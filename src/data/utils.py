@@ -318,7 +318,8 @@ def oscnext_extractor(frame, pulsemap, gcd_dict, calibration, input_file, custom
     '''
     features = extract_features(frame, pulsemap, gcd_dict,calibration)
     truths   = extract_truth(frame, input_file, custom_truth)
-    return truths, features
+    retros   = extract_retro(frame)
+    return truths, features, retros
 
 def load_geospatial_data(gcd_path):
     gcd_file = dataio.I3File(gcd_path)
@@ -335,8 +336,8 @@ class I3Extractor:
             mode        : string 
         '''
         if mode == 'oscNext' or mode == 'NuGen':
-            truth, pulsemap = oscnext_extractor(frame, pulsemap, gcd_dict, calibration, input_file, custom_truth)
-            return truth, pulsemap
+            truth, pulsemap, retro = oscnext_extractor(frame, pulsemap, gcd_dict, calibration, input_file, custom_truth)
+            return truth, pulsemap, retro
         elif mode == 'inference':
             pulsemap =  extract_features(frame, pulsemap, gcd_dict,calibration)
             return None, pulsemap

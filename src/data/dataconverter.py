@@ -1,12 +1,14 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from utils import I3Extractor
 from utils import load_geospatial_data
 from icecube import dataio
 
-class DataConverter(ABC):
-    def __init__(self, path: str):
-        self._path = path
+class DataConverter(ABCMeta):
+    def __init__(self, paths, mode, pulsemap):
+        self.paths = paths
         self._extractor = I3Extractor()
+        self.mode = mode
+        self.pulsemap = pulsemap
 
     def process_file(self, i3_file, gcd_file, mode, pulsemap):
         gcd_dict, calibration = load_geospatial_data(gcd_file)
@@ -25,7 +27,7 @@ class DataConverter(ABC):
         pass
 
     @abstractmethod
-    def _save(self, array: np.ndarray):
+    def _save(self):
         pass
 
     @abstractmethod
