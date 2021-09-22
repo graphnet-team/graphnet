@@ -1,4 +1,4 @@
-from sqlite_converter import SQLiteDataConverter
+from sqlite_dataconverter import SQLiteDataConverter
 import sqlite3
 import pandas as pd
 
