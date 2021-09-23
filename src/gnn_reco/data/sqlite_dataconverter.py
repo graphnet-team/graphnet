@@ -1,17 +1,16 @@
-from dataconverter import DataConverter
+from .dataconverter import DataConverter
 import pandas as pd
 from sqlalchemy import create_engine
 import sqlalchemy
 import time
 from multiprocessing import Pool
-from utils import I3Extractor
+from .utils import I3Extractor
 import os
 from icecube import icetray, dataio
 import numpy as np
-from utils import load_geospatial_data
+from .utils import load_geospatial_data
 import sqlite3
 from tqdm import tqdm
-from utils import I3Extractor
 
 
 def apply_event_no(extraction, event_no_list, event_counter):
@@ -233,15 +232,14 @@ class SQLiteDataConverter():
             gcd_file_list = np.array_split(np.array(gcd_files),workers)
             for i in range(0,workers):
                 settings.append([file_list[i],str(i),gcd_file_list[i], event_nos[i], self.mode, self.pulsemap, self.max_dict_size, self.db_name, self.outdir])
-            if __name__ == 'sqlite_dataconverter':
-                #parallel_extraction(settings[0])
-                print('starting pool!')
-                p = Pool(processes = workers)
-                p.map_async(parallel_extraction, settings)
-                p.close()
-                p.join()
-                print('pool')
-                self._merge_databases()
+            
+            print('starting pool!')
+            p = Pool(processes = workers)
+            p.map_async(parallel_extraction, settings)
+            p.close()
+            p.join()
+            print('pool')
+            self._merge_databases()
             return
         else:
             print('ERROR: No files found in: %s \n Please make sure your folder structure adheres to IceCube convention'%self.paths)
