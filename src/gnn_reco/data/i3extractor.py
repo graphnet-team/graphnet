@@ -2,7 +2,7 @@ try:
     from icecube import dataclasses, icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
-    pass
+    
 
 def load_geospatial_data(gcd_path):
     """ Loads the geospatial information contained in the gcd-file.

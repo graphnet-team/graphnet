@@ -1,19 +1,18 @@
-from .dataconverter import DataConverter
-import pandas as pd
-from sqlalchemy import create_engine
-import sqlalchemy
-import time
 from multiprocessing import Pool
-from .i3extractor import I3Extractor
-import os
 import numpy as np
-from .i3extractor import load_geospatial_data
+import os
+import pandas as pd
+import sqlalchemy
 import sqlite3
 from tqdm import tqdm
+
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
+
+from .dataconverter import DataConverter
+from .i3extractor import I3Extractor, load_geospatial_data
 
 
 def apply_event_no(extraction, event_no_list, event_counter):

@@ -1,14 +1,18 @@
-from abc import ABCMeta, abstractmethod
-from .i3extractor import I3Extractor
-from .i3extractor import load_geospatial_data
+from abc import ABC, abstractmethod
+
 try:
     from icecube import dataio  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
 
-class DataConverter(ABCMeta):
+from .i3extractor import I3Extractor, load_geospatial_data
+
+
+class DataConverter(ABC):
+    """Abstract base class for specialised (SQLite, numpy, etc.) data converter classes."""
+    
     def __init__(self, paths, mode, pulsemap):
-        
+
         self.paths = paths
         self._extractor = I3Extractor(paths, mode, pulsemap)
         self.mode = mode
