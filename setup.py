@@ -7,7 +7,7 @@ setup(
     url='https://github.com/icecube/gnn-reco',
     author='The IceCube Collaboration',
     license='MIT',
-    packages=['gnn_reco'],
+    packages=find_packages(where='src'),
     package_dir={'': 'src'},
     install_requires=[
         'sqlalchemy',
