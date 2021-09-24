@@ -52,6 +52,8 @@ jobs:
         run: |
           set -o pipefail  # To propagate exit code from pytest
           coverage run --source=src -m pytest tests/ | tee results_pytest.txt
+          pwd
+          ls -alrt
           coverage report -m | tee results_coverage.txt
       - name: Generate unit test/build and coverage badges
         run: |
