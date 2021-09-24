@@ -13,49 +13,25 @@ except ImportError:
 
 from .dataconverter import DataConverter
 from .i3extractor import I3Extractor, load_geospatial_data
+from .utils import create_out_directory, find_files
 
 
 def apply_event_no(extraction, event_no_list, event_counter):
     """Converts extraction to pandas.DataFrame and applies the event_no index to extraction
 
     Args:
-        extraction (dict): dictionary with the extracted data
-        event_no_list (list): List of allocated event_no's
-        event_counter (int): index for event_no_list
+        extraction (dict): Dictionary with the extracted data.
+        event_no_list (list): List of allocated event_no's.
+        event_counter (int): Index for event_no_list.
 
     Returns:
-        out (pandas.DataFrame): extraction as pandas.DataFrame with event_no column
+        out (pandas.DataFrame): Extraction as pandas.DataFrame with event_no column.
     """
     out = pd.DataFrame(extraction.values()).T
     out.columns = extraction.keys()
     out['event_no'] = event_no_list[event_counter]
     return out
 
-def is_i3(file):
-    if 'gcd' in file.lower():
-        return False
-    elif 'geo' in file.lower():
-        return False
-    else:
-        return True
-def has_extension(file, extensions):
-    """Checks if the file has the desired extension.
-
-    Args:
-        file (str): filename
-        extensions (list): list of strings denoting accepted extensions
-
-    Returns:
-        boolean: True if accepted extension is detected, False otherwise
-    """
-    check = 0
-    for extension in extensions:
-        if extension in file:
-            check +=1
-    if check >0:
-        return True
-    else:
-        return False
 
 def get_temporary_database_paths(path):
     out = []
@@ -65,162 +41,39 @@ def get_temporary_database_paths(path):
             out.append(file)
     return out
 
-def find_i3_files(dir, extensions, gcd_rescue):
-    """Finds i3 files in dir and matches each file with a corresponding gcd_file if present in the directory, matches with gcd_rescue if gcd is not present in the directory
-
-    Args:
-        dir (str): path to scan recursively (2 layers deep by IceCube convention)
-        extensions (list): list of accepted file extensions. E.g. i3.zst
-        gcd_rescue (path): path to the gcd that will be default if no gcd is present in the directory
-
-    Returns:
-        files_list (list): a list containg paths to i3 files in dir
-        GCD_list   (list): a list containing paths to gcd_files for each i3-file in dir
-    """
-    files_list = []
-    GCD_list   = []
-    root,folders,root_files = next(os.walk(dir))
-    gcds_root = []
-    gcd_root = None
-    i3files_root = []
-    for file in root_files:
-        if has_extension(file, extensions):
-            if is_i3(file):
-                i3files_root.append(os.path.join(root,file))
-            else:
-                gcd_root = os.path.join(root,file)
-                gcds_root.append(os.path.join(root,file))
-    if gcd_root == None:
-        gcd_root = gcd_rescue
-    for k in range(len(i3files_root) - len(gcds_root)):
-        gcds_root.append(gcd_root)
-    files_list.extend(i3files_root)
-    GCD_list.extend(gcds_root)
-    for folder in folders:
-        sub_root, sub_folders, sub_folder_files = next(os.walk(os.path.join(root,folder)))
-        gcds_folder = []
-        gcd_folder = None
-        i3files_folder = []
-        for sub_folder_file in sub_folder_files:
-            if has_extension(sub_folder_file, extensions):
-                if is_i3(sub_folder_file):
-                    i3files_folder.append(os.path.join(sub_root,sub_folder_file))
-                else:
-                    gcd_folder = os.path.join(sub_root,sub_folder_file)
-                    gcds_folder.append(os.path.join(sub_root,sub_folder_file))
-        if gcd_folder == None:
-            gcd_folder = gcd_rescue
-        for k in range(len(i3files_folder) - len(gcds_folder)):
-            gcds_folder.append(gcd_folder)
-        files_list.extend(i3files_folder)
-        GCD_list.extend(gcds_folder)
-    
-    files_list, GCD_list = pairwiseshuffle(files_list, GCD_list)
-    return files_list, GCD_list
-
-def pairwiseshuffle(files_list, gcd_list):
-    """Shuffles the i3 file list and the correponding gcd file list.This is handy because it ensures a more even extraction load for each worker
-
-    Args:
-        files_list (list): list of i3 file paths
-        gcd_list (list): list of corresponding gcd file paths
-
-    Returns:
-        i3_shuffled (list): list of shuffled i3 file paths
-        gcd_shuffled (list): a list of corresponding gcd file paths
-    """
-    df = pd.DataFrame({'i3': files_list, 'gcd': gcd_list})
-    df_shuffled = df.sample(frac = 1)
-    i3_shuffled = df_shuffled['i3'].tolist()
-    gcd_shuffled = df_shuffled['gcd'].tolist()
-    return i3_shuffled, gcd_shuffled
-
-
-def find_files(paths,outdir,db_name,gcd_rescue, extensions = None):
-    """Loops over paths and returns the corresponding i3 files and gcd files
-
-    Args:
-        paths (list): list of paths
-        outdir (str): path to out directory
-        db_name (str): name of the database
-        gcd_rescue (str): path to the gcd file that will be defaulted to if no gcd is present in a directory
-        extensions (list, optional): list of accepted extensions. E.g. (i3.zst). Defaults to None.
-
-    Returns:
-        input_files (list): a list of paths to i3 files
-        gcd_files (list): a list of corresponding gcd files
-    """
-    print('Counting files in: \n%s\n This might take a few minutes...'%paths)
-    if extensions == None:
-        extensions = ("i3.bz2",".zst",".gz")
-    input_files_mid = []
-    input_files = []
-    files = []
-    gcd_files_mid = []
-    gcd_files = []
-    for path in paths:
-        input_files_mid, gcd_files_mid = find_i3_files(path, extensions, gcd_rescue)
-        input_files.extend(input_files_mid)
-        gcd_files.extend(gcd_files_mid)
-
-    if len(input_files) > 0:
-        input_files, gcd_files = pairwiseshuffle(input_files, gcd_files)
-        save_filenames(input_files, outdir, db_name)
-    return input_files, gcd_files
-    
-def save_filenames(input_files,outdir, db_name):
-    """Saves i3 file names in csv
-
-    Args:
-        input_files (list): list of file names
-        outdir (str): out directory path
-        db_name (str): name of the database
-    """
-    create_out_directory(outdir + '/%s/config'%db_name)
-    input_files = pd.DataFrame(input_files)
-    input_files.columns = ['filename']
-    input_files.to_csv(outdir + '/%s/config/i3files.csv'%db_name)
-    return
-
-def create_out_directory(outdir):
-    try:
-        os.makedirs(outdir)
+def is_empty(features):
+    if features['dom_x'] != None:
         return False
-    except:
+    else:
         return True
 
-def isempty(features):
-        if features['dom_x'] != None:
-            return False
-        else:
-            return True
-
-
 def process_frame(frame, mode, pulsemap, gcd_dict, calibration, i3_file):
-    """Runs I3Extractor() on a single physics frame
+    """Runs I3Extractor() on a single physics frame.
 
     Args:
-        frame (i3 physics frame): i3 physics frame
-        mode (str): extraction mode
-        pulsemap (str): pulsemap key, e.g. SRTInIcePulses
-        gcd_dict (dict): dictionary indexed via om_keys
-        calibration (??): i3 physics frame calibration
-        i3_file (str): i3 file name
+        frame (i3 physics frame): I3 physics frame.
+        mode (str): Extraction mode.
+        pulsemap (str): Pulsemap key, e.g. SRTInIcePulses.
+        gcd_dict (dict): Dictionary indexed via om_keys.
+        calibration (??): I3 physics frame calibration.
+        i3_file (str): I3 file name.
 
     Returns:
-        truth (dict): dictionary with truth extraction
-        pulsemap (dict): dictionary with pulsemap extraction
-        retro (dict): dictionary with RetroReco extraction
+        truth (dict): Dictionary with truth extraction.
+        pulsemap (dict): Dictionary with pulsemap extraction.
+        retro (dict): Dictionary with RetroReco extraction.
     """
     extractor = I3Extractor()
     truth, pulsemap, retro = extractor(frame, mode, pulsemap, gcd_dict, calibration, i3_file)
     return truth, pulsemap, retro
 
 def parallel_extraction(settings):
-    """The function that every worker runs. Extracts feature, truth and RetroReco (if available) and saves it as temporary sqlite databases
+    """The function that every worker runs. 
+    
+    Extracts feature, truth and RetroReco (if available) and saves it as temporary sqlite databases.
 
     Args:
-        settings (list): list of arguments 
+        settings (list): List of arguments.
     """
     input_files,id, gcd_files, event_no_list, mode, pulsemap, max_dict_size, db_name, outdir = settings
     event_counter = 0
@@ -246,8 +99,7 @@ def parallel_extraction(settings):
                 if len(retros)>0:
                     retro   = apply_event_no(retros, event_no_list, event_counter)
                     retro_big   = retro_big.append(retro, ignore_index = True, sort = True)
-                is_empty = isempty(features) 
-                if is_empty == False:
+                if not is_empty(features):
                     features = apply_event_no(features, event_no_list, event_counter)
                     feature_big= feature_big.append(features,ignore_index = True, sort = True)
                 event_counter += 1
@@ -278,17 +130,24 @@ def save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name,out
 
 class SQLiteDataConverter():
     def __init__(self, paths, mode, pulsemap, gcd_rescue, outdir, db_name, workers,max_dictionary_size = 10000, verbose = 1):
-        """Converts the i3-files in paths to several temporary sqlite databases in parallel, that are then merged to a single sqlite database
+        """Implementation of DataConverter for saving to SQLite database.
+
+        Converts the i3-files in paths to several temporary SQLite databases in 
+        parallel, that are then merged to a single SQLite database
 
         Args:
-            paths (list): list of directories containing i3 files. IceCube directory structure assumed. 
+            paths (list): list of directories containing I3 files. IceCube 
+                directory structure assumed. 
             mode (str): the mode for extraction.
-            pulsemap (str): the pulsemap chosen for extraction. e.g. SRTInIcePulses
-            gcd_rescue (str): path to gcd_file that the extraction defaults to if none is found in the folders
-            outdir (str): the directory to which the sqlite database is written
+            pulsemap (str): the pulsemap chosen for extraction. e.g. 
+                SRTInIcePulses.
+            gcd_rescue (str): path to gcd_file that the extraction defaults to 
+                if none is found in the folders
+            outdir (str): the directory to which the SQLite database is written
             db_name (str): database name. please omit extensions.
             workers (int): number of workers used for parallel extraction.
-            max_dictionary_size (int, optional): The maximum number of events in a temporary database. Defaults to 10000.
+            max_dictionary_size (int, optional): The maximum number of events in 
+                a temporary database. Defaults to 10000.
             verbose (int, optional): Silent extraction if 0. Defaults to 1.
         """
         self.paths          = paths
