@@ -11,10 +11,9 @@ from .i3extractor import load_geospatial_data
 import sqlite3
 from tqdm import tqdm
 try:
-    from icecube import icetray, dataio
+    from icecube import icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
-    pass
 
 
 def apply_event_no(extraction, event_no_list, event_counter):

@@ -1,5 +1,5 @@
 try:
-    from icecube import dataclasses, icetray, dataio
+    from icecube import dataclasses, icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
     pass
