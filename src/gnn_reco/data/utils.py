@@ -4,6 +4,8 @@
 import os
 import pandas as pd
 import re
+from typing import List
+
 
 def create_out_directory(outdir):
     try:
@@ -11,24 +13,16 @@ def create_out_directory(outdir):
     except:
         print(f"Directory {outdir} already exists")
 
-def is_i3_file(filename):
-    """Check whether `filename` is an I3 file."""
+def is_i3_file(filename: str):
+    """Checks whether `filename` is an I3 file."""
     if re.search('(gcd|geo)', filename.lower()):
         return False
     elif re.search(r'\.i3\.', filename.lower()):
         return True
     return False
 
-def has_extension(filename, extensions):
-    """Checks if the file has the desired extension.
-
-    Args:
-        filename (str): File name.
-        extensions (list[str]): List of accepted extensions.
-
-    Returns:
-        boolean: True if accepted extension is detected, False otherwise
-    """
+def has_extension(filename: str, extensions: List[str]):
+    """Checks if the file has one of the desired extension."""
     return re.search('(' + '|'.join(extensions) + ')$', filename) is not None
 
 def pairwiseshuffle(files_list, gcd_list):
