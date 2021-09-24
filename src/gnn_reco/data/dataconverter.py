@@ -3,7 +3,7 @@ from .i3extractor import I3Extractor
 from .i3extractor import load_geospatial_data
 try:
     from icecube import dataio
-except ModuleNotFoundError:
+except ImportError:
     print("icecube package not available.")
     pass
 
