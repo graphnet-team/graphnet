@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from utils import I3Extractor
-from utils import load_geospatial_data
+from .utils import I3Extractor
+from .utils import load_geospatial_data
 from icecube import dataio
 
 class DataConverter(ABCMeta):
