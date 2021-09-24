@@ -14,5 +14,9 @@ setup(
         'pandas',
         'numpy',
         'tqdm',
+        'pytest',
+        'pylint',
+        'coverage',
+        'anybadge',
         ],
 )
