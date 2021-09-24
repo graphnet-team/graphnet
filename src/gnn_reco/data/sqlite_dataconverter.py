@@ -4,13 +4,17 @@ from sqlalchemy import create_engine
 import sqlalchemy
 import time
 from multiprocessing import Pool
-from .utils import I3Extractor
+from .i3extractor import I3Extractor
 import os
-from icecube import icetray, dataio
 import numpy as np
-from .utils import load_geospatial_data
+from .i3extractor import load_geospatial_data
 import sqlite3
 from tqdm import tqdm
+try:
+    from icecube import icetray, dataio
+except ImportError:
+    print("icecube package not available.")
+    pass
 
 
 def apply_event_no(extraction, event_no_list, event_counter):
