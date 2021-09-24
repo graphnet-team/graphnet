@@ -15,6 +15,16 @@ from utils import I3Extractor
 
 
 def apply_event_no(extraction, event_no_list, event_counter):
+    """Converts extraction to pandas.DataFrame and applies the event_no index to extraction
+
+    Args:
+        extraction (dict): dictionary with the extracted data
+        event_no_list (list): List of allocated event_no's
+        event_counter (int): index for event_no_list
+
+    Returns:
+        out (pandas.DataFrame): extraction as pandas.DataFrame with event_no column
+    """
     out = pd.DataFrame(extraction.values()).T
     out.columns = extraction.keys()
     out['event_no'] = event_no_list[event_counter]
@@ -28,6 +38,15 @@ def is_i3(file):
     else:
         return True
 def has_extension(file, extensions):
+    """Checks if the file has the desired extension.
+
+    Args:
+        file (str): filename
+        extensions (list): list of strings denoting accepted extensions
+
+    Returns:
+        boolean: True if accepted extension is detected, False otherwise
+    """
     check = 0
     for extension in extensions:
         if extension in file:
@@ -46,6 +65,17 @@ def get_temporary_database_paths(path):
     return out
 
 def find_i3_files(dir, extensions, gcd_rescue):
+    """Finds i3 files in dir and matches each file with a corresponding gcd_file if present in the directory, matches with gcd_rescue if gcd is not present in the directory
+
+    Args:
+        dir (str): path to scan recursively (2 layers deep by IceCube convention)
+        extensions (list): list of accepted file extensions. E.g. i3.zst
+        gcd_rescue (path): path to the gcd that will be default if no gcd is present in the directory
+
+    Returns:
+        files_list (list): a list containg paths to i3 files in dir
+        GCD_list   (list): a list containing paths to gcd_files for each i3-file in dir
+    """
     files_list = []
     GCD_list   = []
     root,folders,root_files = next(os.walk(dir))
@@ -88,6 +118,16 @@ def find_i3_files(dir, extensions, gcd_rescue):
     return files_list, GCD_list
 
 def pairwiseshuffle(files_list, gcd_list):
+    """Shuffles the i3 file list and the correponding gcd file list.This is handy because it ensures a more even extraction load for each worker
+
+    Args:
+        files_list (list): list of i3 file paths
+        gcd_list (list): list of corresponding gcd file paths
+
+    Returns:
+        i3_shuffled (list): list of shuffled i3 file paths
+        gcd_shuffled (list): a list of corresponding gcd file paths
+    """
     df = pd.DataFrame({'i3': files_list, 'gcd': gcd_list})
     df_shuffled = df.sample(frac = 1)
     i3_shuffled = df_shuffled['i3'].tolist()
@@ -96,6 +136,19 @@ def pairwiseshuffle(files_list, gcd_list):
 
 
 def find_files(paths,outdir,db_name,gcd_rescue, extensions = None):
+    """Loops over paths and returns the corresponding i3 files and gcd files
+
+    Args:
+        paths (list): list of paths
+        outdir (str): path to out directory
+        db_name (str): name of the database
+        gcd_rescue (str): path to the gcd file that will be defaulted to if no gcd is present in a directory
+        extensions (list, optional): list of accepted extensions. E.g. (i3.zst). Defaults to None.
+
+    Returns:
+        input_files (list): a list of paths to i3 files
+        gcd_files (list): a list of corresponding gcd files
+    """
     print('Counting files in: \n%s\n This might take a few minutes...'%paths)
     if extensions == None:
         extensions = ("i3.bz2",".zst",".gz")
@@ -115,6 +168,13 @@ def find_files(paths,outdir,db_name,gcd_rescue, extensions = None):
     return input_files, gcd_files
     
 def save_filenames(input_files,outdir, db_name):
+    """Saves i3 file names in csv
+
+    Args:
+        input_files (list): list of file names
+        outdir (str): out directory path
+        db_name (str): name of the database
+    """
     create_out_directory(outdir + '/%s/config'%db_name)
     input_files = pd.DataFrame(input_files)
     input_files.columns = ['filename']
@@ -126,9 +186,6 @@ def create_out_directory(outdir):
         os.makedirs(outdir)
         return False
     except:
-        print(' !!WARNING!! \n \
-            %s already exists. \n \
-            ABORTING! '%outdir)
         return True
 
 def isempty(features):
@@ -139,12 +196,31 @@ def isempty(features):
 
 
 def process_frame(frame, mode, pulsemap, gcd_dict, calibration, i3_file):
+    """Runs I3Extractor() on a single physics frame
+
+    Args:
+        frame (i3 physics frame): i3 physics frame
+        mode (str): extraction mode
+        pulsemap (str): pulsemap key, e.g. SRTInIcePulses
+        gcd_dict (dict): dictionary indexed via om_keys
+        calibration (??): i3 physics frame calibration
+        i3_file (str): i3 file name
+
+    Returns:
+        truth (dict): dictionary with truth extraction
+        pulsemap (dict): dictionary with pulsemap extraction
+        retro (dict): dictionary with RetroReco extraction
+    """
     extractor = I3Extractor()
     truth, pulsemap, retro = extractor(frame, mode, pulsemap, gcd_dict, calibration, i3_file)
     return truth, pulsemap, retro
 
 def parallel_extraction(settings):
-    print('hi')
+    """The function that every worker runs. Extracts feature, truth and RetroReco (if available) and saves it as temporary sqlite databases
+
+    Args:
+        settings (list): list of arguments 
+    """
     input_files,id, gcd_files, event_no_list, mode, pulsemap, max_dict_size, db_name, outdir = settings
     event_counter = 0
     feature_big = pd.DataFrame()
@@ -201,6 +277,19 @@ def save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name,out
 
 class SQLiteDataConverter():
     def __init__(self, paths, mode, pulsemap, gcd_rescue, outdir, db_name, workers,max_dictionary_size = 10000, verbose = 1):
+        """Converts the i3-files in paths to several temporary sqlite databases in parallel, that are then merged to a single sqlite database
+
+        Args:
+            paths (list): list of directories containing i3 files. IceCube directory structure assumed. 
+            mode (str): the mode for extraction.
+            pulsemap (str): the pulsemap chosen for extraction. e.g. SRTInIcePulses
+            gcd_rescue (str): path to gcd_file that the extraction defaults to if none is found in the folders
+            outdir (str): the directory to which the sqlite database is written
+            db_name (str): database name. please omit extensions.
+            workers (int): number of workers used for parallel extraction.
+            max_dictionary_size (int, optional): The maximum number of events in a temporary database. Defaults to 10000.
+            verbose (int, optional): Silent extraction if 0. Defaults to 1.
+        """
         self.paths          = paths
         self.mode           = mode
         self.pulsemap       = pulsemap
@@ -214,6 +303,8 @@ class SQLiteDataConverter():
         self._processfiles()
         
     def _processfiles(self):
+        """Starts the parallelized extraction using map_async.
+        """
         if self.verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()    
         create_out_directory(self.outdir + '/%s/data'%self.db_name)
@@ -248,6 +339,8 @@ class SQLiteDataConverter():
             return
         
     def _merge_databases(self):
+        """Merges the temporary databases into a single sqlite database, then deletes the temporary databases 
+        """
         path_tmp = self.outdir + '/' + self.db_name + '/tmp'
         database_path = self.outdir + '/' + self.db_name + '/data/' + self.db_name
         directory_exists = create_out_directory(self.outdir)
@@ -293,11 +386,25 @@ class SQLiteDataConverter():
         return
 
     def _attach_index(self,database, table_name):
+        """Attaches the table index. Important for query times!
+
+        Args:
+            database (str): path to database
+            table_name (str): name of the table being indexed
+        """     
         CODE = "PRAGMA foreign_keys=off;\nBEGIN TRANSACTION;\nCREATE INDEX event_no_{} ON {} (event_no);\nCOMMIT TRANSACTION;\nPRAGMA foreign_keys=on;".format(table_name,table_name)
         self._run_sql_code(database,CODE)
         return
 
     def _create_table(self,database,table_name, columns, is_pulse_map = False):
+        """Creates a table
+
+        Args:
+            database (str): path to the database
+            table_name (str): name of the table
+            columns (str): the names of the columns of the table
+            is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.
+        """
         count = 0
         for column in columns:
             if count == 0:
@@ -327,6 +434,15 @@ class SQLiteDataConverter():
         return
 
     def _create_empty_tables(self,database,pulse_map,truth_columns, pulse_map_columns, retro_columns):
+        """Creates an empty table
+
+        Args:
+            database (str): path to database
+            pulse_map (str): the pulse map key e.g. SR
+            truth_columns ([type]): [description]
+            pulse_map_columns ([type]): [description]
+            retro_columns ([type]): [description]
+        """
         print('Creating Empty Truth Table')
         self._create_table(database, 'truth', truth_columns, is_pulse_map = False) # Creates the truth table containing primary particle attributes and RetroReco reconstructions
         print('Creating Empty RetroReco Table')
@@ -337,18 +453,37 @@ class SQLiteDataConverter():
         return
 
     def _submit_truth(self,database, truth):
+        """Submits truth to the database
+
+        Args:
+            database (str): path to database
+            truth (pandas.DataFrame): contains truth data
+        """ 
         engine_main = sqlalchemy.create_engine('sqlite:///' + database + '.db')
         truth.to_sql('truth',engine_main,index= False, if_exists = 'append')
         engine_main.dispose()
         return  
 
     def _submit_pulse_maps(self,database, features,pulse_map):
+        """Submits pulsemap to the database
+
+        Args:
+            database (str): path to database
+            features (pandas.DataFrame): contains the feature data
+            pulse_map (str): the name of the i3 key for the pulsemap. E.g. SRTInIcePulses
+        """
         engine_main = sqlalchemy.create_engine('sqlite:///' + database + '.db')
         features.to_sql(pulse_map, engine_main,index= False, if_exists = 'append')
         engine_main.dispose()
         return
 
     def _submit_retro(self,database, retro):
+        """Submits RetroReco
+
+        Args:
+            database (str): path to database
+            retro (pandas.DataFrame()): contains RetroReco and associated quantities if available
+        """
         if len(retro)>0:
             engine_main = sqlalchemy.create_engine('sqlite:///' + database + '.db')
             retro.to_sql('RetroReco',engine_main,index= False, if_exists = 'append')
@@ -356,6 +491,17 @@ class SQLiteDataConverter():
         return  
 
     def _extract_everything(self,db, pulsemap):
+        """Extracts everything from the temporary database db
+
+        Args:
+            db (str): path to temporary database
+            pulsemap (str): name of the pulsemap. E.g. SRTInIcePulses
+
+        Returns:
+            truth (pandas.DataFrame()): contains the truth data
+            features (pandas.DataFame()): contains the pulsemap
+            retro (pandas.DataFrame) : contains RetroReco and associated quantities if available
+        """
         with sqlite3.connect(db) as con:
             truth_query = 'select * from truth'
             truth = pd.read_sql(truth_query,con)
@@ -372,6 +518,14 @@ class SQLiteDataConverter():
         return truth, features, retro
 
     def _merge_temporary_databases(self,database, db_files, path_to_tmp,pulse_map):
+        """Merges the temporary databases
+
+        Args:
+            database (str): path to the final database
+            db_files (list): list of names of temporary databases
+            path_to_tmp (str): path to temporary database directory
+            pulse_map (str): name of the pulsemap. E.g. SRTInIcePulses
+        """
         file_counter = 1
         for i in tqdm(range(len(db_files)), colour = 'green'):
             file = db_files[i]
