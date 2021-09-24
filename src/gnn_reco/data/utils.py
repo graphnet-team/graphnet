@@ -1,6 +1,16 @@
 from icecube import dataclasses, icetray, dataio
 
 def load_geospatial_data(gcd_path):
+    """ Loads the geospatial information contained in the gcd-file.
+            
+    Args:
+        gcd_path (str): path to the gcd file
+
+    Returns:
+        dict: om_geom_dict
+        ??  : i3-file calibration
+
+    """
     gcd_file = dataio.I3File(gcd_path)
     g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
     om_geom_dict = g_frame["I3Geometry"].omgeo
@@ -8,14 +18,14 @@ def load_geospatial_data(gcd_path):
     return om_geom_dict, calibration  
 
 def build_retroreco_extraction(is_mc):
-    ''' Builds a default RetroReco extraction dictionary. Contains associated quantities, such as BDT classifiers.
+    """Builds the standard RetroReco extraction. Later evaluated using eval()
 
-        is_mc               : boolean, if True the estimated weight of the simulated event is extracted too.
+    Args:
+        is_mc (bool): if the current physics frame is monte carlo
 
-        RETURNS
-        retro_extraction    : dictionary where each field contains a string that is evaluated later using eval()
-
-    '''
+    Returns:
+        dict: dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()
+    """
     retro_extraction = {'azimuth_retro': 'frame["L7_reconstructed_azimuth"].value',
                         'time_retro': 'frame["L7_reconstructed_time"].value',
                         'energy_retro': 'frame["L7_reconstructed_total_energy"].value', 
@@ -43,11 +53,11 @@ def build_retroreco_extraction(is_mc):
     return retro_extraction
 
 def build_standard_extraction():
-    ''' Builds the standard truth extraction.
+    """Builds the standard truth extraction
 
-        RETURNS
-        standard_truths    : dictionary where each field contains a string that is evaluated later using eval()
-    '''
+    Returns:
+        dict: dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()
+    """
     standard_truths = {'energy': 'MCInIcePrimary.energy',
             'position_x': 'MCInIcePrimary.pos.x', 
             'position_y': 'MCInIcePrimary.pos.y', 
@@ -66,13 +76,14 @@ def build_standard_extraction():
     return standard_truths
 
 def build_blank_extraction(padding_value = -1):
-    ''' Builds the standard blank truth extraction.
+    """Builds a blank truth extraction
 
-        padding_value      : integer or float, the value used for padding 
+    Args:
+        padding_value (int, optional): Defaults to -1.
 
-        RETURNS
-        blank_extraction    : dictionary where each field contains a string that is evaluated later using eval()
-    '''
+    Returns:
+        blank_extraction (dictionary): dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()
+    """
     ## Please note that if the simulation type is pure noise or real that these values will be appended to the truth table
     blank_extraction = {'energy': str(padding_value),
             'position_x': str(padding_value), 
@@ -94,51 +105,68 @@ def build_blank_extraction(padding_value = -1):
 
 
 class I3Extractor:
+    """Extracts relevant information from physics frames.
+    """
     def __call__(self, frame, mode, pulsemap, gcd_dict, calibration, input_file, custom_truth = None):
-        ''' Extract the truth and pulse map information from frame 
-            frame       : I3 Physics Frame 
-            mode        : string 
-        '''
+        """ Extracts relevant information from frame depending on mode
+
+        Args:
+            frame (i3 physics frame): i3 physics frame that is being processed
+            mode (str): a string containing the type of extraction wanted
+            pulsemap (str): the i3-key for the pulse map. E.g. SRTInIcePulses
+            gcd_dict (dict): the dictionary containing DOM specific data that can be indexed using the om_key
+            calibration (??): i3 physics frame calibration
+            input_file (i3 file): the i3 file from which frame originates
+            custom_truth (dict, optional): A dictionary where field names will correspond to column name in database table. Entries in the dictionary are strings that are evaluated using eval(). Defaults to None.
+
+        Returns:
+            pulsemap: dictionary with input data
+            truth   : dictionary with truth data
+            retro   : dictionary with RetroReco and associated quantities
+        """
         if mode == 'oscNext' or mode == 'NuGen':
             truth, pulsemap, retro = self._oscnext_extractor(frame, pulsemap, gcd_dict, calibration, input_file, custom_truth)
             return truth, pulsemap, retro
         elif mode == 'inference':
             pulsemap =  self._extract_features(frame, pulsemap, gcd_dict,calibration)
-            return None, pulsemap
+            return None, pulsemap, None
         else:
             print('ERROR: invalid mode got : %s'%str(mode))
-            return None, None
+            return None, None, None
         
     def _oscnext_extractor(self,frame, pulsemap, gcd_dict, calibration, input_file, custom_truth = None):
-        ''' Extract NuGen or oscNext simulation events
+        """Extracts PFrame data. Officially supports oscNext and NuGen (LE and HE) but might work for others too.
 
-            frame       : i3 physics frame
-            pulsemap    : string, determining the pulsemap for extraction
-            gcd_dict    : dictionary, containing the geospatial information from the gcd-file
-            calibration : the i3 physics frame calibration
-            input_file  : string, path to the i3 file for extraction
-            custom_truth: dictionary, where each field contains a string for evaluation using eval() (check extract_standard_truths() for reference)
+        Args:
+            frame (i3 frame): i3 physics frame
+            pulsemap (str): the pulsemap key, eg. SRTInIcePulses
+            gcd_dict (dict): the gcd dictionary that can be indexed using the om_keys
+            calibration (??): the i3 physics frame calibration
+            input_file (str): path to the i3 file being extracted
+            custom_truth (dict, optional): a custom truth. Field names become column names in the truth table. Entries are strings that are evaluated using eval(). Defaults to None.
 
-            RETURNS
-            truths      : dictionary containing the truth information of the frame
-            features    : dictionary containing xyz, charge, time, relative dom efficiency, pmt area and pulse width
-        '''
+        Returns:
+            truths (dict): truth dictionary, empty if no truth exists in the files (e.g. if real measurements)
+            features (dict): feature dictionary
+            retros (dict): retros dictionary, empty if no RetroReco exists in the files.
+        """
         features = self._extract_features(frame, pulsemap, gcd_dict,calibration)
         truths   = self._extract_truth(frame, input_file, custom_truth)
         retros   = self._extract_retro(frame)
         return truths, features, retros
     
     def _extract_features(self,frame, pulsemap, gcd_dict,calibration):
-        ''' Extracts the chosen pulsemap from the chosen frame object. Handles known pulsemap errors.
+        """Extracts xyz, time, charge, relative dom eff. and pmt area
 
-            frame       : i3 physics frame
-            pulsemap    : string, eg. 'SRTInIcePulses'
-            gcd_dict    : dictionary containing the geospatial information from GCD-file
-            calibration : i3 file calibration
+        Args:
+            frame (i3 physics frame): i3 physics frame
+            pulsemap (str): the key for the pulsemap. E.g. SRTInIcePulses
+            gcd_dict (dict): the gcd dictionary that can be indexed using om_keys
+            calibration (??): i3 physics frame calibration
 
-            RETURNS
-            pulsemap    : dictionary containing charge, time, xyz, pmt area and relative dom efficiency
-        '''
+        Returns:
+            features (dict): a dictionary containing the input features.
+        """
         charge = []
         time   = []
         width  = []
@@ -171,17 +199,16 @@ class I3Extractor:
                     'rde': rqe}
         return features
     def _extract_truth(self,frame, input_file, extract_these_truths = None):
-        '''Extracts the truth information in the frame. 
-        If a custom extraction scheme is not provided, it defaults to a standard extraction.
+        """Extracts the truths in extract_these_truths. Defaults standard_truth_extraction()
 
-        frame                : i3 physics frame
-        input_file           : string, path to i3 file 
-        extract_these_truths : dictionary, containing strings in fields for evaluation using eval() (see standard_truth_extraction() for reference)
-        
-        RETURNS
+        Args:
+            frame (i3 physics frame): i3 physics frame
+            input_file (str): path to i3-file
+            extract_these_truths (dict, optional): custom truth dictionary. Defaults to None.
 
-        truth                : dictionary, containing strings in fields for evaluation using eval()
-        '''
+        Returns:
+            truth (dictionary): dictionary containing the thruth.
+        """
         if extract_these_truths == None:
             extract_these_truths = build_standard_extraction()
         mc = self._is_montecarlo(frame)
@@ -205,6 +232,14 @@ class I3Extractor:
                 truth[truth_variable] = eval(blank_extraction[truth_variable])
         return truth
     def _extract_retro(self,frame):
+        """Extracts RetroReco and associated quantities if available
+
+        Args:
+            frame (i3 physics frame): i3 physics frame
+
+        Returns:
+            retro: dictionary containing RetroReco and associated quantitites
+        """
         contains_retro = self._contains_retroreco(frame)
         contains_classifier = self._contains_classifiers(frame)
         is_mc = self._is_montecarlo(frame)
@@ -215,6 +250,17 @@ class I3Extractor:
                 retro[retro_variable] = eval(self.evaluate_expression(retro_extraction[retro_variable],frame)) 
         return retro
     def _get_om_keys(self,frame, pulsemap, calibration):
+        """Gets the indicies for the gcd_dict and the pulse series
+
+        Args:
+            frame (i3 physics frame): i3 physics frame
+            pulsemap (str): the i3 key for the pulse map, e.g. SRTInIcePulses
+            calibration (??): i3 physics frame calibration
+
+        Returns:
+            om_keys (index): the indicies for the gcd_dict
+            data    (??)   : the pulse series
+        """
         data    = frame[pulsemap]
         try:
             om_keys = data.keys()
@@ -246,13 +292,6 @@ class I3Extractor:
         return out
 
     def _is_montecarlo(self,frame):
-        ''' Checks if the frame is a simulated event
-
-            frame       : i3 physics frame
-
-            RETURNS
-            mc          : boolean
-        '''
         mc = True
         try:
             frame['MCInIcePrimary']
@@ -271,15 +310,15 @@ class I3Extractor:
             return False
 
     def _find_data_type(self,mc, input_file):
-        ''' A series of checks that determines if the i3-files are real data measurements or MC.
-            In case of MC, it determines which type.
+        """Determines the data type
 
-            mc         : boolean
-            input_file : string, describing the path to the i3-file currently being extracted.
+        Args:
+            mc (boolean): is this montecarlo?
+            input_file (str): path to i3 file
 
-            RETURNS
-            sim_type  : string
-        '''
+        Returns:
+            str: the simulation/data type
+        """
         if mc == False:
             sim_type = 'data'
         else:
