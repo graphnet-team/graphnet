@@ -73,9 +73,6 @@ jobs:
           name: pylint
       - uses: actions/download-artifact@v2
         with:
-          name: pytest
-      - uses: actions/download-artifact@v2
-        with:
           name: coverage
       - name: List directory contents
         run: ls -lart
