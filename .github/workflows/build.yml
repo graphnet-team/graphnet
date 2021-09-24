@@ -24,7 +24,7 @@ jobs:
         run: pip install .
       - name: Run pylint
         run: |
-          pylint **/*.py --exit-zero | tee results_pylint.txt
+          pylint src/gnn_reco tests/*.py --exit-zero | tee results_pylint.txt
       - name: Generate badge
         run: grep rated < results_pylint.txt | sed 's/.* at //g;s/\/.*//g' | xargs -I {} anybadge -f pylint.svg -v {} pylint
       - name: Archive pylint results and badge
