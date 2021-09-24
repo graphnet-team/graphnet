@@ -51,8 +51,8 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run -m pytest tests/ | tee results_pytest.txt
-          coverage report --include=./** | tee results_coverage.txt
+          coverage run --source=src -m pytest tests/ | tee results_pytest.txt
+          coverage report -m | tee results_coverage.txt
       - name: Generate unit test/build and coverage badges
         run: |
           tail -1 results_coverage.txt | sed 's/.* \(.*\)%/\1/g' | xargs -I {} anybadge -f coverage.svg -v {} coverage
