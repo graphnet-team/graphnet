@@ -1,4 +1,8 @@
-from icecube import dataclasses, icetray, dataio
+try:
+    from icecube import dataclasses, icetray, dataio
+except ImportError:
+    print("icecube package not available.")
+    pass
 
 def load_geospatial_data(gcd_path):
     """ Loads the geospatial information contained in the gcd-file.

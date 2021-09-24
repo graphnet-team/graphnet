@@ -1,7 +1,11 @@
 from abc import ABCMeta, abstractmethod
-from .utils import I3Extractor
-from .utils import load_geospatial_data
-from icecube import dataio
+from .i3extractor import I3Extractor
+from .i3extractor import load_geospatial_data
+try:
+    from icecube import dataio
+except ImportError:
+    print("icecube package not available.")
+    pass
 
 class DataConverter(ABCMeta):
     def __init__(self, paths, mode, pulsemap):

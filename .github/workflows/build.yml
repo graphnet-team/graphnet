@@ -1,0 +1,93 @@
+# This is a simple workflow to run linting, unit tests, and code coverage and display resulting badges
+name: build
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+    paths-ignore: [ misc/badges/ ]
+  pull_request:
+    branches: [ main ]
+    paths-ignore: [ misc/badges/ ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Install required packages
+        run: pip install -e .
+      - name: Run pylint
+        run: |
+          pylint src/gnn_reco tests/*.py --exit-zero | tee results_pylint.txt
+      - name: Generate badge
+        run: grep rated < results_pylint.txt | sed 's/.* at //g;s/\/.*//g' | xargs -I {} anybadge -f pylint.svg -v {} pylint
+      - name: Archive pylint results and badge
+        uses: actions/upload-artifact@v2
+        with:
+          name: pylint
+          path: |
+            pylint.svg
+          
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+      
+    steps:
+      - uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install required packages 
+        run: pip install -e .
+      - name: Run unit tests and generate coverage report
+        run: |
+          set -o pipefail  # To propagate exit code from pytest
+          coverage run --source=src -m pytest tests/ | tee results_pytest.txt
+          coverage report -m | tee results_coverage.txt
+      - name: Generate unit test/build and coverage badges
+        run: |
+          tail -1 results_coverage.txt | sed 's/.* \(.*\)%/\1/g' | xargs -I {} anybadge -f coverage.svg -v {} coverage
+      - name: Archive code coverage results and badge
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: | 
+            coverage.svg
+  
+  badges:
+    needs: [ linting, tests ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: pylint
+      - uses: actions/download-artifact@v2
+        with:
+          name: coverage
+      - name: List directory contents
+        run: ls -lart
+      - name: Move new badges
+        run: |
+          mkdir -p misc/badges
+          mv pylint.svg misc/badges/
+          mv coverage.svg misc/badges/
+      - name: Configure git
+        run: |
+          git config user.email "andreas.sogaard@gmail.com"
+          git config user.name "Andreas Søgaard"
+      - name: Print status
+        run: git status
+      - name: Stage badges
+        run: git add -f misc/badges/
+#      - name: Commit and push changes
+#        run: git commit -m "Auto-updating badges" > /dev/null && git push origin main || echo "Nothing to push"
