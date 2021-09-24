@@ -19,24 +19,17 @@ def is_i3_file(filename):
         return True
     return False
 
-def has_extension(file, extensions):
+def has_extension(filename, extensions):
     """Checks if the file has the desired extension.
 
     Args:
-        file (str): filename
-        extensions (list): list of strings denoting accepted extensions
+        filename (str): File name.
+        extensions (list[str]): List of accepted extensions.
 
     Returns:
         boolean: True if accepted extension is detected, False otherwise
     """
-    check = 0
-    for extension in extensions:
-        if extension in file:
-            check +=1
-    if check >0:
-        return True
-    else:
-        return False
+    return re.search('(' + '|'.join(extensions) + ')$', filename) is not None
 
 def pairwiseshuffle(files_list, gcd_list):
     """Shuffles the i3 file list and the correponding gcd file list.
