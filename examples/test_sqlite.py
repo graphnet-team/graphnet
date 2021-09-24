@@ -2,7 +2,7 @@
 """
 
 from gnn_reco.data.sqlite_dataconverter import SQLiteDataConverter
-import pandas as pd
+
 
 def main():
     """Main script function."""
