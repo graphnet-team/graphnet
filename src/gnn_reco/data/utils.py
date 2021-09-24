@@ -3,23 +3,21 @@
 
 import os
 import pandas as pd
-
+import re
 
 def create_out_directory(outdir):
     try:
         os.makedirs(outdir)
-        return False
     except:
         print(f"Directory {outdir} already exists")
-        return True
 
-def is_i3(file):
-    if 'gcd' in file.lower():
+def is_i3_file(filename):
+    """Check whether `filename` is an I3 file."""
+    if re.search('(gcd|geo)', filename.lower()):
         return False
-    elif 'geo' in file.lower():
-        return False
-    else:
+    elif re.search(r'\.i3\.', filename.lower()):
         return True
+    return False
 
 def has_extension(file, extensions):
     """Checks if the file has the desired extension.
@@ -125,7 +123,7 @@ def find_i3_files(dir, extensions, gcd_rescue):
     i3files_root = []
     for file in root_files:
         if has_extension(file, extensions):
-            if is_i3(file):
+            if is_i3_file(file):
                 i3files_root.append(os.path.join(root,file))
             else:
                 gcd_root = os.path.join(root,file)
@@ -143,7 +141,7 @@ def find_i3_files(dir, extensions, gcd_rescue):
         i3files_folder = []
         for sub_folder_file in sub_folder_files:
             if has_extension(sub_folder_file, extensions):
-                if is_i3(sub_folder_file):
+                if is_i3_file(sub_folder_file):
                     i3files_folder.append(os.path.join(sub_root,sub_folder_file))
                 else:
                     gcd_folder = os.path.join(sub_root,sub_folder_file)
