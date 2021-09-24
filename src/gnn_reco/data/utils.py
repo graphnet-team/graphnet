@@ -7,13 +7,13 @@ import re
 from typing import List
 
 
-def create_out_directory(outdir):
+def create_out_directory(outdir: str):
     try:
         os.makedirs(outdir)
     except:
         print(f"Directory {outdir} already exists")
 
-def is_i3_file(filename: str):
+def is_i3_file(filename: str) -> bool:
     """Checks whether `filename` is an I3 file."""
     if re.search('(gcd|geo)', filename.lower()):
         return False
@@ -21,8 +21,8 @@ def is_i3_file(filename: str):
         return True
     return False
 
-def has_extension(filename: str, extensions: List[str]):
-    """Checks if the file has one of the desired extension."""
+def has_extension(filename: str, extensions: List[str]) -> bool:
+    """Checks if the file has one of the desired extensions."""
     return re.search('(' + '|'.join(extensions) + ')$', filename) is not None
 
 def pairwiseshuffle(files_list, gcd_list):
