@@ -4,11 +4,11 @@ from sqlalchemy import create_engine
 import sqlalchemy
 import time
 from multiprocessing import Pool
-from .utils import I3Extractor
+from .i3extractor import I3Extractor
 import os
 from icecube import icetray, dataio
 import numpy as np
-from .utils import load_geospatial_data
+from .i3extractor import load_geospatial_data
 import sqlite3
 from tqdm import tqdm
 
