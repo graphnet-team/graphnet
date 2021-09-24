@@ -5,6 +5,7 @@ from icecube import dataio
 
 class DataConverter(ABCMeta):
     def __init__(self, paths, mode, pulsemap):
+        
         self.paths = paths
         self._extractor = I3Extractor(paths, mode, pulsemap)
         self.mode = mode
