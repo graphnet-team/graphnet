@@ -6,11 +6,15 @@ import time
 from multiprocessing import Pool
 from .i3extractor import I3Extractor
 import os
-from icecube import icetray, dataio
 import numpy as np
 from .i3extractor import load_geospatial_data
 import sqlite3
 from tqdm import tqdm
+try:
+    from icecube import icetray, dataio
+except ModuleNotFoundError:
+    print("icecube package not available.")
+    pass
 
 
 def apply_event_no(extraction, event_no_list, event_counter):
