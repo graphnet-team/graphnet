@@ -12,7 +12,7 @@ import sqlite3
 from tqdm import tqdm
 try:
     from icecube import icetray, dataio
-except ModuleNotFoundError:
+except ImportError:
     print("icecube package not available.")
     pass
 

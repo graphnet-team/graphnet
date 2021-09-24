@@ -1,6 +1,6 @@
 try:
     from icecube import dataclasses, icetray, dataio
-except ModuleNotFoundError:
+except ImportError:
     print("icecube package not available.")
     pass
 
