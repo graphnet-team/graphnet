@@ -13,7 +13,7 @@ except ImportError:
 
 from .dataconverter import DataConverter
 from .i3extractor import I3Extractor, load_geospatial_data
-from .utils import create_out_directory, find_files
+from .utils import create_out_directory, find_i3_files, pairwise_shuffle
 
 
 def apply_event_no(extraction, event_no_list, event_counter):
@@ -169,18 +169,20 @@ class SQLiteDataConverter():
             icetray.I3Logger.global_logger = icetray.I3NullLogger()    
         create_out_directory(self.outdir + '/%s/data'%self.db_name)
         create_out_directory(self.outdir + '/%s/tmp'%self.db_name)
-        input_files, gcd_files = find_files(self.paths, self.outdir,self.db_name,self.gcd_rescue)
+        i3_files, gcd_files = find_i3_files(self.paths,self.gcd_rescue)
+        i3_files, gcd_files = pairwise_shuffle(i3_files, gcd_files)
+        self._save_filenames(i3_files)
 
-        if len(input_files) > 0:
-            if self.workers > len(input_files):
-                workers = len(input_files)
+        if len(i3_files) > 0:
+            if self.workers > len(i3_files):
+                workers = len(i3_files)
             else:
                 workers = self.workers
             
             # SETTINGS
             settings = []
             event_nos = np.array_split(np.arange(0,99999999,1),workers) #Notice that this choice means event_no is NOT unique between different databases.
-            file_list = np.array_split(np.array(input_files),workers)
+            file_list = np.array_split(np.array(i3_files),workers)
             gcd_file_list = np.array_split(np.array(gcd_files),workers)
             for i in range(0,workers):
                 settings.append([file_list[i],str(i),gcd_file_list[i], event_nos[i], self.mode, self.pulsemap, self.max_dict_size, self.db_name, self.outdir])
@@ -196,6 +198,18 @@ class SQLiteDataConverter():
         else:
             print('ERROR: No files found in: %s \n Please make sure your folder structure adheres to IceCube convention'%self.paths)
             return
+
+    def _save_filenames(self, i3_files):
+        """Saves I3 file names in CSV format.
+
+        Args:
+            i3_files (list): List of file names.
+            outdir (str): Out directory path.
+            db_name (str): Name of the database.
+        """
+        create_out_directory(self.outdir + '/%s/config'%self.db_name)
+        i3_files = pd.DataFrame(data=i3_files, columns=['filename'])
+        i3_files.to_csv(self.outdir + '/%s/config/i3files.csv'%self.db_name)
         
     def _merge_databases(self):
         """Merges the temporary databases into a single sqlite database, then deletes the temporary databases 
