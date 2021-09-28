@@ -109,15 +109,19 @@ def build_blank_extraction(padding_value = -1):
 
 
 class I3Extractor:
-    """Extracts relevant information from physics frames.
-    """
-    def __call__(self, frame, mode, pulsemap, gcd_dict, calibration, input_file, custom_truth = None):
+    """Extracts relevant information from physics frames."""
+
+    def __init__(self, mode, pulsemap):
+        # Member variables
+        self._mode = mode
+        self._pulsemap = pulsemap
+
+
+    def __call__(self, frame, gcd_dict, calibration, input_file, custom_truth = None):
         """ Extracts relevant information from frame depending on mode
 
         Args:
             frame (i3 physics frame): i3 physics frame that is being processed
-            mode (str): a string containing the type of extraction wanted
-            pulsemap (str): the i3-key for the pulse map. E.g. SRTInIcePulses
             gcd_dict (dict): the dictionary containing DOM specific data that can be indexed using the om_key
             calibration (??): i3 physics frame calibration
             input_file (i3 file): the i3 file from which frame originates
@@ -128,22 +132,21 @@ class I3Extractor:
             truth   : dictionary with truth data
             retro   : dictionary with RetroReco and associated quantities
         """
-        if mode == 'oscNext' or mode == 'NuGen':
-            truth, pulsemap, retro = self._oscnext_extractor(frame, pulsemap, gcd_dict, calibration, input_file, custom_truth)
+        if self._mode == 'oscNext' or self._mode == 'NuGen':
+            truth, pulsemap, retro = self._oscnext_extractor(frame, gcd_dict, calibration, input_file, custom_truth)
             return truth, pulsemap, retro
-        elif mode == 'inference':
-            pulsemap =  self._extract_features(frame, pulsemap, gcd_dict,calibration)
+        elif self._mode == 'inference':
+            pulsemap = self._extract_features(frame, gcd_dict,calibration)
             return None, pulsemap, None
         else:
-            print('ERROR: invalid mode got : %s'%str(mode))
+            print('ERROR: invalid mode got : %s'%str(self._mode))
             return None, None, None
         
-    def _oscnext_extractor(self,frame, pulsemap, gcd_dict, calibration, input_file, custom_truth = None):
+    def _oscnext_extractor(self, frame, gcd_dict, calibration, input_file, custom_truth = None):
         """Extracts PFrame data. Officially supports oscNext and NuGen (LE and HE) but might work for others too.
 
         Args:
             frame (i3 frame): i3 physics frame
-            pulsemap (str): the pulsemap key, eg. SRTInIcePulses
             gcd_dict (dict): the gcd dictionary that can be indexed using the om_keys
             calibration (??): the i3 physics frame calibration
             input_file (str): path to the i3 file being extracted
@@ -154,17 +157,16 @@ class I3Extractor:
             features (dict): feature dictionary
             retros (dict): retros dictionary, empty if no RetroReco exists in the files.
         """
-        features = self._extract_features(frame, pulsemap, gcd_dict,calibration)
+        features = self._extract_features(frame, gcd_dict, calibration)
         truths   = self._extract_truth(frame, input_file, custom_truth)
         retros   = self._extract_retro(frame)
         return truths, features, retros
     
-    def _extract_features(self,frame, pulsemap, gcd_dict,calibration):
+    def _extract_features(self,frame, gcd_dict, calibration):
         """Extracts xyz, time, charge, relative dom eff. and pmt area
 
         Args:
             frame (i3 physics frame): i3 physics frame
-            pulsemap (str): the key for the pulsemap. E.g. SRTInIcePulses
             gcd_dict (dict): the gcd dictionary that can be indexed using om_keys
             calibration (??): i3 physics frame calibration
 
@@ -179,8 +181,8 @@ class I3Extractor:
         x       = []
         y       = []
         z       = []
-        if pulsemap in frame.keys():
-            om_keys,data = self._get_om_keys(frame, pulsemap, calibration)
+        if self._pulsemap in frame.keys():
+            om_keys, data = self._get_om_keys(frame, calibration)
             for om_key in om_keys:
                 pulses = data[om_key]
                 for pulse in pulses:
@@ -202,7 +204,7 @@ class I3Extractor:
                     'pmt_area': area, 
                     'rde': rqe}
         return features
-        
+
     def _extract_truth(self,frame, input_file, extract_these_truths = None):
         """Extracts the truths in extract_these_truths. Defaults standard_truth_extraction()
 
@@ -256,43 +258,42 @@ class I3Extractor:
                 retro[retro_variable] = eval(self.evaluate_expression(retro_extraction[retro_variable],frame)) 
         return retro
 
-    def _get_om_keys(self,frame, pulsemap, calibration):
+    def _get_om_keys(self, frame, calibration):
         """Gets the indicies for the gcd_dict and the pulse series
 
         Args:
             frame (i3 physics frame): i3 physics frame
-            pulsemap (str): the i3 key for the pulse map, e.g. SRTInIcePulses
             calibration (??): i3 physics frame calibration
 
         Returns:
             om_keys (index): the indicies for the gcd_dict
             data    (??)   : the pulse series
         """
-        data    = frame[pulsemap]
+        data = frame[self._pulsemap]
         try:
             om_keys = data.keys()
         except:
             try:
                 if "I3Calibration" in frame.keys():
-                    data = frame[pulsemap].apply(frame)
+                    data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
                 else:
                     frame["I3Calibration"] = calibration 
-                    data = frame[pulsemap].apply(frame)
+                    data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
             except:
-                data = dataclasses.I3RecoPulseSeriesMap.from_frame(frame,pulsemap)
+                data = dataclasses.I3RecoPulseSeriesMap.from_frame(frame, self._pulsemap)
                 om_keys = data.keys()
         return om_keys, data
 
-    def _contains_retroreco(self,frame):
+    def _contains_retroreco(self, frame):
         try:
             frame['L7_reconstructed_zenith']
             return True
         except:
             return False
 
-    def evaluate_expression(self,expression,frame, padding_value = -1):
+    def evaluate_expression(self, expression, frame, padding_value = -1):
         try:
             eval(expression)
             out = expression

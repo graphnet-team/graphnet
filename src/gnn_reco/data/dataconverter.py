@@ -20,7 +20,7 @@ class DataConverter(ABC):
         self._pulsemap = pulsemap
         self._gcd_rescue = gcd_rescue
 
-        self._extractor = I3Extractor()  # @TODO: Restructure I3Extractor to be more "class-like."
+        self._extractor = I3Extractor(mode, pulsemap)  # @TODO: Restructure I3Extractor to be more "class-like."
         
         self._initialise()
 
@@ -44,7 +44,7 @@ class DataConverter(ABC):
                 frame = i3_file.pop_physics()
             except: 
                 continue
-            array = self._extractor(frame, self._mode, self._pulsemap, gcd_dict, calibration, i3_file)
+            array = self._extractor(frame, gcd_dict, calibration, i3_file)
             self._save(array, out_file)
 
     @abstractmethod
