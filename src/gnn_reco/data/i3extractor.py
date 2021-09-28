@@ -106,25 +106,42 @@ def build_blank_extraction(padding_value = -1):
             'SubEventID': 'SubEventID'}
     return blank_extraction
 
+# Module-level constants
+_SUPPORTED_MODES = [
+    'inference',
+    'oscNext',
+    'NuGen',
+]
 
 
 class I3Extractor:
     """Extracts relevant information from physics frames."""
 
     def __init__(self, mode, pulsemap):
+        # Check(s)
+        assert mode in _SUPPORTED_MODES, f"Mode {mode} is not supported by I3Extractor."
+
         # Member variables
         self._mode = mode
         self._pulsemap = pulsemap
+        self._i3_file = None
+        self._gcd_file = None
+        self._gcd_dict = None
+        self._calibration = None
 
+    def set_files(self, i3_file, gcd_file):
+        self._i3_file = i3_file
+        self._gcd_file = gcd_file
+        self._load_gcd_data()
+        
+    def _load_gcd_data(self):
+        self._gcd_dict, self._calibration = load_geospatial_data(self._gcd_file)
 
-    def __call__(self, frame, gcd_dict, calibration, input_file, custom_truth = None):
+    def __call__(self, frame, custom_truth = None):
         """ Extracts relevant information from frame depending on mode
 
         Args:
             frame (i3 physics frame): i3 physics frame that is being processed
-            gcd_dict (dict): the dictionary containing DOM specific data that can be indexed using the om_key
-            calibration (??): i3 physics frame calibration
-            input_file (i3 file): the i3 file from which frame originates
             custom_truth (dict, optional): A dictionary where field names will correspond to column name in database table. Entries in the dictionary are strings that are evaluated using eval(). Defaults to None.
 
         Returns:
@@ -133,23 +150,19 @@ class I3Extractor:
             retro   : dictionary with RetroReco and associated quantities
         """
         if self._mode == 'oscNext' or self._mode == 'NuGen':
-            truth, pulsemap, retro = self._oscnext_extractor(frame, gcd_dict, calibration, input_file, custom_truth)
+            truth, pulsemap, retro = self._oscnext_extractor(frame, custom_truth)
             return truth, pulsemap, retro
         elif self._mode == 'inference':
-            pulsemap = self._extract_features(frame, gcd_dict,calibration)
+            pulsemap = self._extract_features(frame)
             return None, pulsemap, None
-        else:
-            print('ERROR: invalid mode got : %s'%str(self._mode))
-            return None, None, None
         
-    def _oscnext_extractor(self, frame, gcd_dict, calibration, input_file, custom_truth = None):
+        assert False, "Shouldn't reach here."
+        
+    def _oscnext_extractor(self, frame, custom_truth = None):
         """Extracts PFrame data. Officially supports oscNext and NuGen (LE and HE) but might work for others too.
 
         Args:
             frame (i3 frame): i3 physics frame
-            gcd_dict (dict): the gcd dictionary that can be indexed using the om_keys
-            calibration (??): the i3 physics frame calibration
-            input_file (str): path to the i3 file being extracted
             custom_truth (dict, optional): a custom truth. Field names become column names in the truth table. Entries are strings that are evaluated using eval(). Defaults to None.
 
         Returns:
@@ -157,12 +170,12 @@ class I3Extractor:
             features (dict): feature dictionary
             retros (dict): retros dictionary, empty if no RetroReco exists in the files.
         """
-        features = self._extract_features(frame, gcd_dict, calibration)
-        truths   = self._extract_truth(frame, input_file, custom_truth)
+        features = self._extract_features(frame)
+        truths   = self._extract_truth(frame, custom_truth)
         retros   = self._extract_retro(frame)
         return truths, features, retros
     
-    def _extract_features(self,frame, gcd_dict, calibration):
+    def _extract_features(self, frame):
         """Extracts xyz, time, charge, relative dom eff. and pmt area
 
         Args:
@@ -182,18 +195,18 @@ class I3Extractor:
         y       = []
         z       = []
         if self._pulsemap in frame.keys():
-            om_keys, data = self._get_om_keys(frame, calibration)
+            om_keys, data = self._get_om_keys(frame)
             for om_key in om_keys:
                 pulses = data[om_key]
                 for pulse in pulses:
                     charge.append(pulse.charge)
                     time.append(pulse.time) 
                     width.append(pulse.width)
-                    area.append(gcd_dict[om_key].area)  
+                    area.append(self._gcd_dict[om_key].area)  
                     rqe.append(frame["I3Calibration"].dom_cal[om_key].relative_dom_eff)
-                    x.append(gcd_dict[om_key].position.x)
-                    y.append(gcd_dict[om_key].position.y)
-                    z.append(gcd_dict[om_key].position.z)
+                    x.append(self._gcd_dict[om_key].position.x)
+                    y.append(self._gcd_dict[om_key].position.y)
+                    z.append(self._gcd_dict[om_key].position.z)
             
         features = {'charge': charge, 
                     'dom_time': time, 
@@ -205,7 +218,7 @@ class I3Extractor:
                     'rde': rqe}
         return features
 
-    def _extract_truth(self,frame, input_file, extract_these_truths = None):
+    def _extract_truth(self, frame, extract_these_truths = None):
         """Extracts the truths in extract_these_truths. Defaults standard_truth_extraction()
 
         Args:
@@ -219,7 +232,7 @@ class I3Extractor:
         if extract_these_truths == None:
             extract_these_truths = build_standard_extraction()
         mc = self._is_montecarlo(frame)
-        sim_type = self._find_data_type(mc,input_file)
+        sim_type = self._find_data_type(mc, self._i3_file)
         event_time =  frame['I3EventHeader'].start_time.utc_daq_time
         RunID, SubrunID, EventID, SubEventID = self._extract_event_ids(frame)
         if mc:
@@ -239,7 +252,7 @@ class I3Extractor:
                 truth[truth_variable] = eval(blank_extraction[truth_variable])
         return truth
 
-    def _extract_retro(self,frame):
+    def _extract_retro(self, frame):
         """Extracts RetroReco and associated quantities if available
 
         Args:
@@ -258,13 +271,12 @@ class I3Extractor:
                 retro[retro_variable] = eval(self.evaluate_expression(retro_extraction[retro_variable],frame)) 
         return retro
 
-    def _get_om_keys(self, frame, calibration):
+    def _get_om_keys(self, frame):
         """Gets the indicies for the gcd_dict and the pulse series
 
         Args:
             frame (i3 physics frame): i3 physics frame
-            calibration (??): i3 physics frame calibration
-
+            
         Returns:
             om_keys (index): the indicies for the gcd_dict
             data    (??)   : the pulse series
@@ -278,7 +290,7 @@ class I3Extractor:
                     data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
                 else:
-                    frame["I3Calibration"] = calibration 
+                    frame["I3Calibration"] = self._calibration 
                     data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
             except:
