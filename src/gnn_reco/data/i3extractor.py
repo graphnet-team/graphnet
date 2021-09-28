@@ -4,23 +4,6 @@ except ImportError:
     print("icecube package not available.")
     
 
-def load_geospatial_data(gcd_path):
-    """ Loads the geospatial information contained in the gcd-file.
-            
-    Args:
-        gcd_path (str): path to the gcd file
-
-    Returns:
-        dict: om_geom_dict
-        ??  : i3-file calibration
-
-    """
-    gcd_file = dataio.I3File(gcd_path)
-    g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
-    om_geom_dict = g_frame["I3Geometry"].omgeo
-    calibration = gcd_file.pop_frame(icetray.I3Frame.Calibration)["I3Calibration"]
-    return om_geom_dict, calibration  
-
 def build_retroreco_extraction(is_mc):
     """Builds the standard RetroReco extraction. Later evaluated using eval()
 
@@ -135,8 +118,16 @@ class I3Extractor:
         self._load_gcd_data()
         
     def _load_gcd_data(self):
-        self._gcd_dict, self._calibration = load_geospatial_data(self._gcd_file)
-
+        """Loads the geospatial information contained in the gcd-file.
+                
+        Args:
+            gcd_path (str): path to the gcd file
+        """
+        gcd_file = dataio.I3File(self._gcd_file)
+        g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
+        self._gcd_dict = g_frame["I3Geometry"].omgeo
+        self._calibration = gcd_file.pop_frame(icetray.I3Frame.Calibration)["I3Calibration"]
+            
     def __call__(self, frame, custom_truth = None):
         """ Extracts relevant information from frame depending on mode
 
