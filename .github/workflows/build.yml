@@ -101,6 +101,7 @@ jobs:
         run: |
           pip install .
           pip install sphinx
+          pip install sphinx_rtd_theme
       - name: Build documentation
         run: |
           cd docs
