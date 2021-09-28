@@ -93,6 +93,7 @@ jobs:
 #        run: git commit -m "Auto-updating badges" > /dev/null && git push origin main || echo "Nothing to push"
 
   docs:
+    if: ${{ github.event_name == 'push' }}
     needs: [ tests ]
     runs-on: ubuntu-latest
     steps:
@@ -112,3 +113,5 @@ jobs:
         with:
           branch: gh-pages # The branch the action should deploy to.
           folder: docs/build/html # The folder the action should deploy.
+          email: andreas.sogaard@gmail.com
+          name: Andreas Søgaard
