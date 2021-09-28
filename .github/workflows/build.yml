@@ -91,3 +91,23 @@ jobs:
         run: git add -f misc/badges/
 #      - name: Commit and push changes
 #        run: git commit -m "Auto-updating badges" > /dev/null && git push origin main || echo "Nothing to push"
+
+  docs:
+    needs: [ tests ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        run: |
+          pip install .
+          pip install sphinx
+      - name: Build documentation
+        run: |
+          cd docs
+          sphinx-apidoc -f -o ../docs/source/ ../src/
+          make html
+      - name: Deploy to Github Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: docs/build/html # The folder the action should deploy.
