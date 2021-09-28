@@ -1,3 +1,4 @@
+from glob import glob
 from multiprocessing import Pool
 import numpy as np
 import os
@@ -77,12 +78,12 @@ class SQLiteDataConverter(DataConverter):
                 self._outdir,
             ])
         
-        print('starting pool!')
-        p = Pool(processes = workers)
-        p.map_async(parallel_extraction, settings)
+        print(f"Starting pool of {workers} workers to process {len(i3_files)} I3 files")
+        p = Pool(processes=workers)
+        p.map_async(self._parallel_extraction, settings)
         p.close()
         p.join()
-        print('pool')
+        print('Merging databases')
         self._merge_databases()
         
     
@@ -96,6 +97,57 @@ class SQLiteDataConverter(DataConverter):
 
 
     # Non-inherited private method(s)
+    def _parallel_extraction(self, settings):
+        """The function that every worker runs. 
+        
+        Extracts feature, truth and RetroReco (if available) and saves it as temporary sqlite databases.
+
+        Args:
+            settings (list): List of arguments.
+        """
+        input_files,id, gcd_files, event_no_list, mode, pulsemap, max_dict_size, db_name, outdir = settings
+        event_counter = 0
+        feature_big = pd.DataFrame()
+        truth_big   = pd.DataFrame()
+        retro_big   = pd.DataFrame()
+        file_counter = 0
+        output_count = 0
+        gcd_count = 0
+        for u in range(len(input_files)):
+            gcd_dict, calibration = load_geospatial_data(gcd_files[u])
+            i3_file = dataio.I3File(input_files[u], "r")
+
+            while i3_file.more():
+                try:
+                    frame = i3_file.pop_physics()
+                except:
+                    frame = False
+                if frame:
+                    truths, features, retros = self._extractor(frame, mode, pulsemap, gcd_dict, calibration,input_files[u])
+                    truth    = apply_event_no(truths, event_no_list, event_counter)
+                    truth_big   = truth_big.append(truth, ignore_index = True, sort = True)
+                    if len(retros)>0:
+                        retro   = apply_event_no(retros, event_no_list, event_counter)
+                        retro_big   = retro_big.append(retro, ignore_index = True, sort = True)
+                    if not is_empty(features):
+                        features = apply_event_no(features, event_no_list, event_counter)
+                        feature_big= feature_big.append(features,ignore_index = True, sort = True)
+                    event_counter += 1
+                    if len(truth_big) >= max_dict_size:
+                        save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, pulsemap)
+
+                        feature_big = pd.DataFrame()
+                        truth_big   = pd.DataFrame()
+                        retro_big   = pd.DataFrame()
+                        output_count +=1
+            file_counter +=1
+        if len(truth_big) > 0:
+            save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, pulsemap)
+            feature_big = pd.DataFrame()
+            truth_big   = pd.DataFrame()
+            retro_big   = pd.DataFrame()
+            output_count +=1
+        
     def _save_filenames(self, i3_files: List[str]):
         """Saves I3 file names in CSV format."""
         create_out_directory(self._outdir + '/%s/config'%self._db_name)
@@ -103,13 +155,14 @@ class SQLiteDataConverter(DataConverter):
         i3_files.to_csv(self._outdir + '/%s/config/i3files.csv'%self._db_name)
         
     def _merge_databases(self):
-        """Merges the temporary databases into a single sqlite database, then deletes the temporary databases 
-        """
+        """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""
         path_tmp = self._outdir + '/' + self._db_name + '/tmp'
         database_path = self._outdir + '/' + self._db_name + '/data/' + self._db_name
-        db_files = get_temporary_database_paths(path_tmp)
+        db_files = glob(os.path.join(path_tmp, '*.db'))
+        db_files = [os.path.split(db_file)[1] for db_file in db_files]
         if len(db_files) > 0:
             print('Found %s .db-files in %s'%(len(db_files),path_tmp))
+            print(db_files)
             truth_columns, pulse_map_columns, retro_columns = self._extract_column_names(path_tmp, db_files, self._pulsemap)
             self._create_empty_tables(database_path,self._pulsemap, truth_columns, pulse_map_columns, retro_columns)
             self._merge_temporary_databases(database_path, db_files, path_tmp, self._pulsemap)
@@ -220,7 +273,9 @@ class SQLiteDataConverter(DataConverter):
     def _submit_to_database(self, database: str, key: str, data: pd.DataFrame):
         """Submits data to the database with specified key."""
         if len(data) == 0:
-            print(f"No data provided for {key}.")
+            if self._verbose:
+                print(f"No data provided for {key}.")
+                pass
             return
         engine = sqlalchemy.create_engine('sqlite:///' + database + '.db')
         data.to_sql(key, engine,index=False, if_exists='append')
@@ -288,92 +343,11 @@ def apply_event_no(extraction, event_no_list, event_counter):
     out['event_no'] = event_no_list[event_counter]
     return out
 
-
-def get_temporary_database_paths(path):
-    out = []
-    files = os.listdir(path)
-    for file in files:
-        if '.db' in file:
-            out.append(file)
-    return out
-
 def is_empty(features):
     if features['dom_x'] != None:
         return False
     else:
         return True
-
-def process_frame(frame, mode, pulsemap, gcd_dict, calibration, i3_file):
-    """Runs I3Extractor() on a single physics frame.
-
-    Args:
-        frame (i3 physics frame): I3 physics frame.
-        mode (str): Extraction mode.
-        pulsemap (str): Pulsemap key, e.g. SRTInIcePulses.
-        gcd_dict (dict): Dictionary indexed via om_keys.
-        calibration (??): I3 physics frame calibration.
-        i3_file (str): I3 file name.
-
-    Returns:
-        truth (dict): Dictionary with truth extraction.
-        pulsemap (dict): Dictionary with pulsemap extraction.
-        retro (dict): Dictionary with RetroReco extraction.
-    """
-    extractor = I3Extractor()
-    truth, pulsemap, retro = extractor(frame, mode, pulsemap, gcd_dict, calibration, i3_file)
-    return truth, pulsemap, retro
-
-def parallel_extraction(settings):
-    """The function that every worker runs. 
-    
-    Extracts feature, truth and RetroReco (if available) and saves it as temporary sqlite databases.
-
-    Args:
-        settings (list): List of arguments.
-    """
-    input_files,id, gcd_files, event_no_list, mode, pulsemap, max_dict_size, db_name, outdir = settings
-    event_counter = 0
-    feature_big = pd.DataFrame()
-    truth_big   = pd.DataFrame()
-    retro_big   = pd.DataFrame()
-    file_counter = 0
-    output_count = 0
-    gcd_count = 0
-    for u in range(len(input_files)):
-        gcd_dict, calibration = load_geospatial_data(gcd_files[u])
-        i3_file = dataio.I3File(input_files[u], "r")
-
-        while i3_file.more():
-            try:
-                frame = i3_file.pop_physics()
-            except:
-                frame = False
-            if frame:
-                truths, features, retros = process_frame(frame, mode, pulsemap, gcd_dict, calibration,input_files[u])
-                truth    = apply_event_no(truths, event_no_list, event_counter)
-                truth_big   = truth_big.append(truth, ignore_index = True, sort = True)
-                if len(retros)>0:
-                    retro   = apply_event_no(retros, event_no_list, event_counter)
-                    retro_big   = retro_big.append(retro, ignore_index = True, sort = True)
-                if not is_empty(features):
-                    features = apply_event_no(features, event_no_list, event_counter)
-                    feature_big= feature_big.append(features,ignore_index = True, sort = True)
-                event_counter += 1
-                if len(truth_big) >= max_dict_size:
-                    save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name,outdir, pulsemap)
-
-                    feature_big = pd.DataFrame()
-                    truth_big   = pd.DataFrame()
-                    retro_big   = pd.DataFrame()
-                    output_count +=1
-        file_counter +=1
-    if len(truth_big) > 0:
-        save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, pulsemap)
-        feature_big = pd.DataFrame()
-        truth_big   = pd.DataFrame()
-        retro_big   = pd.DataFrame()
-        output_count +=1
-    return
 
 def save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name,outdir, pulsemap):
     engine = sqlalchemy.create_engine('sqlite:///'+outdir + '/%s/tmp/worker-%s-%s.db'%(db_name,id,output_count))
