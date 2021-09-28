@@ -5,7 +5,7 @@ try:
 except ImportError:
     print("icecube package not available.")
 
-from .i3extractor import I3Extractor, load_geospatial_data
+from .i3extractor import I3Extractor
 from .utils import find_i3_files
 
 

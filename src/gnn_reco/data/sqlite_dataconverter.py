@@ -14,7 +14,6 @@ except ImportError:
     print("icecube package not available.")
 
 from .dataconverter import DataConverter
-from .i3extractor import load_geospatial_data
 from .utils import create_out_directory, pairwise_shuffle
 
 
