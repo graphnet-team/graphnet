@@ -112,7 +112,7 @@ class SQLiteDataConverter(DataConverter):
         output_count = 0
         gcd_count = 0
         for u in range(len(input_files)):
-            gcd_dict, calibration = load_geospatial_data(gcd_files[u])
+            self._extractor.set_files(input_files[u], gcd_files[u])
             i3_file = dataio.I3File(input_files[u], "r")
 
             while i3_file.more():
@@ -121,7 +121,7 @@ class SQLiteDataConverter(DataConverter):
                 except:
                     frame = False
                 if frame:
-                    truths, features, retros = self._extractor(frame, gcd_dict, calibration,input_files[u])
+                    truths, features, retros = self._extractor(frame)
                     truth    = apply_event_no(truths, event_no_list, event_counter)
                     truth_big   = truth_big.append(truth, ignore_index = True, sort = True)
                     if len(retros)>0:

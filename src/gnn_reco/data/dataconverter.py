@@ -36,15 +36,15 @@ class DataConverter(ABC):
         pass
 
     def _process_file(self, i3_file, gcd_file, out_file):
-        gcd_dict, calibration = load_geospatial_data(gcd_file)
-        i3_file = dataio.I3File(i3_file, 'r')
+        self._extractor.set_files(i3_file, gcd_file)
+        frames = dataio.I3File(i3_file, 'r')
 
-        while i3_file.more():
+        while frames.more():
             try:
-                frame = i3_file.pop_physics()
+                frame = frames.pop_physics()
             except: 
                 continue
-            array = self._extractor(frame, gcd_dict, calibration, i3_file)
+            array = self._extractor(frame)
             self._save(array, out_file)
 
     @abstractmethod
