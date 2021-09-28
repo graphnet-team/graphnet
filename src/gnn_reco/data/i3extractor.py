@@ -202,6 +202,7 @@ class I3Extractor:
                     'pmt_area': area, 
                     'rde': rqe}
         return features
+        
     def _extract_truth(self,frame, input_file, extract_these_truths = None):
         """Extracts the truths in extract_these_truths. Defaults standard_truth_extraction()
 
@@ -235,6 +236,7 @@ class I3Extractor:
             for truth_variable in blank_extraction.keys():
                 truth[truth_variable] = eval(blank_extraction[truth_variable])
         return truth
+
     def _extract_retro(self,frame):
         """Extracts RetroReco and associated quantities if available
 
@@ -253,6 +255,7 @@ class I3Extractor:
             for retro_variable in retro_extraction.keys():
                 retro[retro_variable] = eval(self.evaluate_expression(retro_extraction[retro_variable],frame)) 
         return retro
+
     def _get_om_keys(self,frame, pulsemap, calibration):
         """Gets the indicies for the gcd_dict and the pulse series
 
@@ -281,12 +284,14 @@ class I3Extractor:
                 data = dataclasses.I3RecoPulseSeriesMap.from_frame(frame,pulsemap)
                 om_keys = data.keys()
         return om_keys, data
+
     def _contains_retroreco(self,frame):
         try:
             frame['L7_reconstructed_zenith']
             return True
         except:
             return False
+
     def evaluate_expression(self,expression,frame, padding_value = -1):
         try:
             eval(expression)
