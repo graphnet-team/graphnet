@@ -2,7 +2,7 @@
 """
 
 from gnn_reco.data.sqlite_dataconverter import SQLiteDataConverter
-import pandas as pd
+
 
 def main():
     """Main script function."""
@@ -14,7 +14,8 @@ def main():
     db_name = 'gnn-reco_test'
     workers = 2
 
-    SQLiteDataConverter(paths, mode, pulsemap, gcd_rescue, outdir, db_name, workers)
+    converter = SQLiteDataConverter(outdir, mode, pulsemap, gcd_rescue, db_name=db_name, workers=workers)
+    converter(paths)
 
 if __name__ == '__main__':
     main()
