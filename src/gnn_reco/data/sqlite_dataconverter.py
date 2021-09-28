@@ -14,8 +14,8 @@ except ImportError:
     print("icecube package not available.")
 
 from .dataconverter import DataConverter
-from .i3extractor import I3Extractor, load_geospatial_data
-from .utils import create_out_directory, find_i3_files, pairwise_shuffle
+from .i3extractor import load_geospatial_data
+from .utils import create_out_directory, pairwise_shuffle
 
 
 class SQLiteDataConverter(DataConverter):
@@ -71,8 +71,6 @@ class SQLiteDataConverter(DataConverter):
                 str(i),
                 gcd_file_list[i], 
                 event_nos[i], 
-                self._mode, 
-                self._pulsemap, 
                 self._max_dict_size, 
                 self._db_name, 
                 self._outdir,
@@ -105,7 +103,7 @@ class SQLiteDataConverter(DataConverter):
         Args:
             settings (list): List of arguments.
         """
-        input_files,id, gcd_files, event_no_list, mode, pulsemap, max_dict_size, db_name, outdir = settings
+        input_files,id, gcd_files, event_no_list, max_dict_size, db_name, outdir = settings
         event_counter = 0
         feature_big = pd.DataFrame()
         truth_big   = pd.DataFrame()
@@ -123,7 +121,7 @@ class SQLiteDataConverter(DataConverter):
                 except:
                     frame = False
                 if frame:
-                    truths, features, retros = self._extractor(frame, mode, pulsemap, gcd_dict, calibration,input_files[u])
+                    truths, features, retros = self._extractor(frame, gcd_dict, calibration,input_files[u])
                     truth    = apply_event_no(truths, event_no_list, event_counter)
                     truth_big   = truth_big.append(truth, ignore_index = True, sort = True)
                     if len(retros)>0:
@@ -134,7 +132,7 @@ class SQLiteDataConverter(DataConverter):
                         feature_big= feature_big.append(features,ignore_index = True, sort = True)
                     event_counter += 1
                     if len(truth_big) >= max_dict_size:
-                        save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, pulsemap)
+                        save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, self._pulsemap)
 
                         feature_big = pd.DataFrame()
                         truth_big   = pd.DataFrame()
@@ -142,7 +140,7 @@ class SQLiteDataConverter(DataConverter):
                         output_count +=1
             file_counter +=1
         if len(truth_big) > 0:
-            save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, pulsemap)
+            save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, self._pulsemap)
             feature_big = pd.DataFrame()
             truth_big   = pd.DataFrame()
             retro_big   = pd.DataFrame()
