@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gnn_reco.data.utils &mdash; gnn-reco  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> gnn-reco
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">gnn-reco</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>gnn_reco.data.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gnn_reco.data.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility function relevant to the gnn_reco.data package.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+
+
+<div class="viewcode-block" id="create_out_directory"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.create_out_directory">[docs]</a><span class="k">def</span> <span class="nf">create_out_directory</span><span class="p">(</span><span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Directory </span><span class="si">{outdir}</span><span class="s2"> already exists&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="is_gcd_file"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.is_gcd_file">[docs]</a><span class="k">def</span> <span class="nf">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether `filename` is a GCD file.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(gcd|geo)&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="is_i3_file"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.is_i3_file">[docs]</a><span class="k">def</span> <span class="nf">is_i3_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether `filename` is an I3 file.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\.i3\.&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="has_extension"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.has_extension">[docs]</a><span class="k">def</span> <span class="nf">has_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extensions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether `filename` has one of the desired extensions.&quot;&quot;&quot;</span>
+    <span class="c1"># @TODO: Remove method, as it is not used?</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extensions</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)$&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="pairwise_shuffle"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.pairwise_shuffle">[docs]</a><span class="k">def</span> <span class="nf">pairwise_shuffle</span><span class="p">(</span><span class="n">i3_list</span><span class="p">,</span> <span class="n">gcd_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Shuffles the I3 file list and the correponding gcd file list.</span>
+<span class="sd">    </span>
+<span class="sd">    This is handy because it ensures a more even extraction load for each worker.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        files_list (list): List of I3 file paths.</span>
+<span class="sd">        gcd_list (list): List of corresponding gcd file paths.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        i3_shuffled (list): List of shuffled I3 file paths.</span>
+<span class="sd">        gcd_shuffled (list): List of corresponding gcd file paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;i3&#39;</span><span class="p">:</span> <span class="n">i3_list</span><span class="p">,</span> <span class="s1">&#39;gcd&#39;</span><span class="p">:</span> <span class="n">gcd_list</span><span class="p">})</span>
+    <span class="n">df_shuffled</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">i3_shuffled</span> <span class="o">=</span> <span class="n">df_shuffled</span><span class="p">[</span><span class="s1">&#39;i3&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">gcd_shuffled</span> <span class="o">=</span> <span class="n">df_shuffled</span><span class="p">[</span><span class="s1">&#39;gcd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">i3_shuffled</span><span class="p">,</span> <span class="n">gcd_shuffled</span></div>
+
+<div class="viewcode-block" id="find_i3_files"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.find_i3_files">[docs]</a><span class="k">def</span> <span class="nf">find_i3_files</span><span class="p">(</span><span class="n">directories</span><span class="p">,</span> <span class="n">gcd_rescue</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Finds I3 files and corresponding GCD files in `directories`.</span>
+
+<span class="sd">    Finds I3 files in dir and matches each file with a corresponding GCD file if </span>
+<span class="sd">    present in the directory, matches with gcd_rescue if gcd is not present in </span>
+<span class="sd">    the directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directories (list[str]): Directories to search recursively for I3 files.</span>
+<span class="sd">        gcd_rescue (str): Path to the GCD that will be default if no GCD is </span>
+<span class="sd">            present in the directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        i3_list (list[str]): Paths to I3 files in `directories`</span>
+<span class="sd">        gcd_list (list[str]): Paths to GCD files for each I3 file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Output containers</span>
+    <span class="n">i3_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">gcd_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">directories</span><span class="p">:</span>
+        <span class="c1"># Recursivley find all I3-like files in `directory`.</span>
+        <span class="n">i3_pattern</span> <span class="o">=</span> <span class="s1">&#39;*.i3.*&#39;</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">))</span>
+
+        <span class="c1"># Loop over all folders containing such I3-like files.</span>
+        <span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+            <span class="c1"># List all I3 and GCD files, respectively, in the current folder.</span>
+            <span class="n">folder_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">i3_pattern</span><span class="p">))</span>
+            <span class="n">folder_i3_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_i3_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
+            <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_gcd_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
+            
+            <span class="c1"># Make sure that no more than one GCD file is found; and use rescue file of none is found.</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd_rescue</span><span class="p">]</span>
+
+            <span class="c1"># Store list of I3 files and corresponding GCD files.</span>
+            <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="n">folder_gcd_files</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+            <span class="n">gcd_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span>
+            <span class="n">i3_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+            <span class="k">pass</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

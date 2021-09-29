@@ -1,0 +1,18 @@
+gnn\_reco package
+=================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gnn_reco.data
+
+Module contents
+---------------
+
+.. automodule:: gnn_reco
+   :members:
+   :undoc-members:
+   :show-inheritance:
