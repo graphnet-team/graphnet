@@ -359,14 +359,17 @@ def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, paddin
             MCInIcePrimary = frame['I3MCTree'][0]
     else:
         MCInIcePrimary = None
+    
     try:
-        interaction_type =  frame["I3MCWeightDict"]["InteractionType"]
+        interaction_type = frame["I3MCWeightDict"]["InteractionType"]
     except:
         interaction_type = padding_value
+    
     try:
         elasticity = frame['I3GENIEResultDict']['y']
     except:
         elasticity = padding_value
+    
     return MCInIcePrimary, interaction_type, elasticity
 
 def extract_event_ids(frame):
