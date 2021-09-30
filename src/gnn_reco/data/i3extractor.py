@@ -184,7 +184,7 @@ class I3Extractor:
         y       = []
         z       = []
         if self._pulsemap in frame.keys():
-            om_keys, data = self._get_om_keys(frame)
+            om_keys, data = self._get_om_keys_and_pulseseries(frame)
             for om_key in om_keys:
                 pulses = data[om_key]
                 for pulse in pulses:
@@ -260,7 +260,7 @@ class I3Extractor:
                 retro[retro_variable] = eval(self.evaluate_expression(retro_extraction[retro_variable],frame)) 
         return retro
 
-    def _get_om_keys(self, frame):
+    def _get_om_keys_and_pulseseries(self, frame):
         """Gets the indicies for the gcd_dict and the pulse series
 
         Args:
