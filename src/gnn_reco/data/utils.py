@@ -8,6 +8,16 @@ from pathlib import Path
 import re
 from typing import List
 
+class Options(list):
+    """Generic, enum-like class to easily keep track of a set number of options."""
+    def __init__ (self, *args):
+        # Base class constructor
+        super().__init__(args)
+        
+        # Programmatically set options as attributes for easy access
+        for option in self:
+            setattr(self, option, option)
+
 
 def create_out_directory(outdir: str):
     try:

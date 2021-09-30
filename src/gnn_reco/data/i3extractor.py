@@ -3,7 +3,7 @@ try:
 except ImportError:
     print("icecube package not available.")
     
-from .utils import frame_has_key
+from .utils import Options, frame_has_key
 
 def build_retroreco_extraction(is_mc):
     """Builds the standard RetroReco extraction. Later evaluated using eval()
@@ -91,11 +91,11 @@ def build_blank_extraction(padding_value = -1):
     return blank_extraction
 
 # Module-level constants
-_SUPPORTED_MODES = [
+_SUPPORTED_MODES = Options(
     'inference',
     'oscNext',
     'NuGen',
-]
+)
 
 
 class I3Extractor:
@@ -140,7 +140,7 @@ class I3Extractor:
         """
         truth, features, retro = None, None, None
         features = self._extract_features(frame)
-        if self._mode != 'inference':
+        if self._mode != _SUPPORTED_MODES.inference:
             truth = self._extract_truth(frame, custom_truth)
             retro = self._extract_retro(frame)
         
