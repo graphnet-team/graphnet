@@ -367,21 +367,19 @@ def case_handle_this(frame, sim_type, padding_value = -1):
     return MCInIcePrimary, interaction_type, elasticity
 
 def extract_event_ids(frame):
-    ''' Extracts relevant information contained in the event header. Usefull for backtracking to original i3-files.
+    """Extracts relevant information contained in the event header. Usefull for backtracking to original i3-files.
 
-        frame       : i3 physics frame
+    Args:
+        frame (i3 physics frame)
 
-        RETURNS
-
-        RunID       : integer, denoting the ID of the run (eg. 120000)
-        SubrunID    : integer, denoting the ID of the subrun (e.g. 502)
-        EventID     : integer, denoting the ID of the event (eg. 5)   #NOTICE: THIS IS NOT A UNIQUE NUMBER BETWEEN I3 FILES
-        SubEventID  : integer, denoting the ID of the subevent if the original event is split into multiple (e.g. 2)
-    '''
+    Returns:
+        RunID (int): ID of the run (eg. 120000)
+        SubrunID (int): ID of the subrun (e.g. 502)
+        EventID (int): ID of the event (eg. 5)   #NOTICE: THIS IS NOT A UNIQUE NUMBER BETWEEN I3 FILES
+        SubEventID (int): ID of the subevent if the original event is split into multiple (e.g. 2)
+    """
     RunID       = frame['I3EventHeader'].run_id
     SubrunID    = frame['I3EventHeader'].sub_run_id
     EventID     = frame['I3EventHeader'].event_id
     SubEventID  = frame['I3EventHeader'].sub_event_id
     return RunID, SubrunID, EventID, SubEventID
-
-
