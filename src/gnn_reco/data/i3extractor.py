@@ -225,7 +225,7 @@ class I3Extractor:
         event_time =  frame['I3EventHeader'].start_time.utc_daq_time
         RunID, SubrunID, EventID, SubEventID = extract_event_ids(frame)
         if mc:
-            MCInIcePrimary, interaction_type, elasticity = case_handle_this(frame, sim_type)
+            MCInIcePrimary, interaction_type, elasticity = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
             if MCInIcePrimary != None:
                 ## is not noise
                 truth = {}
@@ -335,20 +335,23 @@ def find_data_type(mc, input_file):
         print('SIM TYPE NOT FOUND!')
     return sim_type
 
-def case_handle_this(frame, sim_type, padding_value = -1):
-    ''' A case handler that does two things
+def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, padding_value=-1):
+    """"Returns primary particle, interaction type, and elasticity.
+    
+    A case handler that does two things
         1) Catches issues related to determining the primary MC particle.
         2) Error handles cases where interaction type and elasticity doesnt exist
 
-        frame           : i3 physics frame
-        sim_type        : string, determining the simulation type
-        padding_value   : int or float, the value used for padding
+    Args:
+        frame (i3 physics frame): ...
+        sim_type (string): Simulation type
+        padding_value (int | float): The value used for padding.
 
-        RETURNS
-        McInIcePrimary  : the primary particle
-        interaction_type: integer, either 1 (charged current), 2 (neutral current), 0 (neither)
-        elasticity      : float in ]0,1[ 
-    '''
+    Returns
+        McInIcePrimary (?): The primary particle
+        interaction_type (int): Either 1 (charged current), 2 (neutral current), 0 (neither)
+        elasticity (float): In ]0,1[ 
+    """
     if sim_type != 'noise':
         try:
             MCInIcePrimary = frame['MCInIcePrimary']
@@ -382,4 +385,4 @@ def extract_event_ids(frame):
     SubrunID    = frame['I3EventHeader'].sub_run_id
     EventID     = frame['I3EventHeader'].event_id
     SubEventID  = frame['I3EventHeader'].sub_event_id
-    return RunID, SubrunID, EventID, SubEventID
+    return RunID, SubrunID, EventID, SubEventID 
