@@ -3,6 +3,7 @@ try:
 except ImportError:
     print("icecube package not available.")
     
+from .utils import frame_has_key
 
 def build_retroreco_extraction(is_mc):
     """Builds the standard RetroReco extraction. Later evaluated using eval()
@@ -118,15 +119,12 @@ class I3Extractor:
         self._load_gcd_data()
         
     def _load_gcd_data(self):
-        """Loads the geospatial information contained in the gcd-file.
-                
-        Args:
-            gcd_path (str): path to the gcd file
-        """
+        """Loads the geospatial information contained in the gcd-file."""
         gcd_file = dataio.I3File(self._gcd_file)
         g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
+        c_frame = gcd_file.pop_frame(icetray.I3Frame.Calibration)
         self._gcd_dict = g_frame["I3Geometry"].omgeo
-        self._calibration = gcd_file.pop_frame(icetray.I3Frame.Calibration)["I3Calibration"]
+        self._calibration = c_frame["I3Calibration"]
             
     def __call__(self, frame, custom_truth = None):
         """ Extracts relevant information from frame depending on mode
@@ -222,12 +220,12 @@ class I3Extractor:
         """
         if extract_these_truths == None:
             extract_these_truths = build_standard_extraction()
-        mc = self._is_montecarlo(frame)
-        sim_type = self._find_data_type(mc, self._i3_file)
+        mc = frame_is_montecarlo(frame)
+        sim_type = find_data_type(mc, self._i3_file)
         event_time =  frame['I3EventHeader'].start_time.utc_daq_time
-        RunID, SubrunID, EventID, SubEventID = self._extract_event_ids(frame)
+        RunID, SubrunID, EventID, SubEventID = extract_event_ids(frame)
         if mc:
-            MCInIcePrimary, interaction_type, elasticity = self._case_handle_this(frame, sim_type)
+            MCInIcePrimary, interaction_type, elasticity = case_handle_this(frame, sim_type)
             if MCInIcePrimary != None:
                 ## is not noise
                 truth = {}
@@ -252,9 +250,9 @@ class I3Extractor:
         Returns:
             retro: dictionary containing RetroReco and associated quantitites
         """
-        contains_retro = self._contains_retroreco(frame)
-        contains_classifier = self._contains_classifiers(frame)
-        is_mc = self._is_montecarlo(frame)
+        contains_retro = frame_contains_retroreco(frame)
+        contains_classifier = frame_contains_classifiers(frame)
+        is_mc = frame_is_montecarlo(frame)
         retro = {}
         if contains_retro or contains_classifier:
             retro_extraction = build_retroreco_extraction(is_mc)
@@ -289,13 +287,6 @@ class I3Extractor:
                 om_keys = data.keys()
         return om_keys, data
 
-    def _contains_retroreco(self, frame):
-        try:
-            frame['L7_reconstructed_zenith']
-            return True
-        except:
-            return False
-
     def evaluate_expression(self, expression, frame, padding_value = -1):
         try:
             eval(expression)
@@ -304,97 +295,93 @@ class I3Extractor:
             out = str(padding_value)
         return out
 
-    def _is_montecarlo(self,frame):
-        mc = True
+# Utilty methods
+def frame_contains_retroreco(frame):
+    return frame_has_key(frame, "L7_reconstructed_zenith")
+
+def frame_contains_classifiers(frame):
+    return frame_has_key(frame, "L4_MuonClassifier_Data_ProbNu")
+
+def frame_is_montecarlo(frame):
+    return (
+        frame_has_key(frame, "MCInIcePrimary") or 
+        frame_has_key(frame, "I3MCTree")
+    )
+    
+
+def find_data_type(mc, input_file):
+    """Determines the data type
+
+    Args:
+        mc (boolean): is this montecarlo?
+        input_file (str): path to i3 file
+
+    Returns:
+        str: the simulation/data type
+    """
+    if mc == False:
+        sim_type = 'data'
+    else:
+        sim_type = 'NuGen'
+    if 'muon' in input_file:
+        sim_type = 'muongun'
+    if 'corsika' in input_file:
+        sim_type = 'corsika'
+    if 'genie' in input_file:
+        sim_type = 'genie'
+    if 'noise' in input_file:
+        sim_type = 'noise'
+    if sim_type == 'lol':
+        print('SIM TYPE NOT FOUND!')
+    return sim_type
+
+def case_handle_this(frame, sim_type, padding_value = -1):
+    ''' A case handler that does two things
+        1) Catches issues related to determining the primary MC particle.
+        2) Error handles cases where interaction type and elasticity doesnt exist
+
+        frame           : i3 physics frame
+        sim_type        : string, determining the simulation type
+        padding_value   : int or float, the value used for padding
+
+        RETURNS
+        McInIcePrimary  : the primary particle
+        interaction_type: integer, either 1 (charged current), 2 (neutral current), 0 (neither)
+        elasticity      : float in ]0,1[ 
+    '''
+    if sim_type != 'noise':
         try:
-            frame['MCInIcePrimary']
+            MCInIcePrimary = frame['MCInIcePrimary']
         except:
-            try:
-                frame['I3MCTree']
-            except:
-                mc = False
-        return mc
+            MCInIcePrimary = frame['I3MCTree'][0]
+    else:
+        MCInIcePrimary = None
+    try:
+        interaction_type =  frame["I3MCWeightDict"]["InteractionType"]
+    except:
+        interaction_type = padding_value
+    try:
+        elasticity = frame['I3GENIEResultDict']['y']
+    except:
+        elasticity = padding_value
+    return MCInIcePrimary, interaction_type, elasticity
 
-    def _contains_classifiers(self,frame):
-        try:
-            frame["L4_MuonClassifier_Data_ProbNu"].value
-            return True
-        except:
-            return False
+def extract_event_ids(frame):
+    ''' Extracts relevant information contained in the event header. Usefull for backtracking to original i3-files.
 
-    def _find_data_type(self,mc, input_file):
-        """Determines the data type
+        frame       : i3 physics frame
 
-        Args:
-            mc (boolean): is this montecarlo?
-            input_file (str): path to i3 file
+        RETURNS
 
-        Returns:
-            str: the simulation/data type
-        """
-        if mc == False:
-            sim_type = 'data'
-        else:
-            sim_type = 'NuGen'
-        if 'muon' in input_file:
-            sim_type = 'muongun'
-        if 'corsika' in input_file:
-            sim_type = 'corsika'
-        if 'genie' in input_file:
-            sim_type = 'genie'
-        if 'noise' in input_file:
-            sim_type = 'noise'
-        if sim_type == 'lol':
-            print('SIM TYPE NOT FOUND!')
-        return sim_type
-
-    def _case_handle_this(self,frame, sim_type, padding_value = -1):
-        ''' A case handler that does two things
-            1) Catches issues related to determining the primary MC particle.
-            2) Error handles cases where interaction type and elasticity doesnt exist
-
-            frame           : i3 physics frame
-            sim_type        : string, determining the simulation type
-            padding_value   : int or float, the value used for padding
-
-            RETURNS
-            McInIcePrimary  : the primary particle
-            interaction_type: integer, either 1 (charged current), 2 (neutral current), 0 (neither)
-            elasticity      : float in ]0,1[ 
-        '''
-        if sim_type != 'noise':
-            try:
-                MCInIcePrimary = frame['MCInIcePrimary']
-            except:
-                MCInIcePrimary = frame['I3MCTree'][0]
-        else:
-            MCInIcePrimary = None
-        try:
-            interaction_type =  frame["I3MCWeightDict"]["InteractionType"]
-        except:
-            interaction_type = padding_value
-        try:
-            elasticity = frame['I3GENIEResultDict']['y']
-        except:
-            elasticity = padding_value
-        return MCInIcePrimary, interaction_type, elasticity
-
-    def _extract_event_ids(self,frame):
-        ''' Extracts relevant information contained in the event header. Usefull for backtracking to original i3-files.
-
-            frame       : i3 physics frame
-
-            RETURNS
-
-            RunID       : integer, denoting the ID of the run (eg. 120000)
-            SubrunID    : integer, denoting the ID of the subrun (e.g. 502)
-            EventID     : integer, denoting the ID of the event (eg. 5)   #NOTICE: THIS IS NOT A UNIQUE NUMBER BETWEEN I3 FILES
-            SubEventID  : integer, denoting the ID of the subevent if the original event is split into multiple (e.g. 2)
-        '''
-        RunID       = frame['I3EventHeader'].run_id
-        SubrunID    = frame['I3EventHeader'].sub_run_id
-        EventID     = frame['I3EventHeader'].event_id
-        SubEventID  = frame['I3EventHeader'].sub_event_id
-        return RunID, SubrunID, EventID, SubEventID
+        RunID       : integer, denoting the ID of the run (eg. 120000)
+        SubrunID    : integer, denoting the ID of the subrun (e.g. 502)
+        EventID     : integer, denoting the ID of the event (eg. 5)   #NOTICE: THIS IS NOT A UNIQUE NUMBER BETWEEN I3 FILES
+        SubEventID  : integer, denoting the ID of the subevent if the original event is split into multiple (e.g. 2)
+    '''
+    RunID       = frame['I3EventHeader'].run_id
+    SubrunID    = frame['I3EventHeader'].sub_run_id
+    EventID     = frame['I3EventHeader'].event_id
+    SubEventID  = frame['I3EventHeader'].sub_event_id
+    return RunID, SubrunID, EventID, SubEventID
 
 
