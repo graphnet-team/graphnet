@@ -18,7 +18,7 @@ from .utils import create_out_directory, pairwise_shuffle
 
 
 class SQLiteDataConverter(DataConverter):
-    def __init__(self, outdir, mode, pulsemap, gcd_rescue,  *, db_name, workers, max_dictionary_size=10000, verbose=1):
+    def __init__(self, outdir, pulsemap, gcd_rescue, extractor_types=None, *, db_name, workers, max_dictionary_size=10000, verbose=1):
         """Implementation of DataConverter for saving to SQLite database.
 
         Converts the i3-files in paths to several temporary SQLite databases in 
@@ -26,11 +26,11 @@ class SQLiteDataConverter(DataConverter):
 
         Args:
             outdir (str): the directory to which the SQLite database is written
-            mode (str): the mode for extraction.
             pulsemap (str): the pulsemap chosen for extraction. e.g. 
                 SRTInIcePulses.
             gcd_rescue (str): path to gcd_file that the extraction defaults to 
                 if none is found in the folders
+            extractor_types (list[I3Extrator-types]): The I3Extractors to use.
             db_name (str): database name. please omit extensions.
             workers (int): number of workers used for parallel extraction.
             max_dictionary_size (int, optional): The maximum number of events in 
@@ -44,7 +44,7 @@ class SQLiteDataConverter(DataConverter):
         self._max_dict_size  = max_dictionary_size 
         
         # Base class constructor
-        super().__init__(outdir, mode, pulsemap, gcd_rescue)
+        super().__init__(outdir, pulsemap, gcd_rescue, extractor_types)
         
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
@@ -111,7 +111,7 @@ class SQLiteDataConverter(DataConverter):
         output_count = 0
         gcd_count = 0
         for u in range(len(input_files)):
-            self._extractor.set_files(input_files[u], gcd_files[u])
+            self._extractors.set_files(input_files[u], gcd_files[u])
             i3_file = dataio.I3File(input_files[u], "r")
 
             while i3_file.more():
@@ -120,7 +120,7 @@ class SQLiteDataConverter(DataConverter):
                 except:
                     frame = False
                 if frame:
-                    truths, features, retros = self._extractor(frame)
+                    truths, features, retros = self._extractors(frame)
                     truth    = apply_event_no(truths, event_no_list, event_counter)
                     truth_big   = truth_big.append(truth, ignore_index = True, sort = True)
                     if len(retros)>0:
