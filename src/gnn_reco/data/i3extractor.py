@@ -126,7 +126,7 @@ class I3Extractor:
         self._gcd_dict = g_frame["I3Geometry"].omgeo
         self._calibration = c_frame["I3Calibration"]
             
-    def __call__(self, frame, custom_truth = None):
+    def __call__(self, frame, custom_truth=None):
         """ Extracts relevant information from frame depending on mode
 
         Args:
@@ -134,36 +134,18 @@ class I3Extractor:
             custom_truth (dict, optional): A dictionary where field names will correspond to column name in database table. Entries in the dictionary are strings that are evaluated using eval(). Defaults to None.
 
         Returns:
-            pulsemap: dictionary with input data
             truth   : dictionary with truth data
+            pulsemap: dictionary with input data
             retro   : dictionary with RetroReco and associated quantities
         """
-        if self._mode == 'oscNext' or self._mode == 'NuGen':
-            truth, pulsemap, retro = self._oscnext_extractor(frame, custom_truth)
-            return truth, pulsemap, retro
-        elif self._mode == 'inference':
-            pulsemap = self._extract_features(frame)
-            return None, pulsemap, None
-        
-        assert False, "Shouldn't reach here."
-        
-    def _oscnext_extractor(self, frame, custom_truth = None):
-        """Extracts PFrame data. Officially supports oscNext and NuGen (LE and HE) but might work for others too.
-
-        Args:
-            frame (i3 frame): i3 physics frame
-            custom_truth (dict, optional): a custom truth. Field names become column names in the truth table. Entries are strings that are evaluated using eval(). Defaults to None.
-
-        Returns:
-            truths (dict): truth dictionary, empty if no truth exists in the files (e.g. if real measurements)
-            features (dict): feature dictionary
-            retros (dict): retros dictionary, empty if no RetroReco exists in the files.
-        """
+        truth, features, retro = None, None, None
         features = self._extract_features(frame)
-        truths   = self._extract_truth(frame, custom_truth)
-        retros   = self._extract_retro(frame)
-        return truths, features, retros
-    
+        if self._mode != 'inference':
+            truth = self._extract_truth(frame, custom_truth)
+            retro = self._extract_retro(frame)
+        
+        return truth, features, retro
+
     def _extract_features(self, frame):
         """Extracts xyz, time, charge, relative dom eff. and pmt area
 
