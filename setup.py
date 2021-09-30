@@ -6,7 +6,7 @@ setup(
     description='A common library for using graph neural networks (GNNs) in netrino telescopes.',
     url='https://github.com/icecube/gnn-reco',
     author='The IceCube Collaboration',
-    license='MIT',
+    license='Apache 2.0',
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     install_requires=[
