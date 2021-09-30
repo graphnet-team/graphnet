@@ -195,19 +195,19 @@ class I3Extractor:
             
         return features
 
-    def _extract_truth(self, frame, extract_these_truths = None):
-        """Extracts the truths in extract_these_truths. Defaults standard_truth_extraction()
+    def _extract_truth(self, frame, custom_truths=None):
+        """Extracts the truths in custom_truths. Defaults standard_truth_extraction()
 
         Args:
             frame (i3 physics frame): i3 physics frame
             input_file (str): path to i3-file
-            extract_these_truths (dict, optional): custom truth dictionary. Defaults to None.
+            custom_truths (dict, optional): custom truth dictionary. Defaults to None.
 
         Returns:
             truth (dictionary): dictionary containing the thruth.
         """
-        if extract_these_truths == None:
-            extract_these_truths = build_standard_extraction()
+        if custom_truths == None:
+            custom_truths = build_standard_extraction()
         mc = frame_is_montecarlo(frame)
         sim_type = find_data_type(mc, self._i3_file)
         event_time =  frame['I3EventHeader'].start_time.utc_daq_time
@@ -217,8 +217,8 @@ class I3Extractor:
             if MCInIcePrimary != None:
                 ## is not noise
                 truth = {}
-                for truth_variable in extract_these_truths.keys():
-                    truth[truth_variable] = eval(extract_these_truths[truth_variable])
+                for truth_variable in custom_truths.keys():
+                    truth[truth_variable] = eval(custom_truths[truth_variable])
             else:
                 print('Could Not Find Primary Particle')
         else:
