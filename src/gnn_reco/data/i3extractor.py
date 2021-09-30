@@ -157,36 +157,42 @@ class I3Extractor:
         Returns:
             features (dict): a dictionary containing the input features.
         """
-        charge = []
-        time   = []
-        width  = []
-        area   = []
-        rqe    = []
-        x       = []
-        y       = []
-        z       = []
-        if self._pulsemap in frame.keys():
+        features = {
+            'charge': [],
+            'dom_time': [],
+            'dom_x': [],
+            'dom_y': [],
+            'dom_z': [],
+            'width' : [],
+            'pmt_area': [],
+            'rde': [],
+        }
+        
+        try:
             om_keys, data = self._get_om_keys_and_pulseseries(frame)
-            for om_key in om_keys:
-                pulses = data[om_key]
-                for pulse in pulses:
-                    charge.append(pulse.charge)
-                    time.append(pulse.time) 
-                    width.append(pulse.width)
-                    area.append(self._gcd_dict[om_key].area)  
-                    rqe.append(frame["I3Calibration"].dom_cal[om_key].relative_dom_eff)
-                    x.append(self._gcd_dict[om_key].position.x)
-                    y.append(self._gcd_dict[om_key].position.y)
-                    z.append(self._gcd_dict[om_key].position.z)
+        except KeyError:  # Target pulsemap does not exist in `frame`
+            return features
+
+        for om_key in om_keys:
+            # Common values for each OM
+            x = self._gcd_dict[om_key].position.x
+            y = self._gcd_dict[om_key].position.y
+            z = self._gcd_dict[om_key].position.z
+            area = self._gcd_dict[om_key].area
+            rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
             
-        features = {'charge': charge, 
-                    'dom_time': time, 
-                    'dom_x': x, 
-                    'dom_y': y, 
-                    'dom_z': z,
-                    'width' : width,
-                    'pmt_area': area, 
-                    'rde': rqe}
+            # Loop over pulses for each OM
+            pulses = data[om_key]
+            for pulse in pulses:
+                features['charge'].append(pulse.charge)
+                features['dom_time'].append(pulse.time) 
+                features['width'].append(pulse.width)
+                features['pmt_area'].append(area)  
+                features['rde'].append(rde)
+                features['dom_x'].append(x)
+                features['dom_y'].append(y)
+                features['dom_z'].append(z)
+            
         return features
 
     def _extract_truth(self, frame, extract_these_truths = None):
