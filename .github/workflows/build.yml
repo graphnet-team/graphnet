@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Install required packages
-        run: pip install -e .
+        run: pip install .[develop]
       - name: Run pylint
         run: |
           pylint src/gnn_reco tests/*.py --exit-zero | tee results_pylint.txt
@@ -47,7 +47,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install required packages 
-        run: pip install -e .
+        run: pip install .[develop]
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
@@ -101,9 +101,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install
         run: |
-          pip install .
-          pip install sphinx
-          pip install sphinx_rtd_theme
+          pip install .[develop]
       - name: Build documentation
         run: |
           cd docs
