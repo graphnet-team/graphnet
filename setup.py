@@ -48,6 +48,6 @@ setup(
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
     dependency_links=[
-        'https://data.pyg.org/whl/torch-1.8.0+cpu.html',
+        'https://data.pyg.org/whl/torch-1.9.0+cpu.html',
     ],
 )
