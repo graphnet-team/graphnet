@@ -18,7 +18,7 @@ from .utils import create_out_directory, pairwise_shuffle
 
 
 class SQLiteDataConverter(DataConverter):
-    def __init__(self, outdir, pulsemap, gcd_rescue, extractor_types=None, *, db_name, workers, max_dictionary_size=10000, verbose=1):
+    def __init__(self, outdir, pulsemap, gcd_rescue, *, db_name, workers, max_dictionary_size=10000, verbose=1):
         """Implementation of DataConverter for saving to SQLite database.
 
         Converts the i3-files in paths to several temporary SQLite databases in 
@@ -30,7 +30,6 @@ class SQLiteDataConverter(DataConverter):
                 SRTInIcePulses.
             gcd_rescue (str): path to gcd_file that the extraction defaults to 
                 if none is found in the folders
-            extractor_types (list[I3Extrator-types]): The I3Extractors to use.
             db_name (str): database name. please omit extensions.
             workers (int): number of workers used for parallel extraction.
             max_dictionary_size (int, optional): The maximum number of events in 
@@ -44,7 +43,7 @@ class SQLiteDataConverter(DataConverter):
         self._max_dict_size  = max_dictionary_size 
         
         # Base class constructor
-        super().__init__(outdir, pulsemap, gcd_rescue, extractor_types)
+        super().__init__(outdir, pulsemap, gcd_rescue)
         
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):

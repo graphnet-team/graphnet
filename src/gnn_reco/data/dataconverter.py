@@ -12,7 +12,7 @@ from .utils import find_i3_files
 class DataConverter(ABC):
     """Abstract base class for specialised (SQLite, numpy, etc.) data converter classes."""
 
-    def __init__(self, outdir, pulsemap, gcd_rescue, extractor_types=None):
+    def __init__(self, outdir, pulsemap, gcd_rescue):
 
         # Member variables
         self._outdir = outdir
@@ -20,12 +20,11 @@ class DataConverter(ABC):
         self._gcd_rescue = gcd_rescue
 
         # Create I3Extractors
-        if extractor_types is None:
-            extractor_types = [I3TruthExtractor, I3FeatureExtractor, I3RetroExtractor]
-
-        self._extractors = I3ExtractorCollection(*[
-            extractor_type(pulsemap) for extractor_type in extractor_types
-        ])
+        self._extractors = I3ExtractorCollection(
+            I3TruthExtractor(),
+            I3FeatureExtractor(pulsemap),
+            I3RetroExtractor(),
+        )
         
         self._initialise()
 

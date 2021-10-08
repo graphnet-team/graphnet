@@ -13,10 +13,9 @@ from .utils import frame_has_key
 class I3Extractor(ABC):
     """Extracts relevant information from physics frames."""
 
-    def __init__(self, pulsemap):
+    def __init__(self):
        
         # Member variables
-        self._pulsemap = pulsemap
         self._i3_file = None
         self._gcd_file = None
         self._gcd_dict = None
@@ -60,6 +59,10 @@ class I3ExtractorCollection(list):
         
 
 class I3FeatureExtractor(I3Extractor):
+    def __init__(self, pulsemap):
+        self._pulsemap = pulsemap
+        super().__init__()
+    
     def __call__(self, frame) -> dict:
         """Extract features to be used as inputs to GNN models."""
         output = {
