@@ -22,6 +22,7 @@ INSTALL_REQUIRES = [
     'sqlalchemy',
     'pandas',
     'numpy',
+    'timer',
     'tqdm',
     'torch-scatter',
     'torch-sparse',
