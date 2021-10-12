@@ -61,397 +61,299 @@
            <div itemprop="articleBody">
              
   <h1>Source code for gnn_reco.data.i3extractor</h1><div class="highlight"><pre>
-<span></span><span class="k">try</span><span class="p">:</span>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+
+<span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="n">dataclasses</span><span class="p">,</span> <span class="n">icetray</span><span class="p">,</span> <span class="n">dataio</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;icecube package not available.&quot;</span><span class="p">)</span>
     
-
-<div class="viewcode-block" id="load_geospatial_data"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.load_geospatial_data">[docs]</a><span class="k">def</span> <span class="nf">load_geospatial_data</span><span class="p">(</span><span class="n">gcd_path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Loads the geospatial information contained in the gcd-file.</span>
-<span class="sd">            </span>
-<span class="sd">    Args:</span>
-<span class="sd">        gcd_path (str): path to the gcd file</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        dict: om_geom_dict</span>
-<span class="sd">        ??  : i3-file calibration</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">gcd_file</span> <span class="o">=</span> <span class="n">dataio</span><span class="o">.</span><span class="n">I3File</span><span class="p">(</span><span class="n">gcd_path</span><span class="p">)</span>
-    <span class="n">g_frame</span> <span class="o">=</span> <span class="n">gcd_file</span><span class="o">.</span><span class="n">pop_frame</span><span class="p">(</span><span class="n">icetray</span><span class="o">.</span><span class="n">I3Frame</span><span class="o">.</span><span class="n">Geometry</span><span class="p">)</span>
-    <span class="n">om_geom_dict</span> <span class="o">=</span> <span class="n">g_frame</span><span class="p">[</span><span class="s2">&quot;I3Geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">omgeo</span>
-    <span class="n">calibration</span> <span class="o">=</span> <span class="n">gcd_file</span><span class="o">.</span><span class="n">pop_frame</span><span class="p">(</span><span class="n">icetray</span><span class="o">.</span><span class="n">I3Frame</span><span class="o">.</span><span class="n">Calibration</span><span class="p">)[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">om_geom_dict</span><span class="p">,</span> <span class="n">calibration</span>  </div>
-
-<div class="viewcode-block" id="build_retroreco_extraction"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.build_retroreco_extraction">[docs]</a><span class="k">def</span> <span class="nf">build_retroreco_extraction</span><span class="p">(</span><span class="n">is_mc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Builds the standard RetroReco extraction. Later evaluated using eval()</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        is_mc (bool): if the current physics frame is monte carlo</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        dict: dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">retro_extraction</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;azimuth_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_azimuth&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;time_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_time&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;energy_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_total_energy&quot;].value&#39;</span><span class="p">,</span> 
-                        <span class="s1">&#39;position_x_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_vertex_x&quot;].value&#39;</span><span class="p">,</span> 
-                        <span class="s1">&#39;position_y_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_vertex_y&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;position_z_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_vertex_z&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;zenith_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_zenith&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;azimuth_sigma&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_retro_crs_prefit__azimuth_sigma_tot&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;position_x_sigma&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_retro_crs_prefit__x_sigma_tot&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;position_y_sigma&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_retro_crs_prefit__y_sigma_tot&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;position_z_sigma&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_retro_crs_prefit__z_sigma_tot&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;time_sigma&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_retro_crs_prefit__time_sigma_tot&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;zenith_sigma&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_retro_crs_prefit__zenith_sigma_tot&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;energy_sigma&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_retro_crs_prefit__energy_sigma_tot&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cascade_energy_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_cascade_energy&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;track_energy_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_track_energy&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;track_length_retro&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_reconstructed_track_length&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;L7_MuonClassifier_FullSky_ProbNu&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_MuonClassifier_FullSky_ProbNu&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;L4_MuonClassifier_Data_ProbNu&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L4_MuonClassifier_Data_ProbNu&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;L4_NoiseClassifier_ProbNu&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L4_NoiseClassifier_ProbNu&quot;].value&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;L7_PIDClassifier_FullSky_ProbTrack&#39;</span><span class="p">:</span> <span class="s1">&#39;frame[&quot;L7_PIDClassifier_FullSky_ProbTrack&quot;].value&#39;</span><span class="p">}</span>
-
-    <span class="k">if</span> <span class="n">is_mc</span><span class="p">:</span>
-        <span class="n">retro_extraction</span><span class="p">[</span><span class="s1">&#39;osc_weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;frame[&quot;I3MCWeightDict&quot;][&quot;weight&quot;]&#39;</span>    
-    <span class="k">return</span> <span class="n">retro_extraction</span></div>
-
-<div class="viewcode-block" id="build_standard_extraction"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.build_standard_extraction">[docs]</a><span class="k">def</span> <span class="nf">build_standard_extraction</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Builds the standard truth extraction</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        dict: dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">standard_truths</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;energy&#39;</span><span class="p">:</span> <span class="s1">&#39;MCInIcePrimary.energy&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;position_x&#39;</span><span class="p">:</span> <span class="s1">&#39;MCInIcePrimary.pos.x&#39;</span><span class="p">,</span> 
-            <span class="s1">&#39;position_y&#39;</span><span class="p">:</span> <span class="s1">&#39;MCInIcePrimary.pos.y&#39;</span><span class="p">,</span> 
-            <span class="s1">&#39;position_z&#39;</span><span class="p">:</span> <span class="s1">&#39;MCInIcePrimary.pos.z&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;azimuth&#39;</span><span class="p">:</span> <span class="s1">&#39;MCInIcePrimary.dir.azimuth&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;zenith&#39;</span><span class="p">:</span> <span class="s1">&#39;MCInIcePrimary.dir.zenith&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="s1">&#39;MCInIcePrimary.pdg_encoding&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;event_time&#39;</span><span class="p">:</span> <span class="s1">&#39;event_time&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;sim_type&#39;</span><span class="p">:</span> <span class="s1">&#39;sim_type&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;interaction_type&#39;</span><span class="p">:</span> <span class="s1">&#39;interaction_type&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;elasticity&#39;</span><span class="p">:</span> <span class="s1">&#39;elasticity&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;RunID&#39;</span><span class="p">:</span> <span class="s1">&#39;RunID&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;SubrunID&#39;</span><span class="p">:</span> <span class="s1">&#39;SubrunID&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;EventID&#39;</span><span class="p">:</span> <span class="s1">&#39;EventID&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;SubEventID&#39;</span><span class="p">:</span> <span class="s1">&#39;SubEventID&#39;</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">standard_truths</span></div>
-
-<div class="viewcode-block" id="build_blank_extraction"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.build_blank_extraction">[docs]</a><span class="k">def</span> <span class="nf">build_blank_extraction</span><span class="p">(</span><span class="n">padding_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Builds a blank truth extraction</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        padding_value (int, optional): Defaults to -1.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        blank_extraction (dictionary): dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1">## Please note that if the simulation type is pure noise or real that these values will be appended to the truth table</span>
-    <span class="n">blank_extraction</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;energy&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span>
-            <span class="s1">&#39;position_x&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span> 
-            <span class="s1">&#39;position_y&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span> 
-            <span class="s1">&#39;position_z&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span>
-            <span class="s1">&#39;azimuth&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span>
-            <span class="s1">&#39;zenith&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span>
-            <span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span>
-            <span class="s1">&#39;event_time&#39;</span><span class="p">:</span> <span class="s1">&#39;event_time&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;sim_type&#39;</span><span class="p">:</span> <span class="s1">&#39;sim_type&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;interaction_type&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span>
-            <span class="s1">&#39;elasticity&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">),</span>
-            <span class="s1">&#39;RunID&#39;</span><span class="p">:</span> <span class="s1">&#39;RunID&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;SubrunID&#39;</span><span class="p">:</span> <span class="s1">&#39;SubrunID&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;EventID&#39;</span><span class="p">:</span> <span class="s1">&#39;EventID&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;SubEventID&#39;</span><span class="p">:</span> <span class="s1">&#39;SubEventID&#39;</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">blank_extraction</span></div>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">frame_has_key</span>
 
 
+<div class="viewcode-block" id="I3Extractor"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor">[docs]</a><span class="k">class</span> <span class="nc">I3Extractor</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extracts relevant information from physics frames.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="I3Extractor"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor">[docs]</a><span class="k">class</span> <span class="nc">I3Extractor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Extracts relevant information from physics frames.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="I3Extractor.__call__"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">gcd_dict</span><span class="p">,</span> <span class="n">calibration</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">custom_truth</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Extracts relevant information from frame depending on mode</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       
+        <span class="c1"># Member variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_file</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            frame (i3 physics frame): i3 physics frame that is being processed</span>
-<span class="sd">            mode (str): a string containing the type of extraction wanted</span>
-<span class="sd">            pulsemap (str): the i3-key for the pulse map. E.g. SRTInIcePulses</span>
-<span class="sd">            gcd_dict (dict): the dictionary containing DOM specific data that can be indexed using the om_key</span>
-<span class="sd">            calibration (??): i3 physics frame calibration</span>
-<span class="sd">            input_file (i3 file): the i3 file from which frame originates</span>
-<span class="sd">            custom_truth (dict, optional): A dictionary where field names will correspond to column name in database table. Entries in the dictionary are strings that are evaluated using eval(). Defaults to None.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pulsemap: dictionary with input data</span>
-<span class="sd">            truth   : dictionary with truth data</span>
-<span class="sd">            retro   : dictionary with RetroReco and associated quantities</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;oscNext&#39;</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;NuGen&#39;</span><span class="p">:</span>
-            <span class="n">truth</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">retro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oscnext_extractor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">gcd_dict</span><span class="p">,</span> <span class="n">calibration</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">custom_truth</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">truth</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">retro</span>
-        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;inference&#39;</span><span class="p">:</span>
-            <span class="n">pulsemap</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_extract_features</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">gcd_dict</span><span class="p">,</span><span class="n">calibration</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: invalid mode got : </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
-            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+<div class="viewcode-block" id="I3Extractor.set_files"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor.set_files">[docs]</a>    <span class="k">def</span> <span class="nf">set_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span> <span class="o">=</span> <span class="n">i3_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_file</span> <span class="o">=</span> <span class="n">gcd_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_gcd_data</span><span class="p">()</span></div>
         
-<div class="viewcode-block" id="I3Extractor._oscnext_extractor"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._oscnext_extractor">[docs]</a>    <span class="k">def</span> <span class="nf">_oscnext_extractor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">gcd_dict</span><span class="p">,</span> <span class="n">calibration</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">custom_truth</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Extracts PFrame data. Officially supports oscNext and NuGen (LE and HE) but might work for others too.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            frame (i3 frame): i3 physics frame</span>
-<span class="sd">            pulsemap (str): the pulsemap key, eg. SRTInIcePulses</span>
-<span class="sd">            gcd_dict (dict): the gcd dictionary that can be indexed using the om_keys</span>
-<span class="sd">            calibration (??): the i3 physics frame calibration</span>
-<span class="sd">            input_file (str): path to the i3 file being extracted</span>
-<span class="sd">            custom_truth (dict, optional): a custom truth. Field names become column names in the truth table. Entries are strings that are evaluated using eval(). Defaults to None.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            truths (dict): truth dictionary, empty if no truth exists in the files (e.g. if real measurements)</span>
-<span class="sd">            features (dict): feature dictionary</span>
-<span class="sd">            retros (dict): retros dictionary, empty if no RetroReco exists in the files.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_features</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">gcd_dict</span><span class="p">,</span><span class="n">calibration</span><span class="p">)</span>
-        <span class="n">truths</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_truth</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">custom_truth</span><span class="p">)</span>
-        <span class="n">retros</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_retro</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">truths</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">retros</span></div>
-    
-<div class="viewcode-block" id="I3Extractor._extract_features"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._extract_features">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">gcd_dict</span><span class="p">,</span><span class="n">calibration</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Extracts xyz, time, charge, relative dom eff. and pmt area</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            frame (i3 physics frame): i3 physics frame</span>
-<span class="sd">            pulsemap (str): the key for the pulsemap. E.g. SRTInIcePulses</span>
-<span class="sd">            gcd_dict (dict): the gcd dictionary that can be indexed using om_keys</span>
-<span class="sd">            calibration (??): i3 physics frame calibration</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            features (dict): a dictionary containing the input features.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">charge</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">time</span>   <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">width</span>  <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">area</span>   <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">rqe</span>    <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">x</span>       <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">y</span>       <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">z</span>       <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">pulsemap</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">om_keys</span><span class="p">,</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">calibration</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
-                <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">pulse</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">:</span>
-                    <span class="n">charge</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span>
-                    <span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">time</span><span class="p">)</span> 
-                    <span class="n">width</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
-                    <span class="n">area</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>  
-                    <span class="n">rqe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span><span class="p">)</span>
-                    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-                    <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-                    <span class="n">z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+<div class="viewcode-block" id="I3Extractor._load_gcd_data"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._load_gcd_data">[docs]</a>    <span class="k">def</span> <span class="nf">_load_gcd_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loads the geospatial information contained in the gcd-file.&quot;&quot;&quot;</span>
+        <span class="n">gcd_file</span> <span class="o">=</span> <span class="n">dataio</span><span class="o">.</span><span class="n">I3File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gcd_file</span><span class="p">)</span>
+        <span class="n">g_frame</span> <span class="o">=</span> <span class="n">gcd_file</span><span class="o">.</span><span class="n">pop_frame</span><span class="p">(</span><span class="n">icetray</span><span class="o">.</span><span class="n">I3Frame</span><span class="o">.</span><span class="n">Geometry</span><span class="p">)</span>
+        <span class="n">c_frame</span> <span class="o">=</span> <span class="n">gcd_file</span><span class="o">.</span><span class="n">pop_frame</span><span class="p">(</span><span class="n">icetray</span><span class="o">.</span><span class="n">I3Frame</span><span class="o">.</span><span class="n">Calibration</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span> <span class="o">=</span> <span class="n">g_frame</span><span class="p">[</span><span class="s2">&quot;I3Geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">omgeo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="o">=</span> <span class="n">c_frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span></div>
             
-        <span class="n">features</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;charge&#39;</span><span class="p">:</span> <span class="n">charge</span><span class="p">,</span> 
-                    <span class="s1">&#39;dom_time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> 
-                    <span class="s1">&#39;dom_x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> 
-                    <span class="s1">&#39;dom_y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> 
-                    <span class="s1">&#39;dom_z&#39;</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span>
-                    <span class="s1">&#39;width&#39;</span> <span class="p">:</span> <span class="n">width</span><span class="p">,</span>
-                    <span class="s1">&#39;pmt_area&#39;</span><span class="p">:</span> <span class="n">area</span><span class="p">,</span> 
-                    <span class="s1">&#39;rde&#39;</span><span class="p">:</span> <span class="n">rqe</span><span class="p">}</span>
-        <span class="k">return</span> <span class="n">features</span></div>
-<div class="viewcode-block" id="I3Extractor._extract_truth"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._extract_truth">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_truth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">extract_these_truths</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Extracts the truths in extract_these_truths. Defaults standard_truth_extraction()</span>
+<div class="viewcode-block" id="I3Extractor.__call__"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor.__call__">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extracts relevant information from frame.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
 
-<span class="sd">        Args:</span>
-<span class="sd">            frame (i3 physics frame): i3 physics frame</span>
-<span class="sd">            input_file (str): path to i3-file</span>
-<span class="sd">            extract_these_truths (dict, optional): custom truth dictionary. Defaults to None.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            truth (dictionary): dictionary containing the thruth.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">extract_these_truths</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">extract_these_truths</span> <span class="o">=</span> <span class="n">build_standard_extraction</span><span class="p">()</span>
-        <span class="n">mc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="n">sim_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_data_type</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span><span class="n">input_file</span><span class="p">)</span>
-        <span class="n">event_time</span> <span class="o">=</span>  <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">start_time</span><span class="o">.</span><span class="n">utc_daq_time</span>
-        <span class="n">RunID</span><span class="p">,</span> <span class="n">SubrunID</span><span class="p">,</span> <span class="n">EventID</span><span class="p">,</span> <span class="n">SubEventID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_event_ids</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mc</span><span class="p">:</span>
-            <span class="n">MCInIcePrimary</span><span class="p">,</span> <span class="n">interaction_type</span><span class="p">,</span> <span class="n">elasticity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_case_handle_this</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">MCInIcePrimary</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1">## is not noise</span>
-                <span class="n">truth</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="k">for</span> <span class="n">truth_variable</span> <span class="ow">in</span> <span class="n">extract_these_truths</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">truth</span><span class="p">[</span><span class="n">truth_variable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">extract_these_truths</span><span class="p">[</span><span class="n">truth_variable</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Could Not Find Primary Particle&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1">## is real data or noise   </span>
-            <span class="n">blank_extraction</span> <span class="o">=</span> <span class="n">build_blank_extraction</span><span class="p">()</span>
-            <span class="n">truth</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">truth_variable</span> <span class="ow">in</span> <span class="n">blank_extraction</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">truth</span><span class="p">[</span><span class="n">truth_variable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">blank_extraction</span><span class="p">[</span><span class="n">truth_variable</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">truth</span></div>
-<div class="viewcode-block" id="I3Extractor._extract_retro"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._extract_retro">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_retro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Extracts RetroReco and associated quantities if available</span>
+<div class="viewcode-block" id="I3ExtractorCollection"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3ExtractorCollection">[docs]</a><span class="k">class</span> <span class="nc">I3ExtractorCollection</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to manage multiple I3Extractors.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">extractors</span><span class="p">):</span>
+        <span class="c1"># Check(s)</span>
+        <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="n">extractors</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">I3Extractor</span><span class="p">)</span>
+        
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractors</span><span class="p">)</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            frame (i3 physics frame): i3 physics frame</span>
+<div class="viewcode-block" id="I3ExtractorCollection.set_files"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3ExtractorCollection.set_files">[docs]</a>    <span class="k">def</span> <span class="nf">set_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">extractor</span><span class="o">.</span><span class="n">set_files</span><span class="p">(</span><span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">)</span></div>
+        
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">extractor</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
+        
 
-<span class="sd">        Returns:</span>
-<span class="sd">            retro: dictionary containing RetroReco and associated quantitites</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">contains_retro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_retroreco</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="n">contains_classifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_classifiers</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="n">is_mc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="n">retro</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">contains_retro</span> <span class="ow">or</span> <span class="n">contains_classifier</span><span class="p">:</span>
-            <span class="n">retro_extraction</span> <span class="o">=</span> <span class="n">build_retroreco_extraction</span><span class="p">(</span><span class="n">is_mc</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">retro_variable</span> <span class="ow">in</span> <span class="n">retro_extraction</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">retro</span><span class="p">[</span><span class="n">retro_variable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate_expression</span><span class="p">(</span><span class="n">retro_extraction</span><span class="p">[</span><span class="n">retro_variable</span><span class="p">],</span><span class="n">frame</span><span class="p">))</span> 
-        <span class="k">return</span> <span class="n">retro</span></div>
-<div class="viewcode-block" id="I3Extractor._get_om_keys"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._get_om_keys">[docs]</a>    <span class="k">def</span> <span class="nf">_get_om_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">calibration</span><span class="p">):</span>
+<div class="viewcode-block" id="I3FeatureExtractor"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3FeatureExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span> <span class="o">=</span> <span class="n">pulsemap</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="I3FeatureExtractor.__call__"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3FeatureExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;charge&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;dom_time&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;dom_x&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;dom_y&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;dom_z&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;width&#39;</span> <span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;pmt_area&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;rde&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># Target pulsemap does not exist in `frame`</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
+            <span class="c1"># Common values for each OM</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">area</span>
+            <span class="n">rde</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
+            
+            <span class="c1"># Loop over pulses for each OM</span>
+            <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">pulse</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;charge&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;dom_time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">time</span><span class="p">)</span> 
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;pmt_area&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>  
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;rde&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rde</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;dom_x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;dom_y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;dom_z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="I3FeatureExtractor._get_om_keys_and_pulseseries"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3FeatureExtractor._get_om_keys_and_pulseseries">[docs]</a>    <span class="k">def</span> <span class="nf">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets the indicies for the gcd_dict and the pulse series</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            frame (i3 physics frame): i3 physics frame</span>
-<span class="sd">            pulsemap (str): the i3 key for the pulse map, e.g. SRTInIcePulses</span>
-<span class="sd">            calibration (??): i3 physics frame calibration</span>
-
+<span class="sd">            </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            om_keys (index): the indicies for the gcd_dict</span>
 <span class="sd">            data    (??)   : the pulse series</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data</span>    <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">pulsemap</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
                     <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">calibration</span> 
-                    <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> 
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
                     <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="k">except</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span><span class="n">pulsemap</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">)</span>
                 <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span></div>
-    <span class="k">def</span> <span class="nf">_contains_retroreco</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span></div></div>
+
+
+<div class="viewcode-block" id="I3TruthExtractor"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3TruthExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3TruthExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
+<div class="viewcode-block" id="I3TruthExtractor.__call__"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3TruthExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extracts truth features.&quot;&quot;&quot;</span>
+        <span class="n">is_mc</span> <span class="o">=</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="n">find_data_type</span><span class="p">(</span><span class="n">is_mc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span><span class="p">)</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;energy&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;position_x&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;position_y&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;position_z&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;azimuth&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;zenith&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;event_time&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">start_time</span><span class="o">.</span><span class="n">utc_daq_time</span><span class="p">,</span>
+            <span class="s1">&#39;sim_type&#39;</span><span class="p">:</span> <span class="n">sim_type</span><span class="p">,</span>
+            <span class="s1">&#39;interaction_type&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;elasticity&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;RunID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span>
+            <span class="s1">&#39;SubrunID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_run_id</span><span class="p">,</span>
+            <span class="s1">&#39;EventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">event_id</span><span class="p">,</span>
+            <span class="s1">&#39;SubEventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_id</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">is_mc</span><span class="p">:</span>
+            <span class="n">MCInIcePrimary</span><span class="p">,</span> <span class="n">interaction_type</span><span class="p">,</span> <span class="n">elasticity</span> <span class="o">=</span> <span class="n">get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span><span class="p">)</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s1">&#39;energy&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span>
+                <span class="s1">&#39;position_x&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                <span class="s1">&#39;position_y&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                <span class="s1">&#39;position_z&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+                <span class="s1">&#39;azimuth&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">azimuth</span><span class="p">,</span>
+                <span class="s1">&#39;zenith&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">zenith</span><span class="p">,</span>
+                <span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pdg_encoding</span><span class="p">,</span>
+                <span class="s1">&#39;interaction_type&#39;</span><span class="p">:</span> <span class="n">interaction_type</span><span class="p">,</span>
+                <span class="s1">&#39;elasticity&#39;</span><span class="p">:</span> <span class="n">elasticity</span><span class="p">,</span>
+            <span class="p">})</span>
+        
+        <span class="k">return</span> <span class="n">output</span></div></div>
+
+
+<div class="viewcode-block" id="I3RetroExtractor"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3RetroExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3RetroExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
+<div class="viewcode-block" id="I3RetroExtractor.__call__"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3RetroExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extracts RETRO reco. and associated quantities if available.&quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">frame_contains_retro</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s1">&#39;azimuth_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_azimuth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;time_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;energy_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_total_energy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;position_x_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_vertex_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;position_y_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_vertex_y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;position_z_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_vertex_z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;zenith_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_zenith&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;azimuth_sigma&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__azimuth_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;position_x_sigma&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__x_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;position_y_sigma&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__y_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;position_z_sigma&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__z_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;time_sigma&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__time_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;zenith_sigma&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__zenith_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;energy_sigma&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__energy_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;cascade_energy_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_cascade_energy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;track_energy_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_track_energy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;track_length_retro&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_track_length&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="p">})</span>
+        
+        <span class="k">if</span> <span class="n">frame_contains_classifiers</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s1">&#39;L7_MuonClassifier_FullSky_ProbNu&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_MuonClassifier_FullSky_ProbNu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;L4_MuonClassifier_Data_ProbNu&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L4_MuonClassifier_Data_ProbNu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;L4_NoiseClassifier_ProbNu&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L4_NoiseClassifier_ProbNu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;L7_PIDClassifier_FullSky_ProbTrack&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_PIDClassifier_FullSky_ProbTrack&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s1">&#39;osc_weight&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCWeightDict&quot;</span><span class="p">][</span><span class="s2">&quot;weight&quot;</span><span class="p">],</span>
+            <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">output</span></div></div>
+
+
+<span class="c1"># Utilty methods</span>
+<div class="viewcode-block" id="frame_contains_retro"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.frame_contains_retro">[docs]</a><span class="k">def</span> <span class="nf">frame_contains_retro</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;L7_reconstructed_zenith&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="frame_contains_classifiers"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.frame_contains_classifiers">[docs]</a><span class="k">def</span> <span class="nf">frame_contains_classifiers</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;L4_MuonClassifier_Data_ProbNu&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="frame_is_montecarlo"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.frame_is_montecarlo">[docs]</a><span class="k">def</span> <span class="nf">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;MCInIcePrimary&quot;</span><span class="p">)</span> <span class="ow">or</span> 
+        <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;I3MCTree&quot;</span><span class="p">)</span>
+    <span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="find_data_type"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.find_data_type">[docs]</a><span class="k">def</span> <span class="nf">find_data_type</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">input_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determines the data type</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mc (boolean): is this montecarlo?</span>
+<span class="sd">        input_file (str): path to i3 file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: the simulation/data type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># @TODO: Rewrite to make automaticallu infer `mc` from `input_file`?</span>
+    <span class="k">if</span> <span class="n">mc</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;NuGen&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;muon&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;muongun&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;corsika&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;corsika&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;genie&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;genie&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;noise&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;noise&#39;</span>
+    <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s1">&#39;lol&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SIM TYPE NOT FOUND!&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sim_type</span></div>
+
+<div class="viewcode-block" id="get_primary_particle_interaction_type_and_elasticity"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.get_primary_particle_interaction_type_and_elasticity">[docs]</a><span class="k">def</span> <span class="nf">get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;&quot;Returns primary particle, interaction type, and elasticity.</span>
+<span class="sd">    </span>
+<span class="sd">    A case handler that does two things</span>
+<span class="sd">        1) Catches issues related to determining the primary MC particle.</span>
+<span class="sd">        2) Error handles cases where interaction type and elasticity doesnt exist</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        frame (i3 physics frame): ...</span>
+<span class="sd">        sim_type (string): Simulation type</span>
+<span class="sd">        padding_value (int | float): The value used for padding.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">        McInIcePrimary (?): The primary particle</span>
+<span class="sd">        interaction_type (int): Either 1 (charged current), 2 (neutral current), 0 (neither)</span>
+<span class="sd">        elasticity (float): In ]0,1[ </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sim_type</span> <span class="o">!=</span> <span class="s1">&#39;noise&#39;</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;L7_reconstructed_zenith&#39;</span><span class="p">]</span>
-            <span class="k">return</span> <span class="kc">True</span>
+            <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;MCInIcePrimary&#39;</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-<div class="viewcode-block" id="I3Extractor.evaluate_expression"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor.evaluate_expression">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">expression</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">eval</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">expression</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span></div>
-
-    <span class="k">def</span> <span class="nf">_is_montecarlo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">):</span>
-        <span class="n">mc</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;MCInIcePrimary&#39;</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3MCTree&#39;</span><span class="p">]</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">mc</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">mc</span>
-
-    <span class="k">def</span> <span class="nf">_contains_classifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L4_MuonClassifier_Data_ProbNu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-<div class="viewcode-block" id="I3Extractor._find_data_type"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._find_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">_find_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mc</span><span class="p">,</span> <span class="n">input_file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Determines the data type</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            mc (boolean): is this montecarlo?</span>
-<span class="sd">            input_file (str): path to i3 file</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            str: the simulation/data type</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">mc</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;NuGen&#39;</span>
-        <span class="k">if</span> <span class="s1">&#39;muon&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;muongun&#39;</span>
-        <span class="k">if</span> <span class="s1">&#39;corsika&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;corsika&#39;</span>
-        <span class="k">if</span> <span class="s1">&#39;genie&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;genie&#39;</span>
-        <span class="k">if</span> <span class="s1">&#39;noise&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;noise&#39;</span>
-        <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s1">&#39;lol&#39;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SIM TYPE NOT FOUND!&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">sim_type</span></div>
-
-<div class="viewcode-block" id="I3Extractor._case_handle_this"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._case_handle_this">[docs]</a>    <span class="k">def</span> <span class="nf">_case_handle_this</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span><span class="p">,</span> <span class="n">padding_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; A case handler that does two things</span>
-<span class="sd">            1) Catches issues related to determining the primary MC particle.</span>
-<span class="sd">            2) Error handles cases where interaction type and elasticity doesnt exist</span>
-
-<span class="sd">            frame           : i3 physics frame</span>
-<span class="sd">            sim_type        : string, determining the simulation type</span>
-<span class="sd">            padding_value   : int or float, the value used for padding</span>
-
-<span class="sd">            RETURNS</span>
-<span class="sd">            McInIcePrimary  : the primary particle</span>
-<span class="sd">            interaction_type: integer, either 1 (charged current), 2 (neutral current), 0 (neither)</span>
-<span class="sd">            elasticity      : float in ]0,1[ </span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="n">sim_type</span> <span class="o">!=</span> <span class="s1">&#39;noise&#39;</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;MCInIcePrimary&#39;</span><span class="p">]</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3MCTree&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">interaction_type</span> <span class="o">=</span>  <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCWeightDict&quot;</span><span class="p">][</span><span class="s2">&quot;InteractionType&quot;</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="n">interaction_type</span> <span class="o">=</span> <span class="n">padding_value</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">elasticity</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3GENIEResultDict&#39;</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="n">elasticity</span> <span class="o">=</span> <span class="n">padding_value</span>
-        <span class="k">return</span> <span class="n">MCInIcePrimary</span><span class="p">,</span> <span class="n">interaction_type</span><span class="p">,</span> <span class="n">elasticity</span></div>
-
-<div class="viewcode-block" id="I3Extractor._extract_event_ids"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3Extractor._extract_event_ids">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_event_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Extracts relevant information contained in the event header. Usefull for backtracking to original i3-files.</span>
-
-<span class="sd">            frame       : i3 physics frame</span>
-
-<span class="sd">            RETURNS</span>
-
-<span class="sd">            RunID       : integer, denoting the ID of the run (eg. 120000)</span>
-<span class="sd">            SubrunID    : integer, denoting the ID of the subrun (e.g. 502)</span>
-<span class="sd">            EventID     : integer, denoting the ID of the event (eg. 5)   #NOTICE: THIS IS NOT A UNIQUE NUMBER BETWEEN I3 FILES</span>
-<span class="sd">            SubEventID  : integer, denoting the ID of the subevent if the original event is split into multiple (e.g. 2)</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">RunID</span>       <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">run_id</span>
-        <span class="n">SubrunID</span>    <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_run_id</span>
-        <span class="n">EventID</span>     <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">event_id</span>
-        <span class="n">SubEventID</span>  <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_id</span>
-        <span class="k">return</span> <span class="n">RunID</span><span class="p">,</span> <span class="n">SubrunID</span><span class="p">,</span> <span class="n">EventID</span><span class="p">,</span> <span class="n">SubEventID</span></div></div>
-
-
+            <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3MCTree&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">interaction_type</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCWeightDict&quot;</span><span class="p">][</span><span class="s2">&quot;InteractionType&quot;</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">interaction_type</span> <span class="o">=</span> <span class="n">padding_value</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">elasticity</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3GENIEResultDict&#39;</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">elasticity</span> <span class="o">=</span> <span class="n">padding_value</span>
+    
+    <span class="k">return</span> <span class="n">MCInIcePrimary</span><span class="p">,</span> <span class="n">interaction_type</span><span class="p">,</span> <span class="n">elasticity</span></div>
 </pre></div>
 
            </div>

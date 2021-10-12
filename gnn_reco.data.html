@@ -81,7 +81,7 @@
 <span id="gnn-reco-data-dataconverter-module"></span><h2>gnn_reco.data.dataconverter module<a class="headerlink" href="#module-gnn_reco.data.dataconverter" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gnn_reco.data.dataconverter.DataConverter">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.dataconverter.DataConverter" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.dataconverter.DataConverter" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abstract base class for specialised (SQLite, numpy, etc.) data converter classes.</p>
 </dd></dl>
@@ -92,125 +92,96 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3Extractor</span></span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Extracts relevant information from physics frames.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor.__call__" title="Permalink to this definition"></a></dt>
-<dd><p>Extracts relevant information from frame depending on mode</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>frame</strong> (<em>i3 physics frame</em>) – i3 physics frame that is being processed</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – a string containing the type of extraction wanted</p></li>
-<li><p><strong>pulsemap</strong> (<em>str</em>) – the i3-key for the pulse map. E.g. SRTInIcePulses</p></li>
-<li><p><strong>gcd_dict</strong> (<em>dict</em>) – the dictionary containing DOM specific data that can be indexed using the om_key</p></li>
-<li><p><strong>calibration</strong> – i3 physics frame calibration</p></li>
-<li><p><strong>input_file</strong> (<em>i3 file</em>) – the i3 file from which frame originates</p></li>
-<li><p><strong>custom_truth</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary where field names will correspond to column name in database table. Entries in the dictionary are strings that are evaluated using eval(). Defaults to None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dictionary with input data
-truth   : dictionary with truth data
-retro   : dictionary with RetroReco and associated quantities</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pulsemap</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts relevant information from frame.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._case_handle_this">
-<span class="sig-name descname"><span class="pre">_case_handle_this</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._case_handle_this"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._case_handle_this" title="Permalink to this definition"></a></dt>
-<dd><p>A case handler that does two things
-1) Catches issues related to determining the primary MC particle.
-2) Error handles cases where interaction type and elasticity doesnt exist</p>
-<p>frame           : i3 physics frame
-sim_type        : string, determining the simulation type
-padding_value   : int or float, the value used for padding</p>
-<p>RETURNS
-McInIcePrimary  : the primary particle
-interaction_type: integer, either 1 (charged current), 2 (neutral current), 0 (neither)
-elasticity      : float in ]0,1[</p>
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._load_gcd_data">
+<span class="sig-name descname"><span class="pre">_load_gcd_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._load_gcd_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._load_gcd_data" title="Permalink to this definition"></a></dt>
+<dd><p>Loads the geospatial information contained in the gcd-file.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._extract_event_ids">
-<span class="sig-name descname"><span class="pre">_extract_event_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._extract_event_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._extract_event_ids" title="Permalink to this definition"></a></dt>
-<dd><p>Extracts relevant information contained in the event header. Usefull for backtracking to original i3-files.</p>
-<p>frame       : i3 physics frame</p>
-<p>RETURNS</p>
-<p>RunID       : integer, denoting the ID of the run (eg. 120000)
-SubrunID    : integer, denoting the ID of the subrun (e.g. 502)
-EventID     : integer, denoting the ID of the event (eg. 5)   #NOTICE: THIS IS NOT A UNIQUE NUMBER BETWEEN I3 FILES
-SubEventID  : integer, denoting the ID of the subevent if the original event is split into multiple (e.g. 2)</p>
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor.set_files">
+<span class="sig-name descname"><span class="pre">set_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor.set_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor.set_files" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3ExtractorCollection">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3ExtractorCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">extractors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3ExtractorCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3ExtractorCollection" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>Class to manage multiple I3Extractors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3ExtractorCollection.set_files">
+<span class="sig-name descname"><span class="pre">set_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3ExtractorCollection.set_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3ExtractorCollection.set_files" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3FeatureExtractor">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3FeatureExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3FeatureExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3FeatureExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gnn_reco.data.i3extractor.I3Extractor" title="gnn_reco.data.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.data.i3extractor.I3Extractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3FeatureExtractor.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3FeatureExtractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3FeatureExtractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extract features to be used as inputs to GNN models.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._extract_features">
-<span class="sig-name descname"><span class="pre">_extract_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._extract_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._extract_features" title="Permalink to this definition"></a></dt>
-<dd><p>Extracts xyz, time, charge, relative dom eff. and pmt area</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>frame</strong> (<em>i3 physics frame</em>) – i3 physics frame</p></li>
-<li><p><strong>pulsemap</strong> (<em>str</em>) – the key for the pulsemap. E.g. SRTInIcePulses</p></li>
-<li><p><strong>gcd_dict</strong> (<em>dict</em>) – the gcd dictionary that can be indexed using om_keys</p></li>
-<li><p><strong>calibration</strong> – i3 physics frame calibration</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a dictionary containing the input features.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>features (dict)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._extract_retro">
-<span class="sig-name descname"><span class="pre">_extract_retro</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._extract_retro"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._extract_retro" title="Permalink to this definition"></a></dt>
-<dd><p>Extracts RetroReco and associated quantities if available</p>
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3FeatureExtractor._get_om_keys_and_pulseseries">
+<span class="sig-name descname"><span class="pre">_get_om_keys_and_pulseseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3FeatureExtractor._get_om_keys_and_pulseseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3FeatureExtractor._get_om_keys_and_pulseseries" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the indicies for the gcd_dict and the pulse series</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>i3 physics frame</em>) – i3 physics frame</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dictionary containing RetroReco and associated quantitites</p>
+<dd class="field-even"><p>the indicies for the gcd_dict
+data    (??)   : the pulse series</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>retro</p>
+<dd class="field-odd"><p>om_keys (index)</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._extract_truth">
-<span class="sig-name descname"><span class="pre">_extract_truth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract_these_truths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._extract_truth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._extract_truth" title="Permalink to this definition"></a></dt>
-<dd><p>Extracts the truths in extract_these_truths. Defaults standard_truth_extraction()</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>frame</strong> (<em>i3 physics frame</em>) – i3 physics frame</p></li>
-<li><p><strong>input_file</strong> (<em>str</em>) – path to i3-file</p></li>
-<li><p><strong>extract_these_truths</strong> (<em>dict</em><em>, </em><em>optional</em>) – custom truth dictionary. Defaults to None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dictionary containing the thruth.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>truth (dictionary)</p>
-</dd>
-</dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3RetroExtractor">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3RetroExtractor</span></span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3RetroExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3RetroExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gnn_reco.data.i3extractor.I3Extractor" title="gnn_reco.data.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.data.i3extractor.I3Extractor</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._find_data_type">
-<span class="sig-name descname"><span class="pre">_find_data_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._find_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._find_data_type" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3RetroExtractor.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3RetroExtractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3RetroExtractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts RETRO reco. and associated quantities if available.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3TruthExtractor">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3TruthExtractor</span></span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3TruthExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3TruthExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gnn_reco.data.i3extractor.I3Extractor" title="gnn_reco.data.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.data.i3extractor.I3Extractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3TruthExtractor.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3TruthExtractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3TruthExtractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts truth features.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.find_data_type">
+<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">find_data_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#find_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.find_data_type" title="Permalink to this definition"></a></dt>
 <dd><p>Determines the data type</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -228,123 +199,46 @@ SubEventID  : integer, denoting the ID of the subevent if the original event is 
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._get_om_keys">
-<span class="sig-name descname"><span class="pre">_get_om_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._get_om_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._get_om_keys" title="Permalink to this definition"></a></dt>
-<dd><p>Gets the indicies for the gcd_dict and the pulse series</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>frame</strong> (<em>i3 physics frame</em>) – i3 physics frame</p></li>
-<li><p><strong>pulsemap</strong> (<em>str</em>) – the i3 key for the pulse map, e.g. SRTInIcePulses</p></li>
-<li><p><strong>calibration</strong> – i3 physics frame calibration</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the indicies for the gcd_dict
-data    (??)   : the pulse series</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>om_keys (index)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor._oscnext_extractor">
-<span class="sig-name descname"><span class="pre">_oscnext_extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor._oscnext_extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor._oscnext_extractor" title="Permalink to this definition"></a></dt>
-<dd><p>Extracts PFrame data. Officially supports oscNext and NuGen (LE and HE) but might work for others too.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>frame</strong> (<em>i3 frame</em>) – i3 physics frame</p></li>
-<li><p><strong>pulsemap</strong> (<em>str</em>) – the pulsemap key, eg. SRTInIcePulses</p></li>
-<li><p><strong>gcd_dict</strong> (<em>dict</em>) – the gcd dictionary that can be indexed using the om_keys</p></li>
-<li><p><strong>calibration</strong> – the i3 physics frame calibration</p></li>
-<li><p><strong>input_file</strong> (<em>str</em>) – path to the i3 file being extracted</p></li>
-<li><p><strong>custom_truth</strong> (<em>dict</em><em>, </em><em>optional</em>) – a custom truth. Field names become column names in the truth table. Entries are strings that are evaluated using eval(). Defaults to None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>truth dictionary, empty if no truth exists in the files (e.g. if real measurements)
-features (dict): feature dictionary
-retros (dict): retros dictionary, empty if no RetroReco exists in the files.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>truths (dict)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.I3Extractor.evaluate_expression">
-<span class="sig-name descname"><span class="pre">evaluate_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#I3Extractor.evaluate_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.I3Extractor.evaluate_expression" title="Permalink to this definition"></a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.frame_contains_classifiers">
+<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">frame_contains_classifiers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#frame_contains_classifiers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.frame_contains_classifiers" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.frame_contains_retro">
+<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">frame_contains_retro</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#frame_contains_retro"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.frame_contains_retro" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.build_blank_extraction">
-<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">build_blank_extraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">padding_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#build_blank_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.build_blank_extraction" title="Permalink to this definition"></a></dt>
-<dd><p>Builds a blank truth extraction</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>padding_value</strong> (<em>int</em><em>, </em><em>optional</em>) – Defaults to -1.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>blank_extraction (dictionary)</p>
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.frame_is_montecarlo">
+<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.frame_is_montecarlo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.get_primary_particle_interaction_type_and_elasticity">
+<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">get_primary_particle_interaction_type_and_elasticity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#get_primary_particle_interaction_type_and_elasticity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.get_primary_particle_interaction_type_and_elasticity" title="Permalink to this definition"></a></dt>
+<dd><p>“Returns primary particle, interaction type, and elasticity.</p>
+<dl class="simple">
+<dt>A case handler that does two things</dt><dd><ol class="arabic simple">
+<li><p>Catches issues related to determining the primary MC particle.</p></li>
+<li><p>Error handles cases where interaction type and elasticity doesnt exist</p></li>
+</ol>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.build_retroreco_extraction">
-<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">build_retroreco_extraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_mc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#build_retroreco_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.build_retroreco_extraction" title="Permalink to this definition"></a></dt>
-<dd><p>Builds the standard RetroReco extraction. Later evaluated using eval()</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>is_mc</strong> (<em>bool</em>) – if the current physics frame is monte carlo</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.build_standard_extraction">
-<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">build_standard_extraction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#build_standard_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.build_standard_extraction" title="Permalink to this definition"></a></dt>
-<dd><p>Builds the standard truth extraction</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>dicationary where the fields will be used as column names in the sqlite table and the entries are strings evaluated later using eval()</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> (<em>i3 physics frame</em>) – <p>…</p>
+</p></li>
+<li><p><strong>sim_type</strong> (<em>string</em>) – Simulation type</p></li>
+<li><p><strong>padding_value</strong> (<em>int</em><em> | </em><em>float</em>) – The value used for padding.</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gnn_reco.data.i3extractor.load_geospatial_data">
-<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">load_geospatial_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gcd_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/i3extractor.html#load_geospatial_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.i3extractor.load_geospatial_data" title="Permalink to this definition"></a></dt>
-<dd><p>Loads the geospatial information contained in the gcd-file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>gcd_path</strong> (<em>str</em>) – path to the gcd file</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>om_geom_dict
-??  : i3-file calibration</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
+<dl class="simple">
+<dt>Returns</dt><dd><p>McInIcePrimary (?): The primary particle
+interaction_type (int): Either 1 (charged current), 2 (neutral current), 0 (neither)
+elasticity (float): In ]0,1[</p>
 </dd>
 </dl>
 </dd></dl>
@@ -354,11 +248,11 @@ retros (dict): retros dictionary, empty if no RetroReco exists in the files.</p>
 <span id="gnn-reco-data-sqlite-dataconverter-module"></span><h2>gnn_reco.data.sqlite_dataconverter module<a class="headerlink" href="#module-gnn_reco.data.sqlite_dataconverter" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">SQLiteDataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dictionary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/sqlite_dataconverter.html#SQLiteDataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gnn_reco.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">SQLiteDataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dictionary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/sqlite_dataconverter.html#SQLiteDataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#gnn_reco.data.dataconverter.DataConverter" title="gnn_reco.data.dataconverter.DataConverter"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.data.dataconverter.DataConverter</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dictionary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/sqlite_dataconverter.html#SQLiteDataConverter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dictionary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/sqlite_dataconverter.html#SQLiteDataConverter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Implementation of DataConverter for saving to SQLite database.</p>
 <p>Converts the i3-files in paths to several temporary SQLite databases in
 parallel, that are then merged to a single SQLite database</p>
@@ -366,7 +260,6 @@ parallel, that are then merged to a single SQLite database</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outdir</strong> (<em>str</em>) – the directory to which the SQLite database is written</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – the mode for extraction.</p></li>
 <li><p><strong>pulsemap</strong> (<em>str</em>) – the pulsemap chosen for extraction. e.g.
 SRTInIcePulses.</p></li>
 <li><p><strong>gcd_rescue</strong> (<em>str</em>) – path to gcd_file that the extraction defaults to
@@ -559,6 +452,12 @@ gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
 <dd class="field-odd"><p>i3_list (list[str])</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gnn_reco.data.utils.frame_has_key">
+<span class="sig-prename descclassname"><span class="pre">gnn_reco.data.utils.</span></span><span class="sig-name descname"><span class="pre">frame_has_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/data/utils.html#frame_has_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.data.utils.frame_has_key" title="Permalink to this definition"></a></dt>
+<dd><p>Returns whether <cite>frame</cite> contains <cite>key</cite>.</p>
 </dd></dl>
 
 <dl class="py function">
