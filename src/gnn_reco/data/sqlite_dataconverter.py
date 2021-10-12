@@ -14,12 +14,11 @@ except ImportError:
     print("icecube package not available.")
 
 from .dataconverter import DataConverter
-from .i3extractor import I3Extractor, load_geospatial_data
-from .utils import create_out_directory, find_i3_files, pairwise_shuffle
+from .utils import create_out_directory, pairwise_shuffle
 
 
 class SQLiteDataConverter(DataConverter):
-    def __init__(self, outdir, mode, pulsemap, gcd_rescue,  *, db_name, workers, max_dictionary_size=10000, verbose=1):
+    def __init__(self, outdir, pulsemap, gcd_rescue, *, db_name, workers, max_dictionary_size=10000, verbose=1):
         """Implementation of DataConverter for saving to SQLite database.
 
         Converts the i3-files in paths to several temporary SQLite databases in 
@@ -27,7 +26,6 @@ class SQLiteDataConverter(DataConverter):
 
         Args:
             outdir (str): the directory to which the SQLite database is written
-            mode (str): the mode for extraction.
             pulsemap (str): the pulsemap chosen for extraction. e.g. 
                 SRTInIcePulses.
             gcd_rescue (str): path to gcd_file that the extraction defaults to 
@@ -45,7 +43,7 @@ class SQLiteDataConverter(DataConverter):
         self._max_dict_size  = max_dictionary_size 
         
         # Base class constructor
-        super().__init__(outdir, mode, pulsemap, gcd_rescue)
+        super().__init__(outdir, pulsemap, gcd_rescue)
         
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
@@ -71,8 +69,6 @@ class SQLiteDataConverter(DataConverter):
                 str(i),
                 gcd_file_list[i], 
                 event_nos[i], 
-                self._mode, 
-                self._pulsemap, 
                 self._max_dict_size, 
                 self._db_name, 
                 self._outdir,
@@ -105,7 +101,7 @@ class SQLiteDataConverter(DataConverter):
         Args:
             settings (list): List of arguments.
         """
-        input_files,id, gcd_files, event_no_list, mode, pulsemap, max_dict_size, db_name, outdir = settings
+        input_files,id, gcd_files, event_no_list, max_dict_size, db_name, outdir = settings
         event_counter = 0
         feature_big = pd.DataFrame()
         truth_big   = pd.DataFrame()
@@ -114,7 +110,7 @@ class SQLiteDataConverter(DataConverter):
         output_count = 0
         gcd_count = 0
         for u in range(len(input_files)):
-            gcd_dict, calibration = load_geospatial_data(gcd_files[u])
+            self._extractors.set_files(input_files[u], gcd_files[u])
             i3_file = dataio.I3File(input_files[u], "r")
 
             while i3_file.more():
@@ -123,7 +119,7 @@ class SQLiteDataConverter(DataConverter):
                 except:
                     frame = False
                 if frame:
-                    truths, features, retros = self._extractor(frame, mode, pulsemap, gcd_dict, calibration,input_files[u])
+                    truths, features, retros = self._extractors(frame)
                     truth    = apply_event_no(truths, event_no_list, event_counter)
                     truth_big   = truth_big.append(truth, ignore_index = True, sort = True)
                     if len(retros)>0:
@@ -134,7 +130,7 @@ class SQLiteDataConverter(DataConverter):
                         feature_big= feature_big.append(features,ignore_index = True, sort = True)
                     event_counter += 1
                     if len(truth_big) >= max_dict_size:
-                        save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, pulsemap)
+                        save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, self._pulsemap)
 
                         feature_big = pd.DataFrame()
                         truth_big   = pd.DataFrame()
@@ -142,7 +138,7 @@ class SQLiteDataConverter(DataConverter):
                         output_count +=1
             file_counter +=1
         if len(truth_big) > 0:
-            save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, pulsemap)
+            save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, self._pulsemap)
             feature_big = pd.DataFrame()
             truth_big   = pd.DataFrame()
             retro_big   = pd.DataFrame()
