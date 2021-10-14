@@ -7,7 +7,7 @@ from torch_geometric.data import Data
 class SQLiteDataset(torch.utils.data.Dataset):
     """Pytorch dataset for reading from SQLite.
     """
-    def __init__(self, database, pulsemap_table, features, truth, index_column='event_no', truth_table='truth'):
+    def __init__(self, database, pulsemap_table, features, truth, index_column='event_no', truth_table='truth', selection = None):
     
         # Check(s)
         assert isinstance(database, str)
@@ -28,7 +28,10 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self._conn = None  # Handle for sqlite3.connection
         self.establish_connection()
         
-        self._indices = self._get_all_indices()
+        if selection != None:
+            self._indices = selection
+        else:
+            self._indices = self._get_all_indices()
 
     def __len__(self):
         return len(self._indices)
@@ -116,20 +119,19 @@ class SQLiteDataset(torch.utils.data.Dataset):
             'corsika': abs_pid > 20,
         }
 
-        targets = np.asarray([
-            labels_dict['neutrino'],
-            labels_dict['muon'],
-            labels_dict['noise'],
-        ])
-     
-        x = torch.from_numpy(np.asarray(features)[1:].astype(np.float32)) 
-        y = torch.from_numpy(targets)
+        x = torch.from_numpy(np.asarray(features)[:,1:].astype(np.float32)) 
+        n_pulses = torch.tensor(len(x), dtype = torch.int32)
         graph = Data(
-            x=x,
-            y=y.unsqueeze(0),
-            **labels_dict,
+            x=x
         )
-        
+        graph.n_pulses = n_pulses
+
+        for label in labels_dict.keys():
+            graph[label] = labels_dict[label]    
+
+        for truth_key in ['energy', 'position_x', 'position_y', 'position_z', 'azimuth', 'zenith']:
+            graph[truth_key] = torch.tensor(truth_dict[truth_key], dtype = torch.float64)
+
         return graph
         
     def establish_connection(self):
