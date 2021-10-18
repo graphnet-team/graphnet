@@ -119,10 +119,11 @@ class SQLiteDataset(torch.utils.data.Dataset):
             'corsika': abs_pid > 20,
         }
 
-        x = torch.from_numpy(np.asarray(features)[:,1:].astype(np.float32)) 
+        x = torch.from_numpy(np.asarray(features)[:,1:].astype(np.float64)) 
         n_pulses = torch.tensor(len(x), dtype = torch.int32)
         graph = Data(
-            x=x
+            x=x,
+            edge_index= None
         )
         graph.n_pulses = n_pulses
 
