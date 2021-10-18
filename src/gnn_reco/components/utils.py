@@ -3,6 +3,18 @@ import torch
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+from copy import deepcopy
+import torch
+from gnn_reco.data.sqlite_dataset import SQLiteDataset
+from sklearn.model_selection import train_test_split
+from torch_geometric.data.batch import Batch
+import os
+from sklearn.preprocessing import RobustScaler
+import sqlite3
+import pandas as pd
+import pickle
+import numpy as np
+import os
 
 class EarlyStopping(object):
     def __init__(self, mode='min', min_delta=0, patience=10, percentage=False):
@@ -96,52 +108,52 @@ class Trainer(object):
         self.device = device
 
     def __call__(self, model):
-        self.model = model
-        trained_model = self._train()
+        trained_model = self._train(model)
+        self._load_best_parameters(model)
         return trained_model
 
-    def _train(self):
+    def _train(self,model):
         for epoch in range(self.n_epochs):
             acc_loss = torch.tensor([0],dtype = float).to(self.device)
             iteration = 1
+            model.train() 
             pbar = tqdm(self.training_dataloader, unit= 'batches')
             for batch_of_graphs in pbar:
                 batch_of_graphs.to(self.device)
-                with torch.enable_grad():                                       
-                        self.model.train()                                                               
+                with torch.enable_grad():                                                                                                     
                         self.optimizer.zero_grad()                                                   
-                        out                             = self.model(batch_of_graphs)   
-                        loss                            = self.loss_func(out, batch_of_graphs, self.target)                             
+                        out                             = model(batch_of_graphs)   
+                        loss                            = self.loss_func(out, batch_of_graphs, self.target)                      
                         loss.backward()                                                         
                         self.optimizer.step()
                 if self.scheduler != None:    
                     self.optimizer.param_groups[0]['lr'] = self.scheduler.get_next_lr().item()
                 acc_loss += loss
                 if iteration == (len(pbar)):    
-                    validation_loss = self._validate()
+                    validation_loss = self._validate(model)
                     pbar.set_description('epoch: %s || loss: %s || valid loss : %s'%(epoch,acc_loss.item()/iteration, validation_loss.item()))
                 else:
                     pbar.set_description('epoch: %s || loss: %s'%(epoch, acc_loss.item()/iteration))
                 iteration +=1
-            if self._early_stopping_method.step(validation_loss,self.model):
+            if self._early_stopping_method.step(validation_loss,model):
                 print('EARLY STOPPING: %s'%epoch)
-                self._load_best_parameters()
                 break
-        return self.model
+        return model
             
-    def _validate(self):
+    def _validate(self,model):
         acc_loss = torch.tensor([0],dtype = float).to(self.device)
+        model.eval()
         for batch_of_graphs in self.validation_dataloader:
             batch_of_graphs.to(self.device)
             with torch.no_grad():                                                                                        
-                out                             = self.model(batch_of_graphs)   
+                out                             = model(batch_of_graphs)   
                 loss                            = self.loss_func(out, batch_of_graphs, self.target)                             
                 acc_loss += loss
         return acc_loss/len(self.validation_dataloader)
     
-    def _load_best_parameters(self):
-        self.model.load_state_dict(self._early_stopping_method.GetBestParams())
-        return 
+    def _load_best_parameters(self,model):
+        return model.load_state_dict(self._early_stopping_method.GetBestParams())
+         
 
 class Predictor(object):
     def __init__(self, dataloader, target, device, output_column_names, post_processing_method = None):
@@ -152,6 +164,8 @@ class Predictor(object):
         self.post_processing_method = post_processing_method
     def __call__(self, model):
         self.model = model
+        self.model.eval()
+        self.model.predict = True
         if self.post_processing_method == None:
             return self._predict()
         else:
@@ -177,3 +191,76 @@ def vonmises_sine_cosine_post_processing(predictions,target):
     predictions['k'] = abs(predictions['k'])
     predictions['sigma'] = 1/predictions['k']
     return predictions        
+
+
+def make_train_validation_dataloader(db, selection, pulsemap, batch_size, FEATURES, TRUTH, num_workers):
+    training_selection, validation_selection = train_test_split(selection, test_size=0.33, random_state=42)
+
+    training_dataset = SQLiteDataset(db, pulsemap, FEATURES, TRUTH, selection= training_selection)
+    training_dataset.close_connection()
+    training_dataloader = torch.utils.data.DataLoader(training_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, 
+                                            collate_fn=Batch.from_data_list,persistent_workers=True,prefetch_factor=2)
+
+    validation_dataset = SQLiteDataset(db, pulsemap, FEATURES, TRUTH, selection= validation_selection)
+    validation_dataset.close_connection()
+    validation_dataloader = torch.utils.data.DataLoader(validation_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, 
+                                            collate_fn=Batch.from_data_list,persistent_workers=True,prefetch_factor=2)
+    return training_dataloader, validation_dataloader
+
+def save_results(db, tag, results, archive,model):
+    db_name = db.split('/')[-1].split('.')[0]
+    path = archive + '/' + db_name + '/' + tag
+    os.makedirs(path, exist_ok = True)
+    results.to_csv(path + '/results.csv')
+    torch.save(model.cpu(), path + '/' + tag + '.pkl')
+    print('Results saved at: \n %s'%path)
+    return
+
+def check_db_size(db):
+    max_size = 5000000
+    with sqlite3.connect(db) as con:
+        query = 'select event_no from truth'
+        events =  pd.read_sql(query,con)
+    if len(events) > max_size:
+        events = events.sample(max_size)
+    return events        
+
+def fit_scaler(db, features,truth, pulsemap):
+    features = deepcopy(features)
+    truth = deepcopy(truth)
+    features.remove('event_no')
+    truth.remove('event_no')
+    truth =  ', '.join(truth)
+    features = ', '.join(features)
+
+    outdir = '/'.join(db.split('/')[:-2]) 
+    print(os.path.exists(outdir + '/meta/transformers.pkl'))
+    if os.path.exists(outdir + '/meta/transformers.pkl'):
+        comb_scalers = pd.read_pickle(outdir + '/meta/transformers.pkl')
+    # else:
+    #     truths = ['energy', 'position_x', 'position_y', 'position_z', 'azimuth', 'zenith']
+    #     events = check_db_size(db)
+    #     print('Fitting to %s'%pulsemap)
+    #     with sqlite3.connect(db) as con:
+    #         query = 'select %s from %s where event_no in %s'%(features,pulsemap, str(tuple(events['event_no'])))
+    #         feature_data = pd.read_sql(query,con)
+    #         scaler = RobustScaler()
+    #         feature_scaler= scaler.fit(feature_data)
+    #     truth_scalers = {}
+    #     for truth in truths:
+    #         print('Fitting to %s'%truth)
+    #         with sqlite3.connect(db) as con:
+    #             query = 'select %s from truth'%truth
+    #             truth_data = pd.read_sql(query,con)
+    #         scaler = RobustScaler()
+    #         if truth == 'energy':
+    #             truth_scalers[truth] = scaler.fit(np.array(np.log10(truth_data[truth])).reshape(-1,1))
+    #         else:
+    #             truth_scalers[truth] = scaler.fit(np.array(truth_data[truth]).reshape(-1,1))
+
+    #     comb_scalers = {'truth': truth_scalers, 'input': feature_scaler}
+    #     os.makedirs(outdir + '/meta', exist_ok= True)
+    #     with open(outdir + '/meta/transformersv2.pkl','wb') as handle:
+    #         pickle.dump(comb_scalers,handle,protocol = pickle.HIGHEST_PROTOCOL)
+    return comb_scalers
+

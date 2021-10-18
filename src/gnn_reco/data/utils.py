@@ -33,7 +33,7 @@ def get_even_neutrino_indicies(db):
                 is_first = False
             else:
                 indices = indices.append(pid_indicies[pid].sample(smallest_sample_size).reset_index(drop = True), ignore_index = True)
-        return indices.values.ravel().tolist()
+        return indices.sample(frac = 1).values.ravel().tolist()
 
 def create_out_directory(outdir: str):
     try:
