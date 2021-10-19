@@ -65,6 +65,7 @@ class I3FeatureExtractor(I3Extractor):
     
     def __call__(self, frame) -> dict:
         """Extract features to be used as inputs to GNN models."""
+        ""
         output = {
             'charge': [],
             'dom_time': [],
@@ -74,6 +75,13 @@ class I3FeatureExtractor(I3Extractor):
             'width' : [],
             'pmt_area': [],
             'rde': [],
+            'string': [],
+            'pmt_number': [],
+            'dom_number': [],
+            'pmt_dir_x': [],
+            'pmt_dir_y': [],
+            'pmt_dir_z': [],
+            'dom_type': [],
         }
         
         try:
@@ -86,6 +94,13 @@ class I3FeatureExtractor(I3Extractor):
             x = self._gcd_dict[om_key].position.x
             y = self._gcd_dict[om_key].position.y
             z = self._gcd_dict[om_key].position.z
+            pmt_dir_x = self._gcd_dict[om_key].orientation.x
+            pmt_dir_y = self._gcd_dict[om_key].orientation.y
+            pmt_dir_z = self._gcd_dict[om_key].orientation.z
+            string    = om_key[0]
+            dom_number = om_key[1]
+            pmt_number = om_key[2]
+            dom_type = om_key.omtype
             area = self._gcd_dict[om_key].area
             rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
             
