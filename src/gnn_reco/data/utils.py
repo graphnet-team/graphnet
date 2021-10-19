@@ -7,7 +7,33 @@ import pandas as pd
 from pathlib import Path
 import re
 from typing import List
+import sqlite3
 
+def get_even_neutrino_indicies(db):
+        pids = ['12', '14', '16']
+        pid_indicies = {}
+        indices = []
+
+        for pid in pids:
+            with sqlite3.connect(db) as con:
+                pid_indicies[pid] = pd.read_sql_query(f"SELECT event_no FROM truth where abs(pid) = {pid}", con)
+        is_first = True
+        for pid in pids:
+            if is_first:
+                smallest_sample_size = len(pid_indicies[pid])
+                is_first = False
+            else:
+                if len(pid_indicies[pid]) < smallest_sample_size:
+                    smallest_sample_size = len(pid_indicies)
+        
+        is_first = True
+        for pid in pids:
+            if is_first:
+                indices = pid_indicies[pid].sample(smallest_sample_size)
+                is_first = False
+            else:
+                indices = indices.append(pid_indicies[pid].sample(smallest_sample_size).reset_index(drop = True), ignore_index = True)
+        return indices.sample(frac = 1).values.ravel().tolist()
 
 def create_out_directory(outdir: str):
     try:
