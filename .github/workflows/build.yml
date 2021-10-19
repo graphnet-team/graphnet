@@ -5,7 +5,6 @@ name: build
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
     paths-ignore: [ misc/badges/ ]
   pull_request:
     branches: [ main ]
@@ -21,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Install required packages
-        run: pip install -e .
+        run: pip install .[develop]
       - name: Run pylint
         run: |
           pylint src/gnn_reco tests/*.py --exit-zero | tee results_pylint.txt
@@ -47,7 +46,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install required packages 
-        run: pip install -e .
+        run: pip install .[develop]
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
@@ -86,12 +85,11 @@ jobs:
         run: |
           git config user.email "andreas.sogaard@gmail.com"
           git config user.name "Andreas Søgaard"
-      - name: Print status
-        run: git status
+          git status
       - name: Stage badges
         run: git add -f misc/badges/
-#      - name: Commit and push changes
-#        run: git commit -m "Auto-updating badges" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"  
+      - name: Commit and push changes
+        run: git commit -m "Auto-updating badges" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"  
 
   docs:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -101,9 +99,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install
         run: |
-          pip install .
-          pip install sphinx
-          pip install sphinx_rtd_theme
+          pip install .[develop]
       - name: Build documentation
         run: |
           cd docs
