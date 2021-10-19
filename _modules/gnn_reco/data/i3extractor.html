@@ -128,6 +128,7 @@
     
 <div class="viewcode-block" id="I3FeatureExtractor.__call__"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.i3extractor.I3FeatureExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
+        <span class="s2">&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;charge&#39;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s1">&#39;dom_time&#39;</span><span class="p">:</span> <span class="p">[],</span>
@@ -138,6 +139,14 @@
             <span class="s1">&#39;pmt_area&#39;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s1">&#39;rde&#39;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
+            <span class="c1">#&#39;string&#39;: [],</span>
+            <span class="c1">#&#39;pmt_number&#39;: [],</span>
+            <span class="c1">#&#39;dom_number&#39;: [],</span>
+            <span class="c1">#&#39;pmt_dir_x&#39;: [],</span>
+            <span class="c1">#&#39;pmt_dir_y&#39;: [],</span>
+            <span class="c1">#&#39;pmt_dir_z&#39;: [],</span>
+            <span class="c1">#&#39;dom_type&#39;: [],</span>
+        <span class="c1">#}</span>
         
         <span class="k">try</span><span class="p">:</span>
             <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
@@ -149,6 +158,13 @@
             <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span>
             <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span>
             <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span>
+            <span class="c1">#pmt_dir_x = self._gcd_dict[om_key].orientation.x</span>
+            <span class="c1">#pmt_dir_y = self._gcd_dict[om_key].orientation.y</span>
+            <span class="c1">#pmt_dir_z = self._gcd_dict[om_key].orientation.z</span>
+            <span class="c1">#string    = om_key[0]</span>
+            <span class="c1">#dom_number = om_key[1]</span>
+            <span class="c1">#pmt_number = om_key[2]</span>
+            <span class="c1">#dom_type = om_key.omtype</span>
             <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">area</span>
             <span class="n">rde</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
             
