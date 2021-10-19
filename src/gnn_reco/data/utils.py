@@ -99,3 +99,11 @@ def find_i3_files(directories, gcd_rescue):
         pass
 
     return i3_files, gcd_files
+
+def frame_has_key(frame, key: str):
+    """Returns whether `frame` contains `key`."""
+    try:
+        frame[key]
+        return True
+    except:
+        return False

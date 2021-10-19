@@ -5,22 +5,26 @@ try:
 except ImportError:
     print("icecube package not available.")
 
-from .i3extractor import I3Extractor, load_geospatial_data
+from .i3extractor import I3ExtractorCollection, I3FeatureExtractor, I3RetroExtractor, I3TruthExtractor
 from .utils import find_i3_files
 
 
 class DataConverter(ABC):
     """Abstract base class for specialised (SQLite, numpy, etc.) data converter classes."""
 
-    def __init__(self, outdir, mode, pulsemap, gcd_rescue):
+    def __init__(self, outdir, pulsemap, gcd_rescue):
 
         # Member variables
         self._outdir = outdir
-        self._mode = mode
         self._pulsemap = pulsemap
         self._gcd_rescue = gcd_rescue
 
-        self._extractor = I3Extractor()  # @TODO: Restructure I3Extractor to be more "class-like."
+        # Create I3Extractors
+        self._extractors = I3ExtractorCollection(
+            I3TruthExtractor(),
+            I3FeatureExtractor(pulsemap),
+            I3RetroExtractor(),
+        )
         
         self._initialise()
 
@@ -36,16 +40,16 @@ class DataConverter(ABC):
         pass
 
     def _process_file(self, i3_file, gcd_file, out_file):
-        gcd_dict, calibration = load_geospatial_data(gcd_file)
-        i3_file = dataio.I3File(i3_file, 'r')
+        self._extractors.set_files(i3_file, gcd_file)
+        frames = dataio.I3File(i3_file, 'r')
 
-        while i3_file.more():
+        while frames.more():
             try:
-                frame = i3_file.pop_physics()
+                frame = frames.pop_physics()
             except: 
                 continue
-            array = self._extractor(frame, self._mode, self._pulsemap, gcd_dict, calibration, i3_file)
-            self._save(array, out_file)
+            arrays = self._extractors(frame)
+            self._save(arrays, out_file)
 
     @abstractmethod
     def _save(self, array, out_file):
