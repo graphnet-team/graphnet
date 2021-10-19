@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 # Utility method(s)
 def install(package):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", package])
 
 # Requirements definitions
 EXTRAS_REQUIRE = {
