@@ -72,7 +72,10 @@ class ConvNet(torch.nn.Module):
         x = torch.tensor(x).float().to(device)
         #x = torch.tensor(self.scalers['input'].transform(x.cpu().numpy()), dtype = torch.float32).to(device)
         if self.predict == False:
-            data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(data[self.target].cpu().numpy().reshape(-1,1))).to(device)
+            if self.target == 'energy':
+                data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(np.log10(data[self.target].cpu().numpy()).reshape(-1,1))).to(device)
+            else:
+                data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(data[self.target].cpu().numpy().reshape(-1,1))).to(device)
 
         edge_index = knn_graph(x[:, self._knn_cols], 15, batch)
         edge_index, _ = dropout_adj(edge_index, p=0.3)
@@ -105,8 +108,9 @@ class ConvNet(torch.nn.Module):
         x = self.drop5(x)
 
         x = self.out(x)
-        x[:,0] = torch.tanh(x[:,0])
-        x[:,1] = torch.tanh(x[:,1])
+        if self.target == 'zenith' or self.target == 'azimuth':
+            x[:,0] = torch.tanh(x[:,0])
+            x[:,1] = torch.tanh(x[:,1])
         #if self.classification:
         #    x = torch.sigmoid(x)
         #elif self._normalize:
@@ -119,7 +123,12 @@ class ConvNet(torch.nn.Module):
         if self.predict == False:
             return x
         else:
-            pred = np.arctan2(x[:,0].cpu().numpy(),x[:,1].cpu().numpy()).reshape(-1,1)
-            pred = torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
-            sigma = abs(1/x[:,2]).cpu()
-            return torch.cat((pred,sigma.reshape(-1,1)),dim = 1)
+            if self.target == 'zenith' or self.target == 'azimuth':
+                pred = np.arctan2(x[:,0].cpu().numpy(),x[:,1].cpu().numpy()).reshape(-1,1)
+                pred = torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
+                sigma = abs(1/x[:,2]).cpu()
+                return torch.cat((pred,sigma.reshape(-1,1)),dim = 1)
+            else:
+                pred = x.cpu().numpy().reshape(-1,1)
+                pred = 10**torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
+                return pred

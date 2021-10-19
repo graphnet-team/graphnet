@@ -185,13 +185,7 @@ class Predictor(object):
         out['event_no'] = event_nos
         out[self.target] = target
         return out
-
-def vonmises_sine_cosine_post_processing(predictions,target):
-    predictions[target + '_pred'] = np.arctan2(predictions['sine'], predictions['cosine'])
-    predictions['k'] = abs(predictions['k'])
-    predictions['sigma'] = 1/predictions['k']
-    return predictions        
-
+     
 
 def make_train_validation_dataloader(db, selection, pulsemap, batch_size, FEATURES, TRUTH, num_workers):
     training_selection, validation_selection = train_test_split(selection, test_size=0.33, random_state=42)
