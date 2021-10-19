@@ -111,4 +111,4 @@ jobs:
           branch: gh-pages # The branch the action should deploy to.
           folder: docs/build/html # The folder the action should deploy.
           git-config-email: andreas.sogaard@gmail.com
-          git-config-name: Andreas Søgaard'
+          git-config-name: Andreas Søgaard
