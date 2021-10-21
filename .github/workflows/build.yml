@@ -50,7 +50,7 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=src -m pytest tests/ | tee results_pytest.txt
+          coverage run --source=gnn_reco -m pytest tests/ | tee results_pytest.txt
           coverage report -m | tee results_coverage.txt
       - name: Generate unit test/build and coverage badges
         run: |
@@ -110,5 +110,5 @@ jobs:
         with:
           branch: gh-pages # The branch the action should deploy to.
           folder: docs/build/html # The folder the action should deploy.
-          email: andreas.sogaard@gmail.com
-          name: Andreas Søgaard
+          git-config-email: andreas.sogaard@gmail.com
+          git-config-name: Andreas Søgaard
