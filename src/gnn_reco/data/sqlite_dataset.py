@@ -26,7 +26,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self._truth_string = ', '.join(self._truth)
 
         self._conn = None  # Handle for sqlite3.connection
-        self.establish_connection()
         
         if selection != None:
             self._indices = selection
