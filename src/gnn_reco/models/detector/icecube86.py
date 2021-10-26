@@ -1,3 +1,5 @@
+from torch_geometric.data import Data
+
 from gnn_reco.models.detector.detector import Detector
 from gnn_reco.data.constants import FEATURES
 from gnn_reco.models.detector import Detector
@@ -9,14 +11,14 @@ class IceCube86(Detector):
     # Implementing abstract class attribute
     features = FEATURES.ICECUBE86
     
-    def forward(self, data):
+    def _forward(self, data: Data) -> Data:
         """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
             
         Assuming the following features, in this order (see self._features):
             dom_x
             dom_y
             dom_z
-            dom_time
+            dom_times
             charge
             rde
             pmt_area
@@ -28,13 +30,9 @@ class IceCube86(Detector):
             Data: Connected and preprocessed graph data.
         """
 
-        # Convenience variables
-        assert data.x.size()[1] == self.nb_inputs, f"Got graph data with incompatible size, {data.x.size()} vs. {self.nb_inputs} expected"
+        # Check(s)
         assert self.nb_inputs == 7
 
-        # Graph-bulding
-        data = self._graph_builder(data).clone()
-        
         # Preprocessing
         data.x[:,0] /= 100.  # dom_x
         data.x[:,1] /= 100.  # dom_y
