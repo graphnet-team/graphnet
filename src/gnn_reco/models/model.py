@@ -25,8 +25,8 @@ class Model(Module):
 
         self.to(self._device)
         
-
     def forward(self, data):
+        """Common forward pass, chaining model components."""
         data = data.to(self._device)
         data = self._detector(data)
         x = self._gnn(data)
@@ -34,7 +34,7 @@ class Model(Module):
         return preds
 
     def compute_loss(self, preds, data, verbose=False):
-        # Sum losses across tasks
+        """Computes and sums losses across tasks."""
         losses = [task.compute_loss(pred, data) for task, pred in zip(self._tasks, preds)]
         if verbose:
             print(losses)
