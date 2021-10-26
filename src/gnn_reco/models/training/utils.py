@@ -23,6 +23,7 @@ def make_train_validation_dataloader(db, selection, pulsemap, batch_size, featur
 
     validation_dataset = SQLiteDataset(db, pulsemap, features, truth, selection=validation_selection)
     validation_dataloader = torch.utils.data.DataLoader(validation_dataset, **common_kwargs)
+
     return training_dataloader, validation_dataloader
 
 def save_results(db, tag, results, archive,model):
