@@ -22,7 +22,7 @@ class LogCosh(LossFunction):
         elements = self._log_cosh(diff)
         if return_elements:
             return elements
-        return torch.sum(elements)
+        return torch.mean(elements)
 
 class LogCoshOfLogTransformed(LogCosh):
     def forward(self, input: Tensor, target: Tensor, return_elements: bool = False) -> Tensor:
