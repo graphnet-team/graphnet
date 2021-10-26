@@ -18,7 +18,10 @@ class Model(Module):
         if isinstance(tasks, Task):
             tasks = [tasks]
         assert isinstance(tasks, (list, tuple))
-
+        assert all([isinstance(task, Task) for task in tasks])
+        assert isinstance(detector, Detector)
+        assert isinstance(gnn, GNN)
+        
         # Member variable(s)
         self._detector = detector
         self._gnn = gnn
