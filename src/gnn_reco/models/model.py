@@ -2,7 +2,7 @@ from typing import List, Union
 
 import torch
 from torch import Tensor
-from torch.nn import Module
+from torch.nn import Module, ModuleList
 from torch_geometric.data import Data
 
 from gnn_reco.models.detector import Detector
@@ -25,7 +25,7 @@ class Model(Module):
         # Member variable(s)
         self._detector = detector
         self._gnn = gnn
-        self._tasks = tasks
+        self._tasks = ModuleList(tasks)
         self._device = device
 
         self.to(self._device)
@@ -61,5 +61,5 @@ class Model(Module):
         self = super().to(device)
         self._detector = self._detector.to(device)
         self._gnn = self._gnn.to(device)
-        self._tasks = [task.to(device) for task in self._tasks]
-    
+        for ix in range(len(self._tasks)):
+            self._tasks[ix] = self._tasks[ix].to(device)
