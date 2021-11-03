@@ -1,5 +1,9 @@
 from abc import abstractmethod
-from typing import List, final
+from typing import List
+try:
+    from typing import final
+except ImportError:  # Python version < 3.8
+    final = lambda f: f  # Identity decorator
 
 import torch
 from torch.nn import Module

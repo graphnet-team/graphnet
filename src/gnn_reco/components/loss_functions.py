@@ -1,5 +1,9 @@
 from abc import abstractmethod
-from typing import Callable, Optional, final
+from typing import Callable, Optional
+try:
+    from typing import final
+except ImportError:  # Python version < 3.8
+    final = lambda f: f  # Identity decorator
 
 import numpy as np
 import torch
