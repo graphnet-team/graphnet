@@ -11,6 +11,7 @@ from torch import Tensor
 from torch_geometric.data import Data
 from torch_geometric.nn import EdgeConv
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
+from gnn_reco.components.layers import DynEdgeConv
 
 from gnn_reco.models.gnn import GNN
 from gnn_reco.models.utils import calculate_xyzt_homophily
@@ -33,40 +34,55 @@ class DynEdge(GNN):
         l1, l2, l3, l4, l5,l6,l7 = self.nb_inputs, c*16*2, c*32*2, c*42*2, c*32*2, c*16*2, self.nb_outputs
         
         # Graph convolutional operations
-        self.conv_add = EdgeConv(
+        features_subset = slice(0,3)
+        nb_neighbors = 8
+
+        self.conv_add1 = DynEdgeConv(
             torch.nn.Sequential(
                 torch.nn.Linear(l1*2, l2),
                 torch.nn.LeakyReLU(),
                 torch.nn.Linear(l2, l3),
                 torch.nn.LeakyReLU(),
-            ), aggr='add'
+            ), 
+            aggr='add',
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
         )
 
-        self.conv_add2 = EdgeConv(
+        self.conv_add2 = DynEdgeConv(
             torch.nn.Sequential(
                 torch.nn.Linear(l3*2, l4),
                 torch.nn.LeakyReLU(),
                 torch.nn.Linear(l4, l3),
                 torch.nn.LeakyReLU(),
-            ), aggr='add'
+            ), 
+            aggr='add',
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
         )
 
-        self.conv_add3 = EdgeConv(
+        self.conv_add3 = DynEdgeConv(
             torch.nn.Sequential(
                 torch.nn.Linear(l3*2,l4),
                 torch.nn.LeakyReLU(),
                 torch.nn.Linear(l4, l3),
                 torch.nn.LeakyReLU(),
-            ), aggr='add'
+            ), 
+            aggr='add',
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
         )
 
-        self.conv_add4 = EdgeConv(
+        self.conv_add4 = DynEdgeConv(
             torch.nn.Sequential(
                 torch.nn.Linear(l3*2,l4),
                 torch.nn.LeakyReLU(),
                 torch.nn.Linear(l4, l3),
                 torch.nn.LeakyReLU(),
-            ), aggr='add'
+            ), 
+            aggr='add',
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
         )
 
         # Post-processing operations
@@ -92,16 +108,10 @@ class DynEdge(GNN):
         # Calculate homophily (scalar variables)
         h_x, h_y, h_z, h_t = calculate_xyzt_homophily(x, edge_index, batch)
 
-        a = self.conv_add(x, edge_index)
-        
-        #edge_index = knn_graph(x=a[:,0:3],k=k,batch=batch).to(device)
-        b = self.conv_add2(a, edge_index)
-
-        #edge_index = knn_graph(x=b[:,0:3],k=k,batch=batch).to(device)
-        c = self.conv_add3(b, edge_index)
-
-        #edge_index = knn_graph(x=c[:,0:3],k=k,batch=batch).to(device)
-        d = self.conv_add4(c, edge_index)
+        a, edge_index = self.conv_add1(x, edge_index, batch)
+        b, edge_index = self.conv_add2(a, edge_index, batch)
+        c, edge_index = self.conv_add3(b, edge_index, batch)
+        d, edge_index = self.conv_add4(c, edge_index, batch)
 
         # Skip-cat
         x = torch.cat((x, a, b, c, d), dim=1) 
