@@ -165,6 +165,7 @@ class Predictor(object):
         assert len(self.model._tasks) == 1
         predictions = []
         event_nos = []
+        energies = []
         target = []
         with torch.no_grad():
             for batch_of_graphs in tqdm(self.dataloader, unit = 'batches'):
@@ -172,7 +173,9 @@ class Predictor(object):
                 target.extend(batch_of_graphs[self.target].detach().cpu().numpy())
                 predictions.extend(self.model(batch_of_graphs)[0].detach().cpu().numpy())
                 event_nos.extend(batch_of_graphs['event_no'].detach().cpu().numpy())
+                energies.extend(batch_of_graphs['energy'].detach().cpu().numpy())
         out = pd.DataFrame(data = predictions, columns = self.output_column_names)
         out['event_no'] = event_nos
+        out['energy'] = energies
         out[self.target] = target
         return out
