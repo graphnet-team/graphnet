@@ -28,10 +28,11 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         self._conn = None  # Handle for sqlite3.connection
         
-        if selection != None:
-            self._indices = selection
-        else:
+        if selection is None:
             self._indices = self._get_all_indices()
+        else:
+            self._indices = selection
+        self.close_connection()
 
     def __len__(self):
         return len(self._indices)
@@ -44,6 +45,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         return graph
 
     def _get_all_indices(self):
+        self.establish_connection()
         indices = pd.read_sql_query(f"SELECT {self._index_column} FROM {self._truth_table}", self._conn)
         return indices.values.ravel().tolist()
 
