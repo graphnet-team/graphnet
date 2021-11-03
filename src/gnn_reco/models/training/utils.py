@@ -1,4 +1,5 @@
 import os
+import dill
 
 from sklearn.model_selection import train_test_split
 import torch
@@ -31,5 +32,5 @@ def save_results(db, tag, results, archive,model):
     path = archive + '/' + db_name + '/' + tag
     os.makedirs(path, exist_ok = True)
     results.to_csv(path + '/results.csv')
-    torch.save(model.cpu(), path + '/' + tag + '.pkl')
+    torch.save(model.cpu(), path + '/' + tag + '.pkl', pickle_module=dill)
     print('Results saved at: \n %s'%path)
