@@ -1,5 +1,9 @@
 from abc import abstractmethod
-from typing import Union, final
+from typing import Union
+try:
+    from typing import final
+except ImportError:  # Python version < 3.8
+    final = lambda f: f  # Identity decorator
 
 from torch import Tensor
 from torch.nn import Module, Linear
