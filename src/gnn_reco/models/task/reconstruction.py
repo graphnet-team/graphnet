@@ -42,7 +42,7 @@ class LegacyAngularReconstruction(Task):
     def _forward(self, x):
         if self.inference:
             pred = torch.atan2(x[:,0], x[:,1]).unsqueeze(1)
-            sigma = torch.sqrt(torch.abs(1 / x[:,2])).unsqueeze(1)
+            sigma = torch.abs(1 / x[:,2]).unsqueeze(1)
             return torch.cat((pred,sigma), dim=1)
         
         x[:,0] = torch.tanh(x[:,0])
