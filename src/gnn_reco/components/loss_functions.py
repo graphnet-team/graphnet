@@ -1,3 +1,8 @@
+"""Collection of loss functions.
+
+All loss functions inherit from `LossFunction` which (...)
+"""
+
 from abc import abstractmethod
 from typing import Callable, Optional
 try:
@@ -6,47 +11,76 @@ except ImportError:  # Python version < 3.8
     final = lambda f: f  # Identity decorator
 
 import numpy as np
+import scipy.special
 import torch
-from torch.nn.modules.loss import _WeightedLoss
 from torch import Tensor
+from torch.nn.modules.loss import _WeightedLoss
 
 class LossFunction(_WeightedLoss):
     """Base class for loss functions in gnn_reco.
     """
-    def __init__(self, transform_output: Optional[Callable] = None, weight: Optional[Tensor] = None, size_average=None, reduce=None, reduction: str = 'mean'):
-        super().__init__(weight, size_average, reduce, reduction)
+    def __init__(
+        self,
+        transform_output: Optional[Callable] = None,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
         self._transform_output = transform_output if transform_output else lambda x: x
-    
+
     @final
-    def forward(self, prediction: Tensor, target: Tensor, return_elements: bool = False) -> Tensor:
+    def forward(
+        self,
+        prediction: Tensor,
+        target: Tensor,
+        return_elements: bool = False,
+    ) -> Tensor:
+        """Forward pass for all loss functions.
+
+        Args:
+            prediction (Tensor): Tensor containing predictions. Shape [N,P]
+            target (Tensor): Tensor containing targets. Shape [N,T]
+            return_elements (bool, optional): Whether elementwise loss terms
+                should be returned. The alternative is to return the averaged
+                loss across examples. Defaults to False.
+
+        Returns:
+            Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
+                or elementwise terms with shape [N,] (if `return_elements = True`).
+        """
         prediction = self._transform_output(prediction)
         target = self._transform_output(target)
-        return self._forward(prediction, target, return_elements)
+
+        elements = self._forward(prediction, target)
+        assert elements.size(dim=0) == target.size(dim=0), \
+            "`_forward` should return elementwise loss terms."
+
+        return elements if return_elements else torch.mean(elements)
 
     @abstractmethod
-    def _forward(self, prediction: Tensor, target: Tensor, return_elements: bool = False) -> Tensor:
-        """Same syntax as `.forward` for implentation in inheriting classes."""
-        pass
-    
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Syntax similar to `.forward` for implentation in inheriting classes."""
+
 
 class LogCoshLoss(LossFunction):
+    """Log-cosh loss function. 
+    
+    Acts like x^2 for small x; and like |x| for large x.
+    """
     def _log_cosh(self, x: Tensor) -> Tensor:
         """Numerically stble version on log(cosh(x)).
-        
-        Used to avoid `inf` for even moderately large differences.        
+
+        Used to avoid `inf` for even moderately large differences.
         See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]
         """
         return x + torch.nn.functional.softplus(-2. * x) - np.log(2.0)
 
-    def _forward(self, prediction: Tensor, target: Tensor, return_elements: bool = False) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Implementation of loss calculation."""
         assert prediction.dim() == target.dim() + 1
         diff = prediction[:,0] - target
         elements = self._log_cosh(diff)
-        if return_elements:
-            return elements
-        return torch.mean(elements)
+        return elements
 
-import scipy.special
 
 class LogCMK(torch.autograd.Function):
     """MIT License
@@ -85,9 +119,9 @@ class LogCMK(torch.autograd.Function):
         ctx.m = m
         ctx.dtype = dtype
         k = k.double()
-        iv = torch.from_numpy(scipy.special.iv(m / 2.0 - 1, k.cpu().numpy())).to(
-            k.device
-        )
+        iv = torch.from_numpy(
+            scipy.special.iv(m / 2.0 - 1, k.cpu().numpy())
+        ).to(k.device)
         return (
             (m / 2.0 - 1) * torch.log(k) - torch.log(iv) - (m / 2) * np.log(2 * np.pi)
         ).type(dtype)
@@ -105,6 +139,11 @@ class LogCMK(torch.autograd.Function):
         )
 
 class VonMisesFisherLoss(LossFunction):
+    """General class for calculating von Mises-Fisher loss.
+
+    Requires implementation for specific dimension `m` in which the target and
+    prediction vectors need to be prepared.
+    """
     @classmethod
     def log_cmk_exact(cls, m, k):
         return LogCMK.apply(m, k)
@@ -117,101 +156,101 @@ class VonMisesFisherLoss(LossFunction):
         b = (v - 1)
         return -a + b * torch.log(b + a)
 
-    def _evaluate(self, prediction: Tensor, target: Tensor, return_elements: bool = False) -> Tensor:
+    def _evaluate(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the von Mises-Fisher loss for a vector in D-dimensonal space.
 
-        This loss utilises the von Mises-Fisher distribution, which is a probability
-        distribution on the (D - 1) sphere in D-dimensional space.
+        This loss utilises the von Mises-Fisher distribution, which is a
+        probability distribution on the (D - 1) sphere in D-dimensional space.
 
         Args:
-            prediction (torch.Tensor): Predicted vector, of shape [batch_size, D].
-            target (torch.Tensor): Target unit vector, of shape [batch_size, D].
-            return_elements (bool): Whether to return the loss individual for each element/example.
+            prediction (Tensor): Predicted vector, of shape [batch_size, D].
+            target (Tensor): Target unit vector, of shape [batch_size, D].
 
         Returns:
-            loss (torch.Tensor): a batch level scalar quantity describing the VonMisesFischer loss. Shape [1,]
+            loss (Tensor): Elementwise von Mises-Fisher loss terms.
         """
-        eps = torch.finfo(prediction.dtype).eps
-
         # Check(s)
         assert prediction.dim() == 2
         assert target.dim() == 2
         assert prediction.size() == target.size()
-   
+
         # Computing loss
         m = target.size()[1]
         k = torch.norm(prediction, dim=1)
         dotprod = torch.sum(prediction * target, dim=1)
         elements = -self.log_cmk_exact(m, k) - dotprod
-
-        if return_elements:
-            return elements
-        return torch.mean(elements)
+        return elements
 
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
-    def _forward(self, prediction: Tensor, target: Tensor, return_elements: bool = False) -> Tensor:
+    """von Mises-Fisher loss function vectors in the 2D plane."""
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the von Mises-Fisher loss for an angle in the 2D plane.
 
         Args:
-            prediction (torch.Tensor): Output of the model. Must have shape [batch_size, 2] where 0th column is a prediction of `angle` and 1st column is an estimate of `log(var(angle))`.
-            target (torch.Tensor): Target tensor, extracted from graph object.
-            return_elements (bool): Whether to return the loss individual for each element/example.
+            prediction (Tensor): Output of the model. Must have shape [N, 2]
+                where 0th column is a prediction of `angle` and 1st column is an
+                estimate of `kappa`.
+            target (Tensor): Target tensor, extracted from graph object.
 
         Returns:
-            loss (torch.Tensor): a batch level scalar quantity describing the VonMisesFischer loss. Shape [1,]
+            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]
         """
         # Check(s)
         assert prediction.dim() == 2 and prediction.size()[1] == 2
         assert target.dim() == 1
         assert prediction.size()[0] == target.size()[0]
-        
+
         # Formatting target
         angle_true = target
         t = torch.stack([
-            torch.cos(angle_true), 
+            torch.cos(angle_true),
             torch.sin(angle_true),
         ], dim=1)
-        
+
         # Formatting prediction
         angle_pred = prediction[:,0]
         kappa = prediction[:,1]
         p = kappa.unsqueeze(1) * torch.stack([
-            torch.cos(angle_pred),  
+            torch.cos(angle_pred),
             torch.sin(angle_pred),
         ], dim=1)
 
-        return self._evaluate(p, t, return_elements=return_elements)
+        return self._evaluate(p, t)
 
 
 class LegacyVonMisesFisherLoss(LossFunction):
-    def _forward(self, prediction: Tensor, target: Tensor, return_elements: bool = False) -> Tensor:
-        """Repesents a single angle (graph[target]) as a 3D vector (sine(angle), cosine(angle), 1) and calculates 
-        the 3D VonMisesFisher loss of the angular difference between the 3D vector representations.
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Original function for computing von Mises-Fisher loss.
+
+        Repesents a single angle (graph[target]) as a 3D vector (sine(angle),
+        cosine(angle), 1) and calculates the 3D VonMisesFisher loss of the
+        angular difference between the 3D vector representations.
 
         Args:
-            prediction (torch.tensor): Output of the model. Must have shape [batch_size, 3] where 0th column is a prediction of sine(angle) and 1st column is prediction of cosine(angle) and 2nd column is an estimate of Kappa.
-            graph (Data-Object): Data-object with target stored in graph[target]
-            target (str): name of the target. E.g. 'zenith' or 'azimuth'
+            prediction (Tensor): Output of the model. Must have shape [N, 3]
+                where 0th column is a prediction of sine(angle) and 1st column
+                is prediction of cosine(angle) and 2nd column is an estimate of
+                kappa.
+            target (Tensor): Target tensor, extracted from graph object.
 
         Returns:
-            loss (torch.tensor): a batch level scalar quantity describing the VonMisesFischer loss. Shape [1,]
+            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]
         """
         k = torch.abs(prediction[:,2])
-        angle  = target  # graph[target].squeeze(1)
+        angle  = target  # Original: graph[target].squeeze(1)
         u_1 = (1/torch.sqrt(torch.tensor(2,dtype = torch.float)))*torch.sin(angle)
         u_2 = (1/torch.sqrt(torch.tensor(2,dtype = torch.float)))*torch.cos(angle)
         u_3 = (1/torch.sqrt(torch.tensor(2,dtype = torch.float)))*(1)
-        
+
         norm_x  = torch.sqrt(1 + prediction[:,0]**2 + prediction[:,1]**2)
-        
+
         x_1 = (1/norm_x)*prediction[:,0]
         x_2 = (1/norm_x)*prediction[:,1]
         x_3 = (1/norm_x)*(1)
-        
+
         dotprod = u_1*x_1 + u_2*x_2 + u_3*x_3
-        logc_3 = - torch.log(k) + k + torch.log(1 - torch.exp(-2*k))    
+        logc_3 = - torch.log(k) + k + torch.log(1 - torch.exp(-2*k))
         elements = -k*dotprod + logc_3
+
+        return elements
         
-        if return_elements:
-            return elements
-        return torch.mean(elements)
