@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Union
+from typing import Union, final
 
 from torch import Tensor
 from torch.nn import Module, Linear
@@ -25,6 +25,16 @@ class Task(Module):
         # Mapping from last hidden layer to required size of input
         self._affine = Linear(hidden_size, self.nb_inputs)
 
+    @final
+    def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
+        x = self._affine(x)
+        return self._forward(x)
+
+    @abstractmethod
+    def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
+        """Same syntax as `.forward` for implentation in inheriting classes."""
+
+    @final
     def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
         target = data[self._target_label]
         loss = self._loss_function(pred, target)
