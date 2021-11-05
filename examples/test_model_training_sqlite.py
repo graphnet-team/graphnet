@@ -2,21 +2,20 @@ from timer import timer
 import logging
 
 import torch
-#from gnn_reco.data.sqlite_dataset import SQLiteDataset
 
-from gnn_reco.models.detector.icecube86 import IceCube86
-from gnn_reco.models.graph_builders import KNNGraphBuilder
-from gnn_reco.models import Model
-from gnn_reco.models.task.reconstruction import AngularReconstructionWithKappa, EnergyReconstruction, AngularReconstruction, LegacyAngularReconstruction
-
-from gnn_reco.components.loss_functions import LogCoshLoss, VonMisesFisher2DLoss, LegacyVonMisesFisherLoss
+from gnn_reco.components.loss_functions import  VonMisesFisher2DLoss
 from gnn_reco.components.utils import fit_scaler
-from gnn_reco.models.training.trainers import Trainer, Predictor
-from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
-from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
 from gnn_reco.data.constants import FEATURES, TRUTH
 from gnn_reco.data.utils import get_even_neutrino_indicies
+from gnn_reco.legacy import LegacyVonMisesFisherLoss, LegacyAngularReconstruction
+from gnn_reco.models import Model
+from gnn_reco.models.detector.icecube86 import IceCube86
 from gnn_reco.models.gnn import DynEdge, ConvNet
+from gnn_reco.models.graph_builders import KNNGraphBuilder
+from gnn_reco.models.task.reconstruction import AngularReconstructionWithKappa
+from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
+from gnn_reco.models.training.trainers import Trainer, Predictor
+from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
 
 # Configurations
 timer.set_level(logging.INFO)
@@ -72,7 +71,10 @@ def main():
     task = LegacyAngularReconstruction(
         hidden_size=gnn.nb_outputs, 
         target_label=target, 
-        loss_function=LegacyVonMisesFisherLoss(),
+        loss_function=LegacyVonMisesFisherLoss(
+            target_scaler=scalers['truth'][target]
+        ),
+        target_scaler=scalers['truth'][target],
     )
     #task = AngularReconstructionWithKappa(
     #    hidden_size=gnn.nb_outputs, 
@@ -103,7 +105,6 @@ def main():
     except KeyboardInterrupt:
         print("[ctrl+c] Exiting gracefully.")
         pass
-
 
     predictor = Predictor(
         dataloader=validation_dataloader, 
