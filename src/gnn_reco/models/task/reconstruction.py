@@ -32,24 +32,6 @@ class AngularReconstructionWithUncertainty(AngularReconstruction):
         log_var = x[:,2]
         return torch.stack((angle, log_var), dim=1)
 
-class LegacyAngularReconstruction(Task):
-    # Requires three features: untransformed points in (x,y)-space, and "kappa", respectively.
-    nb_inputs = 3
-    def __init__(self, hidden_size: int, target_label: str, loss_function: LossFunction):
-        super().__init__(hidden_size, target_label, loss_function)
-        self.inference = False
-
-    def _forward(self, x):
-        if self.inference:
-            pred = torch.atan2(x[:,0], x[:,1]).unsqueeze(1)
-            sigma = torch.abs(1 / x[:,2]).unsqueeze(1)
-            return torch.cat((pred,sigma), dim=1)
-        
-        x[:,0] = torch.tanh(x[:,0])
-        x[:,1] = torch.tanh(x[:,1])
-        return x
-
-
 class EnergyReconstruction(Task):
     # Requires one feature: untransformed energy
     nb_inputs = 1
