@@ -17,7 +17,7 @@ from gnn_reco.models.gnn import GNN
 from gnn_reco.models.utils import calculate_xyzt_homophily
 
 class DynEdge(GNN):                                                     
-    def __init__(self, nb_inputs, nb_outputs, layer_size_scale=4):                                                                                   
+    def __init__(self, nb_inputs, layer_size_scale=4):                                                                                   
         """DynEdge model.
 
         Args:
@@ -26,13 +26,14 @@ class DynEdge(GNN):
             layer_size_scale (int, optional): Integer that scales the size of 
                 hidden layers. Defaults to 4.
         """
-        # Base class constructor
-        super().__init__(nb_inputs, nb_outputs)
-
+        
         # Architecture configuration
         c = layer_size_scale
-        l1, l2, l3, l4, l5,l6,l7 = self.nb_inputs, c*16*2, c*32*2, c*42*2, c*32*2, c*16*2, self.nb_outputs
+        l1, l2, l3, l4, l5,l6 = self.nb_inputs, c*16*2, c*32*2, c*42*2, c*32*2, c*16*2
         
+        # Base class constructor
+        super().__init__(nb_inputs, l6)
+
         # Graph convolutional operations
         features_subset = slice(0,3)
         nb_neighbors = 8
@@ -89,7 +90,6 @@ class DynEdge(GNN):
         self.nn1 = torch.nn.Linear(l3*4 + l1,l4)                                               
         self.nn2 = torch.nn.Linear(l4,l5)
         self.nn3 = torch.nn.Linear(4*l5 + 5,l6)
-        self.nn4 = torch.nn.Linear(l6,l7)
         self.lrelu = torch.nn.LeakyReLU()
                                                                                    
     def forward(self, data: Data) -> Tensor:
@@ -145,6 +145,5 @@ class DynEdge(GNN):
         x = self.nn3(x)
         
         x = self.lrelu(x)
-        x = self.nn4(x)
 
         return x
