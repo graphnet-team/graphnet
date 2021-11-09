@@ -8,7 +8,7 @@ def log_cosh(prediction, graph, target):
 
 def custom_crossentropy_loss(prediction, graph, target):
     f = CrossEntropyLoss()
-    return f(prediction,graph[target].squeeze(1).long())
+    return f(prediction,graph[target].long())
 
 
 def vonmises_sinecosine_loss(prediction, graph, target):
