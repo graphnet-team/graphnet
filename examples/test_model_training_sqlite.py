@@ -113,7 +113,7 @@ def main():
     )
     trained_model._tasks[0].inference = True
     results = predictor(trained_model)
-    save_results(db, 'dynedge_energy', results,archive, trained_model)
+    save_results(db, 'dynedge_zenith', results,archive, trained_model)
 
 # Main function call
 if __name__ == "__main__":

@@ -35,7 +35,7 @@ def main():
     batch_size = 1024
     num_workers = 15
     device = 'cuda:1'
-    target = 'energy'
+    target = 'zenith'
     n_epochs = 30
     patience = 5
     archive = '/groups/icecube/asogaard/gnn/results/legacy/original'
@@ -47,10 +47,10 @@ def main():
     training_dataloader, validation_dataloader = make_train_validation_dataloader(db, selection, pulsemap, batch_size, features, truth, num_workers)
 
     #model = ConvNet(n_features = 7, n_labels = 1, knn_cols = [0,1,2,3], scalers = scalers,target = target, device = device).to(device)
-    model = Dynedge(k = 8, device = device, n_outputs= 1, scalers = scalers, target = target).to(device)
+    model = Dynedge(k = 8, device = device, n_outputs= 3, scalers = scalers, target = target).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5,eps = 1e-3)
     scheduler = PiecewiseLinearScheduler(training_dataloader, start_lr = 1e-5, max_lr= 1e-3, end_lr = 1e-5, max_epochs= n_epochs)
-    loss_func = log_cosh
+    loss_func = vonmises_sinecosine_loss
 
     trainer = Trainer(training_dataloader = training_dataloader, validation_dataloader= validation_dataloader, 
                     optimizer = optimizer, n_epochs = n_epochs, loss_func = loss_func, target = target, 
@@ -58,9 +58,9 @@ def main():
 
     trained_model = trainer(model)
 
-    predictor = Predictor(dataloader = validation_dataloader, target = target, device = device, output_column_names= [target + '_pred'])
+    predictor = Predictor(dataloader = validation_dataloader, target = target, device = device, output_column_names= [target + '_pred', target + '_var'])
     results = predictor(trained_model)
-    save_results(db, 'dynedge_energy_legacy_original', results, archive, trained_model)
+    save_results(db, 'dynedge_zenith_legacy_original', results, archive, trained_model)
 
 # Main function call
 if __name__ == "__main__":
