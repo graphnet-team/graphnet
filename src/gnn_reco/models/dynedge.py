@@ -1,4 +1,6 @@
 from math import atan2
+from tarfile import PAX_FIELDS
+from matplotlib.pyplot import xcorr
 import torch
 import numpy as np
 from torch_scatter import scatter_mean
@@ -9,6 +11,7 @@ from torch_cluster import knn_graph
 from torch_geometric.nn import EdgeConv
 from torch_geometric.nn.norm import LayerNorm
 from gnn_reco.models.utils import calculate_xyzt_homophily
+from scipy.special import expit
 
 class Dynedge(torch.nn.Module):                                                     
     def __init__(self,k, device, n_outputs, scalers,target):                                                                                   
@@ -56,7 +59,7 @@ class Dynedge(torch.nn.Module):
         if self.predict == False:
             if self.target == 'energy':
                 data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(np.log10(data[self.target].cpu().numpy()).reshape(-1,1))).to(device)
-            else:
+            elif self.target != 'neutrino':
                 data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(data[self.target].cpu().numpy().reshape(-1,1))).to(device)
         edge_index = knn_graph(x=x[:,0:3],k=k,batch=batch).to(device)
 
@@ -104,7 +107,10 @@ class Dynedge(torch.nn.Module):
                 pred = torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
                 sigma = abs(1/x[:,2]).cpu()
                 return torch.cat((pred,sigma.reshape(-1,1)),dim = 1)
-            else:
+            elif self.target != 'neutrino':
                 pred = x.cpu().numpy().reshape(-1,1)
                 pred = 10**torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
                 return pred
+            else:
+                pred = x.cpu().numpy()
+                return torch.tensor(expit(pred[:,1])/(expit(pred[:,0]) + expit(pred[:,1]))) 
