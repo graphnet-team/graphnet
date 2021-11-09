@@ -8,7 +8,7 @@ import time
 class SQLiteDataset(torch.utils.data.Dataset):
     """Pytorch dataset for reading from SQLite.
     """
-    def __init__(self, database, pulsemap_table, features, truth, index_column='event_no', truth_table='truth', selection = None):
+    def __init__(self, database, pulsemap_table, features, truth, index_column='event_no', truth_table='truth', selection=None, dtype=torch.float32):
     
         # Check(s)
         if isinstance(database, list):
@@ -34,19 +34,24 @@ class SQLiteDataset(torch.utils.data.Dataset):
         
         self._database = database
         self._pulsemap_table = pulsemap_table
-        self._features = features
-        self._truth = truth
+        self._features = [index_column] + features
+        self._truth = [index_column] + truth
         self._index_column = index_column
         self._truth_table = truth_table
+        self._dtype = dtype
 
         self._features_string = ', '.join(self._features)
         self._truth_string = ', '.join(self._truth)
         if (self._database_list != None):
             self._current_database = None
         self._conn = None  # Handle for sqlite3.connection
-        self.establish_connection(0)
-        
-        
+
+        if selection is None:
+            self._indices = self._get_all_indices()
+        else:
+            self._indices = selection
+        self.close_connection()
+
 
     def __len__(self):
         return len(self._indices)
@@ -58,6 +63,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         return graph
 
     def _get_all_indices(self):
+        self.establish_connection(0)
         indices = pd.read_sql_query(f"SELECT {self._index_column} FROM {self._truth_table}", self._conn)
         return indices.values.ravel().tolist()
 
@@ -137,19 +143,28 @@ class SQLiteDataset(torch.utils.data.Dataset):
             'corsika': abs_pid > 20,
         }
 
-        x = torch.from_numpy(np.asarray(features)[:,1:].astype(np.float64)) 
-        n_pulses = torch.tensor(len(x), dtype = torch.int32)
+        x = torch.tensor(np.asarray(features)[:,1:], dtype=self._dtype) 
+        n_pulses = torch.tensor(len(x), dtype=torch.int32)
         graph = Data(
             x=x,
             edge_index= None
         )
         graph.n_pulses = n_pulses
 
-        for label in labels_dict.keys():
-            graph[label] = labels_dict[label]    
+        for key, value in labels_dict.items():
+            try:
+                graph[key] = torch.tensor(value)
+            except TypeError:
+                # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
+                pass
 
-        for truth_key in ['energy', 'position_x', 'position_y', 'position_z', 'azimuth', 'zenith']:
-            graph[truth_key] = torch.tensor(truth_dict[truth_key], dtype = torch.float64)
+        for key, value in truth_dict.items():
+            try:
+                graph[key] = torch.tensor(value)
+            except TypeError:
+                # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
+                pass
+
 
         return graph
         
