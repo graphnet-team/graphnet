@@ -1,0 +1,29 @@
+gnn\_reco.models.detector package
+=================================
+
+Submodules
+----------
+
+gnn\_reco.models.detector.detector module
+-----------------------------------------
+
+.. automodule:: gnn_reco.models.detector.detector
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.models.detector.icecube86 module
+------------------------------------------
+
+.. automodule:: gnn_reco.models.detector.icecube86
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gnn_reco.models.detector
+   :members:
+   :undoc-members:
+   :show-inheritance:

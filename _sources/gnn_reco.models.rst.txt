@@ -1,0 +1,48 @@
+gnn\_reco.models package
+========================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gnn_reco.models.detector
+   gnn_reco.models.gnn
+   gnn_reco.models.task
+   gnn_reco.models.training
+
+Submodules
+----------
+
+gnn\_reco.models.graph\_builders module
+---------------------------------------
+
+.. automodule:: gnn_reco.models.graph_builders
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.models.model module
+-----------------------------
+
+.. automodule:: gnn_reco.models.model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.models.utils module
+-----------------------------
+
+.. automodule:: gnn_reco.models.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gnn_reco.models
+   :members:
+   :undoc-members:
+   :show-inheritance:

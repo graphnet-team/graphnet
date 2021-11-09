@@ -1,0 +1,29 @@
+gnn\_reco.legacy package
+========================
+
+Submodules
+----------
+
+gnn\_reco.legacy.original module
+--------------------------------
+
+.. automodule:: gnn_reco.legacy.original
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.legacy.reimplemented module
+-------------------------------------
+
+.. automodule:: gnn_reco.legacy.reimplemented
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gnn_reco.legacy
+   :members:
+   :undoc-members:
+   :show-inheritance:

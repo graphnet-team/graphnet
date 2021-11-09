@@ -7,7 +7,21 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   gnn_reco.components
    gnn_reco.data
+   gnn_reco.legacy
+   gnn_reco.models
+
+Submodules
+----------
+
+gnn\_reco.utils module
+----------------------
+
+.. automodule:: gnn_reco.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------

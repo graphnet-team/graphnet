@@ -1,0 +1,37 @@
+gnn\_reco.models.training package
+=================================
+
+Submodules
+----------
+
+gnn\_reco.models.training.callbacks module
+------------------------------------------
+
+.. automodule:: gnn_reco.models.training.callbacks
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.models.training.trainers module
+-----------------------------------------
+
+.. automodule:: gnn_reco.models.training.trainers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.models.training.utils module
+--------------------------------------
+
+.. automodule:: gnn_reco.models.training.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gnn_reco.models.training
+   :members:
+   :undoc-members:
+   :show-inheritance:

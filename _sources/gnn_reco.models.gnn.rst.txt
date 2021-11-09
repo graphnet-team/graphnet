@@ -1,0 +1,37 @@
+gnn\_reco.models.gnn package
+============================
+
+Submodules
+----------
+
+gnn\_reco.models.gnn.convnet module
+-----------------------------------
+
+.. automodule:: gnn_reco.models.gnn.convnet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.models.gnn.dynedge module
+-----------------------------------
+
+.. automodule:: gnn_reco.models.gnn.dynedge
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.models.gnn.gnn module
+-------------------------------
+
+.. automodule:: gnn_reco.models.gnn.gnn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gnn_reco.models.gnn
+   :members:
+   :undoc-members:
+   :show-inheritance:
