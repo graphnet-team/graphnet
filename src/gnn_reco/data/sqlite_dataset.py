@@ -3,6 +3,7 @@ import numpy as np
 import sqlite3
 import torch
 from torch_geometric.data import Data
+import time
 
 class SQLiteDataset(torch.utils.data.Dataset):
     """Pytorch dataset for reading from SQLite.
@@ -10,8 +11,24 @@ class SQLiteDataset(torch.utils.data.Dataset):
     def __init__(self, database, pulsemap_table, features, truth, index_column='event_no', truth_table='truth', selection = None):
     
         # Check(s)
-        assert isinstance(database, str)
-        assert database.endswith('.db')
+        if isinstance(database, list):
+            self._database_list = database
+            self._all_connections_established = False
+            self._all_connections = []
+        else:
+            self._database_list = None
+            assert isinstance(database, str)
+            assert database.endswith('.db')
+        
+        if isinstance(selection[0], list):
+            self._indices = selection
+        else:
+            self._selection_list = None
+            if selection != None:
+                self._indices = selection
+            else:
+                self._indices = self._get_all_indices()
+
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
         
@@ -24,21 +41,18 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         self._features_string = ', '.join(self._features)
         self._truth_string = ', '.join(self._truth)
-
+        if (self._database_list != None):
+            self._current_database = None
         self._conn = None  # Handle for sqlite3.connection
-        self.establish_connection()
+        self.establish_connection(0)
         
-        if selection != None:
-            self._indices = selection
-        else:
-            self._indices = self._get_all_indices()
+        
 
     def __len__(self):
         return len(self._indices)
 
     def __getitem__(self, i):
-        self.establish_connection()
-
+        self.establish_connection(i)
         features, truth = self._query_database(i)
         graph = self._create_graph(features, truth)
         return graph
@@ -58,7 +72,11 @@ class SQLiteDataset(torch.utils.data.Dataset):
             list: List of tuples, containing event features.
             list: List of tuples, containing truth information.
         """
-        index = self._indices[i]
+        if self._database_list == None:
+            index = self._indices[i]
+        else:
+            index = self._indices[i][0]
+
         
         features = self._conn.execute(
             "SELECT {} FROM {} WHERE {} = {}".format(
@@ -135,10 +153,23 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         return graph
         
-    def establish_connection(self):
+    def establish_connection(self,i):
         """Make sure that a sqlite3 connection is open."""
-        if self._conn is None:
-            self._conn = sqlite3.connect(self._database)
+        if self._database_list == None:
+            if self._conn is None:
+                self._conn = sqlite3.connect(self._database)
+        else:
+            if self._conn is None:
+                if self._all_connections_established is False:
+                    self._all_connections = []
+                    for database in self._database_list:
+                        con = sqlite3.connect(database)
+                        self._all_connections.append(con)
+                    self._all_connections_established = True
+                self._conn = self._all_connections[self._indices[i][1]]
+            if self._indices[i][1] != self._current_database:
+                self._conn = self._all_connections[self._indices[i][1]]
+                self._current_database = self._indices[i][1]
         return self
 
     def close_connection(self):
@@ -154,4 +185,11 @@ class SQLiteDataset(torch.utils.data.Dataset):
             self._conn.close()
             del self._conn
             self._conn = None
+        if self._database_list != None:
+            if self._all_connections_established == True:
+                for con in self._all_connections:
+                    con.close()
+                del self._all_connections
+                self._all_connections_established = False
+                self._conn = None
         return self
