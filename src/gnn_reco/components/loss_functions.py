@@ -35,7 +35,6 @@ class LossFunction(_WeightedLoss):
         return_elements: bool = False,
     ) -> Tensor:
         """Forward pass for all loss functions.
-
         Args:
             prediction (Tensor): Tensor containing predictions. Shape [N,P]
             target (Tensor): Tensor containing targets. Shape [N,T]
