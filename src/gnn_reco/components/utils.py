@@ -215,6 +215,7 @@ class Trainer(object):
         return model
             
     def _validate(self,model):
+        print('validating')
         acc_loss = torch.tensor([0],dtype = float).to(self.device)
         model.eval()
         for batch_of_graphs in self.validation_dataloader:
@@ -261,9 +262,15 @@ class Predictor(object):
         return out
      
 
-def make_train_validation_dataloader(db, selection, pulsemap, batch_size, FEATURES, TRUTH, num_workers, persistent_workers = True):
-    training_selection, validation_selection = train_test_split(selection, test_size=0.33, random_state=42)
-
+def make_train_validation_dataloader(db, selection, pulsemap, batch_size, FEATURES, TRUTH, num_workers, database_indices = None, persistent_workers = True):
+    if isinstance(db, list):
+        df_for_shuffle = pd.DataFrame({'event_no':selection, 'db':database_indices})
+        shuffled_df = df_for_shuffle.sample(frac = 1)
+        training_df, validation_df = train_test_split(shuffled_df, test_size=0.33, random_state=42)
+        training_selection = training_df.values.tolist()
+        validation_selection = validation_df.values.tolist()
+    else:
+        training_selection, validation_selection = train_test_split(selection, test_size=0.33, random_state=42)
     training_dataset = SQLiteDataset(db, pulsemap, FEATURES, TRUTH, selection= training_selection)
     training_dataset.close_connection()
     training_dataloader = torch.utils.data.DataLoader(training_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, 
@@ -273,8 +280,14 @@ def make_train_validation_dataloader(db, selection, pulsemap, batch_size, FEATUR
     validation_dataset.close_connection()
     validation_dataloader = torch.utils.data.DataLoader(validation_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, 
                                             collate_fn=Batch.from_data_list,persistent_workers=persistent_workers,prefetch_factor=2)
-    return training_dataloader, validation_dataloader
+    return training_dataloader, validation_dataloader, {'valid_selection':validation_selection, 'training_selection':training_selection}
 
+def make_dataloader(db, selection, pulsemap, batch_size, FEATURES, TRUTH, num_workers, database_indices = None, persistent_workers = True):
+    dataset = SQLiteDataset(db, pulsemap, FEATURES, TRUTH, selection= selection)
+    dataset.close_connection()
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, 
+                                            collate_fn=Batch.from_data_list,persistent_workers=persistent_workers,prefetch_factor=2)
+    return dataloader
 def save_results(db, tag, results, archive,model):
     db_name = db.split('/')[-1].split('.')[0]
     path = archive + '/' + db_name + '/' + tag
