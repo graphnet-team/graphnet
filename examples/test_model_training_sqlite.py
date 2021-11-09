@@ -7,7 +7,7 @@ from gnn_reco.components.loss_functions import  VonMisesFisher2DLoss
 from gnn_reco.components.utils import fit_scaler
 from gnn_reco.data.constants import FEATURES, TRUTH
 from gnn_reco.data.utils import get_even_neutrino_indicies
-from gnn_reco.legacy import LegacyVonMisesFisherLoss, LegacyAngularReconstruction
+from gnn_reco.legacy.reimplemented import LegacyVonMisesFisherLoss, LegacyAngularReconstruction
 from gnn_reco.models import Model
 from gnn_reco.models.detector.icecube86 import IceCube86
 from gnn_reco.models.gnn import DynEdge, ConvNet
@@ -66,7 +66,6 @@ def main():
     )
     gnn = DynEdge(
         nb_inputs=detector.nb_outputs,
-        nb_outputs=16,
     )
     task = LegacyAngularReconstruction(
         hidden_size=gnn.nb_outputs, 
