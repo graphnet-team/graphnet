@@ -24,16 +24,42 @@ def get_even_neutrino_indicies(db):
                 is_first = False
             else:
                 if len(pid_indicies[pid]) < smallest_sample_size:
-                    smallest_sample_size = len(pid_indicies)
+                    smallest_sample_size = len(pid_indicies[pid])
         
         is_first = True
+        print('smallest: %s \n db: %s'%(smallest_sample_size, db))
         for pid in pids:
             if is_first:
                 indices = pid_indicies[pid].sample(smallest_sample_size)
                 is_first = False
             else:
                 indices = indices.append(pid_indicies[pid].sample(smallest_sample_size).reset_index(drop = True), ignore_index = True)
-        return indices.sample(frac = 1).values.ravel().tolist()
+        even_indices = indices.sample(frac = 1).values.ravel().tolist()
+        with sqlite3.connect(db) as con:
+            query = 'select event_no from truth where abs(pid) != 13 and event_no not in %s'%(str(tuple(pd.DataFrame({'event_no': even_indices})['event_no'])))
+            test = pd.read_sql(query,con).values.ravel().tolist()
+        return even_indices, test
+
+def get_even_signal_background_indicies(db):
+    with sqlite3.connect(db) as con:
+        query = 'select event_no from truth where abs(pid) = 13'
+        muons = pd.read_sql(query,con)
+    neutrinos, test = get_even_neutrino_indicies(db)
+    neutrinos =  pd.DataFrame(neutrinos)
+
+    if len(neutrinos) > len(muons):
+        neutrinos = neutrinos.sample(len(muons))
+    else:
+        muons = muons.sample(len(neutrinos))
+
+    indicies = []
+    indicies.extend(muons.values.ravel().tolist())
+    indicies.extend(neutrinos.values.ravel().tolist())
+    df_for_shuffle = pd.DataFrame(indicies).sample(frac = 1)
+    return df_for_shuffle.values.ravel().tolist()  
+    
+
+
 
 def create_out_directory(outdir: str):
     try:

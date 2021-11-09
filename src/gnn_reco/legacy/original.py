@@ -2,6 +2,7 @@ import logging
 
 import numpy as np
 import pandas as pd
+from scipy.special import expit
 import torch
 from torch.nn import BatchNorm1d
 from torch.nn import CrossEntropyLoss
@@ -186,7 +187,7 @@ class ConvNet(torch.nn.Module):
         if self.predict == False:
             if self.target == 'energy':
                 data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(np.log10(data[self.target].cpu().numpy()).reshape(-1,1))).to(device)
-            else:
+            elif self.target != 'neutrino':
                 data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(data[self.target].cpu().numpy().reshape(-1,1))).to(device)
 
         edge_index = knn_graph(x[:, self._knn_cols], 15, batch)
@@ -240,10 +241,14 @@ class ConvNet(torch.nn.Module):
                 pred = torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
                 sigma = abs(1/x[:,2]).cpu()
                 return torch.cat((pred,sigma.reshape(-1,1)),dim = 1)
-            else:
+            elif self.target != 'neutrino':
                 pred = x.cpu().numpy().reshape(-1,1)
                 pred = 10**torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
                 return pred
+            else:
+                pred = x.cpu().numpy()
+                return torch.tensor(expit(pred[:,1])/(expit(pred[:,0]) + expit(pred[:,1])))  
+
 
 
 def log_cosh(prediction, graph, target):
@@ -252,7 +257,7 @@ def log_cosh(prediction, graph, target):
 
 def custom_crossentropy_loss(prediction, graph, target):
     f = CrossEntropyLoss()
-    return f(prediction,graph[target].squeeze(1).long())
+    return f(prediction, graph[target].long())
 
 
 def vonmises_sinecosine_loss(prediction, graph, target):
