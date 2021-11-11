@@ -3,48 +3,68 @@
 
 from glob import glob
 import os
+import numpy as np
 import pandas as pd
 from pathlib import Path
 import re
-from typing import List
+from typing import List, Tuple
 import sqlite3
 
-def get_even_neutrino_indicies(db):
-        pids = ['12', '14', '16']
-        pid_indicies = {}
-        indices = []
+def get_equal_proportion_neutrino_indices(db: str, seed: int = 21) -> Tuple[List[int]]:
+    """Utility method to get indices for neutrino events in equal flavour proportions.
 
+    Args:
+        db (str): Path to database.
+        seed (int, optional): Random number generator seed. Defaults to 21.
+
+    Returns:
+        tuple: Training and test indices, resp.
+    """
+    # Common variables
+    pids = ['12', '14', '16']
+    pid_indicies = {}
+    indices = []
+    rng = np.random.RandomState(seed=seed)
+
+    # Get a list of all event numbers for each PID
+    with sqlite3.connect(db) as conn:
         for pid in pids:
-            with sqlite3.connect(db) as con:
-                pid_indicies[pid] = pd.read_sql_query(f"SELECT event_no FROM truth where abs(pid) = {pid}", con)
-        is_first = True
-        for pid in pids:
-            if is_first:
-                smallest_sample_size = len(pid_indicies[pid])
-                is_first = False
-            else:
-                if len(pid_indicies[pid]) < smallest_sample_size:
-                    smallest_sample_size = len(pid_indicies[pid])
+            pid_indicies[pid] = pd.read_sql_query(f"SELECT event_no FROM truth where abs(pid) = {pid}", conn)
+
+    # Subsample events for each PID to the smallest sample size
+    samples_sizes = list(map(len, pid_indicies.values()))
+    smallest_sample_size = min(samples_sizes)
+    indices = [
+        (
+            pid_indicies[pid]
+            .sample(smallest_sample_size, replace=False, random_state=rng)
+            .reset_index(drop=True)
+        ) for pid in pids
+    ]
+    indices_equal_proprtions = pd.concat(indices, ignore_index=True)
+    
+    # Shuffle and convert to list
+    indices_equal_proprtions = (
+        indices_equal_proprtions
+        .sample(frac=1, replace=False, random_state=rng)
+        .values
+        .ravel()
+        .tolist()
+    )
+    
+    # Get test indices (?)
+    with sqlite3.connect(db) as con:
+        train_event_nos = '(' + ', '.join(map(str, indices_equal_proprtions)) + ')'
+        query = f'select event_no from truth where abs(pid) != 13 and event_no not in {train_event_nos}'
+        test = pd.read_sql(query, con).values.ravel().tolist()
         
-        is_first = True
-        print('smallest: %s \n db: %s'%(smallest_sample_size, db))
-        for pid in pids:
-            if is_first:
-                indices = pid_indicies[pid].sample(smallest_sample_size)
-                is_first = False
-            else:
-                indices = indices.append(pid_indicies[pid].sample(smallest_sample_size).reset_index(drop = True), ignore_index = True)
-        even_indices = indices.sample(frac = 1).values.ravel().tolist()
-        with sqlite3.connect(db) as con:
-            query = 'select event_no from truth where abs(pid) != 13 and event_no not in %s'%(str(tuple(pd.DataFrame({'event_no': even_indices})['event_no'])))
-            test = pd.read_sql(query,con).values.ravel().tolist()
-        return even_indices, test
+    return indices_equal_proprtions, test
 
 def get_even_signal_background_indicies(db):
     with sqlite3.connect(db) as con:
         query = 'select event_no from truth where abs(pid) = 13'
         muons = pd.read_sql(query,con)
-    neutrinos, test = get_even_neutrino_indicies(db)
+    neutrinos, _ = get_equal_proportion_neutrino_indices(db)
     neutrinos =  pd.DataFrame(neutrinos)
 
     if len(neutrinos) > len(muons):
