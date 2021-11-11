@@ -1,21 +1,18 @@
-
-import torch
-from tqdm import tqdm
-import pandas as pd
-import numpy as np
-from copy import deepcopy
-import torch
-from gnn_reco.data.sqlite_dataset import SQLiteDataset
-from sklearn.model_selection import train_test_split
-from torch_geometric.data.batch import Batch
 import os
-from sklearn.preprocessing import RobustScaler
-import sqlite3
+import torch
 import pandas as pd
+import sqlite3
+from copy import deepcopy
 import pickle
 import numpy as np
-import os
+from tqdm import tqdm
 
+from torch_geometric.data.batch import Batch
+from sklearn.model_selection import train_test_split
+
+from gnn_reco.data.sqlite_dataset import SQLiteDataset
+
+# @TODO >>> RESOLVE DUPLICATION WRT. src/gnn_reco/models/training/{callbacks,trainers,utils}.py
 class EarlyStopping(object):
     def __init__(self, mode='min', min_delta=0, patience=10, percentage=False):
         self.mode = mode
@@ -296,6 +293,7 @@ def save_results(db, tag, results, archive,model):
     torch.save(model.cpu(), path + '/' + tag + '.pkl')
     print('Results saved at: \n %s'%path)
     return
+# @TODO <<< RESOLVE DUPLICATION WRT. src/gnn_reco/models/training/{callbacks,trainers,utils}.py
 
 def check_db_size(db):
     max_size = 5000000
@@ -306,11 +304,11 @@ def check_db_size(db):
         events = events.sample(max_size)
     return events        
 
-def fit_scaler(db, features,truth, pulsemap):
+def fit_scaler(db, features, truth, pulsemap):
     features = deepcopy(features)
     truth = deepcopy(truth)
-    features.remove('event_no')
-    truth.remove('event_no')
+    #features.remove('event_no')
+    #truth.remove('event_no')
     truth =  ', '.join(truth)
     features = ', '.join(features)
 
@@ -344,4 +342,3 @@ def fit_scaler(db, features,truth, pulsemap):
     #     with open(outdir + '/meta/transformersv2.pkl','wb') as handle:
     #         pickle.dump(comb_scalers,handle,protocol = pickle.HIGHEST_PROTOCOL)
     return comb_scalers
-

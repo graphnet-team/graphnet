@@ -29,6 +29,7 @@ INSTALL_REQUIRES = [
     'torch-cluster',
     'torch-spline-conv',
     'torch-geometric',
+    'dill',
 ]
 
 # Ensure pytorch is already installed (see e.g. https://github.com/pyg-team/pytorch_geometric/issues/861#issuecomment-566424944)
