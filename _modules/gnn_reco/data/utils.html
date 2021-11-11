@@ -66,48 +66,70 @@
 
 <span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 
-<div class="viewcode-block" id="get_even_neutrino_indicies"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.get_even_neutrino_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_neutrino_indicies</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
-        <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;14&#39;</span><span class="p">,</span> <span class="s1">&#39;16&#39;</span><span class="p">]</span>
-        <span class="n">pid_indicies</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="viewcode-block" id="get_equal_proportion_neutrino_indices"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.get_equal_proportion_neutrino_indices">[docs]</a><span class="k">def</span> <span class="nf">get_equal_proportion_neutrino_indices</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Utility method to get indices for neutrino events in equal flavour proportions.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        db (str): Path to database.</span>
+<span class="sd">        seed (int, optional): Random number generator seed. Defaults to 42.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Training and test indices, resp.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Common variables</span>
+    <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;14&#39;</span><span class="p">,</span> <span class="s1">&#39;16&#39;</span><span class="p">]</span>
+    <span class="n">pid_indicies</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># Get a list of all event numbers for each PID</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-                <span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT event_no FROM truth where abs(pid) = </span><span class="si">{pid}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
-        <span class="n">is_first</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_first</span><span class="p">:</span>
-                <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">])</span>
-                <span class="n">is_first</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">smallest_sample_size</span><span class="p">:</span>
-                    <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">])</span>
+            <span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT event_no FROM truth where abs(pid) = </span><span class="si">{pid}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+
+    <span class="c1"># Subsample events for each PID to the smallest sample size</span>
+    <span class="n">samples_sizes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">pid_indicies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_sizes</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Smallest sample size: </span><span class="si">{smallest_sample_size}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">smallest_sample_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span>
+    <span class="p">]</span>
+    <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Shuffle and convert to list</span>
+    <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">indices_equal_proprtions</span>
+        <span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">values</span>
+        <span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Get test indices (?)</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">train_event_nos</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">indices_equal_proprtions</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;select event_no from truth where abs(pid) != 13 and event_no not in </span><span class="si">{train_event_nos}</span><span class="s1">&#39;</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         
-        <span class="n">is_first</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;smallest: </span><span class="si">%s</span><span class="s1"> </span><span class="se">\n</span><span class="s1"> db: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">smallest_sample_size</span><span class="p">,</span> <span class="n">db</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_first</span><span class="p">:</span>
-                <span class="n">indices</span> <span class="o">=</span> <span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">smallest_sample_size</span><span class="p">)</span>
-                <span class="n">is_first</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">smallest_sample_size</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">even_indices</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) != 13 and event_no not in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;event_no&#39;</span><span class="p">:</span> <span class="n">even_indices</span><span class="p">})[</span><span class="s1">&#39;event_no&#39;</span><span class="p">])))</span>
-            <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">even_indices</span><span class="p">,</span> <span class="n">test</span></div>
+    <span class="k">return</span> <span class="n">indices_equal_proprtions</span><span class="p">,</span> <span class="n">test</span></div>
 
 <div class="viewcode-block" id="get_even_signal_background_indicies"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.get_even_signal_background_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_signal_background_indicies</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
         <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 13&#39;</span>
         <span class="n">muons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
-    <span class="n">neutrinos</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">get_even_neutrino_indicies</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+    <span class="n">neutrinos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_equal_proportion_neutrino_indices</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
     <span class="n">neutrinos</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">neutrinos</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutrinos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">muons</span><span class="p">):</span>
