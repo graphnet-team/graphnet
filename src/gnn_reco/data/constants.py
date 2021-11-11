@@ -11,6 +11,16 @@ class FEATURES:
         'rde', 
         'pmt_area',
     ]
+    DEEPCORE = ICECUBE86
+    UPGRADE = DEEPCORE + [
+        'string',
+        'pmt_number',
+        'dom_number',
+        'pmt_dir_x',
+        'pmt_dir_y',
+        'pmt_dir_z',
+        'dom_type',
+    ]
 
 class TRUTH:
     ICECUBE86 = [
@@ -25,3 +35,5 @@ class TRUTH:
         'sim_type', 
         'interaction_type',
     ]
+    DEEPCORE = ICECUBE86
+    UPGRADE = DEEPCORE

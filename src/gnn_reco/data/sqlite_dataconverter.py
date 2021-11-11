@@ -6,7 +6,9 @@ import pandas as pd
 import sqlalchemy
 import sqlite3
 from tqdm import tqdm
-from typing import List
+from typing import Dict, List, OrderedDict
+
+from gnn_reco.data.i3extractor import I3TruthExtractor
 
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
@@ -18,16 +20,26 @@ from .utils import create_out_directory, pairwise_shuffle
 
 
 class SQLiteDataConverter(DataConverter):
-    def __init__(self, outdir, pulsemap, gcd_rescue, *, db_name, workers, max_dictionary_size=10000, verbose=1):
+    def __init__(
+        self,
+        extractors,
+        outdir,
+        gcd_rescue, 
+        *, 
+        db_name, 
+        workers, 
+        max_dictionary_size=10000,
+        verbose=1,
+    ):
         """Implementation of DataConverter for saving to SQLite database.
 
         Converts the i3-files in paths to several temporary SQLite databases in 
         parallel, that are then merged to a single SQLite database
 
         Args:
+            feature_extractor_class (class): Class inheriting from I3FeatureExtractor
+                that should be used to extract experiement data.
             outdir (str): the directory to which the SQLite database is written
-            pulsemap (str): the pulsemap chosen for extraction. e.g. 
-                SRTInIcePulses.
             gcd_rescue (str): path to gcd_file that the extraction defaults to 
                 if none is found in the folders
             db_name (str): database name. please omit extensions.
@@ -41,9 +53,16 @@ class SQLiteDataConverter(DataConverter):
         self._verbose        = verbose
         self._workers        = workers
         self._max_dict_size  = max_dictionary_size 
-        
+
         # Base class constructor
-        super().__init__(outdir, pulsemap, gcd_rescue)
+        super().__init__(extractors, outdir, gcd_rescue)
+
+        assert isinstance(extractors[0], I3TruthExtractor), \
+            (f"The first extractor in {self.__class__.__name__} should always be of type "
+             "I3TruthExtractor to allow for attaching unique indices.")
+
+        self._table_names = [extractor.name for extractor in self._extractors]
+        
         
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
@@ -74,11 +93,16 @@ class SQLiteDataConverter(DataConverter):
                 self._outdir,
             ])
         
-        print(f"Starting pool of {workers} workers to process {len(i3_files)} I3 files")
-        p = Pool(processes=workers)
-        p.map_async(self._parallel_extraction, settings)
-        p.close()
-        p.join()
+        if workers > 1:
+            print(f"Starting pool of {workers} workers to process {len(i3_files)} I3 file(s)")
+            p = Pool(processes=workers)
+            p.map_async(self._parallel_extraction, settings)
+            p.close()
+            p.join()
+        else:
+            print(f"Processing {len(i3_files)} I3 file(s) in main thread (not multiprocessing)")
+            self._parallel_extraction(settings[0])
+
         print('Merging databases')
         self._merge_databases()
         
@@ -96,19 +120,20 @@ class SQLiteDataConverter(DataConverter):
     def _parallel_extraction(self, settings):
         """The function that every worker runs. 
         
-        Extracts feature, truth and RetroReco (if available) and saves it as temporary sqlite databases.
+        Performs all requested extractions and saves the results as temporary SQLite databases.
 
         Args:
             settings (list): List of arguments.
         """
-        input_files,id, gcd_files, event_no_list, max_dict_size, db_name, outdir = settings
-        event_counter = 0
-        feature_big = pd.DataFrame()
-        truth_big   = pd.DataFrame()
-        retro_big   = pd.DataFrame()
-        file_counter = 0
+        input_files, id, gcd_files, event_no_list, max_dict_size, db_name, outdir = settings
+        
+        dataframes_big = OrderedDict([
+            (key, pd.DataFrame()) for key in self._table_names
+        ])
+        
+        event_count = 0
         output_count = 0
-        gcd_count = 0
+        first_table = self._table_names[0]
         for u in range(len(input_files)):
             self._extractors.set_files(input_files[u], gcd_files[u])
             i3_file = dataio.I3File(input_files[u], "r")
@@ -117,32 +142,32 @@ class SQLiteDataConverter(DataConverter):
                 try:
                     frame = i3_file.pop_physics()
                 except:
-                    frame = False
-                if frame:
-                    truths, features, retros = self._extractors(frame)
-                    truth    = apply_event_no(truths, event_no_list, event_counter)
-                    truth_big   = truth_big.append(truth, ignore_index = True, sort = True)
-                    if len(retros)>0:
-                        retro   = apply_event_no(retros, event_no_list, event_counter)
-                        retro_big   = retro_big.append(retro, ignore_index = True, sort = True)
-                    if not is_empty(features):
-                        features = apply_event_no(features, event_no_list, event_counter)
-                        feature_big= feature_big.append(features,ignore_index = True, sort = True)
-                    event_counter += 1
-                    if len(truth_big) >= max_dict_size:
-                        save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, self._pulsemap)
+                    continue
+                    
+                # Extract data from I3Frame
+                results = self._extractors(frame)
+                data_dict = OrderedDict(zip(self._table_names, results))
 
-                        feature_big = pd.DataFrame()
-                        truth_big   = pd.DataFrame()
-                        retro_big   = pd.DataFrame()
-                        output_count +=1
-            file_counter +=1
-        if len(truth_big) > 0:
-            save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name, outdir, self._pulsemap)
-            feature_big = pd.DataFrame()
-            truth_big   = pd.DataFrame()
-            retro_big   = pd.DataFrame()
-            output_count +=1
+                # Concatenate data
+                for key, data in data_dict.items():
+                    df = apply_event_no(data, event_no_list, event_count)
+                    if len(df):
+                        dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
+                
+                event_count += 1
+                if len(dataframes_big[first_table]) >= max_dict_size:
+                    self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
+                    dataframes_big = OrderedDict([
+                    (key, pd.DataFrame()) for key in self._table_names
+                ])
+                    output_count +=1
+
+            if len(dataframes_big[first_table]) > 0:
+                self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
+                dataframes_big = OrderedDict([
+                    (key, pd.DataFrame()) for key in self._table_names
+                ])
+                output_count +=1
         
     def _save_filenames(self, i3_files: List[str]):
         """Saves I3 file names in CSV format."""
@@ -154,40 +179,32 @@ class SQLiteDataConverter(DataConverter):
         """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""
         path_tmp = self._outdir + '/' + self._db_name + '/tmp'
         database_path = self._outdir + '/' + self._db_name + '/data/' + self._db_name
-        db_files = glob(os.path.join(path_tmp, '*.db'))
-        db_files = [os.path.split(db_file)[1] for db_file in db_files]
+        db_paths = glob(os.path.join(path_tmp, '*.db'))
+        db_files = [os.path.split(db_file)[1] for db_file in db_paths]
         if len(db_files) > 0:
             print('Found %s .db-files in %s'%(len(db_files),path_tmp))
             print(db_files)
-            truth_columns, pulse_map_columns, retro_columns = self._extract_column_names(path_tmp, db_files, self._pulsemap)
-            self._create_empty_tables(database_path,self._pulsemap, truth_columns, pulse_map_columns, retro_columns)
-            self._merge_temporary_databases(database_path, db_files, path_tmp, self._pulsemap)
+            
+            # Create one empty database table for each extraction
+            for ix_table, table_name in enumerate(self._table_names):
+                column_names = self._extract_column_names(db_paths, table_name)
+                if len(column_names) > 1:
+                    self._create_table(database_path, table_name, column_names, is_pulse_map=(ix_table >= 2))        
+            
+            # Merge temporary databases into newly created one
+            self._merge_temporary_databases(database_path, db_files, path_tmp)
             os.system('rm -r %s'%path_tmp)
         else:
             print('No temporary database files found!')
 
-    def _extract_column_names(self,tmp_path, db_files, pulsemap):
-        db = tmp_path + '/' + db_files[0]
-        with sqlite3.connect(db) as con:
-            truth_query = 'select * from truth limit 1'
-            truth_columns = pd.read_sql(truth_query,con).columns
-
-        with sqlite3.connect(db) as con:
-            pulse_map_query = 'select * from %s limit 1'%pulsemap
-            pulse_map = pd.read_sql(pulse_map_query,con)
-        pulse_map_columns = pulse_map.columns
-        
-        for db_file in db_files:
-            db = tmp_path + '/' + db_file
-            try:
-                with sqlite3.connect(db) as con:
-                    retro_query = 'select * from RetroReco limit 1'
-                    retro_columns = pd.read_sql(retro_query,con).columns
-                if len(retro_columns)>0:
-                    break
-            except:
-                retro_columns = []
-        return truth_columns, pulse_map_columns, retro_columns
+    def _extract_column_names(self, db_paths, table_name):
+        for db_path in db_paths:
+            with sqlite3.connect(db_path) as con:
+                query = f'select * from {table_name} limit 1'
+                columns = pd.read_sql(query, con).columns
+            if len(columns):
+                return columns
+        return []
 
     def _run_sql_code(self, database: str, code: str):
         conn = sqlite3.connect(database + '.db')
@@ -215,55 +232,29 @@ class SQLiteDataConverter(DataConverter):
             columns (str): the names of the columns of the table
             is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.
         """
-        count = 0
+        query_columns = list()
         for column in columns:
-            if count == 0:
-                if column == 'event_no':
-                    if is_pulse_map == False:
-                        query_columns =  column + ' INTEGER PRIMARY KEY NOT NULL'
-                    else:
-                        query_columns =  column + ' NOT NULL'
-                else: 
-                    query_columns =  column + ' FLOAT'
-            else:
-                if column == "event_no":
-                    if is_pulse_map == False:
-                        query_columns =  query_columns + ', ' + column + ' INTEGER PRIMARY KEY NOT NULL'
-                    else:
-                        query_columns = query_columns + ', '+ column + ' NOT NULL' 
+            if column == 'event_no':
+                if is_pulse_map == False:
+                    type_ = 'INTEGER PRIMARY KEY NOT NULL'
                 else:
-                    query_columns = query_columns + ', ' + column + ' FLOAT'
-
-            count +=1
+                    type_ = 'NOT NULL'
+            else: 
+                type_ = 'FLOAT'
+            query_columns.append(f"{column} {type_}")
+        query_columns = ', '.join(query_columns)
+            
         code = (
             "PRAGMA foreign_keys=off;\n"
             f"CREATE TABLE {table_name} ({query_columns});\n"
             "PRAGMA foreign_keys=on;"
         )
         self._run_sql_code(database, code)
+        
         if is_pulse_map:
             print(table_name)
-            print('attaching indexs')
-            self._attach_index(database,table_name)
-        return
-
-    def _create_empty_tables(self,database,pulse_map,truth_columns, pulse_map_columns, retro_columns):
-        """Creates an empty table
-
-        Args:
-            database (str): path to database
-            pulse_map (str): the pulse map key e.g. SR
-            truth_columns ([type]): [description]
-            pulse_map_columns ([type]): [description]
-            retro_columns ([type]): [description]
-        """
-        print('Creating Empty Truth Table')
-        self._create_table(database, 'truth', truth_columns, is_pulse_map=False) # Creates the truth table containing primary particle attributes and RetroReco reconstructions
-        print('Creating Empty RetroReco Table')
-        if len(retro_columns) > 1:
-            self._create_table(database, 'RetroReco',retro_columns, is_pulse_map=False) # Creates the RetroReco Table with reconstuctions and associated values.
-
-        self._create_table(database, pulse_map,pulse_map_columns, is_pulse_map=True)
+            print('Attaching indices')
+            self._attach_index(database, table_name)
         return
 
     def _submit_to_database(self, database: str, key: str, data: pd.DataFrame):
@@ -271,55 +262,49 @@ class SQLiteDataConverter(DataConverter):
         if len(data) == 0:
             if self._verbose:
                 print(f"No data provided for {key}.")
-                pass
             return
         engine = sqlalchemy.create_engine('sqlite:///' + database + '.db')
-        data.to_sql(key, engine,index=False, if_exists='append')
+        data.to_sql(key, engine, index=False, if_exists='append')
         engine.dispose()
 
-    def _extract_everything(self, db, pulsemap):
-        """Extracts everything from the temporary database db
+    def _extract_everything(self, db: str) -> OrderedDict[str, pd.DataFrame]:
+        """Extracts everything from the temporary database `db`.
 
         Args:
-            db (str): path to temporary database
-            pulsemap (str): name of the pulsemap. E.g. SRTInIcePulses
+            db (str): Path to temporary database
 
         Returns:
-            truth (pandas.DataFrame()): contains the truth data
-            features (pandas.DataFame()): contains the pulsemap
-            retro (pandas.DataFrame) : contains RetroReco and associated quantities if available
+            results (dict): Contains the data for each extracted table
         """
-        with sqlite3.connect(db) as con:
-            truth_query = 'select * from truth'
-            truth = pd.read_sql(truth_query,con)
-        with sqlite3.connect(db) as con:
-            pulse_map_query = 'select * from %s'%pulsemap
-            features = pd.read_sql(pulse_map_query,con)
+        results = OrderedDict()
+        with sqlite3.connect(db) as conn:
+            for table_name in self._table_names:
+                query = f'select * from {table_name}'
+                try:
+                    data = pd.read_sql(query, conn)
+                except:
+                    data = []
+                results[table_name] = data
+        return results
 
-        try:
-            with sqlite3.connect(db) as con:
-                retro_query = 'select * from RetroReco'
-                retro = pd.read_sql(retro_query,con)
-        except:
-            retro = []
-        return truth, features, retro
-
-    def _merge_temporary_databases(self,database, db_files, path_to_tmp, pulse_map):
-        """Merges the temporary databases
+    def _merge_temporary_databases(self, database: str, db_files: List[str], path_to_tmp: str):
+        """Merges the temporary databases.
 
         Args:
             database (str): path to the final database
             db_files (list): list of names of temporary databases
             path_to_tmp (str): path to temporary database directory
-            pulse_map (str): name of the pulsemap. E.g. SRTInIcePulses
         """
-        for i in tqdm(range(len(db_files)), colour='green'):
-            file = db_files[i]
-            truth, features, retro = self._extract_everything(path_to_tmp + '/'  + file,pulse_map)
-            self._submit_to_database(database, "truth", truth)
-            self._submit_to_database(database, pulse_map, features)
-            self._submit_to_database(database, "RetroReco", retro)
-            
+        for df_file in tqdm(db_files, colour='green'):
+            results = self._extract_everything(path_to_tmp + '/'  + df_file)
+            for table_name, data in results.items():
+                self._submit_to_database(database, table_name, data)
+
+    def _save_to_sql(self, dataframes_big: dict, id, output_count, db_name, outdir):
+        engine = sqlalchemy.create_engine('sqlite:///' + outdir + f'/{db_name}/tmp/worker-{id}-{output_count}.db')
+        for key, df in dataframes_big.items():
+            df.to_sql(key, con=engine, index=False, if_exists='append')
+        engine.dispose()
 
 
 # Implementation-specific utility function(s)
@@ -334,22 +319,13 @@ def apply_event_no(extraction, event_no_list, event_counter):
     Returns:
         out (pandas.DataFrame): Extraction as pandas.DataFrame with event_no column.
     """
-    out = pd.DataFrame(extraction.values()).T
-    out.columns = extraction.keys()
+    all_scalars = all(map(np.isscalar, extraction.values()))
+    out = pd.DataFrame(extraction, index=[0] if all_scalars else None)
     out['event_no'] = event_no_list[event_counter]
     return out
 
 def is_empty(features):
-    if features['dom_x'] != None:
-        return False
-    else:
+    if features['dom_x'] is None:
         return True
-
-def save_to_sql(feature_big, truth_big, retro_big, id, output_count, db_name,outdir, pulsemap):
-    engine = sqlalchemy.create_engine('sqlite:///'+outdir + '/%s/tmp/worker-%s-%s.db'%(db_name,id,output_count))
-    truth_big.to_sql('truth',engine,index= False, if_exists = 'append')
-    if len(retro_big)> 0:
-        retro_big.to_sql('RetroReco',engine,index= False, if_exists = 'append')
-    feature_big.to_sql(pulsemap,engine,index= False, if_exists = 'append')
-    engine.dispose()
-    return
+    else:
+        return False

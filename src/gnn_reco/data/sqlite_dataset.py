@@ -19,15 +19,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
             self._database_list = None
             assert isinstance(database, str)
             assert database.endswith('.db')
-        
-        if isinstance(selection[0], list):
-            self._indices = selection
-        else:
-            self._selection_list = None
-            if selection != None:
-                self._indices = selection
-            else:
-                self._indices = self._get_all_indices()
 
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
@@ -143,7 +134,14 @@ class SQLiteDataset(torch.utils.data.Dataset):
             'corsika': abs_pid > 20,
         }
 
-        x = torch.tensor(np.asarray(features)[:,1:], dtype=self._dtype) 
+        # Catch cases with no reconstructed pulses
+        if len(features):
+            data = np.asarray(features)[:,1:]
+        else:
+            data = np.array([]).reshape((0, len(self._features) - 1))
+        
+        # Construct graph data object
+        x = torch.tensor(data, dtype=self._dtype) 
         n_pulses = torch.tensor(len(x), dtype=torch.int32)
         graph = Data(
             x=x,
@@ -151,20 +149,14 @@ class SQLiteDataset(torch.utils.data.Dataset):
         )
         graph.n_pulses = n_pulses
 
-        for key, value in labels_dict.items():
-            try:
-                graph[key] = torch.tensor(value)
-            except TypeError:
-                # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
-                pass
-
-        for key, value in truth_dict.items():
-            try:
-                graph[key] = torch.tensor(value)
-            except TypeError:
-                # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
-                pass
-
+        # Write attributes, either target labels or truth info.
+        for write_dict in [labels_dict, truth_dict]:
+            for key, value in write_dict.items():
+                try:
+                    graph[key] = torch.tensor(value)
+                except TypeError:
+                    # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
+                    pass
 
         return graph
         
