@@ -15,7 +15,7 @@ from gnn_reco.models.graph_builders import KNNGraphBuilder
 from gnn_reco.models.task.reconstruction import AngularReconstructionWithKappa
 from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
 from gnn_reco.models.training.trainers import Trainer, Predictor
-from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
+from gnn_reco.components.utils import make_train_validation_dataloader, save_results
 
 # Configurations
 timer.set_level(logging.INFO)
@@ -47,11 +47,12 @@ def main():
     scalers = fit_scaler(db, features, truth, pulsemap)
 
     # Common variables
-    selection = get_even_neutrino_indicies(db)[0:100000]
+    train_selection, test_selection = get_even_neutrino_indicies(db)
+    train_selection = train_selection[0:500000]
 
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(
+    training_dataloader, validation_dataloader, selection_dict = make_train_validation_dataloader(
         db, 
-        selection, 
+        train_selection, 
         pulsemap, 
         batch_size, 
         features, 
