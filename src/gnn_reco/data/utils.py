@@ -10,12 +10,12 @@ import re
 from typing import List, Tuple
 import sqlite3
 
-def get_equal_proportion_neutrino_indices(db: str, seed: int = 21) -> Tuple[List[int]]:
+def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List[int]]:
     """Utility method to get indices for neutrino events in equal flavour proportions.
 
     Args:
         db (str): Path to database.
-        seed (int, optional): Random number generator seed. Defaults to 21.
+        seed (int, optional): Random number generator seed. Defaults to 42.
 
     Returns:
         tuple: Training and test indices, resp.
@@ -34,6 +34,8 @@ def get_equal_proportion_neutrino_indices(db: str, seed: int = 21) -> Tuple[List
     # Subsample events for each PID to the smallest sample size
     samples_sizes = list(map(len, pid_indicies.values()))
     smallest_sample_size = min(samples_sizes)
+    print(f"Smallest sample size: {smallest_sample_size}")
+    
     indices = [
         (
             pid_indicies[pid]
