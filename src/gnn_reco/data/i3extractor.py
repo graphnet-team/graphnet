@@ -13,13 +13,14 @@ from .utils import frame_has_key
 class I3Extractor(ABC):
     """Extracts relevant information from physics frames."""
 
-    def __init__(self):
+    def __init__(self, name):
        
         # Member variables
         self._i3_file = None
         self._gcd_file = None
         self._gcd_dict = None
         self._calibration = None
+        self._name = name
 
     def set_files(self, i3_file, gcd_file):
         self._i3_file = i3_file
@@ -38,6 +39,10 @@ class I3Extractor(ABC):
     def __call__(self, frame) -> dict:
         """Extracts relevant information from frame."""
         pass
+
+    @property
+    def name(self) -> str:
+        return self._name
 
 
 class I3ExtractorCollection(list):
@@ -61,63 +66,7 @@ class I3ExtractorCollection(list):
 class I3FeatureExtractor(I3Extractor):
     def __init__(self, pulsemap):
         self._pulsemap = pulsemap
-        super().__init__()
-    
-    def __call__(self, frame) -> dict:
-        """Extract features to be used as inputs to GNN models."""
-        ""
-        output = {
-            'charge': [],
-            'dom_time': [],
-            'dom_x': [],
-            'dom_y': [],
-            'dom_z': [],
-            'width' : [],
-            'pmt_area': [],
-            'rde': [],
-        }
-            #'string': [],
-            #'pmt_number': [],
-            #'dom_number': [],
-            #'pmt_dir_x': [],
-            #'pmt_dir_y': [],
-            #'pmt_dir_z': [],
-            #'dom_type': [],
-        #}
-        
-        try:
-            om_keys, data = self._get_om_keys_and_pulseseries(frame)
-        except KeyError:  # Target pulsemap does not exist in `frame`
-            return output
-
-        for om_key in om_keys:
-            # Common values for each OM
-            x = self._gcd_dict[om_key].position.x
-            y = self._gcd_dict[om_key].position.y
-            z = self._gcd_dict[om_key].position.z
-            #pmt_dir_x = self._gcd_dict[om_key].orientation.x
-            #pmt_dir_y = self._gcd_dict[om_key].orientation.y
-            #pmt_dir_z = self._gcd_dict[om_key].orientation.z
-            #string    = om_key[0]
-            #dom_number = om_key[1]
-            #pmt_number = om_key[2]
-            #dom_type = om_key.omtype
-            area = self._gcd_dict[om_key].area
-            rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
-            
-            # Loop over pulses for each OM
-            pulses = data[om_key]
-            for pulse in pulses:
-                output['charge'].append(pulse.charge)
-                output['dom_time'].append(pulse.time) 
-                output['width'].append(pulse.width)
-                output['pmt_area'].append(area)  
-                output['rde'].append(rde)
-                output['dom_x'].append(x)
-                output['dom_y'].append(y)
-                output['dom_z'].append(z)
-        
-        return output
+        super().__init__(pulsemap)
 
     def _get_om_keys_and_pulseseries(self, frame):
         """Gets the indicies for the gcd_dict and the pulse series
@@ -146,8 +95,108 @@ class I3FeatureExtractor(I3Extractor):
                 om_keys = data.keys()
         return om_keys, data
 
+class I3FeatureExtractorIceCube86(I3FeatureExtractor):
+    
+    def __call__(self, frame) -> dict:
+        """Extract features to be used as inputs to GNN models."""
+        
+        output = {
+            'charge': [],
+            'dom_time': [],
+            'dom_x': [],
+            'dom_y': [],
+            'dom_z': [],
+            'width' : [],
+            'pmt_area': [],
+            'rde': [],
+        }
+
+        try:
+            om_keys, data = self._get_om_keys_and_pulseseries(frame)
+        except KeyError:
+            print(f"WARN: Pulsemap {self._pulsemap} was not found in frame.")
+            return output
+        
+        for om_key in om_keys:
+            # Common values for each OM
+            x = self._gcd_dict[om_key].position.x
+            y = self._gcd_dict[om_key].position.y
+            z = self._gcd_dict[om_key].position.z
+            area = self._gcd_dict[om_key].area
+            if "I3Calibration" in frame:  # Not available for e.g. mDOMs in IceCube Upgrade
+                rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
+            else:
+                rde = -1.
+            
+            # Loop over pulses for each OM
+            pulses = data[om_key]
+            for pulse in pulses:
+                output['charge'].append(pulse.charge)
+                output['dom_time'].append(pulse.time) 
+                output['width'].append(pulse.width)
+                output['pmt_area'].append(area)  
+                output['rde'].append(rde)
+                output['dom_x'].append(x)
+                output['dom_y'].append(y)
+                output['dom_z'].append(z)
+        
+        return output
+
+class I3FeatureExtractorIceCubeDeepCore(I3FeatureExtractorIceCube86):
+    """..."""
+
+class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
+    
+    def __call__(self, frame) -> dict:
+        """Extract features to be used as inputs to GNN models."""
+        
+        output = {
+            'string': [],
+            'pmt_number': [],
+            'dom_number': [],
+            'pmt_dir_x': [],
+            'pmt_dir_y': [],
+            'pmt_dir_z': [],
+            'dom_type': [],
+        }
+        
+        try:
+            om_keys, data = self._get_om_keys_and_pulseseries(frame)
+        except KeyError:  # Target pulsemap does not exist in `frame`
+            return output
+        
+        for om_key in om_keys:
+            # Common values for each OM
+            pmt_dir_x = self._gcd_dict[om_key].orientation.x
+            pmt_dir_y = self._gcd_dict[om_key].orientation.y
+            pmt_dir_z = self._gcd_dict[om_key].orientation.z
+            string = om_key[0]
+            dom_number = om_key[1]
+            pmt_number = om_key[2]
+            dom_type = self._gcd_dict[om_key].omtype
+            
+            # Loop over pulses for each OM
+            pulses = data[om_key]
+            for _ in pulses:
+                output['string'].append(string)
+                output['pmt_number'].append(pmt_number)
+                output['dom_number'].append(dom_number)
+                output['pmt_dir_x'].append(pmt_dir_x)
+                output['pmt_dir_y'].append(pmt_dir_y)
+                output['pmt_dir_z'].append(pmt_dir_z)
+                output['dom_type'].append(dom_type)
+
+        # Add features from IceCube86
+        output_icecube86 = super().__call__(frame)
+        output.update(output_icecube86)
+        return output
+
 
 class I3TruthExtractor(I3Extractor):
+    
+    def __init__(self, name="truth"):
+        super().__init__(name)
+
     def __call__(self, frame, padding_value=-1) -> dict:
         """Extracts truth features."""
         is_mc = frame_is_montecarlo(frame)
@@ -189,6 +238,10 @@ class I3TruthExtractor(I3Extractor):
 
 
 class I3RetroExtractor(I3Extractor):
+    
+    def __init__(self, name="retro"):
+        super().__init__(name)
+
     def __call__(self, frame) -> dict:
         """Extracts RETRO reco. and associated quantities if available."""
         output = {}
@@ -223,9 +276,14 @@ class I3RetroExtractor(I3Extractor):
             })
 
         if frame_is_montecarlo(frame):
-            output.update({
-                'osc_weight': frame["I3MCWeightDict"]["weight"],
-            })
+            if frame_contains_retro(frame):
+                output.update({
+                    'osc_weight': frame["I3MCWeightDict"]["weight"],
+                })
+            else:
+                output.update({
+                    'osc_weight': -1.,
+                })
 
         return output
 
