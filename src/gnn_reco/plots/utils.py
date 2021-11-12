@@ -255,7 +255,7 @@ def extract_statistics(data,keys, key_bins):
                     biases[key]['cascade']['84th'].append(np.percentile(bias_tmp,84))
     return biases
 
-def GetRetro(data, keys,db):
+def get_retro(data, keys,db):
     events = data['event_no']
     key_count = 0
     for key in keys:
@@ -279,11 +279,11 @@ def GetRetro(data, keys,db):
 def calculate_statistics(data,keys, key_bins,db,include_retro = False):
     biases = {'dynedge': extract_statistics(data, keys, key_bins)}
     if include_retro:
-        retro = GetRetro(data,keys,db)
+        retro = get_retro(data,keys,db)
         biases['retro'] = extract_statistics(retro, keys, key_bins)
     return biases
 
-def PlotBiases(key_limits, biases, is_retro = False):
+def plot_biases(key_limits, biases, is_retro = False):
     key_limits = key_limits['bias']
     if is_retro:
         prefix = 'RetroReco'
@@ -458,83 +458,6 @@ def PlotRelativeImprovement(key_limits, biases):
     return fig
 
 
-
-    
-def WriteReport(archive,data_path, db, key_limits,keys, key_bins):
-    data = pd.read_csv(data_path)
-    data = AddEnergy(db, data)
-    data = AddPIDInteraction(db, data)
-
-    biases = CalculateStatistics(data,keys, key_bins,db,include_retro = True)
-    figures = []
-    figures.append(MakeSummaryWidthPlot(key_limits, biases,include_retro = True, track_cascade= True))
-    #figures.append(PlotBiases(key_limits, biases['dynedge']))
-    #figures.append(PlotBiases(key_limits, biases['retro'], is_retro = True))
-    #figures.append(PlotWidth(key_limits, biases))
-    return 
-
 def calculate_relative_improvement_error(relimp, w1, w1_sigma, w2, w2_sigma):
     sigma = np.sqrt((np.array(w1_sigma)/np.array(w1))**2 + (np.array(w2_sigma)/np.array(w2))**2)
     return sigma
-
-
-
-def MakeEnergyReport(archive, result_path, db_name):
-    db_tag = db_name + '.db'          
-    db = archive / 'data' / 'databases' / db_name / 'data' /  db_tag
-    key_limits = {'bias':{'energy':{'x':[0,3], 'y':[-100,100]}}, 
-                'width':{'energy':{'x':[0,3.25], 'y':[-0.5,1.5]}},
-                'rel_imp':{'energy':{'x':[0,3], 'y':[-0.75,0.75]}},
-                'osc':{'energy':{'x':[0,3], 'y':[-0.75,0.75]}},
-                'distributions':{'energy':{'x':[0,4], 'y':[-0.75,0.75]}}}
-    keys = ['energy']
-    key_bins = { 'energy': np.arange(0, 3.25, 0.25)}
-    WriteReport(archive,result_path, db, key_limits,keys, key_bins)
-
-def MakeZenithReport(archive, result_path, db_name):
-    db_tag = db_name + '.db'          
-    db = archive / 'data' / 'databases' / db_name / 'data' /  db_tag
-    key_limits = {'bias':{'energy':{'x':[0,3], 'y':[-100,100]},
-                          'zenith': {'x':[0,3], 'y':[-100,100]}}, 
-                'width':{'energy':{'x':[0,3], 'y':[-0.5,1.5]},
-                         'zenith': {'x':[0,3], 'y':[-100,100]}},
-                'rel_imp':{'energy':{'x':[0,3], 'y':[-0.75,0.75]}},
-                'osc':{'energy':{'x':[0,3], 'y':[-0.75,0.75]}},
-                'distributions':{'energy':{'x':[0,4], 'y':[-0.75,0.75]}}}
-    keys = ['zenith']
-    key_bins = { 'energy': np.arange(0, 3.25, 0.25),
-                'zenith': np.arange(0, 180, 10) }
-    WriteReport(archive,result_path, db, key_limits,keys, key_bins)
-
-def MakeAzimuthReport(archive, result_path, db_name):
-    db_tag = db_name + '.db'          
-    db = archive / 'data' / 'databases' / db_name / 'data' /  db_tag
-    key_limits = {'bias':{'energy':{'x':[0,3], 'y':[-100,100]},
-                          'zenith': {'x':[0,3], 'y':[-100,100]},
-                          'azimuth': {'x':[0,3], 'y':[-100,100]}}, 
-                'width':{'energy':{'x':[0,3], 'y':[-0.5,1.5]},
-                         'zenith': {'x':[0,3], 'y':[-100,100]},
-                         'azimuth': {'x':[0,3], 'y':[-100,100]}},
-                'rel_imp':{'energy':{'x':[0,3], 'y':[-0.75,0.75]}},
-                'osc':{'energy':{'x':[0,3], 'y':[-0.75,0.75]}},
-                'distributions':{'energy':{'x':[0,4], 'y':[-0.75,0.75]}}}
-    keys = ['azimuth']
-    key_bins = { 'energy': np.arange(0, 3.25, 0.25),
-                'zenith': np.arange(0, 180, 10),
-                'azimuth': np.arange(0, 2*180, 20) }
-    WriteReport(archive,result_path, db, key_limits,keys, key_bins)
-
-#archive = Path('/groups/hep/pcs557/GNNReco')
-#database_name = 'dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3'
-#MakeEnergyReport(archive= archive, 
-#result_path= '/groups/hep/pcs557/phd/results/dev_lvl7_robustness_muon_neutrino_0000/dynedge_energy_3_test/results.csv' , 
-#db_name= 'dev_lvl7_robustness_muon_neutrino_0000')
-
-#MakeZenithReport(archive= archive, 
-#result_path= '/groups/hep/pcs557/phd/results/dev_lvl7_robustness_muon_neutrino_0000/dynedge_zenith_9_test/results.csv' , 
-#db_name= 'dev_lvl7_robustness_muon_neutrino_0000')
-
-#MakeAzimuthReport(archive= archive, 
-#result_path= '/groups/hep/pcs557/GNNReco/results/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3/even_neutrino_types/lvl7_azimuth/valid_resultsv3.csv' , 
-#db_name= 'dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3')
-

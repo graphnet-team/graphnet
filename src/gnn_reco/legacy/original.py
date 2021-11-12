@@ -68,8 +68,10 @@ class Dynedge(torch.nn.Module):
         if self.predict == False:
             if self.target == 'energy':
                 data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(np.log10(data[self.target].cpu().numpy()).reshape(-1,1))).to(device)
-            else:
+            if self.target == 'zenith':
                 data[self.target] = torch.tensor(self.scalers['truth'][self.target].transform(data[self.target].cpu().numpy().reshape(-1,1))).to(device)
+            if self.target == 'azimuth':
+                data[self.target] = torch.reshape(data[self.target], (-1,1))
         edge_index = knn_graph(x=x[:,0:3],k=k,batch=batch).to(device)
 
         h_x, h_y, h_z, h_t = calculate_xyzt_homophily(x, edge_index, batch)
@@ -113,7 +115,8 @@ class Dynedge(torch.nn.Module):
         else:
             if self.target == 'zenith' or self.target == 'azimuth':
                 pred = np.arctan2(x[:,0].cpu().numpy(),x[:,1].cpu().numpy()).reshape(-1,1)
-                pred = torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
+                if self.target == 'zenith':
+                    pred = torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
                 sigma = abs(1/x[:,2]).cpu()
                 return torch.cat((pred,sigma.reshape(-1,1)),dim = 1)
             else:
