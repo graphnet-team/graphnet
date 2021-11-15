@@ -307,7 +307,7 @@ def load_model(tag, path, detector, gnn, task, device):
     model.load_state_dict(torch.load(path + '/' + tag + '.pkl'))
     model.eval()
     return model
-
+# test
 def check_db_size(db):
     max_size = 5000000
     with sqlite3.connect(db) as con:
