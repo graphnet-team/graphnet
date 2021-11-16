@@ -68,7 +68,7 @@ class Predictor(object):
         self.post_processing_method = post_processing_method
 
     def __call__(self, model):
-        self.model = model.to(self.device)
+        self.model = model
         self.model.eval()
         self.model.predict = True
         if self.post_processing_method == None:
