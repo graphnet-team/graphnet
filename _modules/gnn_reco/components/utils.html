@@ -74,6 +74,7 @@
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 
 <span class="kn">from</span> <span class="nn">gnn_reco.data.sqlite_dataset</span> <span class="k">import</span> <span class="n">SQLiteDataset</span>
+<span class="kn">from</span> <span class="nn">gnn_reco.models</span> <span class="k">import</span> <span class="n">Model</span>
 
 <span class="c1"># @TODO &gt;&gt;&gt; RESOLVE DUPLICATION WRT. src/gnn_reco/models/training/{callbacks,trainers,utils}.py</span>
 <div class="viewcode-block" id="EarlyStopping"><a class="viewcode-back" href="../../../gnn_reco.components.html#gnn_reco.components.utils.EarlyStopping">[docs]</a><span class="k">class</span> <span class="nc">EarlyStopping</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -354,10 +355,23 @@
     <span class="n">path</span> <span class="o">=</span> <span class="n">archive</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">db_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/results.csv&#39;</span><span class="p">)</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results saved at: </span><span class="se">\n</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">path</span><span class="p">)</span>
     <span class="k">return</span></div>
 <span class="c1"># @TODO &lt;&lt;&lt; RESOLVE DUPLICATION WRT. src/gnn_reco/models/training/{callbacks,trainers,utils}.py</span>
+
+<div class="viewcode-block" id="load_model"><a class="viewcode-back" href="../../../gnn_reco.components.html#gnn_reco.components.utils.load_model">[docs]</a><span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">detector</span><span class="p">,</span> <span class="n">gnn</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+    <span class="n">db_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">archive</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">db_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span>
+        <span class="n">detector</span><span class="o">=</span><span class="n">detector</span><span class="p">,</span>
+        <span class="n">gnn</span><span class="o">=</span><span class="n">gnn</span><span class="p">,</span>
+        <span class="n">tasks</span><span class="o">=</span><span class="p">[</span><span class="n">task</span><span class="p">],</span>
+        <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">model</span></div>
 
 <div class="viewcode-block" id="check_db_size"><a class="viewcode-back" href="../../../gnn_reco.components.html#gnn_reco.components.utils.check_db_size">[docs]</a><span class="k">def</span> <span class="nf">check_db_size</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
     <span class="n">max_size</span> <span class="o">=</span> <span class="mi">5000000</span>
