@@ -17,6 +17,7 @@ def make_dataloader(
     pulsemap: str,
     features: List[str],
     truth: List[str],
+    *,
     batch_size: int,
     shuffle: bool,
     selection: List[int] = None,
@@ -50,6 +51,7 @@ def make_train_validation_dataloader(
     pulsemap: str,
     features: List[str],
     truth: List[str],
+    *,
     batch_size: int,
     database_indices: List[int] = None,
     seed: int = 42,
@@ -87,7 +89,7 @@ def make_train_validation_dataloader(
         selection=training_selection,
         **common_kwargs,
     )
-    
+
     validation_dataloader = make_dataloader(
         shuffle=False,
         selection=validation_selection,
