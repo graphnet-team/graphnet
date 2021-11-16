@@ -20,7 +20,7 @@ class EarlyStopping(object):
             self.best = metrics
             return False
 
-        if np.isnan(metrics):
+        if torch.isnan(metrics):
             return True
 
         if self.is_better(metrics, self.best):
