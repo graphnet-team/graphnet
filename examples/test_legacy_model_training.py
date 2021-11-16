@@ -29,7 +29,7 @@ truth = TRUTH.ICECUBE86
 # Main function definition
 def main():
 
-# Configuration
+    # Configuration
     db = '/groups/icecube/leonbozi/datafromrasmus/GNNReco/data/databases/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3/data/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3.db'
     pulsemap = 'SRTTWOfflinePulsesDC'
     batch_size = 1024
@@ -42,18 +42,19 @@ def main():
     scalers = fit_scaler(db, features, truth, pulsemap)
 
     # Common variables
-    selection = get_equal_proportion_neutrino_indices(db)[0:100000]
-
+    train_selection, _ = get_equal_proportion_neutrino_indices(db)
+    train_selection = train_selection[0:100000]
+    
     training_dataloader, validation_dataloader = make_train_validation_dataloader(
         db, 
-        selection,
+        train_selection,
         pulsemap,
         features,
         truth,
         batch_size=batch_size,
         num_workers=num_workers,
     )
-
+    
     #model = ConvNet(n_features = 7, n_labels = 1, knn_cols = [0,1,2,3], scalers = scalers,target = target, device = device).to(device)
     model = Dynedge(k = 8, device = device, n_outputs= 3, scalers = scalers, target = target).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5,eps = 1e-3)
