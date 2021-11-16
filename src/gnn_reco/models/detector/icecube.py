@@ -5,8 +5,7 @@ from gnn_reco.data.constants import FEATURES
 from gnn_reco.models.detector import Detector
 
 class IceCube86(Detector):
-    """`Detector` class for IceCube-86.
-    """
+    """`Detector` class for IceCube-86."""
 
     # Implementing abstract class attribute
     features = FEATURES.ICECUBE86
@@ -47,3 +46,7 @@ class IceCube86(Detector):
         data.x[:,6] /= 0.05  # pmt_area
 
         return data
+
+
+class IceCubeDeepCore(IceCube86):
+    """`Detector` class for IceCube-DeepCore."""
