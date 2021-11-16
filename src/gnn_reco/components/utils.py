@@ -34,13 +34,6 @@ def make_train_validation_dataloader(db, selection, pulsemap, batch_size, FEATUR
     validation_dataloader = torch.utils.data.DataLoader(validation_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, 
                                             collate_fn=Batch.from_data_list,persistent_workers=persistent_workers,prefetch_factor=2)
     return training_dataloader, validation_dataloader, {'valid_selection':validation_selection, 'training_selection':training_selection}
-
-def make_dataloader(db, selection, pulsemap, batch_size, FEATURES, TRUTH, num_workers, database_indices = None, persistent_workers = True):
-    dataset = SQLiteDataset(db, pulsemap, FEATURES, TRUTH, selection= selection)
-    dataset.close_connection()
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, 
-                                            collate_fn=Batch.from_data_list,persistent_workers=persistent_workers,prefetch_factor=2)
-    return dataloader
 # @TODO <<< RESOLVE DUPLICATION WRT. src/gnn_reco/models/training/{callbacks,trainers,utils}.py
 
 def check_db_size(db):
