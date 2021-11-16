@@ -76,7 +76,7 @@ class Model(Module):
         print(f"Model saved to {path}")
 
     @classmethod
-    def load(cls, path: str) -> Module:
+    def load(cls, path: str) -> 'Model':
         return torch.load(path, pickle_module=dill)
 
     def save_state_dict(self, path: str):
@@ -85,6 +85,6 @@ class Model(Module):
         torch.save(self.cpu().state_dict(), path)
         print(f"Model state_dict saved to {path}")
 
-    def load_state_dict(self, path: str):
+    def load_state_dict(self, path: str) -> 'Model':
         state_dict = torch.load(path)
         return super().load_state_dict(state_dict)
