@@ -103,7 +103,7 @@ def save_results(db, tag, results, archive,model):
     path = archive + '/' + db_name + '/' + tag
     os.makedirs(path, exist_ok = True)
     results.to_csv(path + '/results.csv')
-    torch.save(model.cpu().state_dict(), path + '/' + tag + '.pkl')
+    torch.save(model.cpu().state_dict(), path + '/' + tag + '.pth')
     print('Results saved at: \n %s'%path)
 
 def load_model(db, tag, archive, detector, gnn, task, device):
@@ -115,6 +115,6 @@ def load_model(db, tag, archive, detector, gnn, task, device):
         tasks=[task],
         device=device,
     )
-    model.load_state_dict(torch.load(path + '/' + tag + '.pkl'))
+    model.load_state_dict(torch.load(path + '/' + tag + '.pth'))
     model.eval()
     return model
