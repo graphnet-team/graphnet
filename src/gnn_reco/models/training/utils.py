@@ -6,6 +6,7 @@ import torch
 from torch_geometric.data.batch import Batch
 
 from gnn_reco.data.sqlite_dataset import SQLiteDataset
+from gnn_reco.models import Model
 
 def make_train_validation_dataloader(db, selection, pulsemap, batch_size, features, truth, num_workers, persistent_workers=True):
     training_selection, validation_selection = train_test_split(selection, test_size=0.33, random_state=42)
@@ -32,5 +33,18 @@ def save_results(db, tag, results, archive,model):
     path = archive + '/' + db_name + '/' + tag
     os.makedirs(path, exist_ok = True)
     results.to_csv(path + '/results.csv')
-    torch.save(model.cpu(), path + '/' + tag + '.pkl', pickle_module=dill)
+    torch.save(model.cpu().state_dict(), path + '/' + tag + '.pkl')
     print('Results saved at: \n %s'%path)
+
+def load_model(db, tag, archive, detector, gnn, task, device):
+    db_name = db.split('/')[-1].split('.')[0]
+    path = archive + '/' + db_name + '/' + tag
+    model = Model(
+        detector=detector,
+        gnn=gnn,
+        tasks=[task],
+        device=device,
+    )
+    model.load_state_dict(torch.load(path + '/' + tag + '.pkl'))
+    model.eval()
+    return model
