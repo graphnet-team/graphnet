@@ -1,12 +1,48 @@
 import os
-import dill
+from typing import List, Optional
 
+import dill
+import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 import torch
+from torch.utils.data import DataLoader
 from torch_geometric.data.batch import Batch
 
 from gnn_reco.data.sqlite_dataset import SQLiteDataset
 from gnn_reco.models import Model
+
+def make_dataloader(
+    db: str,
+    selection: Optional[str],
+    pulsemap: str,
+    batch_size: int,
+    features: List[str],
+    truth: List[str],
+    shuffle: bool,
+    num_workers: int,
+    persistent_workers: bool =True,
+) -> DataLoader:
+    
+    dataset = SQLiteDataset(
+        db,
+        pulsemap,
+        features,
+        truth,
+        selection=selection,
+    )
+
+    dataloader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        collate_fn=Batch.from_data_list,
+        persistent_workers=persistent_workers,
+        prefetch_factor=2,
+    )
+
+    return dataloader
 
 def make_train_validation_dataloader(db, selection, pulsemap, batch_size, features, truth, num_workers, persistent_workers=True):
     training_selection, validation_selection = train_test_split(selection, test_size=0.33, random_state=42)
