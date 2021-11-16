@@ -20,8 +20,12 @@ class EarlyStopping(object):
             self.best = metrics
             return False
 
-        if torch.isnan(metrics):
-            return True
+        if isinstance(metrics, torch.Tensor):
+            if torch.isnan(metrics):
+                return True
+        else:
+            if np.isnan(metrics):
+                return True
 
         if self.is_better(metrics, self.best):
             self.num_bad_epochs = 0
