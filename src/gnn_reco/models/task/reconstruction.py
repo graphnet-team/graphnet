@@ -12,7 +12,7 @@ class AzimuthReconstruction(Task):
     def _forward(self, x):
         # Transform outputs to angle and prepare prediction
         radius = torch.sqrt(x[:,0]**2 + x[:,1]**2)
-        beta = 0.01
+        beta = 1e-4
         kl_loss = torch.mean(radius**2 - torch.log(radius) - 1)
         self._regularisation_loss += beta * kl_loss
         return torch.atan2(x[:,1], x[:,0]).unsqueeze(1) + np.pi  # atan(y,x) -> [-pi, pi]
