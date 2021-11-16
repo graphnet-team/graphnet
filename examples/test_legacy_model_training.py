@@ -5,16 +5,16 @@ import torch.utils.data
 
 from gnn_reco.components.utils import fit_scaler
 from gnn_reco.data.constants import FEATURES, TRUTH
-from gnn_reco.data.utils import get_even_neutrino_indicies
+from gnn_reco.data.utils import get_equal_proportion_neutrino_indices
 from gnn_reco.legacy.original import (
     Dynedge, 
-    ConvNet, 
-    PiecewiseLinearScheduler,
+    ConvNet,
     vonmises_sinecosine_loss,
     log_cosh,
     Trainer,
     Predictor,
 )
+from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
 from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
 
 # Configurations
@@ -42,9 +42,17 @@ def main():
     scalers = fit_scaler(db, features, truth, pulsemap)
 
     # Common variables
-    selection = get_even_neutrino_indicies(db)[0:100000]
+    selection = get_equal_proportion_neutrino_indices(db)[0:100000]
 
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(db, selection, pulsemap, batch_size, features, truth, num_workers)
+    training_dataloader, validation_dataloader = make_train_validation_dataloader(
+        db, 
+        selection,
+        pulsemap,
+        features,
+        truth,
+        batch_size=batch_size,
+        num_workers=num_workers,
+    )
 
     #model = ConvNet(n_features = 7, n_labels = 1, knn_cols = [0,1,2,3], scalers = scalers,target = target, device = device).to(device)
     model = Dynedge(k = 8, device = device, n_outputs= 3, scalers = scalers, target = target).to(device)
