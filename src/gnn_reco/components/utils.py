@@ -1,16 +1,7 @@
 import os
-import torch
 import pandas as pd
 import sqlite3
 from copy import deepcopy
-import pickle
-import numpy as np
-from tqdm import tqdm
-
-from torch_geometric.data.batch import Batch
-from sklearn.model_selection import train_test_split
-
-from gnn_reco.data.sqlite_dataset import SQLiteDataset
 
 
 def check_db_size(db):
