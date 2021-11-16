@@ -3,7 +3,6 @@ import torch
 from tqdm import tqdm
 
 from gnn_reco.models.training.callbacks import EarlyStopping
-from gnn_reco.models.training.utils import make_train_validation_dataloader
 
 class Trainer(object):
     def __init__(self, training_dataloader, validation_dataloader, optimizer, n_epochs, scheduler = None, patience = 10, early_stopping = True):
