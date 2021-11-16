@@ -140,8 +140,20 @@ def main(target):
         num_workers=num_workers,
     )
     
-    train_legacy_model(training_dataloader, validation_dataloader, target, n_epochs, patience, scalers, device, db, archive)
-    train_new_model(training_dataloader, validation_dataloader, target, n_epochs, patience, scalers, device, db, archive)
+    args = (
+        training_dataloader,
+        validation_dataloader,
+        target,
+        n_epochs,
+        patience,
+        scalers,
+        device,
+        db,
+        archive,
+    )
+
+    train_legacy_model(*args)
+    train_new_model(*args)
     
     
 # Main function call
