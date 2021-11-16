@@ -12,7 +12,7 @@ from gnn_reco.models import Model
 from gnn_reco.models.detector import IceCubeDeepCore
 from gnn_reco.models.gnn import DynEdge, ConvNet
 from gnn_reco.models.graph_builders import KNNGraphBuilder
-from gnn_reco.models.task.reconstruction import AngularReconstructionWithKappa, AzimuthReconstructionWithKappa, ZenithReconstructionWithKappa
+from gnn_reco.models.task.reconstruction import AzimuthReconstructionWithKappa, ZenithReconstructionWithKappa
 from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
 from gnn_reco.models.training.trainers import Trainer, Predictor
 from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
@@ -23,7 +23,6 @@ from gnn_reco.legacy.original import (
     Trainer as LegacyTrainer,
     Predictor as LegacyPredictor,
 )
-from sklearn.preprocessing import RobustScaler
 
 # Configurations
 timer.set_level(logging.INFO)
@@ -129,15 +128,15 @@ def main(target):
 
     # Common variables
     train_selection, _ = get_equal_proportion_neutrino_indices(db)
-    train_selection = train_selection[0:500000]
+    train_selection = train_selection[0:50000]
     
     training_dataloader, validation_dataloader = make_train_validation_dataloader(
         db, 
         train_selection, 
         pulsemap, 
+        batch_size,
         features, 
         truth, 
-        batch_size=batch_size, 
         num_workers=num_workers,
     )
     
