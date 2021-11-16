@@ -117,6 +117,8 @@ class Dynedge(torch.nn.Module):
                 pred = np.arctan2(x[:,0].cpu().numpy(),x[:,1].cpu().numpy()).reshape(-1,1)
                 if self.target == 'zenith':
                     pred = torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
+                else:
+                    pred = torch.tensor(pred, dtype=torch.float32)
                 sigma = abs(1/x[:,2]).cpu()
                 return torch.cat((pred,sigma.reshape(-1,1)),dim = 1)
             else:
