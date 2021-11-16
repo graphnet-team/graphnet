@@ -14,37 +14,6 @@ from gnn_reco.data.sqlite_dataset import SQLiteDataset
 from gnn_reco.models import Model
 
 # @TODO >>> RESOLVE DUPLICATION WRT. src/gnn_reco/models/training/{callbacks,trainers,utils}.py
-class PiecewiseLinearScheduler(object):
-    def __init__(self, training_dataset_length, start_lr, max_lr, end_lr, max_epochs):
-        try:
-            self.dataset_length = len(training_dataset_length)
-            print('Passing dataset as training_dataset_length to PiecewiseLinearScheduler is deprecated. Please pass integer')
-        except:
-            self.dataset_length = training_dataset_length
-        self._start_lr = start_lr
-        self._max_lr   = max_lr
-        self._end_lr   = end_lr
-        self._steps_up = int(self.dataset_length/2)
-        self._steps_down = self.dataset_length*max_epochs - self._steps_up
-        self._current_step = 0
-        self._lr_list = self._calculate_lr_list()
-
-    def _calculate_lr_list(self):
-        res = list()
-        for step in range(0,self._steps_up+self._steps_down):
-            slope_up = (self._max_lr - self._start_lr)/self._steps_up
-            slope_down = (self._end_lr - self._max_lr)/self._steps_down
-            if step <= self._steps_up:
-                res.append(step*slope_up + self._start_lr)
-            if step > self._steps_up:
-                res.append(step*slope_down + self._max_lr -((self._end_lr - self._max_lr)/self._steps_down)*self._steps_up)
-        return torch.tensor(res)
-
-    def get_next_lr(self):
-        lr = self._lr_list[self._current_step]
-        self._current_step = self._current_step + 1
-        return lr
-
 class MultipleDatasetsTrainer(object):
     def __init__(self, training_loaders, validation_loaders, num_training_batches, num_validation_batches,optimizer, n_epochs, loss_func, target, device, scheduler = None, patience = 10, early_stopping = True):
         self.validation_dataloaders = validation_loaders
