@@ -6,7 +6,7 @@ import torch
 from gnn_reco.components.loss_functions import  VonMisesFisher2DLoss
 from gnn_reco.components.utils import fit_scaler
 from gnn_reco.data.constants import FEATURES, TRUTH
-from gnn_reco.data.utils import get_even_neutrino_indicies
+from gnn_reco.data.utils import get_equal_proportion_neutrino_indices
 from gnn_reco.legacy.reimplemented import LegacyVonMisesFisherLoss, LegacyAngularReconstruction
 from gnn_reco.models import Model
 from gnn_reco.models.detector.icecube86 import IceCube86
@@ -15,7 +15,7 @@ from gnn_reco.models.graph_builders import KNNGraphBuilder
 from gnn_reco.models.task.reconstruction import AngularReconstructionWithKappa
 from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
 from gnn_reco.models.training.trainers import Trainer, Predictor
-from gnn_reco.components.utils import make_train_validation_dataloader, save_results
+from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
 
 # Configurations
 timer.set_level(logging.INFO)
@@ -47,17 +47,17 @@ def main():
     scalers = fit_scaler(db, features, truth, pulsemap)
 
     # Common variables
-    train_selection, test_selection = get_even_neutrino_indicies(db)
+    train_selection, _ = get_equal_proportion_neutrino_indices(db)
     train_selection = train_selection[0:500000]
 
-    training_dataloader, validation_dataloader, selection_dict = make_train_validation_dataloader(
+    training_dataloader, validation_dataloader = make_train_validation_dataloader(
         db, 
         train_selection, 
         pulsemap, 
-        batch_size, 
         features, 
         truth, 
-        num_workers,
+        batch_size=batch_size,
+        num_workers=num_workers,
     )
 
     # Building model
