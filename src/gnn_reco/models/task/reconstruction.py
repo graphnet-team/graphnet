@@ -1,23 +1,36 @@
 import numpy as np
 import torch
 
-from gnn_reco.components.loss_functions import LossFunction
 from gnn_reco.models.task import Task
 from gnn_reco.utils import eps_like
 
-class AzimuthReconstruction(Task):
+
+class AzimuthReconstructionWithKappa(Task):
     # Requires two features: untransformed points in (x,y)-space.
     nb_inputs = 2
 
     def _forward(self, x):
         # Transform outputs to angle and prepare prediction
-        radius = torch.sqrt(x[:,0]**2 + x[:,1]**2)
-        beta = 1e-4
-        kl_loss = torch.mean(radius**2 - torch.log(radius) - 1)
+        kappa = torch.linalg.vector_norm(x, dim=1) + eps_like(x)
+        angle = torch.atan2(x[:,1], x[:,0])
+        angle = torch.where(angle < 0, angle + 2 * np.pi, angle)  # atan(y,x) -> [-pi, pi]
+        return torch.stack((angle, kappa), dim=1)
+
+class AzimuthReconstruction(AzimuthReconstructionWithKappa):
+    # Requires two features: untransformed points in (x,y)-space.
+    nb_inputs = 2
+
+    def _forward(self, x):
+        # Transform outputs to angle and prepare prediction
+        res = super()._forward(x)
+        angle = res[:,0].unsqueeze(1)
+        kappa = res[:,1]
+        sigma = torch.sqrt(1. / kappa)
+        beta = 1e-3
+        kl_loss = torch.mean(sigma**2 - torch.log(sigma) - 1)
         self._regularisation_loss += beta * kl_loss
-        return torch.atan2(x[:,1], x[:,0]).unsqueeze(1) + np.pi  # atan(y,x) -> [-pi, pi]
-        
-        #return torch.sigmoid(x[:,:1]) * 2 * np.pi
+        return angle
+
 
 class ZenithReconstruction(Task):
     # Requires two features: untransformed points in (x,y)-space.
@@ -26,17 +39,6 @@ class ZenithReconstruction(Task):
     def _forward(self, x):
         # Transform outputs to angle and prepare prediction
         return torch.sigmoid(x[:,:1]) * np.pi
-
-
-class AzimuthReconstructionWithKappa(AzimuthReconstruction):
-    # Requires one feature in addition to `AzimuthReconstruction`: kappa (unceratinty; 1/variance).
-    nb_inputs = 3
-
-    def _forward(self, x):
-        # Transform outputs to angle and prepare prediction
-        angle = super()._forward(x[:,:2]).squeeze(1)
-        kappa = torch.abs(x[:,2]) + eps_like(x)
-        return torch.stack((angle, kappa), dim=1)
 
 class ZenithReconstructionWithKappa(ZenithReconstruction):
     # Requires one feature in addition to `ZenithReconstruction`: kappa (unceratinty; 1/variance).
