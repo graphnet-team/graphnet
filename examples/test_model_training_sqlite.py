@@ -101,7 +101,7 @@ def main():
     )
 
     try:
-        trained_model = trainer(model)
+        trainer(model)
     except KeyboardInterrupt:
         print("[ctrl+c] Exiting gracefully.")
         pass
@@ -112,9 +112,9 @@ def main():
         device=device, 
         output_column_names=[target + '_pred', target + '_sigma'],
     )
-    trained_model._tasks[0].inference = True
-    results = predictor(trained_model)
-    save_results(db, 'dynedge_zenith', results,archive, trained_model)
+    model._tasks[0].inference = True
+    results = predictor(model)
+    save_results(db, 'dynedge_zenith', results,archive, model)
 
 # Main function call
 if __name__ == "__main__":
