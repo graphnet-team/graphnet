@@ -1,5 +1,7 @@
+import os
 from typing import List, Union
 
+import dill
 import torch
 from torch import Tensor
 from torch.nn import Module, ModuleList
@@ -63,3 +65,26 @@ class Model(Module):
         self._gnn = self._gnn.to(device)
         for ix in range(len(self._tasks)):
             self._tasks[ix] = self._tasks[ix].to(device)
+
+    def save(self, path: str):
+        if not path.endswith('.pth'):
+            print("It is recommended to use the .pth suffix for model files.")
+        dirname = os.path.dirname(path)
+        if dirname:
+            os.makedirs(dirname, exist_ok=True)
+        torch.save(self.cpu(), path, pickle_module=dill)
+        print(f"Model saved to {path}")
+
+    @classmethod
+    def load(cls, path: str) -> 'Model':
+        return torch.load(path, pickle_module=dill)
+
+    def save_state_dict(self, path: str):
+        if not path.endswith('.pth'):
+            print("It is recommended to use the .pth suffix for state_dict files.")
+        torch.save(self.cpu().state_dict(), path)
+        print(f"Model state_dict saved to {path}")
+
+    def load_state_dict(self, path: str) -> 'Model':
+        state_dict = torch.load(path)
+        return super().load_state_dict(state_dict)
