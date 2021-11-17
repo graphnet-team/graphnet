@@ -62,41 +62,125 @@
              
   <h1>Source code for gnn_reco.models.training.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">dill</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
+<span class="kn">import</span> <span class="nn">dill</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data.batch</span> <span class="k">import</span> <span class="n">Batch</span>
 
 <span class="kn">from</span> <span class="nn">gnn_reco.data.sqlite_dataset</span> <span class="k">import</span> <span class="n">SQLiteDataset</span>
+<span class="kn">from</span> <span class="nn">gnn_reco.models</span> <span class="k">import</span> <span class="n">Model</span>
 
-<div class="viewcode-block" id="make_train_validation_dataloader"><a class="viewcode-back" href="../../../../gnn_reco.models.training.html#gnn_reco.models.training.utils.make_train_validation_dataloader">[docs]</a><span class="k">def</span> <span class="nf">make_train_validation_dataloader</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">,</span> <span class="n">persistent_workers</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="n">training_selection</span><span class="p">,</span> <span class="n">validation_selection</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">selection</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<div class="viewcode-block" id="make_dataloader"><a class="viewcode-back" href="../../../../gnn_reco.models.training.html#gnn_reco.models.training.utils.make_dataloader">[docs]</a><span class="k">def</span> <span class="nf">make_dataloader</span><span class="p">(</span>
+    <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">pulsemap</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">persistent_workers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataLoader</span><span class="p">:</span>
+    
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span>
+        <span class="n">db</span><span class="p">,</span>
+        <span class="n">pulsemap</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">,</span>
+        <span class="n">truth</span><span class="p">,</span>
+        <span class="n">selection</span><span class="o">=</span><span class="n">selection</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="n">common_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-        <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
         <span class="n">collate_fn</span><span class="o">=</span><span class="n">Batch</span><span class="o">.</span><span class="n">from_data_list</span><span class="p">,</span>
         <span class="n">persistent_workers</span><span class="o">=</span><span class="n">persistent_workers</span><span class="p">,</span>
         <span class="n">prefetch_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dataloader</span></div>
+
+<div class="viewcode-block" id="make_train_validation_dataloader"><a class="viewcode-back" href="../../../../gnn_reco.models.training.html#gnn_reco.models.training.utils.make_train_validation_dataloader">[docs]</a><span class="k">def</span> <span class="nf">make_train_validation_dataloader</span><span class="p">(</span>
+    <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">pulsemap</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">database_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+    <span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.33</span><span class="p">,</span>
+    <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">persistent_workers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">]:</span>
+
+    <span class="c1"># Reproducibility</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># Perform train/validation split</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">df_for_shuffle</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;event_no&#39;</span><span class="p">:</span> <span class="n">selection</span><span class="p">,</span> <span class="s1">&#39;db&#39;</span><span class="p">:</span> <span class="n">database_indices</span><span class="p">})</span>
+        <span class="n">shuffled_df</span> <span class="o">=</span> <span class="n">df_for_shuffle</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+        <span class="n">training_df</span><span class="p">,</span> <span class="n">validation_df</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">shuffled_df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+        <span class="n">training_selection</span> <span class="o">=</span> <span class="n">training_df</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">validation_selection</span> <span class="o">=</span> <span class="n">validation_df</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">training_selection</span><span class="p">,</span> <span class="n">validation_selection</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">selection</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+
+    <span class="c1"># Create DataLoaders</span>
+    <span class="n">common_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
+        <span class="n">pulsemap</span><span class="o">=</span><span class="n">pulsemap</span><span class="p">,</span>
+        <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
+        <span class="n">truth</span><span class="o">=</span><span class="n">truth</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+        <span class="n">persistent_workers</span><span class="o">=</span><span class="n">persistent_workers</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">training_dataloader</span> <span class="o">=</span> <span class="n">make_dataloader</span><span class="p">(</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">selection</span><span class="o">=</span><span class="n">training_selection</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">common_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">validation_dataloader</span> <span class="o">=</span> <span class="n">make_dataloader</span><span class="p">(</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">selection</span><span class="o">=</span><span class="n">validation_selection</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">common_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
     
-    <span class="n">training_dataset</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="n">training_selection</span><span class="p">)</span>
-    <span class="n">training_dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">training_dataset</span><span class="p">,</span> <span class="o">**</span><span class="n">common_kwargs</span><span class="p">)</span>
-
-    <span class="n">validation_dataset</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="n">validation_selection</span><span class="p">)</span>
-    <span class="n">validation_dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">validation_dataset</span><span class="p">,</span> <span class="o">**</span><span class="n">common_kwargs</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">training_dataloader</span><span class="p">,</span> <span class="n">validation_dataloader</span></div>
+    <span class="k">return</span> <span class="n">training_dataloader</span><span class="p">,</span> <span class="n">validation_dataloader</span>  <span class="c1"># , {&#39;valid_selection&#39;:validation_selection, &#39;training_selection&#39;:training_selection}</span></div>
 
 <div class="viewcode-block" id="save_results"><a class="viewcode-back" href="../../../../gnn_reco.models.training.html#gnn_reco.models.training.utils.save_results">[docs]</a><span class="k">def</span> <span class="nf">save_results</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span><span class="n">model</span><span class="p">):</span>
     <span class="n">db_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">archive</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">db_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/results.csv&#39;</span><span class="p">)</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="n">pickle_module</span><span class="o">=</span><span class="n">dill</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s1">&#39;.pth&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results saved at: </span><span class="se">\n</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_model"><a class="viewcode-back" href="../../../../gnn_reco.models.training.html#gnn_reco.models.training.utils.load_model">[docs]</a><span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">detector</span><span class="p">,</span> <span class="n">gnn</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+    <span class="n">db_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">archive</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">db_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span>
+        <span class="n">detector</span><span class="o">=</span><span class="n">detector</span><span class="p">,</span>
+        <span class="n">gnn</span><span class="o">=</span><span class="n">gnn</span><span class="p">,</span>
+        <span class="n">tasks</span><span class="o">=</span><span class="p">[</span><span class="n">task</span><span class="p">],</span>
+        <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s1">&#39;.pth&#39;</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">model</span></div>
 </pre></div>
 
            </div>

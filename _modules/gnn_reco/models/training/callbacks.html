@@ -83,8 +83,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">best</span> <span class="o">=</span> <span class="n">metrics</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">metrics</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">metrics</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">metrics</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_bad_epochs</span> <span class="o">=</span> <span class="mi">0</span>
@@ -118,12 +122,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_params</span></div></div>
 
 <div class="viewcode-block" id="PiecewiseLinearScheduler"><a class="viewcode-back" href="../../../../gnn_reco.models.training.html#gnn_reco.models.training.callbacks.PiecewiseLinearScheduler">[docs]</a><span class="k">class</span> <span class="nc">PiecewiseLinearScheduler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_dataset</span><span class="p">,</span> <span class="n">start_lr</span><span class="p">,</span> <span class="n">max_lr</span><span class="p">,</span> <span class="n">end_lr</span><span class="p">,</span> <span class="n">max_epochs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_dataset_length</span><span class="p">,</span> <span class="n">start_lr</span><span class="p">,</span> <span class="n">max_lr</span><span class="p">,</span> <span class="n">end_lr</span><span class="p">,</span> <span class="n">max_epochs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_dataset_length</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Passing dataset as training_dataset_length to PiecewiseLinearScheduler is deprecated. Please pass integer&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset_length</span> <span class="o">=</span> <span class="n">training_dataset_length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_start_lr</span> <span class="o">=</span> <span class="n">start_lr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_lr</span>   <span class="o">=</span> <span class="n">max_lr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_end_lr</span>   <span class="o">=</span> <span class="n">end_lr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_steps_up</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">training_dataset</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_steps_down</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_dataset</span><span class="p">)</span><span class="o">*</span><span class="n">max_epochs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps_up</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps_up</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_length</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps_down</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_length</span><span class="o">*</span><span class="n">max_epochs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps_up</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_step</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lr_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_lr_list</span><span class="p">()</span>
 
