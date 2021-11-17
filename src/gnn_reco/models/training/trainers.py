@@ -58,16 +58,17 @@ class Trainer(object):
         return acc_loss/len(self.validation_dataloader)
     
     def _load_best_parameters(self,model):
-        return model.load_state_dict(self._early_stopping_method.get_best_params())
+        return model.load_state_dict(self._early_stopping_method.get_best_params())  
+
 
 class MultipleDatabasesTrainer(object):
-    def __init__(self, databases, selections, pulsemap, batch_size, FEATURES, TRUTH, num_workers,optimizer, n_epochs, loss_func, scheduler = None, patience = 10, early_stopping = True):
+    def __init__(self, databases, selections, pulsemap, batch_size, features, truth, num_workers,optimizer, n_epochs, loss_func, scheduler = None, patience = 10, early_stopping = True):
         self.databases = databases
         self.selections = selections
         self.pulsemap = pulsemap
         self.batch_size  = batch_size
-        self.FEATURES = FEATURES
-        self.TRUTH = TRUTH
+        self.features = features
+        self.truth = truth
         self.num_workers = num_workers
         if early_stopping:
             self._early_stopping_method = EarlyStopping(patience = patience)
@@ -75,21 +76,21 @@ class MultipleDatabasesTrainer(object):
         self.scheduler = scheduler
         self.n_epochs = n_epochs
         self.loss_func = loss_func
-        
+
         self._setup_dataloaders()
 
     def __call__(self, model):
         trained_model = self._train(model)
         self._load_best_parameters(model)
         return trained_model
-    
+
     def _setup_dataloaders(self):
         self.training_dataloaders = []
         self.validation_dataloaders = []
         for i in range(len(self.databases)):
             db = self.databases[i]
             selection = self.selections[i]
-            training_dataloader, validation_dataloader = make_train_validation_dataloader(db, selection, self.pulsemap, self.batch_size, self.FEATURES, self.TRUTH, self.num_workers)
+            training_dataloader, validation_dataloader = make_train_validation_dataloader(db, selection, self.pulsemap, self.features, self.truth, batch_size=self.batch_size, num_workers=self.num_workers)
             self.training_dataloader.append(training_dataloader)
             self.validation_dataloader.append(validation_dataloader)
         return
@@ -140,9 +141,9 @@ class MultipleDatabasesTrainer(object):
                     acc_loss += loss.item()
                 iterations +=1
         return acc_loss/iterations
-    
+
     def _load_best_parameters(self,model):
-        return model.load_state_dict(self._early_stopping_method.get_best_params())       
+        return model.load_state_dict(self._early_stopping_method.get_best_params())
 
 class Predictor(object):
     def __init__(self, dataloader, target, device, output_column_names, post_processing_method = None):

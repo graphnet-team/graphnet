@@ -1,5 +1,7 @@
 from abc import abstractmethod
 from typing import Union
+
+import torch
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
@@ -31,6 +33,7 @@ class Task(Module):
 
     @final
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
+        self._regularisation_loss = 0
         x = self._affine(x)
         return self._forward(x)
 
@@ -41,6 +44,5 @@ class Task(Module):
     @final
     def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
         target = data[self._target_label]
-        loss = self._loss_function(pred, target)
+        loss = self._loss_function(pred, target) + self._regularisation_loss
         return loss
-    
