@@ -18,6 +18,7 @@ from torch_geometric.nn import global_add_pool as gap, global_max_pool as gmp
 from torch_geometric.nn.norm import LayerNorm
 from torch_geometric.utils import dropout_adj
 from tqdm import tqdm
+from gnn_reco.models.training.callbacks import EarlyStopping
 
 from gnn_reco.models.utils import calculate_xyzt_homophily
 
@@ -117,6 +118,8 @@ class Dynedge(torch.nn.Module):
                 pred = np.arctan2(x[:,0].cpu().numpy(),x[:,1].cpu().numpy()).reshape(-1,1)
                 if self.target == 'zenith':
                     pred = torch.tensor(self.scalers['truth'][self.target].inverse_transform(pred),dtype = torch.float32)
+                else:
+                    pred = torch.tensor(pred, dtype=torch.float32)
                 sigma = abs(1/x[:,2]).cpu()
                 return torch.cat((pred,sigma.reshape(-1,1)),dim = 1)
             else:
@@ -291,91 +294,75 @@ def vonmises_sinecosine_loss(prediction, graph, target):
     return loss
 
 
-class EarlyStopping(object):
-    def __init__(self, mode='min', min_delta=0, patience=10, percentage=False):
-        self.mode = mode
-        self.min_delta = min_delta
-        self.patience = patience
-        self.best = None
-        self.num_bad_epochs = 0
-        self.is_better = None
-        self._init_is_better(mode, min_delta, percentage)
+class MultipleDatasetsTrainer(object):
+    def __init__(self, training_loaders, validation_loaders, num_training_batches, num_validation_batches,optimizer, n_epochs, loss_func, target, device, scheduler = None, patience = 10, early_stopping = True):
+        self.validation_dataloaders = validation_loaders
+        self.training_dataloaders = training_loaders
+        self.num_training_batches = num_training_batches
+        self.num_validation_batches = num_validation_batches
+        if early_stopping:
+            self._early_stopping_method = EarlyStopping(patience = patience)
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+        self.n_epochs = n_epochs
+        self.loss_func = loss_func
+        self.target = target
+        self.device = device
 
-        if patience == 0:
-            self.is_better = lambda a, b: True
-            self.step = lambda a: False
+    def __call__(self, model):
+        trained_model = self._train(model)
+        self._load_best_parameters(model)
+        return trained_model
 
-    def step(self, metrics,model):
-        if self.best is None:
-            self.best = metrics
-            return False
-
-        if torch.isnan(metrics):
-            return True
-
-        if self.is_better(metrics, self.best):
-            self.num_bad_epochs = 0
-            self.best = metrics
-            self.best_params = model.state_dict()
-        else:
-            self.num_bad_epochs += 1
-
-        if self.num_bad_epochs >= self.patience:
-            return True
-
-        return False
-
-    def _init_is_better(self, mode, min_delta, percentage):
-        if mode not in {'min', 'max'}:
-            raise ValueError('mode ' + mode + ' is unknown!')
-        if not percentage:
-            if mode == 'min':
-                self.is_better = lambda a, best: a < best - min_delta
-            if mode == 'max':
-                self.is_better = lambda a, best: a > best + min_delta
-        else:
-            if mode == 'min':
-                self.is_better = lambda a, best: a < best - (
-                            best * min_delta / 100)
-            if mode == 'max':
-                self.is_better = lambda a, best: a > best + (
-                            best * min_delta / 100)
-    def GetBestParams(self):
-        return self.best_params
-
-
-class PiecewiseLinearScheduler(object):
-    def __init__(self, training_dataset_length, start_lr, max_lr, end_lr, max_epochs):
-        try:
-            self.dataset_length = len(training_dataset_length)
-            print('Passing dataset as training_dataset_length to PiecewiseLinearScheduler is deprecated. Please pass integer')
-        except:
-            self.dataset_length = training_dataset_length
-        self._start_lr = start_lr
-        self._max_lr   = max_lr
-        self._end_lr   = end_lr
-        self._steps_up = int(self.dataset_length/2)
-        self._steps_down = self.dataset_length*max_epochs - self._steps_up
-        self._current_step = 0
-        self._lr_list = self._calculate_lr_list()
-
-    def _calculate_lr_list(self):
-        res = list()
-        for step in range(0,self._steps_up+self._steps_down):
-            slope_up = (self._max_lr - self._start_lr)/self._steps_up
-            slope_down = (self._end_lr - self._max_lr)/self._steps_down
-            if step <= self._steps_up:
-                res.append(step*slope_up + self._start_lr)
-            if step > self._steps_up:
-                res.append(step*slope_down + self._max_lr -((self._end_lr - self._max_lr)/self._steps_down)*self._steps_up)
-        return torch.tensor(res)
-
-    def get_next_lr(self):
-        lr = self._lr_list[self._current_step]
-        self._current_step = self._current_step + 1
-        return lr
-
+    def _train(self,model):
+        training_batches = self.num_training_batches
+        for epoch in range(self.n_epochs):
+            acc_loss = torch.tensor([0],dtype = float).to(self.device)
+            iteration = 1
+            model.train()
+            pbar = tqdm(total = training_batches, unit= 'batches') 
+            for training_dataloader in self.training_dataloaders:  
+                for batch_of_graphs in training_dataloader:
+                    batch_of_graphs.to(self.device)
+                    with torch.enable_grad():                                                                                                     
+                            self.optimizer.zero_grad()                                                   
+                            out                             = model(batch_of_graphs)   
+                            loss                            = self.loss_func(out, batch_of_graphs, self.target)                      
+                            loss.backward()                                                         
+                            self.optimizer.step()
+                    if self.scheduler != None:    
+                        self.optimizer.param_groups[0]['lr'] = self.scheduler.get_next_lr().item()
+                    acc_loss += loss
+                    iteration +=1
+                    pbar.update(1)
+                    pbar.set_description('epoch: %s || loss: %s'%(epoch, acc_loss.item()/iteration))
+            validation_loss = self._validate(model)
+            pbar.set_description('epoch: %s || loss: %s || valid loss : %s'%(epoch,acc_loss.item()/iteration, validation_loss.item()))
+            if self._early_stopping_method.step(validation_loss,model):
+                print('EARLY STOPPING: %s'%epoch)
+                break
+        return model
+        
+    def _validate(self,model):
+        acc_loss = torch.tensor([0],dtype = float).to(self.device)
+        model.eval()
+        iterations = 1
+        pbar_valid = tqdm(total = self.num_validation_batches, unit= 'batches')
+        pbar_valid.set_description('Validating..')
+        for validation_dataloader in self.validation_dataloaders:
+            for batch_of_graphs in validation_dataloader:
+                batch_of_graphs.to(self.device)
+                with torch.no_grad():                                                                                        
+                    out                             = model(batch_of_graphs)   
+                    loss                            = self.loss_func(out, batch_of_graphs, self.target)                             
+                    acc_loss += loss
+                iterations +=1
+                pbar_valid.update(1)
+        return acc_loss/iterations
     
+    def _load_best_parameters(self,model):
+        return model.load_state_dict(self._early_stopping_method.get_best_params())
+
 class Trainer(object):
     def __init__(self, training_dataloader, validation_dataloader, optimizer, n_epochs, loss_func, target, device, scheduler = None, patience = 10, early_stopping = True):
         self.training_dataloader = training_dataloader
@@ -423,6 +410,7 @@ class Trainer(object):
         return model
             
     def _validate(self,model):
+        print('validating')
         acc_loss = torch.tensor([0],dtype = float).to(self.device)
         model.eval()
         for batch_of_graphs in self.validation_dataloader:
@@ -434,7 +422,7 @@ class Trainer(object):
         return acc_loss/len(self.validation_dataloader)
     
     def _load_best_parameters(self,model):
-        return model.load_state_dict(self._early_stopping_method.GetBestParams())
+        return model.load_state_dict(self._early_stopping_method.get_best_params())
          
 
 class Predictor(object):
@@ -456,6 +444,7 @@ class Predictor(object):
     def _predict(self):
         predictions = []
         event_nos   = []
+        energies = []
         target      = []
         with torch.no_grad():
             for batch_of_graphs in tqdm(self.dataloader, unit = 'batches'):
@@ -463,7 +452,9 @@ class Predictor(object):
                 target.extend(batch_of_graphs[self.target].detach().cpu().numpy())
                 predictions.extend(self.model(batch_of_graphs).detach().cpu().numpy())
                 event_nos.extend(batch_of_graphs['event_no'].detach().cpu().numpy())
+                energies.extend(batch_of_graphs['energy'].detach().cpu().numpy())
         out = pd.DataFrame(data = predictions, columns = self.output_column_names)
         out['event_no'] = event_nos
+        out['energy'] = energies
         out[self.target] = target
         return out
