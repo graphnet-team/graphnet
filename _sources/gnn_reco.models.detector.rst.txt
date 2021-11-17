@@ -12,10 +12,10 @@ gnn\_reco.models.detector.detector module
    :undoc-members:
    :show-inheritance:
 
-gnn\_reco.models.detector.icecube86 module
-------------------------------------------
+gnn\_reco.models.detector.icecube module
+----------------------------------------
 
-.. automodule:: gnn_reco.models.detector.icecube86
+.. automodule:: gnn_reco.models.detector.icecube
    :members:
    :undoc-members:
    :show-inheritance:

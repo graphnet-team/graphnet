@@ -78,49 +78,33 @@
 <section id="module-gnn_reco.models.task.reconstruction">
 <span id="gnn-reco-models-task-reconstruction-module"></span><h2>gnn_reco.models.task.reconstruction module<a class="headerlink" href="#module-gnn_reco.models.task.reconstruction" title="Permalink to this headline"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstruction">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.models.task.reconstruction.</span></span><span class="sig-name descname"><span class="pre">AngularReconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/models/task/reconstruction.html#AngularReconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstruction" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AzimuthReconstruction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.models.task.reconstruction.</span></span><span class="sig-name descname"><span class="pre">AzimuthReconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/models/task/reconstruction.html#AzimuthReconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AzimuthReconstruction" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa" title="gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AzimuthReconstruction.nb_inputs">
+<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AzimuthReconstruction.nb_inputs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AzimuthReconstruction.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AzimuthReconstruction.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.models.task.reconstruction.</span></span><span class="sig-name descname"><span class="pre">AzimuthReconstructionWithKappa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/models/task/reconstruction.html#AzimuthReconstructionWithKappa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#gnn_reco.models.task.task.Task" title="gnn_reco.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.models.task.task.Task</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstruction.nb_inputs">
-<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstruction.nb_inputs" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa.nb_inputs">
+<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa.nb_inputs" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstruction.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstruction.training" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstructionWithKappa">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.models.task.reconstruction.</span></span><span class="sig-name descname"><span class="pre">AngularReconstructionWithKappa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/models/task/reconstruction.html#AngularReconstructionWithKappa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstructionWithKappa" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#gnn_reco.models.task.reconstruction.AngularReconstruction" title="gnn_reco.models.task.reconstruction.AngularReconstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.models.task.reconstruction.AngularReconstruction</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstructionWithKappa.nb_inputs">
-<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstructionWithKappa.nb_inputs" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstructionWithKappa.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstructionWithKappa.training" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstructionWithUncertainty">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.models.task.reconstruction.</span></span><span class="sig-name descname"><span class="pre">AngularReconstructionWithUncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/models/task/reconstruction.html#AngularReconstructionWithUncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstructionWithUncertainty" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#gnn_reco.models.task.reconstruction.AngularReconstruction" title="gnn_reco.models.task.reconstruction.AngularReconstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.models.task.reconstruction.AngularReconstruction</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstructionWithUncertainty.nb_inputs">
-<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstructionWithUncertainty.nb_inputs" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AngularReconstructionWithUncertainty.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AngularReconstructionWithUncertainty.training" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.AzimuthReconstructionWithKappa.training" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -153,6 +137,38 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.EnergyReconstructionWithUncertainty.training">
 <span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.EnergyReconstructionWithUncertainty.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.ZenithReconstruction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.models.task.reconstruction.</span></span><span class="sig-name descname"><span class="pre">ZenithReconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/models/task/reconstruction.html#ZenithReconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.models.task.reconstruction.ZenithReconstruction" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gnn_reco.models.task.task.Task" title="gnn_reco.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.models.task.task.Task</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.ZenithReconstruction.nb_inputs">
+<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.ZenithReconstruction.nb_inputs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.ZenithReconstruction.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.ZenithReconstruction.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.ZenithReconstructionWithKappa">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.models.task.reconstruction.</span></span><span class="sig-name descname"><span class="pre">ZenithReconstructionWithKappa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/models/task/reconstruction.html#ZenithReconstructionWithKappa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.models.task.reconstruction.ZenithReconstructionWithKappa" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gnn_reco.models.task.reconstruction.ZenithReconstruction" title="gnn_reco.models.task.reconstruction.ZenithReconstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.models.task.reconstruction.ZenithReconstruction</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.ZenithReconstructionWithKappa.nb_inputs">
+<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.ZenithReconstructionWithKappa.nb_inputs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gnn_reco.models.task.reconstruction.ZenithReconstructionWithKappa.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.models.task.reconstruction.ZenithReconstructionWithKappa.training" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
