@@ -15,7 +15,7 @@ from gnn_reco.models.graph_builders import KNNGraphBuilder
 from gnn_reco.models.task.reconstruction import AzimuthReconstructionWithKappa, ZenithReconstructionWithKappa
 from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
 from gnn_reco.models.training.trainers import Trainer, Predictor
-from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
+from gnn_reco.models.training.utils import make_dataloader, make_train_validation_dataloader, save_results
 from gnn_reco.legacy.original import (
     Dynedge as LegacyDynedge,  
     vonmises_sinecosine_loss,
@@ -34,7 +34,7 @@ features = FEATURES.ICECUBE86
 truth = TRUTH.ICECUBE86
 
 
-def train_legacy_model(training_dataloader, validation_dataloader, target, n_epochs, patience, scalers, device, db, archive):
+def train_legacy_model(training_dataloader, validation_dataloader, test_dataloader,target, n_epochs, patience, scalers, device, db, archive):
     model = LegacyDynedge(k = 8, device = device, n_outputs= 3, scalers = scalers, target = target).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5,eps = 1e-3)
     scheduler = PiecewiseLinearScheduler(training_dataloader, start_lr = 1e-5, max_lr= 1e-3, end_lr = 1e-5, max_epochs= n_epochs)
@@ -46,12 +46,12 @@ def train_legacy_model(training_dataloader, validation_dataloader, target, n_epo
 
     trained_model = trainer(model)
 
-    predictor = LegacyPredictor(dataloader = validation_dataloader, target = target, device = device, output_column_names= [target + '_pred', target + '_var'])
+    predictor = LegacyPredictor(dataloader = test_dataloader, target = target, device = device, output_column_names= [target + '_pred', target + '_var'])
     results = predictor(trained_model)
     save_results(db, f'dynedge_{target}_legacy', results, archive, trained_model)
 
 
-def train_new_model(training_dataloader, validation_dataloader, target, n_epochs, patience, scalers, device, db, archive):
+def train_new_model(training_dataloader, validation_dataloader, test_dataloader, target, n_epochs, patience, scalers, device, db, archive):
     
     # Building model
     detector = IceCubeDeepCore(
@@ -98,7 +98,7 @@ def train_new_model(training_dataloader, validation_dataloader, target, n_epochs
 
     # Running inference
     predictor = Predictor(
-        dataloader=validation_dataloader, 
+        dataloader=test_dataloader, 
         target=target, 
         device=device, 
         output_column_names=[target + '_pred', target + '_kappa'],
@@ -114,35 +114,29 @@ def main(target):
     print(f"truth: {truth}")
 
     # Configuraiton
-    db = '/groups/icecube/leonbozi/datafromrasmus/GNNReco/data/databases/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3/data/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3.db'
+    db = '/groups/hep/pcs557/GNNReco/data/databases/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db'
     pulsemap = 'SRTTWOfflinePulsesDC'
     batch_size = 1024
-    num_workers = 10
-    device = 'cuda'
+    num_workers = 20
+    device = 'cuda:1'
     n_epochs = 30
     patience = 5
-    archive = '/groups/icecube/asogaard/gnn/results/von_mises-fisher_test'
+    archive = '/groups/hep/pcs557/phd/paper/vonmisesfisher'
 
     # Scalers
     scalers = fit_scaler(db, features, truth, pulsemap)
 
     # Common variables
-    train_selection, _ = get_equal_proportion_neutrino_indices(db)
-    train_selection = train_selection[0:50000]
+    train_selection, test_selection = get_equal_proportion_neutrino_indices(db)
+    train_selection = train_selection
     
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(
-        db, 
-        train_selection, 
-        pulsemap, 
-        batch_size,
-        features, 
-        truth, 
-        num_workers=num_workers,
-    )
+    test_dataloader = make_dataloader(db = db, pulsemap = pulsemap, features = features, truth = truth, batch_size = batch_size, shuffle= True, selection = test_selection, num_workers = num_workers)
+    training_dataloader, validation_dataloader = make_train_validation_dataloader(db =  db, selection = train_selection, pulsemap = pulsemap, features = features, truth = truth, batch_size= batch_size, num_workers = num_workers) 
     
     args = (
         training_dataloader,
         validation_dataloader,
+        test_dataloader,
         target,
         n_epochs,
         patience,
