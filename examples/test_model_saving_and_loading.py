@@ -8,10 +8,10 @@ from gnn_reco.components.loss_functions import  VonMisesFisher2DLoss
 from gnn_reco.data.sqlite_dataset import SQLiteDataset
 from gnn_reco.data.constants import FEATURES, TRUTH
 from gnn_reco.models import Model
-from gnn_reco.models.detector.icecube86 import IceCube86
+from gnn_reco.models.detector.icecube import IceCube86
 from gnn_reco.models.gnn import DynEdge
 from gnn_reco.models.graph_builders import KNNGraphBuilder
-from gnn_reco.models.task.reconstruction import AngularReconstructionWithKappa
+from gnn_reco.models.task.reconstruction import ZenithReconstructionWithKappa
 
 # Load data
 db = "/groups/icecube/leonbozi/datafromrasmus/GNNReco/data/databases/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3/data/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3.db"
@@ -38,7 +38,7 @@ def build_model():
     gnn = DynEdge(
         nb_inputs=detector.nb_outputs,
     )
-    task = AngularReconstructionWithKappa(
+    task = ZenithReconstructionWithKappa(
         hidden_size=gnn.nb_outputs, 
         target_label='zenith', 
         loss_function=VonMisesFisher2DLoss(),

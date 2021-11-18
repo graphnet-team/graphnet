@@ -9,7 +9,7 @@ from gnn_reco.data.constants import FEATURES, TRUTH
 from gnn_reco.data.utils import get_equal_proportion_neutrino_indices
 from gnn_reco.legacy.reimplemented import LegacyVonMisesFisherLoss, LegacyAngularReconstruction
 from gnn_reco.models import Model
-from gnn_reco.models.detector.icecube86 import IceCube86
+from gnn_reco.models.detector.icecube import IceCube86
 from gnn_reco.models.gnn import DynEdge, ConvNet
 from gnn_reco.models.graph_builders import KNNGraphBuilder
 from gnn_reco.models.task.reconstruction import AngularReconstructionWithKappa

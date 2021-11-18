@@ -23,6 +23,9 @@ class I3Extractor(ABC):
         self._name = name
 
     def set_files(self, i3_file, gcd_file):
+        # @TODO: Is it necessary to set the `i3_file`? It is only used in one
+        #        place in `I3TruthExtractor`, and there only in a way that might
+        #        be solved another way.
         self._i3_file = i3_file
         self._gcd_file = gcd_file
         self._load_gcd_data()
@@ -90,6 +93,7 @@ class I3FeatureExtractor(I3Extractor):
                     frame["I3Calibration"] = self._calibration 
                     data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
+                    del frame["I3Calibration"]  # Avoid modifying the frame in-place
             except:
                 data = dataclasses.I3RecoPulseSeriesMap.from_frame(frame, self._pulsemap)
                 om_keys = data.keys()
