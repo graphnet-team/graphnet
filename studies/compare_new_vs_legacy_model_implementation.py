@@ -118,7 +118,7 @@ def main(target):
     pulsemap = 'SRTTWOfflinePulsesDC'
     batch_size = 1024
     num_workers = 20
-    device = 'cuda:1'
+    device = 'cuda:0'
     n_epochs = 30
     patience = 5
     archive = '/groups/hep/pcs557/phd/paper/vonmisesfisher'
@@ -146,11 +146,11 @@ def main(target):
         archive,
     )
 
-    train_legacy_model(*args)
+    #train_legacy_model(*args)
     train_new_model(*args)
     
     
 # Main function call
 if __name__ == "__main__":
     main('azimuth')
-    main('zenith')
+    #main('zenith')
