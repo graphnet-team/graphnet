@@ -132,3 +132,37 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
 
     # Test gradient approximation
     assert torch.allclose(grads_approx, grads_exact, rtol=1e+0)
+
+@pytest.mark.parametrize("m", [2, 3])
+def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
+    """See [1812.04616] Sec. 8.2 for approximation"""
+    # Check(s)
+    assert isinstance(m, int)
+    assert m > 1
+
+    # Define test parameters
+    k = torch.tensor(
+        data=[100., 200., 300., 500., 1000.], 
+        requires_grad=True, 
+        dtype=dtype,
+    )
+    
+    # Compute values
+    res_approx = VonMisesFisherLoss.log_cmk_approx(m, k)
+    res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
+    
+    C = res_exact[0] - res_approx[0] # Normalisation constant
+    res_approx += C
+
+    # Compute gradients
+    grads_approx = _compute_elementwise_gradient(res_approx, k)
+    grads_exact = _compute_elementwise_gradient(res_exact, k)
+
+    exact_is_valid = torch.isfinite(res_exact)
+
+    # Test value approximation
+    assert torch.allclose(res_approx[exact_is_valid], res_exact[exact_is_valid], rtol=1e-2)
+
+    # Test gradient approximation
+    assert torch.allclose(grads_approx[exact_is_valid], grads_exact[exact_is_valid], rtol=1e-2)
+
