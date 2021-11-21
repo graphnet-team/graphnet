@@ -177,7 +177,7 @@ class VonMisesFisherLoss(LossFunction):
         m = target.size()[1]
         k = torch.norm(prediction, dim=1)
         dotprod = torch.sum(prediction * target, dim=1)
-        elements = -self.log_cmk_approx(m,k) - dotprod #-self.log_cmk_exact(m, k) - dotprod
+        elements = -self.log_cmk_exact(m, k) - dotprod
         return elements
 
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
