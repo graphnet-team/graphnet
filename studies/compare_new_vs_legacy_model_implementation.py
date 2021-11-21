@@ -153,4 +153,4 @@ def main(target):
 # Main function call
 if __name__ == "__main__":
     main('azimuth')
-    #main('zenith')
+    main('zenith')
