@@ -28,7 +28,7 @@ INSTALL_REQUIRES = [
     'torch-sparse',
     'torch-cluster',
     'torch-spline-conv',
-    'torch-geometric',
+    'torch-geometric==2.0.1',
     'dill',
 ]
 
