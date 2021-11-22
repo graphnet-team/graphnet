@@ -204,6 +204,7 @@ class I3TruthExtractor(I3Extractor):
     def __call__(self, frame, padding_value=-1) -> dict:
         """Extracts truth features."""
         is_mc = frame_is_montecarlo(frame)
+        is_noise = frame_is_noise(frame)
         sim_type = find_data_type(is_mc, self._i3_file)
 
         output = {
@@ -224,7 +225,7 @@ class I3TruthExtractor(I3Extractor):
             'SubEventID': frame['I3EventHeader'].sub_event_id,
         }
 
-        if is_mc:
+        if is_mc == True and is_noise == False:
             MCInIcePrimary, interaction_type, elasticity = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
             output.update({
                 'energy': MCInIcePrimary.energy,
@@ -272,12 +273,16 @@ class I3RetroExtractor(I3Extractor):
             })
         
         if frame_contains_classifiers(frame):
-            output.update({
-                'L7_MuonClassifier_FullSky_ProbNu': frame["L7_MuonClassifier_FullSky_ProbNu"].value,
-                'L4_MuonClassifier_Data_ProbNu': frame["L4_MuonClassifier_Data_ProbNu"].value,
-                'L4_NoiseClassifier_ProbNu': frame["L4_NoiseClassifier_ProbNu"].value,
-                'L7_PIDClassifier_FullSky_ProbTrack': frame["L7_PIDClassifier_FullSky_ProbTrack"].value,
-            })
+            classifiers = ['L7_MuonClassifier_FullSky_ProbNu','L4_MuonClassifier_Data_ProbNu','L4_NoiseClassifier_ProbNu','L7_PIDClassifier_FullSky_ProbTrack']
+            for classifier in classifiers:
+                if frame_has_key(frame, classifier):
+                    output.update({classifier : frame[classifier].value})
+            #output.update({
+            #    'L7_MuonClassifier_FullSky_ProbNu': frame["L7_MuonClassifier_FullSky_ProbNu"].value,
+            #    'L4_MuonClassifier_Data_ProbNu': frame["L4_MuonClassifier_Data_ProbNu"].value,
+            #    'L4_NoiseClassifier_ProbNu': frame["L4_NoiseClassifier_ProbNu"].value,
+            #    'L7_PIDClassifier_FullSky_ProbTrack': frame["L7_PIDClassifier_FullSky_ProbTrack"].value,
+            #})
 
         if frame_is_montecarlo(frame):
             if frame_contains_retro(frame):
@@ -304,6 +309,15 @@ def frame_is_montecarlo(frame):
         frame_has_key(frame, "MCInIcePrimary") or 
         frame_has_key(frame, "I3MCTree")
     )
+def frame_is_noise(frame):
+    if frame_has_key(frame, "MCInIcePrimary"):
+        return False
+    else:
+        return True 
+    
+def frame_is_lvl7(frame):
+    return frame_has_key(frame, "L7_reconstructed_zenith")
+
     
 
 def find_data_type(mc, input_file):
