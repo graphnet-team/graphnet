@@ -80,6 +80,32 @@ def get_even_signal_background_indicies(db):
     df_for_shuffle = pd.DataFrame(indicies).sample(frac = 1)
     return df_for_shuffle.values.ravel().tolist()  
     
+def get_even_track_cascade_indicies(database):
+    with sqlite3.connect(database) as con:
+        query = 'select event_no from truth where abs(pid) = 12 and interaction_type = 1'
+        nu_e_cc = pd.read_sql(query,con)
+
+    with sqlite3.connect(database) as con:
+        query = 'select event_no from truth where abs(pid) = 12 and interaction_type = 2'
+        nu_e_nc = pd.read_sql(query,con)
+
+    with sqlite3.connect(database) as con:
+        query = 'select event_no from truth where abs(pid) = 14 and interaction_type = 1'
+        nu_u_cc = pd.read_sql(query,con)
+        
+    with sqlite3.connect(database) as con:
+        query = 'select event_no from truth where abs(pid) = 14 and interaction_type = 2'
+        nu_u_nc = pd.read_sql(query,con)
+
+    events = nu_e_nc.append(nu_e_cc.sample(len(nu_e_nc)).reset_index(drop = True), ignore_index= True).append(nu_u_nc.sample(len(nu_e_nc)).reset_index(drop = True), ignore_index= True).append(nu_u_cc.sample(3*len(nu_e_nc)).reset_index(drop = True), ignore_index= True)
+    train_events = events.sample(frac = 1).reset_index(drop = True)
+
+
+    with sqlite3.connect(database) as con:
+        query = 'select event_no from truth where abs(pid) != 13 and event_no not in %s'%str(tuple(train_events['event_no']))
+        test = pd.read_sql(query, con).values.ravel().tolist()
+
+    return events.values.ravel().tolist(), test  
 
 
 
