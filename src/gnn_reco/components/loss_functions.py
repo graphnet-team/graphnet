@@ -155,6 +155,18 @@ class VonMisesFisherLoss(LossFunction):
         b = (v - 1)
         return -a + b * torch.log(b + a)
 
+    @classmethod
+    def log_cmk(cls, m, k, kappa_switch=100.):
+        kappa_switch = torch.tensor([kappa_switch]).to(k.device)
+        
+        # Ensure continuity at `kappa_switch`
+        offset = cls.log_cmk_approx(m, kappa_switch) - cls.log_cmk_exact(m, kappa_switch)
+        return torch.where(
+            k < kappa_switch,
+            cls.log_cmk_exact(m, k),
+            cls.log_cmk_approx(m, k) - offset,
+        )
+
     def _evaluate(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the von Mises-Fisher loss for a vector in D-dimensonal space.
 
@@ -177,7 +189,7 @@ class VonMisesFisherLoss(LossFunction):
         m = target.size()[1]
         k = torch.norm(prediction, dim=1)
         dotprod = torch.sum(prediction * target, dim=1)
-        elements = -self.log_cmk_exact(m, k) - dotprod
+        elements = -self.log_cmk(m, k) - dotprod
         return elements
 
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
