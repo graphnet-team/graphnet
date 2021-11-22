@@ -220,7 +220,7 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
 
         # Formatting prediction
         angle_pred = prediction[:,0]
-        kappa = abs(prediction[:,1])
+        kappa = prediction[:,1]
         p = kappa.unsqueeze(1) * torch.stack([
             torch.cos(angle_pred),
             torch.sin(angle_pred),
