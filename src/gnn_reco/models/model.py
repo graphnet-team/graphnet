@@ -86,5 +86,8 @@ class Model(Module):
         print(f"Model state_dict saved to {path}")
 
     def load_state_dict(self, path: str) -> 'Model':
-        state_dict = torch.load(path)
+        if isinstance(path, str):
+            state_dict = torch.load(path)
+        else:
+            state_dict = path
         return super().load_state_dict(state_dict)
