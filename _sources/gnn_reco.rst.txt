@@ -11,6 +11,7 @@ Subpackages
    gnn_reco.data
    gnn_reco.legacy
    gnn_reco.models
+   gnn_reco.modules
 
 Submodules
 ----------
