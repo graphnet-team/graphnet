@@ -24,27 +24,27 @@ class SQLiteDataConverter(DataConverter):
         self,
         extractors,
         outdir,
-        gcd_rescue, 
-        *, 
-        db_name, 
-        workers, 
+        gcd_rescue,
+        *,
+        db_name,
+        workers,
         max_dictionary_size=10000,
         verbose=1,
     ):
         """Implementation of DataConverter for saving to SQLite database.
 
-        Converts the i3-files in paths to several temporary SQLite databases in 
+        Converts the i3-files in paths to several temporary SQLite databases in
         parallel, that are then merged to a single SQLite database
 
         Args:
             feature_extractor_class (class): Class inheriting from I3FeatureExtractor
                 that should be used to extract experiement data.
             outdir (str): the directory to which the SQLite database is written
-            gcd_rescue (str): path to gcd_file that the extraction defaults to 
+            gcd_rescue (str): path to gcd_file that the extraction defaults to
                 if none is found in the folders
             db_name (str): database name. please omit extensions.
             workers (int): number of workers used for parallel extraction.
-            max_dictionary_size (int, optional): The maximum number of events in 
+            max_dictionary_size (int, optional): The maximum number of events in
                 a temporary database. Defaults to 10000.
             verbose (int, optional): Silent extraction if 0. Defaults to 1.
         """
@@ -52,7 +52,7 @@ class SQLiteDataConverter(DataConverter):
         self._db_name        = db_name
         self._verbose        = verbose
         self._workers        = workers
-        self._max_dict_size  = max_dictionary_size 
+        self._max_dict_size  = max_dictionary_size
 
         # Base class constructor
         super().__init__(extractors, outdir, gcd_rescue)
@@ -62,21 +62,21 @@ class SQLiteDataConverter(DataConverter):
              "I3TruthExtractor to allow for attaching unique indices.")
 
         self._table_names = [extractor.name for extractor in self._extractors]
-        
-        
+
+
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
         """Starts the parallelized extraction using map_async.
         """
-               
+
         create_out_directory(self._outdir + '/%s/data'%self._db_name)
         create_out_directory(self._outdir + '/%s/tmp'%self._db_name)
-        
+
         i3_files, gcd_files = pairwise_shuffle(i3_files, gcd_files)
         self._save_filenames(i3_files)
-        
+
         workers = min(self._workers, len(i3_files))
-        
+
         # SETTINGS
         settings = []
         event_nos = np.array_split(np.arange(0,99999999,1),workers)  # Notice that this choice means event_no is NOT unique between different databases.
@@ -86,13 +86,13 @@ class SQLiteDataConverter(DataConverter):
             settings.append([
                 file_list[i],
                 str(i),
-                gcd_file_list[i], 
-                event_nos[i], 
-                self._max_dict_size, 
-                self._db_name, 
+                gcd_file_list[i],
+                event_nos[i],
+                self._max_dict_size,
+                self._db_name,
                 self._outdir,
             ])
-        
+
         if workers > 1:
             print(f"Starting pool of {workers} workers to process {len(i3_files)} I3 file(s)")
             p = Pool(processes=workers)
@@ -105,8 +105,8 @@ class SQLiteDataConverter(DataConverter):
 
         print('Merging databases')
         self._merge_databases()
-        
-    
+
+
     def _initialise(self):
         if self._verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
@@ -118,19 +118,19 @@ class SQLiteDataConverter(DataConverter):
 
     # Non-inherited private method(s)
     def _parallel_extraction(self, settings):
-        """The function that every worker runs. 
-        
+        """The function that every worker runs.
+
         Performs all requested extractions and saves the results as temporary SQLite databases.
 
         Args:
             settings (list): List of arguments.
         """
         input_files, id, gcd_files, event_no_list, max_dict_size, db_name, outdir = settings
-        
+
         dataframes_big = OrderedDict([
             (key, pd.DataFrame()) for key in self._table_names
         ])
-        
+
         event_count = 0
         output_count = 0
         first_table = self._table_names[0]
@@ -143,7 +143,7 @@ class SQLiteDataConverter(DataConverter):
                     frame = i3_file.pop_physics()
                 except:
                     continue
-                    
+
                 # Extract data from I3Frame
                 results = self._extractors(frame)
                 data_dict = OrderedDict(zip(self._table_names, results))
@@ -153,7 +153,7 @@ class SQLiteDataConverter(DataConverter):
                     df = apply_event_no(data, event_no_list, event_count)
                     if len(df):
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
-                
+
                 event_count += 1
                 if len(dataframes_big[first_table]) >= max_dict_size:
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
@@ -168,13 +168,13 @@ class SQLiteDataConverter(DataConverter):
                     (key, pd.DataFrame()) for key in self._table_names
                 ])
                 output_count +=1
-        
+
     def _save_filenames(self, i3_files: List[str]):
         """Saves I3 file names in CSV format."""
         create_out_directory(self._outdir + '/%s/config'%self._db_name)
         i3_files = pd.DataFrame(data=i3_files, columns=['filename'])
         i3_files.to_csv(self._outdir + '/%s/config/i3files.csv'%self._db_name)
-        
+
     def _merge_databases(self):
         """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""
         path_tmp = self._outdir + '/' + self._db_name + '/tmp'
@@ -184,13 +184,13 @@ class SQLiteDataConverter(DataConverter):
         if len(db_files) > 0:
             print('Found %s .db-files in %s'%(len(db_files),path_tmp))
             print(db_files)
-            
+
             # Create one empty database table for each extraction
             for ix_table, table_name in enumerate(self._table_names):
                 column_names = self._extract_column_names(db_paths, table_name)
                 if len(column_names) > 1:
-                    self._create_table(database_path, table_name, column_names, is_pulse_map=(ix_table >= 2))        
-            
+                    self._create_table(database_path, table_name, column_names, is_pulse_map=(ix_table >= 2))
+
             # Merge temporary databases into newly created one
             self._merge_temporary_databases(database_path, db_files, path_tmp)
             os.system('rm -r %s'%path_tmp)
@@ -210,7 +210,7 @@ class SQLiteDataConverter(DataConverter):
         conn = sqlite3.connect(database + '.db')
         c = conn.cursor()
         c.executescript(code)
-        c.close()  
+        c.close()
 
     def _attach_index(self, database: str, table_name: str):
         """Attaches the table index. Important for query times!"""
@@ -239,18 +239,18 @@ class SQLiteDataConverter(DataConverter):
                     type_ = 'INTEGER PRIMARY KEY NOT NULL'
                 else:
                     type_ = 'NOT NULL'
-            else: 
+            else:
                 type_ = 'FLOAT'
             query_columns.append(f"{column} {type_}")
         query_columns = ', '.join(query_columns)
-            
+
         code = (
             "PRAGMA foreign_keys=off;\n"
             f"CREATE TABLE {table_name} ({query_columns});\n"
             "PRAGMA foreign_keys=on;"
         )
         self._run_sql_code(database, code)
-        
+
         if is_pulse_map:
             print(table_name)
             print('Attaching indices')
