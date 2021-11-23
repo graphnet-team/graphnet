@@ -16,6 +16,7 @@ import torch
 from torch import Tensor
 from torch.nn.modules.loss import _WeightedLoss
 
+
 class LossFunction(_WeightedLoss):
     """Base class for loss functions in gnn_reco.
     """
@@ -61,12 +62,13 @@ class LossFunction(_WeightedLoss):
 
 
 class LogCoshLoss(LossFunction):
-    """Log-cosh loss function. 
-    
+    """Log-cosh loss function.
+
     Acts like x^2 for small x; and like |x| for large x.
     """
-    def _log_cosh(self, x: Tensor) -> Tensor:
-        """Numerically stble version on log(cosh(x)).
+    @classmethod
+    def _log_cosh(cls, x: Tensor) -> Tensor:  # pylint: disable=invalid-name
+        """Numerically stable version on log(cosh(x)).
 
         Used to avoid `inf` for even moderately large differences.
         See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]
@@ -112,26 +114,26 @@ class LogCMK(torch.autograd.Function):
     exact calculations for `m=2` and `m=3` and found to yield the correct results.
     """
     @staticmethod
-    def forward(ctx, m, k):
-        dtype = k.dtype
-        ctx.save_for_backward(k)
+    def forward(ctx, m, kappa):  # pylint: disable=invalid-name,arguments-differ
+        dtype = kappa.dtype
+        ctx.save_for_backward(kappa)
         ctx.m = m
         ctx.dtype = dtype
-        k = k.double()
+        kappa = kappa.double()
         iv = torch.from_numpy(
-            scipy.special.iv(m / 2.0 - 1, k.cpu().numpy())
-        ).to(k.device)
+            scipy.special.iv(m / 2.0 - 1, kappa.cpu().numpy())
+        ).to(kappa.device)
         return (
-            (m / 2.0 - 1) * torch.log(k) - torch.log(iv) - (m / 2) * np.log(2 * np.pi)
+            (m / 2.0 - 1) * torch.log(kappa) - torch.log(iv) - (m / 2) * np.log(2 * np.pi)
         ).type(dtype)
 
     @staticmethod
-    def backward(ctx, grad_output):
-        k = ctx.saved_tensors[0]
+    def backward(ctx, grad_output):  # pylint: disable=invalid-name,arguments-differ
+        kappa = ctx.saved_tensors[0]
         m = ctx.m
         dtype = ctx.dtype
-        k = k.double().cpu().numpy()
-        grads = -((scipy.special.iv(m / 2.0, k)) / (scipy.special.iv(m / 2.0 - 1, k)))
+        kappa = kappa.double().cpu().numpy()
+        grads = -((scipy.special.iv(m / 2.0, kappa)) / (scipy.special.iv(m / 2.0 - 1, kappa)))
         return (
             None,
             grad_output * torch.from_numpy(grads).to(grad_output.device).type(dtype),
@@ -144,27 +146,37 @@ class VonMisesFisherLoss(LossFunction):
     prediction vectors need to be prepared.
     """
     @classmethod
-    def log_cmk_exact(cls, m, k):
-        return LogCMK.apply(m, k)
+    def log_cmk_exact(cls, m: int, kappa: Tensor) -> Tensor:  # pylint: disable=invalid-name
+        """Exact calculation of $log C_{m}(k)$ term in von Mises-Fisher loss."""
+        return LogCMK.apply(m, kappa)
 
     @classmethod
-    def log_cmk_approx(cls, m, k):
-        # [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additionaal minus signn
+    def log_cmk_approx(cls, m: int, kappa: Tensor) -> Tensor:  # pylint: disable=invalid-name
+        """Approx. calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
+        [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additional minus sign.
+        """
         v = m / 2. - 0.5
-        a = torch.sqrt((v + 1)**2 + k**2)
+        a = torch.sqrt((v + 1)**2 + kappa**2)
         b = (v - 1)
         return -a + b * torch.log(b + a)
 
     @classmethod
-    def log_cmk(cls, m, k, kappa_switch=100.):
-        kappa_switch = torch.tensor([kappa_switch]).to(k.device)
-        
+    def log_cmk(cls, m: int, kappa: Tensor, kappa_switch: float = 100.) -> Tensor:  # pylint: disable=invalid-name
+        """Calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
+
+        Since `log_cmk_exact` is diverges for `kappa` >~ 700 (using float64
+        precision), and since `log_cmk_approx` is unaccurate for small `kappa`,
+        this method automatically switches between the two at `kappa_switch`,
+        ensuring continuity at this point.
+        """
+        kappa_switch = torch.tensor([kappa_switch]).to(kappa.device)
+
         # Ensure continuity at `kappa_switch`
         offset = cls.log_cmk_approx(m, kappa_switch) - cls.log_cmk_exact(m, kappa_switch)
         return torch.where(
-            k < kappa_switch,
-            cls.log_cmk_exact(m, k),
-            cls.log_cmk_approx(m, k) - offset,
+            kappa < kappa_switch,
+            cls.log_cmk_exact(m, kappa),
+            cls.log_cmk_approx(m, kappa) - offset,
         )
 
     def _evaluate(self, prediction: Tensor, target: Tensor) -> Tensor:
@@ -191,6 +203,10 @@ class VonMisesFisherLoss(LossFunction):
         dotprod = torch.sum(prediction * target, dim=1)
         elements = -self.log_cmk(m, k) - dotprod
         return elements
+
+    @abstractmethod
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        raise NotImplementedError
 
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
     """von Mises-Fisher loss function vectors in the 2D plane."""
