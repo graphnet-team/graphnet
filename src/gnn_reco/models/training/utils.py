@@ -12,6 +12,7 @@ from torch_geometric.data.batch import Batch
 from gnn_reco.data.sqlite_dataset import SQLiteDataset
 from gnn_reco.models import Model
 
+
 def make_dataloader(
     db: str,
     pulsemap: str,
@@ -24,7 +25,7 @@ def make_dataloader(
     num_workers: int = 10,
     persistent_workers: bool = True,
 ) -> DataLoader:
-    
+
     dataset = SQLiteDataset(
         db,
         pulsemap,
@@ -95,7 +96,7 @@ def make_train_validation_dataloader(
         selection=validation_selection,
         **common_kwargs,
     )
-    
+
     return training_dataloader, validation_dataloader  # , {'valid_selection':validation_selection, 'training_selection':training_selection}
 
 def save_results(db, tag, results, archive,model):
