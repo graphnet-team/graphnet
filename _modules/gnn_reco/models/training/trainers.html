@@ -68,6 +68,7 @@
 <span class="kn">from</span> <span class="nn">gnn_reco.models.training.callbacks</span> <span class="k">import</span> <span class="n">EarlyStopping</span>
 <span class="kn">from</span> <span class="nn">gnn_reco.models.training.utils</span> <span class="k">import</span> <span class="n">make_train_validation_dataloader</span>
 
+
 <div class="viewcode-block" id="Trainer"><a class="viewcode-back" href="../../../../gnn_reco.models.training.html#gnn_reco.models.training.trainers.Trainer">[docs]</a><span class="k">class</span> <span class="nc">Trainer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_dataloader</span><span class="p">,</span> <span class="n">validation_dataloader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">n_epochs</span><span class="p">,</span> <span class="n">scheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">patience</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">early_stopping</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">training_dataloader</span> <span class="o">=</span> <span class="n">training_dataloader</span>
@@ -77,7 +78,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span> <span class="o">=</span> <span class="n">n_epochs</span>
-        
+
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="n">trained_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_best_parameters</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -87,19 +88,19 @@
         <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span><span class="p">):</span>
             <span class="n">acc_loss</span> <span class="o">=</span> <span class="mf">0.</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span> 
+            <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
             <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_dataloader</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span> <span class="s1">&#39;batches&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">batch_of_graphs</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">():</span>                                                                                                     
-                    <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>                                                   
-                    <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)</span>   
+                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)</span>
                     <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">batch_of_graphs</span><span class="p">)</span>
-                    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>                                                         
+                    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>    
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">get_next_lr</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                 <span class="n">acc_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">iteration</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pbar</span><span class="p">)):</span>    
+                <span class="k">if</span> <span class="n">iteration</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pbar</span><span class="p">)):</span>
                     <span class="n">validation_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
                     <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s1">&#39;epoch: </span><span class="si">%s</span><span class="s1"> || loss: </span><span class="si">%s</span><span class="s1"> || valid loss : </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">acc_loss</span><span class="o">/</span><span class="n">iteration</span><span class="p">,</span> <span class="n">validation_loss</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -109,19 +110,19 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EARLY STOPPING: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">epoch</span><span class="p">)</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">model</span>
-            
+
     <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">):</span>
         <span class="n">acc_loss</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">batch_of_graphs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_dataloader</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>                                                                                        
-                <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)</span>   
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)</span>
                 <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">batch_of_graphs</span><span class="p">)</span>
                 <span class="n">acc_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">acc_loss</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_dataloader</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">_load_best_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_early_stopping_method</span><span class="o">.</span><span class="n">get_best_params</span><span class="p">())</span>  </div>
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_early_stopping_method</span><span class="o">.</span><span class="n">get_best_params</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="MultipleDatabasesTrainer"><a class="viewcode-back" href="../../../../gnn_reco.models.training.html#gnn_reco.models.training.trainers.MultipleDatabasesTrainer">[docs]</a><span class="k">class</span> <span class="nc">MultipleDatabasesTrainer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -170,16 +171,16 @@
             <span class="n">acc_loss</span> <span class="o">=</span> <span class="mf">0.</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-            <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span> <span class="o">=</span> <span class="n">training_batches</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span> <span class="s1">&#39;batches&#39;</span><span class="p">)</span> 
-            <span class="k">for</span> <span class="n">training_dataloader</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_dataloaders</span><span class="p">:</span>  
+            <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span> <span class="o">=</span> <span class="n">training_batches</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span> <span class="s1">&#39;batches&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">training_dataloader</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_dataloaders</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">batch_of_graphs</span> <span class="ow">in</span> <span class="n">training_dataloader</span><span class="p">:</span>
-                    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">():</span>                                                                                                     
-                            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>                                                   
-                            <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)</span>   
+                    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                            <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)</span>
                             <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">batch_of_graphs</span><span class="p">)</span>
-                            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>                                                         
+                            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>    
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">get_next_lr</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                     <span class="n">acc_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                     <span class="n">iteration</span> <span class="o">+=</span><span class="mi">1</span>
@@ -198,8 +199,8 @@
         <span class="n">iterations</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">for</span> <span class="n">validation_dataloader</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_dataloaders</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">batch_of_graphs</span> <span class="ow">in</span> <span class="n">validation_dataloader</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>                                                                                        
-                    <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)</span>   
+                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)</span>
                     <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">batch_of_graphs</span><span class="p">)</span>
                     <span class="n">acc_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                 <span class="n">iterations</span> <span class="o">+=</span><span class="mi">1</span>

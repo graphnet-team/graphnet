@@ -87,27 +87,27 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractors</span><span class="p">,</span>
         <span class="n">outdir</span><span class="p">,</span>
-        <span class="n">gcd_rescue</span><span class="p">,</span> 
-        <span class="o">*</span><span class="p">,</span> 
-        <span class="n">db_name</span><span class="p">,</span> 
-        <span class="n">workers</span><span class="p">,</span> 
+        <span class="n">gcd_rescue</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">db_name</span><span class="p">,</span>
+        <span class="n">workers</span><span class="p">,</span>
         <span class="n">max_dictionary_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implementation of DataConverter for saving to SQLite database.</span>
 
-<span class="sd">        Converts the i3-files in paths to several temporary SQLite databases in </span>
+<span class="sd">        Converts the i3-files in paths to several temporary SQLite databases in</span>
 <span class="sd">        parallel, that are then merged to a single SQLite database</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            feature_extractor_class (class): Class inheriting from I3FeatureExtractor</span>
 <span class="sd">                that should be used to extract experiement data.</span>
 <span class="sd">            outdir (str): the directory to which the SQLite database is written</span>
-<span class="sd">            gcd_rescue (str): path to gcd_file that the extraction defaults to </span>
+<span class="sd">            gcd_rescue (str): path to gcd_file that the extraction defaults to</span>
 <span class="sd">                if none is found in the folders</span>
 <span class="sd">            db_name (str): database name. please omit extensions.</span>
 <span class="sd">            workers (int): number of workers used for parallel extraction.</span>
-<span class="sd">            max_dictionary_size (int, optional): The maximum number of events in </span>
+<span class="sd">            max_dictionary_size (int, optional): The maximum number of events in</span>
 <span class="sd">                a temporary database. Defaults to 10000.</span>
 <span class="sd">            verbose (int, optional): Silent extraction if 0. Defaults to 1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -115,7 +115,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span>        <span class="o">=</span> <span class="n">db_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span>        <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span>        <span class="o">=</span> <span class="n">workers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_dict_size</span>  <span class="o">=</span> <span class="n">max_dictionary_size</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_dict_size</span>  <span class="o">=</span> <span class="n">max_dictionary_size</span>
 
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractors</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">gcd_rescue</span><span class="p">)</span>
@@ -125,21 +125,21 @@
              <span class="s2">&quot;I3TruthExtractor to allow for attaching unique indices.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">extractor</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractors</span><span class="p">]</span></div>
-        
-        
+
+
     <span class="c1"># Abstract method implementation(s)</span>
 <div class="viewcode-block" id="SQLiteDataConverter._process_files"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter._process_files">[docs]</a>    <span class="k">def</span> <span class="nf">_process_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Starts the parallelized extraction using map_async.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-               
+
         <span class="n">create_out_directory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s1">&#39;/</span><span class="si">%s</span><span class="s1">/data&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">)</span>
         <span class="n">create_out_directory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s1">&#39;/</span><span class="si">%s</span><span class="s1">/tmp&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">)</span>
-        
+
         <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span> <span class="o">=</span> <span class="n">pairwise_shuffle</span><span class="p">(</span><span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_filenames</span><span class="p">(</span><span class="n">i3_files</span><span class="p">)</span>
-        
+
         <span class="n">workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">i3_files</span><span class="p">))</span>
-        
+
         <span class="c1"># SETTINGS</span>
         <span class="n">settings</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">event_nos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">99999999</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">workers</span><span class="p">)</span>  <span class="c1"># Notice that this choice means event_no is NOT unique between different databases.</span>
@@ -149,13 +149,13 @@
             <span class="n">settings</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
                 <span class="n">file_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
-                <span class="n">gcd_file_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> 
-                <span class="n">event_nos</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> 
-                <span class="bp">self</span><span class="o">.</span><span class="n">_max_dict_size</span><span class="p">,</span> 
-                <span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">,</span> 
+                <span class="n">gcd_file_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">event_nos</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_dict_size</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span>
             <span class="p">])</span>
-        
+
         <span class="k">if</span> <span class="n">workers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Starting pool of </span><span class="si">{workers}</span><span class="s2"> workers to process {len(i3_files)} I3 file(s)&quot;</span><span class="p">)</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">workers</span><span class="p">)</span>
@@ -168,8 +168,8 @@
 
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Merging databases&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_merge_databases</span><span class="p">()</span></div>
-        
-    
+
+
     <span class="k">def</span> <span class="nf">_initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">icetray</span><span class="o">.</span><span class="n">I3Logger</span><span class="o">.</span><span class="n">global_logger</span> <span class="o">=</span> <span class="n">icetray</span><span class="o">.</span><span class="n">I3NullLogger</span><span class="p">()</span>
@@ -181,19 +181,19 @@
 
     <span class="c1"># Non-inherited private method(s)</span>
 <div class="viewcode-block" id="SQLiteDataConverter._parallel_extraction"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter._parallel_extraction">[docs]</a>    <span class="k">def</span> <span class="nf">_parallel_extraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The function that every worker runs. </span>
-<span class="sd">        </span>
+        <span class="sd">&quot;&quot;&quot;The function that every worker runs.</span>
+
 <span class="sd">        Performs all requested extractions and saves the results as temporary SQLite databases.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            settings (list): List of arguments.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">input_files</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">gcd_files</span><span class="p">,</span> <span class="n">event_no_list</span><span class="p">,</span> <span class="n">max_dict_size</span><span class="p">,</span> <span class="n">db_name</span><span class="p">,</span> <span class="n">outdir</span> <span class="o">=</span> <span class="n">settings</span>
-        
+
         <span class="n">dataframes_big</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([</span>
             <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">())</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span>
         <span class="p">])</span>
-        
+
         <span class="n">event_count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">output_count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">first_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -206,7 +206,7 @@
                     <span class="n">frame</span> <span class="o">=</span> <span class="n">i3_file</span><span class="o">.</span><span class="n">pop_physics</span><span class="p">()</span>
                 <span class="k">except</span><span class="p">:</span>
                     <span class="k">continue</span>
-                    
+
                 <span class="c1"># Extract data from I3Frame</span>
                 <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractors</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
                 <span class="n">data_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">,</span> <span class="n">results</span><span class="p">))</span>
@@ -216,7 +216,7 @@
                     <span class="n">df</span> <span class="o">=</span> <span class="n">apply_event_no</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">event_no_list</span><span class="p">,</span> <span class="n">event_count</span><span class="p">)</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
                         <span class="n">dataframes_big</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframes_big</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                
+
                 <span class="n">event_count</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataframes_big</span><span class="p">[</span><span class="n">first_table</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">max_dict_size</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_save_to_sql</span><span class="p">(</span><span class="n">dataframes_big</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">output_count</span><span class="p">,</span> <span class="n">db_name</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
@@ -231,13 +231,13 @@
                     <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">())</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span>
                 <span class="p">])</span>
                 <span class="n">output_count</span> <span class="o">+=</span><span class="mi">1</span></div>
-        
+
 <div class="viewcode-block" id="SQLiteDataConverter._save_filenames"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter._save_filenames">[docs]</a>    <span class="k">def</span> <span class="nf">_save_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;Saves I3 file names in CSV format.&quot;&quot;&quot;</span>
         <span class="n">create_out_directory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s1">&#39;/</span><span class="si">%s</span><span class="s1">/config&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">)</span>
         <span class="n">i3_files</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">i3_files</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">])</span>
         <span class="n">i3_files</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s1">&#39;/</span><span class="si">%s</span><span class="s1">/config/i3files.csv&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">)</span></div>
-        
+
 <div class="viewcode-block" id="SQLiteDataConverter._merge_databases"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter._merge_databases">[docs]</a>    <span class="k">def</span> <span class="nf">_merge_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Merges the temporary databases into a single sqlite database, then deletes the temporary databases.&quot;&quot;&quot;</span>
         <span class="n">path_tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span> <span class="o">+</span> <span class="s1">&#39;/tmp&#39;</span>
@@ -247,13 +247,13 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">db_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found </span><span class="si">%s</span><span class="s1"> .db-files in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">db_files</span><span class="p">),</span><span class="n">path_tmp</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">db_files</span><span class="p">)</span>
-            
+
             <span class="c1"># Create one empty database table for each extraction</span>
             <span class="k">for</span> <span class="n">ix_table</span><span class="p">,</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">):</span>
                 <span class="n">column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_column_names</span><span class="p">(</span><span class="n">db_paths</span><span class="p">,</span> <span class="n">table_name</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">database_path</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">is_pulse_map</span><span class="o">=</span><span class="p">(</span><span class="n">ix_table</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">))</span>        
-            
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">database_path</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">is_pulse_map</span><span class="o">=</span><span class="p">(</span><span class="n">ix_table</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">))</span>
+
             <span class="c1"># Merge temporary databases into newly created one</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_merge_temporary_databases</span><span class="p">(</span><span class="n">database_path</span><span class="p">,</span> <span class="n">db_files</span><span class="p">,</span> <span class="n">path_tmp</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;rm -r </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">path_tmp</span><span class="p">)</span>
@@ -273,7 +273,7 @@
         <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span> <span class="o">+</span> <span class="s1">&#39;.db&#39;</span><span class="p">)</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
         <span class="n">c</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  
+        <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SQLiteDataConverter._attach_index"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.sqlite_dataconverter.SQLiteDataConverter._attach_index">[docs]</a>    <span class="k">def</span> <span class="nf">_attach_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Attaches the table index. Important for query times!&quot;&quot;&quot;</span>
@@ -302,18 +302,18 @@
                     <span class="n">type_</span> <span class="o">=</span> <span class="s1">&#39;INTEGER PRIMARY KEY NOT NULL&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">type_</span> <span class="o">=</span> <span class="s1">&#39;NOT NULL&#39;</span>
-            <span class="k">else</span><span class="p">:</span> 
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">type_</span> <span class="o">=</span> <span class="s1">&#39;FLOAT&#39;</span>
             <span class="n">query_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{column}</span><span class="s2"> </span><span class="si">{type_}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">query_columns</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">query_columns</span><span class="p">)</span>
-            
+
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;PRAGMA foreign_keys=off;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">f</span><span class="s2">&quot;CREATE TABLE </span><span class="si">{table_name}</span><span class="s2"> (</span><span class="si">{query_columns}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;PRAGMA foreign_keys=on;&quot;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_sql_code</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="n">is_pulse_map</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Attaching indices&#39;</span><span class="p">)</span>

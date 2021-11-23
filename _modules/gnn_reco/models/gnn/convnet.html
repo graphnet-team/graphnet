@@ -76,23 +76,24 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="k">import</span> <span class="n">TAGConv</span><span class="p">,</span> <span class="n">global_add_pool</span><span class="p">,</span> <span class="n">global_max_pool</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span>
 
-<span class="kn">from</span> <span class="nn">gnn_reco.models.gnn</span> <span class="k">import</span> <span class="n">GNN</span>
+<span class="kn">from</span> <span class="nn">gnn_reco.models.gnn.gnn</span> <span class="k">import</span> <span class="n">GNN</span>
+
 
 <div class="viewcode-block" id="ConvNet"><a class="viewcode-back" href="../../../../gnn_reco.models.gnn.html#gnn_reco.models.gnn.convnet.ConvNet">[docs]</a><span class="k">class</span> <span class="nc">ConvNet</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
 <div class="viewcode-block" id="ConvNet.__init__"><a class="viewcode-back" href="../../../../gnn_reco.models.gnn.html#gnn_reco.models.gnn.convnet.ConvNet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">nb_outputs</span><span class="p">,</span> <span class="n">nb_intermediate</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">dropout_ratio</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;ConvNet model.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            nb_inputs (int): Number of input features, i.e. dimension of input </span>
+<span class="sd">            nb_inputs (int): Number of input features, i.e. dimension of input</span>
 <span class="sd">                layer.</span>
-<span class="sd">            nb_outputs (int): Number of prediction labels, i.e. dimension of </span>
+<span class="sd">            nb_outputs (int): Number of prediction labels, i.e. dimension of</span>
 <span class="sd">                output layer.</span>
 <span class="sd">            nb_intermediate (int): Number of nodes in intermediate layer(s)</span>
 <span class="sd">            dropout_ratio (float): Fraction of nodes to drop</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nb_inputs</span><span class="p">,</span> <span class="n">nb_outputs</span><span class="p">)</span>
-        
+
         <span class="c1"># Member variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate</span> <span class="o">=</span> <span class="n">nb_intermediate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate</span>
@@ -101,23 +102,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">TAGConv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">TAGConv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conv3</span> <span class="o">=</span> <span class="n">TAGConv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">batchnorm1</span> <span class="o">=</span> <span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">linear1</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">linear2</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">linear3</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">linear4</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">linear5</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">drop1</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_ratio</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drop2</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_ratio</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drop3</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_ratio</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drop4</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_ratio</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drop5</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_ratio</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_outputs</span><span class="p">)</span></div>
-        
+
 <div class="viewcode-block" id="ConvNet.forward"><a class="viewcode-back" href="../../../../gnn_reco.models.gnn.html#gnn_reco.models.gnn.convnet.ConvNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
@@ -127,26 +128,26 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Tensor: Model output.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="c1"># Convenience variables</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span>
 
         <span class="c1"># Graph convolutional operations</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">))</span>
         <span class="n">x1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
-            <span class="n">global_add_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span> 
+            <span class="n">global_add_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span>
             <span class="n">global_max_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span>
         <span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">))</span>
         <span class="n">x2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
-            <span class="n">global_add_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span> 
+            <span class="n">global_add_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span>
             <span class="n">global_max_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span>
         <span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv3</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">))</span>
         <span class="n">x3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
-            <span class="n">global_add_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span> 
+            <span class="n">global_add_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span>
             <span class="n">global_max_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">),</span>
         <span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -155,7 +156,7 @@
 
         <span class="c1"># Batch-normalising intermediate features</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchnorm1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        
+
         <span class="c1"># Post-processing</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -170,7 +171,7 @@
 
         <span class="c1"># Read-out</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        
+
         <span class="k">return</span> <span class="n">x</span></div></div>
 </pre></div>
 

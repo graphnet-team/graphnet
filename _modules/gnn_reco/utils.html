@@ -61,13 +61,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for gnn_reco.utils</h1><div class="highlight"><pre>
-<span></span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">finfo</span>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
 
-<div class="viewcode-block" id="eps_like"><a class="viewcode-back" href="../../gnn_reco.html#gnn_reco.utils.eps_like">[docs]</a><span class="k">def</span> <span class="nf">eps_like</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return `eps` matching `x`&#39;s dtype.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">finfo</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span></div>
-    
+<div class="viewcode-block" id="eps_like"><a class="viewcode-back" href="../../gnn_reco.html#gnn_reco.utils.eps_like">[docs]</a><span class="k">def</span> <span class="nf">eps_like</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return `eps` matching `tensor`&#39;s dtype.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span></div>
 </pre></div>
 
            </div>

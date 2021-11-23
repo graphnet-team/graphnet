@@ -61,8 +61,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for gnn_reco.data.utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utility function relevant to the gnn_reco.data package.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utility function relevant to the gnn_reco.data package.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -98,7 +97,7 @@
     <span class="n">samples_sizes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">pid_indicies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_sizes</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Smallest sample size: </span><span class="si">{smallest_sample_size}</span><span class="s2">&quot;</span><span class="p">)</span>
-    
+
     <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span>
             <span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span>
@@ -107,7 +106,7 @@
         <span class="p">)</span> <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span>
     <span class="p">]</span>
     <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    
+
     <span class="c1"># Shuffle and convert to list</span>
     <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">indices_equal_proprtions</span>
@@ -116,13 +115,13 @@
         <span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
         <span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="p">)</span>
-    
+
     <span class="c1"># Get test indices (?)</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
         <span class="n">train_event_nos</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">indices_equal_proprtions</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
         <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;select event_no from truth where abs(pid) != 13 and event_no not in </span><span class="si">{train_event_nos}</span><span class="s1">&#39;</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        
+
     <span class="k">return</span> <span class="n">indices_equal_proprtions</span><span class="p">,</span> <span class="n">test</span></div>
 
 <div class="viewcode-block" id="get_even_signal_background_indicies"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.get_even_signal_background_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_signal_background_indicies</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
@@ -141,8 +140,8 @@
     <span class="n">indicies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">muons</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
     <span class="n">indicies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">neutrinos</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
     <span class="n">df_for_shuffle</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">indicies</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df_for_shuffle</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  </div>
-    
+    <span class="k">return</span> <span class="n">df_for_shuffle</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="get_even_track_cascade_indicies"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.get_even_track_cascade_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_track_cascade_indicies</span><span class="p">(</span><span class="n">database</span><span class="p">):</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
         <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 12 and interaction_type = 1&#39;</span>
@@ -155,7 +154,7 @@
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
         <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 14 and interaction_type = 1&#39;</span>
         <span class="n">nu_u_cc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
-        
+
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
         <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 14 and interaction_type = 2&#39;</span>
         <span class="n">nu_u_nc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
@@ -168,7 +167,7 @@
         <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) != 13 and event_no not in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">train_events</span><span class="p">[</span><span class="s1">&#39;event_no&#39;</span><span class="p">]))</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">events</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">test</span>  </div>
+    <span class="k">return</span> <span class="n">events</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">test</span></div>
 
 
 
@@ -199,7 +198,7 @@
 
 <div class="viewcode-block" id="pairwise_shuffle"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.pairwise_shuffle">[docs]</a><span class="k">def</span> <span class="nf">pairwise_shuffle</span><span class="p">(</span><span class="n">i3_list</span><span class="p">,</span> <span class="n">gcd_list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Shuffles the I3 file list and the correponding gcd file list.</span>
-<span class="sd">    </span>
+
 <span class="sd">    This is handy because it ensures a more even extraction load for each worker.</span>
 
 <span class="sd">    Args:</span>
@@ -219,13 +218,13 @@
 <div class="viewcode-block" id="find_i3_files"><a class="viewcode-back" href="../../../gnn_reco.data.html#gnn_reco.data.utils.find_i3_files">[docs]</a><span class="k">def</span> <span class="nf">find_i3_files</span><span class="p">(</span><span class="n">directories</span><span class="p">,</span> <span class="n">gcd_rescue</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds I3 files and corresponding GCD files in `directories`.</span>
 
-<span class="sd">    Finds I3 files in dir and matches each file with a corresponding GCD file if </span>
-<span class="sd">    present in the directory, matches with gcd_rescue if gcd is not present in </span>
+<span class="sd">    Finds I3 files in dir and matches each file with a corresponding GCD file if</span>
+<span class="sd">    present in the directory, matches with gcd_rescue if gcd is not present in</span>
 <span class="sd">    the directory.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        directories (list[str]): Directories to search recursively for I3 files.</span>
-<span class="sd">        gcd_rescue (str): Path to the GCD that will be default if no GCD is </span>
+<span class="sd">        gcd_rescue (str): Path to the GCD that will be default if no GCD is</span>
 <span class="sd">            present in the directory.</span>
 
 <span class="sd">    Returns:</span>
@@ -248,7 +247,7 @@
             <span class="n">folder_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">i3_pattern</span><span class="p">))</span>
             <span class="n">folder_i3_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_i3_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
             <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_gcd_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
-            
+
             <span class="c1"># Make sure that no more than one GCD file is found; and use rescue file of none is found.</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
