@@ -1,5 +1,4 @@
-"""Utility function relevant to the gnn_reco.data package.
-"""
+"""Utility function relevant to the gnn_reco.data package."""
 
 from glob import glob
 import os
@@ -35,7 +34,7 @@ def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List
     samples_sizes = list(map(len, pid_indicies.values()))
     smallest_sample_size = min(samples_sizes)
     print(f"Smallest sample size: {smallest_sample_size}")
-    
+
     indices = [
         (
             pid_indicies[pid]
@@ -44,7 +43,7 @@ def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List
         ) for pid in pids
     ]
     indices_equal_proprtions = pd.concat(indices, ignore_index=True)
-    
+
     # Shuffle and convert to list
     indices_equal_proprtions = (
         indices_equal_proprtions
@@ -53,13 +52,13 @@ def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List
         .ravel()
         .tolist()
     )
-    
+
     # Get test indices (?)
     with sqlite3.connect(db) as con:
         train_event_nos = '(' + ', '.join(map(str, indices_equal_proprtions)) + ')'
         query = f'select event_no from truth where abs(pid) != 13 and event_no not in {train_event_nos}'
         test = pd.read_sql(query, con).values.ravel().tolist()
-        
+
     return indices_equal_proprtions, test
 
 def get_even_signal_background_indicies(db):
@@ -78,8 +77,8 @@ def get_even_signal_background_indicies(db):
     indicies.extend(muons.values.ravel().tolist())
     indicies.extend(neutrinos.values.ravel().tolist())
     df_for_shuffle = pd.DataFrame(indicies).sample(frac = 1)
-    return df_for_shuffle.values.ravel().tolist()  
-    
+    return df_for_shuffle.values.ravel().tolist()
+
 def get_even_track_cascade_indicies(database):
     with sqlite3.connect(database) as con:
         query = 'select event_no from truth where abs(pid) = 12 and interaction_type = 1'
@@ -92,7 +91,7 @@ def get_even_track_cascade_indicies(database):
     with sqlite3.connect(database) as con:
         query = 'select event_no from truth where abs(pid) = 14 and interaction_type = 1'
         nu_u_cc = pd.read_sql(query,con)
-        
+
     with sqlite3.connect(database) as con:
         query = 'select event_no from truth where abs(pid) = 14 and interaction_type = 2'
         nu_u_nc = pd.read_sql(query,con)
@@ -105,7 +104,7 @@ def get_even_track_cascade_indicies(database):
         query = 'select event_no from truth where abs(pid) != 13 and event_no not in %s'%str(tuple(train_events['event_no']))
         test = pd.read_sql(query, con).values.ravel().tolist()
 
-    return events.values.ravel().tolist(), test  
+    return events.values.ravel().tolist(), test
 
 
 
@@ -136,7 +135,7 @@ def has_extension(filename: str, extensions: List[str]) -> bool:
 
 def pairwise_shuffle(i3_list, gcd_list):
     """Shuffles the I3 file list and the correponding gcd file list.
-    
+
     This is handy because it ensures a more even extraction load for each worker.
 
     Args:
@@ -156,13 +155,13 @@ def pairwise_shuffle(i3_list, gcd_list):
 def find_i3_files(directories, gcd_rescue):
     """Finds I3 files and corresponding GCD files in `directories`.
 
-    Finds I3 files in dir and matches each file with a corresponding GCD file if 
-    present in the directory, matches with gcd_rescue if gcd is not present in 
+    Finds I3 files in dir and matches each file with a corresponding GCD file if
+    present in the directory, matches with gcd_rescue if gcd is not present in
     the directory.
 
     Args:
         directories (list[str]): Directories to search recursively for I3 files.
-        gcd_rescue (str): Path to the GCD that will be default if no GCD is 
+        gcd_rescue (str): Path to the GCD that will be default if no GCD is
             present in the directory.
 
     Returns:
@@ -185,7 +184,7 @@ def find_i3_files(directories, gcd_rescue):
             folder_files = glob(os.path.join(folder, i3_pattern))
             folder_i3_files = list(filter(is_i3_file, folder_files))
             folder_gcd_files = list(filter(is_gcd_file, folder_files))
-            
+
             # Make sure that no more than one GCD file is found; and use rescue file of none is found.
             assert len(folder_gcd_files) <= 1
             if len(folder_gcd_files) == 0:
