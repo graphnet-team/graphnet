@@ -1,5 +1,4 @@
-"""Unit tests for I3Extractor class.
-"""
+"""Unit tests for I3Extractor class."""
 
 from gnn_reco.data.utils import is_i3_file, has_extension
 

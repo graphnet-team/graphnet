@@ -11,7 +11,7 @@ def check_db_size(db):
         events =  pd.read_sql(query,con)
     if len(events) > max_size:
         events = events.sample(max_size)
-    return events        
+    return events
 
 def fit_scaler(db, features, truth, pulsemap):
     features = deepcopy(features)
@@ -21,7 +21,7 @@ def fit_scaler(db, features, truth, pulsemap):
     truth =  ', '.join(truth)
     features = ', '.join(features)
 
-    outdir = '/'.join(db.split('/')[:-2]) 
+    outdir = '/'.join(db.split('/')[:-2])
     print(os.path.exists(outdir + '/meta/transformers.pkl'))
     if os.path.exists(outdir + '/meta/transformers.pkl'):
         comb_scalers = pd.read_pickle(outdir + '/meta/transformers.pkl')

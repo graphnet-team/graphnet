@@ -1,6 +1,10 @@
+from abc import abstractmethod
 from torch.nn import Module
+from torch import Tensor
+from torch_geometric.data import Data
 
-class GNN(Module):         
+
+class GNN(Module):
     """Base class for all core GNN models in gnn_reco."""
     def __init__(self, nb_inputs, nb_outputs):
         # Base class constructor
@@ -19,3 +23,7 @@ class GNN(Module):
     def nb_outputs(self) -> int:
         """Number of outputs from GNN model."""
         return self._nb_outputs
+
+    @abstractmethod
+    def forward(self, data: Data) -> Tensor:
+        """Learnable forward pass in model."""
