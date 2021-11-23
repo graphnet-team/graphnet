@@ -6,12 +6,13 @@ from torch_geometric.nn import EdgeConv
 from torch_geometric.nn.pool import knn_graph
 from torch_geometric.typing import Adj
 
+
 class DynEdgeConv(EdgeConv):
     def __init__(
-        self, 
-        nn: Callable, 
-        aggr: str = 'max', 
-        nb_neighbors: int = 8, 
+        self,
+        nn: Callable,
+        aggr: str = 'max',
+        nb_neighbors: int = 8,
         features_subset: Optional[Sequence] = None,
         **kwargs,
     ):
@@ -22,7 +23,7 @@ class DynEdgeConv(EdgeConv):
 
         # Base class constructor
         super().__init__(nn=nn, aggr=aggr, **kwargs)
-        
+
         # Additional member variables
         self.nb_neighbors = nb_neighbors
         self.features_subset = features_subset
@@ -30,12 +31,12 @@ class DynEdgeConv(EdgeConv):
     def forward(self, x: Tensor, edge_index: Adj, batch: Optional[Tensor] = None) -> Tensor:
         # Standard EdgeConv forward pass
         x = super().forward(x, edge_index)
-        
+
         # Recompute adjacency
         edge_index = knn_graph(
             x=x[:, self.features_subset],
             k=self.nb_neighbors,
             batch=batch,
         ).to(x.device)
-        
+
         return x, edge_index
