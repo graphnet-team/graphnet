@@ -71,12 +71,12 @@ class LogCoshLoss(LossFunction):
         Used to avoid `inf` for even moderately large differences.
         See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]
         """
-        return x + torch.nn.functional.softplus(-2. * x) - np.log(2.0)
+        return torch.log(torch.cosh(x))#x + torch.nn.functional.softplus(-2. * x) - np.log(2.0)
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
         assert prediction.dim() == target.dim() + 1
-        diff = prediction[:,0] - target
+        diff = prediction[:,0] - torch.log10(target)
         elements = self._log_cosh(diff)
         return elements
 

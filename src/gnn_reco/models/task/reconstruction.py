@@ -57,7 +57,7 @@ class EnergyReconstruction(Task):
 
     def _forward(self, x):
         # Transform energy
-        return torch.pow(10, x[:,0] + 1.).unsqueeze(1)
+        return x[:,0].unsqueeze(1) #torch.pow(10, x[:,0] + 1.).unsqueeze(1)
 
 class EnergyReconstructionWithUncertainty(EnergyReconstruction):
     # Requires one feature in addition to `EnergyReconstruction`: log-variance (uncertainty).

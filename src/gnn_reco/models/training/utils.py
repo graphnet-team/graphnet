@@ -98,12 +98,14 @@ def make_train_validation_dataloader(
     
     return training_dataloader, validation_dataloader  # , {'valid_selection':validation_selection, 'training_selection':training_selection}
 
-def save_results(db, tag, results, archive,model):
+def save_results(db, tag, results, archive,model, validation_loss = None, training_loss = None):
     db_name = db.split('/')[-1].split('.')[0]
     path = archive + '/' + db_name + '/' + tag
     os.makedirs(path, exist_ok = True)
     results.to_csv(path + '/results.csv')
     torch.save(model.cpu().state_dict(), path + '/' + tag + '.pth')
+    if validation_loss != None:
+        pd.DataFrame({'training_loss': training_loss, 'validation_loss':validation_loss}).to_csv(path + '/' +'training_hist.csv')
     print('Results saved at: \n %s'%path)
 
 def load_model(db, tag, archive, detector, gnn, task, device):

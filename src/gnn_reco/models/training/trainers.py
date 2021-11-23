@@ -6,7 +6,7 @@ from gnn_reco.models.training.callbacks import EarlyStopping
 from gnn_reco.models.training.utils import make_train_validation_dataloader
 
 class Trainer(object):
-    def __init__(self, training_dataloader, validation_dataloader, optimizer, n_epochs, scheduler = None, patience = 10, early_stopping = True):
+    def __init__(self, training_dataloader, validation_dataloader, optimizer, n_epochs, scheduler = None, patience = 10, early_stopping = True, export_loss = False):
         self.training_dataloader = training_dataloader
         self.validation_dataloader = validation_dataloader
         if early_stopping:
@@ -14,6 +14,9 @@ class Trainer(object):
         self.optimizer = optimizer
         self.scheduler = scheduler
         self.n_epochs = n_epochs
+        self.export_loss = export_loss
+        self.validation_loss = []
+        self.training_loss = []
         
     def __call__(self, model):
         trained_model = self._train(model)
@@ -42,6 +45,9 @@ class Trainer(object):
                 else:
                     pbar.set_description('epoch: %s || loss: %s'%(epoch, acc_loss/iteration))
                 iteration +=1
+            if self.export_loss:
+                self.training_loss.append(acc_loss/iteration)
+                self.validation_loss.append(validation_loss)
             if self._early_stopping_method.step(validation_loss,model):
                 print('EARLY STOPPING: %s'%epoch)
                 break
