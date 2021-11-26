@@ -5,7 +5,7 @@ try:
     from icecube import dataclasses, icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
-    
+
 from abc import abstractmethod
 from .utils import frame_has_key
 
@@ -14,7 +14,7 @@ class I3Extractor(ABC):
     """Extracts relevant information from physics frames."""
 
     def __init__(self, name):
-       
+
         # Member variables
         self._i3_file = None
         self._gcd_file = None
@@ -23,10 +23,13 @@ class I3Extractor(ABC):
         self._name = name
 
     def set_files(self, i3_file, gcd_file):
+        # @TODO: Is it necessary to set the `i3_file`? It is only used in one
+        #        place in `I3TruthExtractor`, and there only in a way that might
+        #        be solved another way.
         self._i3_file = i3_file
         self._gcd_file = gcd_file
         self._load_gcd_data()
-        
+
     def _load_gcd_data(self):
         """Loads the geospatial information contained in the gcd-file."""
         gcd_file = dataio.I3File(self._gcd_file)
@@ -34,7 +37,7 @@ class I3Extractor(ABC):
         c_frame = gcd_file.pop_frame(icetray.I3Frame.Calibration)
         self._gcd_dict = g_frame["I3Geometry"].omgeo
         self._calibration = c_frame["I3Calibration"]
-            
+
     @abstractmethod
     def __call__(self, frame) -> dict:
         """Extracts relevant information from frame."""
@@ -51,17 +54,17 @@ class I3ExtractorCollection(list):
         # Check(s)
         for extractor in extractors:
             assert isinstance(extractor, I3Extractor)
-        
+
         # Base class constructor
         super().__init__(extractors)
 
     def set_files(self, i3_file, gcd_file):
         for extractor in self:
             extractor.set_files(i3_file, gcd_file)
-        
+
     def __call__(self, frame) -> List[dict]:
         return [extractor(frame) for extractor in self]
-        
+
 
 class I3FeatureExtractor(I3Extractor):
     def __init__(self, pulsemap):
@@ -73,7 +76,7 @@ class I3FeatureExtractor(I3Extractor):
 
         Args:
             frame (i3 physics frame): i3 physics frame
-            
+
         Returns:
             om_keys (index): the indicies for the gcd_dict
             data    (??)   : the pulse series
@@ -87,19 +90,20 @@ class I3FeatureExtractor(I3Extractor):
                     data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
                 else:
-                    frame["I3Calibration"] = self._calibration 
+                    frame["I3Calibration"] = self._calibration
                     data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
+                    del frame["I3Calibration"]  # Avoid modifying the frame in-place
             except:
                 data = dataclasses.I3RecoPulseSeriesMap.from_frame(frame, self._pulsemap)
                 om_keys = data.keys()
         return om_keys, data
 
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
-    
+
     def __call__(self, frame) -> dict:
         """Extract features to be used as inputs to GNN models."""
-        
+
         output = {
             'charge': [],
             'dom_time': [],
@@ -116,7 +120,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         except KeyError:
             print(f"WARN: Pulsemap {self._pulsemap} was not found in frame.")
             return output
-        
+
         for om_key in om_keys:
             # Common values for each OM
             x = self._gcd_dict[om_key].position.x
@@ -127,29 +131,29 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
             else:
                 rde = -1.
-            
+
             # Loop over pulses for each OM
             pulses = data[om_key]
             for pulse in pulses:
                 output['charge'].append(pulse.charge)
-                output['dom_time'].append(pulse.time) 
+                output['dom_time'].append(pulse.time)
                 output['width'].append(pulse.width)
-                output['pmt_area'].append(area)  
+                output['pmt_area'].append(area)
                 output['rde'].append(rde)
                 output['dom_x'].append(x)
                 output['dom_y'].append(y)
                 output['dom_z'].append(z)
-        
+
         return output
 
 class I3FeatureExtractorIceCubeDeepCore(I3FeatureExtractorIceCube86):
     """..."""
 
 class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
-    
+
     def __call__(self, frame) -> dict:
         """Extract features to be used as inputs to GNN models."""
-        
+
         output = {
             'string': [],
             'pmt_number': [],
@@ -159,12 +163,12 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
             'pmt_dir_z': [],
             'dom_type': [],
         }
-        
+
         try:
             om_keys, data = self._get_om_keys_and_pulseseries(frame)
         except KeyError:  # Target pulsemap does not exist in `frame`
             return output
-        
+
         for om_key in om_keys:
             # Common values for each OM
             pmt_dir_x = self._gcd_dict[om_key].orientation.x
@@ -174,7 +178,7 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
             dom_number = om_key[1]
             pmt_number = om_key[2]
             dom_type = self._gcd_dict[om_key].omtype
-            
+
             # Loop over pulses for each OM
             pulses = data[om_key]
             for _ in pulses:
@@ -193,13 +197,14 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
 
 
 class I3TruthExtractor(I3Extractor):
-    
+
     def __init__(self, name="truth"):
         super().__init__(name)
 
     def __call__(self, frame, padding_value=-1) -> dict:
         """Extracts truth features."""
         is_mc = frame_is_montecarlo(frame)
+        is_noise = frame_is_noise(frame)
         sim_type = find_data_type(is_mc, self._i3_file)
 
         output = {
@@ -220,7 +225,7 @@ class I3TruthExtractor(I3Extractor):
             'SubEventID': frame['I3EventHeader'].sub_event_id,
         }
 
-        if is_mc:
+        if is_mc == True and is_noise == False:
             MCInIcePrimary, interaction_type, elasticity = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
             output.update({
                 'energy': MCInIcePrimary.energy,
@@ -233,12 +238,12 @@ class I3TruthExtractor(I3Extractor):
                 'interaction_type': interaction_type,
                 'elasticity': elasticity,
             })
-        
+
         return output
 
 
 class I3RetroExtractor(I3Extractor):
-    
+
     def __init__(self, name="retro"):
         super().__init__(name)
 
@@ -266,14 +271,18 @@ class I3RetroExtractor(I3Extractor):
                 'track_energy_retro': frame["L7_reconstructed_track_energy"].value,
                 'track_length_retro': frame["L7_reconstructed_track_length"].value,
             })
-        
+
         if frame_contains_classifiers(frame):
-            output.update({
-                'L7_MuonClassifier_FullSky_ProbNu': frame["L7_MuonClassifier_FullSky_ProbNu"].value,
-                'L4_MuonClassifier_Data_ProbNu': frame["L4_MuonClassifier_Data_ProbNu"].value,
-                'L4_NoiseClassifier_ProbNu': frame["L4_NoiseClassifier_ProbNu"].value,
-                'L7_PIDClassifier_FullSky_ProbTrack': frame["L7_PIDClassifier_FullSky_ProbTrack"].value,
-            })
+            classifiers = ['L7_MuonClassifier_FullSky_ProbNu','L4_MuonClassifier_Data_ProbNu','L4_NoiseClassifier_ProbNu','L7_PIDClassifier_FullSky_ProbTrack']
+            for classifier in classifiers:
+                if frame_has_key(frame, classifier):
+                    output.update({classifier : frame[classifier].value})
+            #output.update({
+            #    'L7_MuonClassifier_FullSky_ProbNu': frame["L7_MuonClassifier_FullSky_ProbNu"].value,
+            #    'L4_MuonClassifier_Data_ProbNu': frame["L4_MuonClassifier_Data_ProbNu"].value,
+            #    'L4_NoiseClassifier_ProbNu': frame["L4_NoiseClassifier_ProbNu"].value,
+            #    'L7_PIDClassifier_FullSky_ProbTrack': frame["L7_PIDClassifier_FullSky_ProbTrack"].value,
+            #})
 
         if frame_is_montecarlo(frame):
             if frame_contains_retro(frame):
@@ -297,10 +306,19 @@ def frame_contains_classifiers(frame):
 
 def frame_is_montecarlo(frame):
     return (
-        frame_has_key(frame, "MCInIcePrimary") or 
+        frame_has_key(frame, "MCInIcePrimary") or
         frame_has_key(frame, "I3MCTree")
     )
-    
+def frame_is_noise(frame):
+    if frame_has_key(frame, "MCInIcePrimary"):
+        return False
+    else:
+        return True
+
+def frame_is_lvl7(frame):
+    return frame_has_key(frame, "L7_reconstructed_zenith")
+
+
 
 def find_data_type(mc, input_file):
     """Determines the data type
@@ -331,7 +349,7 @@ def find_data_type(mc, input_file):
 
 def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, padding_value=-1):
     """"Returns primary particle, interaction type, and elasticity.
-    
+
     A case handler that does two things
         1) Catches issues related to determining the primary MC particle.
         2) Error handles cases where interaction type and elasticity doesnt exist
@@ -344,7 +362,7 @@ def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, paddin
     Returns
         McInIcePrimary (?): The primary particle
         interaction_type (int): Either 1 (charged current), 2 (neutral current), 0 (neither)
-        elasticity (float): In ]0,1[ 
+        elasticity (float): In ]0,1[
     """
     if sim_type != 'noise':
         try:
@@ -353,15 +371,15 @@ def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, paddin
             MCInIcePrimary = frame['I3MCTree'][0]
     else:
         MCInIcePrimary = None
-    
+
     try:
         interaction_type = frame["I3MCWeightDict"]["InteractionType"]
     except:
         interaction_type = padding_value
-    
+
     try:
         elasticity = frame['I3GENIEResultDict']['y']
     except:
         elasticity = padding_value
-    
+
     return MCInIcePrimary, interaction_type, elasticity

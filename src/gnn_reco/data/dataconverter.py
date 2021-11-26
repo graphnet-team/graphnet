@@ -14,7 +14,7 @@ class DataConverter(ABC):
 
     def __init__(self, extractors, outdir, gcd_rescue):
         """Constructor"""
-        
+
         # Check(s)
         if not isinstance(extractors, (list, tuple)):
             extractors = [extractors]
@@ -30,7 +30,7 @@ class DataConverter(ABC):
 
         # Create I3Extractors
         self._extractors = I3ExtractorCollection(*extractors)
-        
+
         # Implementation-specific initialisation
         self._initialise()
 
@@ -52,7 +52,7 @@ class DataConverter(ABC):
     #    while frames.more():
     #        try:
     #            frame = frames.pop_physics()
-    #        except: 
+    #        except:
     #            continue
     #        arrays = self._extractors(frame)
     #        self._save(arrays, out_file)
