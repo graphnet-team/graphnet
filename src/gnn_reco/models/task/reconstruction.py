@@ -50,3 +50,19 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
         log_var = x[:,1]
         pred = torch.stack((energy, log_var), dim=1)
         return pred
+
+class VertexReconstruction(Task):
+    # Requires four features, x, y, z and t
+    nb_inputs = 4
+
+    def _forward(self, x):
+        # Initally do nothing to the output
+        return x.unsqueeze(1) 
+
+class PositionReconstruction(Task):
+    # Requires three features, x, y, z
+    nb_inputs = 3
+
+    def _forward(self, x):
+        # Initally do nothing to the output
+        return x.unsqueeze(1) 
