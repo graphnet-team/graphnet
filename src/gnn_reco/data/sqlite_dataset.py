@@ -9,7 +9,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
     """Pytorch dataset for reading from SQLite.
     """
     def __init__(self, database, pulsemap_table, features, truth, index_column='event_no', truth_table='truth', selection=None, dtype=torch.float32):
-    
+
         # Check(s)
         if isinstance(database, list):
             self._database_list = database
@@ -22,7 +22,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
-        
+
         self._database = database
         self._pulsemap_table = pulsemap_table
         self._features = [index_column] + features
@@ -62,7 +62,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         """Query SQLite database for event feature and truth information.
 
         Args:
-            i (int): Sequentially numbered index (i.e. in [0,len(self))) of the 
+            i (int): Sequentially numbered index (i.e. in [0,len(self))) of the
                 event to query.
 
         Returns:
@@ -74,12 +74,12 @@ class SQLiteDataset(torch.utils.data.Dataset):
         else:
             index = self._indices[i][0]
 
-        
+
         features = self._conn.execute(
             "SELECT {} FROM {} WHERE {} = {}".format(
-                self._features_string, 
-                self._pulsemap_table, 
-                self._index_column, 
+                self._features_string,
+                self._pulsemap_table,
+                self._index_column,
                 index,
             )
         )
@@ -95,14 +95,14 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         features = features.fetchall()
         truth = truth.fetchall()
-        
+
         return features, truth
 
     def _create_graph(self, features, truth):
         """Create Pytorch Data (i.e.graph) object.
 
-        No preprocessing is performed at this stage, just as no node adjancency 
-        is imposed. This means that the `edge_attr` and `edge_weight` attributes 
+        No preprocessing is performed at this stage, just as no node adjancency
+        is imposed. This means that the `edge_attr` and `edge_weight` attributes
         are not set.
 
         Args:
@@ -119,7 +119,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         # Unpack common variables
         abs_pid = abs(truth_dict['pid'])
         sim_type = truth_dict['sim_type']
-        
+
         labels_dict = {
             'event_no': truth_dict['event_no'],
             'muon': abs_pid == 13,
@@ -139,9 +139,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
             data = np.asarray(features)[:,1:]
         else:
             data = np.array([]).reshape((0, len(self._features) - 1))
-        
+
         # Construct graph data object
-        x = torch.tensor(data, dtype=self._dtype) 
+        x = torch.tensor(data, dtype=self._dtype)
         n_pulses = torch.tensor(len(x), dtype=torch.int32)
         graph = Data(
             x=x,
@@ -159,7 +159,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
                     pass
 
         return graph
-        
+
     def establish_connection(self,i):
         """Make sure that a sqlite3 connection is open."""
         if self._database_list == None:
@@ -182,10 +182,10 @@ class SQLiteDataset(torch.utils.data.Dataset):
     def close_connection(self):
         """Make sure that no sqlite3 connection is open.
 
-        This is necessary to calls this before passing to `torch.DataLoader` 
-        such that the dataset replica on each worker is required to create its 
-        own connection (thereby avoiding `sqlite3.DatabaseError: database disk 
-        image is malformed` errors due to inability to use sqlite3 connection 
+        This is necessary to calls this before passing to `torch.DataLoader`
+        such that the dataset replica on each worker is required to create its
+        own connection (thereby avoiding `sqlite3.DatabaseError: database disk
+        image is malformed` errors due to inability to use sqlite3 connection
         accross processes.
         """
         if self._conn is not None:

@@ -1,5 +1,4 @@
-"""Unit tests for loss functions.
-"""
+"""Unit tests for loss functions."""
 
 import numpy as np
 import pytest
@@ -14,8 +13,8 @@ from gnn_reco.utils import eps_like
 def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
     """Computes  gradient of each element in `outptus` wrt. `inputs`.
 
-    It is assumed that each element in `inputs` only affects the corresponding 
-    element in `outputs`. This should be the result of any vectorised 
+    It is assumed that each element in `inputs` only affects the corresponding
+    element in `outputs`. This should be the result of any vectorised
     calculation (as used in tests).
     """
     # Check(s)
@@ -27,14 +26,14 @@ def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
     nb_elements = inputs.size(dim=0)
     elementwise_gradients = torch.stack([
         grad(
-            outputs=outputs[ix], 
-            inputs=inputs, 
+            outputs=outputs[ix],
+            inputs=inputs,
             retain_graph=True,
         )[0][ix] for ix in range(nb_elements)
     ])
     return elementwise_gradients
 
-    
+
 # Unit test(s)
 def test_log_cosh(dtype=torch.float32):
     # Prepare test data
@@ -46,17 +45,17 @@ def test_log_cosh(dtype=torch.float32):
     losses = log_cosh_loss(x, y, return_elements=True)
     losses_reference = torch.log(torch.cosh(x[:,0] - y))
 
-    # (1) Loss functions should not return  `inf` losses, even for large 
-    #     differences between prediction and target. This is not necessarily 
-    #     true for the directly calculated loss (reference) where cosh(x) may go 
+    # (1) Loss functions should not return  `inf` losses, even for large
+    #     differences between prediction and target. This is not necessarily
+    #     true for the directly calculated loss (reference) where cosh(x) may go
     #     to `inf` for x >~ 100.
     assert torch.all(torch.isfinite(losses))
 
-    # (2) For the inputs where the reference loss _is_ valid, the two 
+    # (2) For the inputs where the reference loss _is_ valid, the two
     #     calculations should agree exactly.
     reference_is_valid = torch.isfinite(losses_reference)
     assert torch.allclose(losses_reference[reference_is_valid], losses[reference_is_valid])
-    
+
 
 def test_log_cosh_of_log_transformed(dtype=torch.float32):
     # Prepare test data
@@ -73,21 +72,21 @@ def test_log_cosh_of_log_transformed(dtype=torch.float32):
 
 def test_von_mises_fisher_exact_m3(dtype=torch.float64):
     """
-    See https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution 
+    See https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution
     for exact, simplified reference.
     """
     # Define test parameters
     m = 3
     k = torch.tensor(
-        data=[0.0001, 0.001, 0.01, 0.1, 1., 3., 10., 30., 100.], 
-        requires_grad=True, 
+        data=[0.0001, 0.001, 0.01, 0.1, 1., 3., 10., 30., 100.],
+        requires_grad=True,
         dtype=dtype,
     )
 
     # Compute values
-    res_reference = torch.log(k) - k - torch.log(2 * np.pi * (1 - torch.exp(-2 * k)))    
+    res_reference = torch.log(k) - k - torch.log(2 * np.pi * (1 - torch.exp(-2 * k)))
     res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
-    
+
     # Compute gradients
     grads_reference = _compute_elementwise_gradient(res_reference, k)
     grads_exact = _compute_elementwise_gradient(res_exact, k)
@@ -108,15 +107,15 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
 
     # Define test parameters
     k = torch.tensor(
-        data=[0.0001, 0.001, 0.01, 0.1, 1., 3., 10., 30., 100.], 
-        requires_grad=True, 
+        data=[0.0001, 0.001, 0.01, 0.1, 1., 3., 10., 30., 100.],
+        requires_grad=True,
         dtype=dtype,
     )
-    
+
     # Compute values
     res_approx = VonMisesFisherLoss.log_cmk_approx(m, k)
     res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
-    
+
     C = res_exact[0] - res_approx[0] # Normalisation constant from integrating gradient
     res_approx += C - eps_like(C)
 
@@ -142,15 +141,15 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
 
     # Define test parameters
     k = torch.tensor(
-        data=[100., 200., 300., 500., 1000.], 
-        requires_grad=True, 
+        data=[100., 200., 300., 500., 1000.],
+        requires_grad=True,
         dtype=dtype,
     )
-    
+
     # Compute values
     res_approx = VonMisesFisherLoss.log_cmk_approx(m, k)
     res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
-    
+
     C = res_exact[0] - res_approx[0] # Normalisation constant
     res_approx += C
 
