@@ -153,7 +153,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         for write_dict in [labels_dict, truth_dict]:
             for key, value in write_dict.items():
                 try:
-                    graph[key] = torch.tensor(value)
+                    graph[key] = torch.tensor(value,dtype=torch.float)
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
                     pass

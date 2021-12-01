@@ -69,3 +69,15 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
         log_var = x[:,1]
         pred = torch.stack((energy, log_var), dim=1)
         return pred
+
+
+
+
+
+class BinaryClassificationToTarget(Task):
+    #requires one feature: probability of being neutrino?
+    nb_inputs = 1
+
+    def _forward(self, x):
+        #transform probability of being muon
+        return torch.sigmoid(x[:,0])

@@ -80,6 +80,16 @@ class LogCoshLoss(LossFunction):
         elements = self._log_cosh(diff)
         return elements
 
+class BinaryLoss(LossFunction):
+    """ Computes binary cross entropy for a vector of predictions (between 0 and 1), 
+    targets should be 0 and 1 for muon and neutrino respectively
+    where prediction is prob. the PID is neutrino (12,14,16)
+    loss should be reported elementwise, so set reduction to None
+    """
+    
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor: 
+        return torch.nn.functional.binary_cross_entropy(prediction,target,reduction='none')
+
 
 class LogCMK(torch.autograd.Function):
     """MIT License
