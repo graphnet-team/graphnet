@@ -1,7 +1,5 @@
+import torch
 
-from torch import Tensor, finfo
-
-def eps_like(x: Tensor) -> Tensor:
-    """Return `eps` matching `x`'s dtype."""
-    return finfo(x.dtype).eps
-    
+def eps_like(tensor: torch.Tensor) -> torch.Tensor:
+    """Return `eps` matching `tensor`'s dtype."""
+    return torch.finfo(tensor.dtype).eps
