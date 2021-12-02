@@ -2,9 +2,11 @@ import os
 from typing import List, Union
 
 import dill
+from pytorch_lightning import LightningModule
 import torch
 from torch import Tensor
-from torch.nn import Module, ModuleList
+from torch.nn import ModuleList
+from torch.optim import Adam
 from torch_geometric.data import Data
 
 from gnn_reco.models.detector.detector import Detector
@@ -12,7 +14,7 @@ from gnn_reco.models.gnn.gnn import GNN
 from gnn_reco.models.task import Task
 
 
-class Model(Module):
+class Model(LightningModule):
     """Main class for all models in gnn-reco.
 
     This class chains together the different elements of a complete GNN-based
@@ -25,7 +27,8 @@ class Model(Module):
         detector: Detector,
         gnn: GNN,
         tasks: Union[Task, List[Task]],
-        device: str,
+        optimizer_class=Adam,
+        optimizer_kwargs=dict(),
     ):
 
         # Base class constructor
@@ -43,17 +46,31 @@ class Model(Module):
         self._detector = detector
         self._gnn = gnn
         self._tasks = ModuleList(tasks)
-        self._device = device
-
-        self.to(self._device)
+        self._optimizer_class = optimizer_class
+        self._optimizer_kwargs = optimizer_kwargs
 
     def forward(self, data: Data) -> List[Union[Tensor, Data]]:
         """Common forward pass, chaining model components."""
-        data = data.to(self._device)
         data = self._detector(data)
         x = self._gnn(data)
         preds = [task(x) for task in self._tasks]
         return preds
+
+    def configure_optimizers(self):
+        optimizer = self._optimizer_class(self.parameters(), **self._optimizer_kwargs)
+        return optimizer
+
+    def training_step(self, train_batch, batch_idx):
+        preds = self(train_batch)
+        loss = self.compute_loss(preds, train_batch)
+        self.log('train_loss', loss)
+        return loss
+
+    def validation_step(self, val_batch, batch_idx):
+        preds = self(val_batch)
+        loss = self.compute_loss(preds, val_batch)
+        self.log('val_loss', loss)
+        return loss
 
     def compute_loss(self, preds: Tensor, data: Data, verbose=False) -> Tensor:
         """Computes and sums losses across tasks."""
@@ -65,24 +82,6 @@ class Model(Module):
         assert all(loss.dim() == 0 for loss in losses), \
             "Please reduce loss for each task separately"
         return torch.sum(torch.stack(losses))
-
-    def to(self, device: str):  # pylint: disable=arguments-differ
-        """Override `_apply` to make invocations apply to member modules as well.
-
-        This applied to e.g. `.to(...)` and `.cuda()`, see
-        [https://stackoverflow.com/a/57208704].
-
-        Args:
-            fn (function): Function to be applied.
-
-        Returns:
-            self
-        """
-        super().to(device)
-        self._detector.to(device)
-        self._gnn.to(device)
-        for ix, _ in enumerate(self._tasks):
-            self._tasks[ix].to(device)
 
     def save(self, path: str):
         """Saves entire model to `path`."""
