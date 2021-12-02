@@ -29,6 +29,7 @@ INSTALL_REQUIRES = [
     'torch-cluster',
     'torch-spline-conv',
     'torch-geometric==2.0.1',
+    'pytorch-geometric',
     'dill',
 ]
 
@@ -36,11 +37,11 @@ INSTALL_REQUIRES = [
 try:
     import torch  # pyright: reportMissingImports=false
 except ImportError:
-    install('torch>=1.9.0')
+    install('torch==1.9.0')
 
 setup(
     name='gnn_reco',
-    version='0.1.1',   
+    version='0.1.1',
     description='A common library for using graph neural networks (GNNs) in netrino telescopes.',
     url='https://github.com/icecube/gnn-reco',
     author='The IceCube Collaboration',

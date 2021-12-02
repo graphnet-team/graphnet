@@ -6,6 +6,6 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - pytorch=1.9.1
+  - pytorch=1.9.0
   - cudatoolkit=11.1
   - pyg
