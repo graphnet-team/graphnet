@@ -5,14 +5,14 @@ try:
 except ImportError:  # Python version < 3.8
     final = lambda f: f  # Identity decorator
 
+from pytorch_lightning import LightningModule
 import torch
-from torch.nn import Module
 from torch_geometric.data import Data
 
 from gnn_reco.models.graph_builders import GraphBuilder
 
 
-class Detector(Module):
+class Detector(LightningModule):
     """Base class for all detector-specific read-ins in gnn_reco."""
 
     @property
