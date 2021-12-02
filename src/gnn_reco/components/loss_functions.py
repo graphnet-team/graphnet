@@ -82,7 +82,7 @@ class LogCoshLoss(LossFunction):
         elements = self._log_cosh(diff)
         return elements
 
-class BinaryLoss(LossFunction):
+class BinaryCrossEntropyLoss(LossFunction):
     """ Computes binary cross entropy for a vector of predictions (between 0 and 1), 
     targets should be 0 and 1 for muon and neutrino respectively
     where prediction is prob. the PID is neutrino (12,14,16)
