@@ -80,7 +80,7 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
 
 
 
-class BinaryClassificationToTarget(Task):
+class BinaryClassificationTask(Task):
     #requires one feature: probability of being neutrino?
     nb_inputs = 1
 
