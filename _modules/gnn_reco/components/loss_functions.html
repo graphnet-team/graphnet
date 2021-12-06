@@ -145,6 +145,16 @@
         <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_cosh</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">elements</span></div></div>
 
+<div class="viewcode-block" id="BinaryCrossEntropyLoss"><a class="viewcode-back" href="../../../gnn_reco.components.html#gnn_reco.components.loss_functions.BinaryCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">BinaryCrossEntropyLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Computes binary cross entropy for a vector of predictions (between 0 and 1), </span>
+<span class="sd">    targets should be 0 and 1 for muon and neutrino respectively</span>
+<span class="sd">    where prediction is prob. the PID is neutrino (12,14,16)</span>
+<span class="sd">    loss should be reported elementwise, so set reduction to None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">binary_cross_entropy</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="LogCMK"><a class="viewcode-back" href="../../../gnn_reco.components.html#gnn_reco.components.loss_functions.LogCMK">[docs]</a><span class="k">class</span> <span class="nc">LogCMK</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;MIT License</span>

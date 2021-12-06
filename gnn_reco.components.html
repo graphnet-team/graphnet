@@ -95,6 +95,21 @@
 <p>Collection of loss functions.</p>
 <p>All loss functions inherit from <cite>LossFunction</cite> which (…)</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="gnn_reco.components.loss_functions.BinaryCrossEntropyLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.components.loss_functions.</span></span><span class="sig-name descname"><span class="pre">BinaryCrossEntropyLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/components/loss_functions.html#BinaryCrossEntropyLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.components.loss_functions.BinaryCrossEntropyLoss" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></code></a></p>
+<p>Computes binary cross entropy for a vector of predictions (between 0 and 1),
+targets should be 0 and 1 for muon and neutrino respectively
+where prediction is prob. the PID is neutrino (12,14,16)
+loss should be reported elementwise, so set reduction to None</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gnn_reco.components.loss_functions.BinaryCrossEntropyLoss.reduction">
+<span class="sig-name descname"><span class="pre">reduction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#gnn_reco.components.loss_functions.BinaryCrossEntropyLoss.reduction" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="gnn_reco.components.loss_functions.LogCMK">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.components.loss_functions.</span></span><span class="sig-name descname"><span class="pre">LogCMK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/components/loss_functions.html#LogCMK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.components.loss_functions.LogCMK" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.autograd.function.Function</span></code></p>
