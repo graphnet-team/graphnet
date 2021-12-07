@@ -28,7 +28,7 @@ class Detector(LightningModule):
         self._graph_builder = graph_builder
         self._scalers = scalers
         if self._scalers:
-            print("Will use scalers rather than standard preprocessing ",
+            print("Will use scalers rather than standard preprocessing",
                  f"in {self.__class__.__name__}.")
 
     @final
