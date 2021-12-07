@@ -29,7 +29,7 @@ INSTALL_REQUIRES = [
     'torch-cluster',
     'torch-spline-conv',
     'torch-geometric==2.0.1',
-    'pytorch-geometric',
+    'pytorch-lightning',
     'dill',
 ]
 
