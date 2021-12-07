@@ -3,18 +3,17 @@ import logging
 
 import torch
 
-from gnn_reco.components.loss_functions import  VonMisesFisher2DLoss
+from gnn_reco.components.loss_functions import  LogCoshLoss, VonMisesFisher2DLoss
 from gnn_reco.components.utils import fit_scaler
 from gnn_reco.data.constants import FEATURES, TRUTH
 from gnn_reco.data.utils import get_equal_proportion_neutrino_indices
-from gnn_reco.legacy.reimplemented import LegacyVonMisesFisherLoss, LegacyAngularReconstruction
-from gnn_reco.models import Model
+from gnn_reco.legacy.callbacks import PiecewiseLinearScheduler
+from gnn_reco.legacy.trainers import Trainer, Predictor
+from gnn_reco.legacy.model import Model
 from gnn_reco.models.detector.icecube import IceCube86
 from gnn_reco.models.gnn import DynEdge, ConvNet
 from gnn_reco.models.graph_builders import KNNGraphBuilder
-from gnn_reco.models.task.reconstruction import AngularReconstructionWithKappa
-from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
-from gnn_reco.models.training.trainers import Trainer, Predictor
+from gnn_reco.models.task.reconstruction import EnergyReconstruction
 from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
 
 # Configurations
@@ -35,11 +34,11 @@ def main():
     # Configuraiton
     db = '/groups/icecube/leonbozi/datafromrasmus/GNNReco/data/databases/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3/data/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3.db'
     pulsemap = 'SRTTWOfflinePulsesDC'
-    batch_size = 1024
+    batch_size = 256
     num_workers = 10
-    device = 'cuda:1'
-    target = 'zenith'
-    n_epochs = 30
+    device = 'cuda:0'
+    target = 'energy'
+    n_epochs = 5
     patience = 5
     archive = '/groups/icecube/asogaard/gnn/results'
 
@@ -48,14 +47,14 @@ def main():
 
     # Common variables
     train_selection, _ = get_equal_proportion_neutrino_indices(db)
-    train_selection = train_selection[0:500000]
+    train_selection = train_selection[0:50000]
 
     training_dataloader, validation_dataloader = make_train_validation_dataloader(
-        db, 
-        train_selection, 
-        pulsemap, 
-        features, 
-        truth, 
+        db,
+        train_selection,
+        pulsemap,
+        features,
+        truth,
         batch_size=batch_size,
         num_workers=num_workers,
     )
@@ -68,19 +67,13 @@ def main():
     gnn = DynEdge(
         nb_inputs=detector.nb_outputs,
     )
-    task = LegacyAngularReconstruction(
-        hidden_size=gnn.nb_outputs, 
-        target_label=target, 
-        loss_function=LegacyVonMisesFisherLoss(
-            target_scaler=scalers['truth'][target]
+    task = EnergyReconstruction(
+        hidden_size=gnn.nb_outputs,
+        target_label=target,
+        loss_function=LogCoshLoss(
+            transform_prediction_and_target=torch.log10,
         ),
-        target_scaler=scalers['truth'][target],
     )
-    #task = AngularReconstructionWithKappa(
-    #    hidden_size=gnn.nb_outputs, 
-    #    target_label=target, 
-    #    loss_function=VonMisesFisher2DLoss(),
-    #)
     model = Model(
         detector=detector,
         gnn=gnn,
@@ -93,9 +86,9 @@ def main():
 
     trainer = Trainer(
         training_dataloader=training_dataloader,
-        validation_dataloader=validation_dataloader, 
+        validation_dataloader=validation_dataloader,
         optimizer=optimizer,
-        n_epochs=n_epochs, 
+        n_epochs=n_epochs,
         scheduler=scheduler,
         patience=patience,
     )
@@ -107,14 +100,14 @@ def main():
         pass
 
     predictor = Predictor(
-        dataloader=validation_dataloader, 
-        target=target, 
-        device=device, 
-        output_column_names=[target + '_pred', target + '_sigma'],
+        dataloader=validation_dataloader,
+        target=target,
+        device=device,
+        output_column_names=[target + '_pred'],
     )
     model._tasks[0].inference = True
     results = predictor(model)
-    save_results(db, 'dynedge_zenith', results,archive, model)
+    save_results(db, 'dynedge_energy', results,archive, model)
 
 # Main function call
 if __name__ == "__main__":
