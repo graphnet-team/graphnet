@@ -1,91 +1,98 @@
 import numpy as np
 import torch
+import warnings
+
+from torch.optim.lr_scheduler import _LRScheduler
+from pytorch_lightning.callbacks import TQDMProgressBar
+
+class PiecewiseLinearLR(_LRScheduler):
+    """Interpolates learning rate linearly between milestones.
+
+    For each milestone, denoting a specified number of steps, a factor
+    multiplying the base learning rate is specified. For steps between two
+    milestones, the learning rate is interpolated linearly between the two
+    closest milestones. For steps before the first milestone, the factor for the
+    first milestone is used; vice versa for steps after the last milestone.
+
+    Args:
+        optimizer (Optimizer): Wrapped optimizer.
+        milestones (list): List of step indices. Must be increasing.
+        factors (list): List of multiplicative factors. Must be same length as
+            `milestones`.
+        last_epoch (int): The index of the last epoch. Default: -1.
+        verbose (bool): If ``True``, prints a message to stdout for
+            each update. Default: ``False``.
+    """
+    def __init__(self, optimizer, milestones, factors, last_epoch=-1,
+                 verbose=False):
+        # Check(s)
+        if milestones != sorted(milestones):
+            raise ValueError("Milestones must be increasing")
+        if len(milestones) != len(factors):
+            raise ValueError("Only multiplicative factor must be specified for each milestone.")
+
+        self.milestones = milestones
+        self.factors = factors
+        super().__init__(optimizer, last_epoch, verbose)
+
+    def _get_factor(self):
+        # Linearly interpolate multiplicative factor between milestones.
+        return np.interp(self.last_epoch, self.milestones, self.factors)
+
+    def get_lr(self):
+        if not self._get_lr_called_within_step:
+            warnings.warn("To get the last learning rate computed by the scheduler, "
+                          "please use `get_last_lr()`.", UserWarning)
+
+        return [base_lr * self._get_factor() for base_lr in self.base_lrs]
 
 
-class EarlyStopping(object):
-    def __init__(self, mode='min', min_delta=0, patience=10, percentage=False):
-        self.mode = mode
-        self.min_delta = min_delta
-        self.patience = patience
-        self.best = None
-        self.num_bad_epochs = 0
-        self.is_better = None
-        self._init_is_better(mode, min_delta, percentage)
+class ProgressBar(TQDMProgressBar):
+    """Custom progress bar for gnn-reco.
 
-        if patience == 0:
-            self.is_better = lambda a, b: True
-            self.step = lambda a: False
+    Customises the default progress in pytorch-lightning.
+    """
+    def _common_config(self, bar):
+        bar.unit = ' batch(es)'
+        bar.colour = 'green'
+        return bar
 
-    def step(self, metrics,model):
-        if self.best is None:
-            self.best = metrics
-            return False
+    def init_validation_tqdm(self):
+        bar = super().init_validation_tqdm()
+        bar = self._common_config(bar)
+        return bar
 
-        if isinstance(metrics, torch.Tensor):
-            if torch.isnan(metrics):
-                return True
-        else:
-            if np.isnan(metrics):
-                return True
+    def init_predict_tqdm(self):
+        bar = super().init_predict_tqdm()
+        bar = self._common_config(bar)
+        return bar
 
-        if self.is_better(metrics, self.best):
-            self.num_bad_epochs = 0
-            self.best = metrics
-            self.best_params = model.state_dict()
-        else:
-            self.num_bad_epochs += 1
+    def init_test_tqdm(self):
+        bar = super().init_test_tqdm()
+        bar = self._common_config(bar)
+        return bar
 
-        if self.num_bad_epochs >= self.patience:
-            return True
+    def init_train_tqdm(self):
+        bar = super().init_train_tqdm()
+        bar = self._common_config(bar)
+        return bar
 
-        return False
+    def get_metrics(self, trainer, model):
+        # Don't show the version number
+        items = super().get_metrics(trainer, model)
+        items.pop("v_num", None)
+        return items
 
-    def _init_is_better(self, mode, min_delta, percentage):
-        if mode not in {'min', 'max'}:
-            raise ValueError('mode ' + mode + ' is unknown!')
-        if not percentage:
-            if mode == 'min':
-                self.is_better = lambda a, best: a < best - min_delta
-            if mode == 'max':
-                self.is_better = lambda a, best: a > best + min_delta
-        else:
-            if mode == 'min':
-                self.is_better = lambda a, best: a < best - (
-                            best * min_delta / 100)
-            if mode == 'max':
-                self.is_better = lambda a, best: a > best + (
-                            best * min_delta / 100)
+    def on_train_epoch_start(self, trainer, model):
+        """Prints the results of the previous epoch on a separate line.
 
-    def get_best_params(self):
-        return self.best_params
-
-class PiecewiseLinearScheduler(object):
-    def __init__(self, training_dataset_length, start_lr, max_lr, end_lr, max_epochs):
-        try:
-            self.dataset_length = len(training_dataset_length)
-            print('Passing dataset as training_dataset_length to PiecewiseLinearScheduler is deprecated. Please pass integer')
-        except:
-            self.dataset_length = training_dataset_length
-        self._start_lr = start_lr
-        self._max_lr   = max_lr
-        self._end_lr   = end_lr
-        self._steps_up = int(self.dataset_length/2)
-        self._steps_down = self.dataset_length*max_epochs - self._steps_up
-        self._current_step = 0
-        self._lr_list = self._calculate_lr_list()
-
-    def _calculate_lr_list(self):
-        res = list()
-        for step in range(0,self._steps_up+self._steps_down):
-            slope_up = (self._max_lr - self._start_lr)/self._steps_up
-            slope_down = (self._end_lr - self._max_lr)/self._steps_down
-            if step <= self._steps_up:
-                res.append(step*slope_up + self._start_lr)
-            if step > self._steps_up:
-                res.append(step*slope_down + self._max_lr -((self._end_lr - self._max_lr)/self._steps_down)*self._steps_up)
-        return torch.tensor(res)
-
-    def get_next_lr(self):
-        lr = self._lr_list[self._current_step]
-        self._current_step = self._current_step + 1
-        return lr
+        This allows the user to see the losses/metrics for previous epochs while
+        the current is training. The default behaviour in pytorch-lightning is
+        to overwrite the progress bar from previous epochs.
+        """
+        if trainer.current_epoch > 0:
+            self._update_bar(self.main_progress_bar)
+            self.main_progress_bar.set_postfix(self.get_metrics(trainer, model))
+            print("")
+        super().on_train_epoch_start(trainer, model)
+        self.main_progress_bar.set_description(f"Epoch {trainer.current_epoch:2d}")
