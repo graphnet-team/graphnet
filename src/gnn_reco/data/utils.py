@@ -9,6 +9,49 @@ import re
 from typing import List, Tuple
 import sqlite3
 
+
+def get_desired_event_numbers(db_path, desired_size, fraction_noise=0, fraction_nu_e=0, fraction_muon=0, fraction_nu_mu = 0, fraction_nu_tau=0, seed=0):
+    assert fraction_nu_e + fraction_muon + fraction_nu_mu + fraction_nu_tau + fraction_noise == 1.0, 'Sum of fractions not equal to one.'
+    rng = np.random.RandomState(seed=seed)
+
+    fracs = [fraction_noise,fraction_muon,fraction_nu_e,fraction_nu_mu,fraction_nu_tau]
+    numbers_desired = [int(x * desired_size) for x in fracs]
+    pids = [1,13,12,14,16]
+
+    with sqlite3.connect(db_path) as con:
+        total_query = 'SELECT event_no FROM truth WHERE abs(pid) IN {}'.format(tuple(pids))
+        tot_event_nos = pd.read_sql(total_query,con)
+        if len(tot_event_nos) < desired_size:
+            desired_size = len(tot_event_nos)
+            numbers_desired = [x * desired_size for x in fracs]
+            print('Only {} events in database, using this number instead.'.format(len(tot_event_nos)))
+
+        list_of_dataframes = []
+        restart_trigger = True
+        while restart_trigger:
+            restart_trigger = False
+            for number,particle_type in zip(numbers_desired,pids):
+                query_is = 'SELECT event_no FROM truth WHERE abs(pid) == {}'.format(particle_type)
+                tmp_dataframe = pd.read_sql(query_is,con)
+                try:
+                    dataframe = tmp_dataframe.sample(number, replace=False, random_state=rng).reset_index(drop=True)#could add weights (re-weigh) here with replace=True
+                except ValueError:
+                    if len(tmp_dataframe)==0:
+                        print('There are no particles of type {} in this database please make new request.'.format(particle_type))
+                        return None
+                    print('There have been {} requested of particle {}, we can only supply {}. \nRenormalising...'.format(number,particle_type,len(tmp_dataframe)))
+                    numbers_desired = [int(new_x * (len(tmp_dataframe)/number)) for new_x in numbers_desired]
+                    restart_trigger = True
+                    list_of_dataframes = []
+                    break                    
+
+                list_of_dataframes.append(dataframe)   
+        retrieved_event_nos_pd = pd.concat(list_of_dataframes)
+        event_no_list = retrieved_event_nos_pd.sample(frac=1, replace=False, random_state=rng).values.ravel().tolist()
+
+    return event_no_list
+
+
 def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List[int]]:
     """Utility method to get indices for neutrino events in equal flavour proportions.
 
@@ -56,7 +99,7 @@ def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List
     # Get test indices (?)
     with sqlite3.connect(db) as con:
         train_event_nos = '(' + ', '.join(map(str, indices_equal_proprtions)) + ')'
-        query = f'select event_no from truth where abs(pid) != 13 and event_no not in {train_event_nos}'
+        query = f'select event_no from truth where abs(pid) != 13 and abs(pid) != 1 and event_no not in {train_event_nos}'
         test = pd.read_sql(query, con).values.ravel().tolist()
 
     return indices_equal_proprtions, test
