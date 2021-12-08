@@ -56,13 +56,32 @@ class VertexReconstruction(Task):
     nb_inputs = 4
 
     def _forward(self, x):
-        # Initally do nothing to the output
-        return x.unsqueeze(1) 
+
+        # Scale xyz to roughly the right order of magnitude, leave time
+        x[:,0] = x[:,0] * 1e2
+        x[:,1] = x[:,1] * 1e2
+        x[:,2] = x[:,2] * 1e2
+
+        return x 
 
 class PositionReconstruction(Task):
     # Requires three features, x, y, z
     nb_inputs = 3
 
     def _forward(self, x):
-        # Initally do nothing to the output
-        return x.unsqueeze(1) 
+
+        # Scale to roughly the right order of magnitude
+        x[:,0] = x[:,0] * 1e2
+        x[:,1] = x[:,1] * 1e2
+        x[:,2] = x[:,2] * 1e2
+
+        return x 
+
+class TimeReconstruction(Task):
+    # Requires on feature, time
+    nb_inputs = 1
+
+    def _forward(self, x):
+
+        # Leave as it is
+        return x 
