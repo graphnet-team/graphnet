@@ -1,5 +1,4 @@
-"""Unit tests for I3Extractor class.
-"""
+"""Unit tests for I3Extractor class."""
 
 from gnn_reco.data.i3extractor import I3FeatureExtractorIceCube86, I3TruthExtractor, I3RetroExtractor
 
