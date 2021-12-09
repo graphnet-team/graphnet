@@ -4,6 +4,22 @@ gnn\_reco.legacy package
 Submodules
 ----------
 
+gnn\_reco.legacy.callbacks module
+---------------------------------
+
+.. automodule:: gnn_reco.legacy.callbacks
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gnn\_reco.legacy.model module
+-----------------------------
+
+.. automodule:: gnn_reco.legacy.model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 gnn\_reco.legacy.original module
 --------------------------------
 
@@ -12,10 +28,10 @@ gnn\_reco.legacy.original module
    :undoc-members:
    :show-inheritance:
 
-gnn\_reco.legacy.reimplemented module
--------------------------------------
+gnn\_reco.legacy.trainers module
+--------------------------------
 
-.. automodule:: gnn_reco.legacy.reimplemented
+.. automodule:: gnn_reco.legacy.trainers
    :members:
    :undoc-members:
    :show-inheritance:

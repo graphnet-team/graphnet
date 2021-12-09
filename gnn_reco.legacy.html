@@ -39,8 +39,10 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">gnn_reco.legacy package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-gnn_reco.legacy.original">gnn_reco.legacy.original module</a></li>
-<li><a class="reference internal" href="#module-gnn_reco.legacy.reimplemented">gnn_reco.legacy.reimplemented module</a></li>
+<li><a class="reference internal" href="#module-gnn_reco.legacy.callbacks">gnn_reco.legacy.callbacks module</a></li>
+<li><a class="reference internal" href="#gnn-reco-legacy-model-module">gnn_reco.legacy.model module</a></li>
+<li><a class="reference internal" href="#gnn-reco-legacy-original-module">gnn_reco.legacy.original module</a></li>
+<li><a class="reference internal" href="#gnn-reco-legacy-trainers-module">gnn_reco.legacy.trainers module</a></li>
 <li><a class="reference internal" href="#module-gnn_reco.legacy">Module contents</a></li>
 </ul>
 </li>
@@ -75,196 +77,44 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="module-gnn_reco.legacy.original">
-<span id="gnn-reco-legacy-original-module"></span><h2>gnn_reco.legacy.original module<a class="headerlink" href="#module-gnn_reco.legacy.original" title="Permalink to this headline"></a></h2>
+<section id="module-gnn_reco.legacy.callbacks">
+<span id="gnn-reco-legacy-callbacks-module"></span><h2>gnn_reco.legacy.callbacks module<a class="headerlink" href="#module-gnn_reco.legacy.callbacks" title="Permalink to this headline"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.ConvNet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.original.</span></span><span class="sig-name descname"><span class="pre">ConvNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knn_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classification</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_intermediate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#ConvNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.ConvNet" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dt class="sig sig-object py" id="gnn_reco.legacy.callbacks.EarlyStopping">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.callbacks.</span></span><span class="sig-name descname"><span class="pre">EarlyStopping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/callbacks.html#EarlyStopping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.callbacks.EarlyStopping" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.ConvNet.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knn_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classification</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_intermediate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#ConvNet.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.ConvNet.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Standard network architecture
-Parameters:
-———-
-n_features: int</p>
-<blockquote>
-<div><p>Number of input features, i.e. dimension of input layer</p>
-</div></blockquote>
-<dl class="simple">
-<dt>n_labels: int</dt><dd><p>Number of prediction labels, i.e. dimension of output layer</p>
-</dd>
-<dt>knn_cols: arr</dt><dd><p>Column indices of features to be used for k-nearest-neighbor edge calculation
-Usually x, y, z, t</p>
-</dd>
-<dt>classification: bool</dt><dd><p>Switches to classification loss</p>
-</dd>
-<dt>normalize: bool</dt><dd><p>Whether to normalize ouput (e.g. for prediction of vector on unit sphere)</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="gnn_reco.legacy.callbacks.EarlyStopping.get_best_params">
+<span class="sig-name descname"><span class="pre">get_best_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/callbacks.html#EarlyStopping.get_best_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.callbacks.EarlyStopping.get_best_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.ConvNet.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#ConvNet.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.ConvNet.forward" title="Permalink to this definition"></a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.ConvNet.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.legacy.original.ConvNet.training" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="gnn_reco.legacy.callbacks.EarlyStopping.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/callbacks.html#EarlyStopping.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.callbacks.EarlyStopping.step" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.Dynedge">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.original.</span></span><span class="sig-name descname"><span class="pre">Dynedge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#Dynedge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.Dynedge" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dt class="sig sig-object py" id="gnn_reco.legacy.callbacks.PiecewiseLinearScheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.callbacks.</span></span><span class="sig-name descname"><span class="pre">PiecewiseLinearScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataset_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_epochs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/callbacks.html#PiecewiseLinearScheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.callbacks.PiecewiseLinearScheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.Dynedge.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#Dynedge.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.Dynedge.forward" title="Permalink to this definition"></a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.Dynedge.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.legacy.original.Dynedge.training" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="gnn_reco.legacy.callbacks.PiecewiseLinearScheduler.get_next_lr">
+<span class="sig-name descname"><span class="pre">get_next_lr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/callbacks.html#PiecewiseLinearScheduler.get_next_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.callbacks.PiecewiseLinearScheduler.get_next_lr" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.MultipleDatasetsTrainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.original.</span></span><span class="sig-name descname"><span class="pre">MultipleDatasetsTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_loaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_loaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_training_batches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_validation_batches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#MultipleDatasetsTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.MultipleDatasetsTrainer" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.Predictor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.original.</span></span><span class="sig-name descname"><span class="pre">Predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_column_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_processing_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#Predictor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.Predictor" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.Trainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.original.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#Trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.Trainer" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.custom_crossentropy_loss">
-<span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.original.</span></span><span class="sig-name descname"><span class="pre">custom_crossentropy_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#custom_crossentropy_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.custom_crossentropy_loss" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.log_cosh">
-<span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.original.</span></span><span class="sig-name descname"><span class="pre">log_cosh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#log_cosh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.log_cosh" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gnn_reco.legacy.original.vonmises_sinecosine_loss">
-<span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.original.</span></span><span class="sig-name descname"><span class="pre">vonmises_sinecosine_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/original.html#vonmises_sinecosine_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.original.vonmises_sinecosine_loss" title="Permalink to this definition"></a></dt>
-<dd><p>Repesents a single angle (graph[target]) as a 3D vector (sine(angle), cosine(angle), 1) and calculates
-the 3D VonMisesFisher loss of the angular difference between the 3D vector representations.
-:param prediction: Output of the model. Must have shape [batch_size, 3] where 0th column is a prediction of sine(angle) and 1st column is prediction of cosine(angle) and 2nd column is an estimate of Kappa.
-:type prediction: torch.tensor
-:param graph: Data-object with target stored in graph[target]
-:type graph: Data-Object
-:param target: name of the target. E.g. ‘zenith’ or ‘azimuth’
-:type target: str</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>a batch level scalar quantity describing the VonMisesFischer loss. Shape [1,]</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>loss (torch.tensor)</p>
-</dd>
-</dl>
 </dd></dl>
 
 </section>
-<section id="module-gnn_reco.legacy.reimplemented">
-<span id="gnn-reco-legacy-reimplemented-module"></span><h2>gnn_reco.legacy.reimplemented module<a class="headerlink" href="#module-gnn_reco.legacy.reimplemented" title="Permalink to this headline"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.legacy.reimplemented.LegacyAngularReconstruction">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.reimplemented.</span></span><span class="sig-name descname"><span class="pre">LegacyAngularReconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_scaler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/reimplemented.html#LegacyAngularReconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.reimplemented.LegacyAngularReconstruction" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="gnn_reco.models.task.html#gnn_reco.models.task.task.Task" title="gnn_reco.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.models.task.task.Task</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.legacy.reimplemented.LegacyAngularReconstruction.nb_inputs">
-<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#gnn_reco.legacy.reimplemented.LegacyAngularReconstruction.nb_inputs" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.legacy.reimplemented.LegacyAngularReconstruction.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.legacy.reimplemented.LegacyAngularReconstruction.training" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gnn_reco.legacy.reimplemented.</span></span><span class="sig-name descname"><span class="pre">LegacyVonMisesFisherLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_scaler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gnn_reco/legacy/reimplemented.html#LegacyVonMisesFisherLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="gnn_reco.components.html#gnn_reco.components.loss_functions.LossFunction" title="gnn_reco.components.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">gnn_reco.components.loss_functions.LossFunction</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss._forward">
-<span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/gnn_reco/legacy/reimplemented.html#LegacyVonMisesFisherLoss._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss._forward" title="Permalink to this definition"></a></dt>
-<dd><p>Original function for computing von Mises-Fisher loss.</p>
-<p>Repesents a single angle (graph[target]) as a 3D vector (sine(angle),
-cosine(angle), 1) and calculates the 3D VonMisesFisher loss of the
-angular difference between the 3D vector representations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>prediction</strong> (<em>Tensor</em>) – Output of the model. Must have shape [N, 3]
-where 0th column is a prediction of sine(angle) and 1st column
-is prediction of cosine(angle) and 2nd column is an estimate of
-kappa.</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Target tensor, extracted from graph object.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Elementwise von Mises-Fisher loss terms. Shape [N,]</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>loss (Tensor)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss.reduction">
-<span class="sig-name descname"><span class="pre">reduction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss.reduction" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss.training" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss.weight">
-<span class="sig-name descname"><span class="pre">weight</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gnn_reco.legacy.reimplemented.LegacyVonMisesFisherLoss.weight" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="gnn-reco-legacy-model-module">
+<h2>gnn_reco.legacy.model module<a class="headerlink" href="#gnn-reco-legacy-model-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="gnn-reco-legacy-original-module">
+<h2>gnn_reco.legacy.original module<a class="headerlink" href="#gnn-reco-legacy-original-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="gnn-reco-legacy-trainers-module">
+<h2>gnn_reco.legacy.trainers module<a class="headerlink" href="#gnn-reco-legacy-trainers-module" title="Permalink to this headline"></a></h2>
 </section>
 <section id="module-gnn_reco.legacy">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-gnn_reco.legacy" title="Permalink to this headline"></a></h2>

@@ -12,14 +12,6 @@ gnn\_reco.models.training.callbacks module
    :undoc-members:
    :show-inheritance:
 
-gnn\_reco.models.training.trainers module
------------------------------------------
-
-.. automodule:: gnn_reco.models.training.trainers
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 gnn\_reco.models.training.utils module
 --------------------------------------
 
