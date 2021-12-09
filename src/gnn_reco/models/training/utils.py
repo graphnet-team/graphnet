@@ -1,7 +1,7 @@
+from collections import OrderedDict
 import os
 from typing import List, Optional, Tuple
 
-import dill
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -98,6 +98,31 @@ def make_train_validation_dataloader(
     )
 
     return training_dataloader, validation_dataloader  # , {'valid_selection':validation_selection, 'training_selection':training_selection}
+
+def get_predictions(trainer, model, dataloader, prediction_columns, additional_attributes=None):
+    # Check(s)
+    if additional_attributes is None:
+        additional_attributes = []
+    assert isinstance(additional_attributes, list)
+
+    # Get predictions
+    predictions_torch = trainer.predict(model, dataloader)
+    predictions = [p[0].detach().cpu().numpy() for p in predictions_torch]  # Assuming single task
+    predictions = np.concatenate(predictions, axis=0)
+    assert len(prediction_columns) == predictions.shape[1]
+
+    # Get additional attributes
+    attributes = OrderedDict([(attr, []) for attr in additional_attributes])
+    for batch in dataloader:
+        for attr in attributes:
+            attributes[attr].extend(batch[attr].detach().cpu().numpy())
+
+    data = np.concatenate([predictions] + [
+        np.asarray(values)[:, np.newaxis] for values in attributes.values()
+    ], axis=1)
+
+    results = pd.DataFrame(data, columns=prediction_columns + additional_attributes)
+    return results
 
 def save_results(db, tag, results, archive,model):
     db_name = db.split('/')[-1].split('.')[0]

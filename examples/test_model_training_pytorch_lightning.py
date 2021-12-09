@@ -1,20 +1,24 @@
-from timer import timer
 import logging
+import numpy as np
+import pandas as pd
+from timer import timer
 
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks import EarlyStopping
 import torch
+from torch.optim.adam import Adam
 
 from gnn_reco.components.loss_functions import  LogCoshLoss, VonMisesFisher2DLoss
 from gnn_reco.components.utils import fit_scaler
 from gnn_reco.data.constants import FEATURES, TRUTH
 from gnn_reco.data.utils import get_equal_proportion_neutrino_indices
-from gnn_reco.legacy.callbacks import PiecewiseLinearScheduler
-from gnn_reco.legacy.trainers import Trainer, Predictor
-from gnn_reco.legacy.model import Model
+from gnn_reco.models import Model
 from gnn_reco.models.detector.icecube import IceCube86
 from gnn_reco.models.gnn import DynEdge, ConvNet
 from gnn_reco.models.graph_builders import KNNGraphBuilder
 from gnn_reco.models.task.reconstruction import EnergyReconstruction
-from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
+from gnn_reco.models.training.callbacks import ProgressBar, PiecewiseLinearLR
+from gnn_reco.models.training.utils import get_predictions, make_train_validation_dataloader, save_results
 
 # Configurations
 timer.set_level(logging.INFO)
@@ -36,14 +40,11 @@ def main():
     pulsemap = 'SRTTWOfflinePulsesDC'
     batch_size = 256
     num_workers = 10
-    device = 'cuda:0'
+    gpus = [0]
     target = 'energy'
     n_epochs = 5
     patience = 5
     archive = '/groups/icecube/asogaard/gnn/results'
-
-    # Scalers
-    scalers = fit_scaler(db, features, truth, pulsemap)
 
     # Common variables
     train_selection, _ = get_equal_proportion_neutrino_indices(db)
@@ -62,7 +63,6 @@ def main():
     # Building model
     detector = IceCube86(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
-        scalers=scalers['input']['SRTTWOfflinePulsesDC'],
     )
     gnn = DynEdge(
         nb_inputs=detector.nb_outputs,
@@ -78,36 +78,50 @@ def main():
         detector=detector,
         gnn=gnn,
         tasks=[task],
-        device=device,
-    )
+        optimizer_class=Adam,
+        optimizer_kwargs={'lr': 1e-03, 'eps': 1e-03},
+        scheduler_class=PiecewiseLinearLR,
+        scheduler_kwargs={
+            'milestones': [0, len(training_dataloader) / 2, len(training_dataloader) * n_epochs],
+            'factors': [1e-2, 1, 1e-02],
+        },
+        scheduler_config={
+            'interval': 'step',
+        },
+     )
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-8, eps=1e-03)
-    scheduler = PiecewiseLinearScheduler(training_dataloader, start_lr=1e-5, max_lr=1e-3, end_lr=1e-5, max_epochs=n_epochs)
+    # Training model
+    callbacks = [
+        EarlyStopping(
+            monitor='val_loss',
+            patience=patience,
+        ),
+        ProgressBar(),
+    ]
 
     trainer = Trainer(
-        training_dataloader=training_dataloader,
-        validation_dataloader=validation_dataloader,
-        optimizer=optimizer,
-        n_epochs=n_epochs,
-        scheduler=scheduler,
-        patience=patience,
+        gpus=gpus,
+        max_epochs=n_epochs,
+        callbacks=callbacks,
+        log_every_n_steps=1,
     )
 
     try:
-        trainer(model)
+        trainer.fit(model, training_dataloader, validation_dataloader)
     except KeyboardInterrupt:
         print("[ctrl+c] Exiting gracefully.")
         pass
 
-    predictor = Predictor(
-        dataloader=validation_dataloader,
-        target=target,
-        device=device,
-        output_column_names=[target + '_pred'],
+    # Saving predictions to file
+    results = get_predictions(
+        trainer,
+        model,
+        validation_dataloader,
+        [target + '_pred'],
+        [target, 'event_no'],
     )
-    model._tasks[0].inference = True
-    results = predictor(model)
-    save_results(db, 'dynedge_energy', results,archive, model)
+
+    save_results(db, 'dynedge_energy_pytorch_lightning', results,archive, model)
 
 # Main function call
 if __name__ == "__main__":

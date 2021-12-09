@@ -63,7 +63,7 @@ def test_log_cosh_of_log_transformed(dtype=torch.float32):
     y = 0.5 * x.clone().squeeze()  # Shape [N,]
 
     log_cosh_loss = LogCoshLoss()
-    log_cosh_of_log_transformed_loss = LogCoshLoss(transform_output=lambda x: torch.log10(x))
+    log_cosh_of_log_transformed_loss = LogCoshLoss(transform_prediction_and_target=lambda x: torch.log10(x))
     assert torch.allclose(
         log_cosh_loss(torch.log10(x), torch.log10(y), return_elements=True),
         log_cosh_of_log_transformed_loss(x, y, return_elements=True),
