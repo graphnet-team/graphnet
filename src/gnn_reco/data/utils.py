@@ -23,7 +23,7 @@ def get_desired_event_numbers(db_path, desired_size, fraction_noise=0, fraction_
         tot_event_nos = pd.read_sql(total_query,con)
         if len(tot_event_nos) < desired_size:
             desired_size = len(tot_event_nos)
-            numbers_desired = [x * desired_size for x in fracs]
+            numbers_desired = [int(x * desired_size) for x in fracs]
             print('Only {} events in database, using this number instead.'.format(len(tot_event_nos)))
 
         list_of_dataframes = []
@@ -43,9 +43,9 @@ def get_desired_event_numbers(db_path, desired_size, fraction_noise=0, fraction_
                     numbers_desired = [int(new_x * (len(tmp_dataframe)/number)) for new_x in numbers_desired]
                     restart_trigger = True
                     list_of_dataframes = []
-                    break                    
+                    break
 
-                list_of_dataframes.append(dataframe)   
+                list_of_dataframes.append(dataframe)
         retrieved_event_nos_pd = pd.concat(list_of_dataframes)
         event_no_list = retrieved_event_nos_pd.sample(frac=1, replace=False, random_state=rng).values.ravel().tolist()
 
