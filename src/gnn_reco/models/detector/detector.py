@@ -5,14 +5,14 @@ try:
 except ImportError:  # Python version < 3.8
     final = lambda f: f  # Identity decorator
 
+from pytorch_lightning import LightningModule
 import torch
-from torch.nn import Module
 from torch_geometric.data import Data
 
 from gnn_reco.models.graph_builders import GraphBuilder
 
 
-class Detector(Module):
+class Detector(LightningModule):
     """Base class for all detector-specific read-ins in gnn_reco."""
 
     @property
@@ -28,7 +28,7 @@ class Detector(Module):
         self._graph_builder = graph_builder
         self._scalers = scalers
         if self._scalers:
-            print("Will use scalers rather than standard preprocessing ",
+            print("Will use scalers rather than standard preprocessing",
                  f"in {self.__class__.__name__}.")
 
     @final

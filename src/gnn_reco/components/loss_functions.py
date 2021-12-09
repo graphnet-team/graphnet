@@ -22,11 +22,19 @@ class LossFunction(_WeightedLoss):
     """
     def __init__(
         self,
-        transform_output: Optional[Callable] = None,
+        transform_prediction_and_target: Optional[Callable] = None,
+        transform_target: Optional[Callable] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self._transform_output = transform_output if transform_output else lambda x: x
+
+        # Check(s)
+        assert not((transform_prediction_and_target is not None) and (transform_target is not None)), \
+            "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
+
+        # Member variables
+        self._transform_prediction = transform_prediction_and_target if transform_prediction_and_target else lambda x: x
+        self._transform_target = transform_target if transform_target else self._transform_prediction
 
     @final
     def forward(
@@ -47,8 +55,8 @@ class LossFunction(_WeightedLoss):
             Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
-        prediction = self._transform_output(prediction)
-        target = self._transform_output(target)
+        prediction = self._transform_prediction(prediction)
+        target = self._transform_target(target)
 
         elements = self._forward(prediction, target)
         assert elements.size(dim=0) == target.size(dim=0), \
@@ -81,6 +89,16 @@ class LogCoshLoss(LossFunction):
         diff = prediction[:,0] - target
         elements = self._log_cosh(diff)
         return elements
+
+class BinaryCrossEntropyLoss(LossFunction):
+    """ Computes binary cross entropy for a vector of predictions (between 0 and 1), 
+    targets should be 0 and 1 for muon and neutrino respectively
+    where prediction is prob. the PID is neutrino (12,14,16)
+    loss should be reported elementwise, so set reduction to None
+    """
+    
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor: 
+        return torch.nn.functional.binary_cross_entropy(prediction, target, reduction='none')
 
 
 class LogCMK(torch.autograd.Function):

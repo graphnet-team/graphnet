@@ -1,10 +1,10 @@
 from abc import abstractmethod
-from torch.nn import Module
+from pytorch_lightning.core.lightning import LightningModule
 from torch import Tensor
 from torch_geometric.data import Data
 
 
-class GNN(Module):
+class GNN(LightningModule):
     """Base class for all core GNN models in gnn_reco."""
     def __init__(self, nb_inputs, nb_outputs):
         # Base class constructor
