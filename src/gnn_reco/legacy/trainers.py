@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 from tqdm import tqdm
 
-from gnn_reco.models.training.callbacks import EarlyStopping
+from gnn_reco.legacy.callbacks import EarlyStopping
 from gnn_reco.models.training.utils import make_train_validation_dataloader
 
 
