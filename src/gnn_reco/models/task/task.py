@@ -6,14 +6,15 @@ try:
 except ImportError:  # Python version < 3.8
     final = lambda f: f  # Identity decorator
 
+from pytorch_lightning.core.lightning import LightningModule
 from torch import Tensor
-from torch.nn import Module, Linear
+from torch.nn import Linear
 from torch_geometric.data import Data
 
 from gnn_reco.components.loss_functions import LossFunction
 
 
-class Task(Module):
+class Task(LightningModule):
     """Base class for all reconstruction and classification tasks."""
 
     @property

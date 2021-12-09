@@ -134,3 +134,4 @@ docs/**/*.rst
 
 # Badges
 misc/badges
+lightning_logs/
