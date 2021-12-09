@@ -110,3 +110,11 @@ class TimeReconstruction(Task):
 
         # Leave as it is
         return x 
+
+class BinaryClassificationTask(Task):
+    #requires one feature: probability of being neutrino?
+    nb_inputs = 1
+
+    def _forward(self, x):
+        #transform probability of being muon
+        return torch.sigmoid(x[:,0])
