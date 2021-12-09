@@ -54,8 +54,6 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
         kappa = torch.abs(x[:,1]) + eps_like(x)
         return torch.stack((angle, kappa), dim=1)
 
-
-
 class EnergyReconstruction(Task):
     """Reconstructs energy."""
     # Requires one feature: untransformed energy
