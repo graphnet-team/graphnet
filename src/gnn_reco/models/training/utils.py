@@ -34,12 +34,17 @@ def make_dataloader(
         selection=selection,
     )
 
+    def collate_fn(graphs):
+        # Remove graphs with less than two DOM hits. Should not occur in "production."
+        graphs = [g for g in graphs if g.n_pulses > 1]
+        return Batch.from_data_list(graphs)
+
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=shuffle,
         num_workers=num_workers,
-        collate_fn=Batch.from_data_list,
+        collate_fn=collate_fn,
         persistent_workers=persistent_workers,
         prefetch_factor=2,
     )
