@@ -54,7 +54,6 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
         kappa = torch.abs(x[:,1]) + eps_like(x)
         return torch.stack((angle, kappa), dim=1)
 
-
 class EnergyReconstruction(Task):
     """Reconstructs energy."""
     # Requires one feature: untransformed energy
@@ -76,9 +75,40 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
         pred = torch.stack((energy, log_var), dim=1)
         return pred
 
+class VertexReconstruction(Task):
+    # Requires four features, x, y, z and t
+    nb_inputs = 4
 
+    def _forward(self, x):
 
+        # Scale xyz to roughly the right order of magnitude, leave time
+        x[:,0] = x[:,0] * 1e2
+        x[:,1] = x[:,1] * 1e2
+        x[:,2] = x[:,2] * 1e2
 
+        return x 
+
+class PositionReconstruction(Task):
+    # Requires three features, x, y, z
+    nb_inputs = 3
+
+    def _forward(self, x):
+
+        # Scale to roughly the right order of magnitude
+        x[:,0] = x[:,0] * 1e2
+        x[:,1] = x[:,1] * 1e2
+        x[:,2] = x[:,2] * 1e2
+
+        return x 
+
+class TimeReconstruction(Task):
+    # Requires on feature, time
+    nb_inputs = 1
+
+    def _forward(self, x):
+
+        # Leave as it is
+        return x 
 
 class BinaryClassificationTask(Task):
     #requires one feature: probability of being neutrino?
