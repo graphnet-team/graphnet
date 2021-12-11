@@ -33,6 +33,7 @@ class TRUTH:
         'elasticity',
         'sim_type',
         'interaction_type',
+        'interaction_time',                               ## Added for vertex reconstruction
     ]
     DEEPCORE = ICECUBE86
     UPGRADE = DEEPCORE
