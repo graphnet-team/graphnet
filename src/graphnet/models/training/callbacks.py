@@ -48,7 +48,7 @@ class PiecewiseLinearLR(_LRScheduler):
 
 
 class ProgressBar(TQDMProgressBar):
-    """Custom progress bar for gnn-reco.
+    """Custom progress bar for graphnet.
 
     Customises the default progress in pytorch-lightning.
     """

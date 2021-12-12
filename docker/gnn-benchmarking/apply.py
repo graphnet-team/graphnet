@@ -6,7 +6,7 @@ import sys
 
 from I3Tray import I3Tray
 
-from gnn_reco.modules import GNNModule
+from graphnet.modules import GNNModule
 
 
 # Constants (from Dockerfile)

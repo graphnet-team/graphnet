@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from gnn_reco.plots.utils import calculate_statistics
-from gnn_reco.plots.utils import calculate_relative_improvement_error
-from gnn_reco.plots.utils import add_energy
-from gnn_reco.plots.utils import add_pid_and_interaction
+from graphnet.plots.utils import calculate_statistics
+from graphnet.plots.utils import calculate_relative_improvement_error
+from graphnet.plots.utils import add_energy
+from graphnet.plots.utils import add_pid_and_interaction
 
 def width_plot(key_limits, keys, key_bins, db, data_path, figsize = (10,8), include_retro = True, track_cascade = True):
     """Makes a binned resolution plot. Will either divide into track/cascade or make a summary plot containing one curve for both topologies. 

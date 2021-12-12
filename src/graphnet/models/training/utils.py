@@ -9,8 +9,8 @@ import torch
 from torch.utils.data import DataLoader
 from torch_geometric.data.batch import Batch
 
-from gnn_reco.data.sqlite_dataset import SQLiteDataset
-from gnn_reco.models import Model
+from graphnet.data.sqlite_dataset import SQLiteDataset
+from graphnet.models import Model
 
 
 def make_dataloader(

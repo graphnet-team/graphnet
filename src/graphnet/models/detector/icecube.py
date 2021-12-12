@@ -1,7 +1,7 @@
 from torch_geometric.data import Data
 
-from gnn_reco.models.detector.detector import Detector
-from gnn_reco.data.constants import FEATURES
+from graphnet.models.detector.detector import Detector
+from graphnet.data.constants import FEATURES
 
 
 class IceCube86(Detector):

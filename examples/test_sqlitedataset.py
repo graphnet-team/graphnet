@@ -7,8 +7,8 @@ import torch.utils.data
 from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
-from gnn_reco.data.constants import FEATURES, TRUTH
-from gnn_reco.data.sqlite_dataset import SQLiteDataset
+from graphnet.data.constants import FEATURES, TRUTH
+from graphnet.data.sqlite_dataset import SQLiteDataset
 
 # Configurations
 timer.set_level(logging.INFO)

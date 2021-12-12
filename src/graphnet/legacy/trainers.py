@@ -2,8 +2,8 @@ import pandas as pd
 import torch
 from tqdm import tqdm
 
-from gnn_reco.legacy.callbacks import EarlyStopping
-from gnn_reco.models.training.utils import make_train_validation_dataloader
+from graphnet.legacy.callbacks import EarlyStopping
+from graphnet.models.training.utils import make_train_validation_dataloader
 
 
 class Trainer(object):

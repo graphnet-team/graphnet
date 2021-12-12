@@ -2,21 +2,18 @@ import os
 from typing import List, Union
 
 import dill
-from pytorch_lightning import LightningModule
 import torch
 from torch import Tensor
-from torch.nn import ModuleList
-from torch.optim import Adam
+from torch.nn import Module, ModuleList
 from torch_geometric.data import Data
 
-from gnn_reco.models.detector.detector import Detector
-from gnn_reco.models.gnn.gnn import GNN
-from gnn_reco.models.task import Task
+from graphnet.models.detector.detector import Detector
+from graphnet.models.gnn.gnn import GNN
+from graphnet.models.task import Task
 
 
-class Model(LightningModule):
-    """Main class for all models in gnn-reco.
-
+class Model(Module):
+    """Main class for all models in graphnet.
     This class chains together the different elements of a complete GNN-based
     model (detector read-in, GNN architecture, and task-specific read-outs).
     """
@@ -27,11 +24,7 @@ class Model(LightningModule):
         detector: Detector,
         gnn: GNN,
         tasks: Union[Task, List[Task]],
-        optimizer_class=Adam,
-        optimizer_kwargs=None,
-        scheduler_class=None,
-        scheduler_kwargs=None,
-        scheduler_config=None,
+        device: str,
     ):
 
         # Base class constructor
@@ -49,45 +42,17 @@ class Model(LightningModule):
         self._detector = detector
         self._gnn = gnn
         self._tasks = ModuleList(tasks)
-        self._optimizer_class = optimizer_class
-        self._optimizer_kwargs = optimizer_kwargs or dict()
-        self._scheduler_class = scheduler_class
-        self._scheduler_kwargs = scheduler_kwargs or dict()
-        self._scheduler_config = scheduler_config or dict()
+        self._device = device
 
-    def configure_optimizers(self):
-        optimizer = self._optimizer_class(self.parameters(), **self._optimizer_kwargs)
-        config = {
-            "optimizer": optimizer,
-        }
-        if self._scheduler_class is not None:
-            scheduler = self._scheduler_class(optimizer, **self._scheduler_kwargs)
-            config.update({
-                "lr_scheduler": {
-                    "scheduler": scheduler,
-                    **self._scheduler_config
-                },
-            })
-        return config
+        self.to(self._device)
 
     def forward(self, data: Data) -> List[Union[Tensor, Data]]:
         """Common forward pass, chaining model components."""
+        data = data.to(self._device)
         data = self._detector(data)
         x = self._gnn(data)
         preds = [task(x) for task in self._tasks]
         return preds
-
-    def training_step(self, train_batch, batch_idx):
-        preds = self(train_batch)
-        loss = self.compute_loss(preds, train_batch)
-        self.log('train_loss', loss, batch_size=self._get_batch_size(train_batch))
-        return loss
-
-    def validation_step(self, val_batch, batch_idx):
-        preds = self(val_batch)
-        loss = self.compute_loss(preds, val_batch)
-        self.log('val_loss', loss, batch_size=self._get_batch_size(val_batch), prog_bar=True)
-        return loss
 
     def compute_loss(self, preds: Tensor, data: Data, verbose=False) -> Tensor:
         """Computes and sums losses across tasks."""
@@ -99,6 +64,21 @@ class Model(LightningModule):
         assert all(loss.dim() == 0 for loss in losses), \
             "Please reduce loss for each task separately"
         return torch.sum(torch.stack(losses))
+
+    def to(self, device: str):  # pylint: disable=arguments-differ
+        """Override `_apply` to make invocations apply to member modules as well.
+        This applied to e.g. `.to(...)` and `.cuda()`, see
+        [https://stackoverflow.com/a/57208704].
+        Args:
+            fn (function): Function to be applied.
+        Returns:
+            self
+        """
+        super().to(device)
+        self._detector.to(device)
+        self._gnn.to(device)
+        for ix, _ in enumerate(self._tasks):
+            self._tasks[ix].to(device)
 
     def save(self, path: str):
         """Saves entire model to `path`."""
@@ -129,6 +109,3 @@ class Model(LightningModule):
         else:
             state_dict = path
         return super().load_state_dict(state_dict)
-
-    def _get_batch_size(self, data: Data) -> int:
-        return torch.numel(torch.unique(data.batch))

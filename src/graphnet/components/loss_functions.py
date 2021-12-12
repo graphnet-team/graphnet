@@ -18,7 +18,7 @@ from torch.nn.modules.loss import _WeightedLoss
 
 
 class LossFunction(_WeightedLoss):
-    """Base class for loss functions in gnn_reco.
+    """Base class for loss functions in graphnet.
     """
     def __init__(
         self,
