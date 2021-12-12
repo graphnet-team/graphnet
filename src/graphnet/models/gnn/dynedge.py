@@ -11,10 +11,10 @@ from torch import Tensor
 from torch_geometric.data import Data
 from torch_geometric.nn import EdgeConv
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
-from gnn_reco.components.layers import DynEdgeConv
+from graphnet.components.layers import DynEdgeConv
 
-from gnn_reco.models.gnn.gnn import GNN
-from gnn_reco.models.utils import calculate_xyzt_homophily
+from graphnet.models.gnn.gnn import GNN
+from graphnet.models.utils import calculate_xyzt_homophily
 
 
 class DynEdge(GNN):
