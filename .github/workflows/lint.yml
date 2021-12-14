@@ -20,7 +20,8 @@ jobs:
         run: |
           pwd
           ls -lart
-      - uses: ./.github/actions/install-torch
+      - name: Install dependencies
+        uses: ./.github/actions/install-torch
       - name: Install package
         run: |
           pip install .[develop]
@@ -29,7 +30,9 @@ jobs:
           pylint src/graphnet tests/*.py --exit-zero | tee results_pylint.txt
       - name: Generate badge
         run: |
-          grep rated < results_pylint.txt | sed 's/.* at //g;s/\/.*//g' | xargs -I {} anybadge -f misc/badges/pylint.svg -v {} pylint
+          grep rated < results_pylint.txt | sed 's/.* at //g;s/\/.*//g' | xargs -I {} anybadge -f pylint.svg -v {} pylint
+          mkdir -p misc/badges/
+          mv pylint.svg misc/badges/
       - name: Configure git
         run: |
           git config user.email "andreas.sogaard@gmail.com"
