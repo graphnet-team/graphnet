@@ -24,7 +24,7 @@ jobs:
           pwd
           ls -lart
       - name: Install dependencies
-        uses: .github/actions/install-torch
+        uses: ./.github/actions/install-torch
       - name: Install package
         run: |
           pip install .[develop]
