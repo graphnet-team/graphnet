@@ -8,7 +8,7 @@ inputs:
   pyg-verison:
     description: 'Version of pytorch-geometric to install'
     required: true
-    default: '1.9.1'
+    default: '2.0.1'
   cuda:
     description: 'Which device type to install pytorch for'
     required: true
