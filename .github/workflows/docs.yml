@@ -1,0 +1,35 @@
+# This is a simple workflow to automatically generate API docs
+name: docs
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push to the main branch
+  push:
+    branches: [ main ]
+    paths-ignore: [ misc/badges/ ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/install-torch
+      - name: Install package
+        run: |
+          pip install .[develop]
+      - name: Build documentation
+        run: |
+          cd docs
+          sphinx-apidoc -f -o ../docs/source/ ../src/
+          make html
+      - name: Deploy to Github Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages  # The branch the action should deploy to.
+          folder: docs/build/html  # The folder the action should deploy.
+          git-config-email: andreas.sogaard@gmail.com
+          git-config-name: Andreas Søgaard
