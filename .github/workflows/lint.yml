@@ -18,8 +18,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: debug
         run: |
-        pwd
-        ls -lart
+          pwd
+          ls -lart
       - uses: ./.github/actions/install-torch.yml
       - name: Install package
         run: |
