@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/install-torch
+      - uses: actions/install-torch.yml
       - name: Install package
         run: |
           pip install .[develop]
