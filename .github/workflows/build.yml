@@ -23,7 +23,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: ./.github/actions/install-torch
+      - name: Install dependencies
+        uses: ./.github/actions/install-torch
       - name: Install package
         run: |
           pip install .[develop]
@@ -34,7 +35,9 @@ jobs:
           coverage report -m | tee results_coverage.txt
       - name: Generate unit test/build and coverage badges
         run: |
-          tail -1 results_coverage.txt | sed 's/.* \(.*\)%/\1/g' | xargs -I {} anybadge -f misc/badges/coverage.svg -v {} coverage
+          tail -1 results_coverage.txt | sed 's/.* \(.*\)%/\1/g' | xargs -I {} anybadge -f coverage.svg -v {} coverage
+          mkdir -p misc/badges/
+          mv coverage.svg misc/badges/
       - name: Configure git
         run: |
           git config user.email "andreas.sogaard@gmail.com"
