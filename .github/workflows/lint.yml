@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
+      - name: debug
+        run: |
         pwd
         ls -lart
       - uses: ./.github/actions/install-torch.yml
