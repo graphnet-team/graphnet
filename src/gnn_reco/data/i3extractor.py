@@ -243,31 +243,35 @@ class I3TruthExtractor(I3Extractor):
 
     def __extract_dbang_decay_length__(self,frame, padding_value):
         mctree = frame['I3MCTree']
-        p_true = mctree.primaries[0]
-        p_daughters = mctree.get_daughters(p_true)        
-        if (len(p_daughters) == 2):
-            for p_daughter in p_daughters:
-                if p_daughter.type == dataclasses.I3Particle.Hadrons:
-                    casc_0_true = p_daughter
-                else:
-                    hnl_true = p_daughter
-            hnl_daughters = mctree.get_daughters(hnl_true)
-        else:
-            decay_length  =  padding_value
-            hnl_daughters = []
+        try:
+            p_true = mctree.primaries[0]
+            p_daughters = mctree.get_daughters(p_true)        
+            if (len(p_daughters) == 2):
+                for p_daughter in p_daughters:
+                    if p_daughter.type == dataclasses.I3Particle.Hadrons:
+                        casc_0_true = p_daughter
+                    else:
+                        hnl_true = p_daughter
+                hnl_daughters = mctree.get_daughters(hnl_true)
+            else:
+                decay_length  =  padding_value
+                hnl_daughters = []
 
-        if (len(hnl_daughters) > 0):    
-            for count_hnl_daughters, hnl_daughter in enumerate(hnl_daughters):
-                if not count_hnl_daughters:
-                    casc_1_true = hnl_daughter
-                else:
-                    assert(casc_1_true.pos == hnl_daughter.pos)
-                    casc_1_true.energy = casc_1_true.energy + hnl_daughter.energy
-            decay_length = phys_services.I3Calculator.distance(casc_0_true,casc_1_true)/icetray.I3Units.m
-            
-        else:
-            decay_length = -1
-        return decay_length
+            if (len(hnl_daughters) > 0):    
+                for count_hnl_daughters, hnl_daughter in enumerate(hnl_daughters):
+                    if not count_hnl_daughters:
+                        casc_1_true = hnl_daughter
+                    else:
+                        assert(casc_1_true.pos == hnl_daughter.pos)
+                        casc_1_true.energy = casc_1_true.energy + hnl_daughter.energy
+                decay_length = phys_services.I3Calculator.distance(casc_0_true,casc_1_true)/icetray.I3Units.m
+                
+            else:
+                decay_length = padding_value
+            return decay_length
+        except:
+            return padding_value
+
 
 
 class I3RetroExtractor(I3Extractor):
