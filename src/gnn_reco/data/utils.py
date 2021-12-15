@@ -167,7 +167,7 @@ def is_i3_file(filename: str) -> bool:
     """Checks whether `filename` is an I3 file."""
     if is_gcd_file(filename.lower()):
         return False
-    elif re.search(r'\.i3\.', filename.lower()):
+    elif re.search(r'\.i3\.', filename.lower()) or '.zst' in filename.lower() :
         return True
     return False
 
