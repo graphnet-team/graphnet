@@ -165,11 +165,14 @@ def is_gcd_file(filename: str) -> bool:
 
 def is_i3_file(filename: str) -> bool:
     """Checks whether `filename` is an I3 file."""
+    print(filename)
     if is_gcd_file(filename.lower()):
         return False
-    elif re.search(r'\.i3\.', filename.lower()) or '.zst' in filename.lower() :
+    #elif re.search(r'\.i3\.', filename.lower()) or '.zst' in filename.lower():
+    #    return True
+    #return False
+    else:
         return True
-    return False
 
 def has_extension(filename: str, extensions: List[str]) -> bool:
     """Checks whether `filename` has one of the desired extensions."""
@@ -217,28 +220,28 @@ def find_i3_files(directories, gcd_rescue):
 
     for directory in directories:
         # Recursivley find all I3-like files in `directory`.
-        i3_pattern = '*.i3.*'
-        paths = list(Path(directory).rglob(i3_pattern))
+        i3_patterns = ['*.bz2', '*.zst']
+        for i3_pattern in i3_patterns:
+            paths = list(Path(directory).rglob(i3_pattern))
+            # Loop over all folders containing such I3-like files.
+            folders = sorted(set([os.path.dirname(path) for path in paths]))
+            for folder in folders:
+                # List all I3 and GCD files, respectively, in the current folder.
+                folder_files = glob(os.path.join(folder, i3_pattern))
+                folder_i3_files = list(filter(is_i3_file, folder_files))
+                folder_gcd_files = list(filter(is_gcd_file, folder_files))
 
-        # Loop over all folders containing such I3-like files.
-        folders = sorted(set([os.path.dirname(path) for path in paths]))
-        for folder in folders:
-            # List all I3 and GCD files, respectively, in the current folder.
-            folder_files = glob(os.path.join(folder, i3_pattern))
-            folder_i3_files = list(filter(is_i3_file, folder_files))
-            folder_gcd_files = list(filter(is_gcd_file, folder_files))
+                # Make sure that no more than one GCD file is found; and use rescue file of none is found.
+                assert len(folder_gcd_files) <= 1
+                if len(folder_gcd_files) == 0:
+                    folder_gcd_files = [gcd_rescue]
 
-            # Make sure that no more than one GCD file is found; and use rescue file of none is found.
-            assert len(folder_gcd_files) <= 1
-            if len(folder_gcd_files) == 0:
-                folder_gcd_files = [gcd_rescue]
-
-            # Store list of I3 files and corresponding GCD files.
-            folder_gcd_files = folder_gcd_files * len(folder_i3_files)
-            gcd_files.extend(folder_gcd_files)
-            i3_files.extend(folder_i3_files)
+                # Store list of I3 files and corresponding GCD files.
+                folder_gcd_files = folder_gcd_files * len(folder_i3_files)
+                gcd_files.extend(folder_gcd_files)
+                i3_files.extend(folder_i3_files)
+                pass
             pass
-        pass
 
     return i3_files, gcd_files
 

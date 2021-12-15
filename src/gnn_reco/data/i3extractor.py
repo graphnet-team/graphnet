@@ -310,10 +310,12 @@ def frame_is_montecarlo(frame):
         frame_has_key(frame, "I3MCTree")
     )
 def frame_is_noise(frame):
-    if frame_has_key(frame, "MCInIcePrimary"):
-        return False
-    else:
+    if frame_has_key(frame, "noise_weight"):
         return True
+    elif frame_has_key(frame, "NoiseEngine_bool"):
+        return True
+    else:
+        return False
 
 def frame_is_lvl7(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")
@@ -369,6 +371,10 @@ def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, paddin
             MCInIcePrimary = frame['MCInIcePrimary']
         except:
             MCInIcePrimary = frame['I3MCTree'][0]
+            try:                                    ## This rather odd check is to avoid the muons that sometime have nans in primary particle
+                MCInIcePrimary - 2 
+            except:
+                MCInIcePrimary = frame['I3MCTree'][1] ## for some strange reason the second entry is identical in all variables and has no nans (always muon)
     else:
         MCInIcePrimary = None
 
