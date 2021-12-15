@@ -122,16 +122,16 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         labels_dict = {
             'event_no': truth_dict['event_no'],
-            'muon': abs_pid == 13,
-            'muon_stopped': truth_dict.get('stopped_muon') == 1,
-            'noise': (abs_pid == 1) & (sim_type != 'data'),
-            'neutrino': (abs_pid != 13 ) & (abs_pid != 1 ),  # `abs_pid in [12,14,16]`?
-            'v_e': abs_pid == 12,
-            'v_u': abs_pid == 14,
-            'v_t': abs_pid == 16,
-            'track': (abs_pid == 14) & (truth_dict['interaction_type'] == 1),
-            'dbang': sim_type == 'dbang',
-            'corsika': abs_pid > 20,
+            'muon': int(abs_pid == 13),
+            'muon_stopped': int(truth_dict.get('stopped_muon') == 1),
+            'noise': int((abs_pid == 1) & (sim_type != 'data')),
+            'neutrino': int((abs_pid != 13 ) & (abs_pid != 1 )),  # `abs_pid in [12,14,16]`?
+            'v_e': int(abs_pid == 12),
+            'v_u': int(abs_pid == 14),
+            'v_t': int(abs_pid == 16),
+            'track': int((abs_pid == 14) & (truth_dict['interaction_type'] == 1)),
+            'dbang': int(sim_type == 'dbang'),
+            'corsika': int(abs_pid > 20)
         }
 
         # Catch cases with no reconstructed pulses
