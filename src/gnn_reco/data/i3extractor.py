@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 import numpy as np
 try:
-    from icecube import dataclasses, icetray, dataio  # pyright: reportMissingImports=false
+    from icecube import dataclasses, icetray, dataio , phys_services  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
 
@@ -197,7 +197,6 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
 
 
 class I3TruthExtractor(I3Extractor):
-
     def __init__(self, name="truth"):
         super().__init__(name)
 
@@ -223,6 +222,7 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
+            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value)
         }
 
         if is_mc == True and is_noise == False:
@@ -240,6 +240,34 @@ class I3TruthExtractor(I3Extractor):
             })
 
         return output
+
+    def __extract_dbang_decay_length__(self,frame, padding_value):
+        mctree = frame['I3MCTree']
+        p_true = mctree.primaries[0]
+        p_daughters = mctree.get_daughters(p_true)        
+        if (len(p_daughters) == 2):
+            for p_daughter in p_daughters:
+                if p_daughter.type == dataclasses.I3Particle.Hadrons:
+                    casc_0_true = p_daughter
+                else:
+                    hnl_true = p_daughter
+            hnl_daughters = mctree.get_daughters(hnl_true)
+        else:
+            decay_length  =  padding_value
+            hnl_daughters = []
+
+        if (len(hnl_daughters) > 0):    
+            for count_hnl_daughters, hnl_daughter in enumerate(hnl_daughters):
+                if not count_hnl_daughters:
+                    casc_1_true = hnl_daughter
+                else:
+                    assert(casc_1_true.pos == hnl_daughter.pos)
+                    casc_1_true.energy = casc_1_true.energy + hnl_daughter.energy
+            decay_length = phys_services.I3Calculator.distance(casc_0_true,casc_1_true)/icetray.I3Units.m
+            
+        else:
+            decay_length = -1
+        return decay_length
 
 
 class I3RetroExtractor(I3Extractor):
@@ -345,6 +373,8 @@ def find_data_type(mc, input_file):
         sim_type = 'genie'
     if 'noise' in input_file:
         sim_type = 'noise'
+    if 'L2' in input_file:  ## not robust
+        sim_type = 'dbang'
     if sim_type == 'lol':
         print('SIM TYPE NOT FOUND!')
     return sim_type
