@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-
+import numpy as np
 try:
     from icecube import dataclasses, icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
@@ -118,7 +118,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         try:
             om_keys, data = self._get_om_keys_and_pulseseries(frame)
         except KeyError:
-            print(f"WARN: Pulsemap {self._pulsemap} was not found in frame.")
+            #print(f"WARN: Pulsemap {self._pulsemap} was not found in frame.")
             return output
 
         for om_key in om_keys:
@@ -310,10 +310,12 @@ def frame_is_montecarlo(frame):
         frame_has_key(frame, "I3MCTree")
     )
 def frame_is_noise(frame):
-    if frame_has_key(frame, "MCInIcePrimary"):
-        return False
-    else:
+    if frame_has_key(frame, "noise_weight"):
         return True
+    elif frame_has_key(frame, "NoiseEngine_bool"):
+        return True
+    else:
+        return False
 
 def frame_is_lvl7(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")
@@ -339,7 +341,7 @@ def find_data_type(mc, input_file):
         sim_type = 'muongun'
     if 'corsika' in input_file:
         sim_type = 'corsika'
-    if 'genie' in input_file:
+    if 'genie' in input_file or 'nu' in input_file.lower():
         sim_type = 'genie'
     if 'noise' in input_file:
         sim_type = 'noise'
@@ -369,9 +371,10 @@ def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, paddin
             MCInIcePrimary = frame['MCInIcePrimary']
         except:
             MCInIcePrimary = frame['I3MCTree'][0]
-    else:
+        if MCInIcePrimary.energy != MCInIcePrimary.energy: # This is a nan check. Only happens for some muons where second item in MCTree is primary. Weird!
+            MCInIcePrimary = frame['I3MCTree'][1] ## for some strange reason the second entry is identical in all variables and has no nans (always muon)
+    else:   
         MCInIcePrimary = None
-
     try:
         interaction_type = frame["I3MCWeightDict"]["InteractionType"]
     except:
