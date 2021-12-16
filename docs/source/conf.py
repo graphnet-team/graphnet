@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'gnn-reco'
+project = 'graphnet'
 copyright = '2021, IceCube Collaboration'
 author = 'IceCube Collaboration'
 

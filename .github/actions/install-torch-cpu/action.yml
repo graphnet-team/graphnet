@@ -1,0 +1,23 @@
+name: 'Install pytorch and pytorch-geometric for CPU'
+description: 'Installs a few common dependencies'
+inputs:
+  torch-verison:
+    description: 'Version of pytorch to install'
+    required: true
+    default: '1.9.1'
+  pyg-verison:
+    description: 'Version of pytorch-geometric to install'
+    required: true
+    default: '2.0.1'
+runs:
+  using: "composite"
+  steps:
+    - name: "Install dependencies"
+      run: |
+        pip install torch==${{ inputs.torch-verison }}+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+        pip install torch-cluster -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
+        pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
+        pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
+        pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
+        pip install torch-geometric==${{ inputs.pyg-verison }}
+      shell: bash
