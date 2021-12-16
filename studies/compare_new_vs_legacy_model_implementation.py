@@ -4,19 +4,19 @@ import logging
 
 import torch
 
-from gnn_reco.components.loss_functions import  VonMisesFisher2DLoss
-from gnn_reco.components.utils import fit_scaler
-from gnn_reco.data.constants import FEATURES, TRUTH
-from gnn_reco.data.utils import get_equal_proportion_neutrino_indices
-from gnn_reco.models import Model
-from gnn_reco.models.detector import IceCubeDeepCore
-from gnn_reco.models.gnn import DynEdge, ConvNet
-from gnn_reco.models.graph_builders import KNNGraphBuilder
-from gnn_reco.models.task.reconstruction import AzimuthReconstructionWithKappa, ZenithReconstructionWithKappa
-from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
-from gnn_reco.models.training.trainers import Trainer, Predictor
-from gnn_reco.models.training.utils import make_dataloader, make_train_validation_dataloader, save_results
-from gnn_reco.legacy.original import (
+from graphnet.components.loss_functions import  VonMisesFisher2DLoss
+from graphnet.components.utils import fit_scaler
+from graphnet.data.constants import FEATURES, TRUTH
+from graphnet.data.utils import get_equal_proportion_neutrino_indices
+from graphnet.models import Model
+from graphnet.models.detector import IceCubeDeepCore
+from graphnet.models.gnn import DynEdge, ConvNet
+from graphnet.models.graph_builders import KNNGraphBuilder
+from graphnet.models.task.reconstruction import AzimuthReconstructionWithKappa, ZenithReconstructionWithKappa
+from graphnet.models.training.callbacks import PiecewiseLinearScheduler
+from graphnet.models.training.trainers import Trainer, Predictor
+from graphnet.models.training.utils import make_dataloader, make_train_validation_dataloader, save_results
+from graphnet.legacy.original import (
     Dynedge as LegacyDynedge,  
     vonmises_sinecosine_loss,
     log_cosh,

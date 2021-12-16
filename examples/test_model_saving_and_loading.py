@@ -4,14 +4,14 @@ import torch
 from torch.utils.data import DataLoader
 from torch_geometric.data import Batch
 
-from gnn_reco.components.loss_functions import  VonMisesFisher2DLoss
-from gnn_reco.data.sqlite_dataset import SQLiteDataset
-from gnn_reco.data.constants import FEATURES, TRUTH
-from gnn_reco.models import Model
-from gnn_reco.models.detector.icecube import IceCube86
-from gnn_reco.models.gnn import DynEdge
-from gnn_reco.models.graph_builders import KNNGraphBuilder
-from gnn_reco.models.task.reconstruction import ZenithReconstructionWithKappa
+from graphnet.components.loss_functions import  VonMisesFisher2DLoss
+from graphnet.data.sqlite_dataset import SQLiteDataset
+from graphnet.data.constants import FEATURES, TRUTH
+from graphnet.models import Model
+from graphnet.models.detector.icecube import IceCube86
+from graphnet.models.gnn import DynEdge
+from graphnet.models.graph_builders import KNNGraphBuilder
+from graphnet.models.task.reconstruction import ZenithReconstructionWithKappa
 
 # Load data
 db = "/groups/icecube/leonbozi/datafromrasmus/GNNReco/data/databases/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3/data/dev_level7_noise_muon_nu_classification_pass2_fixedRetro_v3.db"
