@@ -40,10 +40,10 @@ except ImportError:
     install('torch==1.9.0')
 
 setup(
-    name='gnn_reco',
+    name='graphnet',
     version='0.1.1',
-    description='A common library for using graph neural networks (GNNs) in netrino telescopes.',
-    url='https://github.com/icecube/gnn-reco',
+    description='A common library for using graph neural networks (GNNs) in netrino telescope experiments.',
+    url='https://github.com/icecube/graphnet',
     author='The IceCube Collaboration',
     license='Apache 2.0',
     packages=find_packages(where='src'),
