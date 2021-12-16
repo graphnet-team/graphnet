@@ -1,9 +1,9 @@
-# This is a simple workflow to run linting, unit tests, and code coverage and display resulting badges
+# This is a simple workflow to run unit tests and code coverage, and display resulting badges
 name: build
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
+  # Triggers the workflow on push
   push:
     paths-ignore: [ misc/badges/ ]
   pull_request:
@@ -15,38 +15,22 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  linting:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Install required packages
-        run: pip install .[develop]
-      - name: Run pylint
-        run: |
-          pylint src/graphnet tests/*.py --exit-zero | tee results_pylint.txt
-      - name: Generate badge
-        run: grep rated < results_pylint.txt | sed 's/.* at //g;s/\/.*//g' | xargs -I {} anybadge -f pylint.svg -v {} pylint
-      - name: Archive pylint results and badge
-        uses: actions/upload-artifact@v2
-        with:
-          name: pylint
-          path: |
-            pylint.svg
-
-  tests:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
-
     steps:
-      - uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install required packages
-        run: pip install .[develop]
+      - name: Install dependencies
+        uses: ./.github/actions/install-torch-cpu
+      - name: Install package
+        run: |
+          pip install .[develop]
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
@@ -55,31 +39,7 @@ jobs:
       - name: Generate unit test/build and coverage badges
         run: |
           tail -1 results_coverage.txt | sed 's/.* \(.*\)%/\1/g' | xargs -I {} anybadge -f coverage.svg -v {} coverage
-      - name: Archive code coverage results and badge
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage
-          path: |
-            coverage.svg
-
-  badges:
-    if: ${{ github.event_name == 'push' }}
-    needs: [ linting, tests ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: pylint
-      - uses: actions/download-artifact@v2
-        with:
-          name: coverage
-      - name: List directory contents
-        run: ls -lart
-      - name: Move new badges
-        run: |
-          mkdir -p misc/badges
-          mv pylint.svg misc/badges/
+          mkdir -p misc/badges/
           mv coverage.svg misc/badges/
       - name: Configure git
         run: |
@@ -89,26 +49,4 @@ jobs:
       - name: Stage badges
         run: git add -f misc/badges/
       - name: Commit and push changes
-        run: git commit -m "Auto-updating badges" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"
-
-  docs:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    needs: [ tests ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install
-        run: |
-          pip install .[develop]
-      - name: Build documentation
-        run: |
-          cd docs
-          sphinx-apidoc -f -o ../docs/source/ ../src/
-          make html
-      - name: Deploy to Github Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.5
-        with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: docs/build/html # The folder the action should deploy.
-          git-config-email: andreas.sogaard@gmail.com
-          git-config-name: Andreas Søgaard
+        run: git commit -m "Auto-updating coverage badge" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"

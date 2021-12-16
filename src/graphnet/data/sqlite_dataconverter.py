@@ -189,7 +189,11 @@ class SQLiteDataConverter(DataConverter):
             for ix_table, table_name in enumerate(self._table_names):
                 column_names = self._extract_column_names(db_paths, table_name)
                 if len(column_names) > 1:
-                    self._create_table(database_path, table_name, column_names, is_pulse_map=(ix_table >= 2))
+                    if 'retro' in table_name.lower() or 'truth' in table_name.lower():
+                        is_pulse_map = False
+                    else:
+                        is_pulse_map = True
+                    self._create_table(database_path, table_name, column_names, is_pulse_map= is_pulse_map)#(ix_table >= 2))
 
             # Merge temporary databases into newly created one
             self._merge_temporary_databases(database_path, db_files, path_tmp)
