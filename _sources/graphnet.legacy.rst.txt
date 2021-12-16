@@ -1,0 +1,45 @@
+graphnet.legacy package
+=======================
+
+Submodules
+----------
+
+graphnet.legacy.callbacks module
+--------------------------------
+
+.. automodule:: graphnet.legacy.callbacks
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.legacy.model module
+----------------------------
+
+.. automodule:: graphnet.legacy.model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.legacy.original module
+-------------------------------
+
+.. automodule:: graphnet.legacy.original
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.legacy.trainers module
+-------------------------------
+
+.. automodule:: graphnet.legacy.trainers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.legacy
+   :members:
+   :undoc-members:
+   :show-inheritance:

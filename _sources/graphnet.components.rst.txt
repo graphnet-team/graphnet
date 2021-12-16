@@ -1,0 +1,37 @@
+graphnet.components package
+===========================
+
+Submodules
+----------
+
+graphnet.components.layers module
+---------------------------------
+
+.. automodule:: graphnet.components.layers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.components.loss\_functions module
+------------------------------------------
+
+.. automodule:: graphnet.components.loss_functions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.components.utils module
+--------------------------------
+
+.. automodule:: graphnet.components.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.components
+   :members:
+   :undoc-members:
+   :show-inheritance:

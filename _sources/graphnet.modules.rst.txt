@@ -1,0 +1,21 @@
+graphnet.modules package
+========================
+
+Submodules
+----------
+
+graphnet.modules.gnn\_module module
+-----------------------------------
+
+.. automodule:: graphnet.modules.gnn_module
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.modules
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,29 @@
+graphnet.models.task package
+============================
+
+Submodules
+----------
+
+graphnet.models.task.reconstruction module
+------------------------------------------
+
+.. automodule:: graphnet.models.task.reconstruction
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.models.task.task module
+--------------------------------
+
+.. automodule:: graphnet.models.task.task
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.models.task
+   :members:
+   :undoc-members:
+   :show-inheritance:

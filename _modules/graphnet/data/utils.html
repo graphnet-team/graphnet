@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.data.utils &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>graphnet.data.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphnet.data.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility function relevant to the graphnet.data package.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+
+
+<div class="viewcode-block" id="get_desired_event_numbers"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_desired_event_numbers">[docs]</a><span class="k">def</span> <span class="nf">get_desired_event_numbers</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">desired_size</span><span class="p">,</span> <span class="n">fraction_noise</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fraction_nu_e</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fraction_muon</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fraction_nu_mu</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fraction_nu_tau</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">fraction_nu_e</span> <span class="o">+</span> <span class="n">fraction_muon</span> <span class="o">+</span> <span class="n">fraction_nu_mu</span> <span class="o">+</span> <span class="n">fraction_nu_tau</span> <span class="o">+</span> <span class="n">fraction_noise</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;Sum of fractions not equal to one.&#39;</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="n">fracs</span> <span class="o">=</span> <span class="p">[</span><span class="n">fraction_noise</span><span class="p">,</span><span class="n">fraction_muon</span><span class="p">,</span><span class="n">fraction_nu_e</span><span class="p">,</span><span class="n">fraction_nu_mu</span><span class="p">,</span><span class="n">fraction_nu_tau</span><span class="p">]</span>
+    <span class="n">numbers_desired</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">desired_size</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fracs</span><span class="p">]</span>
+    <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">16</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">total_query</span> <span class="o">=</span> <span class="s1">&#39;SELECT event_no FROM truth WHERE abs(pid) IN </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pids</span><span class="p">))</span>
+        <span class="n">tot_event_nos</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">total_query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tot_event_nos</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">desired_size</span><span class="p">:</span>
+            <span class="n">desired_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tot_event_nos</span><span class="p">)</span>
+            <span class="n">numbers_desired</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">desired_size</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fracs</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Only </span><span class="si">{}</span><span class="s1"> events in database, using this number instead.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tot_event_nos</span><span class="p">)))</span>
+
+        <span class="n">list_of_dataframes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">restart_trigger</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">restart_trigger</span><span class="p">:</span>
+            <span class="n">restart_trigger</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">number</span><span class="p">,</span><span class="n">particle_type</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">numbers_desired</span><span class="p">,</span><span class="n">pids</span><span class="p">):</span>
+                <span class="n">query_is</span> <span class="o">=</span> <span class="s1">&#39;SELECT event_no FROM truth WHERE abs(pid) == </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">particle_type</span><span class="p">)</span>
+                <span class="n">tmp_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query_is</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">dataframe</span> <span class="o">=</span> <span class="n">tmp_dataframe</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="c1">#could add weights (re-weigh) here with replace=True</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp_dataframe</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no particles of type </span><span class="si">{}</span><span class="s1"> in this database please make new request.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">particle_type</span><span class="p">))</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There have been </span><span class="si">{}</span><span class="s1"> requested of particle </span><span class="si">{}</span><span class="s1">, we can only supply </span><span class="si">{}</span><span class="s1">. </span><span class="se">\n</span><span class="s1">Renormalising...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number</span><span class="p">,</span><span class="n">particle_type</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp_dataframe</span><span class="p">)))</span>
+                    <span class="n">numbers_desired</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">new_x</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp_dataframe</span><span class="p">)</span><span class="o">/</span><span class="n">number</span><span class="p">))</span> <span class="k">for</span> <span class="n">new_x</span> <span class="ow">in</span> <span class="n">numbers_desired</span><span class="p">]</span>
+                    <span class="n">restart_trigger</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">list_of_dataframes</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">break</span>
+
+                <span class="n">list_of_dataframes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
+        <span class="n">retrieved_event_nos_pd</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">list_of_dataframes</span><span class="p">)</span>
+        <span class="n">event_no_list</span> <span class="o">=</span> <span class="n">retrieved_event_nos_pd</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">event_no_list</span></div>
+
+
+<div class="viewcode-block" id="get_equal_proportion_neutrino_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_equal_proportion_neutrino_indices">[docs]</a><span class="k">def</span> <span class="nf">get_equal_proportion_neutrino_indices</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Utility method to get indices for neutrino events in equal flavour proportions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db (str): Path to database.</span>
+<span class="sd">        seed (int, optional): Random number generator seed. Defaults to 42.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Training and test indices, resp.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Common variables</span>
+    <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;14&#39;</span><span class="p">,</span> <span class="s1">&#39;16&#39;</span><span class="p">]</span>
+    <span class="n">pid_indicies</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># Get a list of all event numbers for each PID</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">:</span>
+            <span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT event_no FROM truth where abs(pid) = </span><span class="si">{pid}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+
+    <span class="c1"># Subsample events for each PID to the smallest sample size</span>
+    <span class="n">samples_sizes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">pid_indicies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_sizes</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Smallest sample size: </span><span class="si">{smallest_sample_size}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="n">pid_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">smallest_sample_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span>
+    <span class="p">]</span>
+    <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Shuffle and convert to list</span>
+    <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">indices_equal_proprtions</span>
+        <span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">values</span>
+        <span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Get test indices (?)</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">train_event_nos</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">indices_equal_proprtions</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;select event_no from truth where abs(pid) != 13 and abs(pid) != 1 and event_no not in </span><span class="si">{train_event_nos}</span><span class="s1">&#39;</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">indices_equal_proprtions</span><span class="p">,</span> <span class="n">test</span></div>
+
+<div class="viewcode-block" id="get_even_signal_background_indicies"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_even_signal_background_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_signal_background_indicies</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 13&#39;</span>
+        <span class="n">muons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
+    <span class="n">neutrinos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_equal_proportion_neutrino_indices</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+    <span class="n">neutrinos</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">neutrinos</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutrinos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">muons</span><span class="p">):</span>
+        <span class="n">neutrinos</span> <span class="o">=</span> <span class="n">neutrinos</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">muons</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">muons</span> <span class="o">=</span> <span class="n">muons</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">neutrinos</span><span class="p">))</span>
+
+    <span class="n">indicies</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">indicies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">muons</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">indicies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">neutrinos</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">df_for_shuffle</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">indicies</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_for_shuffle</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="get_even_track_cascade_indicies"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_even_track_cascade_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_track_cascade_indicies</span><span class="p">(</span><span class="n">database</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 12 and interaction_type = 1&#39;</span>
+        <span class="n">nu_e_cc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 12 and interaction_type = 2&#39;</span>
+        <span class="n">nu_e_nc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 14 and interaction_type = 1&#39;</span>
+        <span class="n">nu_u_cc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) = 14 and interaction_type = 2&#39;</span>
+        <span class="n">nu_u_nc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
+
+    <span class="n">events</span> <span class="o">=</span> <span class="n">nu_e_nc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nu_e_cc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nu_u_nc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nu_u_cc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">train_events</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth where abs(pid) != 13 and event_no not in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">train_events</span><span class="p">[</span><span class="s1">&#39;event_no&#39;</span><span class="p">]))</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">events</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">test</span></div>
+
+
+
+<div class="viewcode-block" id="create_out_directory"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.create_out_directory">[docs]</a><span class="k">def</span> <span class="nf">create_out_directory</span><span class="p">(</span><span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Directory </span><span class="si">{outdir}</span><span class="s2"> already exists&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="is_gcd_file"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.is_gcd_file">[docs]</a><span class="k">def</span> <span class="nf">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether `filename` is a GCD file.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(gcd|geo)&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="is_i3_file"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.is_i3_file">[docs]</a><span class="k">def</span> <span class="nf">is_i3_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether `filename` is an I3 file.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\.i3\.&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="has_extension"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.has_extension">[docs]</a><span class="k">def</span> <span class="nf">has_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extensions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether `filename` has one of the desired extensions.&quot;&quot;&quot;</span>
+    <span class="c1"># @TODO: Remove method, as it is not used?</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extensions</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)$&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="pairwise_shuffle"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.pairwise_shuffle">[docs]</a><span class="k">def</span> <span class="nf">pairwise_shuffle</span><span class="p">(</span><span class="n">i3_list</span><span class="p">,</span> <span class="n">gcd_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Shuffles the I3 file list and the correponding gcd file list.</span>
+
+<span class="sd">    This is handy because it ensures a more even extraction load for each worker.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        files_list (list): List of I3 file paths.</span>
+<span class="sd">        gcd_list (list): List of corresponding gcd file paths.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        i3_shuffled (list): List of shuffled I3 file paths.</span>
+<span class="sd">        gcd_shuffled (list): List of corresponding gcd file paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;i3&#39;</span><span class="p">:</span> <span class="n">i3_list</span><span class="p">,</span> <span class="s1">&#39;gcd&#39;</span><span class="p">:</span> <span class="n">gcd_list</span><span class="p">})</span>
+    <span class="n">df_shuffled</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">i3_shuffled</span> <span class="o">=</span> <span class="n">df_shuffled</span><span class="p">[</span><span class="s1">&#39;i3&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">gcd_shuffled</span> <span class="o">=</span> <span class="n">df_shuffled</span><span class="p">[</span><span class="s1">&#39;gcd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">i3_shuffled</span><span class="p">,</span> <span class="n">gcd_shuffled</span></div>
+
+<div class="viewcode-block" id="find_i3_files"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.find_i3_files">[docs]</a><span class="k">def</span> <span class="nf">find_i3_files</span><span class="p">(</span><span class="n">directories</span><span class="p">,</span> <span class="n">gcd_rescue</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Finds I3 files and corresponding GCD files in `directories`.</span>
+
+<span class="sd">    Finds I3 files in dir and matches each file with a corresponding GCD file if</span>
+<span class="sd">    present in the directory, matches with gcd_rescue if gcd is not present in</span>
+<span class="sd">    the directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directories (list[str]): Directories to search recursively for I3 files.</span>
+<span class="sd">        gcd_rescue (str): Path to the GCD that will be default if no GCD is</span>
+<span class="sd">            present in the directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        i3_list (list[str]): Paths to I3 files in `directories`</span>
+<span class="sd">        gcd_list (list[str]): Paths to GCD files for each I3 file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Output containers</span>
+    <span class="n">i3_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">gcd_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">directories</span><span class="p">:</span>
+        <span class="c1"># Recursivley find all I3-like files in `directory`.</span>
+        <span class="n">i3_pattern</span> <span class="o">=</span> <span class="s1">&#39;*.i3.*&#39;</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">))</span>
+
+        <span class="c1"># Loop over all folders containing such I3-like files.</span>
+        <span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+            <span class="c1"># List all I3 and GCD files, respectively, in the current folder.</span>
+            <span class="n">folder_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">i3_pattern</span><span class="p">))</span>
+            <span class="n">folder_i3_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_i3_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
+            <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_gcd_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
+
+            <span class="c1"># Make sure that no more than one GCD file is found; and use rescue file of none is found.</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd_rescue</span><span class="p">]</span>
+
+            <span class="c1"># Store list of I3 files and corresponding GCD files.</span>
+            <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="n">folder_gcd_files</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+            <span class="n">gcd_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span>
+            <span class="n">i3_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+            <span class="k">pass</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span></div>
+
+<div class="viewcode-block" id="frame_has_key"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.frame_has_key">[docs]</a><span class="k">def</span> <span class="nf">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns whether `frame` contains `key`.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">frame</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

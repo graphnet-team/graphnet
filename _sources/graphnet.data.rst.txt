@@ -1,0 +1,61 @@
+graphnet.data package
+=====================
+
+Submodules
+----------
+
+graphnet.data.constants module
+------------------------------
+
+.. automodule:: graphnet.data.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.dataconverter module
+----------------------------------
+
+.. automodule:: graphnet.data.dataconverter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.i3extractor module
+--------------------------------
+
+.. automodule:: graphnet.data.i3extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.sqlite\_dataconverter module
+------------------------------------------
+
+.. automodule:: graphnet.data.sqlite_dataconverter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.sqlite\_dataset module
+------------------------------------
+
+.. automodule:: graphnet.data.sqlite_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.utils module
+--------------------------
+
+.. automodule:: graphnet.data.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.data
+   :members:
+   :undoc-members:
+   :show-inheritance:
