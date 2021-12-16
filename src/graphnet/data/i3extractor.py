@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
-
+import numpy as np
 try:
-    from icecube import dataclasses, icetray, dataio  # pyright: reportMissingImports=false
+    from icecube import dataclasses, icetray, dataio , phys_services  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
 
@@ -118,7 +118,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         try:
             om_keys, data = self._get_om_keys_and_pulseseries(frame)
         except KeyError:
-            print(f"WARN: Pulsemap {self._pulsemap} was not found in frame.")
+            #print(f"WARN: Pulsemap {self._pulsemap} was not found in frame.")
             return output
 
         for om_key in om_keys:
@@ -197,7 +197,6 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
 
 
 class I3TruthExtractor(I3Extractor):
-
     def __init__(self, name="truth"):
         super().__init__(name)
 
@@ -223,6 +222,7 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
+            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value)
         }
 
         if is_mc == True and is_noise == False:
@@ -240,6 +240,38 @@ class I3TruthExtractor(I3Extractor):
             })
 
         return output
+
+    def __extract_dbang_decay_length__(self,frame, padding_value):
+        mctree = frame['I3MCTree']
+        try:
+            p_true = mctree.primaries[0]
+            p_daughters = mctree.get_daughters(p_true)        
+            if (len(p_daughters) == 2):
+                for p_daughter in p_daughters:
+                    if p_daughter.type == dataclasses.I3Particle.Hadrons:
+                        casc_0_true = p_daughter
+                    else:
+                        hnl_true = p_daughter
+                hnl_daughters = mctree.get_daughters(hnl_true)
+            else:
+                decay_length  =  padding_value
+                hnl_daughters = []
+
+            if (len(hnl_daughters) > 0):    
+                for count_hnl_daughters, hnl_daughter in enumerate(hnl_daughters):
+                    if not count_hnl_daughters:
+                        casc_1_true = hnl_daughter
+                    else:
+                        assert(casc_1_true.pos == hnl_daughter.pos)
+                        casc_1_true.energy = casc_1_true.energy + hnl_daughter.energy
+                decay_length = phys_services.I3Calculator.distance(casc_0_true,casc_1_true)/icetray.I3Units.m
+                
+            else:
+                decay_length = padding_value
+            return decay_length
+        except:
+            return padding_value
+
 
 
 class I3RetroExtractor(I3Extractor):
@@ -310,10 +342,12 @@ def frame_is_montecarlo(frame):
         frame_has_key(frame, "I3MCTree")
     )
 def frame_is_noise(frame):
-    if frame_has_key(frame, "MCInIcePrimary"):
-        return False
-    else:
+    if frame_has_key(frame, "noise_weight"):
         return True
+    elif frame_has_key(frame, "NoiseEngine_bool"):
+        return True
+    else:
+        return False
 
 def frame_is_lvl7(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")
@@ -339,10 +373,12 @@ def find_data_type(mc, input_file):
         sim_type = 'muongun'
     if 'corsika' in input_file:
         sim_type = 'corsika'
-    if 'genie' in input_file:
+    if 'genie' in input_file or 'nu' in input_file.lower():
         sim_type = 'genie'
     if 'noise' in input_file:
         sim_type = 'noise'
+    if 'L2' in input_file:  ## not robust
+        sim_type = 'dbang'
     if sim_type == 'lol':
         print('SIM TYPE NOT FOUND!')
     return sim_type
@@ -369,9 +405,10 @@ def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, paddin
             MCInIcePrimary = frame['MCInIcePrimary']
         except:
             MCInIcePrimary = frame['I3MCTree'][0]
-    else:
+        if MCInIcePrimary.energy != MCInIcePrimary.energy: # This is a nan check. Only happens for some muons where second item in MCTree is primary. Weird!
+            MCInIcePrimary = frame['I3MCTree'][1] ## for some strange reason the second entry is identical in all variables and has no nans (always muon)
+    else:   
         MCInIcePrimary = None
-
     try:
         interaction_type = frame["I3MCWeightDict"]["InteractionType"]
     except:
