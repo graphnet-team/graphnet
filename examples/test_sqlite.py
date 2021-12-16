@@ -1,13 +1,13 @@
 """Minimum working example (MWE) to use SQLiteDataConverter
 """
 
-from gnn_reco.data.i3extractor import (
+from graphnet.data.i3extractor import (
     I3FeatureExtractorIceCube86,
     I3FeatureExtractorIceCubeUpgrade,
     I3RetroExtractor,
     I3TruthExtractor,
 )
-from gnn_reco.data.sqlite_dataconverter import SQLiteDataConverter
+from graphnet.data.sqlite_dataconverter import SQLiteDataConverter
 
 
 def main_icecube86():

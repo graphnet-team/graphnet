@@ -3,10 +3,10 @@ from timer import timer
 import torch
 import torch.utils.data
 
-from gnn_reco.components.utils import fit_scaler
-from gnn_reco.data.constants import FEATURES, TRUTH
-from gnn_reco.data.utils import get_equal_proportion_neutrino_indices
-from gnn_reco.legacy.original import (
+from graphnet.components.utils import fit_scaler
+from graphnet.data.constants import FEATURES, TRUTH
+from graphnet.data.utils import get_equal_proportion_neutrino_indices
+from graphnet.legacy.original import (
     Dynedge, 
     ConvNet,
     vonmises_sinecosine_loss,
@@ -14,8 +14,8 @@ from gnn_reco.legacy.original import (
     Trainer,
     Predictor,
 )
-from gnn_reco.models.training.callbacks import PiecewiseLinearScheduler
-from gnn_reco.models.training.utils import make_train_validation_dataloader, save_results
+from graphnet.models.training.callbacks import PiecewiseLinearScheduler
+from graphnet.models.training.utils import make_train_validation_dataloader, save_results
 
 # Configurations
 timer.set_level(logging.INFO)
