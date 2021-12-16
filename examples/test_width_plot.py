@@ -1,4 +1,4 @@
-from gnn_reco.plots.width_plot import width_plot
+from graphnet.plots.width_plot import width_plot
 import numpy as np
 
 

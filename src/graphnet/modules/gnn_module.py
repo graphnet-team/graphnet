@@ -14,9 +14,9 @@ try:
 except ImportError:
     print("icecube package not available.")
 
-from gnn_reco.data.i3extractor import I3FeatureExtractorIceCube86
-from gnn_reco.data.constants import FEATURES
-from gnn_reco.models import Model
+from graphnet.data.i3extractor import I3FeatureExtractorIceCube86
+from graphnet.data.constants import FEATURES
+from graphnet.models import Model
 
 
 # Constant(s)
@@ -28,7 +28,7 @@ DTYPES = {
 
 
 class GNNModule(I3Module):
-    """Base I3Module for running gnn-reco models in I3Tray chains."""
+    """Base I3Module for running graphnet models in I3Tray chains."""
 
     def __init__(self, context):
         # Base class constructor

@@ -18,9 +18,9 @@ from torch_geometric.nn import global_add_pool as gap, global_max_pool as gmp
 from torch_geometric.nn.norm import LayerNorm
 from torch_geometric.utils import dropout_adj
 from tqdm import tqdm
-from gnn_reco.models.training.callbacks import EarlyStopping
+from graphnet.models.training.callbacks import EarlyStopping
 
-from gnn_reco.models.utils import calculate_xyzt_homophily
+from graphnet.models.utils import calculate_xyzt_homophily
 
 
 class Dynedge(torch.nn.Module):                                                     

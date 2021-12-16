@@ -1,4 +1,4 @@
-"""Utility function relevant to the gnn_reco.data package."""
+"""Utility function relevant to the graphnet.data package."""
 
 from glob import glob
 import os

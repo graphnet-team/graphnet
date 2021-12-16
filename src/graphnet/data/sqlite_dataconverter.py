@@ -8,7 +8,7 @@ import sqlite3
 from tqdm import tqdm
 from typing import Dict, List, OrderedDict
 
-from gnn_reco.data.i3extractor import I3TruthExtractor
+from graphnet.data.i3extractor import I3TruthExtractor
 
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false

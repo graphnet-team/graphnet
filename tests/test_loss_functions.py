@@ -6,8 +6,8 @@ import torch
 from torch import Tensor
 from torch.autograd import grad
 
-from gnn_reco.components.loss_functions import LogCoshLoss, VonMisesFisherLoss
-from gnn_reco.utils import eps_like
+from graphnet.components.loss_functions import LogCoshLoss, VonMisesFisherLoss
+from graphnet.utils import eps_like
 
 # Utility method(s)
 def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
