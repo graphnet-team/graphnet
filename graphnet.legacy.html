@@ -40,9 +40,9 @@
 <li><a class="reference internal" href="#">graphnet.legacy package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-graphnet.legacy.callbacks">graphnet.legacy.callbacks module</a></li>
-<li><a class="reference internal" href="#graphnet-legacy-model-module">graphnet.legacy.model module</a></li>
+<li><a class="reference internal" href="#module-graphnet.legacy.model">graphnet.legacy.model module</a></li>
 <li><a class="reference internal" href="#graphnet-legacy-original-module">graphnet.legacy.original module</a></li>
-<li><a class="reference internal" href="#graphnet-legacy-trainers-module">graphnet.legacy.trainers module</a></li>
+<li><a class="reference internal" href="#module-graphnet.legacy.trainers">graphnet.legacy.trainers module</a></li>
 <li><a class="reference internal" href="#module-graphnet.legacy">Module contents</a></li>
 </ul>
 </li>
@@ -107,14 +107,97 @@
 </dd></dl>
 
 </section>
-<section id="graphnet-legacy-model-module">
-<h2>graphnet.legacy.model module<a class="headerlink" href="#graphnet-legacy-model-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.legacy.model">
+<span id="graphnet-legacy-model-module"></span><h2>graphnet.legacy.model module<a class="headerlink" href="#module-graphnet.legacy.model" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.legacy.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><span class="pre">graphnet.models.detector.detector.Detector</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gnn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><span class="pre">graphnet.models.gnn.gnn.GNN</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><span class="pre">graphnet.models.task.task.Task</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><span class="pre">graphnet.models.task.task.Task</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/legacy/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.model.Model" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Main class for all models in graphnet.
+This class chains together the different elements of a complete GNN-based
+model (detector read-in, GNN architecture, and task-specific read-outs).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model.compute_loss">
+<span class="sig-name descname"><span class="pre">compute_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/legacy/model.html#Model.compute_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.model.Model.compute_loss" title="Permalink to this definition"></a></dt>
+<dd><p>Computes and sums losses across tasks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch_geometric.data.data.Data</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/legacy/model.html#Model.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.model.Model.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Common forward pass, chaining model components.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.legacy.model.Model" title="graphnet.legacy.model.Model"><span class="pre">graphnet.legacy.model.Model</span></a></span></span><a class="reference internal" href="_modules/graphnet/legacy/model.html#Model.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.model.Model.load" title="Permalink to this definition"></a></dt>
+<dd><p>Loads entire model from <cite>path</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model.load_state_dict">
+<span class="sig-name descname"><span class="pre">load_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.legacy.model.Model" title="graphnet.legacy.model.Model"><span class="pre">graphnet.legacy.model.Model</span></a></span></span><a class="reference internal" href="_modules/graphnet/legacy/model.html#Model.load_state_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.model.Model.load_state_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Loads model <cite>state_dict</cite> from <cite>path</cite>, either file or loaded object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/legacy/model.html#Model.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.model.Model.save" title="Permalink to this definition"></a></dt>
+<dd><p>Saves entire model to <cite>path</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model.save_state_dict">
+<span class="sig-name descname"><span class="pre">save_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/legacy/model.html#Model.save_state_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.model.Model.save_state_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Saves model <cite>state_dict</cite> to <cite>path</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model.to">
+<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/legacy/model.html#Model.to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.model.Model.to" title="Permalink to this definition"></a></dt>
+<dd><p>Override <cite>_apply</cite> to make invocations apply to member modules as well.
+This applied to e.g. <cite>.to(…)</cite> and <cite>.cuda()</cite>, see
+[<a class="reference external" href="https://stackoverflow.com/a/57208704">https://stackoverflow.com/a/57208704</a>].
+:param fn: Function to be applied.
+:type fn: function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.legacy.model.Model.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.legacy.model.Model.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="graphnet-legacy-original-module">
 <h2>graphnet.legacy.original module<a class="headerlink" href="#graphnet-legacy-original-module" title="Permalink to this headline"></a></h2>
 </section>
-<section id="graphnet-legacy-trainers-module">
-<h2>graphnet.legacy.trainers module<a class="headerlink" href="#graphnet-legacy-trainers-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.legacy.trainers">
+<span id="graphnet-legacy-trainers-module"></span><h2>graphnet.legacy.trainers module<a class="headerlink" href="#module-graphnet.legacy.trainers" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.legacy.trainers.MultipleDatabasesTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.legacy.trainers.</span></span><span class="sig-name descname"><span class="pre">MultipleDatabasesTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">databases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/legacy/trainers.html#MultipleDatabasesTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.trainers.MultipleDatabasesTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.legacy.trainers.Predictor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.legacy.trainers.</span></span><span class="sig-name descname"><span class="pre">Predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_column_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_processing_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/legacy/trainers.html#Predictor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.trainers.Predictor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.legacy.trainers.Trainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.legacy.trainers.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/legacy/trainers.html#Trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.legacy.trainers.Trainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
 </section>
 <section id="module-graphnet.legacy">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.legacy" title="Permalink to this headline"></a></h2>

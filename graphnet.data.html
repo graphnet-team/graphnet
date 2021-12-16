@@ -43,7 +43,7 @@
 <li><a class="reference internal" href="#module-graphnet.data.dataconverter">graphnet.data.dataconverter module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.i3extractor">graphnet.data.i3extractor module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite_dataconverter">graphnet.data.sqlite_dataconverter module</a></li>
-<li><a class="reference internal" href="#graphnet-data-sqlite-dataset-module">graphnet.data.sqlite_dataset module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.sqlite_dataset">graphnet.data.sqlite_dataset module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.utils">graphnet.data.utils module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data">Module contents</a></li>
 </ul>
@@ -487,8 +487,74 @@ a temporary database. Defaults to 10000.</p></li>
 <dd></dd></dl>
 
 </section>
-<section id="graphnet-data-sqlite-dataset-module">
-<h2>graphnet.data.sqlite_dataset module<a class="headerlink" href="#graphnet-data-sqlite-dataset-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.data.sqlite_dataset">
+<span id="graphnet-data-sqlite-dataset-module"></span><h2>graphnet.data.sqlite_dataset module<a class="headerlink" href="#module-graphnet.data.sqlite_dataset" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataset.</span></span><span class="sig-name descname"><span class="pre">SQLiteDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<p>Pytorch dataset for reading from SQLite.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset._create_graph">
+<span class="sig-name descname"><span class="pre">_create_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset._create_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset._create_graph" title="Permalink to this definition"></a></dt>
+<dd><p>Create Pytorch Data (i.e.graph) object.</p>
+<p>No preprocessing is performed at this stage, just as no node adjancency
+is imposed. This means that the <cite>edge_attr</cite> and <cite>edge_weight</cite> attributes
+are not set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>list</em>) – List of tuples, containing event features.</p></li>
+<li><p><strong>truth</strong> (<em>list</em>) – List of tuples, containing truth information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Graph object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset._query_database">
+<span class="sig-name descname"><span class="pre">_query_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset._query_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset._query_database" title="Permalink to this definition"></a></dt>
+<dd><p>Query SQLite database for event feature and truth information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>i</strong> (<em>int</em>) – Sequentially numbered index (i.e. in [0,len(self))) of the
+event to query.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of tuples, containing event features.
+list: List of tuples, containing truth information.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset.close_connection">
+<span class="sig-name descname"><span class="pre">close_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset.close_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset.close_connection" title="Permalink to this definition"></a></dt>
+<dd><p>Make sure that no sqlite3 connection is open.</p>
+<p>This is necessary to calls this before passing to <cite>torch.DataLoader</cite>
+such that the dataset replica on each worker is required to create its
+own connection (thereby avoiding <cite>sqlite3.DatabaseError: database disk
+image is malformed</cite> errors due to inability to use sqlite3 connection
+accross processes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset.establish_connection">
+<span class="sig-name descname"><span class="pre">establish_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset.establish_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset.establish_connection" title="Permalink to this definition"></a></dt>
+<dd><p>Make sure that a sqlite3 connection is open.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-graphnet.data.utils">
 <span id="graphnet-data-utils-module"></span><h2>graphnet.data.utils module<a class="headerlink" href="#module-graphnet.data.utils" title="Permalink to this headline"></a></h2>

@@ -39,7 +39,7 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.components package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#graphnet-components-layers-module">graphnet.components.layers module</a></li>
+<li><a class="reference internal" href="#module-graphnet.components.layers">graphnet.components.layers module</a></li>
 <li><a class="reference internal" href="#module-graphnet.components.loss_functions">graphnet.components.loss_functions module</a></li>
 <li><a class="reference internal" href="#module-graphnet.components.utils">graphnet.components.utils module</a></li>
 <li><a class="reference internal" href="#module-graphnet.components">Module contents</a></li>
@@ -76,8 +76,19 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="graphnet-components-layers-module">
-<h2>graphnet.components.layers module<a class="headerlink" href="#graphnet-components-layers-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.components.layers">
+<span id="graphnet-components-layers-module"></span><h2>graphnet.components.layers module<a class="headerlink" href="#module-graphnet.components.layers" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.components.layers.DynEdgeConv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.components.layers.</span></span><span class="sig-name descname"><span class="pre">DynEdgeConv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_neighbors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features_subset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/components/layers.html#DynEdgeConv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.layers.DynEdgeConv" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.nn.conv.edge_conv.EdgeConv</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.components.layers.DynEdgeConv.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch_sparse.tensor.SparseTensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/components/layers.html#DynEdgeConv.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.layers.DynEdgeConv.forward" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-graphnet.components.loss_functions">
 <span id="graphnet-components-loss-functions-module"></span><h2>graphnet.components.loss_functions module<a class="headerlink" href="#module-graphnet.components.loss_functions" title="Permalink to this headline"></a></h2>
@@ -128,8 +139,7 @@ exact calculations for <cite>m=2</cite> and <cite>m=3</cite> and found to yield 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.components.loss_functions.LogCMK.backward">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/components/loss_functions.html#LogCMK.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.loss_functions.LogCMK.backward" title="Permalink to this definition"></a></dt>
-<dd><p>Defines a formula for differentiating the operation with backward mode
-automatic differentiation.</p>
+<dd><p>Defines a formula for differentiating the operation.</p>
 <p>This function is to be overridden by all subclasses.</p>
 <p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
 as many outputs as the <a class="reference internal" href="#graphnet.components.loss_functions.LogCMK.forward" title="graphnet.components.loss_functions.LogCMK.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in

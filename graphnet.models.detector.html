@@ -39,9 +39,9 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.models.detector package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#graphnet-models-detector-detector-module">graphnet.models.detector.detector module</a></li>
-<li><a class="reference internal" href="#graphnet-models-detector-icecube-module">graphnet.models.detector.icecube module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.detector.detector">graphnet.models.detector.detector module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.detector.icecube">graphnet.models.detector.icecube module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.detector">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -75,14 +75,222 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="graphnet-models-detector-detector-module">
-<h2>graphnet.models.detector.detector module<a class="headerlink" href="#graphnet-models-detector-detector-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.detector.detector">
+<span id="graphnet-models-detector-detector-module"></span><h2>graphnet.models.detector.detector module<a class="headerlink" href="#module-graphnet.models.detector.detector" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.detector.</span></span><span class="sig-name descname"><span class="pre">Detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><span class="pre">graphnet.models.graph_builders.GraphBuilder</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/detector/detector.html#Detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.detector.Detector" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pytorch_lightning.core.lightning.LightningModule</span></code></p>
+<p>Base class for all detector-specific read-ins in graphnet.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector._forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch_geometric.data.data.Data</span></span></span><a class="reference internal" href="_modules/graphnet/models/detector/detector.html#Detector._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.detector.Detector._forward" title="Permalink to this definition"></a></dt>
+<dd><p>Same syntax as <cite>.forward</cite> for implentation in inheriting classes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.features">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.detector.detector.Detector.features" title="Permalink to this definition"></a></dt>
+<dd><p>List of features used/assumed by inheriting <cite>Detector</cite> objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.forward">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch_geometric.data.data.Data</span></span></span><a class="reference internal" href="_modules/graphnet/models/detector/detector.html#Detector.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.detector.Detector.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Pre-process graph <cite>Data</cite> features and build graph adjacency.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.nb_inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.detector.detector.Detector.nb_inputs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.nb_outputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_outputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.detector.detector.Detector.nb_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>This the default, but may be overridden by specific inheriting classes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.detector.Detector.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="graphnet-models-detector-icecube-module">
-<h2>graphnet.models.detector.icecube module<a class="headerlink" href="#graphnet-models-detector-icecube-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.detector.icecube">
+<span id="graphnet-models-detector-icecube-module"></span><h2>graphnet.models.detector.icecube module<a class="headerlink" href="#module-graphnet.models.detector.icecube" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCube86">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCube86</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><span class="pre">graphnet.models.graph_builders.GraphBuilder</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/detector/icecube.html#IceCube86"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.icecube.IceCube86" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.models.detector.detector.Detector</span></code></a></p>
+<p><cite>Detector</cite> class for IceCube-86.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCube86._forward">
+<span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch_geometric.data.data.Data</span></span></span><a class="reference internal" href="_modules/graphnet/models/detector/icecube.html#IceCube86._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.icecube.IceCube86._forward" title="Permalink to this definition"></a></dt>
+<dd><p>Ingests data, builds graph (connectivity/adjacency), and preprocesses features.</p>
+<dl class="simple">
+<dt>Assuming the following features, in this order (see self._features):</dt><dd><p>dom_x
+dom_y
+dom_z
+dom_times
+charge
+rde
+pmt_area</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Data</em>) – Input graph data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Connected and preprocessed graph data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCube86.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCube86.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCube86.features">
+<span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dom_x',</span> <span class="pre">'dom_y',</span> <span class="pre">'dom_z',</span> <span class="pre">'dom_time',</span> <span class="pre">'charge',</span> <span class="pre">'rde',</span> <span class="pre">'pmt_area']</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCube86.features" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCube86.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCube86.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCube86.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCube86.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCube86.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCube86.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCube86.use_amp">
+<span class="sig-name descname"><span class="pre">use_amp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCube86.use_amp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeDeepCore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCubeDeepCore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><span class="pre">graphnet.models.graph_builders.GraphBuilder</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/detector/icecube.html#IceCubeDeepCore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeDeepCore" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.detector.icecube.IceCube86" title="graphnet.models.detector.icecube.IceCube86"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.models.detector.icecube.IceCube86</span></code></a></p>
+<p><cite>Detector</cite> class for IceCube-DeepCore.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeDeepCore.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeDeepCore.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeDeepCore.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeDeepCore.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeDeepCore.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeDeepCore.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeDeepCore.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeDeepCore.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeDeepCore.use_amp">
+<span class="sig-name descname"><span class="pre">use_amp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeDeepCore.use_amp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeUpgrade">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCubeUpgrade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><span class="pre">graphnet.models.graph_builders.GraphBuilder</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/detector/icecube.html#IceCubeUpgrade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeUpgrade" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeDeepCore" title="graphnet.models.detector.icecube.IceCubeDeepCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.models.detector.icecube.IceCubeDeepCore</span></code></a></p>
+<p><cite>Detector</cite> class for IceCube-Upgrade.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeUpgrade._forward">
+<span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch_geometric.data.data.Data</span></span></span><a class="reference internal" href="_modules/graphnet/models/detector/icecube.html#IceCubeUpgrade._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeUpgrade._forward" title="Permalink to this definition"></a></dt>
+<dd><p>Ingests data, builds graph (connectivity/adjacency), and preprocesses features.</p>
+<dl class="simple">
+<dt>Assuming the following features, in this order (see self._features):</dt><dd><p>dom_x
+dom_y
+dom_z
+dom_times
+charge
+rde
+pmt_area
+string
+pmt_number
+dom_number
+pmt_dir_x
+pmt_dir_y
+pmt_dir_z
+dom_type</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Data</em>) – Input graph data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Connected and preprocessed graph data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeUpgrade.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeUpgrade.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeUpgrade.features">
+<span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dom_x',</span> <span class="pre">'dom_y',</span> <span class="pre">'dom_z',</span> <span class="pre">'dom_time',</span> <span class="pre">'charge',</span> <span class="pre">'rde',</span> <span class="pre">'pmt_area',</span> <span class="pre">'string',</span> <span class="pre">'pmt_number',</span> <span class="pre">'dom_number',</span> <span class="pre">'pmt_dir_x',</span> <span class="pre">'pmt_dir_y',</span> <span class="pre">'pmt_dir_z',</span> <span class="pre">'dom_type']</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeUpgrade.features" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeUpgrade.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeUpgrade.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeUpgrade.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeUpgrade.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeUpgrade.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeUpgrade.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.icecube.IceCubeUpgrade.use_amp">
+<span class="sig-name descname"><span class="pre">use_amp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.detector.icecube.IceCubeUpgrade.use_amp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.detector">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.models.detector" title="Permalink to this headline"></a></h2>
 </section>
 </section>
 

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.models.training.callbacks &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>graphnet.models.training.callbacks</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphnet.models.training.callbacks</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="k">import</span> <span class="n">_LRScheduler</span>
+<span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="k">import</span> <span class="n">TQDMProgressBar</span>
+
+<div class="viewcode-block" id="PiecewiseLinearLR"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.PiecewiseLinearLR">[docs]</a><span class="k">class</span> <span class="nc">PiecewiseLinearLR</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interpolates learning rate linearly between milestones.</span>
+
+<span class="sd">    For each milestone, denoting a specified number of steps, a factor</span>
+<span class="sd">    multiplying the base learning rate is specified. For steps between two</span>
+<span class="sd">    milestones, the learning rate is interpolated linearly between the two</span>
+<span class="sd">    closest milestones. For steps before the first milestone, the factor for the</span>
+<span class="sd">    first milestone is used; vice versa for steps after the last milestone.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        optimizer (Optimizer): Wrapped optimizer.</span>
+<span class="sd">        milestones (list): List of step indices. Must be increasing.</span>
+<span class="sd">        factors (list): List of multiplicative factors. Must be same length as</span>
+<span class="sd">            `milestones`.</span>
+<span class="sd">        last_epoch (int): The index of the last epoch. Default: -1.</span>
+<span class="sd">        verbose (bool): If ``True``, prints a message to stdout for</span>
+<span class="sd">            each update. Default: ``False``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">milestones</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="n">last_epoch</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># Check(s)</span>
+        <span class="k">if</span> <span class="n">milestones</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">milestones</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Milestones must be increasing&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">milestones</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">factors</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only multiplicative factor must be specified for each milestone.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">milestones</span> <span class="o">=</span> <span class="n">milestones</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">last_epoch</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Linearly interpolate multiplicative factor between milestones.</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">milestones</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">factors</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PiecewiseLinearLR.get_lr"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.PiecewiseLinearLR.get_lr">[docs]</a>    <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">base_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_factor</span><span class="p">()</span> <span class="k">for</span> <span class="n">base_lr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="ProgressBar"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar">[docs]</a><span class="k">class</span> <span class="nc">ProgressBar</span><span class="p">(</span><span class="n">TQDMProgressBar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom progress bar for graphnet.</span>
+
+<span class="sd">    Customises the default progress in pytorch-lightning.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_common_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bar</span><span class="p">):</span>
+        <span class="n">bar</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39; batch(es)&#39;</span>
+        <span class="n">bar</span><span class="o">.</span><span class="n">colour</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span>
+        <span class="k">return</span> <span class="n">bar</span>
+
+<div class="viewcode-block" id="ProgressBar.init_validation_tqdm"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.init_validation_tqdm">[docs]</a>    <span class="k">def</span> <span class="nf">init_validation_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_validation_tqdm</span><span class="p">()</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_config</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bar</span></div>
+
+<div class="viewcode-block" id="ProgressBar.init_predict_tqdm"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.init_predict_tqdm">[docs]</a>    <span class="k">def</span> <span class="nf">init_predict_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_predict_tqdm</span><span class="p">()</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_config</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bar</span></div>
+
+<div class="viewcode-block" id="ProgressBar.init_test_tqdm"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.init_test_tqdm">[docs]</a>    <span class="k">def</span> <span class="nf">init_test_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_test_tqdm</span><span class="p">()</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_config</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bar</span></div>
+
+<div class="viewcode-block" id="ProgressBar.init_train_tqdm"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.init_train_tqdm">[docs]</a>    <span class="k">def</span> <span class="nf">init_train_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_train_tqdm</span><span class="p">()</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_config</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bar</span></div>
+
+<div class="viewcode-block" id="ProgressBar.get_metrics"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.get_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># Don&#39;t show the version number</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;v_num&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">items</span></div>
+
+<div class="viewcode-block" id="ProgressBar.on_train_epoch_start"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.on_train_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prints the results of the previous epoch on a separate line.</span>
+
+<span class="sd">        This allows the user to see the losses/metrics for previous epochs while</span>
+<span class="sd">        the current is training. The default behaviour in pytorch-lightning is</span>
+<span class="sd">        to overwrite the progress bar from previous epochs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_bar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_epoch_start</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Epoch </span><span class="si">{trainer.current_epoch:2d}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

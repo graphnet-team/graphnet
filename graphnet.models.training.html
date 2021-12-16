@@ -39,9 +39,9 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.models.training package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#graphnet-models-training-callbacks-module">graphnet.models.training.callbacks module</a></li>
-<li><a class="reference internal" href="#graphnet-models-training-utils-module">graphnet.models.training.utils module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.training.callbacks">graphnet.models.training.callbacks module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.training.utils">graphnet.models.training.utils module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.training">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -75,14 +75,130 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="graphnet-models-training-callbacks-module">
-<h2>graphnet.models.training.callbacks module<a class="headerlink" href="#graphnet-models-training-callbacks-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.training.callbacks">
+<span id="graphnet-models-training-callbacks-module"></span><h2>graphnet.models.training.callbacks module<a class="headerlink" href="#module-graphnet.models.training.callbacks" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.PiecewiseLinearLR">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">PiecewiseLinearLR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">milestones</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#PiecewiseLinearLR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.PiecewiseLinearLR" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler._LRScheduler</span></code></p>
+<p>Interpolates learning rate linearly between milestones.</p>
+<p>For each milestone, denoting a specified number of steps, a factor
+multiplying the base learning rate is specified. For steps between two
+milestones, the learning rate is interpolated linearly between the two
+closest milestones. For steps before the first milestone, the factor for the
+first milestone is used; vice versa for steps after the last milestone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> (<em>Optimizer</em>) – Wrapped optimizer.</p></li>
+<li><p><strong>milestones</strong> (<em>list</em>) – List of step indices. Must be increasing.</p></li>
+<li><p><strong>factors</strong> (<em>list</em>) – List of multiplicative factors. Must be same length as
+<cite>milestones</cite>.</p></li>
+<li><p><strong>last_epoch</strong> (<em>int</em>) – The index of the last epoch. Default: -1.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, prints a message to stdout for
+each update. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.PiecewiseLinearLR.get_lr">
+<span class="sig-name descname"><span class="pre">get_lr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#PiecewiseLinearLR.get_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.PiecewiseLinearLR.get_lr" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">ProgressBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pytorch_lightning.callbacks.progress.tqdm_progress.TQDMProgressBar</span></code></p>
+<p>Custom progress bar for graphnet.</p>
+<p>Customises the default progress in pytorch-lightning.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar.get_metrics">
+<span class="sig-name descname"><span class="pre">get_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar.get_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar.get_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Combines progress bar metrics collected from the trainer with standard metrics from get_standard_metrics.
+Implement this to override the items displayed in the progress bar.</p>
+<p>Here is an example of how to override the defaults:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="c1"># don&#39;t show the version number</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;v_num&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">items</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary with the items to be displayed in the progress bar.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar.init_predict_tqdm">
+<span class="sig-name descname"><span class="pre">init_predict_tqdm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar.init_predict_tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar.init_predict_tqdm" title="Permalink to this definition"></a></dt>
+<dd><p>Override this to customize the tqdm bar for predicting.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar.init_test_tqdm">
+<span class="sig-name descname"><span class="pre">init_test_tqdm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar.init_test_tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar.init_test_tqdm" title="Permalink to this definition"></a></dt>
+<dd><p>Override this to customize the tqdm bar for testing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar.init_train_tqdm">
+<span class="sig-name descname"><span class="pre">init_train_tqdm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar.init_train_tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar.init_train_tqdm" title="Permalink to this definition"></a></dt>
+<dd><p>Override this to customize the tqdm bar for training.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar.init_validation_tqdm">
+<span class="sig-name descname"><span class="pre">init_validation_tqdm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar.init_validation_tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar.init_validation_tqdm" title="Permalink to this definition"></a></dt>
+<dd><p>Override this to customize the tqdm bar for validation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar.on_train_epoch_start">
+<span class="sig-name descname"><span class="pre">on_train_epoch_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar.on_train_epoch_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar.on_train_epoch_start" title="Permalink to this definition"></a></dt>
+<dd><p>Prints the results of the previous epoch on a separate line.</p>
+<p>This allows the user to see the losses/metrics for previous epochs while
+the current is training. The default behaviour in pytorch-lightning is
+to overwrite the progress bar from previous epochs.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="graphnet-models-training-utils-module">
-<h2>graphnet.models.training.utils module<a class="headerlink" href="#graphnet-models-training-utils-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.training.utils">
+<span id="graphnet-models-training-utils-module"></span><h2>graphnet.models.training.utils module<a class="headerlink" href="#module-graphnet.models.training.utils" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.training.utils.get_predictions">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.training.utils.</span></span><span class="sig-name descname"><span class="pre">get_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/utils.html#get_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.utils.get_predictions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.training.utils.load_model">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.training.utils.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gnn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/utils.html#load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.utils.load_model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.training.utils.make_dataloader">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.training.utils.</span></span><span class="sig-name descname"><span class="pre">make_dataloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistent_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.utils.data.dataloader.DataLoader</span></span></span><a class="reference internal" href="_modules/graphnet/models/training/utils.html#make_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.utils.make_dataloader" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.training.utils.make_train_validation_dataloader">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.training.utils.</span></span><span class="sig-name descname"><span class="pre">make_train_validation_dataloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.33</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistent_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/models/training/utils.html#make_train_validation_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.utils.make_train_validation_dataloader" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.training.utils.save_results">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.training.utils.</span></span><span class="sig-name descname"><span class="pre">save_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/utils.html#save_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.utils.save_results" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.training">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.models.training" title="Permalink to this headline"></a></h2>
 </section>
 </section>
 

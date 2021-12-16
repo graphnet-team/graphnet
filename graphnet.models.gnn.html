@@ -39,10 +39,10 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.models.gnn package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#graphnet-models-gnn-convnet-module">graphnet.models.gnn.convnet module</a></li>
-<li><a class="reference internal" href="#graphnet-models-gnn-dynedge-module">graphnet.models.gnn.dynedge module</a></li>
-<li><a class="reference internal" href="#graphnet-models-gnn-gnn-module">graphnet.models.gnn.gnn module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.gnn.convnet">graphnet.models.gnn.convnet module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.gnn.dynedge">graphnet.models.gnn.dynedge module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.gnn.gnn">graphnet.models.gnn.gnn module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.gnn">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -76,17 +76,145 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="graphnet-models-gnn-convnet-module">
-<h2>graphnet.models.gnn.convnet module<a class="headerlink" href="#graphnet-models-gnn-convnet-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.gnn.convnet">
+<span id="graphnet-models-gnn-convnet-module"></span><h2>graphnet.models.gnn.convnet module<a class="headerlink" href="#module-graphnet.models.gnn.convnet" title="Permalink to this headline"></a></h2>
+<p>Implementation of the ConvNet GNN model architecture.</p>
+<p>[Description of what this architecture does.]</p>
+<p>Author: Martin Ha Minh
+Email: ###&#64;###.###</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.gnn.convnet.ConvNet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.convnet.</span></span><span class="sig-name descname"><span class="pre">ConvNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_intermediate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/convnet.html#ConvNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.convnet.ConvNet" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.models.gnn.gnn.GNN</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.convnet.ConvNet.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_intermediate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/convnet.html#ConvNet.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.convnet.ConvNet.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>ConvNet model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_inputs</strong> (<em>int</em>) – Number of input features, i.e. dimension of input
+layer.</p></li>
+<li><p><strong>nb_outputs</strong> (<em>int</em>) – Number of prediction labels, i.e. dimension of
+output layer.</p></li>
+<li><p><strong>nb_intermediate</strong> (<em>int</em>) – Number of nodes in intermediate layer(s)</p></li>
+<li><p><strong>dropout_ratio</strong> (<em>float</em>) – Fraction of nodes to drop</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.convnet.ConvNet.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/convnet.html#ConvNet.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.convnet.ConvNet.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Model forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Data</em>) – Graph of input features.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Model output.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.gnn.convnet.ConvNet.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.gnn.convnet.ConvNet.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="graphnet-models-gnn-dynedge-module">
-<h2>graphnet.models.gnn.dynedge module<a class="headerlink" href="#graphnet-models-gnn-dynedge-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.gnn.dynedge">
+<span id="graphnet-models-gnn-dynedge-module"></span><h2>graphnet.models.gnn.dynedge module<a class="headerlink" href="#module-graphnet.models.gnn.dynedge" title="Permalink to this headline"></a></h2>
+<p>Implementation of the DynEdge GNN model architecture.</p>
+<p>[Description of what this architecture does.]</p>
+<p>Author: Rasmus Oersoe
+Email: ###&#64;###.###</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.dynedge.</span></span><span class="sig-name descname"><span class="pre">DynEdge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.models.gnn.gnn.GNN</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>DynEdge model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_inputs</strong> (<em>int</em>) – Number of input features.</p></li>
+<li><p><strong>nb_outputs</strong> (<em>int</em>) – Number of output features.</p></li>
+<li><p><strong>layer_size_scale</strong> (<em>int</em><em>, </em><em>optional</em>) – Integer that scales the size of
+hidden layers. Defaults to 4.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Model forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Data</em>) – Graph of input features.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Model output.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="graphnet-models-gnn-gnn-module">
-<h2>graphnet.models.gnn.gnn module<a class="headerlink" href="#graphnet-models-gnn-gnn-module" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.gnn.gnn">
+<span id="graphnet-models-gnn-gnn-module"></span><h2>graphnet.models.gnn.gnn module<a class="headerlink" href="#module-graphnet.models.gnn.gnn" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.gnn.gnn.GNN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.gnn.</span></span><span class="sig-name descname"><span class="pre">GNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_outputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/gnn.html#GNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.gnn.GNN" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pytorch_lightning.core.lightning.LightningModule</span></code></p>
+<p>Base class for all core GNN models in graphnet.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.gnn.GNN.forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/gnn.html#GNN.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.gnn.GNN.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Learnable forward pass in model.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.gnn.gnn.GNN.nb_inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.gnn.gnn.GNN.nb_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Number of inputs to GNN model.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.gnn.gnn.GNN.nb_outputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_outputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.gnn.gnn.GNN.nb_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Number of outputs from GNN model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.gnn.gnn.GNN.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.gnn.gnn.GNN.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.models.gnn">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.models.gnn" title="Permalink to this headline"></a></h2>
 </section>
 </section>
 
