@@ -1,6 +1,6 @@
 """Unit tests for I3Extractor class."""
 
-from gnn_reco.data.i3extractor import I3FeatureExtractorIceCube86, I3TruthExtractor, I3RetroExtractor
+from graphnet.data.i3extractor import I3FeatureExtractorIceCube86, I3TruthExtractor, I3RetroExtractor
 
 # @TODO: Need to bundle the package with a dummy/test I3-file to allow for self-contained testing.
 
