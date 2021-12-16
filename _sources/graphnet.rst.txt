@@ -9,7 +9,6 @@ Subpackages
 
    graphnet.components
    graphnet.data
-   graphnet.legacy
    graphnet.models
    graphnet.modules
 
