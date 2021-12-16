@@ -9,17 +9,17 @@ import torch
 from torch.optim.adam import Adam
 from torch.utils.data import dataloader
 
-from gnn_reco.components.loss_functions import  LogCoshLoss, VonMisesFisher2DLoss
-from gnn_reco.components.utils import fit_scaler
-from gnn_reco.data.constants import FEATURES, TRUTH
-from gnn_reco.data.utils import get_desired_event_numbers
-from gnn_reco.models import Model
-from gnn_reco.models.detector.icecube import IceCubeUpgrade
-from gnn_reco.models.gnn import DynEdge, ConvNet
-from gnn_reco.models.graph_builders import KNNGraphBuilder
-from gnn_reco.models.task.reconstruction import EnergyReconstruction
-from gnn_reco.models.training.callbacks import ProgressBar, PiecewiseLinearLR
-from gnn_reco.models.training.utils import get_predictions, make_train_validation_dataloader, save_results
+from graphnet.components.loss_functions import  LogCoshLoss, VonMisesFisher2DLoss
+from graphnet.components.utils import fit_scaler
+from graphnet.data.constants import FEATURES, TRUTH
+from graphnet.data.utils import get_desired_event_numbers
+from graphnet.models import Model
+from graphnet.models.detector.icecube import IceCubeUpgrade
+from graphnet.models.gnn import DynEdge, ConvNet
+from graphnet.models.graph_builders import KNNGraphBuilder
+from graphnet.models.task.reconstruction import EnergyReconstruction
+from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
+from graphnet.models.training.utils import get_predictions, make_train_validation_dataloader, save_results
 
 # Configurations
 timer.set_level(logging.INFO)
