@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        uses: ./.github/actions/install-torch
+        uses: ./.github/actions/install-torch-cpu
       - name: Install package
         run: |
           pip install .[develop]
