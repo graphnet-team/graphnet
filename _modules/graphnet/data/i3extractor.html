@@ -65,7 +65,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="n">dataclasses</span><span class="p">,</span> <span class="n">icetray</span><span class="p">,</span> <span class="n">dataio</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="n">dataclasses</span><span class="p">,</span> <span class="n">icetray</span><span class="p">,</span> <span class="n">dataio</span> <span class="p">,</span> <span class="n">phys_services</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;icecube package not available.&quot;</span><span class="p">)</span>
 
@@ -260,7 +260,6 @@
 
 
 <div class="viewcode-block" id="I3TruthExtractor"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.I3TruthExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3TruthExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;truth&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
@@ -286,6 +285,7 @@
             <span class="s1">&#39;SubrunID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_run_id</span><span class="p">,</span>
             <span class="s1">&#39;EventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">event_id</span><span class="p">,</span>
             <span class="s1">&#39;SubEventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_id</span><span class="p">,</span>
+            <span class="s1">&#39;dbang_decay_length&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__extract_dbang_decay_length__</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">is_mc</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">is_noise</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
@@ -302,7 +302,39 @@
                 <span class="s1">&#39;elasticity&#39;</span><span class="p">:</span> <span class="n">elasticity</span><span class="p">,</span>
             <span class="p">})</span>
 
-        <span class="k">return</span> <span class="n">output</span></div></div>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+    <span class="k">def</span> <span class="nf">__extract_dbang_decay_length__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">):</span>
+        <span class="n">mctree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3MCTree&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">p_true</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">primaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">p_daughters</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">p_true</span><span class="p">)</span>        
+            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p_daughters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">p_daughter</span> <span class="ow">in</span> <span class="n">p_daughters</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">p_daughter</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">Hadrons</span><span class="p">:</span>
+                        <span class="n">casc_0_true</span> <span class="o">=</span> <span class="n">p_daughter</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">hnl_true</span> <span class="o">=</span> <span class="n">p_daughter</span>
+                <span class="n">hnl_daughters</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">hnl_true</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">decay_length</span>  <span class="o">=</span>  <span class="n">padding_value</span>
+                <span class="n">hnl_daughters</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hnl_daughters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>    
+                <span class="k">for</span> <span class="n">count_hnl_daughters</span><span class="p">,</span> <span class="n">hnl_daughter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hnl_daughters</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">count_hnl_daughters</span><span class="p">:</span>
+                        <span class="n">casc_1_true</span> <span class="o">=</span> <span class="n">hnl_daughter</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">assert</span><span class="p">(</span><span class="n">casc_1_true</span><span class="o">.</span><span class="n">pos</span> <span class="o">==</span> <span class="n">hnl_daughter</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+                        <span class="n">casc_1_true</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="n">casc_1_true</span><span class="o">.</span><span class="n">energy</span> <span class="o">+</span> <span class="n">hnl_daughter</span><span class="o">.</span><span class="n">energy</span>
+                <span class="n">decay_length</span> <span class="o">=</span> <span class="n">phys_services</span><span class="o">.</span><span class="n">I3Calculator</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">casc_0_true</span><span class="p">,</span><span class="n">casc_1_true</span><span class="p">)</span><span class="o">/</span><span class="n">icetray</span><span class="o">.</span><span class="n">I3Units</span><span class="o">.</span><span class="n">m</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">decay_length</span> <span class="o">=</span> <span class="n">padding_value</span>
+            <span class="k">return</span> <span class="n">decay_length</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">padding_value</span></div>
+
 
 
 <div class="viewcode-block" id="I3RetroExtractor"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.I3RetroExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3RetroExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
@@ -408,6 +440,8 @@
         <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;genie&#39;</span>
     <span class="k">if</span> <span class="s1">&#39;noise&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
         <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;noise&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;L2&#39;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>  <span class="c1">## not robust</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="s1">&#39;dbang&#39;</span>
     <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s1">&#39;lol&#39;</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SIM TYPE NOT FOUND!&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sim_type</span></div>
