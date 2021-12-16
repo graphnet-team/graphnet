@@ -167,10 +167,10 @@ def is_i3_file(filename: str) -> bool:
     """Checks whether `filename` is an I3 file."""
     if is_gcd_file(filename.lower()):
         return False
-    if '.bz2' in filename or '.zst' in filename.lower():
+    elif has_extension(filename, ['bz2', 'zst']):
         return True
     return False
-    
+
 def has_extension(filename: str, extensions: List[str]) -> bool:
     """Checks whether `filename` has one of the desired extensions."""
     # @TODO: Remove method, as it is not used?
