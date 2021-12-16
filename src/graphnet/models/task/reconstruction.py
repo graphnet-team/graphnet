@@ -1,8 +1,8 @@
 import numpy as np
 import torch
 
-from gnn_reco.models.task import Task
-from gnn_reco.utils import eps_like
+from graphnet.models.task import Task
+from graphnet.utils import eps_like
 
 
 class AzimuthReconstructionWithKappa(Task):

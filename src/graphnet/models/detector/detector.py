@@ -9,11 +9,11 @@ from pytorch_lightning import LightningModule
 import torch
 from torch_geometric.data import Data
 
-from gnn_reco.models.graph_builders import GraphBuilder
+from graphnet.models.graph_builders import GraphBuilder
 
 
 class Detector(LightningModule):
-    """Base class for all detector-specific read-ins in gnn_reco."""
+    """Base class for all detector-specific read-ins in graphnet."""
 
     @property
     @abstractmethod
