@@ -1,3 +1,4 @@
+from typing import List, Optional, Union
 import pandas as pd
 import numpy as np
 import sqlite3
@@ -8,7 +9,17 @@ import time
 class SQLiteDataset(torch.utils.data.Dataset):
     """Pytorch dataset for reading from SQLite.
     """
-    def __init__(self, database, pulsemap_table, features, truth, index_column='event_no', truth_table='truth', selection=None, dtype=torch.float32):
+    def __init__(
+        self,
+        database: str,
+        pulsemaps: Union[str, List[str]],
+        features: List[str],
+        truth: List[str],
+        index_column: str = 'event_no',
+        truth_table: str = 'truth',
+        selection: Optional[List[int]] = None,
+        dtype: torch.dtype = torch.float32,
+    ):
 
         # Check(s)
         if isinstance(database, list):
@@ -20,11 +31,14 @@ class SQLiteDataset(torch.utils.data.Dataset):
             assert isinstance(database, str)
             assert database.endswith('.db')
 
+        if isinstance(pulsemaps, str):
+            pulsemaps = [pulsemaps]
+
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
 
         self._database = database
-        self._pulsemap_table = pulsemap_table
+        self._pulsemaps = pulsemaps
         self._features = [index_column] + features
         self._truth = [index_column] + truth
         self._index_column = index_column
@@ -74,15 +88,19 @@ class SQLiteDataset(torch.utils.data.Dataset):
         else:
             index = self._indices[i][0]
 
+        features = []
+        for pulsemap in self._pulsemaps:
+            features_pulsemap = self._conn.execute(
+                "SELECT {} FROM {} WHERE {} = {}".format(
+                    self._features_string,
+                    pulsemap,
+                    self._index_column,
+                    index,
+                )
+            ).fetchall()
 
-        features = self._conn.execute(
-            "SELECT {} FROM {} WHERE {} = {}".format(
-                self._features_string,
-                self._pulsemap_table,
-                self._index_column,
-                index,
-            )
-        )
+            # print(f"[{i}] Adding {len(features_pulsemap)} DOMs")
+            features.extend(features_pulsemap)
 
         truth = self._conn.execute(
             "SELECT {} FROM {} WHERE {} = {}".format(
@@ -91,10 +109,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
                 self._index_column,
                 index,
             )
-        )
-
-        features = features.fetchall()
-        truth = truth.fetchall()
+        ).fetchall()
 
         return features, truth
 
