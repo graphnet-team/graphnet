@@ -2,7 +2,7 @@ from graphnet.plots.width_plot import width_plot
 import numpy as np
 
 
-predictions_path = '/groups/icecube/asogaard/gnn/results/dev_upgrade_step4_preselection_decemberv2/test_upgrade_mc_mdom_zenith_regression/results.csv'
+predictions_path = '/tmp/asogaard/upgrade_test_1/dev_upgrade_step4_preselection_decemberv2/test_upgrade_zenith_regression/results.csv'
 database    = '/groups/icecube/asogaard/data/sqlite/dev_upgrade_step4_preselection_decemberv2/data/dev_upgrade_step4_preselection_decemberv2.db'
 
 emin, emax = -1, 4
@@ -18,6 +18,8 @@ keys = ['zenith']
 key_bins = { 'energy': np.arange(emin, emax + estep, estep),
             'zenith': np.arange(0, 180, 10) }
 
-performance_figure = width_plot(key_limits, keys, key_bins, database, predictions_path, figsize = (10,8), include_retro = False, track_cascade = True)
+performance_figure = width_plot(key_limits, keys, key_bins, database, predictions_path, figsize = (10,8), include_retro = False, track_cascade = True,
+    filter_query="n_pulses > 40",
+)
 
-performance_figure.savefig('test_performance_figures.png')
+performance_figure.savefig('test_upgrade_performance.png')
