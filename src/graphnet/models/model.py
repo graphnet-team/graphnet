@@ -70,6 +70,13 @@ class Model(LightningModule):
             })
         return config
 
+    #def on_epoch_start(self) -> None:
+    #    self._train_loss = 0.
+    #    self._train_step = 0.
+    #    self._val_loss = 0.
+    #    self._val_step = 0.
+    #    return super().on_epoch_start()
+
     def forward(self, data: Data) -> List[Union[Tensor, Data]]:
         """Common forward pass, chaining model components."""
         data = self._detector(data)
@@ -77,15 +84,18 @@ class Model(LightningModule):
         preds = [task(x) for task in self._tasks]
         return preds
 
+    def shared_step(self, batch, batch_idx):
+        preds = self(batch)
+        loss = self.compute_loss(preds, batch)
+        return loss
+
     def training_step(self, train_batch, batch_idx):
-        preds = self(train_batch)
-        loss = self.compute_loss(preds, train_batch)
-        self.log('train_loss', loss, batch_size=self._get_batch_size(train_batch))
+        loss = self.shared_step(train_batch, batch_idx)
+        self.log('train_loss', loss, batch_size=self._get_batch_size(train_batch), prog_bar=True, on_step=False, on_epoch=True)
         return loss
 
     def validation_step(self, val_batch, batch_idx):
-        preds = self(val_batch)
-        loss = self.compute_loss(preds, val_batch)
+        loss = self.shared_step(val_batch, batch_idx)
         self.log('val_loss', loss, batch_size=self._get_batch_size(val_batch), prog_bar=True)
         return loss
 
