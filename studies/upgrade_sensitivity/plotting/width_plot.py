@@ -113,7 +113,7 @@ x_text = 1.4
 y_text = ymax - 2.
 plt.text(x_text, y_text - 0 * y_sep, "Trained on equal-flavour mix (3 x 286K events)", va='top')
 plt.text(x_text, y_text - 1 * y_sep, "No selection applied", va='top')
-plt.text(x_text, y_text - 2 * y_sep, "asogaard/graphnet:training-on-upgrade-mc@<commit>", va='top')
+plt.text(x_text, y_text - 2 * y_sep, "asogaard/graphnet:training-on-upgrade-mc@9d5207e5", va='top')
 plt.suptitle("Neutrino zenith regression in IceCube Upgrade MC using GNNs (07/01/22)")
 plt.ylim(0, ymax)
 plt.xlim(-1,4)
@@ -126,7 +126,7 @@ ax.set_position([box.x0, box.y0, box.width * 0.86, box.height])
 # Put a legend to the right of the current axis
 ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
-plt.savefig('test.png')
+plt.savefig('220107_preliminary_upgrade_performance_zenith.png')
 
 '''
 emin, emax = -1, 4
