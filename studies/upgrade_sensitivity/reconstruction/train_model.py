@@ -55,12 +55,11 @@ def main():
     target = 'zenith'
     n_epochs = 30
     patience = 5
-    #archive = '/groups/icecube/asogaard/gnn/results'
-    archive = '/tmp/asogaard/upgrade_test_1/'
+    archive = '/groups/icecube/asogaard/gnn/results/upgrade_test_1/'
+    run_name = f'test_upgrade_{target}_regression'
 
     # Common variables
     train_selection, _ = get_equal_proportion_neutrino_indices(db)
-    #train_selection = train_selection[0:50000]
 
     training_dataloader, validation_dataloader = make_train_validation_dataloader(
         db,
@@ -123,8 +122,10 @@ def main():
         print("[ctrl+c] Exiting gracefully.")
         pass
 
-    model.save(os.path.join(archive, "test_upgrade_zenith_regression.pth"))
-    model.save_state_dict(os.path.join(archive, "test_upgrade_zenith_regression_state_dict.pth"))
+
+    # Saving model
+    model.save(os.path.join(archive, f"{run_name}.pth"))
+    model.save_state_dict(os.path.join(archive, f"{run_name}_state_dict.pth"))
 
     # Saving predictions to file
     results = get_predictions(
@@ -132,10 +133,10 @@ def main():
         model,
         validation_dataloader,
         [target + '_pred', target + '_kappa'],
-        [target, 'event_no', 'n_pulses'],
+        [target, 'event_no', 'energy', 'n_pulses'],
     )
 
-    save_results(db, 'test_upgrade_zenith_regression', results, archive, model)
+    save_results(db, run_name, results, archive, model)
 
 # Main function call
 if __name__ == "__main__":
