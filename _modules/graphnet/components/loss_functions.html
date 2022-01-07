@@ -154,13 +154,13 @@
         <span class="k">return</span> <span class="n">elements</span></div></div>
 
 <div class="viewcode-block" id="BinaryCrossEntropyLoss"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.BinaryCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">BinaryCrossEntropyLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Computes binary cross entropy for a vector of predictions (between 0 and 1), </span>
+    <span class="sd">&quot;&quot;&quot; Computes binary cross entropy for a vector of predictions (between 0 and 1),</span>
 <span class="sd">    targets should be 0 and 1 for muon and neutrino respectively</span>
 <span class="sd">    where prediction is prob. the PID is neutrino (12,14,16)</span>
 <span class="sd">    loss should be reported elementwise, so set reduction to None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">binary_cross_entropy</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span></div>
 
 
@@ -251,14 +251,13 @@
 <span class="sd">        ensuring continuity at this point.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kappa_switch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">kappa_switch</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">kappa</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">mask_exact</span> <span class="o">=</span> <span class="p">(</span><span class="n">kappa</span> <span class="o">&lt;</span> <span class="n">kappa_switch</span><span class="p">)</span>
 
         <span class="c1"># Ensure continuity at `kappa_switch`</span>
         <span class="n">offset</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">log_cmk_approx</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">kappa_switch</span><span class="p">)</span> <span class="o">-</span> <span class="bp">cls</span><span class="o">.</span><span class="n">log_cmk_exact</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">kappa_switch</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">kappa</span> <span class="o">&lt;</span> <span class="n">kappa_switch</span><span class="p">,</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">log_cmk_exact</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">kappa</span><span class="p">),</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">log_cmk_approx</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">log_cmk_approx</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">mask_exact</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">log_cmk_exact</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">kappa</span><span class="p">[</span><span class="n">mask_exact</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="VonMisesFisherLoss._evaluate"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.VonMisesFisherLoss._evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculates the von Mises-Fisher loss for a vector in D-dimensonal space.</span>
