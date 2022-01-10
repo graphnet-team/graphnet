@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import Union
+from typing import Callable, Optional
 
 try:
     from typing import final
@@ -22,14 +23,30 @@ class Task(LightningModule):
     def nb_inputs(self) -> int:
         """Number of inputs assumed by task."""
 
-    def __init__(self, hidden_size: int, target_label: str, loss_function: LossFunction):
+    def __init__(
+        self, 
+        hidden_size: int, 
+        target_label: str, 
+        loss_function: LossFunction,
+        transform_prediction_and_target: Optional[Callable] = None,
+        transform_target: Optional[Callable] = None,
+        transform_inference: Optional[Callable] = None,
+    ):
         # Base class constructor
         super().__init__()
+
+        # Check(s)
+        assert not((transform_prediction_and_target is not None) and (transform_target is not None)), \
+            "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
+        assert (transform_target is not None) == (transform_inference is not None), \
+            "Please specify both `transform_inference` and `transform_target`"
 
         # Member variables
         self._regularisation_loss = None
         self._target_label = target_label
-        self._loss_function = loss_function
+        self._loss_function = loss_function(transform_prediction_and_target=transform_prediction_and_target, transform_target=transform_target) # Added
+        self._transform_inference = transform_inference
+        self._transform_forward = lambda x: x
 
         # Mapping from last hidden layer to required size of input
         self._affine = Linear(hidden_size, self.nb_inputs)
@@ -38,6 +55,7 @@ class Task(LightningModule):
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         self._regularisation_loss = 0  # Reset
         x = self._affine(x)
+        x = self._transform_forward(x)
         return self._forward(x)
 
     @abstractmethod
@@ -49,3 +67,8 @@ class Task(LightningModule):
         target = data[self._target_label]
         loss = self._loss_function(pred, target) + self._regularisation_loss
         return loss
+
+    @final
+    def inference(self):
+        '''Set task to inference mode by substituting unitary forward transform with inference transform'''
+        self._transform_forward = self._transform_inference
