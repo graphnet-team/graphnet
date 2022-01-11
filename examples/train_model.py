@@ -131,7 +131,7 @@ def main():
         [config["target"], 'event_no'],
     )
 
-    save_results(config["db"], run_name, results,archive, model)
+    save_results(config["db"], run_name, results, archive, model)
 
 # Main function call
 if __name__ == "__main__":
