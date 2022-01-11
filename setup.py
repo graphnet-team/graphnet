@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from setuptools import setup, find_packages
+import versioneer
 
 # Utility method(s)
 def install(package):
@@ -15,6 +16,7 @@ EXTRAS_REQUIRE = {
         'anybadge',
         'sphinx',
         'sphinx_rtd_theme',
+        'versioneer',
     ],
 }
 
@@ -41,11 +43,12 @@ except ImportError:
 
 setup(
     name='graphnet',
-    version='0.1.1',
+    version=versioneer.get_version(),
     description='A common library for using graph neural networks (GNNs) in netrino telescope experiments.',
-    url='https://github.com/icecube/graphnet',
-    author='The IceCube Collaboration',
     license='Apache 2.0',
+    author='The IceCube Collaboration',
+    url='https://github.com/icecube/graphnet',
+    cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     install_requires=INSTALL_REQUIRES,
