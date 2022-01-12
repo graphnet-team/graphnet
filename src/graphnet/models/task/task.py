@@ -44,7 +44,7 @@ class Task(LightningModule):
         # Member variables
         self._regularisation_loss = None
         self._target_label = target_label
-        self._loss_function = loss_function(transform_prediction_and_target=transform_prediction_and_target, transform_target=transform_target) # Added
+        self._loss_function = loss_function
         self._transform_inference = transform_inference
         self._transform_forward = lambda x: x
 
