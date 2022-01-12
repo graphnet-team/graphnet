@@ -83,4 +83,4 @@ class Task(LightningModule):
     @final
     def inference(self):
         '''Set task to inference mode by substituting unitary forward transform with inference transform'''
-        self._transform_forward = self._transform_inference
+        self._inference = True
