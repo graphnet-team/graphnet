@@ -52,8 +52,18 @@ class Task(LightningModule):
         self._regularisation_loss = None
         self._target_label = target_label
         self._loss_function = loss_function
-        self._transform_inference = transform_inference
-        self._transform_forward = lambda x: x
+        if transform_prediction_and_target is not None:
+            self._transform_prediction_training = transform_prediction_and_target
+            self._transform_prediction_inference = lambda x: x
+            self._transform_target = transform_prediction_and_target
+        elif transform_target is not None:
+            self._transform_prediction_training = lambda x: x
+            self._transform_prediction_inference = transform_inference
+            self._transform_target = transform_target
+        else:
+            self._transform_prediction_training = lambda x: x
+            self._transform_prediction_inference = lambda x: x
+            self._transform_target = lambda x: x
         self._inference = False
         # Mapping from last hidden layer to required size of input
         self._affine = Linear(hidden_size, self.nb_inputs)
