@@ -64,7 +64,12 @@ class Task(LightningModule):
         x = self._affine(x)
         x = self._transform_forward(x)
         return self._forward(x)
-
+    @final
+    def _transform_prediction(self, prediction: Union[Tensor, Data]) -> Union[Tensor, Data]:
+        if self._inference:
+            return self._transform_prediction_inference(prediction)
+        else:
+            return self._transform_prediction_training(prediction)
     @abstractmethod
     def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Same syntax as `.forward` for implentation in inheriting classes."""
