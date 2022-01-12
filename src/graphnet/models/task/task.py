@@ -72,7 +72,7 @@ class Task(LightningModule):
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         self._regularisation_loss = 0  # Reset
         x = self._affine(x)
-        x = self._transform_forward(x)
+        x = self._transform_prediction(x)
         return self._forward(x)
     @final
     def _transform_prediction(self, prediction: Union[Tensor, Data]) -> Union[Tensor, Data]:
