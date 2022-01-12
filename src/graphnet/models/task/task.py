@@ -40,7 +40,14 @@ class Task(LightningModule):
             "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
         assert (transform_target is not None) == (transform_inference is not None), \
             "Please specify both `transform_inference` and `transform_target`"
-
+        if transform_target is not None:
+            x_test = np.logspace(-6, 6, 12 + 1)
+            x_test = torch.from_numpy(np.concatenate([-x_test[::-1], [0], x_test]))
+            t_test = transform_target(x_test)
+            valid = torch.isfinite(t_test)
+            assert torch.allclose(transform_inference(t_test)[valid], x_test[valid]), \
+                "The provided transforms for targets during training and predictions during inference at not inverse."
+            del x_test, t_test, valid
         # Member variables
         self._regularisation_loss = None
         self._target_label = target_label
