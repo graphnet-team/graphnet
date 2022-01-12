@@ -47,7 +47,7 @@ class Task(LightningModule):
         self._loss_function = loss_function
         self._transform_inference = transform_inference
         self._transform_forward = lambda x: x
-
+        self._inference = False
         # Mapping from last hidden layer to required size of input
         self._affine = Linear(hidden_size, self.nb_inputs)
 
