@@ -70,8 +70,7 @@ def main():
     task = EnergyReconstruction(
         hidden_size=gnn.nb_outputs,
         target_label=target,
-        loss_function=LogCoshLoss,
-        transform_prediction_and_target=torch.log10,
+        loss_function=LogCoshLoss(),
     )
     model = Model(
         detector=detector,
