@@ -1,2 +1,2 @@
-from .dynedge import DynEdge, DynEdge_V2
+from .dynedge import DynEdge
 from .convnet import ConvNet

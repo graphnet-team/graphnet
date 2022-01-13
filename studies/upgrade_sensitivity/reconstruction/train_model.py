@@ -1,11 +1,10 @@
 import logging
 import os
-import numpy as np
-import pandas as pd
 from timer import timer
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
@@ -15,7 +14,7 @@ from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.utils import get_equal_proportion_neutrino_indices
 from graphnet.models import Model
 from graphnet.models.detector.icecube import IceCubeUpgrade
-from graphnet.models.gnn import DynEdge_V2, ConvNet
+from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import EnergyReconstruction, ZenithReconstructionWithKappa
 from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
@@ -29,6 +28,15 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 # Constants
 features = FEATURES.UPGRADE
 truth = TRUTH.UPGRADE
+
+# Initialise Weights & Biases (W&B) run
+wandb_logger = WandbLogger(
+    project="example-script",
+    entity="graphnet-team",
+    save_dir='./wandb/',
+    log_model=True,
+)
+
 
 # Main function definition
 def main():
@@ -75,7 +83,7 @@ def main():
     detector = IceCubeUpgrade(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
-    gnn = DynEdge_V2(
+    gnn = DynEdge(
         nb_inputs=detector.nb_outputs,
     )
     task = ZenithReconstructionWithKappa(
