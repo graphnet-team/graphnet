@@ -98,8 +98,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
                     index,
                 )
             ).fetchall()
-
-            # print(f"[{i}] Adding {len(features_pulsemap)} DOMs")
             features.extend(features_pulsemap)
 
         truth = self._conn.execute(
