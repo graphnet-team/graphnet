@@ -44,6 +44,14 @@ graphnet.data.sqlite\_dataset module
    :undoc-members:
    :show-inheritance:
 
+graphnet.data.sqlite\_dataset\_perturbed module
+-----------------------------------------------
+
+.. automodule:: graphnet.data.sqlite_dataset_perturbed
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.data.utils module
 --------------------------
 

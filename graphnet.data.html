@@ -44,6 +44,7 @@
 <li><a class="reference internal" href="#module-graphnet.data.i3extractor">graphnet.data.i3extractor module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite_dataconverter">graphnet.data.sqlite_dataconverter module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite_dataset">graphnet.data.sqlite_dataset module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.sqlite_dataset_perturbed">graphnet.data.sqlite_dataset_perturbed module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.utils">graphnet.data.utils module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data">Module contents</a></li>
 </ul>
@@ -553,6 +554,16 @@ accross processes.</p>
 <dd><p>Make sure that a sqlite3 connection is open.</p>
 </dd></dl>
 
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.sqlite_dataset_perturbed">
+<span id="graphnet-data-sqlite-dataset-perturbed-module"></span><h2>graphnet.data.sqlite_dataset_perturbed module<a class="headerlink" href="#module-graphnet.data.sqlite_dataset_perturbed" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset_perturbed.SQLiteDatasetPerturbed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataset_perturbed.</span></span><span class="sig-name descname"><span class="pre">SQLiteDatasetPerturbed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perturbation_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset_perturbed.html#SQLiteDatasetPerturbed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset_perturbed.SQLiteDatasetPerturbed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.sqlite_dataset.SQLiteDataset" title="graphnet.data.sqlite_dataset.SQLiteDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.data.sqlite_dataset.SQLiteDataset</span></code></a></p>
+<p>Pytorch dataset for reading from SQLite including a perturbation step to test the stability of a trained model.</p>
 </dd></dl>
 
 </section>
