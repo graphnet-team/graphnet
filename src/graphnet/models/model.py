@@ -77,16 +77,19 @@ class Model(LightningModule):
         preds = [task(x) for task in self._tasks]
         return preds
 
+    def shared_step(self, batch, batch_idx):
+        preds = self(batch)
+        loss = self.compute_loss(preds, batch)
+        return loss
+
     def training_step(self, train_batch, batch_idx):
-        preds = self(train_batch)
-        loss = self.compute_loss(preds, train_batch)
-        self.log('train_loss', loss, batch_size=self._get_batch_size(train_batch))
+        loss = self.shared_step(train_batch, batch_idx)
+        self.log('train_loss', loss, batch_size=self._get_batch_size(train_batch), prog_bar=True, on_epoch=True, on_step=False)
         return loss
 
     def validation_step(self, val_batch, batch_idx):
-        preds = self(val_batch)
-        loss = self.compute_loss(preds, val_batch)
-        self.log('val_loss', loss, batch_size=self._get_batch_size(val_batch), prog_bar=True)
+        loss = self.shared_step(val_batch, batch_idx)
+        self.log('val_loss', loss, batch_size=self._get_batch_size(val_batch), prog_bar=True, on_epoch=True, on_step=False)
         return loss
 
     def compute_loss(self, preds: Tensor, data: Data, verbose=False) -> Tensor:
