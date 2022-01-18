@@ -137,3 +137,11 @@ class Model(LightningModule):
         """Sets model to inference mode."""
         for task in self._tasks:
             task.inference()
+
+    def train(self, mode=True):
+        super().train(mode)
+        """Deactivates inference mode."""
+        if mode:
+            for task in self._tasks:
+                task.train_eval()
+        return self
