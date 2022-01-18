@@ -76,13 +76,13 @@ class LogCoshLoss(LossFunction):
         return elements
 
 class BinaryCrossEntropyLoss(LossFunction):
-    """ Computes binary cross entropy for a vector of predictions (between 0 and 1), 
+    """ Computes binary cross entropy for a vector of predictions (between 0 and 1),
     targets should be 0 and 1 for muon and neutrino respectively
     where prediction is prob. the PID is neutrino (12,14,16)
     loss should be reported elementwise, so set reduction to None
     """
-    
-    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor: 
+
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         return torch.nn.functional.binary_cross_entropy(prediction, target, reduction='none')
 
 
@@ -173,14 +173,13 @@ class VonMisesFisherLoss(LossFunction):
         ensuring continuity at this point.
         """
         kappa_switch = torch.tensor([kappa_switch]).to(kappa.device)
+        mask_exact = (kappa < kappa_switch)
 
         # Ensure continuity at `kappa_switch`
         offset = cls.log_cmk_approx(m, kappa_switch) - cls.log_cmk_exact(m, kappa_switch)
-        return torch.where(
-            kappa < kappa_switch,
-            cls.log_cmk_exact(m, kappa),
-            cls.log_cmk_approx(m, kappa) - offset,
-        )
+        ret = cls.log_cmk_approx(m, kappa) - offset
+        ret[mask_exact] = cls.log_cmk_exact(m, kappa[mask_exact])
+        return ret
 
     def _evaluate(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the von Mises-Fisher loss for a vector in D-dimensonal space.
