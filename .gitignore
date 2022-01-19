@@ -136,3 +136,5 @@ docs/**/*.rst
 misc/badges
 lightning_logs/
 wandb/
+**.png
+**.pth
