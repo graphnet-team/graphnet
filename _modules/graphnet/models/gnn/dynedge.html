@@ -211,6 +211,153 @@
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lrelu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+
+<div class="viewcode-block" id="DynEdge_V2"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2">[docs]</a><span class="k">class</span> <span class="nc">DynEdge_V2</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
+<div class="viewcode-block" id="DynEdge_V2.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">layer_size_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;DynEdge model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nb_inputs (int): Number of input features.</span>
+<span class="sd">            nb_outputs (int): Number of output features.</span>
+<span class="sd">            layer_size_scale (int, optional): Integer that scales the size of</span>
+<span class="sd">                hidden layers. Defaults to 4.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Architecture configuration</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">layer_size_scale</span>
+        <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">l3</span><span class="p">,</span> <span class="n">l4</span><span class="p">,</span> <span class="n">l5</span><span class="p">,</span><span class="n">l6</span> <span class="o">=</span> <span class="n">nb_inputs</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="mi">16</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="mi">32</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="mi">42</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="mi">32</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="mi">16</span><span class="o">*</span><span class="mi">2</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nb_inputs</span><span class="p">,</span> <span class="n">l6</span><span class="p">)</span>
+
+        <span class="c1"># Graph convolutional operations</span>
+        <span class="n">features_subset</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">nb_neighbors</span> <span class="o">=</span> <span class="mi">8</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_add1</span> <span class="o">=</span> <span class="n">DynEdgeConv</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l2</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l2</span><span class="p">,</span> <span class="n">l3</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="p">),</span>
+            <span class="n">aggr</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">,</span>
+            <span class="n">nb_neighbors</span><span class="o">=</span><span class="n">nb_neighbors</span><span class="p">,</span>
+            <span class="n">features_subset</span><span class="o">=</span><span class="n">features_subset</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_add2</span> <span class="o">=</span> <span class="n">DynEdgeConv</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l3</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l4</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l4</span><span class="p">,</span> <span class="n">l3</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="p">),</span>
+            <span class="n">aggr</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">,</span>
+            <span class="n">nb_neighbors</span><span class="o">=</span><span class="n">nb_neighbors</span><span class="p">,</span>
+            <span class="n">features_subset</span><span class="o">=</span><span class="n">features_subset</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_add3</span> <span class="o">=</span> <span class="n">DynEdgeConv</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l3</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">l4</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l4</span><span class="p">,</span> <span class="n">l3</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="p">),</span>
+            <span class="n">aggr</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">,</span>
+            <span class="n">nb_neighbors</span><span class="o">=</span><span class="n">nb_neighbors</span><span class="p">,</span>
+            <span class="n">features_subset</span><span class="o">=</span><span class="n">features_subset</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_add4</span> <span class="o">=</span> <span class="n">DynEdgeConv</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l3</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">l4</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l4</span><span class="p">,</span> <span class="n">l3</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="p">),</span>
+            <span class="n">aggr</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">,</span>
+            <span class="n">nb_neighbors</span><span class="o">=</span><span class="n">nb_neighbors</span><span class="p">,</span>
+            <span class="n">features_subset</span><span class="o">=</span><span class="n">features_subset</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Post-processing operations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nn1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l3</span><span class="o">*</span><span class="mi">4</span> <span class="o">+</span> <span class="n">l1</span><span class="p">,</span><span class="n">l4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nn2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">l4</span><span class="p">,</span><span class="n">l5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nn3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">l5</span> <span class="o">+</span> <span class="mi">0</span><span class="p">,</span><span class="n">l6</span><span class="p">)</span>  <span class="c1"># 4*l5 + 5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lrelu</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DynEdge_V2.forward"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Model forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (Data): Graph of input features.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tensor: Model output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Convenience variables</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span>
+
+        <span class="c1"># Calculate homophily (scalar variables)</span>
+        <span class="n">h_x</span><span class="p">,</span> <span class="n">h_y</span><span class="p">,</span> <span class="n">h_z</span><span class="p">,</span> <span class="n">h_t</span> <span class="o">=</span> <span class="n">calculate_xyzt_homophily</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+
+        <span class="c1"># Calculate mean features</span>
+        <span class="n">global_means</span> <span class="o">=</span> <span class="n">scatter_mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Add global variables</span>
+        <span class="n">distribute</span> <span class="o">=</span> <span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+        <span class="n">global_variables</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+            <span class="n">global_means</span><span class="p">,</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">n_pulses</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">h_x</span><span class="p">,</span>
+            <span class="n">h_y</span><span class="p">,</span>
+            <span class="n">h_z</span><span class="p">,</span>
+            <span class="n">h_t</span><span class="p">,</span>
+        <span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+        <span class="n">global_variables_distributed</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">distribute</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">global_variables</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">global_variables_distributed</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">a</span><span class="p">,</span> <span class="n">edge_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_add1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">,</span> <span class="n">edge_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_add2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+        <span class="n">c</span><span class="p">,</span> <span class="n">edge_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_add3</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">edge_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_add4</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+
+        <span class="c1"># Skip-cat</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Post-processing</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lrelu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># Aggregation across nodes</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scatter_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">b</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scatter_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">scatter_mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Concatenate aggregations and scalar features</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span>
+            <span class="n">a</span><span class="p">,</span>
+            <span class="n">b</span><span class="p">,</span>
+            <span class="n">c</span><span class="p">,</span>
+        <span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Read-out</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lrelu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lrelu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x</span></div></div>
 </pre></div>
 
            </div>

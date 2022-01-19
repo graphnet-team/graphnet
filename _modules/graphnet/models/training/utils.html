@@ -63,7 +63,7 @@
   <h1>Source code for graphnet.models.training.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -78,7 +78,7 @@
 
 <div class="viewcode-block" id="make_dataloader"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.utils.make_dataloader">[docs]</a><span class="k">def</span> <span class="nf">make_dataloader</span><span class="p">(</span>
     <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">pulsemap</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
@@ -89,9 +89,13 @@
     <span class="n">persistent_workers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataLoader</span><span class="p">:</span>
 
+    <span class="c1"># Check(s)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pulsemaps</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">pulsemaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">pulsemaps</span><span class="p">]</span>
+
     <span class="n">dataset</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span>
         <span class="n">db</span><span class="p">,</span>
-        <span class="n">pulsemap</span><span class="p">,</span>
+        <span class="n">pulsemaps</span><span class="p">,</span>
         <span class="n">features</span><span class="p">,</span>
         <span class="n">truth</span><span class="p">,</span>
         <span class="n">selection</span><span class="o">=</span><span class="n">selection</span><span class="p">,</span>
@@ -117,7 +121,7 @@
 <div class="viewcode-block" id="make_train_validation_dataloader"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.utils.make_train_validation_dataloader">[docs]</a><span class="k">def</span> <span class="nf">make_train_validation_dataloader</span><span class="p">(</span>
     <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">pulsemap</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
@@ -132,6 +136,10 @@
     <span class="c1"># Reproducibility</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
+    <span class="c1"># Checks(s)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pulsemaps</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">pulsemaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">pulsemaps</span><span class="p">]</span>
+
     <span class="c1"># Perform train/validation split</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">df_for_shuffle</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;event_no&#39;</span><span class="p">:</span> <span class="n">selection</span><span class="p">,</span> <span class="s1">&#39;db&#39;</span><span class="p">:</span> <span class="n">database_indices</span><span class="p">})</span>
@@ -145,7 +153,7 @@
     <span class="c1"># Create DataLoaders</span>
     <span class="n">common_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
-        <span class="n">pulsemap</span><span class="o">=</span><span class="n">pulsemap</span><span class="p">,</span>
+        <span class="n">pulsemaps</span><span class="o">=</span><span class="n">pulsemaps</span><span class="p">,</span>
         <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
         <span class="n">truth</span><span class="o">=</span><span class="n">truth</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
