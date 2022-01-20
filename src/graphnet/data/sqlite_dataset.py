@@ -122,16 +122,16 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         labels_dict = {
             'event_no': truth_dict['event_no'],
-            'muon': int(abs_pid == 13),
-            'muon_stopped': int(truth_dict.get('stopped_muon') == 1),
-            'noise': int((abs_pid == 1) & (sim_type != 'data')),
-            'neutrino': int((abs_pid != 13 ) & (abs_pid != 1 )),  # `abs_pid in [12,14,16]`?
-            'v_e': int(abs_pid == 12),
-            'v_u': int(abs_pid == 14),
-            'v_t': int(abs_pid == 16),
-            'track': int((abs_pid == 14) & (truth_dict['interaction_type'] == 1)),
-            'dbang': int(sim_type == 'dbang'),
-            'corsika': int(abs_pid > 20)
+            'muon': float(abs_pid == 13),
+            'muon_stopped': float(truth_dict.get('stopped_muon') == 1),
+            'noise': float((abs_pid == 1) & (sim_type != 'data')),
+            'neutrino': float((abs_pid != 13 ) & (abs_pid != 1 )),  # `abs_pid in [12,14,16]`?
+            'v_e': float(abs_pid == 12),
+            'v_u': float(abs_pid == 14),
+            'v_t': float(abs_pid == 16),
+            'track': float((abs_pid == 14) & (truth_dict['interaction_type'] == 1)),
+            'dbang': float(sim_type == 'dbang'),
+            'corsika': float(abs_pid > 20)
         }
 
         # Catch cases with no reconstructed pulses
@@ -153,6 +153,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         for write_dict in [labels_dict, truth_dict]:
             for key, value in write_dict.items():
                 try:
+                    #graph[key] = torch.tensor(value)
                     graph[key] = torch.tensor(value)
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
