@@ -130,7 +130,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             'v_u': int(abs_pid == 14),
             'v_t': int(abs_pid == 16),
             'track': int((abs_pid == 14) & (truth_dict['interaction_type'] == 1)),
-            'dbang': int(sim_type == 'dbang'),
+            'dbang': int(truth_dict['dbang_decay_length'] > -1),
             'corsika': int(abs_pid > 20)
         }
 
