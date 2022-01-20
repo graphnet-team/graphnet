@@ -1,16 +1,16 @@
 """Minimum working example (MWE) to use SQLiteDataConverter
 """
 
-from gnn_reco.data.i3extractor import (
+from graphnet.data.i3extractor import (
     I3FeatureExtractorIceCubeUpgrade,
     I3TruthExtractor,
 )
-from gnn_reco.data.sqlite_dataconverter import SQLiteDataConverter
+from graphnet.data.sqlite_dataconverter import SQLiteDataConverter
 
 
 def make_database():
     """Main script function."""
-    paths = ['/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4/step4']        
+    paths = ['/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4/step4']
     gcd_rescue = '/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4/gcd/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2'#/groups/icecube/stuttard/data/oscNext/pass2/gcd/GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz'
     outdir = '/groups/hep/pcs557/GNNReco/data/databases'
     db_name = 'dev_step4_preselection_december'
@@ -29,4 +29,4 @@ def make_database():
     converter(paths)
 if __name__ == '__main__':
     make_database()
-    
+
