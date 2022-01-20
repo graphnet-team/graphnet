@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 from torch.autograd import grad
 
-from graphnet.components.loss_functions import LogCoshLoss, VonMisesFisherLoss
+from graphnet.components.loss_functions import LogCoshLoss, VonMisesFisherLoss, BinaryCrossEntropyLoss
 from graphnet.utils import eps_like
 
 # Utility method(s)
@@ -165,3 +165,15 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
     # Test gradient approximation
     assert torch.allclose(grads_approx[exact_is_valid], grads_exact[exact_is_valid], rtol=1e-2)
 
+def test_binary_cross_entropy(dtype=torch.float32):
+    # Prepare test data
+    n=10
+    x = torch.rand(n, dtype=dtype).unsqueeze(1)  # Shape [N, 1]
+    y = torch.rand(n, dtype=dtype)  # Shape [N,]
+
+    # Calculate losses using loss function, and manually
+    binary_cross_entropy_loss = BinaryCrossEntropyLoss()
+    losses = binary_cross_entropy_loss(x, y, return_elements=True)
+    losses_reference = torch.nn.functional.binary_cross_entropy(x[:,0], y, reduction='none')
+
+    assert torch.allclose(losses_reference, losses)
