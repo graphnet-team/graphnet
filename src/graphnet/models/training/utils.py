@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import os
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -15,7 +15,7 @@ from graphnet.models import Model
 
 def make_dataloader(
     db: str,
-    pulsemap: str,
+    pulsemaps: Union[str, List[str]],
     features: List[str],
     truth: List[str],
     *,
@@ -26,9 +26,13 @@ def make_dataloader(
     persistent_workers: bool = True,
 ) -> DataLoader:
 
+    # Check(s)
+    if isinstance(pulsemaps, str):
+        pulsemaps = [pulsemaps]
+
     dataset = SQLiteDataset(
         db,
-        pulsemap,
+        pulsemaps,
         features,
         truth,
         selection=selection,
@@ -54,7 +58,7 @@ def make_dataloader(
 def make_train_validation_dataloader(
     db: str,
     selection: List[int],
-    pulsemap: str,
+    pulsemaps: Union[str, List[str]],
     features: List[str],
     truth: List[str],
     *,
@@ -69,6 +73,10 @@ def make_train_validation_dataloader(
     # Reproducibility
     rng = np.random.RandomState(seed=seed)
 
+    # Checks(s)
+    if isinstance(pulsemaps, str):
+        pulsemaps = [pulsemaps]
+
     # Perform train/validation split
     if isinstance(db, list):
         df_for_shuffle = pd.DataFrame({'event_no': selection, 'db': database_indices})
@@ -82,7 +90,7 @@ def make_train_validation_dataloader(
     # Create DataLoaders
     common_kwargs = dict(
         db=db,
-        pulsemap=pulsemap,
+        pulsemaps=pulsemaps,
         features=features,
         truth=truth,
         batch_size=batch_size,
