@@ -1,34 +1,36 @@
-import logging
-import numpy as np
-import pandas as pd
-from timer import timer
+import os.path
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
-from torch.utils.data import dataloader
 
-from graphnet.components.loss_functions import  LogCoshLoss, VonMisesFisher2DLoss
-from graphnet.components.utils import fit_scaler
+from graphnet.components.loss_functions import  LogCoshLoss
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.utils import get_desired_event_numbers
+from graphnet.data.utils import get_equal_proportion_neutrino_indices
 from graphnet.models import Model
-from graphnet.models.detector.icecube import IceCubeUpgrade
-from graphnet.models.gnn import DynEdge, ConvNet
+from graphnet.models.detector.icecube import IceCubeDeepCore
+from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
 from graphnet.models.training.utils import get_predictions, make_train_validation_dataloader, save_results
 
 # Configurations
-timer.set_level(logging.INFO)
-logging.basicConfig(level=logging.INFO)
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 # Constants
-features = FEATURES.UPGRADE
-truth = TRUTH.UPGRADE
+features = FEATURES.DEEPCORE
+truth = TRUTH.DEEPCORE
+
+# Initialise Weights & Biases (W&B) run
+wandb_logger = WandbLogger(
+    project="example-script",
+    entity="graphnet-team",
+    save_dir='./wandb/',
+    log_model=True,
+)
 
 # Main function definition
 def main():
@@ -36,32 +38,39 @@ def main():
     print(f"features: {features}")
     print(f"truth: {truth}")
 
-    # Configuraiton
-    db = '/groups/icecube/asogaard/temp/sqlite_test_upgrade/data_test/data/data_test.db'
-    pulsemap = 'I3RecoPulseSeriesMapRFCleaned_mDOM'
-    batch_size = 128
-    num_workers = 10
-    gpus = [0]
-    target = 'energy'
-    n_epochs = 30
-    patience = 5
-    archive = '/groups/icecube/asogaard/gnn/results'
+    # Configuration
+    config = {
+        "db": '/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db',
+        "pulsemap": 'SRTTWOfflinePulsesDC',
+        "batch_size": 512,
+        "num_workers": 10,
+        "gpus": [1],
+        "target": 'energy',
+        "n_epochs": 5,
+        "patience": 5,
+    }
+    archive = "/groups/icecube/asogaard/gnn/results/"
+    run_name = "dynedge_{}_example".format(config["target"])
+
+    # Log configuration to W&B
+    wandb_logger.experiment.config.update(config)
 
     # Common variables
-    train_selection = get_desired_event_numbers(db, 1000000, fraction_nu_e=1.)
+    train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
+    train_selection = train_selection[0:50000]
 
     training_dataloader, validation_dataloader = make_train_validation_dataloader(
-        db,
+        config["db"],
         train_selection,
-        pulsemap,
+        config["pulsemap"],
         features,
         truth,
-        batch_size=batch_size,
-        num_workers=num_workers,
+        batch_size=config["batch_size"],
+        num_workers=config["num_workers"],
     )
 
     # Building model
-    detector = IceCubeUpgrade(
+    detector = IceCubeDeepCore(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
     gnn = DynEdge(
@@ -69,7 +78,7 @@ def main():
     )
     task = EnergyReconstruction(
         hidden_size=gnn.nb_outputs,
-        target_label=target,
+        target_label=config["target"],
         loss_function=LogCoshLoss(
             transform_prediction_and_target=torch.log10,
         ),
@@ -82,7 +91,7 @@ def main():
         optimizer_kwargs={'lr': 1e-03, 'eps': 1e-03},
         scheduler_class=PiecewiseLinearLR,
         scheduler_kwargs={
-            'milestones': [0, len(training_dataloader) / 2, len(training_dataloader) * n_epochs],
+            'milestones': [0, len(training_dataloader) / 2, len(training_dataloader) * config["n_epochs"]],
             'factors': [1e-2, 1, 1e-02],
         },
         scheduler_config={
@@ -94,16 +103,17 @@ def main():
     callbacks = [
         EarlyStopping(
             monitor='val_loss',
-            patience=patience,
+            patience=config["patience"],
         ),
         ProgressBar(),
     ]
 
     trainer = Trainer(
-        gpus=gpus,
-        max_epochs=n_epochs,
+        gpus=config["gpus"],
+        max_epochs=config["n_epochs"],
         callbacks=callbacks,
         log_every_n_steps=1,
+        logger=wandb_logger,
     )
 
     try:
@@ -117,11 +127,11 @@ def main():
         trainer,
         model,
         validation_dataloader,
-        [target + '_pred'],
-        [target, 'event_no'],
+        [config["target"] + '_pred'],
+        [config["target"], 'event_no'],
     )
 
-    save_results(db, 'test_upgrade_mDOM_energy', results, archive, model)
+    save_results(config["db"], run_name, results, archive, model)
 
 # Main function call
 if __name__ == "__main__":
