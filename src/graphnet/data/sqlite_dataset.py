@@ -163,7 +163,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         graph.n_pulses = n_pulses
         graph.features = self._features[1:]
 
-        # Write attributes, either target labels or truth info.
+        # Write attributes, either target labels, truth info or original features.
         for write_dict in [labels_dict, truth_dict]:
             for key, value in write_dict.items():
                 try:
@@ -171,6 +171,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
                     pass
+
+        for ix, feature in enumerate(graph.features):
+            graph[feature] = graph.x[:,ix].detach()
 
         return graph
 
