@@ -4,6 +4,7 @@ from glob import glob
 import os
 import numpy as np
 import pandas as pd
+import matplotlib.path as mpath
 from pathlib import Path
 import re
 from typing import List, Tuple
@@ -249,3 +250,31 @@ def frame_has_key(frame, key: str):
         return True
     except:
         return False
+
+def muon_stopped(truth, horizontal_pad = 100, vertical_pad = 100):
+    '''
+    Determine if a simulated muon stops inside the fiducial volume of the IceCube detector as defined in the RIDE study.
+    Vertical and horizontal pad shrink fiducial volume further.
+    Using track length, azimuth and zenith travel from the starting/generation point,
+    also return x,y,z of muon end point (to be reconstructed)
+    '''
+    #to do:remove hard-coded border coords and replace with GCD file contents using string no's
+    border_coords = np.array([(-256.1400146484375, -521.0800170898438), (-132.8000030517578, -501.45001220703125), (-9.13000011444092, -481.739990234375), (114.38999938964844, -461.989990234375), (237.77999877929688, -442.4200134277344), (361.0, -422.8299865722656), (405.8299865722656, -306.3800048828125), (443.6000061035156, -194.16000366210938), (500.42999267578125, -58.45000076293945), (544.0700073242188, 55.88999938964844), (576.3699951171875, 170.9199981689453), (505.2699890136719, 257.8800048828125), (429.760009765625, 351.0199890136719), (338.44000244140625, 463.7200012207031), (224.5800018310547, 432.3500061035156), (101.04000091552734, 412.7900085449219), (22.11000061035156, 509.5), (-101.05999755859375, 490.2200012207031), (-224.08999633789062, 470.8599853515625), (-347.8800048828125, 451.5199890136719), (-392.3800048828125, 334.239990234375), (-437.0400085449219, 217.8000030517578), (-481.6000061035156, 101.38999938964844), (-526.6300048828125, -15.60000038146973), (-570.9000244140625, -125.13999938964844), (-492.42999267578125, -230.16000366210938), (-413.4599914550781, -327.2699890136719), (-334.79998779296875, -424.5)])
+    border_z = [-512.82,524.56]
+    border = mpath.Path(border_coords)
+
+    start_pos = np.array([truth['position_x'],
+                          truth['position_y'],
+                          truth['position_z']])
+                          
+    travel_vec = -1*np.array([truth['track_length']*np.cos(truth['azimuth'])*np.sin(truth['zenith']),
+                           truth['track_length']*np.sin(truth['azimuth'])*np.sin(truth['zenith']),
+                           truth['track_length']*np.cos(truth['zenith'])])
+    
+    end_pos = start_pos+travel_vec
+
+    stopped_xy = border.contains_point((end_pos[0],end_pos[1]),radius=-horizontal_pad) 
+    stopped_z = (end_pos[2] > border_z[0] + vertical_pad) * (end_pos[2] < border_z[1] - vertical_pad) 
+    stopped_muon = stopped_xy * stopped_z 
+
+    return end_pos,stopped_muon
