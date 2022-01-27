@@ -1,5 +1,6 @@
 import torch
 from torch_geometric.data import Data
+from graphnet.components.clustering import cluster_pulses_to_dom, cluster_pulses_to_pmt
 
 from graphnet.models.detector.detector import Detector
 from graphnet.data.constants import FEATURES
@@ -102,6 +103,10 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
 
         # Check(s)
         assert data.features == self._features
+
+        # Assign pulse cluster indices to DOMs and PMTs, respectively
+        data = cluster_pulses_to_dom(data)
+        data = cluster_pulses_to_pmt(data)
 
         # Feature engineering inspired by Linea Hedemark and Tetiana Kozynets.
         xyz = data.x[:,:3]
