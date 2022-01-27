@@ -35,6 +35,34 @@ class Task(LightningModule):
         transform_inference: Optional[Callable] = None,
         transform_support: Optional[tuple] = None,
     ):
+    """Base class for all reconstruction and classification tasks.
+
+    Args:
+        hidden_size: The number of nodes in the layer feeding into this tasks,
+          used to construct the affine transformation to the predicted quantity.
+        target_label: Name of the quantity being predicted, used to extract the
+          target tensor from the `Data` object in `.compute_loss(...)`.
+        loss_function: Loss function appropriate to the task.
+        transform_prediction_and_target: Optional function to transform both the
+          predicted and target tensor before passing them to the loss function.
+          Useful e.g. for having the model predict quantities on a physical
+          scale, but transforming this scale to O(1) for a numerically stable
+          loss computation.
+        transform_target: Optional function to transform only the target tensor
+          before passing it, and the predicted tensor, to the loss function.
+          Useful e.g. for having the model predict a transformed version of the
+          target quantity, e.g. the log10-scaled energy, rather than the
+          physical quantity itself. Used in conjunction with `transform_inference`
+          to perform the inverse transform on the predicted quantity to recover
+          the physical scale.
+        transform_inference: Optional function to inverse-transform the model
+          prediction to recover a physical scale. Used in conjunction with
+          `transform_target`.
+        transform_support: Optional tuple to specify minimum and maximum of the
+          range of validity for the inverse transforms `transform_target` and
+          `transform_inference` in case this is restricted. By default the
+          invertibility of `transform_target` is tested on the range [-1e6, 1e6].
+    """
         # Base class constructor
         super().__init__()
 
