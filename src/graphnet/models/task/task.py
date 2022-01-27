@@ -33,7 +33,7 @@ class Task(LightningModule):
         transform_prediction_and_target: Optional[Callable] = None,
         transform_target: Optional[Callable] = None,
         transform_inference: Optional[Callable] = None,
-        transform_support: tuple = None,
+        transform_support: Optional[tuple] = None,
     ):
         # Base class constructor
         super().__init__()
