@@ -7,7 +7,7 @@ except ImportError:
     print("icecube package not available.")
 
 from abc import abstractmethod
-from .utils import frame_has_key
+from .utils import frame_has_key,muon_stopped
 
 
 class I3Extractor(ABC):
@@ -238,6 +238,17 @@ class I3TruthExtractor(I3Extractor):
                 'interaction_type': interaction_type,
                 'elasticity': elasticity,
             })
+            if abs(output['pid'])==13:
+                output.update({
+                    'track_length': MCInIcePrimary.length,
+                })
+                final_position, stopped = muon_stopped(output)
+                output.update({
+                    'final_position_x': final_position[0],
+                    'final_position_y': final_position[1],
+                    'final_position_z': final_position[2],
+                    'stopped_muon': stopped,
+                })                
 
         return output
 
