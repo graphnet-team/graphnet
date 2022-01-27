@@ -164,8 +164,8 @@
         <span class="n">train_event_nos</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">indices_equal_proprtions</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
         <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;select event_no from truth where abs(pid) != 13 and abs(pid) != 1 and event_no not in </span><span class="si">{train_event_nos}</span><span class="s1">&#39;</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">indices_equal_proprtions</span><span class="p">,</span> <span class="n">test</span></div>
+ 
+    <span class="k">return</span> <span class="n">indices_equal_proprtions</span> <span class="p">,</span> <span class="n">test</span></div>
 
 <div class="viewcode-block" id="get_even_signal_background_indicies"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_even_signal_background_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_signal_background_indicies</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
@@ -212,6 +212,72 @@
 
     <span class="k">return</span> <span class="n">events</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">test</span></div>
 
+<div class="viewcode-block" id="get_even_dbang_selection"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_even_dbang_selection">[docs]</a><span class="k">def</span> <span class="nf">get_even_dbang_selection</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">min_max_decay_length</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Utility method to get indices for neutrino events with equal dbang / non-dbang labels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db (str): Path to database.</span>
+<span class="sd">        seed (int, optional): Random number generator seed. Defaults to 42.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Training and test indices, resp.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Common variables</span>
+    <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;14&#39;</span><span class="p">,</span> <span class="s1">&#39;16&#39;</span><span class="p">]</span>
+    <span class="n">non_dbangs_indicies</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">dbangs_indicies</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># Get a list of all event numbers for each PID that is not dbang</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">:</span>
+            <span class="n">non_dbangs_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT event_no FROM truth where abs(pid) = </span><span class="si">{pid}</span><span class="s2"> and dbang_decay_length = -1&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+
+    <span class="c1"># Subsample events for each PID to the smallest sample size</span>
+    <span class="n">samples_sizes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">non_dbangs_indicies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_sizes</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Smallest non dbang sample size: </span><span class="si">{smallest_sample_size}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="n">non_dbangs_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">smallest_sample_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span>
+    <span class="p">]</span>
+    <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Get a list of all event numbers  that is dbang</span>
+    <span class="k">if</span> <span class="n">min_max_decay_length</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">dbangs_indicies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT event_no FROM truth where dbang_decay_length != -1&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;dbang sample size: {len(dbangs_indicies)}&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">min_max_decay_length</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">dbangs_indicies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT event_no FROM truth where dbang_decay_length != -1 and dbang_decay_length &gt;= </span><span class="si">{min_max_decay_length[0]}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">dbangs_indicies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT event_no FROM truth where dbang_decay_length != -1 and dbang_decay_length &gt;= </span><span class="si">{min_max_decay_length[0]}</span><span class="s2"> and dbang_decay_length &lt;= </span><span class="si">{min_max_decay_length[1]}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices_equal_proprtions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dbangs_indicies</span><span class="p">):</span>
+        <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="n">indices_equal_proprtions</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dbangs_indicies</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dbangs_indicies</span> <span class="o">=</span> <span class="n">dbangs_indicies</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices_equal_proprtions</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dbangs in joint sample: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">dbangs_indicies</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;non-dbangs in joint sample: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">indices_equal_proprtions</span><span class="p">))</span>
+
+    <span class="n">joint_indicies</span> <span class="o">=</span> <span class="n">dbangs_indicies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices_equal_proprtions</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="c1"># Shuffle and convert to list</span>
+
+
+    <span class="c1"># Get test indices (?)</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="n">train_event_nos</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">joint_indicies</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;select event_no from truth where abs(pid) != 13 and abs(pid) != 1 and event_no not in </span><span class="si">{train_event_nos}</span><span class="s1">&#39;</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">joint_indicies</span><span class="p">,</span> <span class="n">test</span></div>
 
 
 <div class="viewcode-block" id="create_out_directory"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.create_out_directory">[docs]</a><span class="k">def</span> <span class="nf">create_out_directory</span><span class="p">(</span><span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>

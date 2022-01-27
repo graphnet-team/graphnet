@@ -632,6 +632,26 @@ gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.utils.get_even_dbang_selection">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">get_even_dbang_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_max_decay_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/utils.html#get_even_dbang_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.get_even_dbang_selection" title="Permalink to this definition"></a></dt>
+<dd><p>Utility method to get indices for neutrino events with equal dbang / non-dbang labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>str</em>) – Path to database.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random number generator seed. Defaults to 42.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Training and test indices, resp.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.utils.get_even_signal_background_indicies">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">get_even_signal_background_indicies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#get_even_signal_background_indicies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.get_even_signal_background_indicies" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
