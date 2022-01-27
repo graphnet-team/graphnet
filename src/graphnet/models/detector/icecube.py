@@ -1,6 +1,7 @@
 import torch
 from torch_geometric.data import Data
 from graphnet.components.clustering import cluster_pulses_to_dom, cluster_pulses_to_pmt
+from graphnet.components.sum_pool import sum_pool_x
 
 from graphnet.models.detector.detector import Detector
 from graphnet.data.constants import FEATURES
@@ -112,8 +113,7 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
         xyz = data.x[:,:3]
         charge = data.x[:,4].unsqueeze(dim=1)
         center_of_gravity = torch.sum(xyz * charge, dim=1, keepdim=True) / torch.sum(charge)
-        #photo_electrons_on_pmt =
-
+        photoelectrons_on_pmt = torch.floor(sum_pool_x(data.index_pmt, data['charge'], data.batch)).clip(1, None).float()
 
         # Preprocessing
         data.x[:,0] /= 500.  # dom_x
