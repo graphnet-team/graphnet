@@ -25,7 +25,7 @@ def main():
     print(f"features: {features}")
     print(f"truth: {truth}")
 
-    # Configuraiton
+    # Configuration
     db = '/groups/icecube/asogaard/data/sqlite/dev_upgrade_step4_preselection_decemberv2/data/dev_upgrade_step4_preselection_decemberv2.db'
     pulsemaps = ['IceCubePulsesTWSRT', 'I3RecoPulseSeriesMapRFCleaned_mDOM', 'IceCubePulsesTWSRT']
     batch_size = 256
