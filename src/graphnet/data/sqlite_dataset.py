@@ -161,6 +161,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             edge_index= None
         )
         graph.n_pulses = n_pulses
+        graph.features = self._features[1:]
 
         # Write attributes, either target labels or truth info.
         for write_dict in [labels_dict, truth_dict]:
