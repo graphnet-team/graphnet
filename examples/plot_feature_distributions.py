@@ -27,7 +27,7 @@ def main():
 
     # Configuraiton
     db = '/groups/icecube/asogaard/data/sqlite/dev_upgrade_step4_preselection_decemberv2/data/dev_upgrade_step4_preselection_decemberv2.db'
-    pulsemaps = ['I3RecoPulseSeriesMapRFCleaned_mDOM', 'IceCubePulsesTWSRT']
+    pulsemaps = ['IceCubePulsesTWSRT', 'I3RecoPulseSeriesMapRFCleaned_mDOM', 'IceCubePulsesTWSRT']
     batch_size = 256
     num_workers = 10
 
