@@ -118,11 +118,19 @@ def get_predictions(trainer, model, dataloader, prediction_columns, additional_a
         additional_attributes = []
     assert isinstance(additional_attributes, list)
 
+    # Set model to inference mode
+    model.inference()
+
     # Get predictions
     predictions_torch = trainer.predict(model, dataloader)
     predictions = [p[0].detach().cpu().numpy() for p in predictions_torch]  # Assuming single task
     predictions = np.concatenate(predictions, axis=0)
-    assert len(prediction_columns) == predictions.shape[1]
+    try:
+        assert len(prediction_columns) == predictions.shape[1]
+    except IndexError:
+        predictions = predictions.reshape((-1, 1))
+        assert len(prediction_columns) == predictions.shape[1]
+
 
     # Get additional attributes
     attributes = OrderedDict([(attr, []) for attr in additional_attributes])
