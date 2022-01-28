@@ -20,21 +20,8 @@ from torch.nn.modules.loss import _WeightedLoss
 class LossFunction(_WeightedLoss):
     """Base class for loss functions in graphnet.
     """
-    def __init__(
-        self,
-        transform_prediction_and_target: Optional[Callable] = None,
-        transform_target: Optional[Callable] = None,
-        **kwargs,
-    ):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        # Check(s)
-        assert not((transform_prediction_and_target is not None) and (transform_target is not None)), \
-            "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
-
-        # Member variables
-        self._transform_prediction = transform_prediction_and_target if transform_prediction_and_target else lambda x: x
-        self._transform_target = transform_target if transform_target else self._transform_prediction
 
     @final
     def forward(
@@ -55,8 +42,6 @@ class LossFunction(_WeightedLoss):
             Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
-        prediction = self._transform_prediction(prediction)
-        target = self._transform_target(target)
 
         elements = self._forward(prediction, target)
         assert elements.size(dim=0) == target.size(dim=0), \
