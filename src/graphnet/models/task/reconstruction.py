@@ -117,3 +117,8 @@ class BinaryClassificationTask(Task):
     def _forward(self, x):
         #transform probability of being muon
         return torch.sigmoid(x[:,0])
+
+class BinaryClassificationTaskLogits(Task):
+    nb_inputs = 1
+    def _forward(self, x):
+        return x
