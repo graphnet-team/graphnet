@@ -3,7 +3,7 @@ name: lint
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push events
+  # Triggers the workflow on push and PRs
   push:
     paths-ignore: [ misc/badges/ ]
   pull_request:
@@ -45,5 +45,6 @@ jobs:
         run: |
           git add -f misc/badges/
       - name: Commit and push changes
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
           git commit -m "Auto-updating lint badge" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"
