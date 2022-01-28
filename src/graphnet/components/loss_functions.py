@@ -98,7 +98,7 @@ class BinaryCrossEntropyLoss(LossFunction):
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        return torch.nn.functional.binary_cross_entropy(prediction, target, reduction='none')
+        return torch.nn.functional.binary_cross_entropy(prediction.float(), target.float(), reduction='none')
 
 
 class LogCMK(torch.autograd.Function):
