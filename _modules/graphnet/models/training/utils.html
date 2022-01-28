@@ -181,6 +181,9 @@
         <span class="n">additional_attributes</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">additional_attributes</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
+    <span class="c1"># Set model to inference mode</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">inference</span><span class="p">()</span>
+
     <span class="c1"># Get predictions</span>
     <span class="n">predictions_torch</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">)</span>
     <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">predictions_torch</span><span class="p">]</span>  <span class="c1"># Assuming single task</span>
