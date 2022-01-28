@@ -135,3 +135,16 @@ class Model(LightningModule):
 
     def _get_batch_size(self, data: Data) -> int:
         return torch.numel(torch.unique(data.batch))
+
+    def inference(self):
+        """Sets model to inference mode."""
+        for task in self._tasks:
+            task.inference()
+
+    def train(self, mode=True):
+        super().train(mode)
+        """Deactivates inference mode."""
+        if mode:
+            for task in self._tasks:
+                task.train_eval()
+        return self
