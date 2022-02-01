@@ -1,10 +1,9 @@
 import torch
 from torch_geometric.data import Data
-from graphnet.components.clustering import cluster_pulses_to_dom, cluster_pulses_to_pmt
-from graphnet.components.sum_pool import sum_pool_x
 
-from graphnet.models.detector.detector import Detector
+from graphnet.components.pool import group_pulses_to_dom, group_pulses_to_pmt, sum_pool_and_distribute
 from graphnet.data.constants import FEATURES
+from graphnet.models.detector.detector import Detector
 
 
 class IceCube86(Detector):
@@ -24,7 +23,7 @@ class IceCube86(Detector):
         """
 
         # Check(s)
-        assert data.feautures == self._features
+        self._validate_features(data)
 
         # Preprocessing
         data.x[:,0] /= 100.  # dom_x
@@ -63,7 +62,7 @@ class IceCubeUpgrade(IceCubeDeepCore):
         """
 
         # Check(s)
-        assert data.features == self._features
+        self._validate_features(data)
 
         # Preprocessing
         data.x[:,0] /= 500.  # dom_x
@@ -92,6 +91,10 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
     # Implementing abstract class attribute
     features = FEATURES.UPGRADE
 
+    @property
+    def nb_outputs(self):
+        return self.nb_inputs + 3
+
     def _forward(self, data: Data) -> Data:
         """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
 
@@ -103,17 +106,30 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
         """
 
         # Check(s)
-        assert data.features == self._features
+        self._validate_features(data)
 
         # Assign pulse cluster indices to DOMs and PMTs, respectively
-        data = cluster_pulses_to_dom(data)
-        data = cluster_pulses_to_pmt(data)
+        data = group_pulses_to_dom(data)
+        data = group_pulses_to_pmt(data)
 
         # Feature engineering inspired by Linea Hedemark and Tetiana Kozynets.
-        xyz = data.x[:,:3]
-        charge = data.x[:,4].unsqueeze(dim=1)
-        center_of_gravity = torch.sum(xyz * charge, dim=1, keepdim=True) / torch.sum(charge)
-        photoelectrons_on_pmt = torch.floor(sum_pool_x(data.index_pmt, data['charge'], data.batch)).clip(1, None).float()
+        xyz = torch.stack((data['dom_x'], data['dom_y'], data['dom_z']), dim=1)
+        pmt_dir = torch.stack((data['pmt_dir_x'], data['pmt_dir_x'], data['pmt_dir_x']), dim=1)
+        charge = data['charge'].unsqueeze(dim=1)
+        center_of_gravity = sum_pool_and_distribute(xyz * charge, data.batch) / sum_pool_and_distribute(charge, data.batch)
+        vector_to_center_of_gravity = center_of_gravity - xyz
+        distance_to_center_of_gravity = torch.norm(vector_to_center_of_gravity, p=2, dim=1)
+        unit_vector_to_center_of_gravity = vector_to_center_of_gravity / (distance_to_center_of_gravity.unsqueeze(dim=1) + 1e-3)
+        cos_angle_wrt_center_of_gravity = (pmt_dir * unit_vector_to_center_of_gravity).sum(dim=1)
+        photoelectrons_on_pmt = sum_pool_and_distribute(data['charge'], data.pmt_index, data.batch).floor().clip(1, None)
+
+        # Add new features
+        data.x = torch.cat((
+            data.x,
+            photoelectrons_on_pmt.unsqueeze(dim=1),
+            distance_to_center_of_gravity.unsqueeze(dim=1),
+            cos_angle_wrt_center_of_gravity.unsqueeze(dim=1),
+        ), dim=1)
 
         # Preprocessing
         data.x[:,0] /= 500.  # dom_x
@@ -133,5 +149,9 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
         #data.x[:,11] /= 1.  # pmt_dir_y
         #data.x[:,12] /= 1.  # pmt_dir_z
         data.x[:,13] /= 130.  # dom_type
+
+        # -- Engineered features
+        data.x[:,14] = torch.log10(data.x[:,14]) / 2.  # photoelectrons_on_pmt
+        data.x[:,15] = torch.log10(1e-03 + data.x[:,15]) / 2.  # distance_to_center_of_gravity
 
         return data
