@@ -8,6 +8,7 @@ except ImportError:  # Python version < 3.8
 from pytorch_lightning import LightningModule
 import torch
 from torch_geometric.data import Data
+from torch_geometric.data.batch import Batch
 
 from graphnet.models.graph_builders import GraphBuilder
 
@@ -80,3 +81,11 @@ class Detector(LightningModule):
     def nb_outputs(self) -> int:
         """This the default, but may be overridden by specific inheriting classes."""
         return self.nb_inputs
+
+    def _validate_features(self, data: Data):
+        if isinstance(data, Batch):
+            data_features = data[0].features
+        else:
+            data_features = data.features
+        assert data_features == self.features, \
+            "Features on Data and Detector differ: {data_features} vs. {self.features}"
