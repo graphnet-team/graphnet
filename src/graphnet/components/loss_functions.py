@@ -15,6 +15,7 @@ import scipy.special
 import torch
 from torch import Tensor
 from torch.nn.modules.loss import _WeightedLoss
+from torch_geometric.data import Data
 
 
 class LossFunction(_WeightedLoss):
@@ -28,12 +29,16 @@ class LossFunction(_WeightedLoss):
         self,
         prediction: Tensor,
         target: Tensor,
+        data: Data,
+        target_label: str,
         return_elements: bool = False,
     ) -> Tensor:
         """Forward pass for all loss functions.
         Args:
             prediction (Tensor): Tensor containing predictions. Shape [N,P]
             target (Tensor): Tensor containing targets. Shape [N,T]
+            data (Data Object): torch_geometric.data.Data object containing graphs. Shape [n_pulses_in_batch, n_features]
+            target_label (str): name of target variable. Enables target = data[target_label] indexation
             return_elements (bool, optional): Whether elementwise loss terms
                 should be returned. The alternative is to return the averaged
                 loss across examples. Defaults to False.
@@ -42,8 +47,7 @@ class LossFunction(_WeightedLoss):
             Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
-
-        elements = self._forward(prediction, target)
+        elements = self._forward(prediction, target, data, target_label)
         assert elements.size(dim=0) == target.size(dim=0), \
             "`_forward` should return elementwise loss terms."
 
@@ -67,8 +71,7 @@ class LogCoshLoss(LossFunction):
         See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]
         """
         return x + torch.nn.functional.softplus(-2. * x) - np.log(2.0)
-
-    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor, data: Data, target_label: str) -> Tensor:
         """Implementation of loss calculation."""
         assert prediction.dim() == target.dim() + 1
         diff = prediction[:,0] - target
@@ -81,9 +84,16 @@ class BinaryCrossEntropyLoss(LossFunction):
     where prediction is prob. the PID is neutrino (12,14,16)
     loss should be reported elementwise, so set reduction to None
     """
-
-    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor, data: Data, target_label: str) -> Tensor:
         return torch.nn.functional.binary_cross_entropy(prediction.float(), target.float(), reduction='none')
+
+class DBangBCELossWeighted(LossFunction):
+    """ Custom implementation of BinaryCrossEntropyLoss that weighs the loss using 1/dbang_decay_length.
+        Must have this truth variable available.
+    """
+    def _forward(self, prediction: Tensor, target: Tensor, data: Data, target_label: str) -> Tensor:
+        weight = torch.abs(1/data['dbang_decay_length'])
+        return weight*torch.nn.functional.binary_cross_entropy(prediction.float(), target.float(), reduction='none')
 
 
 class LogCMK(torch.autograd.Function):
@@ -212,7 +222,7 @@ class VonMisesFisherLoss(LossFunction):
 
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
     """von Mises-Fisher loss function vectors in the 2D plane."""
-    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor, data: Data, target_label: str) -> Tensor:
         """Calculates the von Mises-Fisher loss for an angle in the 2D plane.
 
         Args:
@@ -220,6 +230,8 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
                 where 0th column is a prediction of `angle` and 1st column is an
                 estimate of `kappa`.
             target (Tensor): Target tensor, extracted from graph object.
+            data (Data): torch_geometric.data.Data Object.
+            target_label (str): the target name. Enables target = data[target_label] indexing
 
         Returns:
             loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]
@@ -247,7 +259,7 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         return self._evaluate(p, t)
 
 class XYZWithMaxScaling(LossFunction):
-    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor, data: Data, target_label: str) -> Tensor:
         diff = (prediction[:,0] - target[:,0]/764.431509)**2 + (prediction[:,1] - target[:,1]/785.041607)**2 + (prediction[:,2] - target[:,2]/1083.249944)**2 #+(prediction[:,3] - target[:,3]/14721.646883) 
         elements = torch.sqrt(diff)
         return elements
