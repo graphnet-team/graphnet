@@ -3,7 +3,7 @@ name: build
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push
+  # Triggers the workflow on push and PRs
   push:
     paths-ignore: [ misc/badges/ ]
   pull_request:
@@ -47,6 +47,9 @@ jobs:
           git config user.name "Andreas Søgaard"
           git status
       - name: Stage badges
-        run: git add -f misc/badges/
+        run: |
+          git add -f misc/badges/
       - name: Commit and push changes
-        run: git commit -m "Auto-updating coverage badge" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          git commit -m "Auto-updating coverage badge" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"
