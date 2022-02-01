@@ -151,6 +151,13 @@
 
         <span class="k">return</span> <span class="n">x</span> </div>
 
+<div class="viewcode-block" id="XYZReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.XYZReconstruction">[docs]</a><span class="k">class</span> <span class="nc">XYZReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="c1"># Requires four features, x, y, z</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> </div>
+
 <div class="viewcode-block" id="PositionReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction">[docs]</a><span class="k">class</span> <span class="nc">PositionReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="c1"># Requires three features, x, y, z</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">3</span>
