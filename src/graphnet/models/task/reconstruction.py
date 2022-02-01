@@ -88,6 +88,13 @@ class VertexReconstruction(Task):
 
         return x 
 
+class XYZReconstruction(Task):
+    # Requires four features, x, y, z
+    nb_inputs = 3
+
+    def _forward(self, x):
+        return x 
+
 class PositionReconstruction(Task):
     # Requires three features, x, y, z
     nb_inputs = 3
