@@ -111,6 +111,13 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         return features, truth
 
+    def _get_dbang_label(self, truth_dict):
+        try:
+            label = int(truth_dict['dbang_decay_length'] > -1)
+            return label
+        except:
+            return -1
+
     def _create_graph(self, features, truth):
         """Create Pytorch Data (i.e.graph) object.
 
@@ -143,7 +150,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             'v_u': int(abs_pid == 14),
             'v_t': int(abs_pid == 16),
             'track': int((abs_pid == 14) & (truth_dict['interaction_type'] == 1)),
-            'dbang': int(truth_dict['dbang_decay_length'] > -1),
+            'dbang': self._get_dbang_label(truth_dict),
             'corsika': int(abs_pid > 20)
         }
 
