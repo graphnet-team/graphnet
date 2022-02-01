@@ -57,19 +57,6 @@ def test_log_cosh(dtype=torch.float32):
     assert torch.allclose(losses_reference[reference_is_valid], losses[reference_is_valid])
 
 
-def test_log_cosh_of_log_transformed(dtype=torch.float32):
-    # Prepare test data
-    x = torch.tensor([1, 10, 100, 1000, 10000], dtype=dtype).unsqueeze(1)  # Shape [N, 1]
-    y = 0.5 * x.clone().squeeze()  # Shape [N,]
-
-    log_cosh_loss = LogCoshLoss()
-    log_cosh_of_log_transformed_loss = LogCoshLoss(transform_prediction_and_target=lambda x: torch.log10(x))
-    assert torch.allclose(
-        log_cosh_loss(torch.log10(x), torch.log10(y), return_elements=True),
-        log_cosh_of_log_transformed_loss(x, y, return_elements=True),
-    )
-
-
 def test_von_mises_fisher_exact_m3(dtype=torch.float64):
     """
     See https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution
