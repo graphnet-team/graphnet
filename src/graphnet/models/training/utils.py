@@ -120,6 +120,9 @@ def get_predictions(trainer, model, dataloader, prediction_columns, additional_a
         additional_attributes = []
     assert isinstance(additional_attributes, list)
 
+    # Set model to inference mode
+    model.inference()
+
     # Get predictions
     predictions_torch = trainer.predict(model, dataloader)
     predictions = [p[0].detach().cpu().numpy() for p in predictions_torch]  # Assuming single task
