@@ -44,7 +44,7 @@ def test_log_cosh(dtype=torch.float32):
     data['target'] = y
     # Calculate losses using loss function, and manually
     log_cosh_loss = LogCoshLoss()
-    losses = log_cosh_loss(x, y, data, 'target' return_elements=True)
+    losses = log_cosh_loss(x, y, data, 'target', return_elements=True)
     losses_reference = torch.log(torch.cosh(x[:,0] - y))
 
     # (1) Loss functions should not return  `inf` losses, even for large
