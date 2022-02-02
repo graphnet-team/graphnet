@@ -19,12 +19,12 @@ def test_transform_prediction_and_target():
 
     # Test not inverse functions
     with pytest.raises(
-        AssertionError, 
+        AssertionError,
         match="The provided transforms for targets during training and predictions during inference are not inverse. Please adjust transformation functions or support."
         ) as e_info:
         task = EnergyReconstruction(
-            hidden_size=gnn.nb_outputs, 
-            target_label='energy', 
+            hidden_size=gnn.nb_outputs,
+            target_labels='energy',
             loss_function=LogCoshLoss(),
             transform_target=torch.log10,
             transform_inference=torch.log10,
@@ -37,7 +37,7 @@ def test_transform_prediction_and_target():
         ) as e_info:
         task = EnergyReconstruction(
             hidden_size=gnn.nb_outputs,
-            target_label='energy',
+            target_labels='energy',
             loss_function=LogCoshLoss(),
             transform_prediction_and_target=torch.log10,
             transform_inference=torch.log10,
