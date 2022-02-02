@@ -246,8 +246,15 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
 
         return self._evaluate(p, t)
 
-class XYZWithMaxScaling(LossFunction):
+class EuclideanDistance(LossFunction):
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        diff = (prediction[:,0] - target[:,0]/764.431509)**2 + (prediction[:,1] - target[:,1]/785.041607)**2 + (prediction[:,2] - target[:,2]/1083.249944)**2 #+(prediction[:,3] - target[:,3]/14721.646883) 
-        elements = torch.sqrt(diff)
-        return elements
+        """Calculates the 3D Euclidean distance between predicted and target.
+
+        Args:
+            prediction (Tensor): predicted position. Shape [n, 3]
+            target (Tensor): true position Shape [n, 3]
+
+        Returns:
+            Tensor: Loss. Shape [n,1]
+        """
+        return torch.sqrt((prediction[:,0] - target[:,0])**2 + (prediction[:,1] - target[:,1])**2 + (prediction[:,2] - target[:,2])**2) 
