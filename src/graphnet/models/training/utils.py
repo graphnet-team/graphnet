@@ -9,6 +9,8 @@ import torch
 from torch.utils.data import DataLoader
 from torch_geometric.data.batch import Batch
 
+from tqdm import tqdm
+
 from graphnet.data.sqlite_dataset import SQLiteDataset
 from graphnet.models import Model
 
@@ -118,11 +120,19 @@ def get_predictions(trainer, model, dataloader, prediction_columns, additional_a
         additional_attributes = []
     assert isinstance(additional_attributes, list)
 
+    # Set model to inference mode
+    model.inference()
+
     # Get predictions
     predictions_torch = trainer.predict(model, dataloader)
     predictions = [p[0].detach().cpu().numpy() for p in predictions_torch]  # Assuming single task
     predictions = np.concatenate(predictions, axis=0)
-    assert len(prediction_columns) == predictions.shape[1]
+    try:
+        assert len(prediction_columns) == predictions.shape[1]
+    except IndexError:
+        predictions = predictions.reshape((-1, 1))
+        assert len(prediction_columns) == predictions.shape[1]
+
 
     # Get additional attributes
     attributes = OrderedDict([(attr, []) for attr in additional_attributes])
@@ -157,3 +167,39 @@ def load_model(db, tag, archive, detector, gnn, task, device):
     model.load_state_dict(torch.load(path + '/' + tag + '.pth'))
     model.eval()
     return model
+
+class Predictor(object):
+    def __init__(self, dataloader, target, device, output_column_names, post_processing_method = None):
+        self.dataloader = dataloader
+        self.target = target
+        self.output_column_names = output_column_names
+        self.device = device
+        self.post_processing_method = post_processing_method
+
+    def __call__(self, model):
+        self.model = model
+        self.model.eval()
+        self.model.predict = True
+        if self.post_processing_method == None:
+            return self._predict()
+        else:
+            return self.post_processing_method(self._predict(), self.target)
+
+    def _predict(self):
+        assert len(self.model._tasks) == 1
+        predictions = []
+        event_nos = []
+        energies = []
+        target = []
+        with torch.no_grad():
+            for batch_of_graphs in tqdm(self.dataloader, unit = 'batches'):
+                batch_of_graphs.to(self.device)
+                target.extend(batch_of_graphs[self.target].detach().cpu().numpy())
+                predictions.extend(self.model(batch_of_graphs)[0].detach().cpu().numpy())
+                event_nos.extend(batch_of_graphs['event_no'].detach().cpu().numpy())
+                energies.extend(batch_of_graphs['energy'].detach().cpu().numpy())
+        out = pd.DataFrame(data = predictions, columns = self.output_column_names)
+        out['event_no'] = event_nos
+        out['energy'] = energies
+        out[self.target] = target
+        return out
