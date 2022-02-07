@@ -195,6 +195,50 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         output.update(output_icecube86)
         return output
 
+class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
+
+    def __call__(self, frame) -> dict:
+        """Extract features to be used as inputs to GNN models."""
+
+        output = {
+            'string': [],
+            'pmt_number': [],
+            'dom_number': [],
+            'pmt_dir_x': [],
+            'pmt_dir_y': [],
+            'pmt_dir_z': [],
+            'dom_type': [],
+            'truth_flag': [],
+        }
+
+        try:
+            om_keys, data = self._get_om_keys_and_pulseseries(frame)
+        except KeyError:  # Target pulsemap does not exist in `frame`
+            return output
+            
+        for om_key in om_keys:
+            # Common values for each OM
+            pmt_dir_x = self._gcd_dict[om_key].orientation.x
+            pmt_dir_y = self._gcd_dict[om_key].orientation.y
+            pmt_dir_z = self._gcd_dict[om_key].orientation.z
+            string = om_key[0]
+            dom_number = om_key[1]
+            pmt_number = om_key[2]
+            dom_type = self._gcd_dict[om_key].omtype
+
+            # Loop over pulses for each OM
+            pulses = data[om_key]
+            for truth_flag in pulses:
+                output['string'].append(string)
+                output['pmt_number'].append(pmt_number)
+                output['dom_number'].append(dom_number)
+                output['pmt_dir_x'].append(pmt_dir_x)
+                output['pmt_dir_y'].append(pmt_dir_y)
+                output['pmt_dir_z'].append(pmt_dir_z)
+                output['dom_type'].append(dom_type)
+                output['truth_flag'].append(truth_flag)
+
+        return output
 
 class I3TruthExtractor(I3Extractor):
     def __init__(self, name="truth", borders=None):
