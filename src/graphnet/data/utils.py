@@ -102,8 +102,8 @@ def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List
         train_event_nos = '(' + ', '.join(map(str, indices_equal_proprtions)) + ')'
         query = f'select event_no from truth where abs(pid) != 13 and abs(pid) != 1 and event_no not in {train_event_nos}'
         test = pd.read_sql(query, con).values.ravel().tolist()
-
-    return indices_equal_proprtions, test
+ 
+    return indices_equal_proprtions , test
 
 def get_even_signal_background_indicies(db):
     with sqlite3.connect(db) as con:
@@ -150,6 +150,72 @@ def get_even_track_cascade_indicies(database):
 
     return events.values.ravel().tolist(), test
 
+def get_even_dbang_selection(db: str, min_max_decay_length = None, seed: int = 42) -> Tuple[List[int]]:
+    """Utility method to get indices for neutrino events with equal dbang / non-dbang labels.
+
+    Args:
+        db (str): Path to database.
+        seed (int, optional): Random number generator seed. Defaults to 42.
+
+    Returns:
+        tuple: Training and test indices, resp.
+    """
+    # Common variables
+    pids = ['12', '14', '16']
+    non_dbangs_indicies = {}
+    dbangs_indicies = {}
+    indices = []
+    rng = np.random.RandomState(seed=seed)
+
+    # Get a list of all event numbers for each PID that is not dbang
+    with sqlite3.connect(db) as conn:
+        for pid in pids:
+            non_dbangs_indicies[pid] = pd.read_sql_query(f"SELECT event_no FROM truth where abs(pid) = {pid} and dbang_decay_length = -1", conn)
+
+    # Subsample events for each PID to the smallest sample size
+    samples_sizes = list(map(len, non_dbangs_indicies.values()))
+    smallest_sample_size = min(samples_sizes)
+    print(f"Smallest non dbang sample size: {smallest_sample_size}")
+    indices = [
+        (
+            non_dbangs_indicies[pid]
+            .sample(smallest_sample_size, replace=False, random_state=rng)
+            .reset_index(drop=True)
+        ) for pid in pids
+    ]
+    indices_equal_proprtions = pd.concat(indices, ignore_index=True)
+
+    # Get a list of all event numbers  that is dbang
+    if min_max_decay_length == None:
+        with sqlite3.connect(db) as conn:
+            dbangs_indicies = pd.read_sql_query(f"SELECT event_no FROM truth where dbang_decay_length != -1", conn)
+        print(f"dbang sample size: {len(dbangs_indicies)}")
+    elif min_max_decay_length[1] == None:
+        with sqlite3.connect(db) as conn:
+            dbangs_indicies = pd.read_sql_query(f"SELECT event_no FROM truth where dbang_decay_length != -1 and dbang_decay_length >= {min_max_decay_length[0]}", conn)
+    else:
+        with sqlite3.connect(db) as conn:
+            dbangs_indicies = pd.read_sql_query(f"SELECT event_no FROM truth where dbang_decay_length != -1 and dbang_decay_length >= {min_max_decay_length[0]} and dbang_decay_length <= {min_max_decay_length[1]}", conn)
+
+    if len(indices_equal_proprtions) > len(dbangs_indicies):
+        indices_equal_proprtions = indices_equal_proprtions.sample(len(dbangs_indicies)).reset_index(drop = True)
+    else:
+        dbangs_indicies = dbangs_indicies.sample(len(indices_equal_proprtions)).reset_index(drop = True)
+
+    print('dbangs in joint sample: %s'%len(dbangs_indicies))
+    print('non-dbangs in joint sample: %s'%len(indices_equal_proprtions))
+
+    joint_indicies = dbangs_indicies.append(indices_equal_proprtions, ignore_index=True).reset_index(drop = True).sample(frac=1, replace=False, random_state=rng).values.ravel().tolist()
+    # Shuffle and convert to list
+
+
+    # Get test indices (?)
+    with sqlite3.connect(db) as con:
+        train_event_nos = '(' + ', '.join(map(str, joint_indicies)) + ')'
+        query = f'select event_no from truth where abs(pid) != 13 and abs(pid) != 1 and event_no not in {train_event_nos}'
+        test = pd.read_sql(query, con).values.ravel().tolist()
+
+    return joint_indicies, test
 
 
 def create_out_directory(outdir: str):
