@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.components.pool &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>graphnet.components.pool</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphnet.components.pool</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool.consecutive</span> <span class="k">import</span> <span class="n">consecutive_cluster</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool.pool</span> <span class="k">import</span> <span class="n">pool_edge</span><span class="p">,</span> <span class="n">pool_batch</span><span class="p">,</span> <span class="n">pool_pos</span>
+<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter</span>
+
+
+<div class="viewcode-block" id="sum_pool_and_distribute"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.sum_pool_and_distribute">[docs]</a><span class="k">def</span> <span class="nf">sum_pool_and_distribute</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">cluster_index</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LongTensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sum-pool values across the cluster, and distribute the individual nodes.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+    <span class="n">tensor_pooled</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sum_pool_x</span><span class="p">(</span><span class="n">cluster_index</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+    <span class="n">inv</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">consecutive_cluster</span><span class="p">(</span><span class="n">cluster_index</span><span class="p">)</span>
+    <span class="n">tensor_unpooled</span> <span class="o">=</span> <span class="n">tensor_pooled</span><span class="p">[</span><span class="n">inv</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tensor_unpooled</span></div>
+
+
+<div class="viewcode-block" id="group_identical"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.group_identical">[docs]</a><span class="k">def</span> <span class="nf">group_identical</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LongTensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Group rows in `tensor` that are identical</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor (Tensor): Tensor of shape [N, F]</span>
+<span class="sd">        batch (Optional[LongTensor], optional): Batch indices, to only group</span>
+<span class="sd">            identical rows within batches. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tensor: List of group indices, from 0 to num. groups - 1, assigning all</span>
+<span class="sd">            identical rows to the same group.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">tensor</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="group_pulses_to_dom"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.group_pulses_to_dom">[docs]</a><span class="k">def</span> <span class="nf">group_pulses_to_dom</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Groups pulses on the same DOM, using DOM and string number.&quot;&quot;&quot;</span>
+    <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">dom_number</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">string</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="s1">&#39;batch&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_identical</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="group_pulses_to_pmt"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.group_pulses_to_pmt">[docs]</a><span class="k">def</span> <span class="nf">group_pulses_to_pmt</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Groups pulses on the same PMT, using PMT, DOM, and string number.&quot;&quot;&quot;</span>
+    <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">pmt_number</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">dom_number</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">string</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="s1">&#39;batch&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">pmt_index</span> <span class="o">=</span> <span class="n">group_identical</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<span class="c1"># Below mirroring `torch_geometric.nn.pool.{avg,max}_pool.py` exactly</span>
+<span class="k">def</span> <span class="nf">_sum_pool_x</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="sum_pool_x"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.sum_pool_x">[docs]</a><span class="k">def</span> <span class="nf">sum_pool_x</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sum-Pools node features according to the clustering defined in</span>
+<span class="sd">    :attr:`cluster`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,</span>
+<span class="sd">            \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.</span>
+<span class="sd">        x (Tensor): Node feature matrix</span>
+<span class="sd">            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.</span>
+<span class="sd">        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,</span>
+<span class="sd">            B-1\}}^N`, which assigns each node to a specific example.</span>
+<span class="sd">        size (int, optional): The maximum number of clusters in a single</span>
+<span class="sd">            example. This property is useful to obtain a batch-wise dense</span>
+<span class="sd">            representation, *e.g.* for applying FC layers, but should only be</span>
+<span class="sd">            used if the size of the maximum number of clusters per example is</span>
+<span class="sd">            known in advance. (default: :obj:`None`)</span>
+
+<span class="sd">    :rtype: (:class:`Tensor`, :class:`LongTensor`) if :attr:`size` is</span>
+<span class="sd">        :obj:`None`, else :class:`Tensor`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">_sum_pool_x</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch_size</span> <span class="o">*</span> <span class="n">size</span><span class="p">),</span> <span class="kc">None</span>
+
+    <span class="n">cluster</span><span class="p">,</span> <span class="n">perm</span> <span class="o">=</span> <span class="n">consecutive_cluster</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">_sum_pool_x</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">pool_batch</span><span class="p">(</span><span class="n">perm</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span></div>
+
+
+<div class="viewcode-block" id="sum_pool"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.sum_pool">[docs]</a><span class="k">def</span> <span class="nf">sum_pool</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Pools and coarsens a graph given by the</span>
+<span class="sd">    :class:`torch_geometric.data.Data` object according to the clustering</span>
+<span class="sd">    defined in :attr:`cluster`.</span>
+<span class="sd">    All nodes within the same cluster will be represented as one node.</span>
+<span class="sd">    Final node features are defined by the *sum* of features of all nodes</span>
+<span class="sd">    within the same cluster, node positions are averaged and edge indices are</span>
+<span class="sd">    defined to be the union of the edge indices of all nodes within the same</span>
+<span class="sd">    cluster.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,</span>
+<span class="sd">            \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.</span>
+<span class="sd">        data (Data): Graph data object.</span>
+<span class="sd">        transform (callable, optional): A function/transform that takes in the</span>
+<span class="sd">            coarsened and pooled :obj:`torch_geometric.data.Data` object and</span>
+<span class="sd">            returns a transformed version. (default: :obj:`None`)</span>
+
+<span class="sd">    :rtype: :class:`torch_geometric.data.Data`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cluster</span><span class="p">,</span> <span class="n">perm</span> <span class="o">=</span> <span class="n">consecutive_cluster</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_sum_pool_x</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">index</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">pool_edge</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pool_batch</span><span class="p">(</span><span class="n">perm</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pool_pos</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">Batch</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="n">attr</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

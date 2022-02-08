@@ -20,6 +20,14 @@ graphnet.components.loss\_functions module
    :undoc-members:
    :show-inheritance:
 
+graphnet.components.pool module
+-------------------------------
+
+.. automodule:: graphnet.components.pool
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.components.utils module
 --------------------------------
 
