@@ -7,7 +7,7 @@
 
 
 
-### :gear: Install
+## :gear: Install
 
 We recommend installing `graphnet` in a separate environment, e.g. using Conda. See details on installing conda [here](https://www.anaconda.com/products/individual). This fastest way to get up and running is to install the package in the provided conda environment:
 ```bash
@@ -21,14 +21,14 @@ $ conda activate gnn_py38
 You can also install the package in a python virtual environment, or in your system python, but then you will have to contend with C++ compiler versions; the non-standard interplay between [pytorch](https://pytorch.org/) and [pytorch-geometric](https://pytorch-geometric.readthedocs.io/en/latest/) (see e.g. [here](https://github.com/pyg-team/pytorch_geometric/issues/861#issuecomment-566424944)), which `graphnet` uses internally; etc.
 
 
-### :handshake: Contributing
+## :handshake: Contributing
 
 To make sure that the process of contributing is as smooth and effective as possible, we provide a few guidelines in the [contributing guide](CONTRIBUTING.md) that we encourage contributors to follow.
 
 In short, everyone who wants to contribute to this project is more than welcome to do so! Contributions are handled through pull requests, that should be linked to a [GitHub issue](https://github.com/icecube/graphnet/issues) describing the feature to be added or bug to be fixed. Pull requests will be reviewed by the project maintainers and merged into the main branch when accepted.
 
 
-### :test_tube: Experiment tracking
+## :test_tube: Experiment tracking
 
 We're using [Weights & Biases](https://wandb.ai/) (W&B) to track the results — i.e. losses, metrics, and model artifacts — of training runs as a means to track model experimentation and streamline optimisation. To authenticate with W&B, sign up on the website and run the following in your terminal after having installed this package:
 ```bash
