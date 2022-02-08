@@ -138,3 +138,4 @@ lightning_logs/
 wandb/
 **.png
 **.pth
+**.ipynb
