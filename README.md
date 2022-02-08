@@ -1,4 +1,4 @@
-![logo](./assets/logo.png)
+![logo](./assets/identity/graphnet-logo-and-wordmark.png)
 
 ![build](https://github.com/icecube/graphnet/actions/workflows/build.yml/badge.svg)
 ![pylint](./assets/badges/pylint.svg)
