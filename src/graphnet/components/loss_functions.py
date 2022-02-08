@@ -70,8 +70,7 @@ class LogCoshLoss(LossFunction):
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
-        assert prediction.dim() == target.dim() + 1
-        diff = prediction[:,0] - target
+        diff = prediction - target
         elements = self._log_cosh(diff)
         return elements
 
@@ -226,11 +225,11 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         """
         # Check(s)
         assert prediction.dim() == 2 and prediction.size()[1] == 2
-        assert target.dim() == 1
+        assert target.dim() == 2
         assert prediction.size()[0] == target.size()[0]
 
         # Formatting target
-        angle_true = target
+        angle_true = target[:,0]
         t = torch.stack([
             torch.cos(angle_true),
             torch.sin(angle_true),
@@ -248,6 +247,6 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
 
 class XYZWithMaxScaling(LossFunction):
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        diff = (prediction[:,0] - target[:,0]/764.431509)**2 + (prediction[:,1] - target[:,1]/785.041607)**2 + (prediction[:,2] - target[:,2]/1083.249944)**2 #+(prediction[:,3] - target[:,3]/14721.646883) 
+        diff = (prediction[:,0] - target[:,0]/764.431509)**2 + (prediction[:,1] - target[:,1]/785.041607)**2 + (prediction[:,2] - target[:,2]/1083.249944)**2 #+(prediction[:,3] - target[:,3]/14721.646883)
         elements = torch.sqrt(diff)
         return elements
