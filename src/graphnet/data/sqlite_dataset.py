@@ -111,6 +111,13 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         return features, truth
 
+    def _get_dbang_label(self, truth_dict):
+        try:
+            label = int(truth_dict['dbang_decay_length'] > -1)
+            return label
+        except:
+            return -1
+
     def _create_graph(self, features, truth):
         """Create Pytorch Data (i.e.graph) object.
 
@@ -143,7 +150,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             'v_u': int(abs_pid == 14),
             'v_t': int(abs_pid == 16),
             'track': int((abs_pid == 14) & (truth_dict['interaction_type'] == 1)),
-            'dbang': int(sim_type == 'dbang'),
+            'dbang': self._get_dbang_label(truth_dict),
             'corsika': int(abs_pid > 20)
         }
 
@@ -161,8 +168,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
             edge_index= None
         )
         graph.n_pulses = n_pulses
+        graph.features = self._features[1:]
 
-        # Write attributes, either target labels or truth info.
+        # Write attributes, either target labels, truth info or original features.
         for write_dict in [labels_dict, truth_dict]:
             for key, value in write_dict.items():
                 try:
@@ -170,6 +178,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
                     pass
+
+        for ix, feature in enumerate(graph.features):
+            graph[feature] = graph.x[:,ix].detach()
 
         return graph
 

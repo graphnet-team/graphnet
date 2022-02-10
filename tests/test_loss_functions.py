@@ -38,12 +38,12 @@ def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
 def test_log_cosh(dtype=torch.float32):
     # Prepare test data
     x = torch.tensor([-100, -10, -1, 0, 1, 10, 100], dtype=dtype).unsqueeze(1)  # Shape [N, 1]
-    y = 0. * x.clone().squeeze()  # Shape [N,]
+    y = 0. * x.clone()  # Shape [N,1]
 
     # Calculate losses using loss function, and manually
     log_cosh_loss = LogCoshLoss()
     losses = log_cosh_loss(x, y, return_elements=True)
-    losses_reference = torch.log(torch.cosh(x[:,0] - y))
+    losses_reference = torch.log(torch.cosh(x - y))
 
     # (1) Loss functions should not return  `inf` losses, even for large
     #     differences between prediction and target. This is not necessarily
@@ -55,19 +55,6 @@ def test_log_cosh(dtype=torch.float32):
     #     calculations should agree exactly.
     reference_is_valid = torch.isfinite(losses_reference)
     assert torch.allclose(losses_reference[reference_is_valid], losses[reference_is_valid])
-
-
-def test_log_cosh_of_log_transformed(dtype=torch.float32):
-    # Prepare test data
-    x = torch.tensor([1, 10, 100, 1000, 10000], dtype=dtype).unsqueeze(1)  # Shape [N, 1]
-    y = 0.5 * x.clone().squeeze()  # Shape [N,]
-
-    log_cosh_loss = LogCoshLoss()
-    log_cosh_of_log_transformed_loss = LogCoshLoss(transform_prediction_and_target=lambda x: torch.log10(x))
-    assert torch.allclose(
-        log_cosh_loss(torch.log10(x), torch.log10(y), return_elements=True),
-        log_cosh_of_log_transformed_loss(x, y, return_elements=True),
-    )
 
 
 def test_von_mises_fisher_exact_m3(dtype=torch.float64):
