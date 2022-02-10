@@ -7,7 +7,7 @@ except ImportError:
     print("icecube package not available.")
 
 from abc import abstractmethod
-from .utils import frame_has_key
+from .utils import frame_has_key,muon_stopped
 
 
 class I3Extractor(ABC):
@@ -195,10 +195,60 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         output.update(output_icecube86)
         return output
 
+class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
+
+    def __call__(self, frame) -> dict:
+        """Extract features to be used as inputs to GNN models."""
+
+        output = {
+            'string': [],
+            'pmt_number': [],
+            'dom_number': [],
+            'pmt_dir_x': [],
+            'pmt_dir_y': [],
+            'pmt_dir_z': [],
+            'dom_type': [],
+            'truth_flag': [],
+        }
+
+        try:
+            om_keys, data = self._get_om_keys_and_pulseseries(frame)
+        except KeyError:  # Target pulsemap does not exist in `frame`
+            return output
+            
+        for om_key in om_keys:
+            # Common values for each OM
+            pmt_dir_x = self._gcd_dict[om_key].orientation.x
+            pmt_dir_y = self._gcd_dict[om_key].orientation.y
+            pmt_dir_z = self._gcd_dict[om_key].orientation.z
+            string = om_key[0]
+            dom_number = om_key[1]
+            pmt_number = om_key[2]
+            dom_type = self._gcd_dict[om_key].omtype
+
+            # Loop over pulses for each OM
+            pulses = data[om_key]
+            for truth_flag in pulses:
+                output['string'].append(string)
+                output['pmt_number'].append(pmt_number)
+                output['dom_number'].append(dom_number)
+                output['pmt_dir_x'].append(pmt_dir_x)
+                output['pmt_dir_y'].append(pmt_dir_y)
+                output['pmt_dir_z'].append(pmt_dir_z)
+                output['dom_type'].append(dom_type)
+                output['truth_flag'].append(truth_flag)
+
+        return output
 
 class I3TruthExtractor(I3Extractor):
-    def __init__(self, name="truth"):
+    def __init__(self, name="truth", borders=None):
         super().__init__(name)
+        if borders == None:
+            border_xy = np.array([(-256.1400146484375, -521.0800170898438), (-132.8000030517578, -501.45001220703125), (-9.13000011444092, -481.739990234375), (114.38999938964844, -461.989990234375), (237.77999877929688, -442.4200134277344), (361.0, -422.8299865722656), (405.8299865722656, -306.3800048828125), (443.6000061035156, -194.16000366210938), (500.42999267578125, -58.45000076293945), (544.0700073242188, 55.88999938964844), (576.3699951171875, 170.9199981689453), (505.2699890136719, 257.8800048828125), (429.760009765625, 351.0199890136719), (338.44000244140625, 463.7200012207031), (224.5800018310547, 432.3500061035156), (101.04000091552734, 412.7900085449219), (22.11000061035156, 509.5), (-101.05999755859375, 490.2200012207031), (-224.08999633789062, 470.8599853515625), (-347.8800048828125, 451.5199890136719), (-392.3800048828125, 334.239990234375), (-437.0400085449219, 217.8000030517578), (-481.6000061035156, 101.38999938964844), (-526.6300048828125, -15.60000038146973), (-570.9000244140625, -125.13999938964844), (-492.42999267578125, -230.16000366210938), (-413.4599914550781, -327.2699890136719), (-334.79998779296875, -424.5)])
+            border_z = np.array([-512.82,524.56])
+            self._borders = [border_xy,border_z]
+        else:
+            self._borders = borders
 
     def __call__(self, frame, padding_value=-1) -> dict:
         """Extracts truth features."""
@@ -238,6 +288,17 @@ class I3TruthExtractor(I3Extractor):
                 'interaction_type': interaction_type,
                 'elasticity': elasticity,
             })
+            if abs(output['pid'])==13:
+                output.update({
+                    'track_length': MCInIcePrimary.length,
+                })
+                final_position, stopped = muon_stopped(output,self._borders)
+                output.update({
+                    'final_position_x': final_position[0],
+                    'final_position_y': final_position[1],
+                    'final_position_z': final_position[2],
+                    'stopped_muon': stopped,
+                })                
 
         return output
 

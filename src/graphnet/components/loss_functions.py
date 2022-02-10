@@ -20,21 +20,8 @@ from torch.nn.modules.loss import _WeightedLoss
 class LossFunction(_WeightedLoss):
     """Base class for loss functions in graphnet.
     """
-    def __init__(
-        self,
-        transform_prediction_and_target: Optional[Callable] = None,
-        transform_target: Optional[Callable] = None,
-        **kwargs,
-    ):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        # Check(s)
-        assert not((transform_prediction_and_target is not None) and (transform_target is not None)), \
-            "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
-
-        # Member variables
-        self._transform_prediction = transform_prediction_and_target if transform_prediction_and_target else lambda x: x
-        self._transform_target = transform_target if transform_target else self._transform_prediction
 
     @final
     def forward(
@@ -55,8 +42,6 @@ class LossFunction(_WeightedLoss):
             Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
-        prediction = self._transform_prediction(prediction)
-        target = self._transform_target(target)
 
         elements = self._forward(prediction, target)
         assert elements.size(dim=0) == target.size(dim=0), \
@@ -85,8 +70,7 @@ class LogCoshLoss(LossFunction):
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
-        assert prediction.dim() == target.dim() + 1
-        diff = prediction[:,0] - target
+        diff = prediction - target
         elements = self._log_cosh(diff)
         return elements
 
@@ -98,7 +82,7 @@ class BinaryCrossEntropyLoss(LossFunction):
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        return torch.nn.functional.binary_cross_entropy(prediction, target, reduction='none')
+        return torch.nn.functional.binary_cross_entropy(prediction.float(), target.float(), reduction='none')
 
 
 class LogCMK(torch.autograd.Function):
@@ -241,11 +225,11 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         """
         # Check(s)
         assert prediction.dim() == 2 and prediction.size()[1] == 2
-        assert target.dim() == 1
+        assert target.dim() == 2
         assert prediction.size()[0] == target.size()[0]
 
         # Formatting target
-        angle_true = target
+        angle_true = target[:,0]
         t = torch.stack([
             torch.cos(angle_true),
             torch.sin(angle_true),
@@ -260,3 +244,9 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         ], dim=1)
 
         return self._evaluate(p, t)
+
+class XYZWithMaxScaling(LossFunction):
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        diff = (prediction[:,0] - target[:,0]/764.431509)**2 + (prediction[:,1] - target[:,1]/785.041607)**2 + (prediction[:,2] - target[:,2]/1083.249944)**2 #+(prediction[:,3] - target[:,3]/14721.646883)
+        elements = torch.sqrt(diff)
+        return elements

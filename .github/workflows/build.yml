@@ -3,12 +3,12 @@ name: build
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push
+  # Triggers the workflow on push and PRs
   push:
-    paths-ignore: [ misc/badges/ ]
+    paths-ignore: [ assets/badges/ ]
   pull_request:
     branches: [ main ]
-    paths-ignore: [ misc/badges/ ]
+    paths-ignore: [ assets/badges/ ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -39,14 +39,17 @@ jobs:
       - name: Generate unit test/build and coverage badges
         run: |
           tail -1 results_coverage.txt | sed 's/.* \(.*\)%/\1/g' | xargs -I {} anybadge -f coverage.svg -v {} coverage
-          mkdir -p misc/badges/
-          mv coverage.svg misc/badges/
+          mkdir -p assets/badges/
+          mv coverage.svg assets/badges/
       - name: Configure git
         run: |
           git config user.email "andreas.sogaard@gmail.com"
           git config user.name "Andreas Søgaard"
           git status
       - name: Stage badges
-        run: git add -f misc/badges/
+        run: |
+          git add -f assets/badges/
       - name: Commit and push changes
-        run: git commit -m "Auto-updating coverage badge" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          git commit -m "Auto-updating coverage badge" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"
