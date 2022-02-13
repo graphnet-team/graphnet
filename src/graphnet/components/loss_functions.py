@@ -253,9 +253,6 @@ class EuclideanDistance(LossFunction):
         Args:
             prediction (Tensor): Output of the model. Must have shape [N, 3]
             target (Tensor): Target tensor, extracted from graph object.
-            data (Data): torch_geometric.data.Data Object.
-            target_label (str): the target name. Enables target = data[target_label] indexing
-
         Returns:
             Tensor: Loss. Shape [n,1]
         """
