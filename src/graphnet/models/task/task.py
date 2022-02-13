@@ -106,7 +106,7 @@ class Task(LightningModule):
     @final
     def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
         transformed_target = self._transform_target(data[self._target_label])
-        loss = self._loss_function(pred, transformed_target, data, self._target_label) + self._regularisation_loss
+        loss = self._loss_function(pred, transformed_target) + self._regularisation_loss
         return loss
 
     @final
