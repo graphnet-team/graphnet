@@ -15,8 +15,6 @@ import scipy.special
 import torch
 from torch import Tensor
 from torch.nn.modules.loss import _WeightedLoss
-from torch_geometric.data import Data
-
 
 class LossFunction(_WeightedLoss):
     """Base class for loss functions in graphnet.
@@ -209,7 +207,7 @@ class VonMisesFisherLoss(LossFunction):
 
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
     """von Mises-Fisher loss function vectors in the 2D plane."""
-    def _forward(self, prediction: Tensor, target: Tensor, data: Data, target_label: str) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the von Mises-Fisher loss for an angle in the 2D plane.
 
         Args:
@@ -217,9 +215,6 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
                 where 0th column is a prediction of `angle` and 1st column is an
                 estimate of `kappa`.
             target (Tensor): Target tensor, extracted from graph object.
-            data (Data): torch_geometric.data.Data Object.
-            target_label (str): the target name. Enables target = data[target_label] indexing
-
         Returns:
             loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]
         """
