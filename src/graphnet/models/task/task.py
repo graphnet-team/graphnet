@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Union
+from typing import List, Union
 from typing import Callable, Optional
 import numpy as np
 
@@ -53,9 +53,9 @@ class Task(LightningModule):
         """Number of inputs assumed by task."""
 
     def __init__(
-        self, 
-        hidden_size: int, 
-        target_label: str, 
+        self,
+        hidden_size: int,
+        target_labels: Union[str, List[str]],
         loss_function: LossFunction,
         transform_prediction_and_target: Optional[Callable] = None,
         transform_target: Optional[Callable] = None,
@@ -66,9 +66,13 @@ class Task(LightningModule):
         # Base class constructor
         super().__init__()
 
+        # Check(s)
+        if isinstance(target_labels, str):
+            target_labels = [target_labels]
+
         # Member variables
         self._regularisation_loss = None
-        self._target_label = target_label
+        self._target_labels = target_labels
         self._loss_function = loss_function
         self._inference = False
 
@@ -76,9 +80,9 @@ class Task(LightningModule):
         self._transform_prediction_inference = lambda x: x
         self._transform_target = lambda x: x
         self._validate_and_set_transforms(
-            transform_prediction_and_target, 
-            transform_target, 
-            transform_inference, 
+            transform_prediction_and_target,
+            transform_target,
+            transform_inference,
             transform_support
         )
 
@@ -89,8 +93,8 @@ class Task(LightningModule):
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         self._regularisation_loss = 0  # Reset
         x = self._affine(x)
-        x = self._transform_prediction(x)
-        return self._forward(x)
+        x = self._forward(x)
+        return self._transform_prediction(x)
 
     @final
     def _transform_prediction(self, prediction: Union[Tensor, Data]) -> Union[Tensor, Data]:
@@ -105,8 +109,9 @@ class Task(LightningModule):
 
     @final
     def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
-        transformed_target = self._transform_target(data[self._target_label])
-        loss = self._loss_function(pred, transformed_target) + self._regularisation_loss
+        target = torch.stack([data[label] for label in self._target_labels], dim=1)
+        target = self._transform_target(target)
+        loss = self._loss_function(pred, target) + self._regularisation_loss
         return loss
 
     @final
@@ -118,13 +123,13 @@ class Task(LightningModule):
     def train_eval(self):
         '''Deactivate inference mode'''
         self._inference = False
-        
+
     @final
     def _validate_and_set_transforms(
-        self, 
-        transform_prediction_and_target: Union[Callable, None], 
-        transform_target: Union[Callable, None], 
-        transform_inference: Union[Callable, None], 
+        self,
+        transform_prediction_and_target: Union[Callable, None],
+        transform_target: Union[Callable, None],
+        transform_inference: Union[Callable, None],
         transform_support: Union[Callable, None]
     ):
         '''Assert that a valid combination of transformation arguments are passed and update the corresponding functions'''

@@ -95,7 +95,7 @@ def main():
     )
     task = ZenithReconstructionWithKappa(
         hidden_size=gnn.nb_outputs,
-        target_label=config['target'],
+        target_labels=config['target'],
         loss_function=VonMisesFisher2DLoss(),
     )
     model = Model(

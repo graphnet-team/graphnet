@@ -67,8 +67,7 @@ class LogCoshLoss(LossFunction):
         return x + torch.nn.functional.softplus(-2. * x) - np.log(2.0)
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
-        assert prediction.dim() == target.dim() + 1
-        diff = prediction[:,0] - target
+        diff = prediction - target
         elements = self._log_cosh(diff)
         return elements
 
@@ -220,11 +219,11 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         """
         # Check(s)
         assert prediction.dim() == 2 and prediction.size()[1] == 2
-        assert target.dim() == 1
+        assert target.dim() == 2
         assert prediction.size()[0] == target.size()[0]
 
         # Formatting target
-        angle_true = target
+        angle_true = target[:,0]
         t = torch.stack([
             torch.cos(angle_true),
             torch.sin(angle_true),
@@ -252,5 +251,6 @@ class EuclideanDistance(LossFunction):
             Tensor: Loss. Shape [n,1]
         """
         return torch.sqrt((prediction[:,0] - target[:,0])**2 + (prediction[:,1] - target[:,1])**2 + (prediction[:,2] - target[:,2])**2) 
+
 
 
