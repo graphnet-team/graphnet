@@ -230,42 +230,6 @@
     <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s1">&#39;.pth&#39;</span><span class="p">))</span>
     <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">model</span></div>
-
-<div class="viewcode-block" id="Predictor"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.utils.Predictor">[docs]</a><span class="k">class</span> <span class="nc">Predictor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">output_column_names</span><span class="p">,</span> <span class="n">post_processing_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span> <span class="o">=</span> <span class="n">dataloader</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_column_names</span> <span class="o">=</span> <span class="n">output_column_names</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">post_processing_method</span> <span class="o">=</span> <span class="n">post_processing_method</span>
-
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_processing_method</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_processing_method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_tasks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">event_nos</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">energies</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">batch_of_graphs</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;batches&#39;</span><span class="p">):</span>
-                <span class="n">batch_of_graphs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-                <span class="n">target</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-                <span class="n">predictions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-                <span class="n">event_nos</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">[</span><span class="s1">&#39;event_no&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-                <span class="n">energies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">batch_of_graphs</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_column_names</span><span class="p">)</span>
-        <span class="n">out</span><span class="p">[</span><span class="s1">&#39;event_no&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_nos</span>
-        <span class="n">out</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">energies</span>
-        <span class="n">out</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span>
-        <span class="k">return</span> <span class="n">out</span></div>
 </pre></div>
 
            </div>

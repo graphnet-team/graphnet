@@ -79,7 +79,6 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">Tensor</span>
 <span class="kn">from</span> <span class="nn">torch.nn.modules.loss</span> <span class="k">import</span> <span class="n">_WeightedLoss</span>
 
-
 <div class="viewcode-block" id="LossFunction"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.LossFunction">[docs]</a><span class="k">class</span> <span class="nc">LossFunction</span><span class="p">(</span><span class="n">_WeightedLoss</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for loss functions in graphnet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -105,7 +104,6 @@
 <span class="sd">            Tensor: Loss, either averaged to a scalar (if `return_elements = False`)</span>
 <span class="sd">                or elementwise terms with shape [N,] (if `return_elements = True`).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">elements</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> \
             <span class="s2">&quot;`_forward` should return elementwise loss terms.&quot;</span>
@@ -130,7 +128,6 @@
 <span class="sd">        See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="o">-</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="LogCoshLoss._forward"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.LogCoshLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Implementation of loss calculation.&quot;&quot;&quot;</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">prediction</span> <span class="o">-</span> <span class="n">target</span>
@@ -143,10 +140,8 @@
 <span class="sd">    where prediction is prob. the PID is neutrino (12,14,16)</span>
 <span class="sd">    loss should be reported elementwise, so set reduction to None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">binary_cross_entropy</span><span class="p">(</span><span class="n">prediction</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="LogCMK"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.LogCMK">[docs]</a><span class="k">class</span> <span class="nc">LogCMK</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;MIT License</span>
@@ -282,7 +277,6 @@
 <span class="sd">                where 0th column is a prediction of `angle` and 1st column is an</span>
 <span class="sd">                estimate of `kappa`.</span>
 <span class="sd">            target (Tensor): Target tensor, extracted from graph object.</span>
-
 <span class="sd">        Returns:</span>
 <span class="sd">            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -308,11 +302,21 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div></div>
 
-<div class="viewcode-block" id="XYZWithMaxScaling"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.XYZWithMaxScaling">[docs]</a><span class="k">class</span> <span class="nc">XYZWithMaxScaling</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">prediction</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">764.431509</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">prediction</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">785.041607</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">prediction</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="mf">1083.249944</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1">#+(prediction[:,3] - target[:,3]/14721.646883)</span>
-        <span class="n">elements</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">elements</span></div>
+
+<div class="viewcode-block" id="EuclideanDistance"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance">[docs]</a><span class="k">class</span> <span class="nc">EuclideanDistance</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="EuclideanDistance._forward"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the 3D Euclidean distance between predicted and target.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prediction (Tensor): Output of the model. Must have shape [N, 3]</span>
+<span class="sd">            target (Tensor): Target tensor, extracted from graph object.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Tensor: Loss. Shape [n,1]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">prediction</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">prediction</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">prediction</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> </div></div>
+
+
+
 </pre></div>
 
            </div>

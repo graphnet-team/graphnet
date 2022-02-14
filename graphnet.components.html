@@ -112,6 +112,37 @@ loss should be reported elementwise, so set reduction to None</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="graphnet.components.loss_functions.EuclideanDistance">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.components.loss_functions.</span></span><span class="sig-name descname"><span class="pre">EuclideanDistance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/components/loss_functions.html#EuclideanDistance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.loss_functions.EuclideanDistance" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.components.loss_functions.LossFunction" title="graphnet.components.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.components.loss_functions.LossFunction</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.components.loss_functions.EuclideanDistance._forward">
+<span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/components/loss_functions.html#EuclideanDistance._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.loss_functions.EuclideanDistance._forward" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the 3D Euclidean distance between predicted and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prediction</strong> (<em>Tensor</em>) – Output of the model. Must have shape [N, 3]</p></li>
+<li><p><strong>target</strong> (<em>Tensor</em>) – Target tensor, extracted from graph object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Loss. Shape [n,1]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.components.loss_functions.EuclideanDistance.reduction">
+<span class="sig-name descname"><span class="pre">reduction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.components.loss_functions.EuclideanDistance.reduction" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="graphnet.components.loss_functions.LogCMK">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.components.loss_functions.</span></span><span class="sig-name descname"><span class="pre">LogCMK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/components/loss_functions.html#LogCMK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.loss_functions.LogCMK" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.autograd.function.Function</span></code></p>
@@ -353,27 +384,6 @@ ensuring continuity at this point.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.components.loss_functions.VonMisesFisherLoss.weight">
 <span class="sig-name descname"><span class="pre">weight</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.components.loss_functions.VonMisesFisherLoss.weight" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.components.loss_functions.XYZWithMaxScaling">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.components.loss_functions.</span></span><span class="sig-name descname"><span class="pre">XYZWithMaxScaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/components/loss_functions.html#XYZWithMaxScaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.loss_functions.XYZWithMaxScaling" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.components.loss_functions.LossFunction" title="graphnet.components.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.components.loss_functions.LossFunction</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.components.loss_functions.XYZWithMaxScaling.reduction">
-<span class="sig-name descname"><span class="pre">reduction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.components.loss_functions.XYZWithMaxScaling.reduction" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.components.loss_functions.XYZWithMaxScaling.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.components.loss_functions.XYZWithMaxScaling.training" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.components.loss_functions.XYZWithMaxScaling.weight">
-<span class="sig-name descname"><span class="pre">weight</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.components.loss_functions.XYZWithMaxScaling.weight" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

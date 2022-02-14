@@ -85,7 +85,6 @@
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
- | <a href="#X"><strong>X</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
@@ -128,9 +127,11 @@
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._extract_everything">_extract_everything() (graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
-      <li><a href="graphnet.components.html#graphnet.components.loss_functions.LogCoshLoss._forward">_forward() (graphnet.components.loss_functions.LogCoshLoss method)</a>
+      <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance._forward">_forward() (graphnet.components.loss_functions.EuclideanDistance method)</a>
 
       <ul>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.LogCoshLoss._forward">(graphnet.components.loss_functions.LogCoshLoss method)</a>
+</li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.LossFunction._forward">(graphnet.components.loss_functions.LossFunction method)</a>
 </li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisher2DLoss._forward">(graphnet.components.loss_functions.VonMisesFisher2DLoss method)</a>
@@ -279,6 +280,8 @@
       <li><a href="graphnet.html#graphnet.utils.eps_like">eps_like() (in module graphnet.utils)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset.establish_connection">establish_connection() (graphnet.data.sqlite_dataset.SQLiteDataset method)</a>
+</li>
+      <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance">EuclideanDistance (class in graphnet.components.loss_functions)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -812,13 +815,17 @@
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.nb_inputs">(graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty attribute)</a>
 </li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.nb_inputs">(graphnet.models.task.reconstruction.PassOutput1 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.nb_inputs">(graphnet.models.task.reconstruction.PassOutput2 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.nb_inputs">(graphnet.models.task.reconstruction.PassOutput3 attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.nb_inputs">(graphnet.models.task.reconstruction.PositionReconstruction attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.nb_inputs">(graphnet.models.task.reconstruction.TimeReconstruction attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.nb_inputs">(graphnet.models.task.reconstruction.VertexReconstruction attribute)</a>
-</li>
-        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.XYZReconstruction.nb_inputs">(graphnet.models.task.reconstruction.XYZReconstruction attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.nb_inputs">(graphnet.models.task.reconstruction.ZenithReconstruction attribute)</a>
 </li>
@@ -853,6 +860,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.html#graphnet.data.utils.pairwise_shuffle">pairwise_shuffle() (in module graphnet.data.utils)</a>
 </li>
+      <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1">PassOutput1 (class in graphnet.models.task.reconstruction)</a>
+</li>
+      <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2">PassOutput2 (class in graphnet.models.task.reconstruction)</a>
+</li>
+      <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3">PassOutput3 (class in graphnet.models.task.reconstruction)</a>
+</li>
       <li><a href="graphnet.models.training.html#graphnet.models.training.callbacks.PiecewiseLinearLR">PiecewiseLinearLR (class in graphnet.models.training.callbacks)</a>
 </li>
       <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction">PositionReconstruction (class in graphnet.models.task.reconstruction)</a>
@@ -873,8 +886,6 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.models.training.html#graphnet.models.training.utils.Predictor">Predictor (class in graphnet.models.training.utils)</a>
-</li>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.prepare_data_per_node">prepare_data_per_node (graphnet.models.detector.icecube.IceCube86 attribute)</a>
 
       <ul>
@@ -902,6 +913,8 @@
       <li><a href="graphnet.components.html#graphnet.components.loss_functions.BinaryCrossEntropyLoss.reduction">reduction (graphnet.components.loss_functions.BinaryCrossEntropyLoss attribute)</a>
 
       <ul>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance.reduction">(graphnet.components.loss_functions.EuclideanDistance attribute)</a>
+</li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.LogCoshLoss.reduction">(graphnet.components.loss_functions.LogCoshLoss attribute)</a>
 </li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.LossFunction.reduction">(graphnet.components.loss_functions.LossFunction attribute)</a>
@@ -909,8 +922,6 @@
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisher2DLoss.reduction">(graphnet.components.loss_functions.VonMisesFisher2DLoss attribute)</a>
 </li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisherLoss.reduction">(graphnet.components.loss_functions.VonMisesFisherLoss attribute)</a>
-</li>
-        <li><a href="graphnet.components.html#graphnet.components.loss_functions.XYZWithMaxScaling.reduction">(graphnet.components.loss_functions.XYZWithMaxScaling attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -966,8 +977,6 @@
       <ul>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisherLoss.training">(graphnet.components.loss_functions.VonMisesFisherLoss attribute)</a>
 </li>
-        <li><a href="graphnet.components.html#graphnet.components.loss_functions.XYZWithMaxScaling.training">(graphnet.components.loss_functions.XYZWithMaxScaling attribute)</a>
-</li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.training">(graphnet.models.detector.detector.Detector attribute)</a>
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.training">(graphnet.models.detector.icecube.IceCube86 attribute)</a>
@@ -1000,13 +1009,17 @@
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.training">(graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty attribute)</a>
 </li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.training">(graphnet.models.task.reconstruction.PassOutput1 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.training">(graphnet.models.task.reconstruction.PassOutput2 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.training">(graphnet.models.task.reconstruction.PassOutput3 attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.training">(graphnet.models.task.reconstruction.PositionReconstruction attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.training">(graphnet.models.task.reconstruction.TimeReconstruction attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.training">(graphnet.models.task.reconstruction.VertexReconstruction attribute)</a>
-</li>
-        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.XYZReconstruction.training">(graphnet.models.task.reconstruction.XYZReconstruction attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.training">(graphnet.models.task.reconstruction.ZenithReconstruction attribute)</a>
 </li>
@@ -1074,21 +1087,7 @@
       <ul>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisherLoss.weight">(graphnet.components.loss_functions.VonMisesFisherLoss attribute)</a>
 </li>
-        <li><a href="graphnet.components.html#graphnet.components.loss_functions.XYZWithMaxScaling.weight">(graphnet.components.loss_functions.XYZWithMaxScaling attribute)</a>
-</li>
       </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="X">X</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.XYZReconstruction">XYZReconstruction (class in graphnet.models.task.reconstruction)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.components.html#graphnet.components.loss_functions.XYZWithMaxScaling">XYZWithMaxScaling (class in graphnet.components.loss_functions)</a>
-</li>
   </ul></td>
 </tr></table>
 

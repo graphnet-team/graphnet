@@ -97,6 +97,24 @@
         <span class="k">return</span> <span class="n">angle</span></div>
 
 
+<div class="viewcode-block" id="PassOutput1"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1">[docs]</a><span class="k">class</span> <span class="nc">PassOutput1</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Passes 1 output without interference.&quot;&quot;&quot;</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="PassOutput2"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2">[docs]</a><span class="k">class</span> <span class="nc">PassOutput2</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Passes 2 output without interference.&quot;&quot;&quot;</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="PassOutput3"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3">[docs]</a><span class="k">class</span> <span class="nc">PassOutput3</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Passes 3 output without interference.&quot;&quot;&quot;</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
 <div class="viewcode-block" id="ZenithReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction">[docs]</a><span class="k">class</span> <span class="nc">ZenithReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reconstructs zenith angle.&quot;&quot;&quot;</span>
     <span class="c1"># Requires two features: untransformed points in (x,y)-space.</span>
@@ -121,10 +139,10 @@
     <span class="sd">&quot;&quot;&quot;Reconstructs energy.&quot;&quot;&quot;</span>
     <span class="c1"># Requires one feature: untransformed energy</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
-
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="c1"># Transform energy</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="EnergyReconstructionWithUncertainty"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty">[docs]</a><span class="k">class</span> <span class="nc">EnergyReconstructionWithUncertainty</span><span class="p">(</span><span class="n">EnergyReconstruction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reconstructs energy and associated uncertainty (log(var)).&quot;&quot;&quot;</span>
@@ -149,13 +167,6 @@
         <span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e2</span>
         <span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e2</span>
 
-        <span class="k">return</span> <span class="n">x</span> </div>
-
-<div class="viewcode-block" id="XYZReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.XYZReconstruction">[docs]</a><span class="k">class</span> <span class="nc">XYZReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="c1"># Requires four features, x, y, z</span>
-    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">3</span>
-
-    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span> </div>
 
 <div class="viewcode-block" id="PositionReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction">[docs]</a><span class="k">class</span> <span class="nc">PositionReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
