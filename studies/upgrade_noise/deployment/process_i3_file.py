@@ -1,4 +1,3 @@
-import time
 import argparse
 from glob import glob
 from os import makedirs
@@ -6,7 +5,7 @@ from os.path import join, dirname
 
 from I3Tray import I3Tray
 from graphnet.data.utils import is_gcd_file
-from icecube import dataclasses, icetray
+from icecube import dataclasses
 
 import torch
 from torch.optim.adam import Adam
