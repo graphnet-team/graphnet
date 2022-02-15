@@ -1,3 +1,4 @@
+import time
 import argparse
 from glob import glob
 from os import makedirs
@@ -5,7 +6,7 @@ from os.path import join, dirname
 
 from I3Tray import I3Tray
 from graphnet.data.utils import is_gcd_file
-from icecube import dataclasses
+from icecube import dataclasses, icetray
 
 import torch
 from torch.optim.adam import Adam
@@ -13,11 +14,10 @@ from torch.optim.adam import Adam
 from graphnet.modules import GraphNeTModuleIceCubeUpgrade
 
 # Constants
-#BASE_DIR = "/groups/icecube/asogaard/gnn/upgrade_sensitivity"
-#RUN_NAME = "dev_step4_numu_140021_second_run"
-#MODEL_NAME = "upgrade_energy_regression_45e_GraphSagePulses"
-#MODEL_PATH = f"{BASE_DIR}/results/{RUN_NAME}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
-MODEL_PATH = "dev_step4_numu_140021_second_run_upgrade_energy_regression_45e_GraphSagePulses_clean.pth"
+BASE_DIR = "/groups/icecube/asogaard/gnn/upgrade_sensitivity"
+RUN_NAME = "dev_step4_numu_140021_second_run"
+MODEL_NAME = "upgrade_energy_regression_45e_GraphSagePulses"
+MODEL_PATH = f"{BASE_DIR}/results/{RUN_NAME}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
 
 # Main function definition
 def main(input_files, output_file, key, pulsemaps, gcd_file, events_max):
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     parser.add_argument("input_folder", help="The input folder where i3 files of a given dataset are located.")
     parser.add_argument("output_folder", help="The output folder where processed i3 files will be saved.")
     parser.add_argument("--key", nargs='?', default="graphnet_energy")
-    parser.add_argument("--pulsemaps", nargs='+', type=list, default="SplitInIcePulses_GraphSage_Pulses")
+    parser.add_argument("--pulsemaps", nargs='+', default=["SplitInIcePulses_GraphSage_Pulses"])
     parser.add_argument("--gcd_file", nargs='?', default=None)
     parser.add_argument("--events_max", nargs='?', type=int, default=0)
 
