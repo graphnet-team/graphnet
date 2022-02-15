@@ -90,5 +90,5 @@ def build_model(target):
 # Main function call
 if __name__ == '__main__':
     for target in ['energy', 'zenith', 'track']:
-        for run_number in [140021, 140021]:
+        for run_number in [140021, 140022]:
             main(target, run_number)
