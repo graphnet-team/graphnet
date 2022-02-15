@@ -4,10 +4,10 @@ graphnet.modules package
 Submodules
 ----------
 
-graphnet.modules.gnn\_module module
------------------------------------
+graphnet.modules.graphnet\_module module
+----------------------------------------
 
-.. automodule:: graphnet.modules.gnn_module
+.. automodule:: graphnet.modules.graphnet_module
    :members:
    :undoc-members:
    :show-inheritance:
