@@ -1,1 +1,1 @@
-from .gnn_module import *
+from .graphnet_module import *
