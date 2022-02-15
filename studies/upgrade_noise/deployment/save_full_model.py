@@ -37,8 +37,7 @@ def main(target, run_number):
     model = build_model(target)
     model.load_state_dict(model_base_path + '_state_dict.pth')
     model.inference()
-    #model.save(model_base_path + '_clean.pth')
-    model.save(run_name + '_' + model_name + '_clean.pth')
+    model.save(model_base_path + '_clean.pth')
 
 
 def get_task(target, hidden_size):
