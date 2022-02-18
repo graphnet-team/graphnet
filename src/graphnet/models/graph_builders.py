@@ -2,8 +2,10 @@ from abc import ABC, abstractmethod
 from typing import List
 
 import torch
-from torch_geometric.nn import knn_graph
+from torch_geometric.nn import knn_graph,radius_graph
 from torch_geometric.data import Data
+
+from graphnet.models.utils import calculate_distance_matrix
 
 
 class GraphBuilder(ABC):  # pylint: disable=too-few-public-methods
@@ -44,20 +46,20 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
         return data
 
 
-class EuclideanGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
-    """Builds graph adjacency """
+class RadialGraphBuilder(GraphBuilder):  
+    """Builds graph adjacency according to a sphere of chosen radius centred at each DOM hit"""
     def __init__ (
         self,
-        sigma: float, #retains/requires grad? here?
+        radius: float,
         columns: List[int] = None,
         device: str = None,
     ):
-        # Check(s) 
+        # Check(s)
         if columns is None:
             columns = [0,1,2]
 
         # Member variable(s)
-        self._sigma = torch.tensor(sigma, requires_grad=True)
+        self._radius = radius
         self._columns = columns
         self._device = device
 
@@ -67,41 +69,59 @@ class EuclideanGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-met
             print("WARNING: GraphBuilder received graph with pre-existing structure. ",
                   "Will overwrite.")
 
-        data.edge_index, data.edge_weight = euclidean_graph_builder(
+        data.edge_index = radius_graph(
             data.x[:, self._columns],
-            self._sigma,
-            #data.batch,
+            self._radius,
+            data.batch,
         ).to(self._device)
 
         return data
 
 
-def euclidean_graph_builder(coords, sigma):
+class EuclideanGraphBuilder(GraphBuilder): # pylint: disable=too-few-public-methods
+    """Builds graph adjacency according to Euclidean distance as in https://arxiv.org/pdf/1809.06166.pdf"""
+    def __init__ (
+        self,
+        sigma: float,
+        threshold: float = 0.0,
+        columns: List[int] = None,
+    ):
+        # Check(s)
+        if columns is None:
+            columns = [0,1,2]
 
-    def g_kernel(sigma,arr1,arr2):
-        return torch.exp((-0.5 * torch.linalg.norm(arr1-arr2)**2)/sigma**2)
-    
-    n_doms = coords.shape[0]
-    affinity_mat = -1*torch.ones((n_doms,n_doms))
-    weighted_adj_mat = -1*torch.ones((n_doms,n_doms))
+        # Member variable(s)
+        self._sigma = sigma
+        self._threshold = threshold
+        self._columns = columns
+        
 
-    for i in range(n_doms):
-        for j in range(n_doms):
-            affinity_mat[i,j] = g_kernel(sigma,coords[i,:],coords[j,:])
-        for k in range(n_doms):
-            weighted_adj_mat[i,k] = torch.exp(affinity_mat[i,k])/torch.sum(torch.exp(affinity_mat[i,:]))
+    def __call__ (self, data: Data) -> Data:
+        # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
+        if data.edge_index is not None:
+            print("WARNING: GraphBuilder received graph with pre-existing structure. ",
+                  "Will overwrite.")
 
-    adj_list = []
-    edge_weights = []
-    for row in range(n_doms): 
-        for col in range(n_doms):
-            adj_list.append([row,col])
-            edge_weights.append(weighted_adj_mat[row,col])        
+        xyz_coords = data.x[:,self._columns]
+        batch_mask = (data.batch.unsqueeze(dim=0) == data.batch.unsqueeze(dim=1))
 
-    return torch.tensor(adj_list).t().contiguous(),torch.tensor(edge_weights)
+        distance_matrix = calculate_distance_matrix(xyz_coords)
+        affinity_matrix = torch.exp(-0.5*distance_matrix/self._sigma**2)
 
-#class EuclideanGraphBuilder(GraphBuilder):
-#    ...
+        exp_row_sums = torch.exp(affinity_matrix).sum(axis=1)
+        weighted_adj_matrix = torch.exp(affinity_matrix)/exp_row_sums.unsqueeze(dim=1)
+        
+        #only include edges with weights that exceed the chosen threshold (and are part of the same pulsemap)
+        sources,targets = torch.where((weighted_adj_matrix>self._threshold) & (batch_mask))
+        edge_weights = weighted_adj_matrix[sources,targets]     
+
+        data.edge_index = torch.stack((sources,targets))
+        data.edge_weight = edge_weights  
+
+        return data
+
+
+
 
 
 #class MinkowskiGraphBuilder(GraphBuilder):
