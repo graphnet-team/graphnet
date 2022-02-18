@@ -23,8 +23,7 @@ def calculate_distance_matrix(xyz_coords):
     Input:
         x.y,z co-ordinates of active DOMs
 
-    Calculates the matrix of distances squared from DOM i to DOM j
-    in x,y,z co-ordinates
+    Calculates the matrix of distances squared from DOM i to DOM j in x,y,z co-ordinates
 
     Returns:
         matrix: tensor of size [N_doms,N_doms]
