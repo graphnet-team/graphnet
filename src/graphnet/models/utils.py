@@ -1,3 +1,4 @@
+import torch
 from torch_geometric.utils.homophily import homophily
 
 def calculate_xyzt_homophily(x, edge_index, batch):
@@ -15,3 +16,19 @@ def calculate_xyzt_homophily(x, edge_index, batch):
     hz = homophily(edge_index, x[:,2], batch).reshape(-1,1)
     ht = homophily(edge_index, x[:,3], batch).reshape(-1,1)
     return hx, hy, hz, ht
+
+
+def calculate_distance_matrix(xyz_coords):
+    '''
+    Input:
+        x.y,z co-ordinates of active DOMs
+
+    Calculates the matrix of distances squared from DOM i to DOM j
+    in x,y,z co-ordinates
+
+    Returns:
+        matrix: tensor of size [N_doms,N_doms]
+    '''
+    diff_sqrd = (xyz_coords.unsqueeze(dim=2) - xyz_coords.T.unsqueeze(dim=0))**2    
+    return torch.sum(diff_sqrd, dim=1)
+
