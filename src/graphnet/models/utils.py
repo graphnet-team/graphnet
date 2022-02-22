@@ -1,4 +1,5 @@
 import torch
+from torch import Tensor
 from torch_geometric.utils.homophily import homophily
 
 def calculate_xyzt_homophily(x, edge_index, batch):
