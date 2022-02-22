@@ -29,6 +29,6 @@ def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
     Returns:
         Matrix of pairwise distances, of shape [nb_doms, nb_doms]
     '''
-    diff_sqrd = (xyz_coords.unsqueeze(dim=2) - xyz_coords.T.unsqueeze(dim=0))**2    
-    return torch.sum(diff_sqrd, dim=1)
+    diff = (xyz_coords.unsqueeze(dim=2) - xyz_coords.T.unsqueeze(dim=0))
+    return torch.sqrt(torch.sum(diff**2, dim=1))
 
