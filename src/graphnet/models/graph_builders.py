@@ -103,6 +103,8 @@ class EuclideanGraphBuilder(GraphBuilder): # pylint: disable=too-few-public-meth
                   "Will overwrite.")
 
         xyz_coords = data.x[:,self._columns]
+
+        # Construct block-diagonal matrix indicating whether pulses belong to the same event in the batch
         batch_mask = (data.batch.unsqueeze(dim=0) == data.batch.unsqueeze(dim=1))
 
         distance_matrix = calculate_distance_matrix(xyz_coords)
