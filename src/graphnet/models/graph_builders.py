@@ -106,7 +106,7 @@ class EuclideanGraphBuilder(GraphBuilder): # pylint: disable=too-few-public-meth
         batch_mask = (data.batch.unsqueeze(dim=0) == data.batch.unsqueeze(dim=1))
 
         distance_matrix = calculate_distance_matrix(xyz_coords)
-        affinity_matrix = torch.exp(-0.5*distance_matrix/self._sigma**2)
+        affinity_matrix = torch.exp(-0.5 * distance_matrix**2 / self._sigma**2)
 
         exp_row_sums = torch.exp(affinity_matrix).sum(axis=1)
         weighted_adj_matrix = torch.exp(affinity_matrix)/exp_row_sums.unsqueeze(dim=1)
