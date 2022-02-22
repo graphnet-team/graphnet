@@ -108,6 +108,7 @@ class EuclideanGraphBuilder(GraphBuilder): # pylint: disable=too-few-public-meth
         distance_matrix = calculate_distance_matrix(xyz_coords)
         affinity_matrix = torch.exp(-0.5 * distance_matrix**2 / self._sigma**2)
 
+        # Use softmax to normalise all adjacencies to one for each node
         exp_row_sums = torch.exp(affinity_matrix).sum(axis=1)
         weighted_adj_matrix = torch.exp(affinity_matrix)/exp_row_sums.unsqueeze(dim=1)
         
