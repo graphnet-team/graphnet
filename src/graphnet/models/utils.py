@@ -18,7 +18,7 @@ def calculate_xyzt_homophily(x, edge_index, batch):
     return hx, hy, hz, ht
 
 
-def calculate_distance_matrix(xyz_coords):
+def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
     '''
     Input:
         x.y,z co-ordinates of active DOMs
