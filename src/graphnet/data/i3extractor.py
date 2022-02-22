@@ -93,7 +93,7 @@ class I3FeatureExtractor(I3Extractor):
                     frame["I3Calibration"] = self._calibration
                     data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
-                    #del frame["I3Calibration"]  # Avoid modifying the frame in-place
+                    del frame["I3Calibration"]  # Avoid adding unneccesary data to frame
             except:
                 data = dataclasses.I3RecoPulseSeriesMap.from_frame(frame, self._pulsemap)
                 om_keys = data.keys()
@@ -127,10 +127,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             y = self._gcd_dict[om_key].position.y
             z = self._gcd_dict[om_key].position.z
             area = self._gcd_dict[om_key].area
-            if "I3Calibration" in frame:  # Not available for e.g. mDOMs in IceCube Upgrade
-                rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
-            else:
-                rde = -1.
+            rde = self._get_relative_dom_efficiency(frame, om_key)
 
             # Loop over pulses for each OM
             pulses = data[om_key]
@@ -145,6 +142,15 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output['dom_z'].append(z)
 
         return output
+    def _get_relative_dom_efficiency(self, frame, om_key):
+        if "I3Calibration" in frame:  # Not available for e.g. mDOMs in IceCube Upgrade
+            rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
+        else:
+            try:
+                rde = self._calibration.dom_cal[om_key].relative_dom_eff
+            except:
+                rde = -1
+        return rde
 
 class I3FeatureExtractorIceCubeDeepCore(I3FeatureExtractorIceCube86):
     """..."""
