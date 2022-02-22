@@ -112,8 +112,8 @@ class EuclideanGraphBuilder(GraphBuilder): # pylint: disable=too-few-public-meth
         exp_row_sums = torch.exp(affinity_matrix).sum(axis=1)
         weighted_adj_matrix = torch.exp(affinity_matrix)/exp_row_sums.unsqueeze(dim=1)
         
-        #only include edges with weights that exceed the chosen threshold (and are part of the same pulsemap)
-        sources,targets = torch.where((weighted_adj_matrix>self._threshold) & (batch_mask))
+        # Only include edges with weights that exceed the chosen threshold (and are part of the same event)
+        sources, targets = torch.where((weighted_adj_matrix > self._threshold) & (batch_mask))
         edge_weights = weighted_adj_matrix[sources,targets]     
 
         data.edge_index = torch.stack((sources,targets))
