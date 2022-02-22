@@ -156,7 +156,7 @@
                     <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
                     <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-                    <span class="k">del</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span>  <span class="c1"># Avoid modifying the frame in-place</span>
+                    <span class="k">del</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span>  <span class="c1"># Avoid adding unneccesary data to frame</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">)</span>
                 <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -190,10 +190,7 @@
             <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span>
             <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span>
             <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">area</span>
-            <span class="k">if</span> <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>  <span class="c1"># Not available for e.g. mDOMs in IceCube Upgrade</span>
-                <span class="n">rde</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">rde</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>
+            <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_relative_dom_efficiency</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">)</span>
 
             <span class="c1"># Loop over pulses for each OM</span>
             <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
@@ -207,7 +204,16 @@
                 <span class="n">output</span><span class="p">[</span><span class="s1">&#39;dom_y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s1">&#39;dom_z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">output</span></div></div>
+        <span class="k">return</span> <span class="n">output</span></div>
+    <span class="k">def</span> <span class="nf">_get_relative_dom_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>  <span class="c1"># Not available for e.g. mDOMs in IceCube Upgrade</span>
+            <span class="n">rde</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">rde</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">rde</span></div>
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCubeDeepCore"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractorIceCubeDeepCore">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCubeDeepCore</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;...&quot;&quot;&quot;</span></div>
@@ -466,12 +472,15 @@
         <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;I3MCTree&quot;</span><span class="p">)</span>
     <span class="p">)</span></div>
 <div class="viewcode-block" id="frame_is_noise"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.frame_is_noise">[docs]</a><span class="k">def</span> <span class="nf">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;noise_weight&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">elif</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;NoiseEngine_bool&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3MCTree&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;MCInIcePrimary&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="frame_is_lvl7"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.frame_is_lvl7">[docs]</a><span class="k">def</span> <span class="nf">frame_is_lvl7</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;L7_reconstructed_zenith&quot;</span><span class="p">)</span></div>
