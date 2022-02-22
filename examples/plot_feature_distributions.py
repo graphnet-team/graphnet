@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.utils import get_equal_proportion_neutrino_indices
-from graphnet.models.detector.icecube import IceCubeUpgrade
+from graphnet.models.detector.icecube import IceCubeUpgrade, IceCubeUpgrade_V2
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.training.utils import make_train_validation_dataloader
 
@@ -25,11 +25,11 @@ def main():
     print(f"features: {features}")
     print(f"truth: {truth}")
 
-    # Configuraiton
+    # Configuration
     db = '/groups/icecube/asogaard/data/sqlite/dev_upgrade_step4_preselection_decemberv2/data/dev_upgrade_step4_preselection_decemberv2.db'
-    pulsemaps = ['I3RecoPulseSeriesMapRFCleaned_mDOM', 'IceCubePulsesTWSRT']
+    pulsemaps = ['IceCubePulsesTWSRT', 'I3RecoPulseSeriesMapRFCleaned_mDOM', 'IceCubePulsesTWSRT']
     batch_size = 256
-    num_workers = 10
+    num_workers = 1
 
     # Common variables
     train_selection, _ = get_equal_proportion_neutrino_indices(db)
@@ -46,7 +46,7 @@ def main():
     )
 
     # Building model
-    detector = IceCubeUpgrade(
+    detector = IceCubeUpgrade_V2(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
 
@@ -64,16 +64,17 @@ def main():
     print("Number of infs:", np.sum(np.isinf(x_original)))
 
     # Plot feature distributions
-    nb_features = len(features)
-    dim = int(np.ceil(np.sqrt(nb_features)))
+    nb_features_original = x_original.shape[1]
+    nb_features_preprocessed = x_preprocessed.shape[1]
+    dim = int(np.ceil(np.sqrt(nb_features_preprocessed)))
     axis_size = 4
     bins = 100
 
     # -- Original
     fig, axes = plt.subplots(dim, dim, figsize=(dim * axis_size, dim * axis_size))
-    for ix, ax in enumerate(axes.ravel()[:nb_features]):
+    for ix, ax in enumerate(axes.ravel()[:nb_features_original]):
         ax.hist(x_original[:,ix], bins=bins)
-        ax.set_xlabel(f"x{ix}: {features[ix]}")
+        ax.set_xlabel(f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}")
         ax.set_yscale('log')
 
     fig.tight_layout
@@ -81,9 +82,9 @@ def main():
 
     # -- Preprocessed
     fig, axes = plt.subplots(dim, dim, figsize=(dim * axis_size, dim * axis_size))
-    for ix, ax in enumerate(axes.ravel()[:nb_features]):
+    for ix, ax in enumerate(axes.ravel()[:nb_features_preprocessed]):
         ax.hist(x_preprocessed[:,ix], bins=bins, color='orange')
-        ax.set_xlabel(f"x{ix}: {features[ix]}")
+        ax.set_xlabel(f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}")
         ax.set_yscale('log')
 
     fig.tight_layout

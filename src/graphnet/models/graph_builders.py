@@ -121,8 +121,5 @@ class EuclideanGraphBuilder(GraphBuilder): # pylint: disable=too-few-public-meth
         return data
 
 
-
-
-
 #class MinkowskiGraphBuilder(GraphBuilder):
 #    ...
