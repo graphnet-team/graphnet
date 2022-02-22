@@ -9,6 +9,8 @@ import torch
 from torch.utils.data import DataLoader
 from torch_geometric.data.batch import Batch
 
+from tqdm import tqdm
+
 from graphnet.data.sqlite_dataset import SQLiteDataset
 from graphnet.models import Model
 

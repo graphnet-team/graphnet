@@ -4,7 +4,7 @@ inputs:
   torch-verison:
     description: 'Version of pytorch to install'
     required: true
-    default: '1.9.1'
+    default: '1.9.0'
   pyg-verison:
     description: 'Version of pytorch-geometric to install'
     required: true

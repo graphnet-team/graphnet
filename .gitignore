@@ -133,8 +133,9 @@ docs/build/html
 docs/**/*.rst
 
 # Badges
-misc/badges
+assets/badges
 lightning_logs/
 wandb/
 **.png
 **.pth
+**.ipynb
