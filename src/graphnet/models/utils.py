@@ -21,13 +21,13 @@ def calculate_xyzt_homophily(x, edge_index, batch):
 
 def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
     '''
-    Input:
-        x.y,z co-ordinates of active DOMs
-
-    Calculates the matrix of distances squared from DOM i to DOM j in x,y,z co-ordinates
+    Calculate the matrix of pairwise distances between pulses in (x,y,z)-coordinates.
+    
+    Args:
+        xyz_coords: (x,y,z)-coordinates of pulses, of shape [nb_doms, 3].
 
     Returns:
-        matrix: tensor of size [N_doms,N_doms]
+        Matrix of pairwise distances, of shape [nb_doms, nb_doms]
     '''
     diff_sqrd = (xyz_coords.unsqueeze(dim=2) - xyz_coords.T.unsqueeze(dim=0))**2    
     return torch.sum(diff_sqrd, dim=1)
