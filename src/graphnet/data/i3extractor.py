@@ -272,7 +272,12 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
-            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value)
+            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value),
+            'track_length': padding_value,
+            'final_position_x': padding_value,
+            'final_position_y': padding_value,
+            'final_position_z': padding_value,
+            'stopped_muon': padding_value,
         }
 
         if is_mc == True and is_noise == False:
