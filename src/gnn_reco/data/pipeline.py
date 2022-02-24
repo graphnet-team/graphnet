@@ -23,7 +23,6 @@ class InSQLitePipeline(ABC):
         self._truth =  truth
         self._batch_size = batch_size
         self._outdir = outdir
-        print(self._device)
         self._module_dict = self._load_modules(module_dict)
     
     def __call__(self, database, pulsemap) -> dict:
