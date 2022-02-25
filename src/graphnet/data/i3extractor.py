@@ -387,10 +387,16 @@ class I3RetroExtractor(I3Extractor):
             if frame_contains_retro(frame):
                 output.update({
                     'osc_weight': frame["I3MCWeightDict"]["weight"],
+                    'OneWeight': frame["I3MCWeightDict"]["OneWeight"],
+                    'gen_ratio': frame["I3MCWeightDict"]["gen_ratio"],
+                    'osc_weight': frame["I3MCWeightDict"]["NEvents"],
                 })
             else:
                 output.update({
-                    'osc_weight': -1.,
+                    'osc_weight': -1,
+                    'OneWeight': -1,
+                    'gen_ratio': -1,
+                    'osc_weight': -1,
                 })
 
         return output
