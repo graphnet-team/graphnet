@@ -304,7 +304,29 @@ class I3TruthExtractor(I3Extractor):
                     'final_position_y': final_position[1],
                     'final_position_z': final_position[2],
                     'stopped_muon': stopped,
-                })                
+                })  
+            if frame_contains_retro(frame):
+                if abs(MCInIcePrimary.pdg_encoding) != 13: # if not muon
+                    output.update({
+                        'osc_weight'         : frame["I3MCWeightDict"]["weight"],
+                        'OneWeight'          : frame["I3MCWeightDict"]["OneWeight"],
+                        'gen_ratio'          : frame["I3MCWeightDict"]["gen_ratio"],
+                        'NEvents'            : frame["I3MCWeightDict"]["NEvents"],
+                    })
+                else:
+                    output.update({
+                        'osc_weight'        : frame["I3MCWeightDict"]["weight"],
+                        'OneWeight'         : padding_value,
+                        'gen_ratio'         : padding_value,
+                        'NEvents'           : padding_value,
+                    })
+            else:
+                output.update({
+                            'osc_weight'    : padding_value,
+                            'OneWeight'     : padding_value,
+                            'gen_ratio'     : padding_value,
+                            'NEvents'       : padding_value,
+                        })              
 
         return output
 
@@ -382,22 +404,6 @@ class I3RetroExtractor(I3Extractor):
             #    'L4_NoiseClassifier_ProbNu': frame["L4_NoiseClassifier_ProbNu"].value,
             #    'L7_PIDClassifier_FullSky_ProbTrack': frame["L7_PIDClassifier_FullSky_ProbTrack"].value,
             #})
-
-        if frame_is_montecarlo(frame):
-            if frame_contains_retro(frame):
-                output.update({
-                    'osc_weight': frame["I3MCWeightDict"]["weight"],
-                    'OneWeight': frame["I3MCWeightDict"]["OneWeight"],
-                    'gen_ratio': frame["I3MCWeightDict"]["gen_ratio"],
-                    'osc_weight': frame["I3MCWeightDict"]["NEvents"],
-                })
-            else:
-                output.update({
-                    'osc_weight': -1,
-                    'OneWeight': -1,
-                    'gen_ratio': -1,
-                    'osc_weight': -1,
-                })
 
         return output
 
