@@ -15,7 +15,7 @@ import sqlite3
 
 class InSQLitePipeline(ABC):
     """Extracts relevant information from physics frames."""
-    def __init__(self, module_dict, features, truth, device, outdir = None,batch_size = 100, n_workers = 10, pipeline_name = 'pipeline'):
+    def __init__(self, module_dict, features, truth, device, retro_table_name = 'retro',outdir = None,batch_size = 100, n_workers = 10, pipeline_name = 'pipeline'):
         # Member variables
         self._pipeline_name = pipeline_name
         self._device = device
@@ -25,6 +25,7 @@ class InSQLitePipeline(ABC):
         self._batch_size = batch_size
         self._outdir = outdir
         self._module_dict = self._load_modules(module_dict)
+        self._retro_table_name = retro_table_name
 
     def __call__(self, database, pulsemap) -> dict:
         """Extracts relevant information from frame."""
@@ -75,13 +76,27 @@ class InSQLitePipeline(ABC):
             truth = pd.read_sql(query,con)
         return truth
 
+    def _get_retro(self,database):
+        try:
+            with sqlite3.connect(database) as con:
+                query = 'SELECT * FROM %s'%self._retro_table_name
+                retro = pd.read_sql(query,con)
+            return retro
+        except:
+            print('%s table does not exist'%self._retro_table_name)
+            return
+
+
     def _make_pipeline_database(self,outdir, df, original_database):
         os.makedirs(outdir)
         pipeline_database = outdir + '/%s.db'%self._pipeline_name
         truth = self._get_truth(original_database)
+        retro = self._get_retro(original_database)
 
         self._save_to_sql(df, 'reconstruction', pipeline_database)
         self._save_to_sql(truth, 'truth', pipeline_database)
+        if retro != None:
+            self._save_to_sql(retro, self._retro_table_name, pipeline_database)        
         return
         
 
