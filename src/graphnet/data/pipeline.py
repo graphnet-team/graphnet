@@ -24,7 +24,7 @@ class InSQLitePipeline(ABC):
         self._truth =  truth
         self._batch_size = batch_size
         self._outdir = outdir
-        self._module_dict = self._load_modules(module_dict)
+        self._module_dict = module_dict
         self._retro_table_name = retro_table_name
 
     def __call__(self, database, pulsemap) -> dict:
@@ -34,11 +34,22 @@ class InSQLitePipeline(ABC):
             device = int(self._device[-1])
         if os.path.isdir(outdir) == False:
             dataframes = []
-            dataloader = self._make_dataloader(database, pulsemap)
             for target in self._module_dict.keys():
+                dataloader = self._make_dataloader(database, pulsemap)
                 trainer = Trainer(gpus = [device])
-                results = get_predictions(trainer,self._module_dict[target]['loaded_module'], dataloader, self._module_dict[target]['output_column_names'], ['event_no'])
+                model = torch.load(self._module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
+                model.load_state_dict(self._module_dict[target]['state_dict'])
+                model._gnn.to(self._device)
+                model._device = self._device
+                model.to(self._device)
+                model.eval()
+                model.inference()
+                results = get_predictions(trainer,model, dataloader, self._module_dict[target]['output_column_names'], ['event_no', 'zenith', 'energy'])
                 dataframes.append(results.sort_values('event_no').reset_index(drop = True))
+            import pickle
+            with open('/home/iwsatlas1/oersoe/phd/oscillations/merge_test.pickle', 'wb') as file:
+                # A new file will be created
+                pickle.dump(dataframes, file)
             df = self._combine_outputs(dataframes)
             self._make_pipeline_database(outdir,df, database)
         else:
@@ -95,8 +106,8 @@ class InSQLitePipeline(ABC):
 
         self._save_to_sql(df, 'reconstruction', pipeline_database)
         self._save_to_sql(truth, 'truth', pipeline_database)
-        if retro != None:
-            self._save_to_sql(retro, self._retro_table_name, pipeline_database)        
+        if isinstance(retro, pd.DataFrame):
+            self._save_to_sql(retro, self._retro_table_name, pipeline_database)    
         return
         
 
