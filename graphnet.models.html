@@ -116,6 +116,13 @@
 <section id="module-graphnet.models.graph_builders">
 <span id="graphnet-models-graph-builders-module"></span><h2>graphnet.models.graph_builders module<a class="headerlink" href="#module-graphnet.models.graph_builders" title="Permalink to this headline"></a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.EuclideanGraphBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">EuclideanGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#EuclideanGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.EuclideanGraphBuilder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.models.graph_builders.GraphBuilder</span></code></a></p>
+<p>Builds graph adjacency according to Euclidean distance as in <a class="reference external" href="https://arxiv.org/pdf/1809.06166.pdf">https://arxiv.org/pdf/1809.06166.pdf</a></p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.graph_builders.GraphBuilder">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">GraphBuilder</span></span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#GraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.GraphBuilder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
@@ -557,6 +564,20 @@ the model goes back to training mode and gradients are enabled.</p>
 </section>
 <section id="module-graphnet.models.utils">
 <span id="graphnet-models-utils-module"></span><h2>graphnet.models.utils module<a class="headerlink" href="#module-graphnet.models.utils" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.utils.calculate_distance_matrix">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_distance_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/utils.html#calculate_distance_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.utils.calculate_distance_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the matrix of pairwise distances between pulses in (x,y,z)-coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>xyz_coords</strong> – (x,y,z)-coordinates of pulses, of shape [nb_doms, 3].</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Matrix of pairwise distances, of shape [nb_doms, nb_doms]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.utils.calculate_xyzt_homophily">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_xyzt_homophily</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/utils.html#calculate_xyzt_homophily"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.utils.calculate_xyzt_homophily" title="Permalink to this definition"></a></dt>

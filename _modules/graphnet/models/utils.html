@@ -61,7 +61,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.models.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">torch_geometric.utils.homophily</span> <span class="k">import</span> <span class="n">homophily</span>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils.homophily</span> <span class="k">import</span> <span class="n">homophily</span>
 
 <div class="viewcode-block" id="calculate_xyzt_homophily"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.utils.calculate_xyzt_homophily">[docs]</a><span class="k">def</span> <span class="nf">calculate_xyzt_homophily</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculates xyzt homophily from a batch of graphs.</span>
@@ -78,6 +80,21 @@
     <span class="n">hz</span> <span class="o">=</span> <span class="n">homophily</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span> <span class="n">batch</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">ht</span> <span class="o">=</span> <span class="n">homophily</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">3</span><span class="p">],</span> <span class="n">batch</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">hx</span><span class="p">,</span> <span class="n">hy</span><span class="p">,</span> <span class="n">hz</span><span class="p">,</span> <span class="n">ht</span></div>
+
+
+<div class="viewcode-block" id="calculate_distance_matrix"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.utils.calculate_distance_matrix">[docs]</a><span class="k">def</span> <span class="nf">calculate_distance_matrix</span><span class="p">(</span><span class="n">xyz_coords</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculate the matrix of pairwise distances between pulses in (x,y,z)-coordinates.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        xyz_coords: (x,y,z)-coordinates of pulses, of shape [nb_doms, 3].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Matrix of pairwise distances, of shape [nb_doms, nb_doms]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_coords</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">xyz_coords</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span></div>
+
 </pre></div>
 
            </div>
