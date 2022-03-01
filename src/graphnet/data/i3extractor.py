@@ -309,23 +309,23 @@ class I3TruthExtractor(I3Extractor):
                 if abs(MCInIcePrimary.pdg_encoding) != 13: # if not muon
                     output.update({
                         'osc_weight'         : frame["I3MCWeightDict"]["weight"],
-                        'OneWeight'          : frame["I3MCWeightDict"]["OneWeight"],
+                        'one_weight'          : frame["I3MCWeightDict"]["OneWeight"],
                         'gen_ratio'          : frame["I3MCWeightDict"]["gen_ratio"],
-                        'NEvents'            : frame["I3MCWeightDict"]["NEvents"],
+                        'n_events'            : frame["I3MCWeightDict"]["NEvents"],
                     })
                 else:
                     output.update({
                         'osc_weight'        : frame["I3MCWeightDict"]["weight"],
-                        'OneWeight'         : padding_value,
+                        'one_weight'         : padding_value,
                         'gen_ratio'         : padding_value,
-                        'NEvents'           : padding_value,
+                        'n_events'           : padding_value,
                     })
             else:
                 output.update({
                             'osc_weight'    : padding_value,
-                            'OneWeight'     : padding_value,
+                            'one_weight'     : padding_value,
                             'gen_ratio'     : padding_value,
-                            'NEvents'       : padding_value,
+                            'n_events'       : padding_value,
                         })              
 
         return output
