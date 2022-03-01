@@ -1,4 +1,5 @@
 import os.path
+import argparse
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
@@ -24,32 +25,49 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 features = FEATURES.DEEPCORE
 truth = TRUTH.DEEPCORE
 
-# Initialise Weights & Biases (W&B) run
-wandb_logger = WandbLogger(
-    project="example-script",
-    entity="graphnet-team",
-    save_dir='./wandb/',
-    log_model=True,
-)
-
 # Main function definition
 def main():
+    
+    parser = argparse.ArgumentParser(description="parameters for training example")
+    parser.add_argument("--database", help="path, name and format of database.", type=str, required=True)
+    parser.add_argument("--pulsemap", help="", type=str, required=False, default='SRTTWOfflinePulsesDC')
+    parser.add_argument("--batch", help="batch size of training", type=int, required=False, default=512)
+    parser.add_argument("--workers", help="number of workers", required=False, default=10)
+    parser.add_argument("--gpu", help="Choose gpu to use [1/2]; default is None.", type=int, required=False, default=None)
+    parser.add_argument("--target", help="reconstruction target; energy, ...", type=str, required=False, default='energy')
+    parser.add_argument("--epochs", help="number of epochs to use.", type=int, required=False, default=5)
+    parser.add_argument("--patience", help="???", type=int, required=False, default=5)
+    parser.add_argument("--output", help="output path.", type=str, required=True)
+    args = parser.parse_args()
+
+    savedir = args.output+'/wandb/'
+    os.makedirs(savedir, exist_ok=True)
+    # Initialise Weights & Biases (W&B) run
+    wandb_logger = WandbLogger(
+        project="example-script",
+        entity="graphnet-team",
+        save_dir=savedir,
+        log_model=False,
+    )
 
     print(f"features: {features}")
     print(f"truth: {truth}")
 
     # Configuration
     config = {
-        "db": '/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db',
-        "pulsemap": 'SRTTWOfflinePulsesDC',
-        "batch_size": 512,
-        "num_workers": 10,
-        "gpus": [1],
-        "target": 'energy',
-        "n_epochs": 5,
-        "patience": 5,
+        "db": args.database,
+        "pulsemap": args.pulsemap,
+        "batch_size": args.batch,
+        "num_workers": args.workers,
+        "gpus": [args.gpu],
+        "target": args.target,
+        "n_epochs": args.epochs,
+        "patience": args.patience,
     }
-    archive = "/groups/icecube/asogaard/gnn/results/"
+    
+    archive = args.output
+    os.makedirs(archive, exist_ok=True)
+
     run_name = "dynedge_{}_example".format(config["target"])
 
     # Log configuration to W&B
