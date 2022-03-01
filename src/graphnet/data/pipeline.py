@@ -38,7 +38,7 @@ class InSQLitePipeline(ABC):
                 dataloader = self._make_dataloader(database, pulsemap)
                 trainer = Trainer(gpus = [device])
                 model = torch.load(self._module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
-                model.load_state_dict(self._module_dict[target]['state_dict'])
+                #model.load_state_dict(self._module_dict[target]['state_dict'])
                 model._gnn.to(self._device)
                 model._device = self._device
                 model.to(self._device)
@@ -67,7 +67,7 @@ class InSQLitePipeline(ABC):
             return module_dict
 
     def _make_dataloader(self, database, pulsemap):
-        dataloader = make_dataloader(db = database, pulsemaps = pulsemap, features = self._features, truth = self._truth, batch_size = self._batch_size, shuffle= True, selection = None, num_workers = self.n_workers, persistent_workers= False)
+        dataloader = make_dataloader(db = database, pulsemaps = pulsemap, features = self._features, truth = self._truth, batch_size = self._batch_size, shuffle = False, selection = None, num_workers = self.n_workers, persistent_workers= False)
         return dataloader
 
     def _combine_outputs(self, dataframes):
