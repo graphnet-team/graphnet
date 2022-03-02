@@ -65,6 +65,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self.establish_connection(i)
         features, truth = self._query_database(i)
         graph = self._create_graph(features, truth)
+        graph = self._add_truth_flag(i)
         return graph
 
     def _get_all_indices(self):
@@ -73,6 +74,45 @@ class SQLiteDataset(torch.utils.data.Dataset):
         return indices.values.ravel().tolist()
 
     def _query_database(self, i):
+        """Query SQLite database for event feature and truth information.
+
+        Args:
+            i (int): Sequentially numbered index (i.e. in [0,len(self))) of the
+                event to query.
+
+        Returns:
+            list: List of tuples, containing event features.
+            list: List of tuples, containing truth information.
+        """
+        if self._database_list == None:
+            index = self._indices[i]
+        else:
+            index = self._indices[i][0]
+
+        features = []
+        for pulsemap in self._pulsemaps:
+            features_pulsemap = self._conn.execute(
+                "SELECT {} FROM {} WHERE {} = {}".format(
+                    self._features_string,
+                    pulsemap,
+                    self._index_column,
+                    index,
+                )
+            ).fetchall()
+            features.extend(features_pulsemap)
+
+        truth = self._conn.execute(
+            "SELECT {} FROM {} WHERE {} = {}".format(
+                self._truth_string,
+                self._truth_table,
+                self._index_column,
+                index,
+            )
+        ).fetchall()
+
+        return features, truth
+    
+    def _query_noise_database(self, i):
         """Query SQLite database for event feature and truth information.
 
         Args:
