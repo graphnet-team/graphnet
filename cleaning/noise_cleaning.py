@@ -239,10 +239,10 @@ def predict(model,trainer,target,selection, database, pulsemap, batch_size, num_
 # Main function call
 if __name__ == "__main__":
     # Run management
-    archive = "/home/iwsatlas1/oersoe/phd/upgrade_noise/results"
-    targets = ['zenith' ,'track' , 'energy'] #, 'vertex'] #, 'XYZ'] 
+    archive = "/groups/icecube/qgf305/graphnet_user/results"
+    targets = ['zenith' ,'track' , 'energy'] #, 'vertex'] #, 'XYZ']
     batch_size = 1024
-    database ='/mnt/scratch/rasmus_orsoe/databases/dev_step4_numu_140021_second_run/data/dev_step4_numu_140021_second_run.db'
+    database ='/groups/icecube/asogaard/data/sqlite/dev_step4_numu_140021_second_run/data/dev_step4_numu_140021_second_run.db'
     device = [0]
     n_epochs = 45
     num_workers = 40
