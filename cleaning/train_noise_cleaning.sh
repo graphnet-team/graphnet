@@ -20,7 +20,7 @@ conda activate gnn_py38_leon
 # target: 'track' - BinaryClassificationTask - TODO: create custom binary classification target/task
 
 cd /groups/icecube/${USER}/graphnet/cleaning/
-python train_model_cleaning.py
+python noise_cleaning.py
 
 conda deactivate
 cd /groups/icecube/${USER}/graphnet_user/

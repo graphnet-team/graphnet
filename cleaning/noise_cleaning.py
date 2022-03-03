@@ -245,20 +245,18 @@ if __name__ == "__main__":
     targets = ['truth_flag']#['zenith' ,'track' , 'energy'] #, 'vertex'] #, 'XYZ']
     batch_size = 1024
     database ='/groups/icecube/asogaard/data/sqlite/dev_step4_numu_140021_second_run/data/dev_step4_numu_140021_second_run.db'
-    device = [0]
+    device = [1]
     n_epochs = 45
     num_workers = 40
     patience = 5
     pulsemap = 'SplitInIcePulses_GraphSage_Pulses'
     # Common variables
     for target in targets:
-        if target == 'track':
-            selection = pd.read_csv('/mnt/scratch/rasmus_orsoe/databases/dev_step4_numu_140021_second_run/selection/even_track_cascade_over10pulses.csv')['event_no'].values.ravel().tolist()
-        else:
-            selection = pd.read_csv('/mnt/scratch/rasmus_orsoe/databases/dev_step4_numu_140021_second_run/selection/over10pulses.csv')['event_no'].values.ravel().tolist()
+        selection = get_equal_proportion_neutrino_indices(database)
+        #selection = pd.read_csv('/mnt/scratch/rasmus_orsoe/databases/dev_step4_numu_140021_second_run/selection/over10pulses.csv')['event_no'].values.ravel().tolist()
 
-        run_name = "upgrade_{}_regression_45e_GraphSagePulses".format(target)
+        run_name = "noise_cleaning_{}_GraphSagePulses".format(target)
         
-        train_and_predict_on_validation_set(target,selection, database, pulsemap, batch_size, num_workers, n_epochs, device, run_name,archive, train = True)
+        train_and_predict_on_validation_set(target, selection, database, pulsemap, batch_size, num_workers, n_epochs, device, run_name,archive, train = True)
         #train_and_predict_on_validation_set(target,selection, database, pulsemap, batch_size, num_workers, n_epochs, device, run_name,archive, train = False)
         #predict(target,selection, database, pulsemap, batch_size, num_workers, n_epochs, device)
