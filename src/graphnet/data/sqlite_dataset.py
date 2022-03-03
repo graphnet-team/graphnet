@@ -63,7 +63,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, i):
         self.establish_connection(i)
-        features, truth = self._query_database(i)
+        features, truth = self._query_noise_database(i)
         graph = self._create_graph(features, truth)
         graph = self._add_truth_flag(i)
         return graph

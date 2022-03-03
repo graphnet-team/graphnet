@@ -247,7 +247,7 @@ if __name__ == "__main__":
     n_epochs = 45
     num_workers = 40
     patience = 5
-    pulsemap = 'SplitInIcePulses_GraphSage_Pulses' 
+    pulsemap = 'SplitInIcePulses_GraphSage_Pulses'
     # Common variables
     for target in targets:
         if target == 'track':
