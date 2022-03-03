@@ -105,6 +105,8 @@ def train_and_predict_on_validation_set(target,selection, database, pulsemap, ba
         task = XYZReconstruction(hidden_size=gnn.nb_outputs, target_label=target, loss_function=EuclideanDistance(), transform_target = scale_XYZ, transform_inference = unscale_XYZ)
     elif target == 'track':
         task = BinaryClassificationTask(hidden_size=gnn.nb_outputs,target_label=target,loss_function=BinaryCrossEntropyLoss())
+    elif target == 'truth_flag':
+        task = BinaryClassificationTask(hidden_size=gnn.nb_outputs,target_label=target,loss_function=BinaryCrossEntropyLoss())
     else:
         print('task not found')
     model = Model(
@@ -240,7 +242,7 @@ def predict(model,trainer,target,selection, database, pulsemap, batch_size, num_
 if __name__ == "__main__":
     # Run management
     archive = "/groups/icecube/qgf305/graphnet_user/results"
-    targets = ['zenith' ,'track' , 'energy'] #, 'vertex'] #, 'XYZ']
+    targets = ['truth_flag']#['zenith' ,'track' , 'energy'] #, 'vertex'] #, 'XYZ']
     batch_size = 1024
     database ='/groups/icecube/asogaard/data/sqlite/dev_step4_numu_140021_second_run/data/dev_step4_numu_140021_second_run.db'
     device = [0]

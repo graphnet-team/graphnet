@@ -16,7 +16,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         features: List[str],
         truth: List[str],
         index_column: str = 'event_no',
-        truth_table: str = 'truth',
+        truth_table: str = 'SplitInIcePulses_TruthFlags',#'truth',
         selection: Optional[List[int]] = None,
         dtype: torch.dtype = torch.float32,
     ):
