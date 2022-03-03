@@ -71,7 +71,7 @@ def make_train_validation_dataloader(
     num_workers: int = 10,
     persistent_workers: bool = True,
 ) -> Tuple[DataLoader]:
-
+    
     # Reproducibility
     rng = np.random.RandomState(seed=seed)
 

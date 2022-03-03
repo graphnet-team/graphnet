@@ -106,7 +106,7 @@ def train_and_predict_on_validation_set(target,selection, database, pulsemap, ba
     elif target == 'track':
         task = BinaryClassificationTask(hidden_size=gnn.nb_outputs,target_label=target,loss_function=BinaryCrossEntropyLoss())
     elif target == 'truth_flag':
-        task = BinaryClassificationTask(hidden_size=gnn.nb_outputs,target_label=target,loss_function=BinaryCrossEntropyLoss())
+        task = BinaryClassificationTask(hidden_size=gnn.nb_outputs,target_labels=target,loss_function=BinaryCrossEntropyLoss())
     else:
         print('task not found')
     model = Model(

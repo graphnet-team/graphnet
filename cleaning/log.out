@@ -1,0 +1,4 @@
+Smallest sample size: 0
+features: ['dom_x', 'dom_y', 'dom_z', 'dom_time', 'charge', 'rde', 'pmt_area', 'string', 'pmt_number', 'dom_number', 'pmt_dir_x', 'pmt_dir_y', 'pmt_dir_z', 'dom_type']
+truth: ['energy', 'position_x', 'position_y', 'position_z', 'azimuth', 'zenith', 'pid', 'elasticity', 'sim_type', 'interaction_type']
+Validation sanity check: 0it [00:00, ?it/s]Validation sanity check:   0%|          | 0/1 [00:00<?, ?it/s]                                                              

@@ -13,14 +13,14 @@ conda activate gnn_py38_leon
 # /groups/icecube/asogaard/data/sqlite/dev_step4_numu_140021_second_run/data/dev_step4_numu_140021_second_run.db
 
 # input: SplitInIcePulse
-# truth: GraphSage_Truthflag - TODO: modifiy sqlite_dataset.py - new function _query_noise_database()
+# truth: SplitInIcePulse_Truthflag - TODO: modifiy sqlite_dataset.py - new function _query_noise_database()
 # Benchmark: GraphSagePredictions
 # detector: IceCubeUpgrade
 # gnn: Dyn_edgeV3 - TODO: test viability and dimension of disabled sections
-# target: 'track' - BinaryClassificationTask - TODO: create custom binary classification target/task
+# target: 'truth_flag' - BinaryClassificationTask
 
 cd /groups/icecube/${USER}/graphnet/cleaning/
 python noise_cleaning.py
 
 conda deactivate
-cd /groups/icecube/${USER}/graphnet_user/
+#cd /groups/icecube/${USER}/graphnet_user/
