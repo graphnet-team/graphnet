@@ -500,7 +500,7 @@ def muon_stopped(truth, borders, horizontal_pad = 100., vertical_pad = 100.):
         vertical_pad (float) : further shrink detector depth with exclusion height
     
     Returns:
-        dictionary (dict) : containing the x,y,z co-ordinates of final muon position and contained boolean
+        dictionary (dict) : containing the x,y,z co-ordinates of final muon position and contained boolean (0 or 1)
     '''
     #to do:remove hard-coded border coords and replace with GCD file contents using string no's
     border = mpath.Path(borders[0])
