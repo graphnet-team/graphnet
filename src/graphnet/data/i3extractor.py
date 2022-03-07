@@ -8,7 +8,7 @@ except ImportError:
     print("icecube package not available.")
 
 from abc import abstractmethod
-from .utils import frame_has_key,muon_stopped
+from .utils import frame_has_key
 
 
 class I3Extractor(ABC):
