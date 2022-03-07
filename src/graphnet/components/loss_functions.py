@@ -16,7 +16,6 @@ import torch
 from torch import Tensor
 from torch.nn.modules.loss import _WeightedLoss
 
-
 class LossFunction(_WeightedLoss):
     """Base class for loss functions in graphnet.
     """
@@ -42,7 +41,6 @@ class LossFunction(_WeightedLoss):
             Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
-
         elements = self._forward(prediction, target)
         assert elements.size(dim=0) == target.size(dim=0), \
             "`_forward` should return elementwise loss terms."
@@ -67,11 +65,9 @@ class LogCoshLoss(LossFunction):
         See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]
         """
         return x + torch.nn.functional.softplus(-2. * x) - np.log(2.0)
-
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
-        assert prediction.dim() == target.dim() + 1
-        diff = prediction[:,0] - target
+        diff = prediction - target
         elements = self._log_cosh(diff)
         return elements
 
@@ -81,10 +77,8 @@ class BinaryCrossEntropyLoss(LossFunction):
     where prediction is prob. the PID is neutrino (12,14,16)
     loss should be reported elementwise, so set reduction to None
     """
-
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         return torch.nn.functional.binary_cross_entropy(prediction.float(), target.float(), reduction='none')
-
 
 class LogCMK(torch.autograd.Function):
     """MIT License
@@ -220,17 +214,16 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
                 where 0th column is a prediction of `angle` and 1st column is an
                 estimate of `kappa`.
             target (Tensor): Target tensor, extracted from graph object.
-
         Returns:
             loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]
         """
         # Check(s)
         assert prediction.dim() == 2 and prediction.size()[1] == 2
-        assert target.dim() == 1
+        assert target.dim() == 2
         assert prediction.size()[0] == target.size()[0]
 
         # Formatting target
-        angle_true = target
+        angle_true = target[:,0]
         t = torch.stack([
             torch.cos(angle_true),
             torch.sin(angle_true),
@@ -246,8 +239,18 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
 
         return self._evaluate(p, t)
 
-class XYZWithMaxScaling(LossFunction):
+
+class EuclideanDistance(LossFunction):
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        diff = (prediction[:,0] - target[:,0]/764.431509)**2 + (prediction[:,1] - target[:,1]/785.041607)**2 + (prediction[:,2] - target[:,2]/1083.249944)**2 #+(prediction[:,3] - target[:,3]/14721.646883) 
-        elements = torch.sqrt(diff)
-        return elements
+        """Calculates the 3D Euclidean distance between predicted and target.
+
+        Args:
+            prediction (Tensor): Output of the model. Must have shape [N, 3]
+            target (Tensor): Target tensor, extracted from graph object.
+        Returns:
+            Tensor: Loss. Shape [n,1]
+        """
+        return torch.sqrt((prediction[:,0] - target[:,0])**2 + (prediction[:,1] - target[:,1])**2 + (prediction[:,2] - target[:,2])**2) 
+
+
+
