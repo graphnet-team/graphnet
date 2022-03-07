@@ -154,20 +154,17 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-                    #print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
                     #print(key,' of the dfs:',df,'\n')
                     #print(data_dict[self._pulsemap])
                     #print('should be a boolean', (data_dict[self._pulsemap]['dom_x'] and dataframes_big[first_table]))
-                    print('should we include this P frame in the big dataframe?',(data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]]))
-                    if ((data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]]) and len(df)): #only include if the dom_x is non empty and the truth is non empty
+                    print('should we include this P frame in the big dataframe?',bool(( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) )))
+                    if bool( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) ): #only include if the dom_x is non empty and the truth is non empty
                         print('Im in the if statement now')
                     #if (len(df) and (not data_dict[self._pulsemap]['dom_x'])): #this should filter empty dataframes out. Why does it not now?
-                        #print('length after if? ',len(df))
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
                         #print('Big dataframe:\n',dataframes_big)
                         #print('len(bigdf) = ',len(dataframes_big))
                      
-                
                 event_count += 1
                 if len(dataframes_big[first_table]) >= max_dict_size:#if truth table is bigger than max dict size (10,000) then save THIS MUST NEVER TRIGGER?
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
@@ -354,5 +351,5 @@ def is_empty(features):
 def is_pulsemap_check(table_name):
     if 'retro' in table_name.lower() or 'truth' in table_name.lower():
         return False
-    else:
+    else: #could have to include the lower case word 'pulse'?
         return True
