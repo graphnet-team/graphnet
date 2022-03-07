@@ -234,7 +234,9 @@ def is_i3_file(filename: str) -> bool:
     """Checks whether `filename` is an I3 file."""
     if is_gcd_file(filename.lower()):
         return False
-    elif has_extension(filename, ['bz2', 'zst']):
+    elif has_extension(filename, ['bz2', 'zst', 'gz']):
+        print(filename)
+        print('Is i3?',has_extension(filename, ['bz2', 'zst', 'gz']))
         return True
     return False
 
@@ -284,7 +286,7 @@ def find_i3_files(directories, gcd_rescue):
 
     for directory in directories:
         # Recursivley find all I3-like files in `directory`.
-        i3_patterns = ['*.bz2', '*.zst']
+        i3_patterns = ['*.bz2', '*.zst', '*.gz']
         for i3_pattern in i3_patterns:
             paths = list(Path(directory).rglob(i3_pattern))
             # Loop over all folders containing such I3-like files.

@@ -62,6 +62,9 @@ class SQLiteDataConverter(DataConverter):
              "I3TruthExtractor to allow for attaching unique indices.")
 
         self._table_names = [extractor.name for extractor in self._extractors]
+        print([x for x in self._table_names if is_pulsemap_check(x)])
+        self._pulsemap = [x for x in self._table_names if is_pulsemap_check(x)][0]
+        print('LOOK HERE IS THE PULSEMAP:',self._pulsemap)
 
 
     # Abstract method implementation(s)
@@ -151,16 +154,26 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-                    if len(df):
+                    #print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+                    #print(key,' of the dfs:',df,'\n')
+                    #print(data_dict[self._pulsemap])
+                    #print('should be a boolean', (data_dict[self._pulsemap]['dom_x'] and dataframes_big[first_table]))
+                    print('should we include this P frame in the big dataframe?',(data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]]))
+                    if ((data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]]) and len(df)): #only include if the dom_x is non empty and the truth is non empty
+                        print('Im in the if statement now')
+                    #if (len(df) and (not data_dict[self._pulsemap]['dom_x'])): #this should filter empty dataframes out. Why does it not now?
+                        #print('length after if? ',len(df))
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
-
+                        #print('Big dataframe:\n',dataframes_big)
+                        #print('len(bigdf) = ',len(dataframes_big))
+                     
+                
                 event_count += 1
-                if len(dataframes_big[first_table]) >= max_dict_size:
+                if len(dataframes_big[first_table]) >= max_dict_size:#if truth table is bigger than max dict size (10,000) then save THIS MUST NEVER TRIGGER?
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
-                    dataframes_big = OrderedDict([
-                    (key, pd.DataFrame()) for key in self._table_names
-                ])
+                    dataframes_big = OrderedDict([(key, pd.DataFrame()) for key in self._table_names])
                     output_count +=1
+
 
             if len(dataframes_big[first_table]) > 0:
                 self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
@@ -189,10 +202,12 @@ class SQLiteDataConverter(DataConverter):
             for ix_table, table_name in enumerate(self._table_names):
                 column_names = self._extract_column_names(db_paths, table_name)
                 if len(column_names) > 1:
-                    if 'retro' in table_name.lower() or 'truth' in table_name.lower():
-                        is_pulse_map = False
-                    else:
-                        is_pulse_map = True
+                    is_pulse_map = is_pulsemap_check(table_name)
+
+                    # if 'retro' in table_name.lower() or 'truth' in table_name.lower():
+                    #     is_pulse_map = False
+                    # else:
+                    #     is_pulse_map = True
                     self._create_table(database_path, table_name, column_names, is_pulse_map= is_pulse_map)#(ix_table >= 2))
 
             # Merge temporary databases into newly created one
@@ -307,7 +322,7 @@ class SQLiteDataConverter(DataConverter):
     def _save_to_sql(self, dataframes_big: dict, id, output_count, db_name, outdir):
         engine = sqlalchemy.create_engine('sqlite:///' + outdir + f'/{db_name}/tmp/worker-{id}-{output_count}.db')
         for key, df in dataframes_big.items():
-            if len(dataframes_big[key]) > 0:
+            if len(dataframes_big[key]) > 0: #i would like to place condition here that removes empty 
                 df.to_sql(key, con=engine, index=False, if_exists='append')
         engine.dispose()
 
@@ -334,3 +349,10 @@ def is_empty(features):
         return True
     else:
         return False
+
+
+def is_pulsemap_check(table_name):
+    if 'retro' in table_name.lower() or 'truth' in table_name.lower():
+        return False
+    else:
+        return True
