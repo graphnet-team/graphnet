@@ -34,6 +34,24 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
         return angle
 
 
+class PassOutput1(Task):
+    """Passes 1 output without interference."""
+    nb_inputs = 1
+    def _forward(self, x):
+        return x
+
+class PassOutput2(Task):
+    """Passes 2 output without interference."""
+    nb_inputs = 2
+    def _forward(self, x):
+        return x
+
+class PassOutput3(Task):
+    """Passes 3 output without interference."""
+    nb_inputs = 3
+    def _forward(self, x):
+        return x
+
 class ZenithReconstruction(Task):
     """Reconstructs zenith angle."""
     # Requires two features: untransformed points in (x,y)-space.
@@ -58,10 +76,10 @@ class EnergyReconstruction(Task):
     """Reconstructs energy."""
     # Requires one feature: untransformed energy
     nb_inputs = 1
-
     def _forward(self, x):
         # Transform energy
         return torch.pow(10, x[:,0] + 1.).unsqueeze(1)
+
 
 class EnergyReconstructionWithUncertainty(EnergyReconstruction):
     """Reconstructs energy and associated uncertainty (log(var))."""
@@ -86,13 +104,6 @@ class VertexReconstruction(Task):
         x[:,1] = x[:,1] * 1e2
         x[:,2] = x[:,2] * 1e2
 
-        return x 
-
-class XYZReconstruction(Task):
-    # Requires four features, x, y, z
-    nb_inputs = 3
-
-    def _forward(self, x):
         return x 
 
 class PositionReconstruction(Task):
@@ -123,7 +134,7 @@ class BinaryClassificationTask(Task):
 
     def _forward(self, x):
         #transform probability of being muon
-        return torch.sigmoid(x[:,0])
+        return torch.sigmoid(x)
 
 class BinaryClassificationTaskLogits(Task):
     nb_inputs = 1
