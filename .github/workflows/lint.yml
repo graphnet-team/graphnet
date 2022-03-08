@@ -5,10 +5,10 @@ name: lint
 on:
   # Triggers the workflow on push and PRs
   push:
-    paths-ignore: [ misc/badges/ ]
+    paths-ignore: [ assets/badges/ ]
   pull_request:
     branches: [ main ]
-    paths-ignore: [ misc/badges/ ]
+    paths-ignore: [ assets/badges/ ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -34,8 +34,8 @@ jobs:
       - name: Generate badge
         run: |
           grep rated < results_pylint.txt | sed 's/.* at //g;s/\/.*//g' | xargs -I {} anybadge -f pylint.svg -v {} pylint
-          mkdir -p misc/badges/
-          mv pylint.svg misc/badges/
+          mkdir -p assets/badges/
+          mv pylint.svg assets/badges/
       - name: Configure git
         run: |
           git config user.email "andreas.sogaard@gmail.com"
@@ -43,7 +43,7 @@ jobs:
           git status
       - name: Stage badges
         run: |
-          git add -f misc/badges/
+          git add -f assets/badges/
       - name: Commit and push changes
         if: ${{ github.event_name == 'pull_request' }}
         run: |

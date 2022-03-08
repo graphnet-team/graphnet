@@ -11,7 +11,7 @@ from graphnet.data.sqlite_dataconverter import SQLiteDataConverter
 def make_database():
     """Main script function."""
     paths = ['/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4/step4']
-    gcd_rescue = '/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4/gcd/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2'#/groups/icecube/stuttard/data/oscNext/pass2/gcd/GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz'
+    gcd_rescue = '/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4/gcd/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2'
     outdir = '/groups/hep/pcs557/GNNReco/data/databases'
     db_name = 'dev_step4_preselection_december'
     workers = 45
@@ -27,6 +27,7 @@ def make_database():
         ], outdir, gcd_rescue, db_name=db_name, workers=workers,
     )
     converter(paths)
+
+
 if __name__ == '__main__':
     make_database()
-
