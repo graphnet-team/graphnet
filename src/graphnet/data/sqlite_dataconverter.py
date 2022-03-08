@@ -156,10 +156,9 @@ class SQLiteDataConverter(DataConverter):
                     df = apply_event_no(data, event_no_list, event_count)
                     #print(key,' of the dfs:',df,'\n')
                     #print(data_dict[self._pulsemap])
-                    #print('should be a boolean', (data_dict[self._pulsemap]['dom_x'] and dataframes_big[first_table]))
-                    print('should we include this P frame in the big dataframe?',bool(( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) )))
+                    #print('should we include this P frame in the big dataframe?',bool(( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) )))
                     if bool( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) ): #only include if the dom_x is non empty and the truth is non empty
-                        print('Im in the if statement now')
+                        #print('Im in the if statement now')
                     #if (len(df) and (not data_dict[self._pulsemap]['dom_x'])): #this should filter empty dataframes out. Why does it not now?
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
                         #print('Big dataframe:\n',dataframes_big)
