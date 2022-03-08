@@ -369,7 +369,8 @@ class DynEdge_V3(GNN):
         # Post-processing operations
         self.nn1 = torch.nn.Linear(l3*4 + l1,l4)
         self.nn2 = torch.nn.Linear(l4,l5)
-        self.nn3 = torch.nn.Linear(3*l5 + 0,l6)  # 4*l5 + 5
+        #self.nn3 = torch.nn.Linear(3*l5 + 0,l6)  # 4*l5 + 5
+        self.nn3 = torch.nn.Linear(l5,l6)
         self.lrelu = torch.nn.LeakyReLU()
 
     def forward(self, data: Data) -> Tensor:

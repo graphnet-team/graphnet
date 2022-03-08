@@ -16,7 +16,8 @@ class SQLiteDataset(torch.utils.data.Dataset):
         features: List[str],
         truth: List[str],
         index_column: str = 'event_no',
-        truth_table: str = 'SplitInIcePulses_TruthFlags',#'truth',
+        truth_table: str = 'truth',
+        truth_flag_table: str = 'SplitInIcePulses_TruthFlags',
         selection: Optional[List[int]] = None,
         dtype: torch.dtype = torch.float32,
     ):
@@ -43,6 +44,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self._truth = [index_column] + truth
         self._index_column = index_column
         self._truth_table = truth_table
+        self._truth_flag_table = truth_flag_table
         self._dtype = dtype
 
         self._features_string = ', '.join(self._features)
@@ -63,9 +65,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, i):
         self.establish_connection(i)
-        features, truth = self._query_noise_database(i)
+        features, truth = self._query_database(i)
         graph = self._create_graph(features, truth)
-        graph = self._add_truth_flag(i)
+        graph = self._add_truth_flag(i, graph)
         return graph
 
     def _get_all_indices(self):
@@ -128,28 +130,15 @@ class SQLiteDataset(torch.utils.data.Dataset):
         else:
             index = self._indices[i][0]
 
-        features = []
-        for pulsemap in self._pulsemaps:
-            features_pulsemap = self._conn.execute(
-                "SELECT {} FROM {} WHERE {} = {}".format(
-                    self._features_string,
-                    pulsemap,
-                    self._index_column,
-                    index,
-                )
-            ).fetchall()
-            features.extend(features_pulsemap)
-
-        truth = self._conn.execute(
-            "SELECT {} FROM {} WHERE {} = {}".format(
-                self._truth_string,
-                self._truth_table,
+        truth_flags = self._conn.execute(
+            "SELECT truth_flag FROM {} WHERE {} = {}".format(
+                self._truth_flag_table,
                 self._index_column,
                 index,
             )
         ).fetchall()
 
-        return features, truth
+        return truth_flags
 
     def _get_dbang_label(self, truth_dict):
         try:
@@ -222,6 +211,11 @@ class SQLiteDataset(torch.utils.data.Dataset):
         for ix, feature in enumerate(graph.features):
             graph[feature] = graph.x[:,ix].detach()
 
+        return graph
+
+    def _add_truth_flag(self, i, graph):
+        truth_flags = self._query_noise_database(i)
+        graph['truth_flag'] = torch.tensor(truth_flags).reshape(-1)
         return graph
 
     def establish_connection(self,i):
