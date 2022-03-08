@@ -133,15 +133,12 @@ class SQLiteDataConverter(DataConverter):
         dataframes_big = OrderedDict([
             (key, pd.DataFrame()) for key in self._table_names
         ])
-        print('1')
         event_count = 0
         output_count = 0
         first_table = self._table_names[0]
-        print('First table',first_table)
         for u in range(len(input_files)):
             self._extractors.set_files(input_files[u], gcd_files[u])
             i3_file = dataio.I3File(input_files[u], "r")
-            print(2)
             while i3_file.more():
                 try:
                     frame = i3_file.pop_physics()
