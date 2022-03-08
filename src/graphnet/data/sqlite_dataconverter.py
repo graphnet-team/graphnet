@@ -133,14 +133,15 @@ class SQLiteDataConverter(DataConverter):
         dataframes_big = OrderedDict([
             (key, pd.DataFrame()) for key in self._table_names
         ])
-
+        print('1')
         event_count = 0
         output_count = 0
         first_table = self._table_names[0]
+        print('First table',first_table)
         for u in range(len(input_files)):
             self._extractors.set_files(input_files[u], gcd_files[u])
             i3_file = dataio.I3File(input_files[u], "r")
-
+            print(2)
             while i3_file.more():
                 try:
                     frame = i3_file.pop_physics()
@@ -154,18 +155,13 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-                    #print(key,' of the dfs:',df,'\n')
-                    #print(data_dict[self._pulsemap])
-                    #print('should we include this P frame in the big dataframe?',bool(( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) )))
+                    print('should we include this P frame in the big dataframe?',bool(( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) )))
+
                     if bool( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) ): #only include if the dom_x is non empty and the truth is non empty
-                        #print('Im in the if statement now')
-                    #if (len(df) and (not data_dict[self._pulsemap]['dom_x'])): #this should filter empty dataframes out. Why does it not now?
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
-                        #print('Big dataframe:\n',dataframes_big)
-                        #print('len(bigdf) = ',len(dataframes_big))
                      
                 event_count += 1
-                if len(dataframes_big[first_table]) >= max_dict_size:#if truth table is bigger than max dict size (10,000) then save THIS MUST NEVER TRIGGER?
+                if len(dataframes_big[first_table]) >= max_dict_size:
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
                     dataframes_big = OrderedDict([(key, pd.DataFrame()) for key in self._table_names])
                     output_count +=1
@@ -199,11 +195,6 @@ class SQLiteDataConverter(DataConverter):
                 column_names = self._extract_column_names(db_paths, table_name)
                 if len(column_names) > 1:
                     is_pulse_map = is_pulsemap_check(table_name)
-
-                    # if 'retro' in table_name.lower() or 'truth' in table_name.lower():
-                    #     is_pulse_map = False
-                    # else:
-                    #     is_pulse_map = True
                     self._create_table(database_path, table_name, column_names, is_pulse_map= is_pulse_map)#(ix_table >= 2))
 
             # Merge temporary databases into newly created one
