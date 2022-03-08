@@ -64,13 +64,14 @@
 <span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="n">dataclasses</span><span class="p">,</span> <span class="n">icetray</span><span class="p">,</span> <span class="n">dataio</span> <span class="p">,</span> <span class="n">phys_services</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;icecube package not available.&quot;</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">frame_has_key</span><span class="p">,</span><span class="n">muon_stopped</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">frame_has_key</span>
 
 
 <div class="viewcode-block" id="I3Extractor"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.I3Extractor">[docs]</a><span class="k">class</span> <span class="nc">I3Extractor</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -341,7 +342,9 @@
             <span class="s1">&#39;SubrunID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_run_id</span><span class="p">,</span>
             <span class="s1">&#39;EventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">event_id</span><span class="p">,</span>
             <span class="s1">&#39;SubEventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_id</span><span class="p">,</span>
-            <span class="s1">&#39;dbang_decay_length&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__extract_dbang_decay_length__</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
+            <span class="s1">&#39;dbang_decay_length&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__extract_dbang_decay_length__</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">),</span>
+            <span class="s1">&#39;track_length&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;stopped_muon&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">is_mc</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">is_noise</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
@@ -361,12 +364,12 @@
                 <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
                     <span class="s1">&#39;track_length&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
                 <span class="p">})</span>
-                <span class="n">final_position</span><span class="p">,</span> <span class="n">stopped</span> <span class="o">=</span> <span class="n">muon_stopped</span><span class="p">(</span><span class="n">output</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_borders</span><span class="p">)</span>
+                <span class="n">muon_final</span> <span class="o">=</span> <span class="n">muon_stopped</span><span class="p">(</span><span class="n">output</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_borders</span><span class="p">)</span>
                 <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                    <span class="s1">&#39;final_position_x&#39;</span><span class="p">:</span> <span class="n">final_position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="s1">&#39;final_position_y&#39;</span><span class="p">:</span> <span class="n">final_position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="s1">&#39;final_position_z&#39;</span><span class="p">:</span> <span class="n">final_position</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                    <span class="s1">&#39;stopped_muon&#39;</span><span class="p">:</span> <span class="n">stopped</span><span class="p">,</span>
+                    <span class="s1">&#39;position_x&#39;</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="c1">#position_xyz has no meaning for muons. These will now be updated to muon final position, given track length/azimuth/zenith</span>
+                    <span class="s1">&#39;position_y&#39;</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;position_z&#39;</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;stopped_muon&#39;</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s1">&#39;stopped&#39;</span><span class="p">],</span>
                 <span class="p">})</span>                
 
         <span class="k">return</span> <span class="n">output</span></div>
@@ -553,6 +556,41 @@
         <span class="n">elasticity</span> <span class="o">=</span> <span class="n">padding_value</span>
 
     <span class="k">return</span> <span class="n">MCInIcePrimary</span><span class="p">,</span> <span class="n">interaction_type</span><span class="p">,</span> <span class="n">elasticity</span></div>
+
+
+
+<div class="viewcode-block" id="muon_stopped"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.muon_stopped">[docs]</a><span class="k">def</span> <span class="nf">muon_stopped</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="n">borders</span><span class="p">,</span> <span class="n">horizontal_pad</span> <span class="o">=</span> <span class="mf">100.</span><span class="p">,</span> <span class="n">vertical_pad</span> <span class="o">=</span> <span class="mf">100.</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates where a simulated muon stops and if this is inside the detectors fiducial volume. </span>
+<span class="sd">    IMPORTANT: The final position of the muon is saved in truth extractor/databases as position_x,position_y and position_z.</span>
+<span class="sd">               This is analogoues to the neutrinos whose interaction vertex is saved under the same name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        truth (dict) : dictionary of already extracted values</span>
+<span class="sd">        borders (tuple) : first entry xy outline, second z min/max depth. See I3TruthExtractor for hard-code example.</span>
+<span class="sd">        horizontal_pad (float) : shrink xy plane further with exclusion zone</span>
+<span class="sd">        vertical_pad (float) : further shrink detector depth with exclusion height</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dictionary (dict) : containing the x,y,z co-ordinates of final muon position and contained boolean (0 or 1)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#to do:remove hard-coded border coords and replace with GCD file contents using string no&#39;s</span>
+    <span class="n">border</span> <span class="o">=</span> <span class="n">mpath</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">borders</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">start_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;position_x&#39;</span><span class="p">],</span>
+                          <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;position_y&#39;</span><span class="p">],</span>
+                          <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;position_z&#39;</span><span class="p">]])</span>
+                          
+    <span class="n">travel_vec</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;track_length&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;azimuth&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;zenith&#39;</span><span class="p">]),</span>
+                              <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;track_length&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;azimuth&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;zenith&#39;</span><span class="p">]),</span>
+                              <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;track_length&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;zenith&#39;</span><span class="p">])])</span>
+    
+    <span class="n">end_pos</span> <span class="o">=</span> <span class="n">start_pos</span><span class="o">+</span><span class="n">travel_vec</span>
+
+    <span class="n">stopped_xy</span> <span class="o">=</span> <span class="n">border</span><span class="o">.</span><span class="n">contains_point</span><span class="p">((</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">radius</span><span class="o">=-</span><span class="n">horizontal_pad</span><span class="p">)</span> 
+    <span class="n">stopped_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vertical_pad</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertical_pad</span><span class="p">)</span> 
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span> <span class="p">:</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span> <span class="p">:</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;z&#39;</span> <span class="p">:</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;stopped&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="n">stopped_xy</span> <span class="o">*</span> <span class="n">stopped_z</span><span class="p">)</span> <span class="p">}</span></div>
 </pre></div>
 
            </div>

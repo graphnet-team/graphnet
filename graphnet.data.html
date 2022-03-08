@@ -350,6 +350,32 @@ elasticity (float): In ]0,1[</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.i3extractor.muon_stopped">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.i3extractor.</span></span><span class="sig-name descname"><span class="pre">muon_stopped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical_pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/i3extractor.html#muon_stopped"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.i3extractor.muon_stopped" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates where a simulated muon stops and if this is inside the detectors fiducial volume.
+IMPORTANT: The final position of the muon is saved in truth extractor/databases as position_x,position_y and position_z.</p>
+<blockquote>
+<div><p>This is analogoues to the neutrinos whose interaction vertex is saved under the same name.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>dict</em>) – dictionary of already extracted values</p></li>
+<li><p><strong>borders</strong> (<em>tuple</em>) – first entry xy outline, second z min/max depth. See I3TruthExtractor for hard-code example.</p></li>
+<li><p><strong>horizontal_pad</strong> (<em>float</em>) – shrink xy plane further with exclusion zone</p></li>
+<li><p><strong>vertical_pad</strong> (<em>float</em>) – further shrink detector depth with exclusion height</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>containing the x,y,z co-ordinates of final muon position and contained boolean (0 or 1)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-graphnet.data.sqlite_dataconverter">
 <span id="graphnet-data-sqlite-dataconverter-module"></span><h2>graphnet.data.sqlite_dataconverter module<a class="headerlink" href="#module-graphnet.data.sqlite_dataconverter" title="Permalink to this headline"></a></h2>
@@ -689,16 +715,6 @@ gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
 <dt class="sig sig-object py" id="graphnet.data.utils.is_i3_file">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">is_i3_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/utils.html#is_i3_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.is_i3_file" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether <cite>filename</cite> is an I3 file.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.muon_stopped">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">muon_stopped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical_pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#muon_stopped"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.muon_stopped" title="Permalink to this definition"></a></dt>
-<dd><p>Determine if a simulated muon stops inside the fiducial volume of the IceCube detector as defined in the RIDE study.
-Borders should be a tuple containing two arrays, first entry is xy outlining points, second entry is z min and max depth
-Vertical and horizontal pad shrink fiducial volume further.
-Using track length, azimuth and zenith travel from the starting/generation point,
-also return x,y,z of muon end point (to be reconstructed)</p>
 </dd></dl>
 
 <dl class="py function">

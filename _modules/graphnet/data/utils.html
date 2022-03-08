@@ -67,7 +67,6 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
@@ -380,32 +379,6 @@
     <span class="k">except</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="muon_stopped"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.muon_stopped">[docs]</a><span class="k">def</span> <span class="nf">muon_stopped</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="n">borders</span><span class="p">,</span> <span class="n">horizontal_pad</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">vertical_pad</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Determine if a simulated muon stops inside the fiducial volume of the IceCube detector as defined in the RIDE study.</span>
-<span class="sd">    Borders should be a tuple containing two arrays, first entry is xy outlining points, second entry is z min and max depth</span>
-<span class="sd">    Vertical and horizontal pad shrink fiducial volume further.</span>
-<span class="sd">    Using track length, azimuth and zenith travel from the starting/generation point,</span>
-<span class="sd">    also return x,y,z of muon end point (to be reconstructed)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="c1">#to do:remove hard-coded border coords and replace with GCD file contents using string no&#39;s</span>
-    <span class="n">border</span> <span class="o">=</span> <span class="n">mpath</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">borders</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-    <span class="n">start_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;position_x&#39;</span><span class="p">],</span>
-                          <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;position_y&#39;</span><span class="p">],</span>
-                          <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;position_z&#39;</span><span class="p">]])</span>
-                          
-    <span class="n">travel_vec</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;track_length&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;azimuth&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;zenith&#39;</span><span class="p">]),</span>
-                           <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;track_length&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;azimuth&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;zenith&#39;</span><span class="p">]),</span>
-                           <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;track_length&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;zenith&#39;</span><span class="p">])])</span>
-    
-    <span class="n">end_pos</span> <span class="o">=</span> <span class="n">start_pos</span><span class="o">+</span><span class="n">travel_vec</span>
-
-    <span class="n">stopped_xy</span> <span class="o">=</span> <span class="n">border</span><span class="o">.</span><span class="n">contains_point</span><span class="p">((</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">radius</span><span class="o">=-</span><span class="n">horizontal_pad</span><span class="p">)</span> 
-    <span class="n">stopped_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vertical_pad</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertical_pad</span><span class="p">)</span> 
-    <span class="n">stopped_muon</span> <span class="o">=</span> <span class="n">stopped_xy</span> <span class="o">*</span> <span class="n">stopped_z</span> 
-
-    <span class="k">return</span> <span class="n">end_pos</span><span class="p">,</span><span class="n">stopped_muon</span></div>
 </pre></div>
 
            </div>
