@@ -278,7 +278,7 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
-            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value)
+            'dbang_decay_length': padding_value,
         }
 
         if is_mc == True and is_noise == False:
@@ -293,6 +293,7 @@ class I3TruthExtractor(I3Extractor):
                 'pid': MCInIcePrimary.pdg_encoding,
                 'interaction_type': interaction_type,
                 'elasticity': elasticity,
+                'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value)
             })
             if abs(output['pid'])==13:
                 output.update({
