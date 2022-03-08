@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import List
 import numpy as np
+import matplotlib.path as mpath
 try:
     from icecube import dataclasses, icetray, dataio , phys_services  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
 
 from abc import abstractmethod
-from .utils import frame_has_key,muon_stopped
+from .utils import frame_has_key
 
 
 class I3Extractor(ABC):
@@ -278,7 +279,9 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
-            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value)
+            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value),
+            'track_length': padding_value,
+            'stopped_muon': padding_value,
         }
 
         if is_mc == True and is_noise == False:
@@ -298,12 +301,12 @@ class I3TruthExtractor(I3Extractor):
                 output.update({
                     'track_length': MCInIcePrimary.length,
                 })
-                final_position, stopped = muon_stopped(output,self._borders)
+                muon_final = muon_stopped(output,self._borders)
                 output.update({
-                    'final_position_x': final_position[0],
-                    'final_position_y': final_position[1],
-                    'final_position_z': final_position[2],
-                    'stopped_muon': stopped,
+                    'position_x': muon_final['x'], #position_xyz has no meaning for muons. These will now be updated to muon final position, given track length/azimuth/zenith
+                    'position_y': muon_final['y'],
+                    'position_z': muon_final['z'],
+                    'stopped_muon': muon_final['stopped'],
                 })                
 
         return output
@@ -490,3 +493,38 @@ def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, paddin
         elasticity = padding_value
 
     return MCInIcePrimary, interaction_type, elasticity
+
+
+
+def muon_stopped(truth, borders, horizontal_pad = 100., vertical_pad = 100.):
+    '''
+    Calculates where a simulated muon stops and if this is inside the detectors fiducial volume. 
+    IMPORTANT: The final position of the muon is saved in truth extractor/databases as position_x,position_y and position_z.
+               This is analogoues to the neutrinos whose interaction vertex is saved under the same name.
+
+    Args:
+        truth (dict) : dictionary of already extracted values
+        borders (tuple) : first entry xy outline, second z min/max depth. See I3TruthExtractor for hard-code example.
+        horizontal_pad (float) : shrink xy plane further with exclusion zone
+        vertical_pad (float) : further shrink detector depth with exclusion height
+    
+    Returns:
+        dictionary (dict) : containing the x,y,z co-ordinates of final muon position and contained boolean (0 or 1)
+    '''
+    #to do:remove hard-coded border coords and replace with GCD file contents using string no's
+    border = mpath.Path(borders[0])
+
+    start_pos = np.array([truth['position_x'],
+                          truth['position_y'],
+                          truth['position_z']])
+                          
+    travel_vec = -1*np.array([truth['track_length']*np.cos(truth['azimuth'])*np.sin(truth['zenith']),
+                              truth['track_length']*np.sin(truth['azimuth'])*np.sin(truth['zenith']),
+                              truth['track_length']*np.cos(truth['zenith'])])
+    
+    end_pos = start_pos+travel_vec
+
+    stopped_xy = border.contains_point((end_pos[0],end_pos[1]),radius=-horizontal_pad) 
+    stopped_z = (end_pos[2] > borders[1][0] + vertical_pad) * (end_pos[2] < borders[1][1] - vertical_pad) 
+
+    return {'x' : end_pos[0], 'y' : end_pos[1], 'z' : end_pos[2], 'stopped' : (stopped_xy * stopped_z) }
