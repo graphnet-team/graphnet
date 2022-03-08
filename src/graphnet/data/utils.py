@@ -147,7 +147,7 @@ def get_even_track_cascade_indicies(database):
         query = 'select event_no from truth where abs(pid) != 13 and event_no not in %s'%str(tuple(train_events['event_no']))
         test = pd.read_sql(query, con).values.ravel().tolist()
 
-    return events.values.ravel().tolist(), test
+    return train_events.values.ravel().tolist(), test
 
 def get_even_dbang_selection(db: str, min_max_decay_length = None, seed: int = 42) -> Tuple[List[int]]:
     """Utility method to get indices for neutrino events with equal dbang / non-dbang labels.

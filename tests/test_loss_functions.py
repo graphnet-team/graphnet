@@ -8,6 +8,7 @@ from torch.autograd import grad
 
 from graphnet.components.loss_functions import LogCoshLoss, VonMisesFisherLoss
 from graphnet.utils import eps_like
+from torch_geometric.data import Data
 
 # Utility method(s)
 def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
@@ -38,12 +39,11 @@ def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
 def test_log_cosh(dtype=torch.float32):
     # Prepare test data
     x = torch.tensor([-100, -10, -1, 0, 1, 10, 100], dtype=dtype).unsqueeze(1)  # Shape [N, 1]
-    y = 0. * x.clone().squeeze()  # Shape [N,]
-
+    y = 0. * x.clone()  # Shape [N,1]
     # Calculate losses using loss function, and manually
     log_cosh_loss = LogCoshLoss()
     losses = log_cosh_loss(x, y, return_elements=True)
-    losses_reference = torch.log(torch.cosh(x[:,0] - y))
+    losses_reference = torch.log(torch.cosh(x - y))
 
     # (1) Loss functions should not return  `inf` losses, even for large
     #     differences between prediction and target. This is not necessarily
