@@ -214,8 +214,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         return graph
 
     def _add_truth_flag(self, i, graph):
-        truth_flags = self._query_noise_database(i)
-        graph['truth_flag'] = torch.tensor(truth_flags).reshape(-1)
+        graph['truth_flag'] = torch.tensor(self._query_noise_database(i)).reshape(-1)
         return graph
 
     def establish_connection(self,i):
