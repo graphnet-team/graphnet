@@ -276,4 +276,4 @@ class F1Loss(LossFunction):
 
         f1 = 2*p*r / (p+r+1e-10)
         f1 = torch.where(torch.isnan(f1), torch.zeros_like(f1), f1)
-        return 1 - torch.mean(f1)
+        return torch.ones(target.size()) - torch.mean(f1)
