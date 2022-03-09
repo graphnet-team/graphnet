@@ -136,9 +136,13 @@ def get_predictions(trainer, model, dataloader, prediction_columns, additional_a
 
     # Get additional attributes
     attributes = OrderedDict([(attr, []) for attr in additional_attributes])
+
     for batch in dataloader:
         for attr in attributes:
-            attributes[attr].extend(batch[attr].detach().cpu().numpy())
+            attribute = batch[attr].detach().cpu().numpy()
+            if attr == 'event_no':
+                attribute = np.repeat(attribute, batch['n_pulses'].detach().cpu().numpy())
+            attributes[attr].extend(attribute)
 
     data = np.concatenate([predictions] + [
         np.asarray(values)[:, np.newaxis] for values in attributes.values()
