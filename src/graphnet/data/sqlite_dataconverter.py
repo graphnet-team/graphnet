@@ -152,12 +152,10 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-                    print('should we include this P frame in the big dataframe?',bool(( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) )))
-
                     if bool( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) ): #only include if the dom_x is non empty and the truth is non empty
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
                      
-                event_count += 1
+                event_count += 1 #do we care if this goes up in twos? Or does it have to be 0,1,2,3... if we care there needs to be an if statement
                 if len(dataframes_big[first_table]) >= max_dict_size:
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
                     dataframes_big = OrderedDict([(key, pd.DataFrame()) for key in self._table_names])
