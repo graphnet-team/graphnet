@@ -4,7 +4,6 @@ from glob import glob
 import os
 import numpy as np
 import pandas as pd
-import matplotlib.path as mpath
 from pathlib import Path
 import re
 from typing import List, Tuple
@@ -317,29 +316,3 @@ def frame_has_key(frame, key: str):
     except:
         return False
 
-def muon_stopped(truth, borders, horizontal_pad = 100, vertical_pad = 100):
-    '''
-    Determine if a simulated muon stops inside the fiducial volume of the IceCube detector as defined in the RIDE study.
-    Borders should be a tuple containing two arrays, first entry is xy outlining points, second entry is z min and max depth
-    Vertical and horizontal pad shrink fiducial volume further.
-    Using track length, azimuth and zenith travel from the starting/generation point,
-    also return x,y,z of muon end point (to be reconstructed)
-    '''
-    #to do:remove hard-coded border coords and replace with GCD file contents using string no's
-    border = mpath.Path(borders[0])
-
-    start_pos = np.array([truth['position_x'],
-                          truth['position_y'],
-                          truth['position_z']])
-                          
-    travel_vec = -1*np.array([truth['track_length']*np.cos(truth['azimuth'])*np.sin(truth['zenith']),
-                           truth['track_length']*np.sin(truth['azimuth'])*np.sin(truth['zenith']),
-                           truth['track_length']*np.cos(truth['zenith'])])
-    
-    end_pos = start_pos+travel_vec
-
-    stopped_xy = border.contains_point((end_pos[0],end_pos[1]),radius=-horizontal_pad) 
-    stopped_z = (end_pos[2] > borders[1][0] + vertical_pad) * (end_pos[2] < borders[1][1] - vertical_pad) 
-    stopped_muon = stopped_xy * stopped_z 
-
-    return end_pos,stopped_muon
