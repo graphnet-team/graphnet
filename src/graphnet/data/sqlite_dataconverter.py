@@ -156,6 +156,7 @@ class SQLiteDataConverter(DataConverter):
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
                      
                 event_count += 1 #do we care if this goes up in twos? Or does it have to be 0,1,2,3... if we care there needs to be an if statement
+                
                 if len(dataframes_big[first_table]) >= max_dict_size:
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
                     dataframes_big = OrderedDict([(key, pd.DataFrame()) for key in self._table_names])
