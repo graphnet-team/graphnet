@@ -305,7 +305,7 @@ class SQLiteDataConverter(DataConverter):
     def _save_to_sql(self, dataframes_big: dict, id, output_count, db_name, outdir):
         engine = sqlalchemy.create_engine('sqlite:///' + outdir + f'/{db_name}/tmp/worker-{id}-{output_count}.db')
         for key, df in dataframes_big.items():
-            if len(dataframes_big[key]) > 0: #i would like to maybe place condition here that removes empty 
+            if len(dataframes_big[key]) > 0: 
                 df.to_sql(key, con=engine, index=False, if_exists='append')
         engine.dispose()
 
