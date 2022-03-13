@@ -62,9 +62,8 @@ class SQLiteDataConverter(DataConverter):
              "I3TruthExtractor to allow for attaching unique indices.")
 
         self._table_names = [extractor.name for extractor in self._extractors]
-        print([x for x in self._table_names if is_pulsemap_check(x)])
-        self._pulsemap = [x for x in self._table_names if is_pulsemap_check(x)][0]
-        print('LOOK HERE IS THE PULSEMAP:',self._pulsemap)
+        self._pulsemap = [x for x in self._table_names if is_pulsemap_check(x)][0] #the first non-truth non-retro table name (pulsemap)
+
 
 
     # Abstract method implementation(s)
