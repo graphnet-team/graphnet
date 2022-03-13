@@ -486,18 +486,12 @@ def get_primary_particle_interaction_type_and_elasticity(frame, sim_type, paddin
     try:
         interaction_type = frame["I3MCWeightDict"]["InteractionType"]
     except:
-        try:
-            interaction_type = frame["I3GenieResult"]["xx"]
-        except:
-            interaction_type = padding_value
+        interaction_type = padding_value
 
     try:
         elasticity = frame['I3GENIEResultDict']['y']
     except:
-        try:
-            elasticity = frame['I3GenieResult']['y']
-        except:
-            elasticity = padding_value
+        elasticity = padding_value
 
     return MCInIcePrimary, interaction_type, elasticity
 
