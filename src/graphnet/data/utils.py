@@ -234,8 +234,6 @@ def is_i3_file(filename: str) -> bool:
     if is_gcd_file(filename.lower()):
         return False
     elif has_extension(filename, ['bz2', 'zst', 'gz']):
-        print(filename)
-        print('Is i3?',has_extension(filename, ['bz2', 'zst', 'gz']))
         return True
     return False
 
