@@ -312,7 +312,7 @@ class I3TruthExtractor(I3Extractor):
 
         return output
 
-    def __extract_dbang_decay_length__(self,frame, padding_value):
+    def _extract_dbang_decay_length(self,frame, padding_value):
         mctree = frame['I3MCTree']
         try:
             p_true = mctree.primaries[0]
