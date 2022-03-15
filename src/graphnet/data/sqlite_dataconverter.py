@@ -62,8 +62,7 @@ class SQLiteDataConverter(DataConverter):
              "I3TruthExtractor to allow for attaching unique indices.")
 
         self._table_names = [extractor.name for extractor in self._extractors]
-        self._pulsemap = [extractor.name for extractor in self._extractors if isinstance(extractor,I3FeatureExtractor)][0] #the first feature extractor pulsemap
-
+        self._pulsemap = [extractor.name for extractor in self._extractors if isinstance(extractor,I3FeatureExtractor)]
 
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
@@ -150,11 +149,14 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-                    if bool( data_dict[self._pulsemap]['dom_x'] and data_dict[self._table_names[0]] and len(df) ): #only include if the dom_x is non-empty and the truth is non-empty
+                    if (any_pulsemaps_non_empty(data_dict,self._pulsemap)  and len(df) > 0) :
+                        # only include data_dict in temp. databases if at least one pulsemap is non-empty,  
+                        # and the current extractor (df) is also non-empty (also since truth is always non-empty)
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
-                     
-                event_count += 1 #do we care if this goes up in twos? Or does it have to be 0,1,2,3... if we care this should be wrapped in if statement
-                
+
+                if any_pulsemaps_non_empty(data_dict,self._pulsemap): #event count only increases if we actually place P frame pulsemap inside temp dbs
+                    event_count += 1
+            
                 if len(dataframes_big[first_table]) >= max_dict_size:
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
                     dataframes_big = OrderedDict([(key, pd.DataFrame()) for key in self._table_names])
@@ -325,12 +327,6 @@ def apply_event_no(extraction, event_no_list, event_counter):
     out['event_no'] = event_no_list[event_counter]
     return out
 
-def is_empty(features):
-    if features['dom_x'] is None:
-        return True
-    else:
-        return False
-
 
 def is_pulsemap_check(table_name: str) -> bool:
     """Check whether `table_name` corresponds to a pulsemap, and not a truth or RETRO table."""
@@ -338,3 +334,12 @@ def is_pulsemap_check(table_name: str) -> bool:
         return False
     else: #could have to include the lower case word 'pulse'?
         return True
+
+def any_pulsemaps_non_empty(data_from_frame: OrderedDict, pulsemap_names: List[str]) -> bool:
+    '''Check whether there are any non-empty pulsemaps extracted from P frame.'''
+    # function takes in the data extracted from the P frame, then retrieves the values, if there are any,
+    # from the pulsemap(s) keys (e.g SplitInIcePulses)
+    # if at least one of the pulsemaps is non-empty then return true
+    pulsemap_dicts = np.array(list(map(data_from_frame.get, pulsemap_names)))
+    return any(d['dom_x'] for d in pulsemap_dicts)    
+
