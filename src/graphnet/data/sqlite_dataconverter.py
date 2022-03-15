@@ -10,8 +10,6 @@ from typing import Dict, List, OrderedDict
 
 from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
 
-from graphnet.src.graphnet.data.i3extractor import I3FeatureExtractor
-
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
