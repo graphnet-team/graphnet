@@ -337,7 +337,7 @@ def is_pulsemap_check(table_name: str) -> bool:
     else: #could have to include the lower case word 'pulse'?
         return True
 
-def any_pulsemaps_non_empty(data_from_frame: OrderedDict, pulsemap_names: List[str]) -> bool:
+def any_pulsemaps_non_empty(data_from_frame, pulsemap_names) -> bool:
     '''Check whether there are any non-empty pulsemaps extracted from P frame.'''
     # function takes in the data extracted from the P frame, then retrieves the values, if there are any,
     # from the pulsemap(s) keys (e.g SplitInIcePulses)
