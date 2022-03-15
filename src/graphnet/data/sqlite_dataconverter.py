@@ -159,7 +159,9 @@ class SQLiteDataConverter(DataConverter):
             
                 if len(dataframes_big[first_table]) >= max_dict_size:
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
-                    dataframes_big = OrderedDict([(key, pd.DataFrame()) for key in self._table_names])
+                    dataframes_big = OrderedDict([
+                        (key, pd.DataFrame()) for key in self._table_names
+                    ])
                     output_count +=1
 
 
