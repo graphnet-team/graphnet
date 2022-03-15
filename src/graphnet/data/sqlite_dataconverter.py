@@ -8,7 +8,9 @@ import sqlite3
 from tqdm import tqdm
 from typing import Dict, List, OrderedDict
 
-from graphnet.data.i3extractor import I3TruthExtractor
+from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
+
+from graphnet.src.graphnet.data.i3extractor import I3FeatureExtractor
 
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
@@ -62,8 +64,7 @@ class SQLiteDataConverter(DataConverter):
              "I3TruthExtractor to allow for attaching unique indices.")
 
         self._table_names = [extractor.name for extractor in self._extractors]
-        self._pulsemap = [x for x in self._table_names if is_pulsemap_check(x)][0] #the first non-truth non-retro table name (pulsemap)
-
+        self._pulsemap = [extractor.name for extractor in self._extractors if isinstance(extractor,I3FeatureExtractor)][0] #the first feature extractor pulsemap
 
 
     # Abstract method implementation(s)
