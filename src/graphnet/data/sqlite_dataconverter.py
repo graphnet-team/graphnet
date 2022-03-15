@@ -333,7 +333,8 @@ def is_empty(features):
         return False
 
 
-def is_pulsemap_check(table_name):
+def is_pulsemap_check(table_name: str) -> bool:
+    """Check whether `table_name` corresponds to a pulsemap, and not a truth or RETRO table."""
     if 'retro' in table_name.lower() or 'truth' in table_name.lower():
         return False
     else: #could have to include the lower case word 'pulse'?
