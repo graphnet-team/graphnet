@@ -14,9 +14,22 @@ import sqlalchemy
 import sqlite3
 
 class InSQLitePipeline(ABC):
-    """Extracts relevant information from physics frames."""
+    """Creates a SQLite database with truth and GNN predictions and, if available, RETRO reconstructions. Made for analysis.
+    """
     def __init__(self, module_dict, features, truth, device, retro_table_name = 'retro',outdir = None,batch_size = 100, n_workers = 10, pipeline_name = 'pipeline'):
-        # Member variables
+        """Initializes the pipeline
+
+        Args:
+            module_dict (dict): A dictionary with GNN modules from GraphNet. E.g. {'energy': gnn_module_for_energy_regression}
+            features (list): list of input features for the GNN modules
+            truth (list): list of truth for the GNN ModuleList
+            device (torch._device): the device used for computation
+            retro_table_name (str, optional): Name of the retro table for. Defaults to 'retro'.
+            outdir (path, optional): the directory in which the pipeline database will be stored. Defaults to None.
+            batch_size (int, optional): batch size for inference. Defaults to 100.
+            n_workers (int, optional): number of workers used in dataloading. Defaults to 10.
+            pipeline_name (str, optional): name of the pipeline. If such a pipeline already exists, an error will be prompted to avoid overwriting. Defaults to 'pipeline'.
+        """
         self._pipeline_name = pipeline_name
         self._device = device
         self.n_workers =  n_workers
@@ -28,7 +41,12 @@ class InSQLitePipeline(ABC):
         self._retro_table_name = retro_table_name
 
     def __call__(self, database, pulsemap) -> dict:
-        """Extracts relevant information from frame."""
+        """Runs inference of each field in self._module_dict[target]['']
+
+        Args:
+            database (path): path to database with pulsemap and truth
+            pulsemap (str): name of pulsemaps
+        """
         outdir = self._get_outdir(database)
         if isinstance(self._device, str): # Because pytorch lightning insists on breaking pytorch cuda device naming scheme
             device = int(self._device[-1])
@@ -38,18 +56,13 @@ class InSQLitePipeline(ABC):
                 dataloader = self._make_dataloader(database, pulsemap)
                 trainer = Trainer(gpus = [device])
                 model = torch.load(self._module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
-                #model.load_state_dict(self._module_dict[target]['state_dict'])
                 model._gnn.to(self._device)
                 model._device = self._device
                 model.to(self._device)
                 model.eval()
                 model.inference()
-                results = get_predictions(trainer,model, dataloader, self._module_dict[target]['output_column_names'], ['event_no', 'zenith', 'energy'])
+                results = get_predictions(trainer,model, dataloader, self._module_dict[target]['output_column_names'], ['event_no'])
                 dataframes.append(results.sort_values('event_no').reset_index(drop = True))
-            import pickle
-            with open('/home/iwsatlas1/oersoe/phd/oscillations/merge_test.pickle', 'wb') as file:
-                # A new file will be created
-                pickle.dump(dataframes, file)
             df = self._combine_outputs(dataframes)
             self._make_pipeline_database(outdir,df, database)
         else:
@@ -57,14 +70,22 @@ class InSQLitePipeline(ABC):
             print('WARNING - Pipeline named %s already exists! \n Please rename pipeline!'%self._pipeline_name)
         return
     def _load_modules(self, module_dict):
-            for target in module_dict.keys():
-                model = torch.load(module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
-                model._gnn.to(self._device)
-                model._device = self._device
-                model.to(self._device)
-                model.eval()
-                module_dict[target]['loaded_module'] = model
-            return module_dict
+        """Loads each module in _module_dict
+
+        Args:
+            module_dict (dict): dictionary of GNN ModuleList
+
+        Returns:
+            dict: module_dict with "loaded_module" field added.
+        """
+        for target in module_dict.keys():
+            model = torch.load(module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
+            model._gnn.to(self._device)
+            model._device = self._device
+            model.to(self._device)
+            model.eval()
+            module_dict[target]['loaded_module'] = model
+        return module_dict
 
     def _make_dataloader(self, database, pulsemap):
         dataloader = make_dataloader(db = database, pulsemaps = pulsemap, features = self._features, truth = self._truth, batch_size = self._batch_size, shuffle = False, selection = None, num_workers = self.n_workers, persistent_workers= False)
