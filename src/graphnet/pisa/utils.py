@@ -10,6 +10,153 @@ import multiprocessing
 import os
 import random
 
+
+def make_binning_cfg(config_dict, outdir):
+    template = """#------------------------------------------------------------------------------
+    # Binning definitions, linked back to from stage definitions
+    #------------------------------------------------------------------------------
+    
+    # special PID format from datarelease
+    graphnet_dynamic_binning.order = reco_energy, reco_coszen, pid
+    graphnet_dynamic_binning.reco_energy = {'num_bins':%s, 'is_log':True, 'domain':[0.5,55] * units.GeV, 'tex': r'E_{\\rm reco}'}
+    graphnet_dynamic_binning.reco_coszen = {'num_bins':%s, 'is_lin':True, 'domain':[-1,1], 'tex':r'\\cos{\\theta}_{\\rm reco}'}
+    graphnet_dynamic_binning.pid = {'bin_edges': %s, 'tex':r'{\\rm PID}'}
+    
+    
+    true_allsky_fine.order = true_energy, true_coszen
+    true_allsky_fine.true_energy = {'num_bins':%s, 'is_log':True, 'domain':[1,1000] * units.GeV, 'tex': r'E_{\\rm true}'}
+    true_allsky_fine.true_coszen = {'num_bins':%s, 'is_lin':True, 'domain':[-1,1], 'tex':r'\\cos\,\\theta_{Z,{\\rm true}}'}
+    """%(config_dict['reco_energy']['num_bins'], 
+         config_dict['reco_coszen']['num_bins'], 
+         config_dict['pid']['bin_edges'], 
+         config_dict['true_energy']['num_bins'],
+         config_dict['true_coszen']['num_bins'])
+
+    with open(outdir + '/binning_config.cfg', 'w+') as f:
+        f.write(template)
+    return outdir + '/binning_config.cfg'
+
+def make_pipeline_cfg(config_dict, outdir):
+    template = """#include %s as binning
+    #include settings/osc/nufitv20.cfg as osc
+    #include settings/osc/earth.cfg as earth
+
+    [pipeline]
+    order = data.sqlite_loader, flux.honda_ip, flux.barr_simple, osc.prob3, aeff.aeff, utils.hist
+    param_selections = nh
+    name = neutrinos
+    output_binning = dragon_datarelease
+    output_key = weights, errors
+
+    [data.sqlite_loader]
+    calc_mode = events
+    apply_mode = events
+    output_names = nue_cc, numu_cc, nutau_cc, nue_nc, numu_nc, nutau_nc, nuebar_cc, numubar_cc, nutaubar_cc, nuebar_nc, numubar_nc, nutaubar_nc
+    post_fix = %s
+    database = %s
+
+    [flux.honda_ip]
+    calc_mode = true_allsky_fine
+    apply_mode = events
+    param.flux_table = flux/honda-2015-spl-solmin-aa.d
+
+    [flux.barr_simple]
+    calc_mode = true_allsky_fine
+    apply_mode = events
+    param.nu_nubar_ratio = 1.0 +/- 0.1
+    param.nu_nubar_ratio.fixed = True
+    param.nu_nubar_ratio.range = nominal + [-3., +3.] * sigma
+    param.nue_numu_ratio = 1.0 +/- 0.05
+    param.nue_numu_ratio.fixed = False
+    param.nue_numu_ratio.range = nominal + [-0.5, +0.5]
+    param.Barr_uphor_ratio = 0.0 +/- 1.0
+    param.Barr_uphor_ratio.fixed = False
+    param.Barr_uphor_ratio.range = nominal + [-3.0, +3.0]
+    param.Barr_nu_nubar_ratio = 0.0 +/- 1.0
+    param.Barr_nu_nubar_ratio.fixed = False
+    param.Barr_nu_nubar_ratio.range = nominal + [-3.0, +3.0]
+    param.delta_index = 0.0 +/- 0.1
+    param.delta_index.fixed = False
+    param.delta_index.range = nominal + [-5, +5] * sigma
+
+    [osc.prob3]
+    calc_mode = true_allsky_fine
+    apply_mode = events
+    param.earth_model = osc/PREM_12layer.dat
+    param.YeI = ${earth:YeI}
+    param.YeM = ${earth:YeM}
+    param.YeO = ${earth:YeO}
+    param.detector_depth = ${earth:detector_depth}
+    param.prop_height = ${earth:prop_height}
+    param.theta12 = ${osc:theta12}
+    param.theta12.fixed = True
+    param.nh.theta13 = ${osc:theta13_nh}
+    param.nh.theta13.fixed = False
+    param.nh.theta13.range = ${osc:theta13_nh.range}
+    param.ih.theta13 = ${osc:theta13_ih}
+    param.ih.theta13.fixed = False
+    param.ih.theta13.range = ${osc:theta13_ih.range}
+    param.nh.theta23 = ${osc:theta23_nh}
+    param.nh.theta23.fixed = False
+    param.nh.theta23.range = ${osc:theta23_nh.range}
+    param.nh.theta23.prior = uniform
+    param.ih.theta23 = ${osc:theta23_ih}
+    param.ih.theta23.fixed = False
+    param.ih.theta23.range = ${osc:theta23_ih.range}
+    param.ih.theta23.prior = uniform
+    param.nh.deltacp = 0.0 * units.degree
+    param.nh.deltacp.fixed = True
+    param.nh.deltacp.range = ${osc:deltacp_nh.range}
+    param.nh.deltacp.prior = uniform
+    param.ih.deltacp = 0.0 * units.degree
+    param.ih.deltacp.fixed = True
+    param.deltam21 = ${osc:deltam21}
+    param.deltam21.fixed = True
+    param.nh.deltam31 = ${osc:deltam31_nh}
+    param.nh.deltam31.fixed = False
+    param.nh.deltam31.prior = uniform
+    param.nh.deltam31.range = [0.001, +0.007] * units.eV**2
+    param.ih.deltam31 = ${osc:deltam31_ih}
+    param.ih.deltam31.fixed = False
+    param.ih.deltam31.prior = uniform
+    param.ih.deltam31.range = [-0.007, -0.001] * units.eV**2
+
+    [aeff.aeff]
+    calc_mode = events
+    apply_mode = events
+    param.livetime = 2.5 * units.common_year
+    param.aeff_scale = 1.0
+    param.aeff_scale.fixed = False
+    param.aeff_scale.prior = uniform
+    param.aeff_scale.range = [0.,3.] * units.dimensionless
+    param.nutau_cc_norm = 1.0
+    param.nutau_cc_norm.fixed = True
+    param.nutau_cc_norm.range = [0.2, 2.0] * units.dimensionless
+    param.nutau_cc_norm.prior = uniform
+    param.nutau_norm = 1.0
+    param.nutau_norm.fixed = False
+    param.nutau_norm.range = [-1.0, 8.5] * units.dimensionless
+    param.nutau_norm.prior = uniform
+    param.nu_nc_norm = 1.0 +/- 0.2
+    param.nu_nc_norm.fixed = False
+    param.nu_nc_norm.range = nominal + [-.5,+.5]
+
+    [utils.hist]
+    calc_mode = events
+    apply_mode = dragon_datarelease
+    error_method = sumw2"""%(config_dict['binning_cfg'],
+                             config_dict['post_fix'],
+                             config_dict['pipeline'])
+    with open(outdir + '/config.cfg', 'w+') as f:
+        f.write(template)
+    return
+
+def make_configs(config_dict, outdir, run_name):
+    binning_cfg_path = make_binning_cfg(config_dict, outdir + '/' + run_name)
+    config_dict['binning_cfg'] = binning_cfg_path
+    make_pipeline_cfg(config_dict, outdir + '/' + run_name)
+    return
+
 def parallel_fit_2D_contour(settings):
     """fitting routine for 2D contours. Length of settings determines the amount of jobs this worker gets.
 
