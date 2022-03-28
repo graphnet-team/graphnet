@@ -26,9 +26,15 @@ true_allsky_fine.true_coszen = {'num_bins':%s, 'is_lin':True, 'domain':[-1,1], '
         config_dict['true_energy']['num_bins'],
         config_dict['true_coszen']['num_bins'])
 
-    with open(outdir + '/binning_config.cfg', 'w+') as f:
-        f.write(template)
-    return outdir + '/binning_config.cfg'
+    if config_dict['post_fix'] != None:
+        filename = 'binning_config_%s.cfg'%config_dict['post_fix']
+        with open(outdir + '/' + filename, 'w+') as f:
+            f.write(template)
+    else:
+        filename = 'binning_config.cfg'
+        with open(outdir + '/' + filename, 'w+') as f:
+            f.write(template)
+    return outdir + '/' + filename
 
 def make_pipeline_cfg(config_dict, outdir):
     template = """#include %s as binning
@@ -137,7 +143,7 @@ param.nu_nc_norm.range = nominal + [-.5,+.5]
 
 [utils.hist]
 calc_mode = events
-apply_mode = dragon_datarelease
+apply_mode = graphnet_dynamic_binning
 error_method = sumw2"""%(config_dict['binning_cfg'],
                             config_dict['post_fix'],
                             config_dict['pipeline'])
@@ -151,7 +157,8 @@ error_method = sumw2"""%(config_dict['binning_cfg'],
             f.write(template)
     return outdir + '/' + filename
 
-def make_configs(outdir, run_name, is_retro, pipeline_path, config_dict = None):
+def make_configs(outdir, run_name, is_retro, pipeline_path, post_fix = '_pred', config_dict = None):
+    os.makedirs(outdir + '/' + run_name, exist_ok=True)
     if config_dict == None:
         # Run on standard settings
         config_dict = {'reco_energy' : {'num_bins': 8},
@@ -164,7 +171,7 @@ def make_configs(outdir, run_name, is_retro, pipeline_path, config_dict = None):
     if is_retro:
         config_dict['post_fix'] = '_retro'
     else:
-        config_dict['post_fix'] = None
+        config_dict['post_fix'] = post_fix
     binning_cfg_path = make_binning_cfg(config_dict, outdir + '/' + run_name)
     config_dict['binning_cfg'] = binning_cfg_path
     pipeline_cfg_path = make_pipeline_cfg(config_dict, outdir + '/' + run_name)
@@ -266,7 +273,6 @@ def parallel_fit_1D_contour(settings):
             fit_octants_separately=True,
             )
         results.append([theta23_value, deltam31_value, result[0]['params'].theta23.value, result[0]['params'].deltam31.value, result[0]['metric_val'], model_name, id,result[0]['minimizer_metadata']['success']])
-        os.makedirs(outdir + '/' + run_name + '/fit_objects', exist_ok = True)
 
     os.makedirs(outdir + '/' + run_name + '/tmp', exist_ok = True)
     results = pd.DataFrame(data = results, columns = ['theta23_fixed', 'dm31_fixed', 'theta23_best_fit', 'dm31_best_fit', 'mod_chi2', 'model','id', 'converged'])
@@ -285,7 +291,7 @@ def merge_temporary_files(outdir, run_name):
     df = df.reset_index(drop = True)
     return df
 
-def calculate_2D_contours(outdir, run_name, pipeline_path,model_name = 'gnn', include_retro = True, config_dict = None, grid_size = 30, n_workers = 10, statistical_fit = False):
+def calculate_2D_contours(outdir, run_name, pipeline_path, post_fix = '_pred',model_name = 'gnn', include_retro = True, config_dict = None, grid_size = 30, n_workers = 10, statistical_fit = False):
     """Calculate 2D contours for mixing angle theta_23 and mass difference dm31. Results are saved to outdir/merged_results.csv
     
     Args:
@@ -299,14 +305,15 @@ def calculate_2D_contours(outdir, run_name, pipeline_path,model_name = 'gnn', in
         n_workers (int, optional): Number of parallel fitting routines. Cannot be larger than the number of fitting points. Defaults to 10.
         statistical_fit (bool, optional): Will fit only aeff_scale if True. Defaults to False.
     """
-    if 'minimizer_cfg' in config_dict.keys:
+    if 'minimizer_cfg' in config_dict.keys():
         minimizer_cfg = config_dict['minimizer_cfg']
     else:
-        minimizer_cfg = 'resources/settings/minimizer/graphnet_standard.json'
+        root = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        minimizer_cfg = root + '/resources/settings/minimizer/graphnet_standard.json'
     cfgs = {}
-    cfgs[model_name] = make_configs(outdir = outdir, is_retro = False, pipeline_path = pipeline_path, config_dict = config_dict)
+    cfgs[model_name] = make_configs(outdir = outdir, post_fix = post_fix, run_name = run_name,is_retro = False, pipeline_path = pipeline_path, config_dict = config_dict)
     if include_retro:
-        cfgs['retro'] = make_configs(outdir = outdir, is_retro = True, pipeline_path = pipeline_path, config_dict = config_dict)
+        cfgs['retro'] = make_configs(outdir = outdir, post_fix = post_fix, run_name = run_name,is_retro = True, pipeline_path = pipeline_path, config_dict = config_dict)
     statistical_fit = str(statistical_fit) # When sent to workers, booleans can be messed up. Converting to strings are more robust.
     theta23_range = np.linspace(36, 54, grid_size)
     dm31_range = np.linspace(2.3,2.7, grid_size)*1e-3
@@ -328,7 +335,7 @@ def calculate_2D_contours(outdir, run_name, pipeline_path,model_name = 'gnn', in
     df.to_csv(outdir + '/' + run_name + '/merged_results.csv')
     return
 
-def calculate_1D_contours(outdir, run_name, pipeline_path,model_name = 'gnn', include_retro = True, config_dict = None, grid_size = 30, n_workers = 10, statistical_fit = False):
+def calculate_1D_contours(outdir, run_name, pipeline_path,  post_fix = '_pred', model_name = 'gnn', include_retro = True, config_dict = None, grid_size = 30, n_workers = 10, statistical_fit = False):
     """Calculate 1D contours for mixing angle theta_23 and mass difference dm31. Results are saved to outdir/merged_results.csv
 
     Args:
@@ -342,14 +349,15 @@ def calculate_1D_contours(outdir, run_name, pipeline_path,model_name = 'gnn', in
         n_workers (int, optional): Number of parallel fitting routines. Cannot be larger than the number of fitting points. Defaults to 10.
         statistical_fit (bool, optional): Will fit only aeff_scale if True. Defaults to False.
     """
-    if 'minimizer_cfg' in config_dict.keys:
+    if config_dict != None and 'minimizer_cfg' in config_dict.keys():
         minimizer_cfg = config_dict['minimizer_cfg']
     else:
-        minimizer_cfg = 'resources/settings/minimizer/graphnet_standard.json'
+        root = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        minimizer_cfg = root + '/resources/settings/minimizer/graphnet_standard.json'
     cfgs = {}
-    cfgs[model_name] = make_configs(outdir = outdir, is_retro = False, pipeline_path = pipeline_path, config_dict = config_dict)
+    cfgs[model_name] = make_configs(outdir = outdir, post_fix = post_fix, run_name = run_name, is_retro = False, pipeline_path = pipeline_path, config_dict = config_dict)
     if include_retro:
-        cfgs['retro'] = make_configs(outdir = outdir, is_retro = True, pipeline_path = pipeline_path, config_dict = config_dict)
+        cfgs['retro'] = make_configs(outdir = outdir, post_fix = post_fix, run_name = run_name, is_retro = True, pipeline_path = pipeline_path, config_dict = config_dict)
     statistical_fit = str(statistical_fit) # When sent to workers, booleans can be messed up. Converting to strings are more robust.
     theta23_range = np.linspace(36, 54, grid_size)
     dm31_range = np.linspace(2.3,2.7, grid_size)*1e-3
@@ -364,7 +372,7 @@ def calculate_1D_contours(outdir, run_name, pipeline_path,model_name = 'gnn', in
             count +=1
     random.shuffle(settings)
     chunked_settings = np.array_split(settings, n_workers)
-    #parallel_fit_single_parameter(chunked_settings[0]) # for debugging
+    #parallel_fit_1D_contour(chunked_settings[0]) # for debugging
     p = multiprocessing.Pool(processes = len(chunked_settings))
     _ = p.map_async(parallel_fit_1D_contour,chunked_settings)
     p.close()
