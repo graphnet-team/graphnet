@@ -189,15 +189,15 @@ def parallel_fit_2D_contour(settings):
     for i in range(len(settings)):
         print(i)
         cfg_path, model_name, outdir, theta23_value, deltam31_value, id, run_name, fix_all, minimizer_cfg = settings[i]
+        minimizer_cfg = pisa.utils.fileio.from_file(minimizer_cfg)
         model = DistributionMaker([cfg_path])
         data = model.get_outputs(return_sum=True)
         ana = Analysis()
-        if fix_all == True:
+        if fix_all == 'True':
             # Only free parameters will be [parameter, aeff_scale] - corresponding to a statistical fit
             free_params = model.params.free.names
             for free_param in free_params:
                 if free_param != 'aeff_scale':
-                    print(free_param)
                     if free_param == 'theta23':
                         model.params.theta23.is_fixed = True
                         model.params.theta23.nominal_value = float(theta23_value) * ureg.degree
@@ -326,7 +326,7 @@ def calculate_2D_contours(outdir, run_name, pipeline_path, post_fix = '_pred',mo
                 count +=1
     random.shuffle(settings)
     chunked_settings = np.array_split(settings, n_workers)
-    #parallel_fit_contour(chunked_settings[0]) # for debugging
+    #parallel_fit_2D_contour(chunked_settings[0]) # for debugging
     p = multiprocessing.Pool(processes = len(chunked_settings))
     _ = p.map_async(parallel_fit_2D_contour,chunked_settings)
     p.close()
@@ -372,7 +372,7 @@ def calculate_1D_contours(outdir, run_name, pipeline_path,  post_fix = '_pred', 
             count +=1
     random.shuffle(settings)
     chunked_settings = np.array_split(settings, n_workers)
-    #parallel_fit_1D_contour(chunked_settings[0]) # for debugging
+    parallel_fit_1D_contour(chunked_settings[0]) # for debugging
     p = multiprocessing.Pool(processes = len(chunked_settings))
     _ = p.map_async(parallel_fit_1D_contour,chunked_settings)
     p.close()
