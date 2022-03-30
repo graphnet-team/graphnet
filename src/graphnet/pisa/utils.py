@@ -372,7 +372,7 @@ def calculate_1D_contours(outdir, run_name, pipeline_path,  post_fix = '_pred', 
             count +=1
     random.shuffle(settings)
     chunked_settings = np.array_split(settings, n_workers)
-    parallel_fit_1D_contour(chunked_settings[0]) # for debugging
+    #parallel_fit_1D_contour(chunked_settings[0]) # for debugging
     p = multiprocessing.Pool(processes = len(chunked_settings))
     _ = p.map_async(parallel_fit_1D_contour,chunked_settings)
     p.close()
