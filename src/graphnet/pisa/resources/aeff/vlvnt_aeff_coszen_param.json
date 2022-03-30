@@ -1,0 +1,8 @@
+{
+  "nue_cc + numu_cc": "np.poly1d([-0.05, +0.05, -0.05, 1])",
+  "nuebar_cc + numubar_cc": "np.poly1d([-0.05, +0.05, -0.05, 1])",
+  "nutau_cc": "np.poly1d([-0.05, +0.05, -0.05, 1])",
+  "nutaubar_cc": "np.poly1d([-0.05, +0.05, -0.05, 1])",
+  "nuall_nc": "np.poly1d([-0.05, +0.05, -0.05, 1])",
+  "nuallbar_nc": "np.poly1d([-0.05, +0.05, -0.05, 1])"
+}

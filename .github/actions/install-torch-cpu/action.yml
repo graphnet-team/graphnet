@@ -14,10 +14,12 @@ runs:
   steps:
     - name: "Install dependencies"
       run: |
+        pip install --upgrade pip
+        pip install wheel
         pip install torch==${{ inputs.torch-verison }}+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
-        pip install torch-cluster -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
-        pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
-        pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
-        pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
+        pip install torch-cluster==1.5.9 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
+        pip install torch-scatter==2.0.9 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
+        pip install torch-sparse==0.6.12 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
+        pip install torch-spline-conv==1.2.1 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
         pip install torch-geometric==${{ inputs.pyg-verison }}
       shell: bash

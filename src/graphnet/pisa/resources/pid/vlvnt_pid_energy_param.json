@@ -1,0 +1,18 @@
+{
+  "numu_cc + numubar_cc": {
+    "track": "lambda E: 0.9*(1 - np.exp(-0.2*(E + 0.6)))",
+    "cascade": "lambda E: 1.0 - 0.9*(1 - np.exp(-0.2*(E + 0.6)))"
+  },
+  "nue_cc + nuebar_cc": {
+    "track": "lambda E: np.full_like(E, fill_value=0.15)",
+    "cascade": "lambda E: np.full_like(E, fill_value=1.0 - 0.15)"
+  },
+  "nutau_cc + nutaubar_cc": {
+    "track": "lambda E: np.full_like(E, fill_value=0.25)",
+    "cascade": "lambda E: np.full_like(E, fill_value=1.0 - 0.25)"
+  },
+  "nuall_nc + nuallbar_nc": {
+    "track": "lambda E: np.full_like(E, fill_value=0.15)",
+    "cascade": "lambda E: np.full_like(E, fill_value=1.0 - 0.15)"
+  }
+}
