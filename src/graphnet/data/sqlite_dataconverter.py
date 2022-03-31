@@ -155,7 +155,7 @@ class SQLiteDataConverter(DataConverter):
                         # and the current extractor (df) is also non-empty (also since truth is always non-empty)
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
 
-                if any_pulsemaps_non_empty(data_dict,self._pulsemap): #event count only increases if we actually place P frame pulsemap inside temp dbs
+                if self.any_pulsemap_is_non_empty(data_dict):  # Event count only increases if we actually add data to the temporary database
                     event_count += 1
             
                 if len(dataframes_big[first_table]) >= max_dict_size:
