@@ -5,8 +5,9 @@ import os
 import pandas as pd
 import sqlalchemy
 import sqlite3
+from collections import OrderedDict
 from tqdm import tqdm
-from typing import Dict, List, OrderedDict
+from typing import Dict, List
 
 from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
 
@@ -149,12 +150,12 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-                    if (any_pulsemaps_non_empty(data_dict,self._pulsemap)  and len(df) > 0) :
+                    if (self.any_pulsemap_is_non_empty(data_dict)  and len(df) > 0) :
                         # only include data_dict in temp. databases if at least one pulsemap is non-empty,  
                         # and the current extractor (df) is also non-empty (also since truth is always non-empty)
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
 
-                if any_pulsemaps_non_empty(data_dict,self._pulsemap): #event count only increases if we actually place P frame pulsemap inside temp dbs
+                if self.any_pulsemap_is_non_empty(data_dict): #event count only increases if we actually place P frame pulsemap inside temp dbs
                     event_count += 1
             
                 if len(dataframes_big[first_table]) >= max_dict_size:
@@ -209,6 +210,15 @@ class SQLiteDataConverter(DataConverter):
             if len(columns):
                 return columns
         return []
+
+    def any_pulsemap_is_non_empty(self, data_dict: OrderedDict) -> bool:
+        """Check whether there are any non-empty pulsemaps extracted from P frame.
+        Takes in the data extracted from the P frame, then retrieves the values, if
+        there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least
+        one of the pulsemaps is non-empty then return true.
+        """
+        pulsemap_dicts = map(data_dict.get, self._pulsemap)
+        return any(d['dom_x'] for d in pulsemap_dicts)
 
     def _run_sql_code(self, database: str, code: str):
         conn = sqlite3.connect(database + '.db')
@@ -271,7 +281,7 @@ class SQLiteDataConverter(DataConverter):
         data.to_sql(key, engine, index=False, if_exists='append')
         engine.dispose()
 
-    def _extract_everything(self, db: str) -> OrderedDict[str, pd.DataFrame]:
+    def _extract_everything(self, db: str) -> ' OrderedDict[str, pd.DataFrame] ':
         """Extracts everything from the temporary database `db`.
 
         Args:
@@ -337,11 +347,5 @@ def is_pulsemap_check(table_name: str) -> bool:
     else: #could have to include the lower case word 'pulse'?
         return True
 
-def any_pulsemaps_non_empty(data_from_frame, pulsemap_names) -> bool:
-    '''Check whether there are any non-empty pulsemaps extracted from P frame.'''
-    # function takes in the data extracted from the P frame, then retrieves the values, if there are any,
-    # from the pulsemap(s) keys (e.g SplitInIcePulses)
-    # if at least one of the pulsemaps is non-empty then return true
-    pulsemap_dicts = np.array(list(map(data_from_frame.get, pulsemap_names)))
-    return any(d['dom_x'] for d in pulsemap_dicts)    
+    
 
