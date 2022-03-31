@@ -5,10 +5,11 @@ import os
 import pandas as pd
 import sqlalchemy
 import sqlite3
+from collections import OrderedDict 
 from tqdm import tqdm
-from typing import Dict, List, OrderedDict
+from typing import Dict, List
 
-from graphnet.data.i3extractor import I3TruthExtractor
+from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
 
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
@@ -62,7 +63,7 @@ class SQLiteDataConverter(DataConverter):
              "I3TruthExtractor to allow for attaching unique indices.")
 
         self._table_names = [extractor.name for extractor in self._extractors]
-
+        self._pulsemaps = [extractor.name for extractor in self._extractors if isinstance(extractor, I3FeatureExtractor)]
 
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
@@ -130,14 +131,12 @@ class SQLiteDataConverter(DataConverter):
         dataframes_big = OrderedDict([
             (key, pd.DataFrame()) for key in self._table_names
         ])
-
         event_count = 0
         output_count = 0
         first_table = self._table_names[0]
         for u in range(len(input_files)):
             self._extractors.set_files(input_files[u], gcd_files[u])
             i3_file = dataio.I3File(input_files[u], "r")
-
             while i3_file.more():
                 try:
                     frame = i3_file.pop_physics()
@@ -151,16 +150,23 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-                    if len(df):
+
+                    if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
+                        # only include data_dict in temp. databases if at least one pulsemap is non-empty,  
+                        # and the current extractor (df) is also non-empty (also since truth is always non-empty)
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
 
-                event_count += 1
+
+                if self.any_pulsemap_is_non_empty(data_dict):  # Event count only increases if we actually add data to the temporary database
+                    event_count += 1
+            
                 if len(dataframes_big[first_table]) >= max_dict_size:
                     self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
                     dataframes_big = OrderedDict([
-                    (key, pd.DataFrame()) for key in self._table_names
-                ])
+                        (key, pd.DataFrame()) for key in self._table_names
+                    ])
                     output_count +=1
+
 
             if len(dataframes_big[first_table]) > 0:
                 self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
@@ -189,10 +195,7 @@ class SQLiteDataConverter(DataConverter):
             for ix_table, table_name in enumerate(self._table_names):
                 column_names = self._extract_column_names(db_paths, table_name)
                 if len(column_names) > 1:
-                    if 'retro' in table_name.lower() or 'truth' in table_name.lower():
-                        is_pulse_map = False
-                    else:
-                        is_pulse_map = True
+                    is_pulse_map = is_pulsemap_check(table_name)
                     self._create_table(database_path, table_name, column_names, is_pulse_map= is_pulse_map)#(ix_table >= 2))
 
             # Merge temporary databases into newly created one
@@ -209,6 +212,15 @@ class SQLiteDataConverter(DataConverter):
             if len(columns):
                 return columns
         return []
+
+    def any_pulsemap_is_non_empty(self, data_dict: OrderedDict) -> bool:
+        """Check whether there are any non-empty pulsemaps extracted from P frame.
+        Takes in the data extracted from the P frame, then retrieves the values, if
+        there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least
+        one of the pulsemaps is non-empty then return true.
+        """
+        pulsemap_dicts = map(data_dict.get, self._pulsemap)
+        return any(d['dom_x'] for d in pulsemap_dicts)
 
     def _run_sql_code(self, database: str, code: str):
         conn = sqlite3.connect(database + '.db')
@@ -271,7 +283,7 @@ class SQLiteDataConverter(DataConverter):
         data.to_sql(key, engine, index=False, if_exists='append')
         engine.dispose()
 
-    def _extract_everything(self, db: str) -> OrderedDict[str, pd.DataFrame]:
+    def _extract_everything(self, db: str) -> ' OrderedDict[str, pd.DataFrame] ':
         """Extracts everything from the temporary database `db`.
 
         Args:
@@ -307,7 +319,7 @@ class SQLiteDataConverter(DataConverter):
     def _save_to_sql(self, dataframes_big: dict, id, output_count, db_name, outdir):
         engine = sqlalchemy.create_engine('sqlite:///' + outdir + f'/{db_name}/tmp/worker-{id}-{output_count}.db')
         for key, df in dataframes_big.items():
-            if len(dataframes_big[key]) > 0:
+            if len(dataframes_big[key]) > 0: 
                 df.to_sql(key, con=engine, index=False, if_exists='append')
         engine.dispose()
 
@@ -329,8 +341,13 @@ def apply_event_no(extraction, event_no_list, event_counter):
     out['event_no'] = event_no_list[event_counter]
     return out
 
-def is_empty(features):
-    if features['dom_x'] is None:
-        return True
-    else:
+
+def is_pulsemap_check(table_name: str) -> bool:
+    """Check whether `table_name` corresponds to a pulsemap, and not a truth or RETRO table."""
+    if 'retro' in table_name.lower() or 'truth' in table_name.lower():
         return False
+    else: #could have to include the lower case word 'pulse'?
+        return True
+
+    
+
