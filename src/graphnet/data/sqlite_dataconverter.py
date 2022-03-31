@@ -63,7 +63,7 @@ class SQLiteDataConverter(DataConverter):
              "I3TruthExtractor to allow for attaching unique indices.")
 
         self._table_names = [extractor.name for extractor in self._extractors]
-        self._pulsemap = [extractor.name for extractor in self._extractors if isinstance(extractor,I3FeatureExtractor)]
+        self._pulsemaps = [extractor.name for extractor in self._extractors if isinstance(extractor, I3FeatureExtractor)]
 
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
