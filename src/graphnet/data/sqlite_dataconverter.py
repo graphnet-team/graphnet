@@ -150,7 +150,7 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-                    if (any_pulsemaps_non_empty(data_dict,self._pulsemap)  and len(df) > 0) :
+                    if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
                         # only include data_dict in temp. databases if at least one pulsemap is non-empty,  
                         # and the current extractor (df) is also non-empty (also since truth is always non-empty)
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
