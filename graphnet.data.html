@@ -431,7 +431,7 @@ a temporary database. Defaults to 10000.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._extract_everything">
-<span class="sig-name descname"><span class="pre">_extract_everything</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._extract_everything"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._extract_everything" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">_extract_everything</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pd.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._extract_everything"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._extract_everything" title="Permalink to this definition"></a></dt>
 <dd><p>Extracts everything from the temporary database <cite>db</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -497,6 +497,15 @@ a temporary database. Defaults to 10000.</p></li>
 <dd><p>Submits data to the database with specified key.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty">
+<span class="sig-name descname"><span class="pre">any_pulsemap_is_non_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.OrderedDict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter.any_pulsemap_is_non_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether there are any non-empty pulsemaps extracted from P frame.
+Takes in the data extracted from the P frame, then retrieves the values, if
+there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least
+one of the pulsemaps is non-empty then return true.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -521,9 +530,10 @@ a temporary database. Defaults to 10000.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.is_empty">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.is_empty" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.is_pulsemap_check">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_pulsemap_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#is_pulsemap_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.is_pulsemap_check" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether <cite>table_name</cite> corresponds to a pulsemap, and not a truth or RETRO table.</p>
+</dd></dl>
 
 </section>
 <section id="module-graphnet.data.sqlite_dataset">

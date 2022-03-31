@@ -342,7 +342,7 @@
             <span class="s1">&#39;SubrunID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_run_id</span><span class="p">,</span>
             <span class="s1">&#39;EventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">event_id</span><span class="p">,</span>
             <span class="s1">&#39;SubEventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_id</span><span class="p">,</span>
-            <span class="s1">&#39;dbang_decay_length&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__extract_dbang_decay_length__</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">),</span>
+            <span class="s1">&#39;dbang_decay_length&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s1">&#39;track_length&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s1">&#39;stopped_muon&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
         <span class="p">}</span>
@@ -359,6 +359,7 @@
                 <span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pdg_encoding</span><span class="p">,</span>
                 <span class="s1">&#39;interaction_type&#39;</span><span class="p">:</span> <span class="n">interaction_type</span><span class="p">,</span>
                 <span class="s1">&#39;elasticity&#39;</span><span class="p">:</span> <span class="n">elasticity</span><span class="p">,</span>
+                <span class="s1">&#39;dbang_decay_length&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_dbang_decay_length</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">),</span>
             <span class="p">})</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;pid&#39;</span><span class="p">])</span><span class="o">==</span><span class="mi">13</span><span class="p">:</span>
                 <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
@@ -374,7 +375,7 @@
 
         <span class="k">return</span> <span class="n">output</span></div>
 
-    <span class="k">def</span> <span class="nf">__extract_dbang_decay_length__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_extract_dbang_decay_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">):</span>
         <span class="n">mctree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3MCTree&#39;</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">p_true</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">primaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
