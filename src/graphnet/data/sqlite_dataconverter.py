@@ -5,11 +5,7 @@ import os
 import pandas as pd
 import sqlalchemy
 import sqlite3
-<<<<<<< HEAD
-from collections import OrderedDict
-=======
 from collections import OrderedDict 
->>>>>>> 528c3831d56047c8c6a10b90285d8bed4166a15f
 from tqdm import tqdm
 from typing import Dict, List
 
@@ -154,20 +150,14 @@ class SQLiteDataConverter(DataConverter):
                 # Concatenate data
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
-<<<<<<< HEAD
-                    if (self.any_pulsemap_is_non_empty(data_dict)  and len(df) > 0) :
-=======
+
                     if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
->>>>>>> 528c3831d56047c8c6a10b90285d8bed4166a15f
                         # only include data_dict in temp. databases if at least one pulsemap is non-empty,  
                         # and the current extractor (df) is also non-empty (also since truth is always non-empty)
                         dataframes_big[key] = dataframes_big[key].append(df, ignore_index=True, sort=True)
 
-<<<<<<< HEAD
-                if self.any_pulsemap_is_non_empty(data_dict): #event count only increases if we actually place P frame pulsemap inside temp dbs
-=======
+
                 if self.any_pulsemap_is_non_empty(data_dict):  # Event count only increases if we actually add data to the temporary database
->>>>>>> 528c3831d56047c8c6a10b90285d8bed4166a15f
                     event_count += 1
             
                 if len(dataframes_big[first_table]) >= max_dict_size:
