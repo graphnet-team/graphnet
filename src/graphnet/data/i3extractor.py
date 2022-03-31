@@ -279,7 +279,7 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
-            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value),
+            'dbang_decay_length': padding_value,
             'track_length': padding_value,
             'stopped_muon': padding_value,
         }
@@ -296,6 +296,7 @@ class I3TruthExtractor(I3Extractor):
                 'pid': MCInIcePrimary.pdg_encoding,
                 'interaction_type': interaction_type,
                 'elasticity': elasticity,
+                'dbang_decay_length': self._extract_dbang_decay_length(frame, padding_value),
             })
             if abs(output['pid'])==13:
                 output.update({
@@ -311,7 +312,7 @@ class I3TruthExtractor(I3Extractor):
 
         return output
 
-    def __extract_dbang_decay_length__(self,frame, padding_value):
+    def _extract_dbang_decay_length(self,frame, padding_value):
         mctree = frame['I3MCTree']
         try:
             p_true = mctree.primaries[0]
