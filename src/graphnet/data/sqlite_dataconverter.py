@@ -5,8 +5,9 @@ import os
 import pandas as pd
 import sqlalchemy
 import sqlite3
+from collections import OrderedDict 
 from tqdm import tqdm
-from typing import Dict, List, OrderedDict
+from typing import Dict, List
 
 from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
 
