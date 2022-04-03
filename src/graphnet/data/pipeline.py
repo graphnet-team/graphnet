@@ -5,7 +5,7 @@ from abc import abstractmethod
 import torch
 import dill
 from graphnet.data.constants import TRUTH, FEATURES
-from graphnet.models.training.utils import get_predictions, make_dataloader
+from graphnet.models.training.utils import get_predictions, make_dataloader, run_sql_code, save_to_sql
 from pytorch_lightning import Trainer
 from functools import reduce
 import pandas as pd
@@ -100,31 +100,15 @@ class InSQLitePipeline(ABC):
         pipeline_database = outdir + '/%s.db'%self._pipeline_name
         truth = self._get_truth(original_database)
         retro = self._get_retro(original_database)
-
-        self._save_to_sql(df, 'reconstruction', pipeline_database)
-        self._save_to_sql(truth, 'truth', pipeline_database)
+        self._create_table(pipeline_database,'reconstruction', df)
+        self._create_table(pipeline_database,'truth', truth)
+        save_to_sql(df, 'reconstruction', pipeline_database)
+        save_to_sql(truth, 'truth', pipeline_database)
         if isinstance(retro, pd.DataFrame):
-            self._save_to_sql(retro, self._retro_table_name, pipeline_database)    
+            self._create_table(pipeline_database,'retro', retro)
+            save_to_sql(retro, self._retro_table_name, pipeline_database)    
         return
         
-
-    def _save_to_sql(self, df, table_name, pipeline_database):
-        print('SUBMITTING %s'%table_name)
-        self._create_table(pipeline_database,  table_name, df)
-        engine = sqlalchemy.create_engine('sqlite:///' + pipeline_database)
-        df.to_sql(table_name, con=engine, index=False, if_exists='append')
-        engine.dispose()
-        print('%s SUBMITTED'%table_name)
-        return        
-
-
-    def _run_sql_code(self, database: str, code: str):
-        conn = sqlite3.connect(database)
-        c = conn.cursor()
-        c.executescript(code)
-        c.close()
-
-
     def _create_table(self, pipeline_database, table_name, df):
         """Creates a table.
         Args:
@@ -145,5 +129,5 @@ class InSQLitePipeline(ABC):
             f"CREATE TABLE {table_name} ({query_columns});\n"
             "PRAGMA foreign_keys=on;"
         )
-        self._run_sql_code(pipeline_database, code)
+        run_sql_code(pipeline_database, code)
         return
