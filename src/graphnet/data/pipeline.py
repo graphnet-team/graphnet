@@ -56,9 +56,6 @@ class InSQLitePipeline(ABC):
                 dataloader = self._make_dataloader(database, pulsemap)
                 trainer = Trainer(gpus = [device])
                 model = torch.load(self._module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
-                model._gnn.to(self._device)
-                model._device = self._device
-                model.to(self._device)
                 model.eval()
                 model.inference()
                 results = get_predictions(trainer,model, dataloader, self._module_dict[target]['output_column_names'], ['event_no'])
