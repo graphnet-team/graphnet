@@ -66,23 +66,6 @@ class InSQLitePipeline(ABC):
             print(outdir)
             print('WARNING - Pipeline named %s already exists! \n Please rename pipeline!'%self._pipeline_name)
         return
-    def _load_modules(self, module_dict):
-        """Loads each module in _module_dict
-
-        Args:
-            module_dict (dict): dictionary of GNN ModuleList
-
-        Returns:
-            dict: module_dict with "loaded_module" field added.
-        """
-        for target in module_dict.keys():
-            model = torch.load(module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
-            model._gnn.to(self._device)
-            model._device = self._device
-            model.to(self._device)
-            model.eval()
-            module_dict[target]['loaded_module'] = model
-        return module_dict
 
     def _make_dataloader(self, database, pulsemap):
         dataloader = make_dataloader(db = database, pulsemaps = pulsemap, features = self._features, truth = self._truth, batch_size = self._batch_size, shuffle = False, selection = None, num_workers = self.n_workers, persistent_workers= False)
