@@ -53,7 +53,7 @@ class InSQLitePipeline(ABC):
         if os.path.isdir(outdir) == False:
             dataframes = []
             for target in self._module_dict.keys():
-                dataloader = self._make_dataloader(database, pulsemap)
+                dataloader = make_dataloader(db = database, pulsemaps = pulsemap, features = self._features, truth = self._truth, batch_size = self._batch_size, shuffle = False, selection = None, num_workers = self.n_workers, persistent_workers= False)
                 trainer = Trainer(gpus = [device])
                 model = torch.load(self._module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
                 model.eval()
@@ -66,10 +66,6 @@ class InSQLitePipeline(ABC):
             print(outdir)
             print('WARNING - Pipeline named %s already exists! \n Please rename pipeline!'%self._pipeline_name)
         return
-
-    def _make_dataloader(self, database, pulsemap):
-        dataloader = make_dataloader(db = database, pulsemaps = pulsemap, features = self._features, truth = self._truth, batch_size = self._batch_size, shuffle = False, selection = None, num_workers = self.n_workers, persistent_workers= False)
-        return dataloader
 
     def _combine_outputs(self, dataframes):
         return reduce(lambda x, y: pd.merge(x, y, on = 'event_no'), dataframes)
