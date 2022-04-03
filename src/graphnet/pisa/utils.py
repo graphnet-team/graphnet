@@ -124,7 +124,7 @@ param.ih.deltam31.range = [-0.007, -0.001] * units.eV**2
 [aeff.aeff]
 calc_mode = events
 apply_mode = events
-param.livetime = 2.5 * units.common_year
+param.livetime = 10 * units.common_year
 param.aeff_scale = 1.0
 param.aeff_scale.fixed = False
 param.aeff_scale.prior = uniform
@@ -187,7 +187,6 @@ def parallel_fit_2D_contour(settings):
     """    
     results = []
     for i in range(len(settings)):
-        print(i)
         cfg_path, model_name, outdir, theta23_value, deltam31_value, id, run_name, fix_all, minimizer_cfg = settings[i]
         minimizer_cfg = pisa.utils.fileio.from_file(minimizer_cfg)
         model = DistributionMaker([cfg_path])
@@ -246,7 +245,6 @@ def parallel_fit_1D_contour(settings):
             free_params = model.params.free.names
             for free_param in free_params:
                 if free_param not in  ['aeff_scale', 'theta23', 'deltam31']:
-                    print(free_param)
                     model.params[free_param].is_fixed = True
             if parameter == 'theta23':
                 model.params.theta23.is_fixed = True
