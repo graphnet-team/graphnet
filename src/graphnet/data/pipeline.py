@@ -5,7 +5,8 @@ from abc import abstractmethod
 import torch
 import dill
 from graphnet.data.constants import TRUTH, FEATURES
-from graphnet.models.training.utils import get_predictions, make_dataloader, run_sql_code, save_to_sql
+from graphnet.data.utils import run_sql_code, save_to_sql
+from graphnet.models.training.utils import get_predictions, make_dataloader
 from pytorch_lightning import Trainer
 from functools import reduce
 import pandas as pd
@@ -40,35 +41,63 @@ class InSQLitePipeline(ABC):
         self._module_dict = module_dict
         self._retro_table_name = retro_table_name
 
-    def __call__(self, database, pulsemap) -> dict:
+    def __call__(self, database, pulsemap, chunk_size = 1000000) -> dict:
         """Runs inference of each field in self._module_dict[target]['']
 
         Args:
             database (path): path to database with pulsemap and truth
             pulsemap (str): name of pulsemaps
+            chunk_size (int): database will be sliced in chunks of size chunk_size. Use this parameter to control memory usage. Defaults to 1000000
         """
         outdir = self._get_outdir(database)
         if isinstance(self._device, str): # Because pytorch lightning insists on breaking pytorch cuda device naming scheme
             device = int(self._device[-1])
         if os.path.isdir(outdir) == False:
-            dataframes = []
-            for target in self._module_dict.keys():
-                dataloader = make_dataloader(db = database, pulsemaps = pulsemap, features = self._features, truth = self._truth, batch_size = self._batch_size, shuffle = False, selection = None, num_workers = self.n_workers, persistent_workers= False)
-                trainer = Trainer(gpus = [device])
-                model = torch.load(self._module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
-                model.eval()
-                model.inference()
-                results = get_predictions(trainer,model, dataloader, self._module_dict[target]['output_column_names'], ['event_no'])
-                dataframes.append(results.sort_values('event_no').reset_index(drop = True))
-            df = self._combine_outputs(dataframes)
-            self._make_pipeline_database(outdir,df, database)
+            dataloaders, event_batches = self._setup_dataloaders(chunk_size = chunk_size, db = database, pulsemap = pulsemap, selection = None, persistent_workers= False)
+            i = 0
+            for dataloader in dataloaders:
+                print('CHUNK %s / %s'%(i, len(dataloaders)))
+                df = self._inference(device, dataloader)
+                truth = self._get_truth(database, event_batches[i].tolist())
+                retro = self._get_retro(database, event_batches[i].tolist())
+                self._append_to_pipeline(outdir, truth,retro, df, i)
+                i +=1
         else:
             print(outdir)
             print('WARNING - Pipeline named %s already exists! \n Please rename pipeline!'%self._pipeline_name)
         return
 
+    def _setup_dataloaders(self, chunk_size, db, pulsemap, selection = None, persistent_workers = False):
+        if selection == None:
+            selection = self._get_all_event_nos(db)
+        n_chunks = np.ceil(len(selection)/chunk_size)
+        event_batches = np.array_split(selection, n_chunks) 
+        dataloaders = []
+        for batch in event_batches:
+            dataloaders.append(make_dataloader(db = db, pulsemaps = pulsemap, features = self._features, truth = self._truth, batch_size = self._batch_size, shuffle = False, selection = batch.tolist(), num_workers = self.n_workers, persistent_workers= False))
+        return dataloaders, event_batches
+
+    def _get_all_event_nos(self, db):
+        with sqlite3.connect(db) as con:
+            query = 'SELECT event_no FROM truth'
+            selection = pd.read_sql(query,con).values.ravel().tolist()
+        return selection
+
     def _combine_outputs(self, dataframes):
         return reduce(lambda x, y: pd.merge(x, y, on = 'event_no'), dataframes)
+
+    def _inference(self, device, dataloader):
+        dataframes = []
+        for target in self._module_dict.keys():
+            #dataloader = iter(dataloader)
+            trainer = Trainer(gpus = [device])
+            model = torch.load(self._module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
+            model.eval()
+            model.inference()
+            results = get_predictions(trainer,model, dataloader, self._module_dict[target]['output_column_names'], ['event_no'])
+            dataframes.append(results.sort_values('event_no').reset_index(drop = True))
+            df = self._combine_outputs(dataframes)
+        return df
 
     def _get_outdir(self, database):
         if self._outdir == None:
@@ -78,16 +107,16 @@ class InSQLitePipeline(ABC):
             outdir = self._outdir
         return outdir
 
-    def _get_truth(self,database):
+    def _get_truth(self,database, selection):
         with sqlite3.connect(database) as con:
-            query = 'SELECT * FROM truth'
+            query = 'SELECT * FROM truth WHERE event_no in %s'%str(tuple(selection))
             truth = pd.read_sql(query,con)
         return truth
 
-    def _get_retro(self,database):
+    def _get_retro(self,database, selection):
         try:
             with sqlite3.connect(database) as con:
-                query = 'SELECT * FROM %s'%self._retro_table_name
+                query = 'SELECT * FROM %s WHERE event_no in %s'%(self._retro_table_name, str(tuple(selection)))
                 retro = pd.read_sql(query,con)
             return retro
         except:
@@ -95,17 +124,18 @@ class InSQLitePipeline(ABC):
             return
 
 
-    def _make_pipeline_database(self,outdir, df, original_database):
-        os.makedirs(outdir)
+    def _append_to_pipeline(self,outdir, truth,retro, df, i):
+        os.makedirs(outdir, exist_ok = True)
         pipeline_database = outdir + '/%s.db'%self._pipeline_name
-        truth = self._get_truth(original_database)
-        retro = self._get_retro(original_database)
-        self._create_table(pipeline_database,'reconstruction', df)
-        self._create_table(pipeline_database,'truth', truth)
+        if i == 0:
+            # Only setup table schemes if its the first time appending
+            self._create_table(pipeline_database,'reconstruction', df)
+            self._create_table(pipeline_database,'truth', truth)
         save_to_sql(df, 'reconstruction', pipeline_database)
         save_to_sql(truth, 'truth', pipeline_database)
         if isinstance(retro, pd.DataFrame):
-            self._create_table(pipeline_database,'retro', retro)
+            if i == 0:
+                self._create_table(pipeline_database,'retro', retro)
             save_to_sql(retro, self._retro_table_name, pipeline_database)    
         return
         
