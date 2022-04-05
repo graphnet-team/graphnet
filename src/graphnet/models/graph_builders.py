@@ -3,8 +3,8 @@ from typing import List
 
 import torch
 from torch_geometric.nn import knn_graph,radius_graph
-from torch_geometric.data import Data
-
+from torch_geometric.data import Data, Batch
+from graphnet.components.pool import group_identical
 from graphnet.models.utils import calculate_distance_matrix
 
 
@@ -44,7 +44,6 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
         ).to(self._device)
 
         return data
-
 
 class RadialGraphBuilder(GraphBuilder):  
     """Builds graph adjacency according to a sphere of chosen radius centred at each DOM hit"""

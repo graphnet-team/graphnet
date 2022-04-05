@@ -40,6 +40,77 @@ class IceCube86(Detector):
 
         return data
 
+class IceCube86_v2(Detector):
+    """`Detector` class for IceCube-86 with nodes as doms."""
+
+    # Implementing abstract class attribute
+    features = FEATURES.ICECUBE86
+
+    @property
+    def nb_inputs(self) -> int:
+        return len(self.features) + 7
+
+    @property
+    def nb_outputs(self):
+        return self.nb_inputs + 7
+    def _forward(self, data: Data) -> Data:
+        """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
+
+        Args:
+            data (Data): Input graph data.
+
+        Returns:
+            Data: Connected and preprocessed graph data.
+        """
+
+        # Check(s)
+        self._validate_features(data)
+
+        #pulse_statistics[count,0] = torch.min(time)
+        #pulse_statistics[count,1] = torch.mean(time)
+        #pulse_statistics[count,2] = torch.max(time)
+        #pulse_statistics[count,3] = torch.std(time)
+        #pulse_statistics[count,4] = torch.min(charge)
+        #pulse_statistics[count,5] = torch.mean(charge)
+        #pulse_statistics[count,6] = torch.max(charge)
+        #pulse_statistics[count,7] = torch.std(charge)
+        #unique_doms, n_pulses_pr_dom.unsqueeze(1), pulse_statistics
+
+        # Preprocessing
+        data.x[:,0] /= 100.  # dom_x
+        data.x[:,1] /= 100.  # dom_y
+        data.x[:,2] += 350.  # dom_z
+        data.x[:,2] /= 100.
+        data.x[:,3] -= 1.25  # rde
+        data.x[:,3] /= 0.25
+        data.x[:,4] /= 0.05  # pmt_area
+
+        data.x[:,5] /= 5  # n_pulses
+        data.x[:,5] -= 2
+
+        data.x[:,6] /= 1.05e+04  # dom_time
+        data.x[:,6] -= 1.
+        data.x[:,6] *= 20.
+
+        data.x[:,7] /= 1.05e+04  # dom_time
+        data.x[:,7] -= 1.
+        data.x[:,7] *= 20
+
+        data.x[:,8] /= 1.05e+04  # dom_time
+        data.x[:,8] -= 1.
+        data.x[:,8] *= 20
+
+        data.x[:,9] /= 1.05e+04  # dom_time
+        data.x[:,9] -= 1.
+        data.x[:,9] *= 20
+
+        data.x[:,10] /= 1.  # charge
+        data.x[:,11] /= 1.  # charge
+        data.x[:,12] /= 1.  # charge
+        data.x[:,13] /= 1.  # charge
+        print('detector out')
+        print(data.x.shape)
+        return data
 
 class IceCubeDeepCore(IceCube86):
     """`Detector` class for IceCube-DeepCore."""

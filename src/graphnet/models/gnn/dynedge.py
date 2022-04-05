@@ -106,6 +106,9 @@ class DynEdge(GNN):
         # Convenience variables
         x, edge_index, batch = data.x, data.edge_index, data.batch
 
+        print('modelout')
+        print(x.shape)
+
         # Calculate homophily (scalar variables)
         h_x, h_y, h_z, h_t = calculate_xyzt_homophily(x, edge_index, batch)
 

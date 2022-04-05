@@ -26,6 +26,7 @@ def make_dataloader(
     selection: List[int] = None,
     num_workers: int = 10,
     persistent_workers: bool = True,
+    node_representation: str = 'pulse',
 ) -> DataLoader:
 
     # Check(s)
@@ -38,6 +39,7 @@ def make_dataloader(
         features,
         truth,
         selection=selection,
+        node_representation = node_representation
     )
 
     def collate_fn(graphs):
@@ -70,6 +72,7 @@ def make_train_validation_dataloader(
     test_size: float = 0.33,
     num_workers: int = 10,
     persistent_workers: bool = True,
+    node_representation: str = 'pulse'
 ) -> Tuple[DataLoader]:
 
     # Reproducibility
@@ -98,6 +101,7 @@ def make_train_validation_dataloader(
         batch_size=batch_size,
         num_workers=num_workers,
         persistent_workers=persistent_workers,
+        node_representation = node_representation,
     )
 
     training_dataloader = make_dataloader(
