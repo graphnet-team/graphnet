@@ -17,7 +17,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
         truth: List[str],
         index_column: str = 'event_no',
         truth_table: str = 'truth',
-        truth_flag_table: str = 'SplitInIcePulses_TruthFlags',
         selection: Optional[List[int]] = None,
         dtype: torch.dtype = torch.float32,
     ):
@@ -44,7 +43,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self._truth = [index_column] + truth
         self._index_column = index_column
         self._truth_table = truth_table
-        self._truth_flag_table = truth_flag_table
         self._dtype = dtype
 
         self._features_string = ', '.join(self._features)
@@ -67,7 +65,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self.establish_connection(i)
         features, truth = self._query_database(i)
         graph = self._create_graph(features, truth)
-        graph = self._add_truth_flag(i, graph)
         return graph
 
     def _get_all_indices(self):
@@ -113,32 +110,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
         ).fetchall()
 
         return features, truth
-    
-    def _query_noise_database(self, i):
-        """Query SQLite database for event feature and truth information.
-
-        Args:
-            i (int): Sequentially numbered index (i.e. in [0,len(self))) of the
-                event to query.
-
-        Returns:
-            list: List of tuples, containing event features.
-            list: List of tuples, containing truth information.
-        """
-        if self._database_list == None:
-            index = self._indices[i]
-        else:
-            index = self._indices[i][0]
-
-        truth_flags = self._conn.execute(
-            "SELECT truth_flag FROM {} WHERE {} = {}".format(
-                self._truth_flag_table,
-                self._index_column,
-                index,
-            )
-        ).fetchall()
-
-        return truth_flags
 
     def _get_dbang_label(self, truth_dict):
         try:
@@ -211,10 +182,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
         for ix, feature in enumerate(graph.features):
             graph[feature] = graph.x[:,ix].detach()
 
-        return graph
-
-    def _add_truth_flag(self, i, graph):
-        graph['truth_flag'] = torch.tensor(self._query_noise_database(i)).reshape(-1)
         return graph
 
     def establish_connection(self,i):

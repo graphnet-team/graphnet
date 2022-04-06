@@ -422,18 +422,6 @@ class DynEdge_V3(GNN):
         x = self.lrelu(x)
         x = self.nn2(x)
 
-        # Aggregation across nodes
-        #a, _ = scatter_max(x, batch, dim=0)
-        #b, _ = scatter_min(x, batch, dim=0)
-        #c = scatter_mean(x, batch, dim=0)
-
-        # Concatenate aggregations and scalar features
-        #x = torch.cat((
-        #    a,
-        #    b,
-        #    c,
-        #), dim=1)
-
         # Read-out
         x = self.lrelu(x)
         x = self.nn3(x)

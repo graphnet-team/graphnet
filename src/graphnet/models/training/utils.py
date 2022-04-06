@@ -139,6 +139,40 @@ def get_predictions(trainer, model, dataloader, prediction_columns, additional_a
 
     for batch in dataloader:
         for attr in attributes:
+            attributes[attr].extend(batch[attr].detach().cpu().numpy())
+
+    data = np.concatenate([predictions] + [
+        np.asarray(values)[:, np.newaxis] for values in attributes.values()
+    ], axis=1)
+
+    results = pd.DataFrame(data, columns=prediction_columns + additional_attributes)
+    return results
+
+def get_predictions_pulse_level(trainer, model, dataloader, prediction_columns, additional_attributes=None):
+    # Check(s)
+    if additional_attributes is None:
+        additional_attributes = []
+    assert isinstance(additional_attributes, list)
+
+    # Set model to inference mode
+    model.inference()
+
+    # Get predictions
+    predictions_torch = trainer.predict(model, dataloader)
+    predictions = [p[0].detach().cpu().numpy() for p in predictions_torch]  # Assuming single task
+    predictions = np.concatenate(predictions, axis=0)
+    try:
+        assert len(prediction_columns) == predictions.shape[1]
+    except IndexError:
+        predictions = predictions.reshape((-1, 1))
+        assert len(prediction_columns) == predictions.shape[1]
+
+
+    # Get additional attributes
+    attributes = OrderedDict([(attr, []) for attr in additional_attributes])
+
+    for batch in dataloader:
+        for attr in attributes:
             attribute = batch[attr].detach().cpu().numpy()
             if attr == 'event_no':
                 attribute = np.repeat(attribute, batch['n_pulses'].detach().cpu().numpy())
