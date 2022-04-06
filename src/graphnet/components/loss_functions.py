@@ -252,28 +252,3 @@ class EuclideanDistance(LossFunction):
         """
         return torch.sqrt((prediction[:,0] - target[:,0])**2 + (prediction[:,1] - target[:,1])**2 + (prediction[:,2] - target[:,2])**2) 
 
-
-class F1Loss(LossFunction):
-    
-    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Calclute loss based on precision/recall approximation.
-        Inspired by: https://stackoverflow.com/questions/52041931/is-there-an-optimizer-in-keras-based-on-precision-or-recall-instead-of-loss
-        Inspired by: https://git.dst.etit.tu-chemnitz.de/external/tf-models/-/blob/master/research/global_objectives/loss_layers.py
-        Inspired by: https://link.springer.com/chapter/10.1007/978-3-642-38679-4_37
-        Modeled after: https://www.kaggle.com/rejpalcz/best-loss-function-for-f1-score-metric
-
-        """
-
-        prediction = prediction.float()
-        target = target.float()
-        
-        tp = torch.sum(target*prediction, axis=0)
-        fp = torch.sum((1-target)*prediction, axis=0)
-        fn = torch.sum(target*(1-prediction), axis=0)
-
-        p = tp / (tp + fp + 1e-10)
-        r = tp / (tp + fn + 1e-10)
-
-        f1 = 2*p*r / (p+r+1e-10)
-        f1 = torch.where(torch.isnan(f1), torch.zeros_like(f1), f1)
-        return 1 - torch.mean(f1)

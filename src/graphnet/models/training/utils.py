@@ -71,7 +71,7 @@ def make_train_validation_dataloader(
     num_workers: int = 10,
     persistent_workers: bool = True,
 ) -> Tuple[DataLoader]:
-    
+
     # Reproducibility
     rng = np.random.RandomState(seed=seed)
 
@@ -136,7 +136,6 @@ def get_predictions(trainer, model, dataloader, prediction_columns, additional_a
 
     # Get additional attributes
     attributes = OrderedDict([(attr, []) for attr in additional_attributes])
-
     for batch in dataloader:
         for attr in attributes:
             attributes[attr].extend(batch[attr].detach().cpu().numpy())
