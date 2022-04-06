@@ -252,3 +252,5 @@ class EuclideanDistance(LossFunction):
         """
         return torch.sqrt((prediction[:,0] - target[:,0])**2 + (prediction[:,1] - target[:,1])**2 + (prediction[:,2] - target[:,2])**2) 
 
+
+
