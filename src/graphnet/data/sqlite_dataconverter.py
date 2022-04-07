@@ -219,7 +219,7 @@ class SQLiteDataConverter(DataConverter):
         there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least
         one of the pulsemaps is non-empty then return true.
         """
-        pulsemap_dicts = map(data_dict.get, self._pulsemap)
+        pulsemap_dicts = map(data_dict.get, self._pulsemaps)
         return any(d['dom_x'] for d in pulsemap_dicts)
 
     def _run_sql_code(self, database: str, code: str):
