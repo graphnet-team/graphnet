@@ -8,6 +8,33 @@ from pathlib import Path
 import re
 from typing import List, Tuple
 import sqlite3
+import sqlalchemy
+
+def run_sql_code(database: str, code: str):
+    """executes SQLite coded
+
+    Args:
+        database (str): path to databases
+        code (str): SQLite code
+    """
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    c.executescript(code)
+    c.close()
+    return
+
+def save_to_sql(df, table_name, database):
+    """saves a dataframe df to a table table_name in SQLite database database. Table must exist already.
+
+    Args:
+        df (pandas.DataFrame): dataframe with data to be stored in sqlite table
+        table_name (str): name of table. Must exist already
+        database (SQLite database): path to SQLite database
+    """
+    engine = sqlalchemy.create_engine('sqlite:///' + database)
+    df.to_sql(table_name, con=engine, index=False, if_exists='append')
+    engine.dispose()
+    return   
 
 
 def get_desired_event_numbers(db_path, desired_size, fraction_noise=0, fraction_nu_e=0, fraction_muon=0, fraction_nu_mu = 0, fraction_nu_tau=0, seed=0):
