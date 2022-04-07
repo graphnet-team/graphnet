@@ -71,6 +71,33 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy</span>
+
+<div class="viewcode-block" id="run_sql_code"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.run_sql_code">[docs]</a><span class="k">def</span> <span class="nf">run_sql_code</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;executes SQLite coded</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        database (str): path to databases</span>
+<span class="sd">        code (str): SQLite code</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="save_to_sql"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.save_to_sql">[docs]</a><span class="k">def</span> <span class="nf">save_to_sql</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;saves a dataframe df to a table table_name in SQLite database database. Table must exist already.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.DataFrame): dataframe with data to be stored in sqlite table</span>
+<span class="sd">        table_name (str): name of table. Must exist already</span>
+<span class="sd">        database (SQLite database): path to SQLite database</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="s1">&#39;sqlite:///&#39;</span> <span class="o">+</span> <span class="n">database</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">)</span>
+    <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
+    <span class="k">return</span>   </div>
 
 
 <div class="viewcode-block" id="get_desired_event_numbers"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_desired_event_numbers">[docs]</a><span class="k">def</span> <span class="nf">get_desired_event_numbers</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">desired_size</span><span class="p">,</span> <span class="n">fraction_noise</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fraction_nu_e</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fraction_muon</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fraction_nu_mu</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fraction_nu_tau</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>

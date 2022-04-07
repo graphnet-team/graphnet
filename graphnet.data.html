@@ -42,6 +42,7 @@
 <li><a class="reference internal" href="#module-graphnet.data.constants">graphnet.data.constants module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.dataconverter">graphnet.data.dataconverter module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.i3extractor">graphnet.data.i3extractor module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.pipeline">graphnet.data.pipeline module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite_dataconverter">graphnet.data.sqlite_dataconverter module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite_dataset">graphnet.data.sqlite_dataset module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite_dataset_perturbed">graphnet.data.sqlite_dataset_perturbed module</a></li>
@@ -374,6 +375,62 @@ IMPORTANT: The final position of the muon is saved in truth extractor/databases 
 <dd class="field-odd"><p>dictionary (dict)</p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.pipeline">
+<span id="graphnet-data-pipeline-module"></span><h2>graphnet.data.pipeline module<a class="headerlink" href="#module-graphnet.data.pipeline" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.pipeline.</span></span><span class="sig-name descname"><span class="pre">InSQLitePipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retro_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'retro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pipeline'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Creates a SQLite database with truth and GNN predictions and, if available, RETRO reconstructions. Made for analysis.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Runs inference of each field in self._module_dict[target][‘’]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<em>path</em>) – path to database with pulsemap and truth</p></li>
+<li><p><strong>pulsemap</strong> (<em>str</em>) – name of pulsemaps</p></li>
+<li><p><strong>chunk_size</strong> (<em>int</em>) – database will be sliced in chunks of size chunk_size. Use this parameter to control memory usage. Defaults to 1000000</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retro_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'retro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pipeline'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the pipeline</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module_dict</strong> (<em>dict</em>) – A dictionary with GNN modules from GraphNet. E.g. {‘energy’: gnn_module_for_energy_regression}</p></li>
+<li><p><strong>features</strong> (<em>list</em>) – list of input features for the GNN modules</p></li>
+<li><p><strong>truth</strong> (<em>list</em>) – list of truth for the GNN ModuleList</p></li>
+<li><p><strong>device</strong> (<em>torch._device</em>) – the device used for computation</p></li>
+<li><p><strong>retro_table_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the retro table for. Defaults to ‘retro’.</p></li>
+<li><p><strong>outdir</strong> (<em>path</em><em>, </em><em>optional</em>) – the directory in which the pipeline database will be stored. Defaults to None.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – batch size for inference. Defaults to 100.</p></li>
+<li><p><strong>n_workers</strong> (<em>int</em><em>, </em><em>optional</em>) – number of workers used in dataloading. Defaults to 10.</p></li>
+<li><p><strong>pipeline_name</strong> (<em>str</em><em>, </em><em>optional</em>) – name of the pipeline. If such a pipeline already exists, an error will be prompted to avoid overwriting. Defaults to ‘pipeline’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline._create_table">
+<span class="sig-name descname"><span class="pre">_create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline._create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline._create_table" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a table.
+:param pipeline_database: path to the pipeline database
+:type pipeline_database: str
+:param df: pandas.DataFrame of combined predictions
+:type df: str</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -745,6 +802,35 @@ gcd_shuffled (list): List of corresponding gcd file paths.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>i3_shuffled (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.utils.run_sql_code">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">run_sql_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#run_sql_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.run_sql_code" title="Permalink to this definition"></a></dt>
+<dd><p>executes SQLite coded</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<em>str</em>) – path to databases</p></li>
+<li><p><strong>code</strong> (<em>str</em>) – SQLite code</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.utils.save_to_sql">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">save_to_sql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#save_to_sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.save_to_sql" title="Permalink to this definition"></a></dt>
+<dd><p>saves a dataframe df to a table table_name in SQLite database database. Table must exist already.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – dataframe with data to be stored in sqlite table</p></li>
+<li><p><strong>table_name</strong> (<em>str</em>) – name of table. Must exist already</p></li>
+<li><p><strong>database</strong> (<em>SQLite database</em>) – path to SQLite database</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

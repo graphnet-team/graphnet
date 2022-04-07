@@ -104,10 +104,14 @@
 </li>
         <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3TruthExtractor.__call__">(graphnet.data.i3extractor.I3TruthExtractor method)</a>
 </li>
+        <li><a href="graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline.__call__">(graphnet.data.pipeline.InSQLitePipeline method)</a>
+</li>
       </ul></li>
       <li><a href="graphnet.data.html#graphnet.data.dataconverter.DataConverter.__init__">__init__() (graphnet.data.dataconverter.DataConverter method)</a>
 
       <ul>
+        <li><a href="graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline.__init__">(graphnet.data.pipeline.InSQLitePipeline method)</a>
+</li>
         <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter.__init__">(graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.__init__">(graphnet.models.gnn.convnet.ConvNet method)</a>
@@ -121,12 +125,18 @@
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset._create_graph">_create_graph() (graphnet.data.sqlite_dataset.SQLiteDataset method)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._create_table">_create_table() (graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
+      <li><a href="graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline._create_table">_create_table() (graphnet.data.pipeline.InSQLitePipeline method)</a>
+
+      <ul>
+        <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._create_table">(graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
+      </ul></li>
       <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisherLoss._evaluate">_evaluate() (graphnet.components.loss_functions.VonMisesFisherLoss method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._extract_everything">_extract_everything() (graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance._forward">_forward() (graphnet.components.loss_functions.EuclideanDistance method)</a>
 
       <ul>
@@ -147,8 +157,6 @@
         <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task._forward">(graphnet.models.task.task.Task method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractor._get_om_keys_and_pulseseries">_get_om_keys_and_pulseseries() (graphnet.data.i3extractor.I3FeatureExtractor method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3Extractor._load_gcd_data">_load_gcd_data() (graphnet.data.i3extractor.I3Extractor method)</a>
@@ -448,6 +456,13 @@
 </li>
       </ul></li>
       <li>
+    graphnet.data.pipeline
+
+      <ul>
+        <li><a href="graphnet.data.html#module-graphnet.data.pipeline">module</a>
+</li>
+      </ul></li>
+      <li>
     graphnet.data.sqlite_dataconverter
 
       <ul>
@@ -671,6 +686,8 @@
 </li>
       <li><a href="graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.init_validation_tqdm">init_validation_tqdm() (graphnet.models.training.callbacks.ProgressBar method)</a>
 </li>
+      <li><a href="graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline">InSQLitePipeline (class in graphnet.data.pipeline)</a>
+</li>
       <li><a href="graphnet.data.html#graphnet.data.utils.is_gcd_file">is_gcd_file() (in module graphnet.data.utils)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.utils.is_i3_file">is_i3_file() (in module graphnet.data.utils)</a>
@@ -746,6 +763,8 @@
         <li><a href="graphnet.data.html#module-graphnet.data.dataconverter">graphnet.data.dataconverter</a>
 </li>
         <li><a href="graphnet.data.html#module-graphnet.data.i3extractor">graphnet.data.i3extractor</a>
+</li>
+        <li><a href="graphnet.data.html#module-graphnet.data.pipeline">graphnet.data.pipeline</a>
 </li>
         <li><a href="graphnet.data.html#module-graphnet.data.sqlite_dataconverter">graphnet.data.sqlite_dataconverter</a>
 </li>
@@ -931,6 +950,10 @@
 </li>
       </ul></li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.data.html#graphnet.data.utils.run_sql_code">run_sql_code() (in module graphnet.data.utils)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
@@ -942,16 +965,18 @@
 </li>
       <li><a href="graphnet.models.html#graphnet.models.model.Model.save_state_dict">save_state_dict() (graphnet.models.model.Model method)</a>
 </li>
+      <li><a href="graphnet.data.html#graphnet.data.utils.save_to_sql">save_to_sql() (in module graphnet.data.utils)</a>
+</li>
       <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3Extractor.set_files">set_files() (graphnet.data.i3extractor.I3Extractor method)</a>
 
       <ul>
         <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3ExtractorCollection.set_files">(graphnet.data.i3extractor.I3ExtractorCollection method)</a>
 </li>
       </ul></li>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.shared_step">shared_step() (graphnet.models.model.Model method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.models.html#graphnet.models.model.Model.shared_step">shared_step() (graphnet.models.model.Model method)</a>
+</li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter">SQLiteDataConverter (class in graphnet.data.sqlite_dataconverter)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset">SQLiteDataset (class in graphnet.data.sqlite_dataset)</a>

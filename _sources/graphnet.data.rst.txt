@@ -28,6 +28,14 @@ graphnet.data.i3extractor module
    :undoc-members:
    :show-inheritance:
 
+graphnet.data.pipeline module
+-----------------------------
+
+.. automodule:: graphnet.data.pipeline
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.data.sqlite\_dataconverter module
 ------------------------------------------
 
