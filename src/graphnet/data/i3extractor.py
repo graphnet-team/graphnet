@@ -279,10 +279,24 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
+            'DeepCoreFilter': padding_value,
+            'CascadeFilter': padding_value,
+            'GRECOOnlineFilter_19': padding_value,
+            'MuonFilter_13': padding_value,
+            'OnlineL2Filter_17': padding_value,
             'dbang_decay_length': padding_value,
             'track_length': padding_value,
             'stopped_muon': padding_value,
         }
+
+        if frame['I3EventHeader'].sub_event_stream == 'InIceSplit': #only inicesplit p frames have filters calculated
+            output.update({
+                'DeepCoreFilter_13': int(bool(frame['FilterMask']['DeepCoreFilter_13'])),
+                'CascadeFilter_13': int(bool(frame['FilterMask']['CascadeFilter_13'])),
+                'GRECOOnlineFilter_19': int(bool(frame['FilterMask']['GRECOOnlineFilter_19'])),
+                'MuonFilter_13': int(bool(frame['FilterMask']['MuonFilter_13'])),
+                'OnlineL2Filter_17': int(bool(frame['FilterMask']['OnlineL2Filter_17'])),
+            })
 
         if is_mc == True and is_noise == False:
             MCInIcePrimary, interaction_type, elasticity = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
