@@ -293,7 +293,6 @@ class I3TruthExtractor(I3Extractor):
             output.update({
                 'DeepCoreFilter_13': int(bool(frame['FilterMask']['DeepCoreFilter_13'])),
                 'CascadeFilter_13': int(bool(frame['FilterMask']['CascadeFilter_13'])),
-                'GRECOOnlineFilter_19': int(bool(frame['FilterMask']['GRECOOnlineFilter_19'])),
                 'MuonFilter_13': int(bool(frame['FilterMask']['MuonFilter_13'])),
                 'OnlineL2Filter_17': int(bool(frame['FilterMask']['OnlineL2Filter_17'])),
             })
