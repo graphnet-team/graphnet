@@ -392,17 +392,15 @@ class I3RetroExtractor(I3Extractor):
             for classifier in classifiers:
                 if frame_has_key(frame, classifier):
                     output.update({classifier : frame[classifier].value})
-            #output.update({
-            #    'L7_MuonClassifier_FullSky_ProbNu': frame["L7_MuonClassifier_FullSky_ProbNu"].value,
-            #    'L4_MuonClassifier_Data_ProbNu': frame["L4_MuonClassifier_Data_ProbNu"].value,
-            #    'L4_NoiseClassifier_ProbNu': frame["L4_NoiseClassifier_ProbNu"].value,
-            #    'L7_PIDClassifier_FullSky_ProbTrack': frame["L7_PIDClassifier_FullSky_ProbTrack"].value,
-            #})
 
         if frame_is_montecarlo(frame):
             if frame_contains_retro(frame):
                 output.update({
                     'osc_weight': frame["I3MCWeightDict"]["weight"],
+                })
+            elif frame_is_noise(frame):
+                output.update({
+                    'osc_weight': frame["noise_weight"]["weight"],
                 })
             else:
                 output.update({
