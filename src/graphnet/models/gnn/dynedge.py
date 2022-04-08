@@ -31,7 +31,6 @@ class DynEdge(GNN):
         # Architecture configuration
         c = layer_size_scale
         l1, l2, l3, l4, l5,l6 = nb_inputs, c*16*2, c*32*2, c*42*2, c*32*2, c*16*2
-
         # Base class constructor
         super().__init__(nb_inputs, l6)
 
@@ -105,9 +104,6 @@ class DynEdge(GNN):
 
         # Convenience variables
         x, edge_index, batch = data.x, data.edge_index, data.batch
-
-        print('modelout')
-        print(x.shape)
 
         # Calculate homophily (scalar variables)
         h_x, h_y, h_z, h_t = calculate_xyzt_homophily(x, edge_index, batch)

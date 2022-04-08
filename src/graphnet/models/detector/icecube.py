@@ -52,7 +52,7 @@ class IceCube86_v2(Detector):
 
     @property
     def nb_outputs(self):
-        return self.nb_inputs + 7
+        return self.nb_inputs
     def _forward(self, data: Data) -> Data:
         """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
 
@@ -108,8 +108,6 @@ class IceCube86_v2(Detector):
         data.x[:,11] /= 1.  # charge
         data.x[:,12] /= 1.  # charge
         data.x[:,13] /= 1.  # charge
-        print('detector out')
-        print(data.x.shape)
         return data
 
 class IceCubeDeepCore(IceCube86):
