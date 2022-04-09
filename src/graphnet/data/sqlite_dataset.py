@@ -15,7 +15,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         pulsemaps: Union[str, List[str]],
         features: List[str],
         truth: List[str],
-        node_truth: Optional[List[str]] = None,
+        node_truth_column: Optional[List[str]] = None,
         index_column: str = 'event_no',
         truth_table: str = 'truth',
         node_truth_table: Optional[str] = None,
@@ -40,11 +40,11 @@ class SQLiteDataset(torch.utils.data.Dataset):
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
 
-        if node_truth != None:
+        if node_truth_column != None:
             assert isinstance(node_truth_table, str)
-            if isinstance(node_truth, str):
-                node_truth = [node_truth]
-            self._node_truth = node_truth
+            if isinstance(node_truth_column, str):
+                node_truth_column = [node_truth_column]
+            self._node_truth_column = node_truth_column
             self._node_truth_table = node_truth_table
 
         if string_selection != None:
@@ -80,7 +80,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         return len(self._indices)
 
     def _add_node_truth(self, i, graph):
-        for node_truth_column in self._node_truth:
+        for node_truth_column in self._node_truth_column:
             graph[node_truth_column] = torch.tensor(self._get_node_truth(i, node_truth_column)).reshape(-1)
         return graph
 
@@ -118,7 +118,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self.establish_connection(i)
         features, truth = self._query_database(i)
         graph = self._create_graph(features, truth)
-        if self._node_truth != None:
+        if self._node_truth_column != None:
             graph = self._add_node_truth(i, graph)
         return graph
 
