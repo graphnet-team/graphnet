@@ -114,7 +114,7 @@ def make_train_validation_dataloader(
 
     return training_dataloader, validation_dataloader  # , {'valid_selection':validation_selection, 'training_selection':training_selection}
 
-def get_predictions(trainer, model, dataloader, prediction_columns, additional_attributes=None):
+def get_predictions(trainer, model, dataloader, prediction_columns, node_level = False, additional_attributes=None):
     # Check(s)
     if additional_attributes is None:
         additional_attributes = []
@@ -138,7 +138,12 @@ def get_predictions(trainer, model, dataloader, prediction_columns, additional_a
     attributes = OrderedDict([(attr, []) for attr in additional_attributes])
     for batch in dataloader:
         for attr in attributes:
-            attributes[attr].extend(batch[attr].detach().cpu().numpy())
+            attribute = batch[attr].detach().cpu().numpy()
+            if node_level == True:
+                if attr == 'event_no':
+                    attribute = np.repeat(attribute, batch['n_pulses'].detach().cpu().numpy())
+            attributes[attr].extend(attribute)
+
 
     data = np.concatenate([predictions] + [
         np.asarray(values)[:, np.newaxis] for values in attributes.values()
