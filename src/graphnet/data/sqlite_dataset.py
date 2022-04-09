@@ -15,8 +15,11 @@ class SQLiteDataset(torch.utils.data.Dataset):
         pulsemaps: Union[str, List[str]],
         features: List[str],
         truth: List[str],
+        node_truth: Optional[List[str]] = None,
         index_column: str = 'event_no',
         truth_table: str = 'truth',
+        node_truth_table: Optional[str] = None,
+        string_selection: Optional[List[int]] = None,
         selection: Optional[List[int]] = None,
         dtype: torch.dtype = torch.float32,
     ):
@@ -36,6 +39,21 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
+
+        if node_truth != None:
+            assert isinstance(node_truth_table, str)
+            if isinstance(node_truth, str):
+                node_truth = [node_truth]
+            self._node_truth = node_truth
+            self._node_truth_table = node_truth_table
+
+        if string_selection != None:
+            print('WARNING - STRING SELECTION DETECTED. \n Accepted strings: %s \n all other strings are ignored!'%string_selection)
+            if isinstance(string_selection, int):
+                string_selection = [string_selection]
+            assert isinstance(string_selection, (list))
+        
+        self._string_selection = string_selection
 
         self._database = database
         self._pulsemaps = pulsemaps
@@ -61,10 +79,47 @@ class SQLiteDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self._indices)
 
+    def _add_node_truth(self, i, graph):
+        for node_truth_column in self._node_truth:
+            graph[node_truth_column] = torch.tensor(self._get_node_truth(i, node_truth_column)).reshape(-1)
+        return graph
+
+    def _get_node_truth(self, i, node_truth_column):
+        """Query SQLite database for node truth information.
+        """
+        if self._database_list == None:
+            index = self._indices[i]
+        else:
+            index = self._indices[i][0]
+
+        if self._string_selection == None:
+            node_truth = self._conn.execute(
+                "SELECT {} FROM {} WHERE {} = {}".format(
+                    node_truth_column,
+                    self._node_truth_table,
+                    self._index_column,
+                    index,
+                )
+            ).fetchall()
+        else:
+            node_truth = self._conn.execute(
+                "SELECT {} FROM {} WHERE {} = {} and string in {}".format(
+                    node_truth_column,
+                    self._node_truth_table,
+                    self._index_column,
+                    index,
+                    self._string_selection,
+                )
+            ).fetchall()
+
+        return node_truth
+
     def __getitem__(self, i):
         self.establish_connection(i)
         features, truth = self._query_database(i)
         graph = self._create_graph(features, truth)
+        if self._node_truth != None:
+            graph = self._add_node_truth(i, graph)
         return graph
 
     def _get_all_indices(self):
@@ -90,14 +145,25 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         features = []
         for pulsemap in self._pulsemaps:
-            features_pulsemap = self._conn.execute(
-                "SELECT {} FROM {} WHERE {} = {}".format(
-                    self._features_string,
-                    pulsemap,
-                    self._index_column,
-                    index,
-                )
-            ).fetchall()
+            if self._string_selection == None:
+                features_pulsemap = self._conn.execute(
+                    "SELECT {} FROM {} WHERE {} = {}".format(
+                        self._features_string,
+                        pulsemap,
+                        self._index_column,
+                        index,
+                    )
+                ).fetchall()
+            else:
+                features_pulsemap = self._conn.execute(
+                    "SELECT {} FROM {} WHERE {} = {} and string in {}".format(
+                        self._features_string,
+                        pulsemap,
+                        self._index_column,
+                        index,
+                        self._string_selection
+                    )
+                ).fetchall()
             features.extend(features_pulsemap)
 
         truth = self._conn.execute(
