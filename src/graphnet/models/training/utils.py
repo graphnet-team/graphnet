@@ -26,6 +26,8 @@ def make_dataloader(
     selection: List[int] = None,
     num_workers: int = 10,
     persistent_workers: bool = True,
+    node_truth_column: str = None,
+    node_truth_table: str  = None,
 ) -> DataLoader:
 
     # Check(s)
@@ -38,6 +40,8 @@ def make_dataloader(
         features,
         truth,
         selection=selection,
+        node_truth_column = node_truth_column,
+        node_truth_table = node_truth_table,
     )
 
     def collate_fn(graphs):
@@ -70,6 +74,8 @@ def make_train_validation_dataloader(
     test_size: float = 0.33,
     num_workers: int = 10,
     persistent_workers: bool = True,
+    node_truth_column: str = None,
+    node_truth_table: str  = None,
 ) -> Tuple[DataLoader]:
 
     # Reproducibility
@@ -98,6 +104,8 @@ def make_train_validation_dataloader(
         batch_size=batch_size,
         num_workers=num_workers,
         persistent_workers=persistent_workers,
+        node_truth_column = node_truth_column,
+        node_truth_table = node_truth_table,
     )
 
     training_dataloader = make_dataloader(
