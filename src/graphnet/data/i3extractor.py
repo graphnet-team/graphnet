@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Any, Union
 import numpy as np
 import matplotlib.path as mpath
 try:
@@ -394,23 +394,24 @@ class I3RetroExtractor(I3Extractor):
                     output.update({classifier : frame[classifier].value})
 
         if frame_is_montecarlo(frame):
-            if frame_contains_retro(frame):
-                output.update({
-                    'osc_weight': frame["I3MCWeightDict"]["weight"],
-                })
-            elif frame_is_noise(frame):
+            if frame_is_noise(frame):
                 output.update({
                     'osc_weight': frame["noise_weight"]["weight"],
                 })
             else:
-                output.update({
-                    'osc_weight': -1.,
-                })
-
+                output['osc_weight'] = try_get_key(frame["I3MCWeightDict"],'weight',default_value=-1)
+                
         return output
 
 
 # Utilty methods
+def try_get_key(frame, key, default_value=-1):
+    """Return `key` in `frame` if it exists; otherwise return `default_value."""
+    try:
+        return frame[key]
+    except KeyError:
+        return default_value
+
 def frame_contains_retro(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")
 
