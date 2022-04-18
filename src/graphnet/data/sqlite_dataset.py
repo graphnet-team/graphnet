@@ -108,7 +108,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
                     self._node_truth_table,
                     self._index_column,
                     index,
-                    self._string_selection,
+                    str(tuple(self._string_selection)),
                 )
             ).fetchall()
 
@@ -161,7 +161,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
                         pulsemap,
                         self._index_column,
                         index,
-                        self._string_selection
+                        str(tuple(self._string_selection))
                     )
                 ).fetchall()
             features.extend(features_pulsemap)
