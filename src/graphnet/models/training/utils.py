@@ -28,6 +28,7 @@ def make_dataloader(
     persistent_workers: bool = True,
     node_truth_column: str = None,
     node_truth_table: str  = None,
+    string_selection: List[int] = None,
 ) -> DataLoader:
 
     # Check(s)
@@ -42,6 +43,7 @@ def make_dataloader(
         selection=selection,
         node_truth_column = node_truth_column,
         node_truth_table = node_truth_table,
+        string_selection=string_selection,
     )
 
     def collate_fn(graphs):
@@ -76,6 +78,7 @@ def make_train_validation_dataloader(
     persistent_workers: bool = True,
     node_truth_column: str = None,
     node_truth_table: str  = None,
+    string_selection: List[int] = None,
 ) -> Tuple[DataLoader]:
 
     # Reproducibility
@@ -106,6 +109,7 @@ def make_train_validation_dataloader(
         persistent_workers=persistent_workers,
         node_truth_column = node_truth_column,
         node_truth_table = node_truth_table,
+        string_selection = string_selection,
     )
 
     training_dataloader = make_dataloader(
