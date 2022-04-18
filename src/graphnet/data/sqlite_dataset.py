@@ -51,7 +51,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             print('WARNING - STRING SELECTION DETECTED. \n Accepted strings: %s \n all other strings are ignored!'%string_selection)
             if isinstance(string_selection, int):
                 string_selection = [string_selection]
-            assert isinstance(string_selection, (list))
+            #assert isinstance(string_selection, (list, int))
         
         self._string_selection = string_selection
 
