@@ -88,6 +88,25 @@ class SQLiteDataset(torch.utils.data.Dataset):
             graph[node_truth_column] = torch.tensor(self._get_node_truth(i, node_truth_column)).reshape(-1)
         return graph
 
+def _query_table(self, columns: Union[List, str], table: str, index: int, selection: Optional[Str] = None):
+    """Query a table at a specific index, optionally subject to some selection.""" 
+    # Check(s)
+    if isinstance(columns, list):
+        columns = ', '.join(columns)
+
+    if not selection:  # I.e., `None` or `""`
+        selection = "1=1"  # Identically true, to select all
+    
+    if self._database_list == None:
+        index = self._indices[i]
+    else:
+        index = self._indices[i][0]
+
+    # Query table
+    result = self._conn.execute(
+        f"SELECT {columns} FROM {table} WHERE {self._index_column} = {index} and {selection}"
+    ).fetchall()
+    return result
     def __getitem__(self, i):
         self.establish_connection(i)
         features, truth = self._query_database(i)
