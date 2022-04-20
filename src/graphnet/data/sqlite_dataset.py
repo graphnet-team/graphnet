@@ -85,36 +85,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
             graph[node_truth_column] = torch.tensor(self._get_node_truth(i, node_truth_column)).reshape(-1)
         return graph
 
-    def _get_node_truth(self, i, node_truth_column):
-        """Query SQLite database for node truth information.
-        """
-        if self._database_list == None:
-            index = self._indices[i]
-        else:
-            index = self._indices[i][0]
-
-        if self._string_selection == None:
-            node_truth = self._conn.execute(
-                "SELECT {} FROM {} WHERE {} = {}".format(
-                    node_truth_column,
-                    self._node_truth_table,
-                    self._index_column,
-                    index,
-                )
-            ).fetchall()
-        else:
-            node_truth = self._conn.execute(
-                "SELECT {} FROM {} WHERE {} = {} and string in {}".format(
-                    node_truth_column,
-                    self._node_truth_table,
-                    self._index_column,
-                    index,
-                    str(tuple(self._string_selection)),
-                )
-            ).fetchall()
-
-        return node_truth
-
     def __getitem__(self, i):
         self.establish_connection(i)
         features, truth = self._query_database(i)
