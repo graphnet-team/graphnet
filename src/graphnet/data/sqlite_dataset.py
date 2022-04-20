@@ -55,6 +55,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
                 string_selection = [string_selection]
         
         self._string_selection = string_selection
+        self._selection = ""
+        if self._string_selection:
+            self._selection = f"string in {str(tuple(self._string_selection))}" 
 
         self._database = database
         self._pulsemaps = pulsemaps
