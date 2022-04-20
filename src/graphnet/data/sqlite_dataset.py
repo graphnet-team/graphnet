@@ -40,12 +40,14 @@ class SQLiteDataset(torch.utils.data.Dataset):
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
 
-        if node_truth_column != None:
+        self._node_truth = None
+        if node_truth != None:
             assert isinstance(node_truth_table, str)
-            if isinstance(node_truth_column, str):
-                node_truth_column = [node_truth_column]
-            self._node_truth_column = node_truth_column
+            if isinstance(node_truth, str):
+                node_truth = [node_truth]
+            self._node_truth = node_truth
             self._node_truth_table = node_truth_table
+            self._node_truth_string = ', '.join(self._node_truth)
 
         if string_selection != None:
             print('WARNING - STRING SELECTION DETECTED. \n Accepted strings: %s \n all other strings are ignored!'%string_selection)
