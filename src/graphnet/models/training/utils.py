@@ -107,7 +107,7 @@ def make_train_validation_dataloader(
         batch_size=batch_size,
         num_workers=num_workers,
         persistent_workers=persistent_workers,
-        node_truth_column = node_truth_column,
+        node_truth = node_truth,
         node_truth_table = node_truth_table,
         string_selection = string_selection,
     )
