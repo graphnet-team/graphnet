@@ -41,7 +41,7 @@ def make_dataloader(
         features,
         truth,
         selection=selection,
-        node_truth_column = node_truth_column,
+        node_truth = node_truth,
         node_truth_table = node_truth_table,
         string_selection=string_selection,
     )
