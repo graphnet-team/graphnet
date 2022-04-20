@@ -26,7 +26,7 @@ def make_dataloader(
     selection: List[int] = None,
     num_workers: int = 10,
     persistent_workers: bool = True,
-    node_truth_column: str = None,
+    node_truth: str = None,
     node_truth_table: str  = None,
     string_selection: List[int] = None,
 ) -> DataLoader:
