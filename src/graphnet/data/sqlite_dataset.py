@@ -146,25 +146,22 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
         features = []
         for pulsemap in self._pulsemaps:
-            if self._string_selection == None:
-                features_pulsemap = self._conn.execute(
-                    "SELECT {} FROM {} WHERE {} = {}".format(
-                        self._features_string,
-                        pulsemap,
-                        self._index_column,
-                        index,
-                    )
-                ).fetchall()
+            features_pulsemap = self._query_table(
+                self._features_string,
+                pulsemap,
+                index,
+                self._selection,
+            )
+            
+            if self._node_truth:
+                node_truth = self._query_table(
+                    self._node_truth_string,
+                    self._node_truth_table,
+                    index,
+                    self._selection,
+                )
             else:
-                features_pulsemap = self._conn.execute(
-                    "SELECT {} FROM {} WHERE {} = {} and string in {}".format(
-                        self._features_string,
-                        pulsemap,
-                        self._index_column,
-                        index,
-                        str(tuple(self._string_selection))
-                    )
-                ).fetchall()
+                node_truth = None
             features.extend(features_pulsemap)
 
         truth = self._conn.execute(
