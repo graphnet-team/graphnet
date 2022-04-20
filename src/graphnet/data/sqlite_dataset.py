@@ -15,7 +15,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         pulsemaps: Union[str, List[str]],
         features: List[str],
         truth: List[str],
-        node_truth_column: Optional[List[str]] = None,
+        node_truth: Optional[List[str]] = None,
         index_column: str = 'event_no',
         truth_table: str = 'truth',
         node_truth_table: Optional[str] = None,
