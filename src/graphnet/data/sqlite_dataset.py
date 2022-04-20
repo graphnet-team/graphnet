@@ -83,10 +83,6 @@ class SQLiteDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self._indices)
 
-    def _add_node_truth(self, i, graph):
-        for node_truth_column in self._node_truth_column:
-            graph[node_truth_column] = torch.tensor(self._get_node_truth(i, node_truth_column)).reshape(-1)
-        return graph
 
 def _query_table(self, columns: Union[List, str], table: str, index: int, selection: Optional[Str] = None):
     """Query a table at a specific index, optionally subject to some selection.""" 
