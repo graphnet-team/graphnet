@@ -76,7 +76,7 @@ def make_train_validation_dataloader(
     test_size: float = 0.33,
     num_workers: int = 10,
     persistent_workers: bool = True,
-    node_truth_column: str = None,
+    node_truth: str = None,
     node_truth_table: str  = None,
     string_selection: List[int] = None,
 ) -> Tuple[DataLoader]:
