@@ -33,6 +33,7 @@ EXTRAS_REQUIRE = {
     'develop': [
         'pytest',
         'pylint',
+        'pydocstyle',
         'coverage',
         'anybadge',
         'sphinx',
