@@ -155,16 +155,3 @@ def save_results(db, tag, results, archive,model):
     model.save_state_dict(path + '/' + tag + '_state_dict.pth')
     model.save(path + '/' + tag + '_model.pth')
     print('Results saved at: \n %s'%path)
-
-def load_model(db, tag, archive, detector, gnn, task, device):
-    db_name = db.split('/')[-1].split('.')[0]
-    path = archive + '/' + db_name + '/' + tag
-    model = Model(
-        detector=detector,
-        gnn=gnn,
-        tasks=[task],
-        device=device,
-    )
-    model.load_state_dict(torch.load(path + '/' + tag + '.pth'))
-    model.eval()
-    return model
