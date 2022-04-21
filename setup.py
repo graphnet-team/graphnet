@@ -8,17 +8,9 @@ def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", package])
 
 # Requirements definitions
-EXTRAS_REQUIRE = {
-    'develop': [
-        'pytest',
-        'pylint',
-        'coverage',
-        'anybadge',
-        'sphinx',
-        'sphinx_rtd_theme',
-        'versioneer',
-    ],
-}
+SETUP_REQUIRES = [
+    'setuptools >= 58.2.0',
+]
 
 INSTALL_REQUIRES = [
     'sqlalchemy',
@@ -37,6 +29,18 @@ INSTALL_REQUIRES = [
     'matplotlib',
 ]
 
+EXTRAS_REQUIRE = {
+    'develop': [
+        'pytest',
+        'pylint',
+        'coverage',
+        'anybadge',
+        'sphinx',
+        'sphinx_rtd_theme',
+        'versioneer',
+    ],
+}
+
 # Ensure pytorch is already installed (see e.g. https://github.com/pyg-team/pytorch_geometric/issues/861#issuecomment-566424944)
 try:
     import torch  # pyright: reportMissingImports=false
@@ -53,6 +57,7 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
+    setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
     dependency_links=[
