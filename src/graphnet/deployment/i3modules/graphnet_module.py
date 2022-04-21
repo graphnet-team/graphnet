@@ -1,8 +1,5 @@
-"""
-Classes inheriting from I3Module, for use in deploying GNN models.
-"""
+"""Classes inheriting from I3Module, for use in deploying GNN models to icetray."""
 
-from locale import D_FMT
 import os.path
 
 import numpy as np
