@@ -23,7 +23,7 @@ INSTALL_REQUIRES = [
     'torch-sparse==0.6.12',
     'torch-spline-conv==1.2.1',
     'torch-geometric==2.0.1',
-    'pytorch-lightning',
+    'pytorch-lightning==1.5.6',
     'dill',
     'wandb',
     'matplotlib',
