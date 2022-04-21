@@ -40,7 +40,7 @@
 <li><a class="reference internal" href="#">graphnet package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-graphnet.utils">graphnet.utils module</a></li>
+<li><a class="reference internal" href="#module-graphnet.maths">graphnet.maths module</a></li>
 <li><a class="reference internal" href="#module-graphnet">Module contents</a></li>
 </ul>
 </li>
@@ -138,29 +138,56 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.html#module-graphnet.models">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.modules.html">graphnet.modules package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.modules.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.modules.html#graphnet-modules-graphnet-module-module">graphnet.modules.graphnet_module module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.modules.html#module-contents">Module contents</a></li>
-</ul>
-</li>
 </ul>
 </div>
 </section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="module-graphnet.utils">
-<span id="graphnet-utils-module"></span><h2>graphnet.utils module<a class="headerlink" href="#module-graphnet.utils" title="Permalink to this headline"></a></h2>
+<section id="module-graphnet.maths">
+<span id="graphnet-maths-module"></span><h2>graphnet.maths module<a class="headerlink" href="#module-graphnet.maths" title="Permalink to this headline"></a></h2>
+<p>Collection of assorted “maths-like” functions.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.utils.eps_like">
-<span class="sig-prename descclassname"><span class="pre">graphnet.utils.</span></span><span class="sig-name descname"><span class="pre">eps_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/utils.html#eps_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utils.eps_like" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.maths.eps_like">
+<span class="sig-prename descclassname"><span class="pre">graphnet.maths.</span></span><span class="sig-name descname"><span class="pre">eps_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/maths.html#eps_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.maths.eps_like" title="Permalink to this definition"></a></dt>
 <dd><p>Return <cite>eps</cite> matching <cite>tensor</cite>’s dtype.</p>
 </dd></dl>
 
 </section>
 <section id="module-graphnet">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet" title="Permalink to this headline"></a></h2>
+<p>graphnet - Graph neural networks for neutrino telescope event reconstruction.</p>
+<p><strong>graphnet</strong> is a python package that provides convenient, common, and
+collaboratively developed tools for building graph neural networks (GNNs) to
+solve physics tasks at neutrino telescope experiments. It aims to provide
+physicists with the tools to leverage advanced machine learning (ML) without
+having to be machine learning experts themselves, and thereby accelerate the
+scientific advances in the area of neutrino phyics.</p>
+<p>Design principles:
+- End-to-end: graphnet aims to provide all of the tools for streamlining the</p>
+<blockquote>
+<div><p>process of ingesting and transforming physics data; building, training, and
+optimising GNN models; and deploying them into a reconstruction chain.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Extensibility: graphnet aims to provide the basic building blocks to improve
+reconstruction and classification across the various IceCube configurations,
+but all model components can be easily extended to new experiments, with new
+GNN architectures and for new physics tasks.</p></li>
+</ul>
+<p>Main features:
+- Converters from domain-specific data formats (I3) to more common, indexable</p>
+<blockquote>
+<div><p>formats (e.g., SQLite) suitable as intermediate file formats for training ML
+models</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Plug-and-play GNN model components that abstract away ML implementation
+details and only expose the “building blocks” that are most relevant to
+physicsts (e.g., what detector is used and what are the physicst tasks).</p></li>
+<li><p>I3Modules for easily including GNN models in IceCube reconstruction chains.</p></li>
+<li><p>Docker images for running model inference in a containerised fashion.</p></li>
+</ul>
 </section>
 </section>
 

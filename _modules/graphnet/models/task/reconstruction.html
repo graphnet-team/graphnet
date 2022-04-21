@@ -65,7 +65,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.task</span> <span class="k">import</span> <span class="n">Task</span>
-<span class="kn">from</span> <span class="nn">graphnet.utils</span> <span class="k">import</span> <span class="n">eps_like</span>
+<span class="kn">from</span> <span class="nn">graphnet.maths</span> <span class="k">import</span> <span class="n">eps_like</span>
 
 
 <div class="viewcode-block" id="AzimuthReconstructionWithKappa"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa">[docs]</a><span class="k">class</span> <span class="nc">AzimuthReconstructionWithKappa</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
@@ -167,7 +167,7 @@
         <span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e2</span>
         <span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e2</span>
 
-        <span class="k">return</span> <span class="n">x</span> </div>
+        <span class="k">return</span> <span class="n">x</span></div>
 
 <div class="viewcode-block" id="PositionReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction">[docs]</a><span class="k">class</span> <span class="nc">PositionReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="c1"># Requires three features, x, y, z</span>
@@ -180,7 +180,7 @@
         <span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e2</span>
         <span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e2</span>
 
-        <span class="k">return</span> <span class="n">x</span> </div>
+        <span class="k">return</span> <span class="n">x</span></div>
 
 <div class="viewcode-block" id="TimeReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction">[docs]</a><span class="k">class</span> <span class="nc">TimeReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="c1"># Requires on feature, time</span>
@@ -189,7 +189,7 @@
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 
         <span class="c1"># Leave as it is</span>
-        <span class="k">return</span> <span class="n">x</span> </div>
+        <span class="k">return</span> <span class="n">x</span></div>
 
 <div class="viewcode-block" id="BinaryClassificationTask"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask">[docs]</a><span class="k">class</span> <span class="nc">BinaryClassificationTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="c1">#requires one feature: probability of being neutrino?</span>
