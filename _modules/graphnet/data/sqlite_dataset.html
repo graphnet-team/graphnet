@@ -78,8 +78,11 @@
         <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;event_no&#39;</span><span class="p">,</span>
         <span class="n">truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;truth&#39;</span><span class="p">,</span>
+        <span class="n">node_truth_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">string_selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
     <span class="p">):</span>
@@ -99,6 +102,25 @@
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">node_truth</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_truth_table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_truth</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">node_truth</span> <span class="o">=</span> <span class="p">[</span><span class="n">node_truth</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span> <span class="o">=</span> <span class="n">node_truth</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_table</span> <span class="o">=</span> <span class="n">node_truth_table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_string</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">string_selection</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING - STRING SELECTION DETECTED. </span><span class="se">\n</span><span class="s1"> Accepted strings: </span><span class="si">%s</span><span class="s1"> </span><span class="se">\n</span><span class="s1"> all other strings are ignored!&#39;</span><span class="o">%</span><span class="n">string_selection</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_selection</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">string_selection</span> <span class="o">=</span> <span class="p">[</span><span class="n">string_selection</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_string_selection</span> <span class="o">=</span> <span class="n">string_selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string_selection</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;string in {str(tuple(self._string_selection))}&quot;</span> 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_database</span> <span class="o">=</span> <span class="n">database</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span> <span class="o">=</span> <span class="n">pulsemaps</span>
@@ -120,14 +142,34 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span> <span class="o">=</span> <span class="n">selection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span><span class="p">()</span>
 
-
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">)</span>
 
+
+<div class="viewcode-block" id="SQLiteDataset._query_table"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset._query_table">[docs]</a>    <span class="k">def</span> <span class="nf">_query_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Query a table at a specific index, optionally subject to some selection.&quot;&quot;&quot;</span> 
+        <span class="c1"># Check(s)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">selection</span><span class="p">:</span>  <span class="c1"># I.e., `None` or `&quot;&quot;`</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="s2">&quot;1=1&quot;</span>  <span class="c1"># Identically true, to select all</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_list</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Query table</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;SELECT </span><span class="si">{columns}</span><span class="s2"> FROM </span><span class="si">{table}</span><span class="s2"> WHERE </span><span class="si">{self._index_column}</span><span class="s2"> = </span><span class="si">{index}</span><span class="s2"> and </span><span class="si">{selection}</span><span class="s2">&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">establish_connection</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="n">features</span><span class="p">,</span> <span class="n">truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_database</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">)</span>
+        <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_database</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">graph</span>
 
     <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -145,34 +187,18 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            list: List of tuples, containing event features.</span>
 <span class="sd">            list: List of tuples, containing truth information.</span>
+<span class="sd">            list: List of tuples, containing node-level truth information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_list</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-
         <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pulsemap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">:</span>
-            <span class="n">features_pulsemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="s2">&quot;SELECT </span><span class="si">{}</span><span class="s2"> FROM </span><span class="si">{}</span><span class="s2"> WHERE </span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_features_string</span><span class="p">,</span>
-                    <span class="n">pulsemap</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">,</span>
-                    <span class="n">index</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="n">features_pulsemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_features_string</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_selection</span><span class="p">)</span>
             <span class="n">features</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">features_pulsemap</span><span class="p">)</span>
-
-        <span class="n">truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-            <span class="s2">&quot;SELECT </span><span class="si">{}</span><span class="s2"> FROM </span><span class="si">{}</span><span class="s2"> WHERE </span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_truth_string</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">,</span>
-                <span class="n">index</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span></div>
+        <span class="n">truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">:</span>
+            <span class="n">node_truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_table</span><span class="p">,</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">node_truth</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span></div>
 
     <span class="k">def</span> <span class="nf">_get_dbang_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -181,7 +207,7 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
-<div class="viewcode-block" id="SQLiteDataset._create_graph"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset._create_graph">[docs]</a>    <span class="k">def</span> <span class="nf">_create_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteDataset._create_graph"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset._create_graph">[docs]</a>    <span class="k">def</span> <span class="nf">_create_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create Pytorch Data (i.e.graph) object.</span>
 
 <span class="sd">        No preprocessing is performed at this stage, just as no node adjancency</span>
@@ -191,6 +217,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            features (list): List of tuples, containing event features.</span>
 <span class="sd">            truth (list): List of tuples, containing truth information.</span>
+<span class="sd">            node_truth (list): List of tuples, containing node-level truth.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Data: Graph object.</span>
@@ -198,6 +225,11 @@
         <span class="c1"># Convert nested list to simple dict</span>
         <span class="n">truth_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">truth</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">ix</span><span class="p">]</span> <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">)}</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="c1"># Convert nested list to simple dict</span>
+        <span class="k">if</span> <span class="n">node_truth</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node_truth_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">node_truth</span><span class="p">)</span>
+            <span class="n">node_truth_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">node_truth_array</span><span class="p">[:,</span><span class="n">ix</span><span class="p">]</span> <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">)}</span>
 
         <span class="c1"># Unpack common variables</span>
         <span class="n">abs_pid</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s1">&#39;pid&#39;</span><span class="p">])</span>
@@ -234,17 +266,19 @@
         <span class="n">graph</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
         <span class="c1"># Write attributes, either target labels, truth info or original features.</span>
-        <span class="k">for</span> <span class="n">write_dict</span> <span class="ow">in</span> <span class="p">[</span><span class="n">labels_dict</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">]:</span>
+        <span class="n">add_these_to_graph</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels_dict</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">node_truth</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">add_these_to_graph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_truth_dict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">write_dict</span> <span class="ow">in</span> <span class="n">add_these_to_graph</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">write_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">graph</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                     <span class="c1"># Cannot convert `value` to Tensor due to its data type, e.g. `str`.</span>
                     <span class="k">pass</span>
-
+                    
         <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">features</span><span class="p">):</span>
             <span class="n">graph</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="n">graph</span></div>
 
 <div class="viewcode-block" id="SQLiteDataset.establish_connection"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset.establish_connection">[docs]</a>    <span class="k">def</span> <span class="nf">establish_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>

@@ -223,6 +223,49 @@ hidden layers. Defaults to 4.</p></li>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V3">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.dynedge.</span></span><span class="sig-name descname"><span class="pre">DynEdge_V3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V3" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphnet.models.gnn.gnn.GNN</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V3.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V3.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V3.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>DynEdge model.
+:param nb_inputs: Number of input features.
+:type nb_inputs: int
+:param nb_outputs: Number of output features.
+:type nb_outputs: int
+:param layer_size_scale: Integer that scales the size of</p>
+<blockquote>
+<div><p>hidden layers. Defaults to 4.</p>
+</div></blockquote>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V3.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch_geometric.data.data.Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V3.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V3.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Model forward pass.
+:param data: Graph of input features.
+:type data: Data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Model output.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V3.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V3.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-graphnet.models.gnn.gnn">
 <span id="graphnet-models-gnn-gnn-module"></span><h2>graphnet.models.gnn.gnn module<a class="headerlink" href="#module-graphnet.models.gnn.gnn" title="Permalink to this headline"></a></h2>
