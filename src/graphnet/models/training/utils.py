@@ -26,6 +26,9 @@ def make_dataloader(
     selection: List[int] = None,
     num_workers: int = 10,
     persistent_workers: bool = True,
+    node_truth: str = None,
+    node_truth_table: str  = None,
+    string_selection: List[int] = None,
 ) -> DataLoader:
 
     # Check(s)
@@ -38,6 +41,9 @@ def make_dataloader(
         features,
         truth,
         selection=selection,
+        node_truth = node_truth,
+        node_truth_table = node_truth_table,
+        string_selection=string_selection,
     )
 
     def collate_fn(graphs):
@@ -70,6 +76,9 @@ def make_train_validation_dataloader(
     test_size: float = 0.33,
     num_workers: int = 10,
     persistent_workers: bool = True,
+    node_truth: str = None,
+    node_truth_table: str  = None,
+    string_selection: List[int] = None,
 ) -> Tuple[DataLoader]:
 
     # Reproducibility
@@ -98,6 +107,9 @@ def make_train_validation_dataloader(
         batch_size=batch_size,
         num_workers=num_workers,
         persistent_workers=persistent_workers,
+        node_truth = node_truth,
+        node_truth_table = node_truth_table,
+        string_selection = string_selection,
     )
 
     training_dataloader = make_dataloader(
@@ -114,7 +126,7 @@ def make_train_validation_dataloader(
 
     return training_dataloader, validation_dataloader  # , {'valid_selection':validation_selection, 'training_selection':training_selection}
 
-def get_predictions(trainer, model, dataloader, prediction_columns, additional_attributes=None):
+def get_predictions(trainer, model, dataloader, prediction_columns, node_level = False, additional_attributes=None):
     # Check(s)
     if additional_attributes is None:
         additional_attributes = []
@@ -138,7 +150,12 @@ def get_predictions(trainer, model, dataloader, prediction_columns, additional_a
     attributes = OrderedDict([(attr, []) for attr in additional_attributes])
     for batch in dataloader:
         for attr in attributes:
-            attributes[attr].extend(batch[attr].detach().cpu().numpy())
+            attribute = batch[attr].detach().cpu().numpy()
+            if node_level == True:
+                if attr == 'event_no':
+                    attribute = np.repeat(attribute, batch['n_pulses'].detach().cpu().numpy())
+            attributes[attr].extend(attribute)
+
 
     data = np.concatenate([predictions] + [
         np.asarray(values)[:, np.newaxis] for values in attributes.values()

@@ -4,6 +4,8 @@ from graphnet.data.utils import is_i3_file, has_extension
 
 
 def test_is_i3_file():
+    """Test `is_i3_file_` function.
+    """
     assert is_i3_file("path/to/file.i3.bz2") is True
     assert is_i3_file("path/to/file.bz2") is True
     assert is_i3_file("path/to/file.zst") is True
