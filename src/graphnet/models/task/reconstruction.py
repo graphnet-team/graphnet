@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from graphnet.models.task import Task
-from graphnet.utils import eps_like
+from graphnet.maths import eps_like
 
 
 class AzimuthReconstructionWithKappa(Task):
@@ -104,7 +104,7 @@ class VertexReconstruction(Task):
         x[:,1] = x[:,1] * 1e2
         x[:,2] = x[:,2] * 1e2
 
-        return x 
+        return x
 
 class PositionReconstruction(Task):
     # Requires three features, x, y, z
@@ -117,7 +117,7 @@ class PositionReconstruction(Task):
         x[:,1] = x[:,1] * 1e2
         x[:,2] = x[:,2] * 1e2
 
-        return x 
+        return x
 
 class TimeReconstruction(Task):
     # Requires on feature, time
@@ -126,7 +126,7 @@ class TimeReconstruction(Task):
     def _forward(self, x):
 
         # Leave as it is
-        return x 
+        return x
 
 class BinaryClassificationTask(Task):
     #requires one feature: probability of being neutrino?

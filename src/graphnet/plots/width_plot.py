@@ -1,13 +1,20 @@
+"""Function to make binned resolution plot."""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from graphnet.plots.utils import calculate_statistics
-from graphnet.plots.utils import calculate_relative_improvement_error
-from graphnet.plots.utils import add_energy
-from graphnet.plots.utils import add_pid_and_interaction
+
+from graphnet.plots.utils import (
+    calculate_statistics,
+    calculate_relative_improvement_error,
+    add_energy,
+    add_pid_and_interaction,
+)
 
 def width_plot(key_limits, keys, key_bins, db, data_path, figsize = (10,8), include_retro = True, track_cascade = True):
-    """Makes a binned resolution plot. Will either divide into track/cascade or make a summary plot containing one curve for both topologies. 
+    """Makes a binned resolution plot.
+
+    Will either divide into track/cascade or make a summary plot containing one curve for both topologies.
 
     Args:
         key_limits (dict): dictionary containing the key limits. Must have field called 'width'
@@ -39,8 +46,8 @@ def width_plot(key_limits, keys, key_bins, db, data_path, figsize = (10,8), incl
                 plot_data_retro = biases['retro'][key][pid][interaction_type]
             if len(plot_data['mean']) != 0:
                 ax3 = ax1.twinx()
-                ax3.bar(x = (plot_data['mean']), height = plot_data['count'], 
-                        alpha = 0.3, 
+                ax3.bar(x = (plot_data['mean']), height = plot_data['count'],
+                        alpha = 0.3,
                         color = 'grey',
                         align = 'center',
                         width = 0.25)
@@ -69,8 +76,8 @@ def width_plot(key_limits, keys, key_bins, db, data_path, figsize = (10,8), incl
                 plt.tick_params(right=False,labelright=False)
                 ax1.set_ylabel('%s Resolution %s'%(key, unit_tag), size = 15)
                 ax2.set_xlabel('$Energy_{log10}$ [GeV]', size = 15)
-                ax2.set_ylabel('Rel. Impro.', size = 15)  
-                
+                ax2.set_ylabel('Rel. Impro.', size = 15)
+
                 fig.suptitle('%s CC'%key, size = 20)
                 #fig.savefig('performance_%s.png'%key)
     else:
@@ -87,8 +94,8 @@ def width_plot(key_limits, keys, key_bins, db, data_path, figsize = (10,8), incl
                 plot_data_retro_cascade = biases['retro'][key]['cascade']
             if len(plot_data_track['mean']) != 0:
                 ax3 = ax1.twinx()
-                #ax3.bar(x = plot_data_track['mean'], height = plot_data_track['count'], 
-                #        alpha = 0.3, 
+                #ax3.bar(x = plot_data_track['mean'], height = plot_data_track['count'],
+                #        alpha = 0.3,
                 #        color = 'grey',
                 #        align = 'center',
                 #        width = 0.25)
@@ -120,8 +127,8 @@ def width_plot(key_limits, keys, key_bins, db, data_path, figsize = (10,8), incl
                 plt.tick_params(right=False,labelright=False)
                 ax1.set_ylabel('%s Resolution %s'%(key, unit_tag), size = 15)
                 ax2.set_xlabel('$Energy_{log10}$ [GeV]', size = 15)
-                ax2.set_ylabel('Rel. Impro.', size = 15)  
-                
+                ax2.set_ylabel('Rel. Impro.', size = 15)
+
                 fig.suptitle('%s Performance'%key, size = 20)
                 #fig.savefig('performance_track_cascade_%s.png'%key)
 
