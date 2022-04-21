@@ -2,11 +2,10 @@ import argparse
 from glob import glob
 from os import makedirs
 from os.path import join, dirname
-import sys
 
-from I3Tray import I3Tray
+from I3Tray import I3Tray  # pyright: reportMissingImports=false
 
-from graphnet.modules import GNNModule
+from graphnet.deployment.i3modules import GraphNeTModuleIceCube86
 
 
 # Constants (from Dockerfile)
@@ -28,11 +27,11 @@ def main(input_files, output_file, key, events_max):
 
     # Get all input I3-files
     input_files = [p for p in input_files if gcd_pattern not in p]
-    
+
     # Run GNN module in tray
     tray = I3Tray()
     tray.Add("I3Reader", filenamelist=input_files)
-    tray.Add(GNNModule, key=key, model_path=MODEL_PATH, gcd_file=gcd_file)
+    tray.Add(GraphNeTModuleIceCube86, key=key, model_path=MODEL_PATH, gcd_file=gcd_file)
     tray.Add("I3Writer", filename=output_file)
     if events_max > 0:
         tray.Execute(events_max)
