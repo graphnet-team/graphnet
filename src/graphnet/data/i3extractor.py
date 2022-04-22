@@ -529,3 +529,81 @@ def muon_stopped(truth, borders, horizontal_pad = 100., vertical_pad = 100.):
     stopped_z = (end_pos[2] > borders[1][0] + vertical_pad) * (end_pos[2] < borders[1][1] - vertical_pad) 
 
     return {'x' : end_pos[0], 'y' : end_pos[1], 'z' : end_pos[2], 'stopped' : (stopped_xy * stopped_z) }
+
+class I3MonopodExtractor(I3Extractor):
+
+    def __init__(self, name="monopod"):
+        super().__init__(name)
+
+    def __call__(self, frame, padding_value = -1) -> dict:
+        """Extracts L4MonopodFit and L5MonopodFit4 reconstruction for cascade events."""
+        output = {}
+        vars = ['zenith', 'azimuth', 'x', 'y', 'z', 'time', 'energy', 'status']
+
+        for var in vars:
+            if var in ['x', 'y', 'z']:
+                label = 'position_' + var
+            elif var == 'time':
+                label = 'interaction_time'
+            else:
+                label = var
+            try:
+                output['l4_' + label + '_' + self.name] = frame['L4MonopodFit'][var.capitalize()].value
+            except:
+                output['l4_' + label + '_' + self.name] = padding_value
+            try:
+                output['l5_Fit4' + label + '_' + self.name] = frame['L5MonopodFit4'][var.capitalize()].value
+            except:
+                output['l5_Fit4' + label + '_' + self.name] = padding_value
+            
+        return output
+
+class I3LineFitExtractor(I3Extractor):
+
+    def __init__(self, name="linefit"):
+        super().__init__(name)
+
+    def __call__(self, frame, padding_value = -1) -> dict:
+        """Extracts LineFit_offline and ImprovedLineFit_split reco. """
+        output = {}
+        vars = ['zenith', 'azimuth', 'x', 'y', 'z', 'time', 'energy', 'status']
+
+        for var in vars:
+            if var in ['x', 'y', 'z']:
+                label = 'position_' + var
+            elif var == 'time':
+                label = 'interaction_time'
+            else:
+                label = var
+            try:
+                output[label + '_' + self.name +'split_offline'] = frame['LineFit_offline'][var.capitalize()].value
+            except:
+                output[label + '_' + self.name +'split_offline'] = padding_value
+            try:
+                output[label + '_' + self.name +'split_improved'] = frame['ImprovedLineFit_split'][var.capitalize()].value
+            except:
+                output[label + '_' + self.name +'split_improved'] = padding_value
+            
+        return output
+
+class I3SplineMPEExtractor(I3Extractor):
+    def __init__(self, name="spline_mpe"):
+        super().__init__(name)
+        
+    def __call__(self, frame, padding_value = -1) -> dict:
+        """Extracts SplineMPE reconstruction for track events."""
+        output = {}
+        vars = ['zenith', 'azimuth', 'x', 'y', 'z', 'time', 'status']
+
+        for var in vars:
+            if var in ['x', 'y', 'z']:
+                label = 'position_' + var
+            elif var == 'time':
+                label = 'interaction_time'
+            else:
+                label = var
+            try:
+                output[label + '_' + self.name +'_split'] = frame['SplineMPE_split'][var.capitalize()].value
+            except:
+                output[label + '_' + self.name +'_split'] = padding_value
+        return output
