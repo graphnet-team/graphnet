@@ -53,6 +53,7 @@ class IceCube86_v2(Detector):
     @property
     def nb_outputs(self):
         return self.nb_inputs
+        
     def _forward(self, data: Data) -> Data:
         """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
 
