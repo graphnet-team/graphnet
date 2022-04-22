@@ -66,16 +66,6 @@ class IceCube86_v2(Detector):
         # Check(s)
         self._validate_features(data)
 
-        #pulse_statistics[count,0] = torch.min(time)
-        #pulse_statistics[count,1] = torch.mean(time)
-        #pulse_statistics[count,2] = torch.max(time)
-        #pulse_statistics[count,3] = torch.std(time)
-        #pulse_statistics[count,4] = torch.min(charge)
-        #pulse_statistics[count,5] = torch.mean(charge)
-        #pulse_statistics[count,6] = torch.max(charge)
-        #pulse_statistics[count,7] = torch.std(charge)
-        #unique_doms, n_pulses_pr_dom.unsqueeze(1), pulse_statistics
-
         # Preprocessing
         data.x[:,0] /= 100.  # dom_x
         data.x[:,1] /= 100.  # dom_y
