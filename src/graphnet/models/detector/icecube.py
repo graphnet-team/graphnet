@@ -40,7 +40,7 @@ class IceCube86(Detector):
 
         return data
 
-class IceCube86_v2(Detector):
+class IceCube86_DOM(Detector):
     """`Detector` class for IceCube-86 with nodes as doms."""
 
     # Implementing abstract class attribute
