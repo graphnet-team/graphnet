@@ -38,6 +38,8 @@ class SQLiteDataset(torch.utils.data.Dataset):
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
 
+        assert node_representation.lower() in ['pulse', 'dom']
+
         self._database = database
         self._pulsemaps = pulsemaps
         self._features = [index_column] + features
@@ -124,14 +126,20 @@ class SQLiteDataset(torch.utils.data.Dataset):
         return torch.unique(tensor, return_counts = True, return_inverse=True, dim=0)
 
     def _make_dom_wise_representation(self,data):
-        unique_doms, inverse_idx, n_pulses_pr_dom = self._get_unique_positions(data.x[:,[0,1,2,5,6]])
+        unique_doms, inverse_idx, n_pulses_pr_dom = self._get_unique_positions(data.x[:,[self._features.index('dom_x')   -1,
+                                                                                        self._features.index('dom_y')    -1,
+                                                                                        self._features.index('dom_z')    -1,
+                                                                                        self._features.index('rde')      -1,
+                                                                                        self._features.index('pmt_area') -1]])
         unique_inverse_indices = torch.unique(inverse_idx)
         count = 0
         pulse_statistics = torch.zeros(size = (len(unique_doms), 8))
         #'dom_x','dom_y','dom_z','dom_time','charge','rde','pmt_area'
+        time_idx = self._features.index('dom_time')-1
+        charge_idx = self._features.index('charge')-1
         for unique_inverse_idx in unique_inverse_indices:
-            time   = data.x[inverse_idx == unique_inverse_idx,3]
-            charge = data.x[inverse_idx == unique_inverse_idx,4]
+            time   = data.x[inverse_idx == unique_inverse_idx,time_idx]
+            charge = data.x[inverse_idx == unique_inverse_idx,charge_idx]
             pulse_statistics[count,0] = torch.min(time)
             pulse_statistics[count,1] = torch.mean(time)
             pulse_statistics[count,2] = torch.max(time)
@@ -187,23 +195,16 @@ class SQLiteDataset(torch.utils.data.Dataset):
             data = np.array([]).reshape((0, len(self._features) - 1))
 
         # Construct graph data object
-        if self._node_representation.lower() == 'pulse':
-            x = torch.tensor(data, dtype=self._dtype)
-            n_pulses = torch.tensor(len(x), dtype=torch.int32)
-            graph = Data(
-                x=x,
-                edge_index= None
-            )
-        elif self._node_representation.lower() == 'dom':
-            x = torch.tensor(data, dtype=self._dtype)
-            n_pulses = torch.tensor(len(x), dtype=torch.int32)
-            graph = Data(
-                x=x,
-                edge_index= None
-            )
+       
+        x = torch.tensor(data, dtype=self._dtype)
+        n_pulses = torch.tensor(len(x), dtype=torch.int32)
+        graph = Data(
+            x=x,
+            edge_index= None
+        )
+        if self._node_representation.lower() == 'dom':
             graph = self._make_dom_wise_representation(graph)
-        else:
-            print('WARNING: node representation %s not recognized!'%self._node_representation)
+        
             
         
         graph.n_pulses = n_pulses
