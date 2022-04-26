@@ -62,7 +62,7 @@
              
   <h1>Source code for graphnet.data.i3extractor</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
 <span class="k">try</span><span class="p">:</span>
@@ -342,10 +342,22 @@
             <span class="s1">&#39;SubrunID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_run_id</span><span class="p">,</span>
             <span class="s1">&#39;EventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">event_id</span><span class="p">,</span>
             <span class="s1">&#39;SubEventID&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_id</span><span class="p">,</span>
+            <span class="s1">&#39;DeepCoreFilter_13&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;CascadeFilter_13&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;MuonFilter_13&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s1">&#39;OnlineL2Filter_17&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s1">&#39;dbang_decay_length&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s1">&#39;track_length&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s1">&#39;stopped_muon&#39;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
         <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="s1">&#39;I3EventHeader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="o">==</span> <span class="s1">&#39;InIceSplit&#39;</span><span class="p">:</span> <span class="c1">#only inicesplit p frames have filters calculated</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s1">&#39;DeepCoreFilter_13&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s1">&#39;FilterMask&#39;</span><span class="p">][</span><span class="s1">&#39;DeepCoreFilter_13&#39;</span><span class="p">])),</span>
+                <span class="s1">&#39;CascadeFilter_13&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s1">&#39;FilterMask&#39;</span><span class="p">][</span><span class="s1">&#39;CascadeFilter_13&#39;</span><span class="p">])),</span>
+                <span class="s1">&#39;MuonFilter_13&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s1">&#39;FilterMask&#39;</span><span class="p">][</span><span class="s1">&#39;MuonFilter_13&#39;</span><span class="p">])),</span>
+                <span class="s1">&#39;OnlineL2Filter_17&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s1">&#39;FilterMask&#39;</span><span class="p">][</span><span class="s1">&#39;OnlineL2Filter_17&#39;</span><span class="p">])),</span>
+            <span class="p">})</span>
 
         <span class="k">if</span> <span class="n">is_mc</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">is_noise</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">MCInIcePrimary</span><span class="p">,</span> <span class="n">interaction_type</span><span class="p">,</span> <span class="n">elasticity</span> <span class="o">=</span> <span class="n">get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span><span class="p">)</span>
@@ -443,27 +455,26 @@
             <span class="k">for</span> <span class="n">classifier</span> <span class="ow">in</span> <span class="n">classifiers</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">classifier</span><span class="p">):</span>
                     <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">classifier</span> <span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="n">classifier</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
-            <span class="c1">#output.update({</span>
-            <span class="c1">#    &#39;L7_MuonClassifier_FullSky_ProbNu&#39;: frame[&quot;L7_MuonClassifier_FullSky_ProbNu&quot;].value,</span>
-            <span class="c1">#    &#39;L4_MuonClassifier_Data_ProbNu&#39;: frame[&quot;L4_MuonClassifier_Data_ProbNu&quot;].value,</span>
-            <span class="c1">#    &#39;L4_NoiseClassifier_ProbNu&#39;: frame[&quot;L4_NoiseClassifier_ProbNu&quot;].value,</span>
-            <span class="c1">#    &#39;L7_PIDClassifier_FullSky_ProbTrack&#39;: frame[&quot;L7_PIDClassifier_FullSky_ProbTrack&quot;].value,</span>
-            <span class="c1">#})</span>
 
         <span class="k">if</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">frame_contains_retro</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
                 <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                    <span class="s1">&#39;osc_weight&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCWeightDict&quot;</span><span class="p">][</span><span class="s2">&quot;weight&quot;</span><span class="p">],</span>
+                    <span class="s1">&#39;osc_weight&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;noise_weight&quot;</span><span class="p">][</span><span class="s2">&quot;weight&quot;</span><span class="p">],</span>
                 <span class="p">})</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                    <span class="s1">&#39;osc_weight&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>
-                <span class="p">})</span>
-
+                <span class="n">output</span><span class="p">[</span><span class="s1">&#39;osc_weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">try_get_key</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCWeightDict&quot;</span><span class="p">],</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span><span class="n">default_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                
         <span class="k">return</span> <span class="n">output</span></div></div>
 
 
 <span class="c1"># Utilty methods</span>
+<div class="viewcode-block" id="try_get_key"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.try_get_key">[docs]</a><span class="k">def</span> <span class="nf">try_get_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return `key` in `frame` if it exists; otherwise return `default_value.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">frame</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default_value</span></div>
+
 <div class="viewcode-block" id="frame_contains_retro"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.frame_contains_retro">[docs]</a><span class="k">def</span> <span class="nf">frame_contains_retro</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;L7_reconstructed_zenith&quot;</span><span class="p">)</span></div>
 
