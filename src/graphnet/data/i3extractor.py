@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Any, Union
 import numpy as np
 import matplotlib.path as mpath
 try:
@@ -279,10 +279,22 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
+            'DeepCoreFilter_13': padding_value,
+            'CascadeFilter_13': padding_value,
+            'MuonFilter_13': padding_value,
+            'OnlineL2Filter_17': padding_value,
             'dbang_decay_length': padding_value,
             'track_length': padding_value,
             'stopped_muon': padding_value,
         }
+
+        if frame['I3EventHeader'].sub_event_stream == 'InIceSplit': #only inicesplit p frames have filters calculated
+            output.update({
+                'DeepCoreFilter_13': int(bool(frame['FilterMask']['DeepCoreFilter_13'])),
+                'CascadeFilter_13': int(bool(frame['FilterMask']['CascadeFilter_13'])),
+                'MuonFilter_13': int(bool(frame['FilterMask']['MuonFilter_13'])),
+                'OnlineL2Filter_17': int(bool(frame['FilterMask']['OnlineL2Filter_17'])),
+            })
 
         if is_mc == True and is_noise == False:
             MCInIcePrimary, interaction_type, elasticity = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
@@ -380,27 +392,26 @@ class I3RetroExtractor(I3Extractor):
             for classifier in classifiers:
                 if frame_has_key(frame, classifier):
                     output.update({classifier : frame[classifier].value})
-            #output.update({
-            #    'L7_MuonClassifier_FullSky_ProbNu': frame["L7_MuonClassifier_FullSky_ProbNu"].value,
-            #    'L4_MuonClassifier_Data_ProbNu': frame["L4_MuonClassifier_Data_ProbNu"].value,
-            #    'L4_NoiseClassifier_ProbNu': frame["L4_NoiseClassifier_ProbNu"].value,
-            #    'L7_PIDClassifier_FullSky_ProbTrack': frame["L7_PIDClassifier_FullSky_ProbTrack"].value,
-            #})
 
         if frame_is_montecarlo(frame):
-            if frame_contains_retro(frame):
+            if frame_is_noise(frame):
                 output.update({
-                    'osc_weight': frame["I3MCWeightDict"]["weight"],
+                    'osc_weight': frame["noise_weight"]["weight"],
                 })
             else:
-                output.update({
-                    'osc_weight': -1.,
-                })
-
+                output['osc_weight'] = try_get_key(frame["I3MCWeightDict"],'weight',default_value=-1)
+                
         return output
 
 
 # Utilty methods
+def try_get_key(frame, key, default_value=-1):
+    """Return `key` in `frame` if it exists; otherwise return `default_value."""
+    try:
+        return frame[key]
+    except KeyError:
+        return default_value
+
 def frame_contains_retro(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")
 
