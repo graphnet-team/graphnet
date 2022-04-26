@@ -33,6 +33,7 @@ class TRUTH:
         'elasticity',
         'sim_type',
         'interaction_type',
+        'stopped_muon',
         'interaction_time',                               ## Added for vertex reconstruction
     ]
     DEEPCORE = ICECUBE86
