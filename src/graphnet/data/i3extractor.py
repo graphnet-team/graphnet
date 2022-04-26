@@ -289,12 +289,22 @@ class I3TruthExtractor(I3Extractor):
         }
 
         if frame['I3EventHeader'].sub_event_stream == 'InIceSplit': #only inicesplit p frames have filters calculated
-            output.update({
-                'DeepCoreFilter_13': int(bool(frame['FilterMask']['DeepCoreFilter_13'])),
-                'CascadeFilter_13': int(bool(frame['FilterMask']['CascadeFilter_13'])),
-                'MuonFilter_13': int(bool(frame['FilterMask']['MuonFilter_13'])),
-                'OnlineL2Filter_17': int(bool(frame['FilterMask']['OnlineL2Filter_17'])),
-            })
+
+            if frame_has_key(frame,key='FilterMask'):
+                output['DeepCoreFilter_13'] = int(bool(try_get_key(frame["FilterMask"],'DeepCoreFilter_13',default_value=-1)))
+                output['CascadeFilter_13'] = int(bool(try_get_key(frame["FilterMask"],'CascadeFilter_13',default_value=-1)))
+                output['MuonFilter_13'] = int(bool(try_get_key(frame["FilterMask"],'MuonFilter_13',default_value=-1)))
+                output['OnlineL2Filter_17'] = int(bool(try_get_key(frame["FilterMask"],'OnlineL2Filter_17',default_value=-1)))
+
+            elif frame_has_key(frame,key='DeepCoreFilter_13'):
+                output['DeepCoreFilter_13'] = int(bool(frame['DeepCoreFilter_13']))
+
+            # output.update({
+            #     'DeepCoreFilter_13': int(bool(frame['FilterMask']['DeepCoreFilter_13'])),
+            #     'CascadeFilter_13': int(bool(frame['FilterMask']['CascadeFilter_13'])),
+            #     'MuonFilter_13': int(bool(frame['FilterMask']['MuonFilter_13'])),
+            #     'OnlineL2Filter_17': int(bool(frame['FilterMask']['OnlineL2Filter_17'])),
+            # })
 
         if is_mc == True and is_noise == False:
             MCInIcePrimary, interaction_type, elasticity = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
