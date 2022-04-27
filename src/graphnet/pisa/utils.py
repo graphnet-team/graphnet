@@ -124,7 +124,7 @@ param.ih.deltam31.range = [-0.007, -0.001] * units.eV**2
 [aeff.aeff]
 calc_mode = events
 apply_mode = events
-param.livetime = 11.7 * units.common_year
+param.livetime = 12.5 * units.common_year
 param.aeff_scale = 1.0
 param.aeff_scale.fixed = False
 param.aeff_scale.prior = uniform
