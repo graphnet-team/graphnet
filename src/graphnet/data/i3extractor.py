@@ -161,7 +161,7 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
     def __call__(self, frame) -> dict:
         """Extract features to be used as inputs to GNN models."""
 
-        output = {
+        output = { 
             'string': [],
             'pmt_number': [],
             'dom_number': [],
@@ -279,10 +279,6 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
-            'DeepCoreFilter_13': padding_value,
-            'CascadeFilter_13': padding_value,
-            'MuonFilter_13': padding_value,
-            'OnlineL2Filter_17': padding_value,
             'dbang_decay_length': padding_value,
             'track_length': padding_value,
             'stopped_muon': padding_value,
@@ -298,13 +294,13 @@ class I3TruthExtractor(I3Extractor):
 
             elif frame_has_key(frame,key='DeepCoreFilter_13'):
                 output['DeepCoreFilter_13'] = int(bool(frame['DeepCoreFilter_13']))
+            
+            output['L3_oscNext_bool'] = try_get_key(frame, 'L3_oscNext_bool',default_value=-1)
+            output['L4_oscNext_bool'] = try_get_key(frame, 'L4_oscNext_bool',default_value=-1)
+            output['L5_oscNext_bool'] = try_get_key(frame, 'L5_oscNext_bool',default_value=-1)
+            output['L6_oscNext_bool'] = try_get_key(frame, 'L6_oscNext_bool',default_value=-1)
+            output['L7_oscNext_bool'] = try_get_key(frame, 'L7_oscNext_bool',default_value=-1)
 
-            # output.update({
-            #     'DeepCoreFilter_13': int(bool(frame['FilterMask']['DeepCoreFilter_13'])),
-            #     'CascadeFilter_13': int(bool(frame['FilterMask']['CascadeFilter_13'])),
-            #     'MuonFilter_13': int(bool(frame['FilterMask']['MuonFilter_13'])),
-            #     'OnlineL2Filter_17': int(bool(frame['FilterMask']['OnlineL2Filter_17'])),
-            # })
 
         if is_mc == True and is_noise == False:
             MCInIcePrimary, interaction_type, elasticity = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
