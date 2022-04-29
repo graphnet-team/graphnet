@@ -282,6 +282,15 @@ class I3TruthExtractor(I3Extractor):
             'dbang_decay_length': padding_value,
             'track_length': padding_value,
             'stopped_muon': padding_value,
+            'DeepCoreFilter_13': padding_value,
+            'CascadeFilter_13': padding_value,
+            'MuonFilter_13': padding_value,
+            'OnlineL2Filter_17': padding_value,
+            'L3_oscNext_bool': padding_value,
+            'L4_oscNext_bool': padding_value,
+            'L5_oscNext_bool': padding_value,
+            'L6_oscNext_bool': padding_value,
+            'L7_oscNext_bool': padding_value,
         }
 
         if frame['I3EventHeader'].sub_event_stream == 'InIceSplit': #only inicesplit p frames have filters calculated
