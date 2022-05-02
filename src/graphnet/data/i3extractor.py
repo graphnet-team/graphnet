@@ -296,19 +296,22 @@ class I3TruthExtractor(I3Extractor):
         if frame['I3EventHeader'].sub_event_stream == 'InIceSplit': #only inicesplit p frames have filters calculated
 
             if frame_has_key(frame,key='FilterMask'):
-                output['DeepCoreFilter_13'] = int(bool(try_get_key(frame["FilterMask"],'DeepCoreFilter_13',default_value=-1)))
-                output['CascadeFilter_13'] = int(bool(try_get_key(frame["FilterMask"],'CascadeFilter_13',default_value=-1)))
-                output['MuonFilter_13'] = int(bool(try_get_key(frame["FilterMask"],'MuonFilter_13',default_value=-1)))
-                output['OnlineL2Filter_17'] = int(bool(try_get_key(frame["FilterMask"],'OnlineL2Filter_17',default_value=-1)))
+                output['DeepCoreFilter_13'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'DeepCoreFilter_13',default_value=-1))# what if frame doesnt have deepcorefilter and it says true (bool(-1)=true)
+                output['CascadeFilter_13'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'CascadeFilter_13',default_value=-1))
+                output['MuonFilter_13'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'MuonFilter_13',default_value=-1))
+                output['OnlineL2Filter_17'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'OnlineL2Filter_17',default_value=-1))
 
             elif frame_has_key(frame,key='DeepCoreFilter_13'):
                 output['DeepCoreFilter_13'] = int(bool(frame['DeepCoreFilter_13']))
             
-            output['L3_oscNext_bool'] = try_get_key(frame, 'L3_oscNext_bool',default_value=-1)
-            output['L4_oscNext_bool'] = try_get_key(frame, 'L4_oscNext_bool',default_value=-1)
-            output['L5_oscNext_bool'] = try_get_key(frame, 'L5_oscNext_bool',default_value=-1)
-            output['L6_oscNext_bool'] = try_get_key(frame, 'L6_oscNext_bool',default_value=-1)
-            output['L7_oscNext_bool'] = try_get_key(frame, 'L7_oscNext_bool',default_value=-1)
+            if frame_has_key(frame, key='L3_oscNext_bool'):
+                output.update({
+                    'L3_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L3_oscNext_bool',default_value=-1)),
+                    'L4_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L4_oscNext_bool',default_value=-1)),
+                    'L5_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L5_oscNext_bool',default_value=-1)),
+                    'L6_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L6_oscNext_bool',default_value=-1)),
+                    'L7_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L7_oscNext_bool',default_value=-1)),
+                    })
 
 
         if is_mc == True and is_noise == False:
@@ -451,6 +454,18 @@ def frame_is_noise(frame):
 
 def frame_is_lvl7(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")
+
+def turn_bool_into_number(i3_bool):
+    #i3bool is either I3Bool(true or False) or -1 as defined by the try_get_key function
+    if i3_bool and type(i3_bool) == icetray.I3Bool:
+        print('passes',i3_bool)
+        return 1
+    elif i3_bool == -1:
+        print('gets the default value',i3_bool)
+        return -1
+    else:
+        return int(bool(i3_bool))
+
 
 
 
