@@ -6,7 +6,7 @@ on:
   # Triggers the workflow on push and PRs
   push:
     paths-ignore: [ assets/badges/ ]
-  pull_request:
+  pull_request_target:
     branches: [ main ]
     paths-ignore: [ assets/badges/ ]
 
@@ -31,6 +31,17 @@ jobs:
       - name: Install package
         run: |
           pip install .[develop]
+      - name: Retrieve test data
+        run: |
+          mkdir -p $TEST_DATA_DIR
+          scp $PUB_WISC_USERNAME@$PUB_WISC_HOST:graphnet/data/test/* $TEST_DATA_DIR
+          ls -l $TEST_DATA_DIR
+          echo "TEST_DATA_DIR=${TEST_DATA_DIR}" >> $GITHUB_ENV
+        env:
+          PUB_WISC_HOST: ${{ secrets.PUB_WISC_HOST }}
+          PUB_WISC_USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
+          PUB_WISC_PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
+          TEST_DATA_DIR: ./test_data/
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
