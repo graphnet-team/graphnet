@@ -27,7 +27,7 @@ jobs:
         uses: ./.github/actions/install-torch-cpu
       - name: Install package
         run: |
-          pip install .[develop]
+          pip install --user .[develop]
       - name: Run pylint
         run: |
           pylint src/graphnet tests/*.py --exit-zero | tee results_pylint.txt
