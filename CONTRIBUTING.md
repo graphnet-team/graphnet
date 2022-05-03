@@ -18,6 +18,23 @@ Create pull requests from your development branch into `icecube:main` to contrib
     * unit tests as nencessary,
     * clean coding practices, see e.g. [here](https://gist.github.com/wojteklu/73c6914cc446146b8b533c0988cf8d29).
 
+## Conventions
+
+This repository aims to support python 3 version that are actively supported (currently `>=3.6`). Standard python coding conventions should be followed:
+
+* Adhere to [PEP 8](https://www.python.org/dev/peps/pep-0008/)
+* Use [pylint](https://www.pylint.org/)/[flake8](https://flake8.pycqa.org/) and [black](https://black.readthedocs.io/) to ensure as clean and well-formatted code as possible
+* When relevant, adhere to [clean coding practices](https://gist.github.com/wojteklu/73c6914cc446146b8b533c0988cf8d29)
+
+## Code quality
+
+To ensure consistency in code style and adherence to select best practices, we recommend that all developers use `black` and `flake8` for automatically formatting and checking their code. This can conveniently be done using pre-commit hooks. To set this up, first make sure that you have installed the `pre-commit` python package. It comes with included when installing `graphnet` with the `develop` tag, i.e., `pip install -e .[develop]`. Then, do
+```bash
+$ pre-commit install
+```
+Then, everytime you commit a change, your code will automatically be formatted using `black` and `flake8` will check for errors and adherence to PEP8. See the illustration below:
+![pre-commit pipeline](./assets/images/precommit_pipeline.png)
+Image source: https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
 
 ## Version control best practices
 
