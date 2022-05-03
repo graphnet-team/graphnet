@@ -41,7 +41,7 @@ jobs:
       - name: Retrieve test data
         run: |
           apt-get install sshpass
-          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA
+          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA_DIR
         env:
           HOST: ${{ secrets.PUB_WISC_HOST }}
           USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
