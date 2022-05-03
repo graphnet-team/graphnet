@@ -6,9 +6,7 @@ import versioneer
 
 # Utility method(s)
 def install(package):
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "--user", package]
-    )
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", package])
 
 
 # Requirements definitions
@@ -40,6 +38,7 @@ EXTRAS_REQUIRE = {
         "pydocstyle",
         "coverage",
         "anybadge",
+        "pre-commit",
         "sphinx",
         "sphinx_rtd_theme",
         "versioneer",
@@ -49,7 +48,7 @@ EXTRAS_REQUIRE = {
 # Ensure pytorch is already installed (see e.g.
 # https://github.com/pyg-team/pytorch_geometric/issues/861#issuecomment-566424944)
 try:
-    import torch  # noqa: F401 # pyright: reportMissingImports=false
+    import torch  # pyright: reportMissingImports=false
 except ImportError:
     install("torch==1.9.0")
 
