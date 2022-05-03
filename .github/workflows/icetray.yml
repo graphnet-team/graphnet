@@ -17,6 +17,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: icecube/icetray:combo-stable
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
@@ -39,13 +40,20 @@ jobs:
           TEST_DATA_DIR: ./test_data/
       - name: Retrieve test data
         run: |
-          sshpass -p "$password" scp -o StrictHostKeyChecking=no $username@$host:$source $target
+          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TARGET
         env:
-          host: ${{ secrets.PUB_WISC_HOST }}
-          username: ${{ secrets.PUB_WISC_USERNAME }}
-          password: ${{ secrets.PUB_WISC_PASSWORD }}
-          source: "graphnet/data/test/*.i3.*"
-          target: "$TEST_DATA"
+          HOST: ${{ secrets.PUB_WISC_HOST }}
+          USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
+          PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
+          SOURCE: "graphnet/data/test/*.i3.*"
+          TARGET: "$TEST_DATA"
+      - name: Check data
+        run: |
+          ls -l $TEST_DATA
+          MD5CHECK="$(find $TEST_DATA -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d" " -f1)"
+          [[ "$MD5CHECK" == "$MD5HASH" ]] && exit 1 || echo "md5sum hashes agree"
+        env:
+          MD5HASH: 7efbc933c39a44efa8cf7ed983030b1e
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
