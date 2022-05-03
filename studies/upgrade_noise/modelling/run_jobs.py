@@ -186,7 +186,7 @@ def predict(model,trainer,target,selection, database, pulsemap, batch_size, num_
         model,
         validation_dataloader,
         [target + '_pred', target + '_kappa'],
-        [target, 'event_no', 'energy'],
+        additional_attributes=[target, 'event_no', 'energy'],
         )
 
     if target in ['track', 'neutrino']:
@@ -201,7 +201,7 @@ def predict(model,trainer,target,selection, database, pulsemap, batch_size, num_
         model,
         validation_dataloader,
         [target + '_pred'],
-        [target, 'event_no', 'energy'],
+        additional_attributes=[target, 'event_no', 'energy'],
     )
 
     if target == 'energy':
@@ -217,7 +217,7 @@ def predict(model,trainer,target,selection, database, pulsemap, batch_size, num_
         model,
         validation_dataloader,
         [target + '_pred'],
-        [target, 'event_no'],
+        additional_attributes=[target, 'event_no'],
         )
     if target == 'XYZ':
         #predictor_valid = Predictor(
@@ -232,7 +232,7 @@ def predict(model,trainer,target,selection, database, pulsemap, batch_size, num_
         model,
         validation_dataloader,
         ['position_x_pred','position_y_pred','position_z_pred'],
-        ['position_x','position_y','position_z', 'event_no', 'energy'],
+        additional_attributes=['position_x','position_y','position_z', 'event_no', 'energy'],
     )
     save_results(database, run_name, results, archive,model)
     return
