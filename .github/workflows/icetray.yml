@@ -1,5 +1,5 @@
-# This is a simple workflow to run unit tests and code coverage, and display resulting badges
-name: build
+# This is a simple workflow to run data/icetray specific unit tests
+name: icetray
 
 # Controls when the workflow will run
 on:
@@ -31,6 +31,21 @@ jobs:
       - name: Install package
         run: |
           pip install .[develop]
+      - name: Create folder for test data
+        run: |
+          mkdir -p $TEST_DATA_DIR
+          echo "TEST_DATA_DIR=${TEST_DATA_DIR}" >> $GITHUB_ENV
+        env:
+          TEST_DATA_DIR: ./test_data/
+      - name: Retrieve test data
+        run: |
+          sshpass -p "$password" scp -o StrictHostKeyChecking=no $username@$host:$source $target
+        env:
+          host: ${{ secrets.PUB_WISC_HOST }}
+          username: ${{ secrets.PUB_WISC_USERNAME }}
+          password: ${{ secrets.PUB_WISC_PASSWORD }}
+          source: "graphnet/data/test/*.i3.*"
+          target: "$TEST_DATA"
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
