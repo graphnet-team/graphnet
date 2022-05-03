@@ -40,7 +40,6 @@ EXTRAS_REQUIRE = {
         "pydocstyle",
         "coverage",
         "anybadge",
-        "pre-commit",
         "sphinx",
         "sphinx_rtd_theme",
         "versioneer",
