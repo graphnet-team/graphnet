@@ -39,7 +39,7 @@ jobs:
           TEST_DATA_DIR: ./test_data/
       - name: Retrieve test data
         run: |
-          sshpass -p "$password" scp -r $username@$host:$source $target
+          sshpass -p "$password" scp -o StrictHostKeyChecking=no $username@$host:$source $target
         env:
           host: ${{ secrets.PUB_WISC_HOST }}
           username: ${{ secrets.PUB_WISC_USERNAME }}
