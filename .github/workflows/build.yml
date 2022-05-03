@@ -38,8 +38,9 @@ jobs:
         env:
           TEST_DATA_DIR: ./test_data/
       - name: Retrieve test data
-        uses: appleboy/scp-action@master
-        with:
+        run: |
+          sshpass -p "$password" scp -r $username@$host:$source $target
+        env:
           host: ${{ secrets.PUB_WISC_HOST }}
           username: ${{ secrets.PUB_WISC_USERNAME }}
           password: ${{ secrets.PUB_WISC_PASSWORD }}
