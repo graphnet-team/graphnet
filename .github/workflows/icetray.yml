@@ -27,13 +27,6 @@ jobs:
       #  uses: actions/setup-python@v2
       #  with:
       #    python-version: ${{ matrix.python-version }}
-      - name: Use bash (for pipefail)
-        run: |
-          echo $0
-          bash --posix
-          echo $0
-          which bash
-
       - name: Install dependencies
         uses: ./.github/actions/install-torch-cpu
       - name: Install package
@@ -48,25 +41,23 @@ jobs:
       - name: Retrieve test data
         run: |
           apt-get install sshpass
-          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TARGET
+          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA
         env:
           HOST: ${{ secrets.PUB_WISC_HOST }}
           USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
           PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
           SOURCE: "graphnet/data/test/*.i3.*"
-          TARGET: "$TEST_DATA"
       - name: Check data
         run: |
           ls -l $TEST_DATA
           MD5CHECK="$(find $TEST_DATA -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d" " -f1)"
-          #if [[ "$MD5CHECK" == "$MD5HASH" ]]; then echo "md5sum hashes agree"; else exit 1; fi
+          if [[ "$MD5CHECK" == "$MD5HASH" ]]; then echo "md5sum hashes agree"; else exit 1; fi
         env:
           MD5HASH: 7efbc933c39a44efa8cf7ed983030b1e
       - name: Run unit tests and generate coverage report
         run: |
-          echo $0
-          bash | set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/ | tee results_pytest.txt
+          coverage run --source=graphnet -m pytest tests/ > results_pytest.txt
+          cat results_pytest.txt
           coverage report -m | tee results_coverage.txt
       - name: Generate unit test/build and coverage badges
         run: |
