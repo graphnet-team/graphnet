@@ -32,6 +32,8 @@ jobs:
           echo $0
           bash --posix
           echo $0
+          which bash
+          type -a bash
       - name: Install dependencies
         uses: ./.github/actions/install-torch-cpu
       - name: Install package
