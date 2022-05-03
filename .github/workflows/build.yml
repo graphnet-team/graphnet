@@ -30,7 +30,7 @@ jobs:
         uses: ./.github/actions/install-torch-cpu
       - name: Install package
         run: |
-          pip install --user .[develop]
+          pip install .[develop]
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest

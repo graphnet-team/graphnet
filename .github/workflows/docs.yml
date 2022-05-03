@@ -21,7 +21,7 @@ jobs:
         uses: ./.github/actions/install-torch-cpu
       - name: Install package
         run: |
-          pip install --user .[develop]
+          pip install .[develop]
       - name: Build documentation
         run: |
           cd docs
