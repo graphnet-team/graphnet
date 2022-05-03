@@ -1,4 +1,4 @@
-[tool.black]
+[build-system]
 # Minimum requirements for the build system to execute.
 requires = ["setuptools==59.5.0", "wheel"]  # PEP 508 specifications.
 
