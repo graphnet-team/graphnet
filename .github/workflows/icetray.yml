@@ -40,6 +40,7 @@ jobs:
           TEST_DATA_DIR: ./test_data/
       - name: Retrieve test data
         run: |
+          apt-get install sshpass
           sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TARGET
         env:
           HOST: ${{ secrets.PUB_WISC_HOST }}
