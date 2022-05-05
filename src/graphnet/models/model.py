@@ -1,5 +1,5 @@
 import os
-from typing import List, Union
+from typing import List, Optional, Union
 
 import dill
 from pytorch_lightning import LightningModule
@@ -8,6 +8,7 @@ from torch import Tensor
 from torch.nn import ModuleList
 from torch.optim import Adam
 from torch_geometric.data import Data
+from graphnet.models.coarsening import Coarsening
 
 from graphnet.models.detector.detector import Detector
 from graphnet.models.gnn.gnn import GNN
@@ -27,6 +28,7 @@ class Model(LightningModule):
         detector: Detector,
         gnn: GNN,
         tasks: Union[Task, List[Task]],
+        coarsening: Optional[Coarsening] = None,
         optimizer_class=Adam,
         optimizer_kwargs=None,
         scheduler_class=None,
@@ -44,11 +46,13 @@ class Model(LightningModule):
         assert all(isinstance(task, Task) for task in tasks)
         assert isinstance(detector, Detector)
         assert isinstance(gnn, GNN)
+        assert coarsening is None or isinstance(coarsening, Coarsening)
 
         # Member variable(s)
         self._detector = detector
         self._gnn = gnn
         self._tasks = ModuleList(tasks)
+        self._coarsening = coarsening
         self._optimizer_class = optimizer_class
         self._optimizer_kwargs = optimizer_kwargs or dict()
         self._scheduler_class = scheduler_class
@@ -72,6 +76,8 @@ class Model(LightningModule):
 
     def forward(self, data: Data) -> List[Union[Tensor, Data]]:
         """Common forward pass, chaining model components."""
+        if self._coarsening:
+            data = self._coarsening(data)
         data = self._detector(data)
         x = self._gnn(data)
         preds = [task(x) for task in self._tasks]
