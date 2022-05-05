@@ -127,7 +127,7 @@ def main():
         model,
         validation_dataloader,
         [config["target"] + '_pred'],
-        [config["target"], 'event_no'],
+        additional_attributes=[config["target"], 'event_no'],
     )
 
     save_results(config["db"], run_name, results, archive, model)
