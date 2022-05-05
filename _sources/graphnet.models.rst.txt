@@ -15,6 +15,14 @@ Subpackages
 Submodules
 ----------
 
+graphnet.models.coarsening module
+---------------------------------
+
+.. automodule:: graphnet.models.coarsening
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.models.graph\_builders module
 --------------------------------------
 
