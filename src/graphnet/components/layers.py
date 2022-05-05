@@ -11,7 +11,7 @@ class DynEdgeConv(EdgeConv):
     def __init__(
         self,
         nn: Callable,
-        aggr: str = 'max',
+        aggr: str = "max",
         nb_neighbors: int = 8,
         features_subset: Optional[Sequence] = None,
         **kwargs,
@@ -28,7 +28,9 @@ class DynEdgeConv(EdgeConv):
         self.nb_neighbors = nb_neighbors
         self.features_subset = features_subset
 
-    def forward(self, x: Tensor, edge_index: Adj, batch: Optional[Tensor] = None) -> Tensor:
+    def forward(
+        self, x: Tensor, edge_index: Adj, batch: Optional[Tensor] = None
+    ) -> Tensor:
         # Standard EdgeConv forward pass
         x = super().forward(x, edge_index)
 

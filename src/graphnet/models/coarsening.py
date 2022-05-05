@@ -144,7 +144,9 @@ class CustomDOMCoarsening(DOMCoarsening):
                 min_pool_x(cluster, charge, batch)[0],
                 max_pool_x(cluster, charge, batch)[0],
                 std_pool_x(cluster, charge, batch)[0],
-                sum_pool_x(cluster, torch.ones_like(charge), batch)[0],  # Num. nodes (pulses) per cluster (DOM)
+                sum_pool_x(cluster, torch.ones_like(charge), batch)[
+                    0
+                ],  # Num. nodes (pulses) per cluster (DOM)
             ),
             dim=1,
         )
@@ -165,7 +167,7 @@ class LoopBasedCoarsening:
         count = 0
         pulse_statistics = torch.zeros(size=(len(unique_doms), 8))
 
-        #'dom_x','dom_y','dom_z','dom_time','charge','rde','pmt_area'
+        # 'dom_x','dom_y','dom_z','dom_time','charge','rde','pmt_area'
         for unique_inverse_idx in unique_inverse_indices:
             time = data.x[inverse_idx == unique_inverse_idx, 3]
             charge = data.x[inverse_idx == unique_inverse_idx, 4]
