@@ -148,7 +148,7 @@ def main():
         model,
         validation_dataloader,
         [config['target'] + '_pred', config['target'] + '_kappa'],
-        [config['target'], 'event_no', 'energy', 'n_pulses'],
+        additional_attributes=[config['target'], 'event_no', 'energy', 'n_pulses'],
     )
 
     save_results(config['db'], run_name, results, archive, model)

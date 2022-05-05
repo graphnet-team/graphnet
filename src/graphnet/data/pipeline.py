@@ -94,7 +94,7 @@ class InSQLitePipeline(ABC):
             model = torch.load(self._module_dict[target]['path'], map_location = 'cpu', pickle_module = dill)
             model.eval()
             model.inference()
-            results = get_predictions(trainer,model, dataloader, self._module_dict[target]['output_column_names'], ['event_no'])
+            results = get_predictions(trainer,model, dataloader, self._module_dict[target]['output_column_names'], additional_attributes=['event_no'])
             dataframes.append(results.sort_values('event_no').reset_index(drop = True))
             df = self._combine_outputs(dataframes)
         return df

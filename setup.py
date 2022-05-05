@@ -11,8 +11,7 @@ def install(package):
 
 # Requirements definitions
 SETUP_REQUIRES = [
-    "setuptools >= 58.2.0",
-]
+'setuptools == 59.5.0',
 
 INSTALL_REQUIRES = [
     "sqlalchemy",
