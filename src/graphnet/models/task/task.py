@@ -6,7 +6,10 @@ import numpy as np
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
-    final = lambda f: f  # Identity decorator
+
+    def final(f):  # Identity decorator
+        return f
+
 
 from pytorch_lightning.core.lightning import LightningModule
 import torch
@@ -83,7 +86,7 @@ class Task(LightningModule):
             transform_prediction_and_target,
             transform_target,
             transform_inference,
-            transform_support
+            transform_support,
         )
 
         # Mapping from last hidden layer to required size of input
@@ -97,7 +100,9 @@ class Task(LightningModule):
         return self._transform_prediction(x)
 
     @final
-    def _transform_prediction(self, prediction: Union[Tensor, Data]) -> Union[Tensor, Data]:
+    def _transform_prediction(
+        self, prediction: Union[Tensor, Data]
+    ) -> Union[Tensor, Data]:
         if self._inference:
             return self._transform_prediction_inference(prediction)
         else:
@@ -116,12 +121,12 @@ class Task(LightningModule):
 
     @final
     def inference(self):
-        '''Set task to inference mode'''
+        """Set task to inference mode"""
         self._inference = True
 
     @final
     def train_eval(self):
-        '''Deactivate inference mode'''
+        """Deactivate inference mode"""
         self._inference = False
 
     @final
@@ -130,20 +135,26 @@ class Task(LightningModule):
         transform_prediction_and_target: Union[Callable, None],
         transform_target: Union[Callable, None],
         transform_inference: Union[Callable, None],
-        transform_support: Union[Callable, None]
+        transform_support: Union[Callable, None],
     ):
-        '''Assert that a valid combination of transformation arguments are passed and update the corresponding functions'''
+        """Assert that a valid combination of transformation arguments are passed and update the corresponding functions"""
         # Checks
-        assert not((transform_prediction_and_target is not None) and (transform_target is not None)), \
-            "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
-        assert (transform_target is not None) == (transform_inference is not None), \
-            "Please specify both `transform_inference` and `transform_target`"
+        assert not (
+            (transform_prediction_and_target is not None)
+            and (transform_target is not None)
+        ), "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
+        assert (transform_target is not None) == (
+            transform_inference is not None
+        ), "Please specify both `transform_inference` and `transform_target`"
 
         if transform_target is not None:
             if transform_support is not None:
-                assert len(transform_support) == 2, \
-                    "Please specify min and max for transformation support."
-                x_test = torch.from_numpy(np.linspace(transform_support[0], transform_support[1], 10))
+                assert (
+                    len(transform_support) == 2
+                ), "Please specify min and max for transformation support."
+                x_test = torch.from_numpy(
+                    np.linspace(transform_support[0], transform_support[1], 10)
+                )
             else:
                 x_test = np.logspace(-6, 6, 12 + 1)
                 x_test = torch.from_numpy(np.concatenate([-x_test[::-1], [0], x_test]))
@@ -153,8 +164,9 @@ class Task(LightningModule):
             t_test = torch.squeeze(transform_inference(t_test), -1)
             valid = torch.isfinite(t_test)
 
-            assert torch.allclose(t_test[valid], x_test[valid]), \
-                "The provided transforms for targets during training and predictions during inference are not inverse. Please adjust transformation functions or support."
+            assert torch.allclose(
+                t_test[valid], x_test[valid]
+            ), "The provided transforms for targets during training and predictions during inference are not inverse. Please adjust transformation functions or support."
             del x_test, t_test, valid
 
         # Set transforms
