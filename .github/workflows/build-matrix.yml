@@ -26,11 +26,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        uses: ./.github/actions/install-torch-cpu
       - name: Install package
-        run: |
-          pip install .[develop]
+        uses: ./.github/actions/install-cpu
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
