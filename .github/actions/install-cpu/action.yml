@@ -24,5 +24,5 @@ runs:
         pip install torch-geometric==${{ inputs.pyg-verison }}
       shell: bash
     - name: Install package
-        run: |
-          pip install .[develop]
+      run: |
+        pip install .[develop]
