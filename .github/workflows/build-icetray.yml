@@ -19,19 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
     steps:
-      - name: Install git
-        run: |
-          apt-get update
-          apt-get install -y git>=2.25
-      - name: Debug
-        run: |
-          git --version
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        uses: ./.github/actions/install-torch-cpu
       - name: Install package
-        run: |
-          pip install .[develop]
+        uses: ./.github/actions/install-cpu
       - name: Create folder for test data
         run: |
           mkdir -p $TEST_DATA_DIR
@@ -56,24 +46,9 @@ jobs:
           MD5HASH: 7efbc933c39a44efa8cf7ed983030b1e
       - name: Run unit tests and generate coverage report
         run: |
-          coverage run --source=graphnet -m pytest tests/ > results_pytest.txt
-          cat results_pytest.txt
-          coverage report -m | tee results_coverage.txt
-      - name: Generate unit test/build and coverage badges
-        run: |
-          tail -1 results_coverage.txt | sed 's/.* \(.*\)%/\1/g' | xargs -I {} anybadge -f coverage.svg -v {} coverage
-          mkdir -p assets/badges/
-          mv coverage.svg assets/badges/
-      - name: Configure git
-        run: |
-          ls -lart .git/
-          git config user.email "andreas.sogaard@gmail.com"
-          git config user.name "Andreas Søgaard"
-          git status
-      - name: Stage badges
-        run: |
-          git add -f assets/badges/
-      - name: Commit and push changes
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          git commit -m "Auto-updating coverage badge" > /dev/null && git push origin ${GITHUB_REF##*/} || echo "Nothing to push"
+          coverage run --source=graphnet -m pytest tests/
+      - uses: paambaati/codeclimate-action@v2.2.4
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: coverage report -m
