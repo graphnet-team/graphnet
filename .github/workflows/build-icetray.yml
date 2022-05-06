@@ -20,8 +20,7 @@ jobs:
     container: icecube/icetray:combo-stable
     steps:
       - uses: actions/checkout@v2
-      - name: Install package
-        uses: ./.github/actions/install-cpu
+      - uses: ./.github/actions/install-cpu
       - name: Create folder for test data
         run: |
           mkdir -p $TEST_DATA_DIR
