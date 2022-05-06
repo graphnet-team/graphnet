@@ -19,10 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
     steps:
-      - name: "Install git"
+      - name: Install git
         run: |
           apt-get update
-          apt-get install -y git>=2.18
+          apt-get install -y git>=2.25
+      - name: Debug
+        run: |
+          git --version
       - uses: actions/checkout@v2
       - name: Install dependencies
         uses: ./.github/actions/install-torch-cpu
