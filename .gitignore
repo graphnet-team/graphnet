@@ -139,3 +139,4 @@ wandb/
 **.png
 **.pth
 **.ipynb
+.vscode/settings.json
