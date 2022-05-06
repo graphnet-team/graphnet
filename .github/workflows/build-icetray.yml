@@ -22,14 +22,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install package
         uses: ./.github/actions/install-cpu
-      - name: Create folder for test data
-        run: |
-          mkdir -p $TEST_DATA_DIR
-          echo "TEST_DATA_DIR=${TEST_DATA_DIR}" >> $GITHUB_ENV
-        env:
-          TEST_DATA_DIR: ./test_data/
       - name: Retrieve test data
         run: |
+          echo "TEST_DATA_DIR=${TEST_DATA_DIR}" >> $GITHUB_ENV
+          mkdir -p $TEST_DATA_DIR
           apt-get install sshpass
           sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA_DIR
         env:
@@ -37,6 +33,7 @@ jobs:
           USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
           PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
           SOURCE: "graphnet/data/test/*.i3.*"
+          TEST_DATA_DIR: ./test_data/
       - name: Check data
         run: |
           ls -l $TEST_DATA
@@ -48,6 +45,8 @@ jobs:
         run: |
           coverage run --source=graphnet -m pytest tests/
           coverage report -m | tee coverage.txt
+      - name: Work around permission issue
+        run: git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         env:
