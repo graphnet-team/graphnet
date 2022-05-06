@@ -66,7 +66,7 @@ jobs:
           mv coverage.svg assets/badges/
       - name: Configure git
         run: |
-          ls -lart
+          ls -lart .git/
           git config user.email "andreas.sogaard@gmail.com"
           git config user.name "Andreas Søgaard"
           git status
