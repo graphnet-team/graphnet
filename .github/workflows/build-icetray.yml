@@ -22,7 +22,7 @@ jobs:
       - name: "Install git"
         run: |
           apt-get update
-          apt-get install -y git
+          apt-get install -y git>=2.18
       - uses: actions/checkout@v2
       - name: Install dependencies
         uses: ./.github/actions/install-torch-cpu
