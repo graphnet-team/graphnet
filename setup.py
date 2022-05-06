@@ -16,7 +16,7 @@ SETUP_REQUIRES = [
 
 INSTALL_REQUIRES = [
     "sqlalchemy",
-    "pandas",
+    "pandas>=1.1.0",
     "numpy",
     "timer",
     "tqdm",
