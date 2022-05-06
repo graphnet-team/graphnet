@@ -1,5 +1,5 @@
-# This is a simple workflow to run unit tests and code coverage, and display resulting badges
-name: build
+# This is a simple workflow to run data/icetray specific unit tests
+name: build-icetray
 
 # Controls when the workflow will run
 on:
@@ -15,26 +15,42 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+  build-matrix:
+    #runs-on: ubuntu-latest
+    container: icecube/icetray:combo-stable
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         uses: ./.github/actions/install-torch-cpu
       - name: Install package
         run: |
           pip install .[develop]
+      - name: Create folder for test data
+        run: |
+          mkdir -p $TEST_DATA_DIR
+          echo "TEST_DATA_DIR=${TEST_DATA_DIR}" >> $GITHUB_ENV
+        env:
+          TEST_DATA_DIR: ./test_data/
+      - name: Retrieve test data
+        run: |
+          apt-get install sshpass
+          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA_DIR
+        env:
+          HOST: ${{ secrets.PUB_WISC_HOST }}
+          USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
+          PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
+          SOURCE: "graphnet/data/test/*.i3.*"
+      - name: Check data
+        run: |
+          ls -l $TEST_DATA
+          MD5CHECK="$(find $TEST_DATA -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d" " -f1)"
+          #if [[ "$MD5CHECK" == "$MD5HASH" ]]; then echo "Checksums agree"; else exit 1; fi
+        env:
+          MD5HASH: 7efbc933c39a44efa8cf7ed983030b1e
       - name: Run unit tests and generate coverage report
         run: |
-          set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/ | tee results_pytest.txt
+          coverage run --source=graphnet -m pytest tests/ > results_pytest.txt
+          cat results_pytest.txt
           coverage report -m | tee results_coverage.txt
       - name: Generate unit test/build and coverage badges
         run: |

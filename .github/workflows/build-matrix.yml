@@ -1,0 +1,38 @@
+# This is a simple workflow to run unit tests and code coverage, and display resulting badges
+name: build-matrix
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push and PRs
+  push:
+    paths-ignore: [ assets/badges/ ]
+  pull_request_target:
+    branches: [ main ]
+    paths-ignore: [ assets/badges/ ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        uses: ./.github/actions/install-torch-cpu
+      - name: Install package
+        run: |
+          pip install .[develop]
+      - name: Run unit tests and generate coverage report
+        run: |
+          set -o pipefail  # To propagate exit code from pytest
+          coverage run --source=graphnet -m pytest tests/
+          coverage report -m
