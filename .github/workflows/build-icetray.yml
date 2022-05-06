@@ -20,7 +20,8 @@ jobs:
     container: icecube/icetray:combo-stable
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/install-cpu
+      - name: Install package
+        uses: ./.github/actions/install-cpu
       - name: Create folder for test data
         run: |
           mkdir -p $TEST_DATA_DIR
@@ -46,8 +47,8 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           coverage run --source=graphnet -m pytest tests/
-      - uses: paambaati/codeclimate-action@v2.2.4
+          coverage report -m
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: coverage report -m

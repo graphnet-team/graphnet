@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/install-cpu
+      - name: Install package
+        uses: ./.github/actions/install-cpu
       - name: Build documentation
         run: |
           cd docs
