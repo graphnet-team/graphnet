@@ -19,6 +19,17 @@ jobs:
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
     steps:
+      - name: "Install git"
+        run: |
+          apt update
+          apt install -y git
+          if ! apt list --installed 2>/dev/null | grep -q "git.*"; then
+            apt install -y git
+          elif apt list --installed 2>/dev/null | grep -q "git.*"; then
+            true
+          else
+            exit 255
+          fi
       - uses: actions/checkout@v2
       - name: Install dependencies
         uses: ./.github/actions/install-torch-cpu
