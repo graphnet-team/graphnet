@@ -16,6 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-icetray:
+    if: "${{ secrets.PUB_WISC_USERNAME != '' }}"
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
     steps:
@@ -26,24 +27,25 @@ jobs:
           editable: true
       - name: Retrieve test data
         run: |
-          echo "TEST_DATA_DIR=${TEST_DATA_DIR}" >> $GITHUB_ENV
+          # Create test data directory
           mkdir -p $TEST_DATA_DIR
+
+          # Copy test data
           apt-get install sshpass
           sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA_DIR
+          ls -l $TEST_DATA_DIR
+
+          # Check integrity of test data
+          find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g'
+          MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g' | md5sum | cut -d" " -f1)"
+          echo "$MD5CHECK vs. $MD5HASH"
+          if [[ $MD5CHECK == $MD5HASH ]]; then echo "Checksums agree"; else exit 1; fi
         env:
           HOST: ${{ secrets.PUB_WISC_HOST }}
           USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
           PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
           SOURCE: "graphnet/data/test/*.i3.*"
           TEST_DATA_DIR: ./test_data/
-      - name: Check data
-        run: |
-          ls -l $TEST_DATA_DIR
-          find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g'
-          MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g' | md5sum | cut -d" " -f1)"
-          echo "$MD5CHECK"
-          if [[ '$MD5CHECK' == '$MD5HASH' ]]; then echo 'Checksums agree'; else exit 1; fi
-        env:
           MD5HASH: 80006a6d58338eb8ea153d2b7b02c0a1
         shell: bash
       - name: Run unit tests and generate coverage report
