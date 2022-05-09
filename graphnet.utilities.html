@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.utilities package &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">graphnet.utilities package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-graphnet.utilities.imports">graphnet.utilities.imports module</a></li>
+<li><a class="reference internal" href="#module-graphnet.utilities.maths">graphnet.utilities.maths module</a></li>
+<li><a class="reference internal" href="#module-graphnet.utilities">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>graphnet.utilities package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/graphnet.utilities.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="graphnet-utilities-package">
+<h1>graphnet.utilities package<a class="headerlink" href="#graphnet-utilities-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-graphnet.utilities.imports">
+<span id="graphnet-utilities-imports-module"></span><h2>graphnet.utilities.imports module<a class="headerlink" href="#module-graphnet.utilities.imports" title="Permalink to this headline"></a></h2>
+<p>Common functionns for icetray/data-based unit tests.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.imports.has_icecube_package">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.imports.</span></span><span class="sig-name descname"><span class="pre">has_icecube_package</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/utilities/imports.html#has_icecube_package"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.imports.has_icecube_package" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether the <cite>icecube</cite> package is available.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.imports.requires_icecube">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.imports.</span></span><span class="sig-name descname"><span class="pre">requires_icecube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/imports.html#requires_icecube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.imports.requires_icecube" title="Permalink to this definition"></a></dt>
+<dd><p>Decorator for only exposing function if <cite>icecube</cite> module is present.</p>
+</dd></dl>
+
+</section>
+<section id="module-graphnet.utilities.maths">
+<span id="graphnet-utilities-maths-module"></span><h2>graphnet.utilities.maths module<a class="headerlink" href="#module-graphnet.utilities.maths" title="Permalink to this headline"></a></h2>
+<p>Collection of assorted “maths-like” functions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.maths.eps_like">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.maths.</span></span><span class="sig-name descname"><span class="pre">eps_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/utilities/maths.html#eps_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.maths.eps_like" title="Permalink to this definition"></a></dt>
+<dd><p>Return <cite>eps</cite> matching <cite>tensor</cite>’s dtype.</p>
+</dd></dl>
+
+</section>
+<section id="module-graphnet.utilities">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.utilities" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

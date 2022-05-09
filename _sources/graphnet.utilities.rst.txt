@@ -1,0 +1,29 @@
+graphnet.utilities package
+==========================
+
+Submodules
+----------
+
+graphnet.utilities.imports module
+---------------------------------
+
+.. automodule:: graphnet.utilities.imports
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.utilities.maths module
+-------------------------------
+
+.. automodule:: graphnet.utilities.maths
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.utilities
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -70,7 +70,7 @@
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data.i3extractor</span> <span class="k">import</span> <span class="n">I3TruthExtractor</span><span class="p">,</span> <span class="n">I3FeatureExtractor</span>
 
@@ -417,16 +417,18 @@
 
 
 <span class="c1"># Implementation-specific utility function(s)</span>
-<div class="viewcode-block" id="apply_event_no"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.sqlite_dataconverter.apply_event_no">[docs]</a><span class="k">def</span> <span class="nf">apply_event_no</span><span class="p">(</span><span class="n">extraction</span><span class="p">,</span> <span class="n">event_no_list</span><span class="p">,</span> <span class="n">event_counter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts extraction to pandas.DataFrame and applies the event_no index to extraction</span>
+<div class="viewcode-block" id="apply_event_no"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.sqlite_dataconverter.apply_event_no">[docs]</a><span class="k">def</span> <span class="nf">apply_event_no</span><span class="p">(</span>
+    <span class="n">extraction</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">event_no_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">event_counter</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Converts extraction to pandas.DataFrame and applies the event_no index to extraction.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        extraction (dict): Dictionary with the extracted data.</span>
-<span class="sd">        event_no_list (list): List of allocated event_no&#39;s.</span>
-<span class="sd">        event_counter (int): Index for event_no_list.</span>
+<span class="sd">        extraction: Dictionary with the extracted data.</span>
+<span class="sd">        event_no_list: List of allocated event_no&#39;s.</span>
+<span class="sd">        event_counter: Index for event_no_list.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        out (pandas.DataFrame): Extraction as pandas.DataFrame with event_no column.</span>
+<span class="sd">        Extraction as pandas.DataFrame with event_no column.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">all_scalars</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">,</span> <span class="n">extraction</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">extraction</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">all_scalars</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
@@ -438,7 +440,7 @@
     <span class="sd">&quot;&quot;&quot;Check whether `table_name` corresponds to a pulsemap, and not a truth or RETRO table.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;retro&quot;</span> <span class="ow">in</span> <span class="n">table_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;truth&quot;</span> <span class="ow">in</span> <span class="n">table_name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># could have to include the lower case word &#39;pulse&#39;?</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Could have to include the lower case word &#39;pulse&#39;?</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 </pre></div>
 

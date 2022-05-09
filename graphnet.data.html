@@ -573,21 +573,18 @@ one of the pulsemaps is non-empty then return true.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.apply_event_no">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">apply_event_no</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_no_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_counter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#apply_event_no"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.apply_event_no" title="Permalink to this definition"></a></dt>
-<dd><p>Converts extraction to pandas.DataFrame and applies the event_no index to extraction</p>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">apply_event_no</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_no_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_counter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#apply_event_no"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.apply_event_no" title="Permalink to this definition"></a></dt>
+<dd><p>Converts extraction to pandas.DataFrame and applies the event_no index to extraction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>extraction</strong> (<em>dict</em>) – Dictionary with the extracted data.</p></li>
-<li><p><strong>event_no_list</strong> (<em>list</em>) – List of allocated event_no’s.</p></li>
-<li><p><strong>event_counter</strong> (<em>int</em>) – Index for event_no_list.</p></li>
+<li><p><strong>extraction</strong> – Dictionary with the extracted data.</p></li>
+<li><p><strong>event_no_list</strong> – List of allocated event_no’s.</p></li>
+<li><p><strong>event_counter</strong> – Index for event_no_list.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Extraction as pandas.DataFrame with event_no column.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>out (pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -696,7 +693,7 @@ accross processes.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.utils.find_i3_files">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">find_i3_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#find_i3_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.find_i3_files" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">find_i3_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#find_i3_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.find_i3_files" title="Permalink to this definition"></a></dt>
 <dd><p>Finds I3 files and corresponding GCD files in <cite>directories</cite>.</p>
 <p>Finds I3 files in dir and matches each file with a corresponding GCD file if
 present in the directory, matches with gcd_rescue if gcd is not present in

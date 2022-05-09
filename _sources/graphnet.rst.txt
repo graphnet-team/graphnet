@@ -10,17 +10,7 @@ Subpackages
    graphnet.components
    graphnet.data
    graphnet.models
-
-Submodules
-----------
-
-graphnet.maths module
----------------------
-
-.. automodule:: graphnet.maths
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   graphnet.utilities
 
 Module contents
 ---------------
