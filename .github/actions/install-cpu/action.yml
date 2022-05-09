@@ -1,5 +1,6 @@
 name: 'Install graphnet'
 description: 'Installs graphnet package, with pytorch and pytorch-geometric for CPU'
+
 inputs:
   torch-verison:
     description: 'Version of pytorch to install'
@@ -17,6 +18,7 @@ inputs:
     description: "Extras flags for pip installation of graphnet"
     required: true
     default: "[develop]"
+
 runs:
   using: "composite"
   steps:
@@ -38,5 +40,5 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        pip install $PIP_FLAGS .${{ inputs.extras }}
+        pip install ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
       shell: bash
