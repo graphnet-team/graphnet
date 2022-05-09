@@ -35,6 +35,7 @@ runs:
       run: |
         PIP_FLAGS=`[[ ${{ inputs.editable }} =~ (T|t)rue ]] && printf "%s\n" "-e" || echo " "`
         echo "PIP_FLAGS=${PIP_FLAGS}" >> $GITHUB_ENV
+      shell: bash
     - name: Install package
       run: |
         pip install $PIP_FLAGS .${{ inputs.extras }}
