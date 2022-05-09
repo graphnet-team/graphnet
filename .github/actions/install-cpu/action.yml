@@ -13,6 +13,10 @@ inputs:
     description: "Whether to install graphnet as editable"
     required: true
     default: false
+  extras:
+    description: "Extras flags for pip installation of graphnet"
+    required: true
+    default: "[develop]"
 runs:
   using: "composite"
   steps:
@@ -29,7 +33,9 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        pip install $FLAGS .[develop]
-      env:
-        FLAGS: "${{ inputs.editable =~ '(T|t)rue' && '-e' || '' }}"
+        if ${{ inputs.editable =~ '(T|t)rue' ]]; then
+          pip install -e .${{ inputs.extras }}
+        else
+          pip install .${{ inputs.extras }}
+        fi
       shell: bash
