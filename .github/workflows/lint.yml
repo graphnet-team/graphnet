@@ -19,15 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: debug
-        run: |
-          pwd
-          ls -lart
-      - name: Install dependencies
-        uses: ./.github/actions/install-torch-cpu
       - name: Install package
-        run: |
-          pip install .[develop]
+        uses: ./.github/actions/install-cpu
       - name: Run pylint
         run: |
           pylint src/graphnet tests/*.py --exit-zero | tee results_pylint.txt

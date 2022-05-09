@@ -1,12 +1,13 @@
 """Utility function relevant to the graphnet.data package."""
 
+from ast import Is
 from glob import glob
 import os
 import numpy as np
 import pandas as pd
 from pathlib import Path
 import re
-from typing import List, Tuple
+from typing import List, Tuple, Union
 import sqlite3
 import sqlalchemy
 
@@ -386,7 +387,7 @@ def pairwise_shuffle(i3_list, gcd_list):
     return i3_shuffled, gcd_shuffled
 
 
-def find_i3_files(directories, gcd_rescue):
+def find_i3_files(directories: Union[str, List[str]], gcd_rescue: str):
     """Finds I3 files and corresponding GCD files in `directories`.
 
     Finds I3 files in dir and matches each file with a corresponding GCD file if
@@ -402,6 +403,9 @@ def find_i3_files(directories, gcd_rescue):
         i3_list (list[str]): Paths to I3 files in `directories`
         gcd_list (list[str]): Paths to GCD files for each I3 file.
     """
+    if isinstance(directories, str):
+        directories = [directories]
+
     # Output containers
     i3_files = []
     gcd_files = []

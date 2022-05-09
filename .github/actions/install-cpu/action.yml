@@ -1,5 +1,5 @@
-name: 'Install pytorch and pytorch-geometric for CPU'
-description: 'Installs a few common dependencies'
+name: 'Install graphnet'
+description: 'Installs graphnet package, with pytorch and pytorch-geometric for CPU'
 inputs:
   torch-verison:
     description: 'Version of pytorch to install'
@@ -22,4 +22,8 @@ runs:
         pip install torch-sparse==0.6.12 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
         pip install torch-spline-conv==1.2.1 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
         pip install torch-geometric==${{ inputs.pyg-verison }}
+      shell: bash
+    - name: Install package
+      run: |
+        pip install .[develop]
       shell: bash
