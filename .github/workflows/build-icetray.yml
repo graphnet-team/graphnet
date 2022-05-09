@@ -41,9 +41,10 @@ jobs:
           ls -l $TEST_DATA_DIR
           MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d" " -f1)"
           echo "$MD5CHECK"
-          bash -c "if [[ '$MD5CHECK' == '$MD5HASH' ]]; then echo 'Checksums agree'; else exit 1; fi"
+          if [[ '$MD5CHECK' == '$MD5HASH' ]]; then echo 'Checksums agree'; else exit 1; fi
         env:
           MD5HASH: 7efbc933c39a44efa8cf7ed983030b1e
+        shell: bash
       - name: Run unit tests and generate coverage report
         run: |
           coverage run --source=graphnet -m pytest tests/
