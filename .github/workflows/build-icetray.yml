@@ -50,6 +50,7 @@ jobs:
         run: git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
+        if: "${{ secrets.CODECLIMATE_TEST_REPORTER_ID != '' }}"
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
         with:
