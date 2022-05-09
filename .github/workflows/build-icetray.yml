@@ -58,7 +58,8 @@ jobs:
           coverage xml -o coverage.xml
       - name: Work around permission issue
         if: "${{ env.PUB_WISC_USERNAME != '' }}"
-        run: git config --global --add safe.directory /__w/graphnet/graphnet
+        run: |
+          git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         if: "${{ env.CC_TEST_REPORTER_ID != '' }} && "${{ env.PUB_WISC_USERNAME != '' }}""
