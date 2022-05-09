@@ -33,9 +33,12 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        if [[ ${{ inputs.editable }} =~ '(T|t)rue' ]]; then
+        echo "FLAGS: >$FLAGS<"
+        if [[ ${{ inputs.editable }} =~ (T|t)rue ]]; then
           pip install -e .${{ inputs.extras }}
         else
           pip install .${{ inputs.extras }}
         fi
+      env:
+        FLAGS: ${{ inputs.editable }} =~ (T|t)rue && '-e' || ''
       shell: bash
