@@ -39,12 +39,12 @@ jobs:
       - name: Check data
         run: |
           ls -l $TEST_DATA_DIR
-          find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \;
-          MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d" " -f1)"
+          find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g'
+          MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g' | md5sum | cut -d" " -f1)"
           echo "$MD5CHECK"
           if [[ '$MD5CHECK' == '$MD5HASH' ]]; then echo 'Checksums agree'; else exit 1; fi
         env:
-          MD5HASH: 7efbc933c39a44efa8cf7ed983030b1e
+          MD5HASH: 80006a6d58338eb8ea153d2b7b02c0a1
         shell: bash
       - name: Run unit tests and generate coverage report
         run: |
