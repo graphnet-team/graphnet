@@ -9,6 +9,10 @@ inputs:
     description: 'Version of pytorch-geometric to install'
     required: true
     default: '2.0.1'
+  editable:
+    description: "Whether to install graphnet as editable"
+    required: true
+    default: false
 runs:
   using: "composite"
   steps:
@@ -25,5 +29,7 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        pip install -e .[develop]
+        pip install $FLAGS .[develop]
+      env:
+        FLAGS: "${{ inputs.editable && '-e' || '' }}"
       shell: bash
