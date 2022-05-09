@@ -69,16 +69,39 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.sqlite_dataset</span> <span class="k">import</span> <span class="n">SQLiteDataset</span>
 
+
 <div class="viewcode-block" id="SQLiteDatasetPerturbed"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.sqlite_dataset_perturbed.SQLiteDatasetPerturbed">[docs]</a><span class="k">class</span> <span class="nc">SQLiteDatasetPerturbed</span><span class="p">(</span><span class="n">SQLiteDataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pytorch dataset for reading from SQLite including a perturbation step to test the stability of a trained model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">pulsemap_table</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">perturbation_dict</span><span class="p">,</span> <span class="n">index_column</span><span class="o">=</span><span class="s1">&#39;event_no&#39;</span><span class="p">,</span> <span class="n">truth_table</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pytorch dataset for reading from SQLite including a perturbation step to test the stability of a trained model.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">,</span>
+        <span class="n">pulsemap_table</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">,</span>
+        <span class="n">truth</span><span class="p">,</span>
+        <span class="n">perturbation_dict</span><span class="p">,</span>
+        <span class="n">index_column</span><span class="o">=</span><span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
+        <span class="n">truth_table</span><span class="o">=</span><span class="s2">&quot;truth&quot;</span><span class="p">,</span>
+        <span class="n">selection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="p">):</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">perturbation_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">perturbation_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">perturbation_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span> <span class="o">=</span> <span class="n">perturbation_dict</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">pulsemap_table</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">index_column</span><span class="p">,</span> <span class="n">truth_table</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">database</span><span class="p">,</span>
+            <span class="n">pulsemap_table</span><span class="p">,</span>
+            <span class="n">features</span><span class="p">,</span>
+            <span class="n">truth</span><span class="p">,</span>
+            <span class="n">index_column</span><span class="p">,</span>
+            <span class="n">truth_table</span><span class="p">,</span>
+            <span class="n">selection</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">establish_connection</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
@@ -95,8 +118,6 @@
         <span class="p">)</span>
         <span class="n">features</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">perturbed_features</span>
         <span class="k">return</span> <span class="n">features</span></div>
-
-
 </pre></div>
 
            </div>

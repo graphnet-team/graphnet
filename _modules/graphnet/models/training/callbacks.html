@@ -68,6 +68,7 @@
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="k">import</span> <span class="n">_LRScheduler</span>
 <span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="k">import</span> <span class="n">TQDMProgressBar</span>
 
+
 <div class="viewcode-block" id="PiecewiseLinearLR"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.PiecewiseLinearLR">[docs]</a><span class="k">class</span> <span class="nc">PiecewiseLinearLR</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interpolates learning rate linearly between milestones.</span>
 
@@ -86,13 +87,15 @@
 <span class="sd">        verbose (bool): If ``True``, prints a message to stdout for</span>
 <span class="sd">            each update. Default: ``False``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">milestones</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="n">last_epoch</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">milestones</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="n">last_epoch</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">milestones</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">milestones</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Milestones must be increasing&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">milestones</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">factors</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only multiplicative factor must be specified for each milestone.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only multiplicative factor must be specified for each milestone.&quot;</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">milestones</span> <span class="o">=</span> <span class="n">milestones</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span>
@@ -104,8 +107,11 @@
 
 <div class="viewcode-block" id="PiecewiseLinearLR.get_lr"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.PiecewiseLinearLR.get_lr">[docs]</a>    <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
+                <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">base_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_factor</span><span class="p">()</span> <span class="k">for</span> <span class="n">base_lr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span><span class="p">]</span></div></div>
 
@@ -115,9 +121,10 @@
 
 <span class="sd">    Customises the default progress in pytorch-lightning.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">_common_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bar</span><span class="p">):</span>
-        <span class="n">bar</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39; batch(es)&#39;</span>
-        <span class="n">bar</span><span class="o">.</span><span class="n">colour</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span>
+        <span class="n">bar</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; batch(es)&quot;</span>
+        <span class="n">bar</span><span class="o">.</span><span class="n">colour</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
         <span class="k">return</span> <span class="n">bar</span>
 
 <div class="viewcode-block" id="ProgressBar.init_validation_tqdm"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.init_validation_tqdm">[docs]</a>    <span class="k">def</span> <span class="nf">init_validation_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

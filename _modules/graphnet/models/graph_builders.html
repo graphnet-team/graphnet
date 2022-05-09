@@ -65,7 +65,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="k">import</span> <span class="n">knn_graph</span><span class="p">,</span><span class="n">radius_graph</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="k">import</span> <span class="n">knn_graph</span><span class="p">,</span> <span class="n">radius_graph</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.utils</span> <span class="k">import</span> <span class="n">calculate_distance_matrix</span>
@@ -73,13 +73,14 @@
 
 <div class="viewcode-block" id="GraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.GraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">GraphBuilder</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">__call__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="KNNGraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">KNNGraphBuilder</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
     <span class="sd">&quot;&quot;&quot;Builds graph adjacency according to the k-nearest neighbours.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nb_nearest_neighbours</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -87,18 +88,20 @@
     <span class="p">):</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 
         <span class="c1"># Member variable(s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_nearest_neighbours</span> <span class="o">=</span> <span class="n">nb_nearest_neighbours</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="n">columns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="c1"># Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">knn_graph</span><span class="p">(</span>
             <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">],</span>
@@ -109,9 +112,10 @@
         <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="RadialGraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">RadialGraphBuilder</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span>  
+<div class="viewcode-block" id="RadialGraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">RadialGraphBuilder</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Builds graph adjacency according to a sphere of chosen radius centred at each DOM hit&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -119,18 +123,20 @@
     <span class="p">):</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 
         <span class="c1"># Member variable(s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_radius</span> <span class="o">=</span> <span class="n">radius</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="n">columns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="c1"># Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">radius_graph</span><span class="p">(</span>
             <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">],</span>
@@ -141,9 +147,10 @@
         <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="EuclideanGraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">EuclideanGraphBuilder</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span> <span class="c1"># pylint: disable=too-few-public-methods</span>
+<div class="viewcode-block" id="EuclideanGraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">EuclideanGraphBuilder</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
     <span class="sd">&quot;&quot;&quot;Builds graph adjacency according to Euclidean distance as in https://arxiv.org/pdf/1809.06166.pdf&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -151,43 +158,46 @@
     <span class="p">):</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 
         <span class="c1"># Member variable(s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">=</span> <span class="n">sigma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span> <span class="o">=</span> <span class="n">threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="n">columns</span>
-        
 
-    <span class="k">def</span> <span class="nf">__call__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="c1"># Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
-        <span class="n">xyz_coords</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">]</span>
+        <span class="n">xyz_coords</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">]</span>
 
         <span class="c1"># Construct block-diagonal matrix indicating whether pulses belong to the same event in the batch</span>
-        <span class="n">batch_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">batch_mask</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">distance_matrix</span> <span class="o">=</span> <span class="n">calculate_distance_matrix</span><span class="p">(</span><span class="n">xyz_coords</span><span class="p">)</span>
         <span class="n">affinity_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">distance_matrix</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="c1"># Use softmax to normalise all adjacencies to one for each node</span>
         <span class="n">exp_row_sums</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">affinity_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">weighted_adj_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">affinity_matrix</span><span class="p">)</span><span class="o">/</span><span class="n">exp_row_sums</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        
-        <span class="c1"># Only include edges with weights that exceed the chosen threshold (and are part of the same event)</span>
-        <span class="n">sources</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">weighted_adj_matrix</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">batch_mask</span><span class="p">))</span>
-        <span class="n">edge_weights</span> <span class="o">=</span> <span class="n">weighted_adj_matrix</span><span class="p">[</span><span class="n">sources</span><span class="p">,</span><span class="n">targets</span><span class="p">]</span>     
+        <span class="n">weighted_adj_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">affinity_matrix</span><span class="p">)</span> <span class="o">/</span> <span class="n">exp_row_sums</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">sources</span><span class="p">,</span><span class="n">targets</span><span class="p">))</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">edge_weight</span> <span class="o">=</span> <span class="n">edge_weights</span>  
+        <span class="c1"># Only include edges with weights that exceed the chosen threshold (and are part of the same event)</span>
+        <span class="n">sources</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">weighted_adj_matrix</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">batch_mask</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">edge_weights</span> <span class="o">=</span> <span class="n">weighted_adj_matrix</span><span class="p">[</span><span class="n">sources</span><span class="p">,</span> <span class="n">targets</span><span class="p">]</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">sources</span><span class="p">,</span> <span class="n">targets</span><span class="p">))</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">edge_weight</span> <span class="o">=</span> <span class="n">edge_weights</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 
 
-<span class="c1">#class MinkowskiGraphBuilder(GraphBuilder):</span>
+<span class="c1"># class MinkowskiGraphBuilder(GraphBuilder):</span>
 <span class="c1">#    ...</span>
 </pre></div>
 

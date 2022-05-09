@@ -64,7 +64,11 @@
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.components.pool</span> <span class="k">import</span> <span class="n">group_pulses_to_dom</span><span class="p">,</span> <span class="n">group_pulses_to_pmt</span><span class="p">,</span> <span class="n">sum_pool_and_distribute</span>
+<span class="kn">from</span> <span class="nn">graphnet.components.pool</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">group_pulses_to_dom</span><span class="p">,</span>
+    <span class="n">group_pulses_to_pmt</span><span class="p">,</span>
+    <span class="n">sum_pool_and_distribute</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.constants</span> <span class="k">import</span> <span class="n">FEATURES</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.detector.detector</span> <span class="k">import</span> <span class="n">Detector</span>
 
@@ -89,17 +93,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_features</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="c1"># Preprocessing</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.</span>  <span class="c1"># dom_x</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.</span>  <span class="c1"># dom_y</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">350.</span>  <span class="c1"># dom_z</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">1.05e+04</span>  <span class="c1"># dom_time</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">20.</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">4</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">1.</span>  <span class="c1"># charge</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">5</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.25</span>  <span class="c1"># rde</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">5</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">0.25</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">6</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">0.05</span>  <span class="c1"># pmt_area</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.0</span>  <span class="c1"># dom_x</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.0</span>  <span class="c1"># dom_y</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">350.0</span>  <span class="c1"># dom_z</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.0</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">1.05e04</span>  <span class="c1"># dom_time</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.0</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">20.0</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">1.0</span>  <span class="c1"># charge</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.25</span>  <span class="c1"># rde</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">0.25</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">0.05</span>  <span class="c1"># pmt_area</span>
 
         <span class="k">return</span> <span class="n">data</span></div></div>
 
@@ -128,25 +132,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_features</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="c1"># Preprocessing</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.</span>  <span class="c1"># dom_x</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.</span>  <span class="c1"># dom_y</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.</span>  <span class="c1"># dom_z</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">2e+04</span>  <span class="c1"># dom_time</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.</span>  <span class="c1"># charge</span>
-        <span class="c1">#data.x[:,5] /= 1.  # rde</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">6</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">0.05</span>  <span class="c1"># pmt_area</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">7</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">50.</span>  <span class="c1"># string</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">7</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">50.</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">8</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">20.</span>  <span class="c1"># pmt_number</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">9</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">60.</span>  <span class="c1"># dom_number</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">9</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">60.</span>
-        <span class="c1">#data.x[:,10] /= 1.  # pmt_dir_x</span>
-        <span class="c1">#data.x[:,11] /= 1.  # pmt_dir_y</span>
-        <span class="c1">#data.x[:,12] /= 1.  # pmt_dir_z</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">13</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">130.</span>  <span class="c1"># dom_type</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.0</span>  <span class="c1"># dom_x</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.0</span>  <span class="c1"># dom_y</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.0</span>  <span class="c1"># dom_z</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">2e04</span>  <span class="c1"># dom_time</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.0</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># charge</span>
+        <span class="c1"># data.x[:,5] /= 1.  # rde</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">0.05</span>  <span class="c1"># pmt_area</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">7</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">50.0</span>  <span class="c1"># string</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">7</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">50.0</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">8</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">20.0</span>  <span class="c1"># pmt_number</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">9</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">60.0</span>  <span class="c1"># dom_number</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">9</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">60.0</span>
+        <span class="c1"># data.x[:,10] /= 1.  # pmt_dir_x</span>
+        <span class="c1"># data.x[:,11] /= 1.  # pmt_dir_y</span>
+        <span class="c1"># data.x[:,12] /= 1.  # pmt_dir_z</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">13</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">130.0</span>  <span class="c1"># dom_type</span>
 
         <span class="k">return</span> <span class="n">data</span></div></div>
+
 
 <div class="viewcode-block" id="IceCubeUpgrade_V2"><a class="viewcode-back" href="../../../../graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade_V2">[docs]</a><span class="k">class</span> <span class="nc">IceCubeUpgrade_V2</span><span class="p">(</span><span class="n">IceCubeDeepCore</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;`Detector` class for IceCube-Upgrade.&quot;&quot;&quot;</span>
@@ -176,46 +181,65 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">group_pulses_to_pmt</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="c1"># Feature engineering inspired by Linea Hedemark and Tetiana Kozynets.</span>
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;dom_x&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;dom_y&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;dom_z&#39;</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">pmt_dir</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;pmt_dir_x&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;pmt_dir_x&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;pmt_dir_x&#39;</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">charge</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;charge&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">center_of_gravity</span> <span class="o">=</span> <span class="n">sum_pool_and_distribute</span><span class="p">(</span><span class="n">xyz</span> <span class="o">*</span> <span class="n">charge</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span> <span class="o">/</span> <span class="n">sum_pool_and_distribute</span><span class="p">(</span><span class="n">charge</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;dom_x&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;dom_y&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;dom_z&quot;</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pmt_dir</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">charge</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">center_of_gravity</span> <span class="o">=</span> <span class="n">sum_pool_and_distribute</span><span class="p">(</span>
+            <span class="n">xyz</span> <span class="o">*</span> <span class="n">charge</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">sum_pool_and_distribute</span><span class="p">(</span><span class="n">charge</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
         <span class="n">vector_to_center_of_gravity</span> <span class="o">=</span> <span class="n">center_of_gravity</span> <span class="o">-</span> <span class="n">xyz</span>
-        <span class="n">distance_to_center_of_gravity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vector_to_center_of_gravity</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">unit_vector_to_center_of_gravity</span> <span class="o">=</span> <span class="n">vector_to_center_of_gravity</span> <span class="o">/</span> <span class="p">(</span><span class="n">distance_to_center_of_gravity</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-3</span><span class="p">)</span>
-        <span class="n">cos_angle_wrt_center_of_gravity</span> <span class="o">=</span> <span class="p">(</span><span class="n">pmt_dir</span> <span class="o">*</span> <span class="n">unit_vector_to_center_of_gravity</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">photoelectrons_on_pmt</span> <span class="o">=</span> <span class="n">sum_pool_and_distribute</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;charge&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">pmt_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span><span class="o">.</span><span class="n">floor</span><span class="p">()</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">distance_to_center_of_gravity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+            <span class="n">vector_to_center_of_gravity</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">unit_vector_to_center_of_gravity</span> <span class="o">=</span> <span class="n">vector_to_center_of_gravity</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">distance_to_center_of_gravity</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-3</span>
+        <span class="p">)</span>
+        <span class="n">cos_angle_wrt_center_of_gravity</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pmt_dir</span> <span class="o">*</span> <span class="n">unit_vector_to_center_of_gravity</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">photoelectrons_on_pmt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">sum_pool_and_distribute</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;charge&quot;</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">pmt_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">floor</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># Add new features</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-            <span class="n">photoelectrons_on_pmt</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">distance_to_center_of_gravity</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">cos_angle_wrt_center_of_gravity</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-        <span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">photoelectrons_on_pmt</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">distance_to_center_of_gravity</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">cos_angle_wrt_center_of_gravity</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Preprocessing</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.</span>  <span class="c1"># dom_x</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.</span>  <span class="c1"># dom_y</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.</span>  <span class="c1"># dom_z</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">2e+04</span>  <span class="c1"># dom_time</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.</span>  <span class="c1"># charge</span>
-        <span class="c1">#data.x[:,5] /= 1.  # rde</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">6</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">0.05</span>  <span class="c1"># pmt_area</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">7</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">50.</span>  <span class="c1"># string</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">7</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">50.</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">8</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">20.</span>  <span class="c1"># pmt_number</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">9</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">60.</span>  <span class="c1"># dom_number</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">9</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">60.</span>
-        <span class="c1">#data.x[:,10] /= 1.  # pmt_dir_x</span>
-        <span class="c1">#data.x[:,11] /= 1.  # pmt_dir_y</span>
-        <span class="c1">#data.x[:,12] /= 1.  # pmt_dir_z</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">13</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">130.</span>  <span class="c1"># dom_type</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.0</span>  <span class="c1"># dom_x</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.0</span>  <span class="c1"># dom_y</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">500.0</span>  <span class="c1"># dom_z</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">2e04</span>  <span class="c1"># dom_time</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.0</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># charge</span>
+        <span class="c1"># data.x[:,5] /= 1.  # rde</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">0.05</span>  <span class="c1"># pmt_area</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">7</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">50.0</span>  <span class="c1"># string</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">7</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">50.0</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">8</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">20.0</span>  <span class="c1"># pmt_number</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">9</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">60.0</span>  <span class="c1"># dom_number</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">9</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">60.0</span>
+        <span class="c1"># data.x[:,10] /= 1.  # pmt_dir_x</span>
+        <span class="c1"># data.x[:,11] /= 1.  # pmt_dir_y</span>
+        <span class="c1"># data.x[:,12] /= 1.  # pmt_dir_z</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">13</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">130.0</span>  <span class="c1"># dom_type</span>
 
         <span class="c1"># -- Engineered features</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">14</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.</span>  <span class="c1"># photoelectrons_on_pmt</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1e-03</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="mi">15</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.</span>  <span class="c1"># distance_to_center_of_gravity</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">14</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># photoelectrons_on_pmt</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1e-03</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">15</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="p">)</span>  <span class="c1"># distance_to_center_of_gravity</span>
 
         <span class="k">return</span> <span class="n">data</span></div></div>
 </pre></div>

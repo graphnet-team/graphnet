@@ -70,24 +70,25 @@
 <div class="viewcode-block" id="check_db_size"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.utils.check_db_size">[docs]</a><span class="k">def</span> <span class="nf">check_db_size</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
     <span class="n">max_size</span> <span class="o">=</span> <span class="mi">5000000</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select event_no from truth&#39;</span>
-        <span class="n">events</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">con</span><span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;select event_no from truth&quot;</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_size</span><span class="p">:</span>
         <span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">max_size</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">events</span></div>
 
+
 <div class="viewcode-block" id="fit_scaler"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.utils.fit_scaler">[docs]</a><span class="k">def</span> <span class="nf">fit_scaler</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">):</span>
     <span class="n">features</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
     <span class="n">truth</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span>
-    <span class="c1">#features.remove(&#39;event_no&#39;)</span>
-    <span class="c1">#truth.remove(&#39;event_no&#39;)</span>
-    <span class="n">truth</span> <span class="o">=</span>  <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span>
-    <span class="n">features</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+    <span class="c1"># features.remove(&#39;event_no&#39;)</span>
+    <span class="c1"># truth.remove(&#39;event_no&#39;)</span>
+    <span class="n">truth</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
 
-    <span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s1">&#39;/meta/transformers.pkl&#39;</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s1">&#39;/meta/transformers.pkl&#39;</span><span class="p">):</span>
-        <span class="n">comb_scalers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s1">&#39;/meta/transformers.pkl&#39;</span><span class="p">)</span>
+    <span class="n">outdir</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/meta/transformers.pkl&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/meta/transformers.pkl&quot;</span><span class="p">):</span>
+        <span class="n">comb_scalers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/meta/transformers.pkl&quot;</span><span class="p">)</span>
     <span class="c1"># else:</span>
     <span class="c1">#     truths = [&#39;energy&#39;, &#39;position_x&#39;, &#39;position_y&#39;, &#39;position_z&#39;, &#39;azimuth&#39;, &#39;zenith&#39;]</span>
     <span class="c1">#     events = check_db_size(db)</span>
