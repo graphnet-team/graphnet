@@ -39,6 +39,7 @@ jobs:
       - name: Check data
         run: |
           ls -l $TEST_DATA_DIR
+          find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \;
           MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d" " -f1)"
           echo "$MD5CHECK"
           if [[ '$MD5CHECK' == '$MD5HASH' ]]; then echo 'Checksums agree'; else exit 1; fi
