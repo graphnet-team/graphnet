@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from graphnet.models.task import Task
-from graphnet.maths import eps_like
+from graphnet.utilities.maths import eps_like
 
 
 class AzimuthReconstructionWithKappa(Task):

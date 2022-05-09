@@ -1,0 +1,56 @@
+# This is a simple workflow to run data/icetray specific unit tests
+name: build-icetray
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push and PRs
+  push:
+    paths-ignore: [ assets/badges/ ]
+  pull_request_target:
+    branches: [ main ]
+    paths-ignore: [ assets/badges/ ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-icetray:
+    runs-on: ubuntu-latest
+    container: icecube/icetray:combo-stable
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install package
+        uses: ./.github/actions/install-cpu
+      - name: Retrieve test data
+        run: |
+          echo "TEST_DATA_DIR=${TEST_DATA_DIR}" >> $GITHUB_ENV
+          mkdir -p $TEST_DATA_DIR
+          apt-get install sshpass
+          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA_DIR
+        env:
+          HOST: ${{ secrets.PUB_WISC_HOST }}
+          USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
+          PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
+          SOURCE: "graphnet/data/test/*.i3.*"
+          TEST_DATA_DIR: ./test_data/
+      - name: Check data
+        run: |
+          ls -l $TEST_DATA
+          MD5CHECK="$(find $TEST_DATA -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d" " -f1)"
+          #if [[ "$MD5CHECK" == "$MD5HASH" ]]; then echo "Checksums agree"; else exit 1; fi
+        env:
+          MD5HASH: 7efbc933c39a44efa8cf7ed983030b1e
+      - name: Run unit tests and generate coverage report
+        run: |
+          coverage run --source=graphnet -m pytest tests/
+          coverage xml -o coverage.xml
+          coverage report -m
+      - name: Work around permission issue
+        run: git config --global --add safe.directory /__w/graphnet/graphnet
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: coverage report

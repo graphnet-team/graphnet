@@ -7,7 +7,7 @@ import sqlalchemy
 import sqlite3
 from collections import OrderedDict
 from tqdm import tqdm
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
 
@@ -354,16 +354,18 @@ class SQLiteDataConverter(DataConverter):
 
 
 # Implementation-specific utility function(s)
-def apply_event_no(extraction, event_no_list, event_counter):
-    """Converts extraction to pandas.DataFrame and applies the event_no index to extraction
+def apply_event_no(
+    extraction: Dict[str, Any], event_no_list: List[int], event_counter: int
+) -> pd.DataFrame:
+    """Converts extraction to pandas.DataFrame and applies the event_no index to extraction.
 
     Args:
-        extraction (dict): Dictionary with the extracted data.
-        event_no_list (list): List of allocated event_no's.
-        event_counter (int): Index for event_no_list.
+        extraction: Dictionary with the extracted data.
+        event_no_list: List of allocated event_no's.
+        event_counter: Index for event_no_list.
 
     Returns:
-        out (pandas.DataFrame): Extraction as pandas.DataFrame with event_no column.
+        Extraction as pandas.DataFrame with event_no column.
     """
     all_scalars = all(map(np.isscalar, extraction.values()))
     out = pd.DataFrame(extraction, index=[0] if all_scalars else None)
@@ -375,5 +377,5 @@ def is_pulsemap_check(table_name: str) -> bool:
     """Check whether `table_name` corresponds to a pulsemap, and not a truth or RETRO table."""
     if "retro" in table_name.lower() or "truth" in table_name.lower():
         return False
-    else:  # could have to include the lower case word 'pulse'?
+    else:  # Could have to include the lower case word 'pulse'?
         return True

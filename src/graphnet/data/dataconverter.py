@@ -47,22 +47,6 @@ class DataConverter(ABC):
     def _process_files(self, i3_files, gcd_files):
         pass
 
-    # def _process_file(self, i3_file, gcd_file, out_file):
-    #    self._extractors.set_files(i3_file, gcd_file)
-    #    frames = dataio.I3File(i3_file, 'r')
-    #
-    #    while frames.more():
-    #        try:
-    #            frame = frames.pop_physics()
-    #        except:
-    #            continue
-    #        arrays = self._extractors(frame)
-    #        self._save(arrays, out_file)
-
-    # @abstractmethod
-    # def _save(self, array, out_file):
-    #    pass
-
     @abstractmethod
     def _initialise(self):
         pass
