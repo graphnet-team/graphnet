@@ -31,5 +31,5 @@ runs:
       run: |
         pip install $FLAGS .[develop]
       env:
-        FLAGS: "${{ inputs.editable == 'true' && '-e' || '' }}"
+        FLAGS: "${{ inputs.editable =~ '(T|t)rue' && '-e' || '' }}"
       shell: bash
