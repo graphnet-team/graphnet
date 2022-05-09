@@ -71,22 +71,31 @@ class ConvNet(GNN):
 
         # Graph convolutional operations
         x = F.leaky_relu(self.conv1(x, edge_index))
-        x1 = torch.cat([
-            global_add_pool(x, batch),
-            global_max_pool(x, batch),
-        ], dim=1)
+        x1 = torch.cat(
+            [
+                global_add_pool(x, batch),
+                global_max_pool(x, batch),
+            ],
+            dim=1,
+        )
 
         x = F.leaky_relu(self.conv2(x, edge_index))
-        x2 = torch.cat([
-            global_add_pool(x, batch),
-            global_max_pool(x, batch),
-        ], dim=1)
+        x2 = torch.cat(
+            [
+                global_add_pool(x, batch),
+                global_max_pool(x, batch),
+            ],
+            dim=1,
+        )
 
         x = F.leaky_relu(self.conv3(x, edge_index))
-        x3 = torch.cat([
-            global_add_pool(x, batch),
-            global_max_pool(x, batch),
-        ], dim=1)
+        x3 = torch.cat(
+            [
+                global_add_pool(x, batch),
+                global_max_pool(x, batch),
+            ],
+            dim=1,
+        )
 
         # Skip-cat
         x = torch.cat([x1, x2, x3], dim=1)

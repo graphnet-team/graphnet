@@ -33,6 +33,7 @@ INSTALL_REQUIRES = [
 
 EXTRAS_REQUIRE = {
     "develop": [
+        "black",
         "pytest",
         "pylint",
         "pydocstyle",

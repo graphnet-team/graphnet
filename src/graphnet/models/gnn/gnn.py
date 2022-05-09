@@ -6,6 +6,7 @@ from torch_geometric.data import Data
 
 class GNN(LightningModule):
     """Base class for all core GNN models in graphnet."""
+
     def __init__(self, nb_inputs, nb_outputs):
         # Base class constructor
         super().__init__()
