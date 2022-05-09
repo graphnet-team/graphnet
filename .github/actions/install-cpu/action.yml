@@ -25,5 +25,5 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        pip install .[develop]
+        pip install -e .[develop]
       shell: bash
