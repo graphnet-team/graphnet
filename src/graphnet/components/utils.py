@@ -7,24 +7,25 @@ from copy import deepcopy
 def check_db_size(db):
     max_size = 5000000
     with sqlite3.connect(db) as con:
-        query = 'select event_no from truth'
-        events =  pd.read_sql(query,con)
+        query = "select event_no from truth"
+        events = pd.read_sql(query, con)
     if len(events) > max_size:
         events = events.sample(max_size)
     return events
 
+
 def fit_scaler(db, features, truth, pulsemap):
     features = deepcopy(features)
     truth = deepcopy(truth)
-    #features.remove('event_no')
-    #truth.remove('event_no')
-    truth =  ', '.join(truth)
-    features = ', '.join(features)
+    # features.remove('event_no')
+    # truth.remove('event_no')
+    truth = ", ".join(truth)
+    features = ", ".join(features)
 
-    outdir = '/'.join(db.split('/')[:-2])
-    print(os.path.exists(outdir + '/meta/transformers.pkl'))
-    if os.path.exists(outdir + '/meta/transformers.pkl'):
-        comb_scalers = pd.read_pickle(outdir + '/meta/transformers.pkl')
+    outdir = "/".join(db.split("/")[:-2])
+    print(os.path.exists(outdir + "/meta/transformers.pkl"))
+    if os.path.exists(outdir + "/meta/transformers.pkl"):
+        comb_scalers = pd.read_pickle(outdir + "/meta/transformers.pkl")
     # else:
     #     truths = ['energy', 'position_x', 'position_y', 'position_z', 'azimuth', 'zenith']
     #     events = check_db_size(db)
