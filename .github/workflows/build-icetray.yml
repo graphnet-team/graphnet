@@ -55,3 +55,5 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
         with:
           coverageCommand: coverage report
+          coverageLocations: coverage.xml:coverage.py
+          debug: True
