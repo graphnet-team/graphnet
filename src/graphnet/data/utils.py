@@ -342,10 +342,7 @@ def get_even_dbang_selection(
 
 
 def create_out_directory(outdir: str):
-    try:
-        os.makedirs(outdir)
-    except:  # noqa: E722
-        print(f"Directory {outdir} already exists")
+    os.makedirs(outdir, exist_ok=True)
 
 
 def is_gcd_file(filename: str) -> bool:
