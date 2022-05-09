@@ -40,5 +40,5 @@ runs:
           pip install .${{ inputs.extras }}
         fi
       env:
-        FLAGS: ${{ inputs.editable }} =~ (T|t)rue && '-e' || ''
+        FLAGS: ${{ inputs.editable =~ (T|t)rue && '-e' || '' }}
       shell: bash
