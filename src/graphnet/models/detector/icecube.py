@@ -173,7 +173,9 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
         data.x[:, 13] /= 130.0  # dom_type
 
         # -- Engineered features
-        data.x[:, 14] = torch.log10(data.x[:, 14]) / 2.0  # photoelectrons_on_pmt
+        data.x[:, 14] = (
+            torch.log10(data.x[:, 14]) / 2.0
+        )  # photoelectrons_on_pmt
         data.x[:, 15] = (
             torch.log10(1e-03 + data.x[:, 15]) / 2.0
         )  # distance_to_center_of_gravity

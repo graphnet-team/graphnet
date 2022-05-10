@@ -124,15 +124,17 @@ class LogCMK(torch.autograd.Function):
     """
 
     @staticmethod
-    def forward(ctx, m, kappa):  # pylint: disable=invalid-name,arguments-differ
+    def forward(
+        ctx, m, kappa
+    ):  # pylint: disable=invalid-name,arguments-differ
         dtype = kappa.dtype
         ctx.save_for_backward(kappa)
         ctx.m = m
         ctx.dtype = dtype
         kappa = kappa.double()
-        iv = torch.from_numpy(scipy.special.iv(m / 2.0 - 1, kappa.cpu().numpy())).to(
-            kappa.device
-        )
+        iv = torch.from_numpy(
+            scipy.special.iv(m / 2.0 - 1, kappa.cpu().numpy())
+        ).to(kappa.device)
         return (
             (m / 2.0 - 1) * torch.log(kappa)
             - torch.log(iv)
@@ -140,17 +142,21 @@ class LogCMK(torch.autograd.Function):
         ).type(dtype)
 
     @staticmethod
-    def backward(ctx, grad_output):  # pylint: disable=invalid-name,arguments-differ
+    def backward(
+        ctx, grad_output
+    ):  # pylint: disable=invalid-name,arguments-differ
         kappa = ctx.saved_tensors[0]
         m = ctx.m
         dtype = ctx.dtype
         kappa = kappa.double().cpu().numpy()
         grads = -(
-            (scipy.special.iv(m / 2.0, kappa)) / (scipy.special.iv(m / 2.0 - 1, kappa))
+            (scipy.special.iv(m / 2.0, kappa))
+            / (scipy.special.iv(m / 2.0 - 1, kappa))
         )
         return (
             None,
-            grad_output * torch.from_numpy(grads).to(grad_output.device).type(dtype),
+            grad_output
+            * torch.from_numpy(grads).to(grad_output.device).type(dtype),
         )
 
 

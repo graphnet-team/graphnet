@@ -37,7 +37,9 @@ def test_retroextractor_constructor():
 
 @requires_icecube
 def test_sqlite_database(test_data_dir: str = TEST_DATA_DIR):
-    database = os.path.join(test_data_dir, "{0}/data/{0}.db".format("test_database"))
+    database = os.path.join(
+        test_data_dir, "{0}/data/{0}.db".format("test_database")
+    )
     pulsemap = "SRTInIcePulses"
     features = FEATURES.DEEPCORE
     truth = TRUTH.DEEPCORE
@@ -78,7 +80,9 @@ def test_sqlite_database(test_data_dir: str = TEST_DATA_DIR):
 
     assert len(dataset) == expected_number_of_events
 
-    for ix, expected_number_of_pulses in zip(test_indices, expected_numbers_of_pulses):
+    for ix, expected_number_of_pulses in zip(
+        test_indices, expected_numbers_of_pulses
+    ):
         event = dataset[ix]
         assert event.x.size(dim=0) == expected_number_of_pulses
         assert event.x.size(dim=0) == event.n_pulses

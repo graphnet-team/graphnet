@@ -40,7 +40,9 @@ def main_icecube_upgrade():
     paths = [
         "/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4"
     ]
-    gcd_rescue = "resources/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2"
+    gcd_rescue = (
+        "resources/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2"
+    )
     outdir = "/groups/icecube/asogaard/temp/sqlite_test_upgrade"
     db_name = "data_test"
     workers = 5
@@ -49,8 +51,12 @@ def main_icecube_upgrade():
         [
             I3TruthExtractor(),
             I3RetroExtractor(),
-            I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMapRFCleaned_mDOM"),
-            I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMapRFCleaned_DEgg"),
+            I3FeatureExtractorIceCubeUpgrade(
+                "I3RecoPulseSeriesMapRFCleaned_mDOM"
+            ),
+            I3FeatureExtractorIceCubeUpgrade(
+                "I3RecoPulseSeriesMapRFCleaned_DEgg"
+            ),
         ],
         outdir,
         gcd_rescue,

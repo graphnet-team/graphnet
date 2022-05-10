@@ -13,10 +13,16 @@ def add_truth(data, database):
             "select event_no, energy, interaction_type, pid from truth where event_no in %s"
             % str(tuple(data["event_no"]))
         )
-        truth = pd.read_sql(query, con).sort_values("event_no").reset_index(drop=True)
+        truth = (
+            pd.read_sql(query, con)
+            .sort_values("event_no")
+            .reset_index(drop=True)
+        )
 
     truth["track"] = 0
-    truth.loc[(abs(truth["pid"]) == 14) & (truth["interaction_type"] == 1), "track"] = 1
+    truth.loc[
+        (abs(truth["pid"]) == 14) & (truth["interaction_type"] == 1), "track"
+    ] = 1
     add_these = []
     for key in truth.columns:
         if key not in data.columns:
@@ -94,7 +100,8 @@ def plot_roc(target, runids, save_dir, save_as_csv=False):
     plt.text(
         x_text,
         y_text - 0 * y_sep,
-        "IceCubeUpgrade/nu_simulation/detector/step4/(%s,%s)" % (runids[0], runids[1]),
+        "IceCubeUpgrade/nu_simulation/detector/step4/(%s,%s)"
+        % (runids[0], runids[1]),
         va="top",
         fontsize=8,
     )
@@ -122,8 +129,12 @@ def plot_roc(target, runids, save_dir, save_as_csv=False):
 
 
 def calculate_width(data_sliced, target):
-    track = data_sliced.loc[data_sliced["track"] == 1, :].reset_index(drop=True)
-    cascade = data_sliced.loc[data_sliced["track"] == 0, :].reset_index(drop=True)
+    track = data_sliced.loc[data_sliced["track"] == 1, :].reset_index(
+        drop=True
+    )
+    cascade = data_sliced.loc[data_sliced["track"] == 0, :].reset_index(
+        drop=True
+    )
     if target == "energy":
         residual_track = (
             (track[target + "_pred"] - track[target]) / track[target]
@@ -132,7 +143,9 @@ def calculate_width(data_sliced, target):
             (cascade[target + "_pred"] - cascade[target]) / cascade[target]
         ) * 100
     elif target == "zenith":
-        residual_track = (track[target + "_pred"] - track[target]) * (360 / (2 * np.pi))
+        residual_track = (track[target + "_pred"] - track[target]) * (
+            360 / (2 * np.pi)
+        )
         residual_cascade = (cascade[target + "_pred"] - cascade[target]) * (
             360 / (2 * np.pi)
         )
@@ -158,21 +171,34 @@ def get_width(df, target):
     if target in ["zenith", "energy", "XYZ"]:
         for i in range(1, len(bins)):
             print(bins[i])
-            idx = (df["energy_log10"] > bins[i - 1]) & (df["energy_log10"] < bins[i])
+            idx = (df["energy_log10"] > bins[i - 1]) & (
+                df["energy_log10"] < bins[i]
+            )
             data_sliced = df.loc[idx, :].reset_index(drop=True)
             energy.append(np.mean(data_sliced["energy_log10"]))
-            track_width, cascade_width, track_error, cascade_error = calculate_width(
-                data_sliced, target
-            )
+            (
+                track_width,
+                cascade_width,
+                track_error,
+                cascade_error,
+            ) = calculate_width(data_sliced, target)
             track_widths.append(track_width)
             cascade_widths.append(cascade_width)
             track_errors.append(track_error)
             cascade_errors.append(cascade_error)
         track_plot_data = pd.DataFrame(
-            {"mean": energy, "width": track_widths, "width_error": track_errors}
+            {
+                "mean": energy,
+                "width": track_widths,
+                "width_error": track_errors,
+            }
         )
         cascade_plot_data = pd.DataFrame(
-            {"mean": energy, "width": cascade_widths, "width_error": cascade_errors}
+            {
+                "mean": energy,
+                "width": cascade_widths,
+                "width_error": cascade_errors,
+            }
         )
         return track_plot_data, cascade_plot_data
     else:
@@ -197,7 +223,9 @@ def make_plot(target, runids, save_dir, save_as_csv=False):
         # if runid == 140021:
         #    pulses_cut_val = 10
         df = (
-            pd.read_csv(predictions_path).sort_values("event_no").reset_index(drop=True)
+            pd.read_csv(predictions_path)
+            .sort_values("event_no")
+            .reset_index(drop=True)
         )
         df = add_truth(df, database)
         df = add_energylog10(df)
@@ -274,7 +302,9 @@ def make_plot(target, runids, save_dir, save_as_csv=False):
         ax1.set_ylim((0, 45))
 
     plt.tick_params(right=False, labelright=False)
-    ax1.set_ylabel("%s Resolution %s" % (target.capitalize(), unit_tag), size=10)
+    ax1.set_ylabel(
+        "%s Resolution %s" % (target.capitalize(), unit_tag), size=10
+    )
     ax1.set_xlabel("Energy  (log10 GeV)", size=10)
 
     x_text = 0.5
@@ -282,7 +312,8 @@ def make_plot(target, runids, save_dir, save_as_csv=False):
     ax1.text(
         x_text,
         y_text - 0 * y_sep,
-        "IceCubeUpgrade/nu_simulation/detector/step4/(%s,%s)" % (runids[0], runids[1]),
+        "IceCubeUpgrade/nu_simulation/detector/step4/(%s,%s)"
+        % (runids[0], runids[1]),
         va="top",
         fontsize=8,
     )

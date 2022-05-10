@@ -25,7 +25,9 @@ class Detector(LightningModule):
     def features(self) -> List[str]:
         """List of features used/assumed by inheriting `Detector` objects."""
 
-    def __init__(self, graph_builder: GraphBuilder, scalers: List[dict] = None):
+    def __init__(
+        self, graph_builder: GraphBuilder, scalers: List[dict] = None
+    ):
         # Base class constructor
         super().__init__()
 
