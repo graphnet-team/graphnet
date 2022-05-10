@@ -20,4 +20,5 @@ jobs:
       - name: Install package
         uses: ./.github/actions/install-cpu
       - name: Black
-        uses: psf/black@stable
+        run: |
+          black . --check --diff --config black.toml
