@@ -146,7 +146,10 @@ class SQLiteDataset(torch.utils.data.Dataset):
         truth = self._query_table(self._truth_string, self._truth_table, i)
         if self._node_truth:
             node_truth = self._query_table(
-                self._node_truth_string, self._node_truth_table, i, self._selection
+                self._node_truth_string,
+                self._node_truth_table,
+                i,
+                self._selection,
             )
         else:
             node_truth = None
@@ -182,7 +185,8 @@ class SQLiteDataset(torch.utils.data.Dataset):
         if node_truth is not None:
             node_truth_array = np.asarray(node_truth)
             node_truth_dict = {
-                key: node_truth_array[:, ix] for ix, key in enumerate(self._node_truth)
+                key: node_truth_array[:, ix]
+                for ix, key in enumerate(self._node_truth)
             }
 
         # Unpack common variables
@@ -200,7 +204,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
             "v_e": int(abs_pid == 12),
             "v_u": int(abs_pid == 14),
             "v_t": int(abs_pid == 16),
-            "track": int((abs_pid == 14) & (truth_dict["interaction_type"] == 1)),
+            "track": int(
+                (abs_pid == 14) & (truth_dict["interaction_type"] == 1)
+            ),
             "dbang": self._get_dbang_label(truth_dict),
             "corsika": int(abs_pid > 20),
         }

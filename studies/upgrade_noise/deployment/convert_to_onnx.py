@@ -15,13 +15,18 @@ from graphnet.models.task.reconstruction import PassOutput1
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 
-from studies.upgrade_noise.modelling.run_jobs import remove_log10, transform_to_log10
+from studies.upgrade_noise.modelling.run_jobs import (
+    remove_log10,
+    transform_to_log10,
+)
 
 # Constants
 BASE_DIR = "/groups/icecube/asogaard/gnn/upgrade_sensitivity"
 RUN_NAME = "dev_step4_numu_140021_second_run"
 MODEL_NAME = "upgrade_energy_regression_45e_GraphSagePulses"
-MODEL_PATH = f"{BASE_DIR}/results/{RUN_NAME}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
+MODEL_PATH = (
+    f"{BASE_DIR}/results/{RUN_NAME}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
+)
 
 
 class DeploymentModule(LightningModule):

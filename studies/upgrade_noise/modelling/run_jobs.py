@@ -45,7 +45,10 @@ def save_results(
     # torch.save(model.cpu().state_dict(), path + '/' + tag + '.pth')
     if validation_loss is not None:
         pd.DataFrame(
-            {"training_loss": training_loss, "validation_loss": validation_loss}
+            {
+                "training_loss": training_loss,
+                "validation_loss": validation_loss,
+            }
         ).to_csv(path + "/" + "training_hist.csv")
     print("Results saved at: \n %s" % path)
 
@@ -82,7 +85,9 @@ truth = TRUTH.UPGRADE
 
 # Configuration
 def build_model(run_name, device, archive):
-    model = torch.load(os.path.join(archive, f"{run_name}.pth"), pickle_module=dill)
+    model = torch.load(
+        os.path.join(archive, f"{run_name}.pth"), pickle_module=dill
+    )
     model.to("cuda:%s" % device[0])
     model.eval()
     model.inference()
@@ -112,7 +117,10 @@ def train_and_predict_on_validation_set(
     print(f"features: {features}")
     print(f"truth: {truth}")
 
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(
+    (
+        training_dataloader,
+        validation_dataloader,
+    ) = make_train_validation_dataloader(
         db=database,
         selection=selection,
         pulsemaps=pulsemap,
@@ -207,7 +215,9 @@ def train_and_predict_on_validation_set(
 
         # Saving model
         model.save(os.path.join(archive, f"{run_name}.pth"))
-        model.save_state_dict(os.path.join(archive, f"{run_name}_state_dict.pth"))
+        model.save_state_dict(
+            os.path.join(archive, f"{run_name}_state_dict.pth")
+        )
         predict(
             model,
             trainer,

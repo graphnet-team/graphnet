@@ -64,7 +64,10 @@ def main():
     train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
     train_selection = train_selection[0:50000]
 
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(
+    (
+        training_dataloader,
+        validation_dataloader,
+    ) = make_train_validation_dataloader(
         config["db"],
         train_selection,
         config["pulsemap"],

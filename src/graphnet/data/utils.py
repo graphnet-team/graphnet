@@ -89,8 +89,10 @@ def get_desired_event_numbers(
         while restart_trigger:
             restart_trigger = False
             for number, particle_type in zip(numbers_desired, pids):
-                query_is = "SELECT event_no FROM truth WHERE abs(pid) == {}".format(
-                    particle_type
+                query_is = (
+                    "SELECT event_no FROM truth WHERE abs(pid) == {}".format(
+                        particle_type
+                    )
                 )
                 tmp_dataframe = pd.read_sql(query_is, con)
                 try:
@@ -123,7 +125,9 @@ def get_desired_event_numbers(
                 list_of_dataframes.append(dataframe)
         retrieved_event_nos_pd = pd.concat(list_of_dataframes)
         event_no_list = (
-            retrieved_event_nos_pd.sample(frac=1, replace=False, random_state=rng)
+            retrieved_event_nos_pd.sample(
+                frac=1, replace=False, random_state=rng
+            )
             .values.ravel()
             .tolist()
         )
@@ -131,7 +135,9 @@ def get_desired_event_numbers(
     return event_no_list
 
 
-def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List[int]]:
+def get_equal_proportion_neutrino_indices(
+    db: str, seed: int = 42
+) -> Tuple[List[int]]:
     """Utility method to get indices for neutrino events in equal flavour proportions.
 
     Args:
@@ -171,14 +177,18 @@ def get_equal_proportion_neutrino_indices(db: str, seed: int = 42) -> Tuple[List
 
     # Shuffle and convert to list
     indices_equal_proprtions = (
-        indices_equal_proprtions.sample(frac=1, replace=False, random_state=rng)
+        indices_equal_proprtions.sample(
+            frac=1, replace=False, random_state=rng
+        )
         .values.ravel()
         .tolist()
     )
 
     # Get test indices (?)
     with sqlite3.connect(db) as con:
-        train_event_nos = "(" + ", ".join(map(str, indices_equal_proprtions)) + ")"
+        train_event_nos = (
+            "(" + ", ".join(map(str, indices_equal_proprtions)) + ")"
+        )
         query = f"select event_no from truth where abs(pid) != 13 and abs(pid) != 1 and event_no not in {train_event_nos}"
         test = pd.read_sql(query, con).values.ravel().tolist()
 
@@ -206,36 +216,33 @@ def get_even_signal_background_indicies(db):
 
 def get_even_track_cascade_indicies(database):
     with sqlite3.connect(database) as con:
-        query = (
-            "select event_no from truth where abs(pid) = 12 and interaction_type = 1"
-        )
+        query = "select event_no from truth where abs(pid) = 12 and interaction_type = 1"
         nu_e_cc = pd.read_sql(query, con)
 
     with sqlite3.connect(database) as con:
-        query = (
-            "select event_no from truth where abs(pid) = 12 and interaction_type = 2"
-        )
+        query = "select event_no from truth where abs(pid) = 12 and interaction_type = 2"
         nu_e_nc = pd.read_sql(query, con)
 
     with sqlite3.connect(database) as con:
-        query = (
-            "select event_no from truth where abs(pid) = 14 and interaction_type = 1"
-        )
+        query = "select event_no from truth where abs(pid) = 14 and interaction_type = 1"
         nu_u_cc = pd.read_sql(query, con)
 
     with sqlite3.connect(database) as con:
-        query = (
-            "select event_no from truth where abs(pid) = 14 and interaction_type = 2"
-        )
+        query = "select event_no from truth where abs(pid) = 14 and interaction_type = 2"
         nu_u_nc = pd.read_sql(query, con)
 
     events = (
         nu_e_nc.append(
-            nu_e_cc.sample(len(nu_e_nc)).reset_index(drop=True), ignore_index=True
+            nu_e_cc.sample(len(nu_e_nc)).reset_index(drop=True),
+            ignore_index=True,
         )
-        .append(nu_u_nc.sample(len(nu_e_nc)).reset_index(drop=True), ignore_index=True)
         .append(
-            nu_u_cc.sample(3 * len(nu_e_nc)).reset_index(drop=True), ignore_index=True
+            nu_u_nc.sample(len(nu_e_nc)).reset_index(drop=True),
+            ignore_index=True,
+        )
+        .append(
+            nu_u_cc.sample(3 * len(nu_e_nc)).reset_index(drop=True),
+            ignore_index=True,
         )
     )
     train_events = events.sample(frac=1).reset_index(drop=True)
@@ -295,7 +302,8 @@ def get_even_dbang_selection(
     if min_max_decay_length is None:
         with sqlite3.connect(db) as conn:
             dbangs_indicies = pd.read_sql_query(
-                "SELECT event_no FROM truth where dbang_decay_length != -1", conn
+                "SELECT event_no FROM truth where dbang_decay_length != -1",
+                conn,
             )
         print(f"dbang sample size: {len(dbangs_indicies)}")
     elif min_max_decay_length[1] is None:

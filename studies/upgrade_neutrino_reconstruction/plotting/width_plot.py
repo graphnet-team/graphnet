@@ -108,7 +108,10 @@ for ix, min_pulses in enumerate([0, 20]):
     uncert = df_realisations.std(axis=1)
 
     # Masking out configuration with too few samples
-    mask = df_selected.groupby(["type", "ix_bin"]).count().mean(axis=1) >= min_samples
+    mask = (
+        df_selected.groupby(["type", "ix_bin"]).count().mean(axis=1)
+        >= min_samples
+    )
     df_plot = df_plot[mask]
     uncert = uncert[mask]
 
@@ -140,7 +143,13 @@ for ix, min_pulses in enumerate([0, 20]):
     # Legend entry for selection
     selection_label = R"$n_{pulses} \geq %d$" % min_pulses
     plt.plot(
-        np.nan, np.nan, color="gray", lw=lw, ls=ls, marker=marker, label=selection_label
+        np.nan,
+        np.nan,
+        color="gray",
+        lw=lw,
+        ls=ls,
+        marker=marker,
+        label=selection_label,
     )
 
 ymax = 55.0
@@ -150,7 +159,10 @@ x_text = -0.9
 y_text = ymax - 2.0
 y_sep = 2.3
 plt.text(
-    x_text, y_text - 0 * y_sep, "IceCubeUpgrade/nu_simulation/detector/step4", va="top"
+    x_text,
+    y_text - 0 * y_sep,
+    "IceCubeUpgrade/nu_simulation/detector/step4",
+    va="top",
 )
 plt.text(
     x_text,
@@ -167,14 +179,21 @@ plt.text(
     "Trained on equal-flavour mix (3 x 286K events)",
     va="top",
 )
-plt.text(x_text, y_text - 1 * y_sep, "No selection applied during training", va="top")
+plt.text(
+    x_text,
+    y_text - 1 * y_sep,
+    "No selection applied during training",
+    va="top",
+)
 plt.text(
     x_text,
     y_text - 2 * y_sep,
     "asogaard/graphnet:training-on-upgrade-mc@<commmit>",
     va="top",
 )
-plt.suptitle("Neutrino zenith regression in IceCube Upgrade MC using GNNs (14/01/22)")
+plt.suptitle(
+    "Neutrino zenith regression in IceCube Upgrade MC using GNNs (14/01/22)"
+)
 plt.ylim(0, ymax)
 plt.yticks(np.arange(0, ymax - 5.0, 5.0))
 plt.xlim(-1, 4)

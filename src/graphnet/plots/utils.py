@@ -16,11 +16,14 @@ def add_energy(db, df):
     except KeyError:
         events = df["event_no"]
         with sqlite3.connect(db) as con:
-            query = "select event_no, energy from truth where event_no in %s" % str(
-                tuple(events)
+            query = (
+                "select event_no, energy from truth where event_no in %s"
+                % str(tuple(events))
             )
             data = (
-                pd.read_sql(query, con).sort_values("event_no").reset_index(drop=True)
+                pd.read_sql(query, con)
+                .sort_values("event_no")
+                .reset_index(drop=True)
             )
 
         df = df.sort_values("event_no").reset_index(drop="True")
@@ -36,10 +39,16 @@ def add_signature(db, df):
             "select event_no, pid, interaction_type from truth where event_no in %s"
             % str(tuple(events))
         )
-        data = pd.read_sql(query, con).sort_values("event_no").reset_index(drop=True)
+        data = (
+            pd.read_sql(query, con)
+            .sort_values("event_no")
+            .reset_index(drop=True)
+        )
 
     df = df.sort_values("event_no").reset_index(drop="True")
-    df["signature"] = int((abs(data["pid"]) == 14) & (data["interaction_type"] == 1))
+    df["signature"] = int(
+        (abs(data["pid"]) == 14) & (data["interaction_type"] == 1)
+    )
     return df
 
 
@@ -51,7 +60,11 @@ def add_pid_and_interaction(db, df):
             "select event_no, pid, interaction_type from truth where event_no in %s"
             % str(tuple(events))
         )
-        data = pd.read_sql(query, con).sort_values("event_no").reset_index(drop=True)
+        data = (
+            pd.read_sql(query, con)
+            .sort_values("event_no")
+            .reset_index(drop=True)
+        )
 
     df = df.sort_values("event_no").reset_index(drop=True)
     df["interaction_type"] = data["interaction_type"]
@@ -74,7 +87,11 @@ def calculate_width(bias_tmp):
 
 def gauss_pdf(mean, std, x):
     """Evaluate a Gaussian p.d.f. with `mean` and `std` at `x`."""
-    pdf = 1 / (std * np.sqrt(2 * np.pi)) * np.exp(-(1 / 2) * ((x - mean) / std) ** 2)
+    pdf = (
+        1
+        / (std * np.sqrt(2 * np.pi))
+        * np.exp(-(1 / 2) * ((x - mean) / std) ** 2)
+    )
     return (pdf).reset_index(drop=True)
 
 
@@ -89,8 +106,12 @@ def empirical_pdf(x, diff):
 def calculate_width_error(diff):
     """Calculate the uncertainty on the estimated width from the 68-interpercentile range."""
     N = len(diff)
-    x_16 = abs(diff - np.percentile(diff, 16, interpolation="nearest")).argmin()
-    x_84 = abs(diff - np.percentile(diff, 84, interpolation="nearest")).argmin()
+    x_16 = abs(
+        diff - np.percentile(diff, 16, interpolation="nearest")
+    ).argmin()
+    x_84 = abs(
+        diff - np.percentile(diff, 84, interpolation="nearest")
+    ).argmin()
     if len(diff) > 0:
         error_width = np.sqrt(
             (1 / empirical_pdf(x_84, diff) ** 2) * (0.84 * (1 - 0.84) / N)
@@ -130,9 +151,9 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
             data[key + post_fix] = data[key + post_fix] * (360 / (2 * np.pi))
         for pid in pids:
             biases[key][str(pid)] = {}
-            data_pid_indexed = data.loc[abs(data["pid"]) == pid, :].reset_index(
-                drop=True
-            )
+            data_pid_indexed = data.loc[
+                abs(data["pid"]) == pid, :
+            ].reset_index(drop=True)
             for interaction_type in interaction_types:
                 biases[key][str(pid)][str(interaction_type)] = {
                     "mean": [],
@@ -153,7 +174,9 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                         "predictions"
                     ] = data_interaction_indexed[key + post_fix].values.ravel()
                     if key == "energy":
-                        biases[key][str(pid)][str(interaction_type)]["bias"] = (
+                        biases[key][str(pid)][str(interaction_type)][
+                            "bias"
+                        ] = (
                             (
                                 10 ** data_interaction_indexed[key + post_fix]
                                 - 10 ** data_interaction_indexed[key]
@@ -161,16 +184,18 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                             / (10 ** data_interaction_indexed[key])
                         ).values.ravel()
                     if key == "zenith":
-                        biases[key][str(pid)][str(interaction_type)]["bias"] = (
+                        biases[key][str(pid)][str(interaction_type)][
+                            "bias"
+                        ] = (
                             data_interaction_indexed[key + post_fix]
                             - data_interaction_indexed[key]
                         ).values.ravel()
                 bins = key_bins["energy"]
 
                 for i in range(1, (len(bins))):
-                    bin_index = (data_interaction_indexed["energy"] > bins[i - 1]) & (
-                        data_interaction_indexed["energy"] < bins[i]
-                    )
+                    bin_index = (
+                        data_interaction_indexed["energy"] > bins[i - 1]
+                    ) & (data_interaction_indexed["energy"] < bins[i])
                     data_interaction_indexed_sliced = (
                         data_interaction_indexed.loc[bin_index, :]
                         .sort_values("%s" % key)
@@ -180,7 +205,12 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                     if key == "energy":
                         bias_tmp_percent = (
                             (
-                                10 ** (data_interaction_indexed_sliced[key + post_fix])
+                                10
+                                ** (
+                                    data_interaction_indexed_sliced[
+                                        key + post_fix
+                                    ]
+                                )
                                 - 10 ** (data_interaction_indexed_sliced[key])
                             )
                             / 10 ** (data_interaction_indexed_sliced[key])
@@ -195,12 +225,16 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                             - data_interaction_indexed_sliced[key]
                         )
                         if key == "azimuth":
-                            bias_tmp[bias_tmp >= 180] = 360 - bias_tmp[bias_tmp >= 180]
+                            bias_tmp[bias_tmp >= 180] = (
+                                360 - bias_tmp[bias_tmp >= 180]
+                            )
                             bias_tmp[bias_tmp <= -180] = -(
                                 bias_tmp[bias_tmp <= -180] + 360
                             )
                     if len(data_interaction_indexed_sliced) > 0:
-                        biases[key][str(pid)][str(interaction_type)]["mean"].append(
+                        biases[key][str(pid)][str(interaction_type)][
+                            "mean"
+                        ].append(
                             np.mean(data_interaction_indexed_sliced["energy"])
                         )
 
@@ -211,15 +245,15 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                             biases[key][str(pid)][str(interaction_type)][
                                 "width_error"
                             ].append(calculate_width_error(bias_tmp_percent))
-                            biases[key][str(pid)][str(interaction_type)]["16th"].append(
-                                np.percentile(bias_tmp_percent, 16)
-                            )
-                            biases[key][str(pid)][str(interaction_type)]["50th"].append(
-                                np.percentile(bias_tmp_percent, 50)
-                            )
-                            biases[key][str(pid)][str(interaction_type)]["84th"].append(
-                                np.percentile(bias_tmp_percent, 84)
-                            )
+                            biases[key][str(pid)][str(interaction_type)][
+                                "16th"
+                            ].append(np.percentile(bias_tmp_percent, 16))
+                            biases[key][str(pid)][str(interaction_type)][
+                                "50th"
+                            ].append(np.percentile(bias_tmp_percent, 50))
+                            biases[key][str(pid)][str(interaction_type)][
+                                "84th"
+                            ].append(np.percentile(bias_tmp_percent, 84))
                         else:
                             biases[key][str(pid)][str(interaction_type)][
                                 "width"
@@ -227,15 +261,15 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                             biases[key][str(pid)][str(interaction_type)][
                                 "width_error"
                             ].append(calculate_width_error(bias_tmp))
-                            biases[key][str(pid)][str(interaction_type)]["16th"].append(
-                                np.percentile(bias_tmp, 16)
-                            )
-                            biases[key][str(pid)][str(interaction_type)]["50th"].append(
-                                np.percentile(bias_tmp, 50)
-                            )
-                            biases[key][str(pid)][str(interaction_type)]["84th"].append(
-                                np.percentile(bias_tmp, 84)
-                            )
+                            biases[key][str(pid)][str(interaction_type)][
+                                "16th"
+                            ].append(np.percentile(bias_tmp, 16))
+                            biases[key][str(pid)][str(interaction_type)][
+                                "50th"
+                            ].append(np.percentile(bias_tmp, 50))
+                            biases[key][str(pid)][str(interaction_type)][
+                                "84th"
+                            ].append(np.percentile(bias_tmp, 84))
 
         biases[key]["all_pid"] = {}
         for interaction_type in interaction_types:
@@ -271,9 +305,9 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                     ).values.ravel()
             bins = key_bins["energy"]
             for i in range(1, (len(bins))):
-                bin_index = (data_interaction_indexed["energy"] > bins[i - 1]) & (
-                    data_interaction_indexed["energy"] < bins[i]
-                )
+                bin_index = (
+                    data_interaction_indexed["energy"] > bins[i - 1]
+                ) & (data_interaction_indexed["energy"] < bins[i])
                 data_interaction_indexed_sliced = (
                     data_interaction_indexed.loc[bin_index, :]
                     .sort_values("%s" % key)
@@ -285,7 +319,10 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                     print(data_interaction_indexed_sliced[key][0:5])
                     bias_tmp_percent = (
                         (
-                            10 ** (data_interaction_indexed_sliced[key + post_fix])
+                            10
+                            ** (
+                                data_interaction_indexed_sliced[key + post_fix]
+                            )
                             - 10 ** (data_interaction_indexed_sliced[key])
                         )
                         / (10 ** (data_interaction_indexed_sliced[key]))
@@ -301,48 +338,52 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                     )
                 if key == "azimuth":
                     bias_tmp[bias_tmp >= 180] = 360 - bias_tmp[bias_tmp >= 180]
-                    bias_tmp[bias_tmp <= -180] = bias_tmp[bias_tmp <= -180] + 360
+                    bias_tmp[bias_tmp <= -180] = (
+                        bias_tmp[bias_tmp <= -180] + 360
+                    )
                     if np.max(bias_tmp) > 180:
                         print(np.max(bias_tmp))
                 if len(data_interaction_indexed_sliced) > 0:
-                    biases[key]["all_pid"][str(interaction_type)]["mean"].append(
+                    biases[key]["all_pid"][str(interaction_type)][
+                        "mean"
+                    ].append(
                         np.mean(data_interaction_indexed_sliced["energy"])
                     )
-                    biases[key]["all_pid"][str(interaction_type)]["count"].append(
-                        len(bias_tmp)
-                    )
+                    biases[key]["all_pid"][str(interaction_type)][
+                        "count"
+                    ].append(len(bias_tmp))
                     if key == "energy":
-                        biases[key]["all_pid"][str(interaction_type)]["width"].append(
-                            calculate_width(bias_tmp_percent)
-                        )
+                        biases[key]["all_pid"][str(interaction_type)][
+                            "width"
+                        ].append(calculate_width(bias_tmp_percent))
                         biases[key]["all_pid"][str(interaction_type)][
                             "width_error"
                         ].append(calculate_width_error(bias_tmp_percent))
-                        biases[key]["all_pid"][str(interaction_type)]["16th"].append(
-                            np.percentile(bias_tmp_percent, 16)
-                        )
-                        biases[key]["all_pid"][str(interaction_type)]["50th"].append(
-                            np.percentile(bias_tmp_percent, 50)
-                        )
-                        biases[key]["all_pid"][str(interaction_type)]["84th"].append(
-                            np.percentile(bias_tmp_percent, 84)
-                        )
+                        biases[key]["all_pid"][str(interaction_type)][
+                            "16th"
+                        ].append(np.percentile(bias_tmp_percent, 16))
+                        biases[key]["all_pid"][str(interaction_type)][
+                            "50th"
+                        ].append(np.percentile(bias_tmp_percent, 50))
+                        biases[key]["all_pid"][str(interaction_type)][
+                            "84th"
+                        ].append(np.percentile(bias_tmp_percent, 84))
                     else:
-                        biases[key]["all_pid"][str(interaction_type)]["width"].append(
-                            calculate_width(bias_tmp)
-                        )
+                        biases[key]["all_pid"][str(interaction_type)][
+                            "width"
+                        ].append(calculate_width(bias_tmp))
                         biases[key]["all_pid"][str(interaction_type)][
                             "width_error"
                         ].append(calculate_width_error(bias_tmp))
-                        biases[key]["all_pid"][str(interaction_type)]["16th"].append(
-                            np.percentile(bias_tmp, 16)
-                        )
-                        biases[key]["all_pid"][str(interaction_type)]["50th"].append(
-                            np.percentile(bias_tmp, 50)
-                        )
-                        biases[key]["all_pid"][str(interaction_type)]["84th"].append(
-                            np.percentile(bias_tmp, 84)
-                        )
+                        biases[key]["all_pid"][str(interaction_type)][
+                            "16th"
+                        ].append(np.percentile(bias_tmp, 16))
+                        biases[key]["all_pid"][str(interaction_type)][
+                            "50th"
+                        ].append(np.percentile(bias_tmp, 50))
+                        biases[key]["all_pid"][str(interaction_type)][
+                            "84th"
+                        ].append(np.percentile(bias_tmp, 84))
 
         biases[key]["cascade"] = {}
         biases[key]["cascade"] = {
@@ -430,13 +471,21 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                         np.percentile(bias_tmp_percent, 84)
                     )
                 else:
-                    biases[key]["cascade"]["width"].append(calculate_width(bias_tmp))
+                    biases[key]["cascade"]["width"].append(
+                        calculate_width(bias_tmp)
+                    )
                     biases[key]["cascade"]["width_error"].append(
                         calculate_width_error(bias_tmp)
                     )
-                    biases[key]["cascade"]["16th"].append(np.percentile(bias_tmp, 16))
-                    biases[key]["cascade"]["50th"].append(np.percentile(bias_tmp, 50))
-                    biases[key]["cascade"]["84th"].append(np.percentile(bias_tmp, 84))
+                    biases[key]["cascade"]["16th"].append(
+                        np.percentile(bias_tmp, 16)
+                    )
+                    biases[key]["cascade"]["50th"].append(
+                        np.percentile(bias_tmp, 50)
+                    )
+                    biases[key]["cascade"]["84th"].append(
+                        np.percentile(bias_tmp, 84)
+                    )
     return biases
 
 
@@ -454,14 +503,22 @@ def get_retro(data, keys, db):
             query_keys,
             str(tuple(events)),
         )
-        retro = pd.read_sql(query, con).sort_values("event_no").reset_index(drop=True)
+        retro = (
+            pd.read_sql(query, con)
+            .sort_values("event_no")
+            .reset_index(drop=True)
+        )
 
     with sqlite3.connect(db) as con:
         query = (
             "select event_no, energy, zenith, azimuth from truth where event_no in %s"
             % (str(tuple(events)))
         )
-        energy = pd.read_sql(query, con).sort_values("event_no").reset_index(drop=True)
+        energy = (
+            pd.read_sql(query, con)
+            .sort_values("event_no")
+            .reset_index(drop=True)
+        )
     retro["energy"] = energy["energy"]
     retro["zenith"] = energy["zenith"]
     retro["azimuth"] = energy["azimuth"]
@@ -545,15 +602,22 @@ def plot_biases(key_limits, biases, is_retro=False):
                         if interaction_type == str(0.0):
                             interaction_tag = "unknown"
 
-                        plt.title("$\\nu_%s$ %s" % (pid_tag, interaction_tag), size=20)
+                        plt.title(
+                            "$\\nu_%s$ %s" % (pid_tag, interaction_tag),
+                            size=20,
+                        )
                         ax[interaction_count, pid_count].tick_params(
                             axis="x", labelsize=10
                         )
                         ax[interaction_count, pid_count].tick_params(
                             axis="y", labelsize=10
                         )
-                        ax[interaction_count, pid_count].set_xlim(key_limits[key]["x"])
-                        ax[interaction_count, pid_count].set_ylim(key_limits[key]["y"])
+                        ax[interaction_count, pid_count].set_xlim(
+                            key_limits[key]["x"]
+                        )
+                        ax[interaction_count, pid_count].set_ylim(
+                            key_limits[key]["y"]
+                        )
                         ax[interaction_count, pid_count].legend()
                         plt.tick_params(right=False, labelright=False)
 
@@ -590,7 +654,9 @@ def PlotWidth(key_limits, biases):
                 if interaction_type != str(0.0):
                     plot_data = biases["dynedge"][key][pid][interaction_type]
                     if contains_retro:
-                        plot_data_retro = biases["retro"][key][pid][interaction_type]
+                        plot_data_retro = biases["retro"][key][pid][
+                            interaction_type
+                        ]
                     if len(plot_data["mean"]) != 0:
 
                         ax2 = ax[interaction_count, pid_count].twinx()
@@ -635,22 +701,30 @@ def PlotWidth(key_limits, biases):
                         if interaction_type == str(0.0):
                             interaction_tag = "unknown"
 
-                        plt.title("$\\nu_%s$ %s" % (pid_tag, interaction_tag), size=20)
+                        plt.title(
+                            "$\\nu_%s$ %s" % (pid_tag, interaction_tag),
+                            size=20,
+                        )
                         ax[interaction_count, pid_count].tick_params(
                             axis="x", labelsize=10
                         )
                         ax[interaction_count, pid_count].tick_params(
                             axis="y", labelsize=10
                         )
-                        ax[interaction_count, pid_count].set_xlim(key_limits[key]["x"])
-                        ax[interaction_count, pid_count].set_ylim(key_limits[key]["y"])
+                        ax[interaction_count, pid_count].set_xlim(
+                            key_limits[key]["x"]
+                        )
+                        ax[interaction_count, pid_count].set_ylim(
+                            key_limits[key]["y"]
+                        )
                         ax[interaction_count, pid_count].legend()
                         plt.tick_params(right=False, labelright=False)
                         if (interaction_count == 0) & (pid_count == 0) or (
                             interaction_count == 1
                         ) & (pid_count == 0):
                             ax[interaction_count, pid_count].set_ylabel(
-                                "W($log_{10}$($\\frac{pred}{truth}$)) [GeV]", size=20
+                                "W($log_{10}$($\\frac{pred}{truth}$)) [GeV]",
+                                size=20,
                             )
                         if interaction_count != 0:
                             ax[interaction_count, pid_count].set_xlabel(
@@ -674,7 +748,9 @@ def PlotRelativeImprovement(key_limits, biases):
             for interaction_type in biases["dynedge"][key][pid]:
                 if interaction_type != str(0.0):
                     plot_data = biases["dynedge"][key][pid][interaction_type]
-                    plot_data_retro = biases["retro"][key][pid][interaction_type]
+                    plot_data_retro = biases["retro"][key][pid][
+                        interaction_type
+                    ]
                     if len(plot_data["mean"]) != 0:
                         ax2 = ax[interaction_count, pid_count].twinx()
                         ax2.bar(
@@ -714,15 +790,22 @@ def PlotRelativeImprovement(key_limits, biases):
                         if interaction_type == str(0.0):
                             interaction_tag = "unknown"
 
-                        plt.title("$\\nu_%s$ %s" % (pid_tag, interaction_tag), size=20)
+                        plt.title(
+                            "$\\nu_%s$ %s" % (pid_tag, interaction_tag),
+                            size=20,
+                        )
                         ax[interaction_count, pid_count].tick_params(
                             axis="x", labelsize=10
                         )
                         ax[interaction_count, pid_count].tick_params(
                             axis="y", labelsize=10
                         )
-                        ax[interaction_count, pid_count].set_xlim(key_limits[key]["x"])
-                        ax[interaction_count, pid_count].set_ylim(key_limits[key]["y"])
+                        ax[interaction_count, pid_count].set_xlim(
+                            key_limits[key]["x"]
+                        )
+                        ax[interaction_count, pid_count].set_ylim(
+                            key_limits[key]["y"]
+                        )
                         ax[interaction_count, pid_count].legend()
                         plt.tick_params(right=False, labelright=False)
                         if (interaction_count == 0) & (pid_count == 0) or (

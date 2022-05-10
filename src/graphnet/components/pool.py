@@ -34,7 +34,9 @@ def min_pool_x(cluster: Any, x: Any, batch: Any, size: Optional[int] = None):
 
 
 def sum_pool_and_distribute(
-    tensor: Tensor, cluster_index: LongTensor, batch: Optional[LongTensor] = None
+    tensor: Tensor,
+    cluster_index: LongTensor,
+    batch: Optional[LongTensor] = None,
 ) -> Tensor:
     """Sum-pool values across the cluster, and distribute the individual nodes."""
     if batch is None:
@@ -45,7 +47,9 @@ def sum_pool_and_distribute(
     return tensor_unpooled
 
 
-def _group_identical(tensor: Tensor, batch: Optional[LongTensor] = None) -> LongTensor:
+def _group_identical(
+    tensor: Tensor, batch: Optional[LongTensor] = None
+) -> LongTensor:
     """Group rows in `tensor` that are identical
 
     Args:

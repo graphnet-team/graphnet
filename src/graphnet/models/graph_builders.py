@@ -84,7 +84,9 @@ class RadialGraphBuilder(GraphBuilder):
         return data
 
 
-class EuclideanGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
+class EuclideanGraphBuilder(
+    GraphBuilder
+):  # pylint: disable=too-few-public-methods
     """Builds graph adjacency according to Euclidean distance as in https://arxiv.org/pdf/1809.06166.pdf"""
 
     def __init__(
@@ -116,11 +118,15 @@ class EuclideanGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-met
         batch_mask = data.batch.unsqueeze(dim=0) == data.batch.unsqueeze(dim=1)
 
         distance_matrix = calculate_distance_matrix(xyz_coords)
-        affinity_matrix = torch.exp(-0.5 * distance_matrix**2 / self._sigma**2)
+        affinity_matrix = torch.exp(
+            -0.5 * distance_matrix**2 / self._sigma**2
+        )
 
         # Use softmax to normalise all adjacencies to one for each node
         exp_row_sums = torch.exp(affinity_matrix).sum(axis=1)
-        weighted_adj_matrix = torch.exp(affinity_matrix) / exp_row_sums.unsqueeze(dim=1)
+        weighted_adj_matrix = torch.exp(
+            affinity_matrix
+        ) / exp_row_sums.unsqueeze(dim=1)
 
         # Only include edges with weights that exceed the chosen threshold (and are part of the same event)
         sources, targets = torch.where(

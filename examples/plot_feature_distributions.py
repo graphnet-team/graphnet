@@ -40,7 +40,10 @@ def main():
     train_selection, _ = get_equal_proportion_neutrino_indices(db)
     train_selection = train_selection[0:10000]
 
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(
+    (
+        training_dataloader,
+        validation_dataloader,
+    ) = make_train_validation_dataloader(
         db,
         train_selection,
         pulsemaps,
@@ -76,20 +79,28 @@ def main():
     bins = 100
 
     # -- Original
-    fig, axes = plt.subplots(dim, dim, figsize=(dim * axis_size, dim * axis_size))
+    fig, axes = plt.subplots(
+        dim, dim, figsize=(dim * axis_size, dim * axis_size)
+    )
     for ix, ax in enumerate(axes.ravel()[:nb_features_original]):
         ax.hist(x_original[:, ix], bins=bins)
-        ax.set_xlabel(f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}")
+        ax.set_xlabel(
+            f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}"
+        )
         ax.set_yscale("log")
 
     fig.tight_layout
     fig.savefig("feature_distribution_original.png")
 
     # -- Preprocessed
-    fig, axes = plt.subplots(dim, dim, figsize=(dim * axis_size, dim * axis_size))
+    fig, axes = plt.subplots(
+        dim, dim, figsize=(dim * axis_size, dim * axis_size)
+    )
     for ix, ax in enumerate(axes.ravel()[:nb_features_preprocessed]):
         ax.hist(x_preprocessed[:, ix], bins=bins, color="orange")
-        ax.set_xlabel(f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}")
+        ax.set_xlabel(
+            f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}"
+        )
         ax.set_yscale("log")
 
     fig.tight_layout

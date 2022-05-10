@@ -38,7 +38,10 @@ class Coarsening(ABC):
     ):
         assert reduce in self.reduce_options
 
-        self._reduce_method, self._attribute_reduce_method = self.reduce_options[reduce]
+        (
+            self._reduce_method,
+            self._attribute_reduce_method,
+        ) = self.reduce_options[reduce]
         self._do_transfer_attributes = transfer_attributes
 
     @abstractmethod
@@ -117,7 +120,9 @@ class DOMCoarsening(Coarsening):
     def _perform_clustering(self, data: Data) -> LongTensor:
         """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
         # dom_index = group_pulses_to_dom(data)
-        dom_index = group_by(data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"])
+        dom_index = group_by(
+            data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
+        )
         return dom_index
 
 
@@ -183,6 +188,7 @@ class LoopBasedCoarsening:
 
         data = data.clone()  # @TODO: To avoid modifying in-place?
         data.x = torch.cat(
-            (unique_doms, n_pulses_pr_dom.unsqueeze(1), pulse_statistics), dim=1
+            (unique_doms, n_pulses_pr_dom.unsqueeze(1), pulse_statistics),
+            dim=1,
         )
         return data

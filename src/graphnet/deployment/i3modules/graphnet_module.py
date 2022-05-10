@@ -7,8 +7,13 @@ import torch
 from torch_geometric.data import Data
 
 try:
-    from icecube.icetray import I3Module, I3Frame  # pyright: reportMissingImports=false
-    from icecube.dataclasses import I3Double  # pyright: reportMissingImports=false
+    from icecube.icetray import (
+        I3Module,
+        I3Frame,
+    )  # pyright: reportMissingImports=false
+    from icecube.dataclasses import (
+        I3Double,
+    )  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
 
@@ -132,11 +137,15 @@ class GraphNeTModuleBase(I3Module):
         features = None
         for i3extractor in self.i3extractors:
             feature_dict = i3extractor(frame)
-            features_pulsemap = np.array([feature_dict[key] for key in self.FEATURES]).T
+            features_pulsemap = np.array(
+                [feature_dict[key] for key in self.FEATURES]
+            ).T
             if features is None:
                 features = features_pulsemap
             else:
-                features = np.concatenate((features, features_pulsemap), axis=0)
+                features = np.concatenate(
+                    (features, features_pulsemap), axis=0
+                )
         return features
 
     def write_predictions_to_frame(

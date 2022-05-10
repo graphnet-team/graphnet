@@ -280,7 +280,8 @@ class DynEdge_V2(GNN):
         )
 
         global_variables_distributed = torch.sum(
-            distribute.unsqueeze(dim=2) * global_variables.unsqueeze(dim=0), dim=1
+            distribute.unsqueeze(dim=2) * global_variables.unsqueeze(dim=0),
+            dim=1,
         )
 
         x = torch.cat((x, global_variables_distributed), dim=1)
@@ -440,7 +441,8 @@ class DynEdge_V3(GNN):
         )
 
         global_variables_distributed = torch.sum(
-            distribute.unsqueeze(dim=2) * global_variables.unsqueeze(dim=0), dim=1
+            distribute.unsqueeze(dim=2) * global_variables.unsqueeze(dim=0),
+            dim=1,
         )
 
         x = torch.cat((x, global_variables_distributed), dim=1)

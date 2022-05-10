@@ -169,7 +169,10 @@ class SQLiteDataConverter(DataConverter):
                 for key, data in data_dict.items():
                     df = apply_event_no(data, event_no_list, event_count)
 
-                    if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
+                    if (
+                        self.any_pulsemap_is_non_empty(data_dict)
+                        and len(df) > 0
+                    ):
                         # only include data_dict in temp. databases if at least one pulsemap is non-empty,
                         # and the current extractor (df) is also non-empty (also since truth is always non-empty)
                         dataframes_big[key] = dataframes_big[key].append(
@@ -182,14 +185,18 @@ class SQLiteDataConverter(DataConverter):
                     event_count += 1
 
                 if len(dataframes_big[first_table]) >= max_dict_size:
-                    self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
+                    self._save_to_sql(
+                        dataframes_big, id, output_count, db_name, outdir
+                    )
                     dataframes_big = OrderedDict(
                         [(key, pd.DataFrame()) for key in self._table_names]
                     )
                     output_count += 1
 
             if len(dataframes_big[first_table]) > 0:
-                self._save_to_sql(dataframes_big, id, output_count, db_name, outdir)
+                self._save_to_sql(
+                    dataframes_big, id, output_count, db_name, outdir
+                )
                 dataframes_big = OrderedDict(
                     [(key, pd.DataFrame()) for key in self._table_names]
                 )
@@ -199,12 +206,16 @@ class SQLiteDataConverter(DataConverter):
         """Saves I3 file names in CSV format."""
         create_out_directory(self._outdir + "/%s/config" % self._db_name)
         i3_files = pd.DataFrame(data=i3_files, columns=["filename"])
-        i3_files.to_csv(self._outdir + "/%s/config/i3files.csv" % self._db_name)
+        i3_files.to_csv(
+            self._outdir + "/%s/config/i3files.csv" % self._db_name
+        )
 
     def _merge_databases(self):
         """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""
         path_tmp = self._outdir + "/" + self._db_name + "/tmp"
-        database_path = self._outdir + "/" + self._db_name + "/data/" + self._db_name
+        database_path = (
+            self._outdir + "/" + self._db_name + "/data/" + self._db_name
+        )
         db_paths = glob(os.path.join(path_tmp, "*.db"))
         db_files = [os.path.split(db_file)[1] for db_file in db_paths]
         if len(db_files) > 0:
@@ -343,9 +354,13 @@ class SQLiteDataConverter(DataConverter):
             for table_name, data in results.items():
                 self._submit_to_database(database, table_name, data)
 
-    def _save_to_sql(self, dataframes_big: dict, id, output_count, db_name, outdir):
+    def _save_to_sql(
+        self, dataframes_big: dict, id, output_count, db_name, outdir
+    ):
         engine = sqlalchemy.create_engine(
-            "sqlite:///" + outdir + f"/{db_name}/tmp/worker-{id}-{output_count}.db"
+            "sqlite:///"
+            + outdir
+            + f"/{db_name}/tmp/worker-{id}-{output_count}.db"
         )
         for key, df in dataframes_big.items():
             if len(dataframes_big[key]) > 0:

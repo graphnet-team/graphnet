@@ -91,8 +91,12 @@ def make_train_validation_dataloader(
 
     # Perform train/validation split
     if isinstance(db, list):
-        df_for_shuffle = pd.DataFrame({"event_no": selection, "db": database_indices})
-        shuffled_df = df_for_shuffle.sample(frac=1, replace=False, random_state=rng)
+        df_for_shuffle = pd.DataFrame(
+            {"event_no": selection, "db": database_indices}
+        )
+        shuffled_df = df_for_shuffle.sample(
+            frac=1, replace=False, random_state=rng
+        )
         training_df, validation_df = train_test_split(
             shuffled_df, test_size=test_size, random_state=rng
         )
@@ -178,11 +182,15 @@ def get_predictions(
 
     data = np.concatenate(
         [predictions]
-        + [np.asarray(values)[:, np.newaxis] for values in attributes.values()],
+        + [
+            np.asarray(values)[:, np.newaxis] for values in attributes.values()
+        ],
         axis=1,
     )
 
-    results = pd.DataFrame(data, columns=prediction_columns + additional_attributes)
+    results = pd.DataFrame(
+        data, columns=prediction_columns + additional_attributes
+    )
     return results
 
 
