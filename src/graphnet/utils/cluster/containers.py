@@ -31,30 +31,6 @@ def trim_duplicates(a_list) :
 # Smart containers
 #
 
-class FiniteList(object) :
-    '''
-    A list which can become full
-    '''
-
-    def __init__(self,limit) :
-        self.data = list()
-        self.limit = limit
-
-    def __init__(self,limit) :
-        return len(self.data)
-
-    def full(self) :
-        if len(self.data) > limit :
-            raise Exception("Finite list has overflowed")
-        else :
-            return len(self.data) == limit
-
-    def append(self,v) :
-        if self.full() :
-            return False
-        else :
-            self.data.append(v)
-            return True
 
 
 
