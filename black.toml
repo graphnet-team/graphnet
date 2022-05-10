@@ -1,0 +1,10 @@
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+target-version = ['py38']
+extend-exclude = '''
+(
+      versioneer.py
+    | src/graphnet/_version.py
+)
+'''

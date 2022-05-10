@@ -38,7 +38,10 @@ class Coarsening(ABC):
     ):
         assert reduce in self.reduce_options
 
-        self._reduce_method, self._attribute_reduce_method = self.reduce_options[reduce]
+        (
+            self._reduce_method,
+            self._attribute_reduce_method,
+        ) = self.reduce_options[reduce]
         self._do_transfer_attributes = transfer_attributes
 
     @abstractmethod
@@ -117,7 +120,9 @@ class DOMCoarsening(Coarsening):
     def _perform_clustering(self, data: Data) -> LongTensor:
         """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
         # dom_index = group_pulses_to_dom(data)
-        dom_index = group_by(data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"])
+        dom_index = group_by(
+            data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
+        )
         return dom_index
 
 
@@ -144,7 +149,9 @@ class CustomDOMCoarsening(DOMCoarsening):
                 min_pool_x(cluster, charge, batch)[0],
                 max_pool_x(cluster, charge, batch)[0],
                 std_pool_x(cluster, charge, batch)[0],
-                sum_pool_x(cluster, torch.ones_like(charge), batch)[0],  # Num. nodes (pulses) per cluster (DOM)
+                sum_pool_x(cluster, torch.ones_like(charge), batch)[
+                    0
+                ],  # Num. nodes (pulses) per cluster (DOM)
             ),
             dim=1,
         )
@@ -165,7 +172,7 @@ class LoopBasedCoarsening:
         count = 0
         pulse_statistics = torch.zeros(size=(len(unique_doms), 8))
 
-        #'dom_x','dom_y','dom_z','dom_time','charge','rde','pmt_area'
+        # 'dom_x','dom_y','dom_z','dom_time','charge','rde','pmt_area'
         for unique_inverse_idx in unique_inverse_indices:
             time = data.x[inverse_idx == unique_inverse_idx, 3]
             charge = data.x[inverse_idx == unique_inverse_idx, 4]
@@ -181,6 +188,7 @@ class LoopBasedCoarsening:
 
         data = data.clone()  # @TODO: To avoid modifying in-place?
         data.x = torch.cat(
-            (unique_doms, n_pulses_pr_dom.unsqueeze(1), pulse_statistics), dim=1
+            (unique_doms, n_pulses_pr_dom.unsqueeze(1), pulse_statistics),
+            dim=1,
         )
         return data

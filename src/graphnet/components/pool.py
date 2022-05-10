@@ -14,9 +14,15 @@ from torch_geometric.nn.pool import (
     max_pool_x,
 )
 
+
 def min_pool(cluster: Any, data: Any, transform: Optional[Any] = None):
     """Like `max_pool, just negating `data`."""
-    return -max_pool(cluster, -data, transform, )
+    return -max_pool(
+        cluster,
+        -data,
+        transform,
+    )
+
 
 def min_pool_x(cluster: Any, x: Any, batch: Any, size: Optional[int] = None):
     """Like `max_pool_x, just negating `data`."""
@@ -26,7 +32,12 @@ def min_pool_x(cluster: Any, x: Any, batch: Any, size: Optional[int] = None):
     else:
         return -ret
 
-def sum_pool_and_distribute(tensor: Tensor, cluster_index: LongTensor, batch: Optional[LongTensor] = None) -> Tensor:
+
+def sum_pool_and_distribute(
+    tensor: Tensor,
+    cluster_index: LongTensor,
+    batch: Optional[LongTensor] = None,
+) -> Tensor:
     """Sum-pool values across the cluster, and distribute the individual nodes."""
     if batch is None:
         batch = torch.zeros(tensor.size(dim=0)).long()
@@ -36,7 +47,9 @@ def sum_pool_and_distribute(tensor: Tensor, cluster_index: LongTensor, batch: Op
     return tensor_unpooled
 
 
-def _group_identical(tensor: Tensor, batch: Optional[LongTensor] = None) -> LongTensor:
+def _group_identical(
+    tensor: Tensor, batch: Optional[LongTensor] = None
+) -> LongTensor:
     """Group rows in `tensor` that are identical
 
     Args:
@@ -51,6 +64,7 @@ def _group_identical(tensor: Tensor, batch: Optional[LongTensor] = None) -> Long
     if batch is not None:
         tensor = tensor.cat((tensor, batch.unsqueeze(dim=1)), dim=1)
     return torch.unique(tensor, return_inverse=True, dim=0)[1]
+
 
 def group_by(data: Data, keys: List[str]) -> LongTensor:
     """Group nodes in `data` that have identical values of `keys`.
@@ -72,24 +86,27 @@ def group_by(data: Data, keys: List[str]) -> LongTensor:
     """
     features = [getattr(data, key) for key in keys]
     tensor = torch.stack(features).T  # .int()  @TODO: Required? Use rounding?
-    batch = getattr(tensor, 'batch', None)
+    batch = getattr(tensor, "batch", None)
     index = _group_identical(tensor, batch)
     return index
 
+
 def group_pulses_to_dom(data: Data) -> Data:
     """Groups pulses on the same DOM, using DOM and string number."""
-    data.dom_index = group_by(data, ['dom_number', 'string'])
+    data.dom_index = group_by(data, ["dom_number", "string"])
     return data
+
 
 def group_pulses_to_pmt(data: Data) -> Data:
     """Groups pulses on the same PMT, using PMT, DOM, and string number."""
-    data.pmt_index = group_by(data, ['pmt_number', 'dom_number', 'string'])
+    data.pmt_index = group_by(data, ["pmt_number", "dom_number", "string"])
     return data
 
 
 # Below mirroring `torch_geometric.nn.pool.{avg,max}_pool.py` exactly
 def _sum_pool_x(cluster, x, size: Optional[int] = None):
-    return scatter(x, cluster, dim=0, dim_size=size, reduce='sum')
+    return scatter(x, cluster, dim=0, dim_size=size, reduce="sum")
+
 
 def _std_pool_x(cluster, x, size: Optional[int] = None):
     return scatter_std(x, cluster, dim=0, dim_size=size, unbiased=False)
@@ -124,6 +141,7 @@ def sum_pool_x(cluster, x, batch, size: Optional[int] = None):
     batch = pool_batch(perm, batch)
 
     return x, batch
+
 
 def std_pool_x(cluster, x, batch, size: Optional[int] = None):
     r"""Std-Pools node features according to the clustering defined in
@@ -189,6 +207,7 @@ def sum_pool(cluster, data, transform=None):
         data = transform(data)
 
     return data
+
 
 def std_pool(cluster, data, transform=None):
     r"""Pools and coarsens a graph given by the

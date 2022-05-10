@@ -15,20 +15,25 @@ from graphnet.models.task.reconstruction import PassOutput1
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 
-from studies.upgrade_noise.modelling.run_jobs import remove_log10, transform_to_log10
+from studies.upgrade_noise.modelling.run_jobs import (
+    remove_log10,
+    transform_to_log10,
+)
 
 # Constants
 BASE_DIR = "/groups/icecube/asogaard/gnn/upgrade_sensitivity"
 RUN_NAME = "dev_step4_numu_140021_second_run"
 MODEL_NAME = "upgrade_energy_regression_45e_GraphSagePulses"
-MODEL_PATH = f"{BASE_DIR}/results/{RUN_NAME}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
+MODEL_PATH = (
+    f"{BASE_DIR}/results/{RUN_NAME}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
+)
+
 
 class DeploymentModule(LightningModule):
     def __init__(self, model, features):
         super().__init__()
         self.model = model
         self.features = features
-
 
     def __call__(self, x):
         # Prepare Data-object
@@ -45,10 +50,8 @@ class DeploymentModule(LightningModule):
         return self.model(data)
 
 
-
 # Main function definition
 def main():
-
 
     # Building model
     detector = IceCubeUpgrade(
@@ -70,7 +73,7 @@ def main():
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,
-     )
+    )
 
     model.load_state_dict(MODEL_PATH)
     model.inference()
@@ -78,10 +81,10 @@ def main():
     # Convet to ONNX format
     filepath = "model.onnx"
     deployment_model = DeploymentModule(model, detector.features)
-    sample_x=torch.randn((2, len(detector.features))),
+    sample_x = (torch.randn((2, len(detector.features))),)
     deployment_model.to_onnx(filepath, sample_x, export_params=True)
 
 
 # Main function call
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
