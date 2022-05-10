@@ -60,15 +60,22 @@ class Model(LightningModule):
         self._scheduler_config = scheduler_config or dict()
 
     def configure_optimizers(self):
-        optimizer = self._optimizer_class(self.parameters(), **self._optimizer_kwargs)
+        optimizer = self._optimizer_class(
+            self.parameters(), **self._optimizer_kwargs
+        )
         config = {
             "optimizer": optimizer,
         }
         if self._scheduler_class is not None:
-            scheduler = self._scheduler_class(optimizer, **self._scheduler_kwargs)
+            scheduler = self._scheduler_class(
+                optimizer, **self._scheduler_kwargs
+            )
             config.update(
                 {
-                    "lr_scheduler": {"scheduler": scheduler, **self._scheduler_config},
+                    "lr_scheduler": {
+                        "scheduler": scheduler,
+                        **self._scheduler_config,
+                    },
                 }
             )
         return config
@@ -114,7 +121,8 @@ class Model(LightningModule):
     def compute_loss(self, preds: Tensor, data: Data, verbose=False) -> Tensor:
         """Computes and sums losses across tasks."""
         losses = [
-            task.compute_loss(pred, data) for task, pred in zip(self._tasks, preds)
+            task.compute_loss(pred, data)
+            for task, pred in zip(self._tasks, preds)
         ]
         if verbose:
             print(losses)
@@ -141,11 +149,15 @@ class Model(LightningModule):
     def save_state_dict(self, path: str):
         """Saves model `state_dict` to `path`."""
         if not path.endswith(".pth"):
-            print("It is recommended to use the .pth suffix for state_dict files.")
+            print(
+                "It is recommended to use the .pth suffix for state_dict files."
+            )
         torch.save(self.cpu().state_dict(), path)
         print(f"Model state_dict saved to {path}")
 
-    def load_state_dict(self, path: str) -> "Model":  # pylint: disable=arguments-differ
+    def load_state_dict(
+        self, path: str
+    ) -> "Model":  # pylint: disable=arguments-differ
         """Loads model `state_dict` from `path`, either file or loaded object."""
         if isinstance(path, str):
             state_dict = torch.load(path)

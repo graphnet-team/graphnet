@@ -24,7 +24,9 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
     ):
 
         assert isinstance(perturbation_dict, dict)
-        assert len(set(perturbation_dict.keys())) == len(perturbation_dict.keys())
+        assert len(set(perturbation_dict.keys())) == len(
+            perturbation_dict.keys()
+        )
         self._perturbation_dict = perturbation_dict
         super().__init__(
             database,
@@ -51,7 +53,9 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
         features = np.array(features)
         perturbed_features = np.random.normal(
             loc=features[:, self._perturbation_cols],
-            scale=np.array(list(self._perturbation_dict.values()), dtype=np.float),
+            scale=np.array(
+                list(self._perturbation_dict.values()), dtype=np.float
+            ),
         )
         features[:, self._perturbation_cols] = perturbed_features
         return features

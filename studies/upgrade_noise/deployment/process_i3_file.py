@@ -16,7 +16,9 @@ from graphnet.modules import GraphNeTModuleIceCubeUpgrade
 BASE_DIR = "/groups/icecube/asogaard/gnn/upgrade_sensitivity"
 RUN_NAME = "dev_step4_numu_140021_second_run"
 MODEL_NAME = "upgrade_energy_regression_45e_GraphSagePulses"
-MODEL_PATH = f"{BASE_DIR}/results/{RUN_NAME}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
+MODEL_PATH = (
+    f"{BASE_DIR}/results/{RUN_NAME}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
+)
 
 
 # Main function definition

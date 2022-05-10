@@ -77,7 +77,9 @@ def test_von_mises_fisher_exact_m3(dtype=torch.float64):
     )
 
     # Compute values
-    res_reference = torch.log(k) - k - torch.log(2 * np.pi * (1 - torch.exp(-2 * k)))
+    res_reference = (
+        torch.log(k) - k - torch.log(2 * np.pi * (1 - torch.exp(-2 * k)))
+    )
     res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
 
     # Compute gradients
@@ -109,7 +111,9 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
     res_approx = VonMisesFisherLoss.log_cmk_approx(m, k)
     res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
 
-    C = res_exact[0] - res_approx[0]  # Normalisation constant from integrating gradient
+    C = (
+        res_exact[0] - res_approx[0]
+    )  # Normalisation constant from integrating gradient
     res_approx += C - eps_like(C)
 
     # Compute gradients

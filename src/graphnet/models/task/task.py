@@ -114,7 +114,9 @@ class Task(LightningModule):
 
     @final
     def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
-        target = torch.stack([data[label] for label in self._target_labels], dim=1)
+        target = torch.stack(
+            [data[label] for label in self._target_labels], dim=1
+        )
         target = self._transform_target(target)
         loss = self._loss_function(pred, target) + self._regularisation_loss
         return loss
@@ -157,7 +159,9 @@ class Task(LightningModule):
                 )
             else:
                 x_test = np.logspace(-6, 6, 12 + 1)
-                x_test = torch.from_numpy(np.concatenate([-x_test[::-1], [0], x_test]))
+                x_test = torch.from_numpy(
+                    np.concatenate([-x_test[::-1], [0], x_test])
+                )
 
             # Add feature dimension before inference transformation to make it match the dimensions of a standard prediction. Remove it again before comparison. Temporary
             t_test = torch.unsqueeze(transform_target(x_test), -1)
@@ -171,7 +175,9 @@ class Task(LightningModule):
 
         # Set transforms
         if transform_prediction_and_target is not None:
-            self._transform_prediction_training = transform_prediction_and_target
+            self._transform_prediction_training = (
+                transform_prediction_and_target
+            )
             self._transform_target = transform_prediction_and_target
         elif transform_target is not None:
             self._transform_prediction_inference = transform_inference

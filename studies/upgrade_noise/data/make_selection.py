@@ -33,7 +33,9 @@ def merge_tmp(tmp_dir):
                 df = pd.read_csv(tmp_dir + "/" + file)
                 is_first = False
             else:
-                df = df.append(pd.read_csv(tmp_dir + "/" + file), ignore_index=True)
+                df = df.append(
+                    pd.read_csv(tmp_dir + "/" + file), ignore_index=True
+                )
     df = df.sort_values("event_no").reset_index(drop=True)
     return df
 
@@ -68,13 +70,17 @@ def make_even_track_cascade(events, db):
     print("found %s cascades" % len(cascades))
     if len(tracks) > len(cascades):
         return (
-            pd.concat([tracks.sample(len(cascades)), cascades], ignore_index=True)
+            pd.concat(
+                [tracks.sample(len(cascades)), cascades], ignore_index=True
+            )
             .sample(frac=1)
             .reset_index(drop=True)
         )
     else:
         return (
-            pd.concat([tracks, cascades.sample(len(tracks))], ignore_index=True)
+            pd.concat(
+                [tracks, cascades.sample(len(tracks))], ignore_index=True
+            )
             .sample(frac=1)
             .reset_index(drop=True)
         )
@@ -84,9 +90,7 @@ if __name__ == "__main__":
     n_workers = 50
     db = "/mnt/scratch/rasmus_orsoe/databases/dev_step4_numu_140021_second_run/data/dev_step4_numu_140021_second_run.db"
     tmp_dir = "/home/iwsatlas1/oersoe/phd/upgrade_noise/tmp"
-    path = (
-        "/mnt/scratch/rasmus_orsoe/databases/dev_step4_numu_140021_second_run/selection"
-    )
+    path = "/mnt/scratch/rasmus_orsoe/databases/dev_step4_numu_140021_second_run/selection"
     with sqlite3.connect(db) as con:
         query = "select event_no from truth"
         events = pd.read_sql(query, con)

@@ -25,7 +25,9 @@ class PiecewiseLinearLR(_LRScheduler):
             each update. Default: ``False``.
     """
 
-    def __init__(self, optimizer, milestones, factors, last_epoch=-1, verbose=False):
+    def __init__(
+        self, optimizer, milestones, factors, last_epoch=-1, verbose=False
+    ):
         # Check(s)
         if milestones != sorted(milestones):
             raise ValueError("Milestones must be increasing")
@@ -99,7 +101,11 @@ class ProgressBar(TQDMProgressBar):
         """
         if trainer.current_epoch > 0:
             self._update_bar(self.main_progress_bar)
-            self.main_progress_bar.set_postfix(self.get_metrics(trainer, model))
+            self.main_progress_bar.set_postfix(
+                self.get_metrics(trainer, model)
+            )
             print("")
         super().on_train_epoch_start(trainer, model)
-        self.main_progress_bar.set_description(f"Epoch {trainer.current_epoch:2d}")
+        self.main_progress_bar.set_description(
+            f"Epoch {trainer.current_epoch:2d}"
+        )

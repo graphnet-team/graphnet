@@ -141,7 +141,9 @@ def width_plot(
             plot_data_track = biases["dynedge"][key][str(14.0)][str(1.0)]
             plot_data_cascade = biases["dynedge"][key]["cascade"]
             if include_retro:
-                plot_data_retro_track = biases["retro"][key][str(14.0)][str(1.0)]
+                plot_data_retro_track = biases["retro"][key][str(14.0)][
+                    str(1.0)
+                ]
                 plot_data_retro_cascade = biases["retro"][key]["cascade"]
             if len(plot_data_track["mean"]) != 0:
                 ax3 = ax1.twinx()

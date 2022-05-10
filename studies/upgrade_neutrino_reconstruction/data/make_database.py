@@ -24,8 +24,12 @@ def make_database():
             I3FeatureExtractorIceCubeUpgrade("SplitInIcePulsesCleaned"),
             I3FeatureExtractorIceCubeUpgrade("SplitInIcePulsesSRT"),
             I3FeatureExtractorIceCubeUpgrade("SplitInIcePulsesTWSRT"),
-            I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMapRFCleaned_DEgg"),
-            I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMapRFCleaned_mDOM"),
+            I3FeatureExtractorIceCubeUpgrade(
+                "I3RecoPulseSeriesMapRFCleaned_DEgg"
+            ),
+            I3FeatureExtractorIceCubeUpgrade(
+                "I3RecoPulseSeriesMapRFCleaned_mDOM"
+            ),
         ],
         outdir,
         gcd_rescue,
