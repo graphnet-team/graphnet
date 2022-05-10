@@ -163,7 +163,9 @@
                     <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
                     <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-                    <span class="k">del</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span>  <span class="c1"># Avoid adding unneccesary data to frame</span>
+                    <span class="k">del</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;I3Calibration&quot;</span>
+                    <span class="p">]</span>  <span class="c1"># Avoid adding unneccesary data to frame</span>
             <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span>
                     <span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span>
@@ -216,7 +218,9 @@
         <span class="k">return</span> <span class="n">output</span></div>
 
     <span class="k">def</span> <span class="nf">_get_relative_dom_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>  <span class="c1"># Not available for e.g. mDOMs in IceCube Upgrade</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span>
+        <span class="p">):</span>  <span class="c1"># Not available for e.g. mDOMs in IceCube Upgrade</span>
             <span class="n">rde</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -404,7 +408,9 @@
                     <span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
                         <span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">])</span>
                     <span class="p">),</span>
-                    <span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">])),</span>
+                    <span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
+                        <span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">])</span>
+                    <span class="p">),</span>
                     <span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
                         <span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">])</span>
                     <span class="p">),</span>
@@ -416,7 +422,9 @@
                 <span class="n">MCInIcePrimary</span><span class="p">,</span>
                 <span class="n">interaction_type</span><span class="p">,</span>
                 <span class="n">elasticity</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">=</span> <span class="n">get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span><span class="p">)</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span>
+            <span class="p">)</span>
             <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span>
@@ -470,14 +478,20 @@
                 <span class="n">hnl_daughters</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hnl_daughters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">count_hnl_daughters</span><span class="p">,</span> <span class="n">hnl_daughter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hnl_daughters</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">count_hnl_daughters</span><span class="p">,</span> <span class="n">hnl_daughter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                    <span class="n">hnl_daughters</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">count_hnl_daughters</span><span class="p">:</span>
                         <span class="n">casc_1_true</span> <span class="o">=</span> <span class="n">hnl_daughter</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">assert</span> <span class="n">casc_1_true</span><span class="o">.</span><span class="n">pos</span> <span class="o">==</span> <span class="n">hnl_daughter</span><span class="o">.</span><span class="n">pos</span>
-                        <span class="n">casc_1_true</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="n">casc_1_true</span><span class="o">.</span><span class="n">energy</span> <span class="o">+</span> <span class="n">hnl_daughter</span><span class="o">.</span><span class="n">energy</span>
+                        <span class="n">casc_1_true</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">casc_1_true</span><span class="o">.</span><span class="n">energy</span> <span class="o">+</span> <span class="n">hnl_daughter</span><span class="o">.</span><span class="n">energy</span>
+                        <span class="p">)</span>
                 <span class="n">decay_length</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">phys_services</span><span class="o">.</span><span class="n">I3Calculator</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">casc_0_true</span><span class="p">,</span> <span class="n">casc_1_true</span><span class="p">)</span>
+                    <span class="n">phys_services</span><span class="o">.</span><span class="n">I3Calculator</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span>
+                        <span class="n">casc_0_true</span><span class="p">,</span> <span class="n">casc_1_true</span>
+                    <span class="p">)</span>
                     <span class="o">/</span> <span class="n">icetray</span><span class="o">.</span><span class="n">I3Units</span><span class="o">.</span><span class="n">m</span>
                 <span class="p">)</span>
 
@@ -501,18 +515,34 @@
                 <span class="p">{</span>
                     <span class="s2">&quot;azimuth_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_azimuth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                     <span class="s2">&quot;time_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;energy_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_total_energy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;position_x_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_vertex_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;position_y_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_vertex_y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;position_z_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_vertex_z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;energy_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_reconstructed_total_energy&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;position_x_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_reconstructed_vertex_x&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;position_y_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_reconstructed_vertex_y&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;position_z_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_reconstructed_vertex_z&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                     <span class="s2">&quot;zenith_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_zenith&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                     <span class="s2">&quot;azimuth_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
                         <span class="s2">&quot;L7_retro_crs_prefit__azimuth_sigma_tot&quot;</span>
                     <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;position_x_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__x_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;position_y_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__y_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;position_z_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__z_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;time_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_retro_crs_prefit__time_sigma_tot&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;position_x_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_retro_crs_prefit__x_sigma_tot&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;position_y_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_retro_crs_prefit__y_sigma_tot&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;position_z_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_retro_crs_prefit__z_sigma_tot&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;time_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_retro_crs_prefit__time_sigma_tot&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                     <span class="s2">&quot;zenith_sigma&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
                         <span class="s2">&quot;L7_retro_crs_prefit__zenith_sigma_tot&quot;</span>
                     <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -522,8 +552,12 @@
                     <span class="s2">&quot;cascade_energy_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
                         <span class="s2">&quot;L7_reconstructed_cascade_energy&quot;</span>
                     <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;track_energy_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_track_energy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;track_length_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_reconstructed_track_length&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;track_energy_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_reconstructed_track_energy&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;track_length_retro&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;L7_reconstructed_track_length&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                 <span class="p">}</span>
             <span class="p">)</span>
 
@@ -571,7 +605,9 @@
 
 
 <div class="viewcode-block" id="frame_is_montecarlo"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.frame_is_montecarlo">[docs]</a><span class="k">def</span> <span class="nf">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;MCInIcePrimary&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;I3MCTree&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">frame_has_key</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;MCInIcePrimary&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">frame_has_key</span><span class="p">(</span>
+        <span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;I3MCTree&quot;</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="frame_is_noise"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.i3extractor.frame_is_noise">[docs]</a><span class="k">def</span> <span class="nf">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
@@ -689,15 +725,21 @@
 
     <span class="n">travel_vec</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="p">[</span>
-            <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;track_length&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;azimuth&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;zenith&quot;</span><span class="p">]),</span>
-            <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;track_length&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;azimuth&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;zenith&quot;</span><span class="p">]),</span>
+            <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;track_length&quot;</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;azimuth&quot;</span><span class="p">])</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;zenith&quot;</span><span class="p">]),</span>
+            <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;track_length&quot;</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;azimuth&quot;</span><span class="p">])</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;zenith&quot;</span><span class="p">]),</span>
             <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;track_length&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;zenith&quot;</span><span class="p">]),</span>
         <span class="p">]</span>
     <span class="p">)</span>
 
     <span class="n">end_pos</span> <span class="o">=</span> <span class="n">start_pos</span> <span class="o">+</span> <span class="n">travel_vec</span>
 
-    <span class="n">stopped_xy</span> <span class="o">=</span> <span class="n">border</span><span class="o">.</span><span class="n">contains_point</span><span class="p">((</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">radius</span><span class="o">=-</span><span class="n">horizontal_pad</span><span class="p">)</span>
+    <span class="n">stopped_xy</span> <span class="o">=</span> <span class="n">border</span><span class="o">.</span><span class="n">contains_point</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">radius</span><span class="o">=-</span><span class="n">horizontal_pad</span>
+    <span class="p">)</span>
     <span class="n">stopped_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vertical_pad</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
         <span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertical_pad</span>
     <span class="p">)</span>

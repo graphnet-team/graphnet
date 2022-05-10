@@ -152,7 +152,12 @@
         <span class="k">return</span></div>
 
     <span class="k">def</span> <span class="nf">_setup_dataloaders</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">persistent_workers</span><span class="o">=</span><span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chunk_size</span><span class="p">,</span>
+        <span class="n">db</span><span class="p">,</span>
+        <span class="n">pulsemap</span><span class="p">,</span>
+        <span class="n">selection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">persistent_workers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">selection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_all_event_nos</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
@@ -203,7 +208,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="p">[</span><span class="n">target</span><span class="p">][</span><span class="s2">&quot;output_column_names&quot;</span><span class="p">],</span>
                 <span class="n">additional_attributes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;event_no&quot;</span><span class="p">],</span>
             <span class="p">)</span>
-            <span class="n">dataframes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;event_no&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">dataframes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;event_no&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_outputs</span><span class="p">(</span><span class="n">dataframes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
@@ -222,7 +229,9 @@
 
     <span class="k">def</span> <span class="nf">_get_truth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">selection</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM truth WHERE event_no in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">selection</span><span class="p">))</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM truth WHERE event_no in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="nb">tuple</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">truth</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">truth</span>
 

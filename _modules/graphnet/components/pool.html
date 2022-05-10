@@ -97,7 +97,9 @@
 
 
 <div class="viewcode-block" id="sum_pool_and_distribute"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.sum_pool_and_distribute">[docs]</a><span class="k">def</span> <span class="nf">sum_pool_and_distribute</span><span class="p">(</span>
-    <span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">cluster_index</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LongTensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">cluster_index</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span>
+    <span class="n">batch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LongTensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Sum-pool values across the cluster, and distribute the individual nodes.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -108,7 +110,9 @@
     <span class="k">return</span> <span class="n">tensor_unpooled</span></div>
 
 
-<div class="viewcode-block" id="_group_identical"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool._group_identical">[docs]</a><span class="k">def</span> <span class="nf">_group_identical</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LongTensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
+<div class="viewcode-block" id="_group_identical"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool._group_identical">[docs]</a><span class="k">def</span> <span class="nf">_group_identical</span><span class="p">(</span>
+    <span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LongTensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Group rows in `tensor` that are identical</span>
 
 <span class="sd">    Args:</span>

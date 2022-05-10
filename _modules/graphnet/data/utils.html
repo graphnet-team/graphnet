@@ -152,8 +152,10 @@
         <span class="k">while</span> <span class="n">restart_trigger</span><span class="p">:</span>
             <span class="n">restart_trigger</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">particle_type</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">numbers_desired</span><span class="p">,</span> <span class="n">pids</span><span class="p">):</span>
-                <span class="n">query_is</span> <span class="o">=</span> <span class="s2">&quot;SELECT event_no FROM truth WHERE abs(pid) == </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">particle_type</span>
+                <span class="n">query_is</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;SELECT event_no FROM truth WHERE abs(pid) == </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">particle_type</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">tmp_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query_is</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -186,7 +188,9 @@
                 <span class="n">list_of_dataframes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
         <span class="n">retrieved_event_nos_pd</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">list_of_dataframes</span><span class="p">)</span>
         <span class="n">event_no_list</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">retrieved_event_nos_pd</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+            <span class="n">retrieved_event_nos_pd</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                <span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span>
+            <span class="p">)</span>
             <span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
             <span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="p">)</span>
@@ -194,7 +198,9 @@
     <span class="k">return</span> <span class="n">event_no_list</span></div>
 
 
-<div class="viewcode-block" id="get_equal_proportion_neutrino_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_equal_proportion_neutrino_indices">[docs]</a><span class="k">def</span> <span class="nf">get_equal_proportion_neutrino_indices</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<div class="viewcode-block" id="get_equal_proportion_neutrino_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_equal_proportion_neutrino_indices">[docs]</a><span class="k">def</span> <span class="nf">get_equal_proportion_neutrino_indices</span><span class="p">(</span>
+    <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Utility method to get indices for neutrino events in equal flavour proportions.</span>
 
 <span class="sd">    Args:</span>
@@ -234,14 +240,18 @@
 
     <span class="c1"># Shuffle and convert to list</span>
     <span class="n">indices_equal_proprtions</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">indices_equal_proprtions</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+        <span class="n">indices_equal_proprtions</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+            <span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span>
+        <span class="p">)</span>
         <span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
         <span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="p">)</span>
 
     <span class="c1"># Get test indices (?)</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-        <span class="n">train_event_nos</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">indices_equal_proprtions</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+        <span class="n">train_event_nos</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">indices_equal_proprtions</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+        <span class="p">)</span>
         <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;select event_no from truth where abs(pid) != 13 and abs(pid) != 1 and event_no not in </span><span class="si">{train_event_nos}</span><span class="s2">&quot;</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
@@ -269,36 +279,33 @@
 
 <div class="viewcode-block" id="get_even_track_cascade_indicies"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.get_even_track_cascade_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_track_cascade_indicies</span><span class="p">(</span><span class="n">database</span><span class="p">):</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;select event_no from truth where abs(pid) = 12 and interaction_type = 1&quot;</span>
-        <span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;select event_no from truth where abs(pid) = 12 and interaction_type = 1&quot;</span>
         <span class="n">nu_e_cc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;select event_no from truth where abs(pid) = 12 and interaction_type = 2&quot;</span>
-        <span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;select event_no from truth where abs(pid) = 12 and interaction_type = 2&quot;</span>
         <span class="n">nu_e_nc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;select event_no from truth where abs(pid) = 14 and interaction_type = 1&quot;</span>
-        <span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;select event_no from truth where abs(pid) = 14 and interaction_type = 1&quot;</span>
         <span class="n">nu_u_cc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;select event_no from truth where abs(pid) = 14 and interaction_type = 2&quot;</span>
-        <span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;select event_no from truth where abs(pid) = 14 and interaction_type = 2&quot;</span>
         <span class="n">nu_u_nc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
 
     <span class="n">events</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">nu_e_nc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">nu_e_cc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">nu_e_cc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nu_u_nc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">nu_u_cc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">nu_u_nc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">nu_u_cc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nu_e_nc</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="p">)</span>
     <span class="n">train_events</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -358,7 +365,8 @@
     <span class="k">if</span> <span class="n">min_max_decay_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">dbangs_indicies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span>
-                <span class="s2">&quot;SELECT event_no FROM truth where dbang_decay_length != -1&quot;</span><span class="p">,</span> <span class="n">conn</span>
+                <span class="s2">&quot;SELECT event_no FROM truth where dbang_decay_length != -1&quot;</span><span class="p">,</span>
+                <span class="n">conn</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;dbang sample size: {len(dbangs_indicies)}&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">min_max_decay_length</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

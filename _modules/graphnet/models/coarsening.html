@@ -101,7 +101,10 @@
     <span class="p">):</span>
         <span class="k">assert</span> <span class="n">reduce</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_options</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reduce_method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attribute_reduce_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_options</span><span class="p">[</span><span class="n">reduce</span><span class="p">]</span>
+        <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reduce_method</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attribute_reduce_method</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_options</span><span class="p">[</span><span class="n">reduce</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_do_transfer_attributes</span> <span class="o">=</span> <span class="n">transfer_attributes</span>
 
 <div class="viewcode-block" id="Coarsening._perform_clustering"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.Coarsening._perform_clustering">[docs]</a>    <span class="nd">@abstractmethod</span>
@@ -180,7 +183,9 @@
 <div class="viewcode-block" id="DOMCoarsening._perform_clustering"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.DOMCoarsening._perform_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform clustering of nodes in `data` by assigning unique cluster indices to each.&quot;&quot;&quot;</span>
         <span class="c1"># dom_index = group_pulses_to_dom(data)</span>
-        <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;dom_x&quot;</span><span class="p">,</span> <span class="s2">&quot;dom_y&quot;</span><span class="p">,</span> <span class="s2">&quot;dom_z&quot;</span><span class="p">,</span> <span class="s2">&quot;rde&quot;</span><span class="p">,</span> <span class="s2">&quot;pmt_area&quot;</span><span class="p">])</span>
+        <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;dom_x&quot;</span><span class="p">,</span> <span class="s2">&quot;dom_y&quot;</span><span class="p">,</span> <span class="s2">&quot;dom_z&quot;</span><span class="p">,</span> <span class="s2">&quot;rde&quot;</span><span class="p">,</span> <span class="s2">&quot;pmt_area&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">dom_index</span></div></div>
 
 
@@ -246,7 +251,8 @@
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>  <span class="c1"># @TODO: To avoid modifying in-place?</span>
         <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">unique_doms</span><span class="p">,</span> <span class="n">n_pulses_pr_dom</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pulse_statistics</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">(</span><span class="n">unique_doms</span><span class="p">,</span> <span class="n">n_pulses_pr_dom</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pulse_statistics</span><span class="p">),</span>
+            <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div></div>
 </pre></div>

@@ -147,7 +147,9 @@
         <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="EuclideanGraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">EuclideanGraphBuilder</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+<div class="viewcode-block" id="EuclideanGraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">EuclideanGraphBuilder</span><span class="p">(</span>
+    <span class="n">GraphBuilder</span>
+<span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
     <span class="sd">&quot;&quot;&quot;Builds graph adjacency according to Euclidean distance as in https://arxiv.org/pdf/1809.06166.pdf&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
@@ -179,11 +181,15 @@
         <span class="n">batch_mask</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">distance_matrix</span> <span class="o">=</span> <span class="n">calculate_distance_matrix</span><span class="p">(</span><span class="n">xyz_coords</span><span class="p">)</span>
-        <span class="n">affinity_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">distance_matrix</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">affinity_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">distance_matrix</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span><span class="o">**</span><span class="mi">2</span>
+        <span class="p">)</span>
 
         <span class="c1"># Use softmax to normalise all adjacencies to one for each node</span>
         <span class="n">exp_row_sums</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">affinity_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">weighted_adj_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">affinity_matrix</span><span class="p">)</span> <span class="o">/</span> <span class="n">exp_row_sums</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">weighted_adj_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="n">affinity_matrix</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">exp_row_sums</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># Only include edges with weights that exceed the chosen threshold (and are part of the same event)</span>
         <span class="n">sources</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
