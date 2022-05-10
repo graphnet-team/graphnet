@@ -22,7 +22,7 @@ from graphnet.models.training.utils import (
 )
 
 # Configurations
-torch.multiprocessing.set_sharing_strategy('file_system')
+torch.multiprocessing.set_sharing_strategy("file_system")
 
 # Constants
 features = FEATURES.DEEPCORE
