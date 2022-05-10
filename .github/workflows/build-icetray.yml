@@ -22,35 +22,49 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install package
         uses: ./.github/actions/install-cpu
-      - name: Retrieve test data
+        with:
+          editable: true
+      - name: Check secrets
         run: |
-          echo "TEST_DATA_DIR=${TEST_DATA_DIR}" >> $GITHUB_ENV
+          echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
+      - name: Retrieve test data
+        if: "${{ env.PUB_WISC_USERNAME != '' }}"
+        run: |
+          # Create test data directory
           mkdir -p $TEST_DATA_DIR
+
+          # Copy test data
           apt-get install sshpass
           sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA_DIR
+          ls -l $TEST_DATA_DIR
+
+          # Check integrity of test data
+          find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g'
+          MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g' | md5sum | cut -d" " -f1)"
+          echo "$MD5CHECK vs. $MD5HASH"
+          if [[ $MD5CHECK == $MD5HASH ]]; then echo "Checksums agree"; else exit 1; fi
         env:
           HOST: ${{ secrets.PUB_WISC_HOST }}
           USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
           PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
           SOURCE: "graphnet/data/test/*.i3.*"
           TEST_DATA_DIR: ./test_data/
-      - name: Check data
-        run: |
-          ls -l $TEST_DATA
-          MD5CHECK="$(find $TEST_DATA -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d" " -f1)"
-          #if [[ "$MD5CHECK" == "$MD5HASH" ]]; then echo "Checksums agree"; else exit 1; fi
-        env:
-          MD5HASH: 7efbc933c39a44efa8cf7ed983030b1e
+          MD5HASH: 80006a6d58338eb8ea153d2b7b02c0a1
+        shell: bash
       - name: Run unit tests and generate coverage report
+        if: "${{ env.PUB_WISC_USERNAME != '' }}"
         run: |
           coverage run --source=graphnet -m pytest tests/
           coverage xml -o coverage.xml
-          coverage report -m
       - name: Work around permission issue
-        run: git config --global --add safe.directory /__w/graphnet/graphnet
+        if: "${{ env.PUB_WISC_USERNAME != '' }}"
+        run: |
+          git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
+        if: "${{ env.CC_TEST_REPORTER_ID != '' }} && ${{ env.PUB_WISC_USERNAME != '' }}"
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
         with:
           coverageCommand: coverage report
+          coverageLocations: coverage.xml:coverage.py
