@@ -21,7 +21,6 @@ import os, socket, subprocess, datetime, shutil#, json, math
 from graphnet.utils.cluster.filesys_tools import make_tmp_dir, is_writable, TMP_FILE_STRFTIME
 
 from graphnet.utils.cluster.unix_tools import which, BASH_SHEBANG
-from graphnet.utils.cluster.containers import RelationalDict
 
 from graphnet.utils.cluster.condor import *
 from graphnet.utils.cluster.slurm import *
