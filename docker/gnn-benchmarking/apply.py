@@ -32,7 +32,12 @@ def main(input_files, output_file, key, events_max):
     # Run GNN module in tray
     tray = I3Tray()
     tray.Add("I3Reader", filenamelist=input_files)
-    tray.Add(GraphNeTModuleIceCube86, key=key, model_path=MODEL_PATH, gcd_file=gcd_file)
+    tray.Add(
+        GraphNeTModuleIceCube86,
+        key=key,
+        model_path=MODEL_PATH,
+        gcd_file=gcd_file,
+    )
     tray.Add("I3Writer", filename=output_file)
     if events_max > 0:
         tray.Execute(events_max)
