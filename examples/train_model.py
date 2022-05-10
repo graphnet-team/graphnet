@@ -29,7 +29,7 @@ wandb_logger = WandbLogger(
     project="example-script",
     entity="graphnet-team",
     save_dir='./wandb/',
-    log_model=False,
+    log_model=True,
 )
 
 # Main function definition
@@ -40,14 +40,14 @@ def main():
 
     # Configuration
     config = {
-        "db": '/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db',
-        "pulsemap": 'SRTTWOfflinePulsesDC',
-        "batch_size": 256,
-        "num_workers": 2,
-        "gpus": [0],
-        "target": 'energy',
-        "n_epochs": 2,
-        "patience": 1,
+        "db": "/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db",
+        "pulsemap": "SRTTWOfflinePulsesDC",
+        "batch_size": 512,
+        "num_workers": 10,
+        "gpus": [1],
+        "target": "energy",
+        "n_epochs": 5,
+        "patience": 5,
     }
     archive = "/groups/icecube/qgf305/graphnet/results/"
     run_name = "dynedge_cluster_{}_example".format(config["target"])
