@@ -19,6 +19,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install package
         uses: ./.github/actions/install-cpu
-      - name: Black
+      - name: Run black
         run: |
           black . --check --diff --config black.toml
