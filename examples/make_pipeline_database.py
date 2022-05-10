@@ -11,7 +11,11 @@ def get_output_column_names(target):
     if target in ["track", "neutrino", "energy"]:
         output_column_names = [target + "_pred"]
     if target == "XYZ":
-        output_column_names = ["position_x_pred", "position_y_pred", "position_z_pred"]
+        output_column_names = [
+            "position_x_pred",
+            "position_y_pred",
+            "position_z_pred",
+        ]
     return output_column_names
 
 
@@ -23,7 +27,9 @@ def build_module_dictionary(targets):
             "/home/iwsatlas1/oersoe/phd/oscillations/models/final/dynedge_oscillation_final_%s.pth"
             % (target)
         )  # dev_lvl7_robustness_muon_neutrino_0000/dynedge_oscillation_%s/dynedge_oscillation_%s.pth'%(target,target)
-        module_dict[target]["output_column_names"] = get_output_column_names(target)
+        module_dict[target]["output_column_names"] = get_output_column_names(
+            target
+        )
     return module_dict
 
 

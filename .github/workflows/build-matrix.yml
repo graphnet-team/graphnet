@@ -1,14 +1,12 @@
-# This is a simple workflow to run unit tests and code coverage, and display resulting badges
+# This is a simple workflow to run unit tests and code coverage
 name: build-matrix
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push and PRs
   push:
-    paths-ignore: [ assets/badges/ ]
   pull_request:
     branches: [ main ]
-    paths-ignore: [ assets/badges/ ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

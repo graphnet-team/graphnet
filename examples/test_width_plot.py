@@ -19,7 +19,10 @@ key_limits = {
     "distributions": {"energy": {"x": [0, 4], "y": [-0.75, 0.75]}},
 }
 keys = ["zenith"]
-key_bins = {"energy": np.arange(0, 3.25, 0.25), "zenith": np.arange(0, 180, 10)}
+key_bins = {
+    "energy": np.arange(0, 3.25, 0.25),
+    "zenith": np.arange(0, 180, 10),
+}
 
 performance_figure = width_plot(
     key_limits,

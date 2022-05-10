@@ -8,7 +8,10 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.components.loss_functions import LogCoshLoss, VonMisesFisher2DLoss
+from graphnet.components.loss_functions import (
+    LogCoshLoss,
+    VonMisesFisher2DLoss,
+)
 from graphnet.components.utils import fit_scaler
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.utils import get_equal_proportion_neutrino_indices
@@ -84,7 +87,10 @@ def main():
     # Common variables
     train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
 
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(
+    (
+        training_dataloader,
+        validation_dataloader,
+    ) = make_train_validation_dataloader(
         config["db"],
         train_selection,
         config["pulsemaps"],
@@ -160,7 +166,12 @@ def main():
         model,
         validation_dataloader,
         [config["target"] + "_pred", config["target"] + "_kappa"],
-        additional_attributes=[config["target"], "event_no", "energy", "n_pulses"],
+        additional_attributes=[
+            config["target"],
+            "event_no",
+            "energy",
+            "n_pulses",
+        ],
     )
 
     save_results(config["db"], run_name, results, archive, model)

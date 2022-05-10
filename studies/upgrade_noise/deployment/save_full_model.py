@@ -31,7 +31,9 @@ def main(target, run_number):
     base_dir = "/groups/icecube/asogaard/gnn/upgrade_sensitivity"
     run_name = f"dev_step4_numu_{run_number:d}_second_run"
     model_name = f"upgrade_{target}_regression_45e_GraphSagePulses"
-    model_base_path = f"{base_dir}/results/{run_name}/{model_name}/{model_name}"
+    model_base_path = (
+        f"{base_dir}/results/{run_name}/{model_name}/{model_name}"
+    )
 
     # Building model
     model = build_model(target)

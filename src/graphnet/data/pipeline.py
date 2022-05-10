@@ -89,7 +89,12 @@ class InSQLitePipeline(ABC):
         return
 
     def _setup_dataloaders(
-        self, chunk_size, db, pulsemap, selection=None, persistent_workers=False
+        self,
+        chunk_size,
+        db,
+        pulsemap,
+        selection=None,
+        persistent_workers=False,
     ):
         if selection is None:
             selection = self._get_all_event_nos(db)
@@ -140,7 +145,9 @@ class InSQLitePipeline(ABC):
                 self._module_dict[target]["output_column_names"],
                 additional_attributes=["event_no"],
             )
-            dataframes.append(results.sort_values("event_no").reset_index(drop=True))
+            dataframes.append(
+                results.sort_values("event_no").reset_index(drop=True)
+            )
             df = self._combine_outputs(dataframes)
         return df
 
@@ -159,7 +166,9 @@ class InSQLitePipeline(ABC):
 
     def _get_truth(self, database, selection):
         with sqlite3.connect(database) as con:
-            query = "SELECT * FROM truth WHERE event_no in %s" % str(tuple(selection))
+            query = "SELECT * FROM truth WHERE event_no in %s" % str(
+                tuple(selection)
+            )
             truth = pd.read_sql(query, con)
         return truth
 

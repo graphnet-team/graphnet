@@ -17,7 +17,9 @@ from graphnet.models.gnn.gnn import GNN
 
 
 class ConvNet(GNN):
-    def __init__(self, nb_inputs, nb_outputs, nb_intermediate=128, dropout_ratio=0.3):
+    def __init__(
+        self, nb_inputs, nb_outputs, nb_intermediate=128, dropout_ratio=0.3
+    ):
         """ConvNet model.
 
         Args:
