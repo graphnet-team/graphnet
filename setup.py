@@ -6,9 +6,7 @@ import versioneer
 
 # Utility method(s)
 def install(package):
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "--user", package]
-    )
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", package])
 
 
 # Requirements definitions
