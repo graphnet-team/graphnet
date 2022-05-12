@@ -21,6 +21,7 @@ $ conda env create -f envs/gnn_py38.yml
 $ conda activate gnn_py38
 (gnn_py38) $ pip install -e .[develop]
 ```
+If you have an old system version of GCC installed (`< 4.9`), you should add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/lib/` to your `.bashrc` script or similar.
 
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
