@@ -25,7 +25,7 @@ def get_logger(
 
     # Common configuration
     log_format = (
-        "%(asctime)s %(levelname)s: %(name)s - %(funcName)s %(message)s"
+        "%(asctime)s %(levelname)-8s %(name)s - %(funcName)s - %(message)s"
     )
     formatter = colorlog.ColoredFormatter(
         "%(log_color)s" + log_format, datefmt="%Y-%m-%d %H:%M:%S"
@@ -34,7 +34,7 @@ def get_logger(
     # Create logger
     logger = colorlog.getLogger("graphnet")
     logger.setLevel(level)
-    logging.basicConfig(level=level)
+    # logging.basicConfig(level=level)
 
     # Add stream handler
     stream_handler = colorlog.StreamHandler(stream=sys.stdout)
