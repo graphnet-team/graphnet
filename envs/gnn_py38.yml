@@ -4,7 +4,10 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - cudatoolkit=11.3
+  - gcc_linux-64
+  - gxx_linux-64
+  - libgcc
+  - cudatoolkit=11.1
   - pip
   - pip:
     - setuptools==59.5.0
