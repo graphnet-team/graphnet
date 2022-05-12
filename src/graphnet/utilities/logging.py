@@ -34,6 +34,7 @@ def get_logger(
     # Create logger
     logger = colorlog.getLogger("graphnet")
     logger.setLevel(level)
+    logging.basicConfig(level=level)
 
     # Add stream handler
     stream_handler = colorlog.StreamHandler(stream=sys.stdout)
