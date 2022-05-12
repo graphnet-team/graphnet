@@ -36,12 +36,12 @@ INSTALL_REQUIRES = [
 EXTRAS_REQUIRE = {
     "develop": [
         "black",
-        "pytest",
-        "pylint",
-        "pydocstyle",
+        "colorlog",
         "coverage",
-        "anybadge",
         "pre-commit",
+        "pydocstyle",
+        "pylint",
+        "pytest",
         "sphinx",
         "sphinx_rtd_theme",
         "versioneer",
