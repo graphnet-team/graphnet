@@ -12,6 +12,11 @@ from graphnet.data.utils import run_sql_code, save_to_sql
 from graphnet.models.training.utils import get_predictions, make_dataloader
 from pytorch_lightning import Trainer
 
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
+
 
 class InSQLitePipeline(ABC):
     """Creates a SQLite database with truth and GNN predictions and, if available, RETRO reconstructions. Made for analysis."""
@@ -74,15 +79,15 @@ class InSQLitePipeline(ABC):
             )
             i = 0
             for dataloader in dataloaders:
-                print("CHUNK %s / %s" % (i, len(dataloaders)))
+                logger.info("CHUNK %s / %s" % (i, len(dataloaders)))
                 df = self._inference(device, dataloader)
                 truth = self._get_truth(database, event_batches[i].tolist())
                 retro = self._get_retro(database, event_batches[i].tolist())
                 self._append_to_pipeline(outdir, truth, retro, df, i)
                 i += 1
         else:
-            print(outdir)
-            print(
+            logger.info(outdir)
+            logger.info(
                 "WARNING - Pipeline named %s already exists! \n Please rename pipeline!"
                 % self._pipeline_name
             )
@@ -182,7 +187,7 @@ class InSQLitePipeline(ABC):
                 retro = pd.read_sql(query, con)
             return retro
         except:  # noqa: E722
-            print("%s table does not exist" % self._retro_table_name)
+            logger.info("%s table does not exist" % self._retro_table_name)
             return
 
     def _append_to_pipeline(self, outdir, truth, retro, df, i):
