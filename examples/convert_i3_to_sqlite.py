@@ -1,6 +1,7 @@
 """Minimum working example (MWE) to use SQLiteDataConverter
 """
 
+import os
 from graphnet.data.i3extractor import (
     I3FeatureExtractorIceCube86,
     I3FeatureExtractorIceCubeUpgrade,
@@ -37,15 +38,14 @@ def main_icecube86():
 
 def main_icecube_upgrade():
     """Main script function."""
-    paths = [
-        "/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4"
-    ]
-    gcd_rescue = (
-        "resources/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2"
+    basedir = "/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4/"
+    paths = [os.path.join(basedir, "step4")]
+    gcd_rescue = os.path.join(
+        basedir, "gcd/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2"
     )
-    outdir = "/groups/icecube/asogaard/temp/sqlite_test_upgrade"
+    outdir = "/groups/icecube/asogaard/temp/sqlite_test_upgrade_0001"
     db_name = "data_test"
-    workers = 5
+    workers = 1
 
     converter = SQLiteDataConverter(
         [

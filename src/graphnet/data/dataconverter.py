@@ -5,8 +5,8 @@ try:
 except ImportError:
     print("icecube package not available.")
 
-from .i3extractor import I3Extractor, I3ExtractorCollection, I3TruthExtractor
-from .utils import find_i3_files
+from graphnet.data.i3extractor import I3Extractor, I3ExtractorCollection
+from graphnet.utilities.filesys import find_i3_files
 
 
 class DataConverter(ABC):

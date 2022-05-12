@@ -10,14 +10,15 @@ from tqdm import tqdm
 from typing import Any, Dict, List
 
 from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
+from graphnet.data.utilities.sqlite import run_sql_code, save_to_sql
 
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
     print("icecube package not available.")
 
-from .dataconverter import DataConverter
-from .utils import create_out_directory, pairwise_shuffle
+from graphnet.data.dataconverter import DataConverter
+from graphnet.data.utilities.random import pairwise_shuffle
 
 
 class SQLiteDataConverter(DataConverter):
@@ -74,8 +75,8 @@ class SQLiteDataConverter(DataConverter):
     def _process_files(self, i3_files, gcd_files):
         """Starts the parallelized extraction using map_async."""
 
-        create_out_directory(self._outdir + "/%s/data" % self._db_name)
-        create_out_directory(self._outdir + "/%s/tmp" % self._db_name)
+        os.makedirs(self._outdir + "/%s/data" % self._db_name, exist_ok=True)
+        os.makedirs(self._outdir + "/%s/tmp" % self._db_name, exist_ok=True)
 
         i3_files, gcd_files = pairwise_shuffle(i3_files, gcd_files)
         self._save_filenames(i3_files)
@@ -185,26 +186,32 @@ class SQLiteDataConverter(DataConverter):
                     event_count += 1
 
                 if len(dataframes_big[first_table]) >= max_dict_size:
-                    self._save_to_sql(
-                        dataframes_big, id, output_count, db_name, outdir
+                    (
+                        dataframes_big,
+                        output_count,
+                    ) = self._save_dataframes_to_sql_and_reset(
+                        dataframes_big,
+                        id,
+                        output_count,
+                        db_name,
+                        outdir,
                     )
-                    dataframes_big = OrderedDict(
-                        [(key, pd.DataFrame()) for key in self._table_names]
-                    )
-                    output_count += 1
 
             if len(dataframes_big[first_table]) > 0:
-                self._save_to_sql(
-                    dataframes_big, id, output_count, db_name, outdir
+                (
+                    dataframes_big,
+                    output_count,
+                ) = self._save_dataframes_to_sql_and_reset(
+                    dataframes_big,
+                    id,
+                    output_count,
+                    db_name,
+                    outdir,
                 )
-                dataframes_big = OrderedDict(
-                    [(key, pd.DataFrame()) for key in self._table_names]
-                )
-                output_count += 1
 
     def _save_filenames(self, i3_files: List[str]):
         """Saves I3 file names in CSV format."""
-        create_out_directory(self._outdir + "/%s/config" % self._db_name)
+        os.makedirs(self._outdir + "/%s/config" % self._db_name, exist_ok=True)
         i3_files = pd.DataFrame(data=i3_files, columns=["filename"])
         i3_files.to_csv(
             self._outdir + "/%s/config/i3files.csv" % self._db_name
@@ -258,12 +265,6 @@ class SQLiteDataConverter(DataConverter):
         pulsemap_dicts = map(data_dict.get, self._pulsemaps)
         return any(d["dom_x"] for d in pulsemap_dicts)
 
-    def _run_sql_code(self, database: str, code: str):
-        conn = sqlite3.connect(database + ".db")
-        c = conn.cursor()
-        c.executescript(code)
-        c.close()
-
     def _attach_index(self, database: str, table_name: str):
         """Attaches the table index. Important for query times!"""
         code = (
@@ -273,7 +274,7 @@ class SQLiteDataConverter(DataConverter):
             "COMMIT TRANSACTION;\n"
             "PRAGMA foreign_keys=on;"
         )
-        self._run_sql_code(database, code)
+        run_sql_code(database, code)
 
     def _create_table(self, database, table_name, columns, is_pulse_map=False):
         """Creates a table.
@@ -301,7 +302,7 @@ class SQLiteDataConverter(DataConverter):
             f"CREATE TABLE {table_name} ({query_columns});\n"
             "PRAGMA foreign_keys=on;"
         )
-        self._run_sql_code(database, code)
+        run_sql_code(database, code)
 
         if is_pulse_map:
             print(table_name)
@@ -354,18 +355,30 @@ class SQLiteDataConverter(DataConverter):
             for table_name, data in results.items():
                 self._submit_to_database(database, table_name, data)
 
-    def _save_to_sql(
-        self, dataframes_big: dict, id, output_count, db_name, outdir
+    def _save_dataframes_to_sql_and_reset(
+        self,
+        dataframes_big: Dict[str, pd.DataFrame],
+        id: int,
+        output_count: int,
+        database: str,
+        outdir: str,
     ):
-        engine = sqlalchemy.create_engine(
-            "sqlite:///"
-            + outdir
-            + f"/{db_name}/tmp/worker-{id}-{output_count}.db"
+        # Format output path
+        output_path = os.path.join(
+            outdir, f"{database}/tmp/worker-{id}-{output_count}.db"
         )
+
+        # Save each dataframe to SQLite database
         for key, df in dataframes_big.items():
-            if len(dataframes_big[key]) > 0:
-                df.to_sql(key, con=engine, index=False, if_exists="append")
-        engine.dispose()
+            if len(df) > 0:
+                save_to_sql(df, key, output_path)
+
+        # Reset dictionary of dataframes
+        dataframes_big = OrderedDict(
+            [(key, pd.DataFrame()) for key in self._table_names]
+        )
+
+        return dataframes_big, output_count + 1
 
 
 # Implementation-specific utility function(s)
