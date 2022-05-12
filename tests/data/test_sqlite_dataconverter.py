@@ -10,4 +10,3 @@ def test_is_pulsemap_check():
     assert is_pulsemap_check("RTTWOfflinePulses") is True
     assert is_pulsemap_check("truth") is False
     assert is_pulsemap_check("retro") is False
-

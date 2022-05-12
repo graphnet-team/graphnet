@@ -31,37 +31,37 @@ def main(target, run_number):
     base_dir = "/groups/icecube/asogaard/gnn/upgrade_sensitivity"
     run_name = f"dev_step4_numu_{run_number:d}_second_run"
     model_name = f"upgrade_{target}_regression_45e_GraphSagePulses"
-    model_base_path = f"{base_dir}/results/{run_name}/{model_name}/{model_name}"
+    model_base_path = (
+        f"{base_dir}/results/{run_name}/{model_name}/{model_name}"
+    )
 
     # Building model
     model = build_model(target)
-    model.load_state_dict(model_base_path + '_state_dict.pth')
+    model.load_state_dict(model_base_path + "_state_dict.pth")
     model.inference()
-    model.save(model_base_path + '_clean.pth')
+    model.save(model_base_path + "_clean.pth")
 
 
 def get_task(target, hidden_size):
     # Common keyword arguments
     kwargs = dict(hidden_size=hidden_size, target_labels=target)
 
-    if target == 'zenith':
+    if target == "zenith":
         task = ZenithReconstructionWithKappa(
-            loss_function=VonMisesFisher2DLoss(),
-            **kwargs
+            loss_function=VonMisesFisher2DLoss(), **kwargs
         )
 
-    elif target == 'energy':
+    elif target == "energy":
         task = PassOutput1(
             loss_function=LogCoshLoss(),
             transform_target=torch.log10,
             transform_inference=lambda x: torch.pow(10, x),
-            **kwargs
+            **kwargs,
         )
 
-    elif target == 'track':
+    elif target == "track":
         task = BinaryClassificationTask(
-            loss_function=BinaryCrossEntropyLoss(),
-            **kwargs
+            loss_function=BinaryCrossEntropyLoss(), **kwargs
         )
 
     else:
@@ -88,7 +88,7 @@ def build_model(target):
 
 
 # Main function call
-if __name__ == '__main__':
-    for target in ['energy', 'zenith', 'track']:
+if __name__ == "__main__":
+    for target in ["energy", "zenith", "track"]:
         for run_number in [140021, 140022]:
             main(target, run_number)

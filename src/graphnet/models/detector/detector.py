@@ -1,9 +1,13 @@
 from abc import abstractmethod
 from typing import List
+
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
-    final = lambda f: f  # Identity decorator
+
+    def final(f):  # Identity decorator
+        return f
+
 
 from pytorch_lightning import LightningModule
 import torch
@@ -21,7 +25,9 @@ class Detector(LightningModule):
     def features(self) -> List[str]:
         """List of features used/assumed by inheriting `Detector` objects."""
 
-    def __init__(self, graph_builder: GraphBuilder, scalers: List[dict] = None):
+    def __init__(
+        self, graph_builder: GraphBuilder, scalers: List[dict] = None
+    ):
         # Base class constructor
         super().__init__()
 
@@ -29,17 +35,20 @@ class Detector(LightningModule):
         self._graph_builder = graph_builder
         self._scalers = scalers
         if self._scalers:
-            print("Will use scalers rather than standard preprocessing",
-                 f"in {self.__class__.__name__}.")
+            print(
+                "Will use scalers rather than standard preprocessing",
+                f"in {self.__class__.__name__}.",
+            )
 
     @final
     def forward(self, data: Data) -> Data:
         """Pre-process graph `Data` features and build graph adjacency."""
 
         # Check(s)
-        assert data.x.size()[1] == self.nb_inputs, \
-            ("Got graph data with incompatible size, ",
-            f"{data.x.size()} vs. {self.nb_inputs} expected")
+        assert data.x.size()[1] == self.nb_inputs, (
+            "Got graph data with incompatible size, ",
+            f"{data.x.size()} vs. {self.nb_inputs} expected",
+        )
 
         # Graph-bulding
         # @NOTE: `.clone` is necessary to avoid modifying original tensor in-place.
@@ -55,12 +64,12 @@ class Detector(LightningModule):
             # Scaling groups of features | @TEMP, probably
             x_numpy = data.x.detach().cpu().numpy()
 
-            data.x[:,:3] = torch.tensor(
-                self._scalers['xyz'].transform(x_numpy[:,:3])
+            data.x[:, :3] = torch.tensor(
+                self._scalers["xyz"].transform(x_numpy[:, :3])
             ).type_as(data.x)
 
-            data.x[:,3:] = torch.tensor(
-                self._scalers['features'].transform(x_numpy[:,3:])
+            data.x[:, 3:] = torch.tensor(
+                self._scalers["features"].transform(x_numpy[:, 3:])
             ).type_as(data.x)
 
         else:
@@ -87,5 +96,6 @@ class Detector(LightningModule):
             data_features = data[0].features
         else:
             data_features = data.features
-        assert data_features == self.features, \
-            "Features on Data and Detector differ: {data_features} vs. {self.features}"
+        assert (
+            data_features == self.features
+        ), "Features on Data and Detector differ: {data_features} vs. {self.features}"

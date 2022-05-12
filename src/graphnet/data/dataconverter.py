@@ -18,11 +18,13 @@ class DataConverter(ABC):
         # Check(s)
         if not isinstance(extractors, (list, tuple)):
             extractors = [extractors]
-        assert len(extractors) > 0, \
-            "Please specify at least one argument of type I3Extractor"
+        assert (
+            len(extractors) > 0
+        ), "Please specify at least one argument of type I3Extractor"
         for extractor in extractors:
-            assert isinstance(extractor, I3Extractor), \
-                f"{type(extractor)} is not a subclass of I3Extractor"
+            assert isinstance(
+                extractor, I3Extractor
+            ), f"{type(extractor)} is not a subclass of I3Extractor"
 
         # Member variables
         self._outdir = outdir
@@ -44,22 +46,6 @@ class DataConverter(ABC):
     @abstractmethod
     def _process_files(self, i3_files, gcd_files):
         pass
-
-    #def _process_file(self, i3_file, gcd_file, out_file):
-    #    self._extractors.set_files(i3_file, gcd_file)
-    #    frames = dataio.I3File(i3_file, 'r')
-    #
-    #    while frames.more():
-    #        try:
-    #            frame = frames.pop_physics()
-    #        except:
-    #            continue
-    #        arrays = self._extractors(frame)
-    #        self._save(arrays, out_file)
-
-    #@abstractmethod
-    #def _save(self, array, out_file):
-    #    pass
 
     @abstractmethod
     def _initialise(self):
