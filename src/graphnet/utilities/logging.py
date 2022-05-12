@@ -18,14 +18,19 @@ def get_logger(
 ) -> logging.Logger:
     """Get `logger` instance, to be used in place of `print()`.
 
-    The logger will print the specified level of output to the terminal, and will also save debug output to file.
+    The logger will print the specified level of output to the terminal, and
+    will also save debug output to file.
     """
     global LOGGER
     if LOGGER:
         return LOGGER
 
     # Common configuration
-    colorlog_format = "\033[1;34m%(name)s\033[0m: %(log_color)s%(levelname)-8s\033[0m %(asctime)s - %(funcName)s - %(message)s"
+    colorlog_format = (
+        "\033[1;34m%(name)s\033[0m: "
+        "%(log_color)s%(levelname)-8s\033[0m "
+        "%(asctime)s - %(funcName)s - %(message)s"
+    )
     basic_format = re.sub(r"\x1b\[[0-9;,]*m", "", colorlog_format).replace(
         "%(log_color)s", ""
     )
