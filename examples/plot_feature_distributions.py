@@ -13,11 +13,12 @@ from graphnet.models.training.utils import make_train_validation_dataloader
 features = FEATURES.UPGRADE
 truth = TRUTH.UPGRADE
 
+
 # Main function definition
 def main():
 
     try:
-        del truth[truth.index('interaction_time')]
+        del truth[truth.index("interaction_time")]
     except ValueError:
         # not found in list
         pass
@@ -26,8 +27,12 @@ def main():
     print(f"truth: {truth}")
 
     # Configuration
-    db = '/groups/icecube/asogaard/data/sqlite/dev_upgrade_step4_preselection_decemberv2/data/dev_upgrade_step4_preselection_decemberv2.db'
-    pulsemaps = ['IceCubePulsesTWSRT', 'I3RecoPulseSeriesMapRFCleaned_mDOM', 'IceCubePulsesTWSRT']
+    db = "/groups/icecube/asogaard/data/sqlite/dev_upgrade_step4_preselection_decemberv2/data/dev_upgrade_step4_preselection_decemberv2.db"
+    pulsemaps = [
+        "IceCubePulsesTWSRT",
+        "I3RecoPulseSeriesMapRFCleaned_mDOM",
+        "IceCubePulsesTWSRT",
+    ]
     batch_size = 256
     num_workers = 1
 
@@ -35,7 +40,10 @@ def main():
     train_selection, _ = get_equal_proportion_neutrino_indices(db)
     train_selection = train_selection[0:10000]
 
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(
+    (
+        training_dataloader,
+        validation_dataloader,
+    ) = make_train_validation_dataloader(
         db,
         train_selection,
         pulsemaps,
@@ -71,24 +79,33 @@ def main():
     bins = 100
 
     # -- Original
-    fig, axes = plt.subplots(dim, dim, figsize=(dim * axis_size, dim * axis_size))
+    fig, axes = plt.subplots(
+        dim, dim, figsize=(dim * axis_size, dim * axis_size)
+    )
     for ix, ax in enumerate(axes.ravel()[:nb_features_original]):
-        ax.hist(x_original[:,ix], bins=bins)
-        ax.set_xlabel(f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}")
-        ax.set_yscale('log')
+        ax.hist(x_original[:, ix], bins=bins)
+        ax.set_xlabel(
+            f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}"
+        )
+        ax.set_yscale("log")
 
     fig.tight_layout
-    fig.savefig('feature_distribution_original.png')
+    fig.savefig("feature_distribution_original.png")
 
     # -- Preprocessed
-    fig, axes = plt.subplots(dim, dim, figsize=(dim * axis_size, dim * axis_size))
+    fig, axes = plt.subplots(
+        dim, dim, figsize=(dim * axis_size, dim * axis_size)
+    )
     for ix, ax in enumerate(axes.ravel()[:nb_features_preprocessed]):
-        ax.hist(x_preprocessed[:,ix], bins=bins, color='orange')
-        ax.set_xlabel(f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}")
-        ax.set_yscale('log')
+        ax.hist(x_preprocessed[:, ix], bins=bins, color="orange")
+        ax.set_xlabel(
+            f"x{ix}: {features[ix] if ix < len(features) else 'N/A'}"
+        )
+        ax.set_yscale("log")
 
     fig.tight_layout
-    fig.savefig('feature_distribution_preprocessed.png')
+    fig.savefig("feature_distribution_preprocessed.png")
+
 
 # Main function call
 if __name__ == "__main__":

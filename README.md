@@ -1,8 +1,12 @@
 ![logo](./assets/identity/graphnet-logo-and-wordmark.png)
 
-![build](https://github.com/icecube/graphnet/actions/workflows/build.yml/badge.svg)
-![pylint](./assets/badges/pylint.svg)
-![coverage](./assets/badges/coverage.svg)
+![build](https://github.com/icecube/graphnet/actions/workflows/build-matrix.yml/badge.svg)
+![build](https://github.com/icecube/graphnet/actions/workflows/build-icetray.yml/badge.svg)
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/f244df0fc73c77102b47/maintainability)](https://codeclimate.com/github/asogaard/graphnet/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/f244df0fc73c77102b47/test_coverage)](https://codeclimate.com/github/asogaard/graphnet/test_coverage)
+
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 

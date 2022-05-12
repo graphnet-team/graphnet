@@ -1,14 +1,43 @@
-from typing import Optional
+from typing import Any, List, Optional
 
 import torch
 from torch import LongTensor, Tensor
 from torch_geometric.data import Data, Batch
 from torch_geometric.nn.pool.consecutive import consecutive_cluster
 from torch_geometric.nn.pool.pool import pool_edge, pool_batch, pool_pos
-from torch_scatter import scatter
+from torch_scatter import scatter, scatter_std
+
+from torch_geometric.nn.pool import (
+    avg_pool,
+    max_pool,
+    avg_pool_x,
+    max_pool_x,
+)
 
 
-def sum_pool_and_distribute(tensor: Tensor, cluster_index: LongTensor, batch: Optional[LongTensor] = None) -> Tensor:
+def min_pool(cluster: Any, data: Any, transform: Optional[Any] = None):
+    """Like `max_pool, just negating `data`."""
+    return -max_pool(
+        cluster,
+        -data,
+        transform,
+    )
+
+
+def min_pool_x(cluster: Any, x: Any, batch: Any, size: Optional[int] = None):
+    """Like `max_pool_x, just negating `data`."""
+    ret = max_pool_x(cluster, -x, batch, size)
+    if size is None:
+        return (-ret[0], ret[1])
+    else:
+        return -ret
+
+
+def sum_pool_and_distribute(
+    tensor: Tensor,
+    cluster_index: LongTensor,
+    batch: Optional[LongTensor] = None,
+) -> Tensor:
     """Sum-pool values across the cluster, and distribute the individual nodes."""
     if batch is None:
         batch = torch.zeros(tensor.size(dim=0)).long()
@@ -18,7 +47,9 @@ def sum_pool_and_distribute(tensor: Tensor, cluster_index: LongTensor, batch: Op
     return tensor_unpooled
 
 
-def group_identical(tensor: Tensor, batch: Optional[LongTensor] = None) -> Tensor:
+def _group_identical(
+    tensor: Tensor, batch: Optional[LongTensor] = None
+) -> LongTensor:
     """Group rows in `tensor` that are identical
 
     Args:
@@ -34,24 +65,51 @@ def group_identical(tensor: Tensor, batch: Optional[LongTensor] = None) -> Tenso
         tensor = tensor.cat((tensor, batch.unsqueeze(dim=1)), dim=1)
     return torch.unique(tensor, return_inverse=True, dim=0)[1]
 
+
+def group_by(data: Data, keys: List[str]) -> LongTensor:
+    """Group nodes in `data` that have identical values of `keys`.
+
+    This grouping is done with in each event in case of batching. This allows
+    for, e.g., assigning the same index to all pulses on the same PMT or DOM in
+    the same event. This can be used for coarsening graphs, e.g., from pulse-
+    level to DOM-level by aggregating feature across each group returned by this
+    method.
+
+    Example:
+      Given:
+        data.f1 = [1,1,2,2,2]
+        data.f2 = [6,7,7,7,8]
+      Calls:
+        groupby(data, ['f1'])       -> [0, 0, 1, 1, 1]
+        groupby(data, ['f2'])       -> [0, 1, 1, 1, 2]
+        groupby(data, ['f1', 'f2']) -> [0, 1, 2, 2, 3]
+    """
+    features = [getattr(data, key) for key in keys]
+    tensor = torch.stack(features).T  # .int()  @TODO: Required? Use rounding?
+    batch = getattr(tensor, "batch", None)
+    index = _group_identical(tensor, batch)
+    return index
+
+
 def group_pulses_to_dom(data: Data) -> Data:
     """Groups pulses on the same DOM, using DOM and string number."""
-    tensor = torch.stack((data.dom_number, data.string)).T.int()
-    batch = getattr(tensor, 'batch', None)
-    data.dom_index = group_identical(tensor, batch)
+    data.dom_index = group_by(data, ["dom_number", "string"])
     return data
+
 
 def group_pulses_to_pmt(data: Data) -> Data:
     """Groups pulses on the same PMT, using PMT, DOM, and string number."""
-    tensor = torch.stack((data.pmt_number, data.dom_number, data.string)).T.int()
-    batch = getattr(tensor, 'batch', None)
-    data.pmt_index = group_identical(tensor, batch)
+    data.pmt_index = group_by(data, ["pmt_number", "dom_number", "string"])
     return data
 
 
 # Below mirroring `torch_geometric.nn.pool.{avg,max}_pool.py` exactly
 def _sum_pool_x(cluster, x, size: Optional[int] = None):
-    return scatter(x, cluster, dim=0, dim_size=size, reduce='sum')
+    return scatter(x, cluster, dim=0, dim_size=size, reduce="sum")
+
+
+def _std_pool_x(cluster, x, size: Optional[int] = None):
+    return scatter_std(x, cluster, dim=0, dim_size=size, unbiased=False)
 
 
 def sum_pool_x(cluster, x, batch, size: Optional[int] = None):
@@ -85,6 +143,37 @@ def sum_pool_x(cluster, x, batch, size: Optional[int] = None):
     return x, batch
 
 
+def std_pool_x(cluster, x, batch, size: Optional[int] = None):
+    r"""Std-Pools node features according to the clustering defined in
+    :attr:`cluster`.
+
+    Args:
+        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
+            \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
+        x (Tensor): Node feature matrix
+            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
+        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
+            B-1\}}^N`, which assigns each node to a specific example.
+        size (int, optional): The maximum number of clusters in a single
+            example. This property is useful to obtain a batch-wise dense
+            representation, *e.g.* for applying FC layers, but should only be
+            used if the size of the maximum number of clusters per example is
+            known in advance. (default: :obj:`None`)
+
+    :rtype: (:class:`Tensor`, :class:`LongTensor`) if :attr:`size` is
+        :obj:`None`, else :class:`Tensor`
+    """
+    if size is not None:
+        batch_size = int(batch.max().item()) + 1
+        return _std_pool_x(cluster, x, batch_size * size), None
+
+    cluster, perm = consecutive_cluster(cluster)
+    x = _std_pool_x(cluster, x)
+    batch = pool_batch(perm, batch)
+
+    return x, batch
+
+
 def sum_pool(cluster, data, transform=None):
     r"""Pools and coarsens a graph given by the
     :class:`torch_geometric.data.Data` object according to the clustering
@@ -108,6 +197,41 @@ def sum_pool(cluster, data, transform=None):
     cluster, perm = consecutive_cluster(cluster)
 
     x = None if data.x is None else _sum_pool_x(cluster, data.x)
+    index, attr = pool_edge(cluster, data.edge_index, data.edge_attr)
+    batch = None if data.batch is None else pool_batch(perm, data.batch)
+    pos = None if data.pos is None else pool_pos(cluster, data.pos)
+
+    data = Batch(batch=batch, x=x, edge_index=index, edge_attr=attr, pos=pos)
+
+    if transform is not None:
+        data = transform(data)
+
+    return data
+
+
+def std_pool(cluster, data, transform=None):
+    r"""Pools and coarsens a graph given by the
+    :class:`torch_geometric.data.Data` object according to the clustering
+    defined in :attr:`cluster`.
+    All nodes within the same cluster will be represented as one node.
+    Final node features are defined by the *std* of features of all nodes
+    within the same cluster, node positions are averaged and edge indices are
+    defined to be the union of the edge indices of all nodes within the same
+    cluster.
+
+    Args:
+        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
+            \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
+        data (Data): Graph data object.
+        transform (callable, optional): A function/transform that takes in the
+            coarsened and pooled :obj:`torch_geometric.data.Data` object and
+            returns a transformed version. (default: :obj:`None`)
+
+    :rtype: :class:`torch_geometric.data.Data`
+    """
+    cluster, perm = consecutive_cluster(cluster)
+
+    x = None if data.x is None else _std_pool_x(cluster, data.x)
     index, attr = pool_edge(cluster, data.edge_index, data.edge_attr)
     batch = None if data.batch is None else pool_batch(perm, data.batch)
     pos = None if data.pos is None else pool_pos(cluster, data.pos)
