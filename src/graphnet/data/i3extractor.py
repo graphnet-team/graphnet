@@ -13,8 +13,6 @@ try:
 except ImportError:
     print("icecube package not available.")
 
-from graphnet.data.utils import frame_has_key
-
 
 class I3Extractor(ABC):
     """Extracts relevant information from physics frames."""
