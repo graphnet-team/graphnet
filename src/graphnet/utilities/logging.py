@@ -1,5 +1,6 @@
 """Consistent and configurable logging across the project."""
 
+import re
 import colorlog
 import datetime
 import logging
@@ -24,22 +25,30 @@ def get_logger(
         return LOGGER
 
     # Common configuration
-    log_format = (
-        "%(asctime)s %(levelname)-8s %(name)s - %(funcName)s - %(message)s"
+    colorlog_format = "\033[1;34m%(name)s\033[0m: %(log_color)s%(levelname)-8s\033[0m %(asctime)s - %(funcName)s - %(message)s"
+    basic_format = re.sub(r"\x1b\[[0-9;,]*m", "", colorlog_format).replace(
+        "%(log_color)s", ""
     )
-    formatter = colorlog.ColoredFormatter(
-        "%(log_color)s" + log_format, datefmt="%Y-%m-%d %H:%M:%S"
+    datefmt = "%Y-%m-%d %H:%M:%S"
+
+    # Formatters
+    colored_formatter = colorlog.ColoredFormatter(
+        colorlog_format,
+        datefmt=datefmt,
+    )
+    basic_formatter = logging.Formatter(
+        basic_format,
+        datefmt=datefmt,
     )
 
     # Create logger
     logger = colorlog.getLogger("graphnet")
     logger.setLevel(level)
-    # logging.basicConfig(level=level)
 
     # Add stream handler
     stream_handler = colorlog.StreamHandler(stream=sys.stdout)
     stream_handler.setLevel(level)
-    stream_handler.setFormatter(formatter)
+    stream_handler.setFormatter(colored_formatter)
     logger.addHandler(stream_handler)
 
     # Add file handler
@@ -55,7 +64,7 @@ def get_logger(
 
     file_handler = logging.FileHandler(log_path)
     stream_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(formatter)
+    file_handler.setFormatter(basic_formatter)
     logger.addHandler(file_handler)
 
     logger.info(f"Writing log to {log_path}")
