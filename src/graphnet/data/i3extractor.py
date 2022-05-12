@@ -336,6 +336,7 @@ class I3TruthExtractor(I3Extractor):
 
         if (
             frame["I3EventHeader"].sub_event_stream == "InIceSplit"
+            and "FilterMask" in frame
         ):  # only inicesplit p frames have filters calculated
             output.update(
                 {
@@ -506,7 +507,7 @@ class I3RetroExtractor(I3Extractor):
                 "L7_PIDClassifier_FullSky_ProbTrack",
             ]
             for classifier in classifiers:
-                if frame_has_key(frame, classifier):
+                if classifier in frame:
                     output.update({classifier: frame[classifier].value})
 
         if frame_is_montecarlo(frame):
@@ -534,17 +535,15 @@ def try_get_key(frame, key, default_value=-1):
 
 
 def frame_contains_retro(frame):
-    return frame_has_key(frame, "L7_reconstructed_zenith")
+    return "L7_reconstructed_zenith" in frame
 
 
 def frame_contains_classifiers(frame):
-    return frame_has_key(frame, "L4_MuonClassifier_Data_ProbNu")
+    return "L4_MuonClassifier_Data_ProbNu" in frame
 
 
 def frame_is_montecarlo(frame):
-    return frame_has_key(frame, "MCInIcePrimary") or frame_has_key(
-        frame, "I3MCTree"
-    )
+    return "MCInIcePrimary" in frame or "I3MCTree" in frame
 
 
 def frame_is_noise(frame):
@@ -560,7 +559,7 @@ def frame_is_noise(frame):
 
 
 def frame_is_lvl7(frame):
-    return frame_has_key(frame, "L7_reconstructed_zenith")
+    return "L7_reconstructed_zenith" in frame
 
 
 def find_data_type(mc, input_file):
