@@ -9,6 +9,11 @@ import pandas as pd
 import multiprocessing
 import os
 import random
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+mpl.use("pdf")
+plt.rc("font", family="serif")
 
 
 def make_binning_cfg(config_dict, outdir):
