@@ -22,7 +22,6 @@ INSTALL_REQUIRES = [
     "numpy",
     "timer",
     "tqdm",
-    "torch==1.10.1",
     "torch-cluster==1.5.9",
     "torch-scatter==2.0.9",
     "torch-sparse==0.6.12",
@@ -54,7 +53,7 @@ EXTRAS_REQUIRE = {
 try:
     import torch  # pyright: reportMissingImports=false
 except ImportError:
-    install("torch==1.9.0")
+    install("torch==1.10.1")
 
 setup(
     name="graphnet",
