@@ -22,6 +22,7 @@ INSTALL_REQUIRES = [
     "numpy",
     "timer",
     "tqdm",
+    "torch==1.10.1",
     "torch-cluster==1.5.9",
     "torch-scatter==2.0.9",
     "torch-sparse==0.6.12",
