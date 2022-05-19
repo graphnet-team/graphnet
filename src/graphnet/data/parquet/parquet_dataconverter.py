@@ -1,3 +1,4 @@
+import awkward
 from glob import glob
 from multiprocessing import Pool
 import numpy as np
@@ -9,7 +10,11 @@ from collections import OrderedDict
 from tqdm import tqdm
 from typing import Any, Dict, List
 
-from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
+from graphnet.data.i3extractor import (
+    I3Extractor,
+    I3TruthExtractor,
+    I3FeatureExtractor,
+)
 from graphnet.data.utilities.sqlite import run_sql_code, save_to_sql
 
 try:
@@ -21,40 +26,14 @@ from graphnet.data.dataconverter import DataConverter
 from graphnet.data.utilities.random import pairwise_shuffle
 
 
-class SQLiteDataConverter(DataConverter):
+class ParquetConverter(DataConverter):
     def __init__(
         self,
-        extractors,
-        outdir,
-        gcd_rescue,
-        *,
-        db_name,
-        workers,
-        max_dictionary_size=10000,
-        verbose=1,
+        extractors: List[I3Extractor],
+        outdir: str,
+        gcd_rescue: str,
     ):
-        """Implementation of DataConverter for saving to SQLite database.
-
-        Converts the i3-files in paths to several temporary SQLite databases in
-        parallel, that are then merged to a single SQLite database
-
-        Args:
-            feature_extractor_class (class): Class inheriting from I3FeatureExtractor
-                that should be used to extract experiement data.
-            outdir (str): the directory to which the SQLite database is written
-            gcd_rescue (str): path to gcd_file that the extraction defaults to
-                if none is found in the folders
-            db_name (str): database name. please omit extensions.
-            workers (int): number of workers used for parallel extraction.
-            max_dictionary_size (int, optional): The maximum number of events in
-                a temporary database. Defaults to 10000.
-            verbose (int, optional): Silent extraction if 0. Defaults to 1.
-        """
-        # Additional member variables
-        self._db_name = db_name
-        self._verbose = verbose
-        self._workers = workers
-        self._max_dict_size = max_dictionary_size
+        """Implementation of DataConverter for saving to Parquet files."""
 
         # Base class constructor
         super().__init__(extractors, outdir, gcd_rescue)
@@ -75,61 +54,17 @@ class SQLiteDataConverter(DataConverter):
     def _process_files(self, i3_files, gcd_files):
         """Starts the parallelized extraction using map_async."""
 
-        os.makedirs(self._outdir + "/%s/data" % self._db_name, exist_ok=True)
-        os.makedirs(self._outdir + "/%s/tmp" % self._db_name, exist_ok=True)
+        os.makedirs(self._outdir, exist_ok=True)
 
-        i3_files, gcd_files = pairwise_shuffle(i3_files, gcd_files)
-        self._save_filenames(i3_files)
-
-        workers = min(self._workers, len(i3_files))
-
-        # SETTINGS
-        settings = []
-        event_nos = np.array_split(
-            np.arange(0, 99999999, 1), workers
-        )  # Notice that this choice means event_no is NOT unique between different databases.
-        file_list = np.array_split(np.array(i3_files), workers)
-        gcd_file_list = np.array_split(np.array(gcd_files), workers)
-        for i in range(workers):
-            settings.append(
-                [
-                    file_list[i],
-                    str(i),
-                    gcd_file_list[i],
-                    event_nos[i],
-                    self._max_dict_size,
-                    self._db_name,
-                    self._outdir,
-                ]
-            )
-
-        if workers > 1:
-            print(
-                f"Starting pool of {workers} workers to process {len(i3_files)} I3 file(s)"
-            )
-            p = Pool(processes=workers)
-            p.map_async(self._parallel_extraction, settings)
-            p.close()
-            p.join()
-        else:
-            print(
-                f"Processing {len(i3_files)} I3 file(s) in main thread (not multiprocessing)"
-            )
-            self._parallel_extraction(settings[0])
-
-        print("Merging databases")
-        self._merge_databases()
+        for i3_file, gcd_file in zip(i3_files, gcd_files):
+            self._process_file(i3_file, gcd_file)
 
     def _initialise(self):
         if self._verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
 
-    def _save(self, array, out_file):
-        # Not used
-        pass
-
     # Non-inherited private method(s)
-    def _parallel_extraction(self, settings):
+    def _process_file(self, i3_file, gcd_file):
         """The function that every worker runs.
 
         Performs all requested extractions and saves the results as temporary SQLite databases.
@@ -137,77 +72,42 @@ class SQLiteDataConverter(DataConverter):
         Args:
             settings (list): List of arguments.
         """
-        (
-            input_files,
-            id,
-            gcd_files,
-            event_no_list,
-            max_dict_size,
-            db_name,
-            outdir,
-        ) = settings
 
-        dataframes_big = OrderedDict(
-            [(key, pd.DataFrame()) for key in self._table_names]
-        )
-        event_count = 0
-        output_count = 0
-        first_table = self._table_names[0]
-        for u in range(len(input_files)):
-            self._extractors.set_files(input_files[u], gcd_files[u])
-            i3_file = dataio.I3File(input_files[u], "r")
-            while i3_file.more():
-                try:
-                    frame = i3_file.pop_physics()
-                except:  # noqa: E722
-                    continue
+        """ TEMP
+        self._extractors.set_files(i3_file, gcd_file)
+        i3_file_io = dataio.I3File(i3_file, "r")
+        #dtype = None
+        arrays = list()
+        while i3_file_io.more():
+            try:
+                frame = i3_file_io.pop_physics()
+            except:  # noqa: E722
+                continue
 
-                # Extract data from I3Frame
-                results = self._extractors(frame)
-                data_dict = OrderedDict(zip(self._table_names, results))
+            # Extract data from I3Frame
+            results = self._extractors(frame)
+            data_dict = OrderedDict(zip(self._table_names, results))
 
-                # Concatenate data
-                for key, data in data_dict.items():
-                    df = apply_event_no(data, event_no_list, event_count)
+            # Concatenate data
+            for key, data in data_dict.items():
+                df = apply_event_no(data, event_no_list, event_count)
 
-                    if (
-                        self.any_pulsemap_is_non_empty(data_dict)
-                        and len(df) > 0
-                    ):
-                        # only include data_dict in temp. databases if at least one pulsemap is non-empty,
-                        # and the current extractor (df) is also non-empty (also since truth is always non-empty)
-                        dataframes_big[key] = dataframes_big[key].append(
-                            df, ignore_index=True, sort=True
-                        )
-
-                if self.any_pulsemap_is_non_empty(
-                    data_dict
-                ):  # Event count only increases if we actually add data to the temporary database
-                    event_count += 1
-
-                if len(dataframes_big[first_table]) >= max_dict_size:
-                    (
-                        dataframes_big,
-                        output_count,
-                    ) = self._save_dataframes_to_sql_and_reset(
-                        dataframes_big,
-                        id,
-                        output_count,
-                        db_name,
-                        outdir,
+                if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
+                    # only include data_dict in temp. databases if at least one pulsemap is non-empty,
+                    # and the current extractor (df) is also non-empty (also since truth is always non-empty)
+                    dataframes_big[key] = dataframes_big[key].append(
+                        df, ignore_index=True, sort=True
                     )
 
-            if len(dataframes_big[first_table]) > 0:
-                (
-                    dataframes_big,
-                    output_count,
-                ) = self._save_dataframes_to_sql_and_reset(
-                    dataframes_big,
-                    id,
-                    output_count,
-                    db_name,
-                    outdir,
-                )
+            if self.any_pulsemap_is_non_empty(
+                data_dict
+            ):  # Event count only increases if we actually add data to the temporary database
+                event_count += 1
+
+        awkward.to_parquet(
+            arrays,
+        )
+        """
 
     def _save_filenames(self, i3_files: List[str]):
         """Saves I3 file names in CSV format."""
