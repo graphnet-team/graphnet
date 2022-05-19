@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 try:
     from icecube import dataio  # pyright: reportMissingImports=false
@@ -12,7 +13,12 @@ from graphnet.utilities.filesys import find_i3_files
 class DataConverter(ABC):
     """Abstract base class for specialised (SQLite, numpy, etc.) data converter classes."""
 
-    def __init__(self, extractors, outdir, gcd_rescue):
+    def __init__(
+        self,
+        extractors: List[I3Extractor],
+        outdir: str,
+        gcd_rescue: str,
+    ):
         """Constructor"""
 
         # Check(s)
