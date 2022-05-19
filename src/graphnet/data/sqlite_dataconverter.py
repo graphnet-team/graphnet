@@ -124,10 +124,6 @@ class SQLiteDataConverter(DataConverter):
         if self._verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
 
-    def _save(self, array, out_file):
-        # Not used
-        pass
-
     # Non-inherited private method(s)
     def _parallel_extraction(self, settings):
         """The function that every worker runs.
