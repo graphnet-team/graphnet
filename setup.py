@@ -53,7 +53,7 @@ EXTRAS_REQUIRE = {
 try:
     import torch  # pyright: reportMissingImports=false
 except ImportError:
-    install("torch==1.9.0")
+    install("torch==1.10.1")
 
 setup(
     name="graphnet",
