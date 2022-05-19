@@ -35,6 +35,7 @@ INSTALL_REQUIRES = [
 
 EXTRAS_REQUIRE = {
     "develop": [
+        "awkward",
         "black",
         "pytest",
         "pylint",
