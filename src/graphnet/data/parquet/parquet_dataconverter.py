@@ -1,24 +1,15 @@
-import re
 import awkward
-from glob import glob
-from multiprocessing import Pool
-import numpy as np
-import os
-import pandas as pd
-import sqlalchemy
-import sqlite3
 from collections import OrderedDict
-from tqdm import tqdm
-from typing import Any, Dict, List
+import os
+import re
+from typing import List
 
 from graphnet.data.i3extractor import (
     I3Extractor,
     I3TruthExtractor,
     I3FeatureExtractor,
 )
-from graphnet.data.utilities.sqlite import run_sql_code, save_to_sql
 from graphnet.data.dataconverter import DataConverter
-from graphnet.data.utilities.random import pairwise_shuffle
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
