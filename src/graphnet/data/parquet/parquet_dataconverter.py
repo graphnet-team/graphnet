@@ -17,14 +17,16 @@ from graphnet.data.i3extractor import (
     I3FeatureExtractor,
 )
 from graphnet.data.utilities.sqlite import run_sql_code, save_to_sql
+from graphnet.data.dataconverter import DataConverter
+from graphnet.data.utilities.random import pairwise_shuffle
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
-    print("icecube package not available.")
-
-from graphnet.data.dataconverter import DataConverter
-from graphnet.data.utilities.random import pairwise_shuffle
+    logger.warning("icecube package not available.")
 
 
 class ParquetDataConverter(DataConverter):
@@ -54,7 +56,7 @@ class ParquetDataConverter(DataConverter):
             for extractor in self._extractors
             if isinstance(extractor, I3FeatureExtractor)
         ]
-        print("Created ParquetDataConverter")
+        logger.info("Created ParquetDataConverter")
 
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
@@ -78,7 +80,7 @@ class ParquetDataConverter(DataConverter):
         Args:
             settings (list): List of arguments.
         """
-        print(f"Processing file {i3_file}")
+        logger.info(f"Processing file {i3_file}")
         self._extractors.set_files(i3_file, gcd_file)
         i3_file_io = dataio.I3File(i3_file, "r")
         arrays = list()
@@ -96,7 +98,7 @@ class ParquetDataConverter(DataConverter):
             arrays.append(data_dict)
 
         # Save to parquet file
-        print("Saving to file")
+        logger.info("Saving to file")
         if len(arrays) > 0:
             basename = os.path.basename(i3_file)
             outfile = os.path.join(
