@@ -40,6 +40,7 @@
 <li><a class="reference internal" href="#">graphnet.utilities package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-graphnet.utilities.imports">graphnet.utilities.imports module</a></li>
+<li><a class="reference internal" href="#module-graphnet.utilities.logging">graphnet.utilities.logging module</a></li>
 <li><a class="reference internal" href="#module-graphnet.utilities.maths">graphnet.utilities.maths module</a></li>
 <li><a class="reference internal" href="#module-graphnet.utilities">Module contents</a></li>
 </ul>
@@ -88,6 +89,18 @@
 <dt class="sig sig-object py" id="graphnet.utilities.imports.requires_icecube">
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.imports.</span></span><span class="sig-name descname"><span class="pre">requires_icecube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/imports.html#requires_icecube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.imports.requires_icecube" title="Permalink to this definition"></a></dt>
 <dd><p>Decorator for only exposing function if <cite>icecube</cite> module is present.</p>
+</dd></dl>
+
+</section>
+<section id="module-graphnet.utilities.logging">
+<span id="graphnet-utilities-logging-module"></span><h2>graphnet.utilities.logging module<a class="headerlink" href="#module-graphnet.utilities.logging" title="Permalink to this headline"></a></h2>
+<p>Consistent and configurable logging across the project.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.get_logger">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">get_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'logs'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">logging.Logger</span></span></span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#get_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.get_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Get <cite>logger</cite> instance, to be used in place of <cite>print()</cite>.</p>
+<p>The logger will print the specified level of output to the terminal, and
+will also save debug output to file.</p>
 </dd></dl>
 
 </section>

@@ -66,6 +66,11 @@
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+
 
 <div class="viewcode-block" id="check_db_size"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.utils.check_db_size">[docs]</a><span class="k">def</span> <span class="nf">check_db_size</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
     <span class="n">max_size</span> <span class="o">=</span> <span class="mi">5000000</span>
@@ -86,34 +91,14 @@
     <span class="n">features</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
 
     <span class="n">outdir</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/meta/transformers.pkl&quot;</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/meta/transformers.pkl&quot;</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/meta/transformers.pkl&quot;</span><span class="p">):</span>
         <span class="n">comb_scalers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/meta/transformers.pkl&quot;</span><span class="p">)</span>
-    <span class="c1"># else:</span>
-    <span class="c1">#     truths = [&#39;energy&#39;, &#39;position_x&#39;, &#39;position_y&#39;, &#39;position_z&#39;, &#39;azimuth&#39;, &#39;zenith&#39;]</span>
-    <span class="c1">#     events = check_db_size(db)</span>
-    <span class="c1">#     print(&#39;Fitting to %s&#39;%pulsemap)</span>
-    <span class="c1">#     with sqlite3.connect(db) as con:</span>
-    <span class="c1">#         query = &#39;select %s from %s where event_no in %s&#39;%(features,pulsemap, str(tuple(events[&#39;event_no&#39;])))</span>
-    <span class="c1">#         feature_data = pd.read_sql(query,con)</span>
-    <span class="c1">#         scaler = RobustScaler()</span>
-    <span class="c1">#         feature_scaler= scaler.fit(feature_data)</span>
-    <span class="c1">#     truth_scalers = {}</span>
-    <span class="c1">#     for truth in truths:</span>
-    <span class="c1">#         print(&#39;Fitting to %s&#39;%truth)</span>
-    <span class="c1">#         with sqlite3.connect(db) as con:</span>
-    <span class="c1">#             query = &#39;select %s from truth&#39;%truth</span>
-    <span class="c1">#             truth_data = pd.read_sql(query,con)</span>
-    <span class="c1">#         scaler = RobustScaler()</span>
-    <span class="c1">#         if truth == &#39;energy&#39;:</span>
-    <span class="c1">#             truth_scalers[truth] = scaler.fit(np.array(np.log10(truth_data[truth])).reshape(-1,1))</span>
-    <span class="c1">#         else:</span>
-    <span class="c1">#             truth_scalers[truth] = scaler.fit(np.array(truth_data[truth]).reshape(-1,1))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;Directory &#39;&quot;</span> <span class="o">+</span> <span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/meta/transformers.pkl&#39; doesn&#39;t exist.&quot;</span>
+        <span class="p">)</span>
 
-    <span class="c1">#     comb_scalers = {&#39;truth&#39;: truth_scalers, &#39;input&#39;: feature_scaler}</span>
-    <span class="c1">#     os.makedirs(outdir + &#39;/meta&#39;, exist_ok= True)</span>
-    <span class="c1">#     with open(outdir + &#39;/meta/transformersv2.pkl&#39;,&#39;wb&#39;) as handle:</span>
-    <span class="c1">#         pickle.dump(comb_scalers,handle,protocol = pickle.HIGHEST_PROTOCOL)</span>
     <span class="k">return</span> <span class="n">comb_scalers</span></div>
 </pre></div>
 

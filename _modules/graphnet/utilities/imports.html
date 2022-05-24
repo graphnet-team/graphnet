@@ -63,6 +63,11 @@
   <h1>Source code for graphnet.utilities.imports</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Common functionns for icetray/data-based unit tests.&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+
 
 <div class="viewcode-block" id="has_icecube_package"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.imports.has_icecube_package">[docs]</a><span class="k">def</span> <span class="nf">has_icecube_package</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check whether the `icecube` package is available.&quot;&quot;&quot;</span>
@@ -81,7 +86,7 @@
         <span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">test_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="n">f</span><span class="s2">&quot;Function `</span><span class="si">{test_function.__name__}</span><span class="s2">` not used since `icecube` isn&#39;t available.&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span>

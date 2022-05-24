@@ -68,6 +68,11 @@
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="k">import</span> <span class="n">_LRScheduler</span>
 <span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="k">import</span> <span class="n">TQDMProgressBar</span>
 
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+
 
 <div class="viewcode-block" id="PiecewiseLinearLR"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.PiecewiseLinearLR">[docs]</a><span class="k">class</span> <span class="nc">PiecewiseLinearLR</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interpolates learning rate linearly between milestones.</span>

@@ -63,7 +63,6 @@
   <h1>Source code for graphnet.data.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility function relevant to the graphnet.data package.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">ast</span> <span class="k">import</span> <span class="n">Is</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -73,6 +72,11 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="run_sql_code"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.utils.run_sql_code">[docs]</a><span class="k">def</span> <span class="nf">run_sql_code</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -141,7 +145,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tot_event_nos</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">desired_size</span><span class="p">:</span>
             <span class="n">desired_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tot_event_nos</span><span class="p">)</span>
             <span class="n">numbers_desired</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">desired_size</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fracs</span><span class="p">]</span>
-            <span class="nb">print</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;Only </span><span class="si">{}</span><span class="s2"> events in database, using this number instead.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="nb">len</span><span class="p">(</span><span class="n">tot_event_nos</span><span class="p">)</span>
                 <span class="p">)</span>
@@ -166,13 +170,13 @@
                     <span class="p">)</span>  <span class="c1"># could add weights (re-weigh) here with replace=True</span>
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp_dataframe</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                             <span class="s2">&quot;There are no particles of type </span><span class="si">{}</span><span class="s2"> in this database please make new request.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                 <span class="n">particle_type</span>
                             <span class="p">)</span>
                         <span class="p">)</span>
                         <span class="k">return</span> <span class="kc">None</span>
-                    <span class="nb">print</span><span class="p">(</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                         <span class="s2">&quot;There have been </span><span class="si">{}</span><span class="s2"> requested of particle </span><span class="si">{}</span><span class="s2">, we can only supply </span><span class="si">{}</span><span class="s2">. </span><span class="se">\n</span><span class="s2">Renormalising...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                             <span class="n">number</span><span class="p">,</span> <span class="n">particle_type</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp_dataframe</span><span class="p">)</span>
                         <span class="p">)</span>
@@ -226,7 +230,7 @@
     <span class="c1"># Subsample events for each PID to the smallest sample size</span>
     <span class="n">samples_sizes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">pid_indicies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_sizes</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Smallest sample size: </span><span class="si">{smallest_sample_size}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Smallest sample size: </span><span class="si">{smallest_sample_size}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span>
@@ -350,7 +354,7 @@
     <span class="c1"># Subsample events for each PID to the smallest sample size</span>
     <span class="n">samples_sizes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">non_dbangs_indicies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_sizes</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Smallest non dbang sample size: </span><span class="si">{smallest_sample_size}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Smallest non dbang sample size: </span><span class="si">{smallest_sample_size}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span>
             <span class="n">non_dbangs_indicies</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span>
@@ -368,7 +372,7 @@
                 <span class="s2">&quot;SELECT event_no FROM truth where dbang_decay_length != -1&quot;</span><span class="p">,</span>
                 <span class="n">conn</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;dbang sample size: {len(dbangs_indicies)}&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;dbang sample size: {len(dbangs_indicies)}&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">min_max_decay_length</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">dbangs_indicies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span>
@@ -391,8 +395,10 @@
             <span class="nb">len</span><span class="p">(</span><span class="n">indices_equal_proprtions</span><span class="p">)</span>
         <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dbangs in joint sample: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">dbangs_indicies</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;non-dbangs in joint sample: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices_equal_proprtions</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;dbangs in joint sample: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">dbangs_indicies</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;non-dbangs in joint sample: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices_equal_proprtions</span><span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="n">joint_indicies</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">dbangs_indicies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices_equal_proprtions</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

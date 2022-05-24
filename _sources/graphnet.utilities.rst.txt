@@ -12,6 +12,14 @@ graphnet.utilities.imports module
    :undoc-members:
    :show-inheritance:
 
+graphnet.utilities.logging module
+---------------------------------
+
+.. automodule:: graphnet.utilities.logging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.utilities.maths module
 -------------------------------
 
