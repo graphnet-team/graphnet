@@ -99,14 +99,14 @@ class DataConverter(ABC):
         args = list(zip(i3_files, gcd_files))
 
         if workers > 1:
-            print(
+            logger.info(
                 f"Starting pool of {workers} workers to process {len(i3_files)} I3 file(s)"
             )
             p = Pool(processes=workers)
             for _ in tqdm(p.imap(self._process_files, args)):
                 pass
         else:
-            print(
+            logger.info(
                 f"Processing {len(i3_files)} I3 file(s) in main thread (not multiprocessing)"
             )
             map(self._process_file, tqdm(args))
