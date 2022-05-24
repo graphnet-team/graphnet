@@ -15,7 +15,7 @@ logger = get_logger()
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
-    logger.info("icecube package not available.")
+    logger.warning("icecube package not available.")
 
 
 class DataConverter(ABC):
