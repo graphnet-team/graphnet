@@ -458,10 +458,8 @@ def frame_is_lvl7(frame):
 def turn_bool_into_number(i3_bool):
     #i3bool is either I3Bool(true or False) or -1 as defined by the try_get_key function
     if i3_bool and type(i3_bool) == icetray.I3Bool:
-        print('passes',i3_bool)
         return 1
     elif i3_bool == -1:
-        print('gets the default value',i3_bool)
         return -1
     else:
         return int(bool(i3_bool))
