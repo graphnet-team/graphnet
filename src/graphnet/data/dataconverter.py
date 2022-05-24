@@ -8,11 +8,14 @@ from tqdm import tqdm
 from graphnet.data.utilities.random import pairwise_shuffle
 from graphnet.data.i3extractor import I3Extractor, I3ExtractorCollection
 from graphnet.utilities.filesys import find_i3_files
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
-    print("icecube package not available.")
+    logger.info("icecube package not available.")
 
 
 class DataConverter(ABC):
@@ -64,7 +67,7 @@ class DataConverter(ABC):
         # Find all I3 and GCD files in the specified directories.
         i3_files, gcd_files = find_i3_files(directories, self._gcd_rescue)
         if len(i3_files) == 0:
-            print(f"ERROR: No files found in: {directories}.")
+            logger.info(f"ERROR: No files found in: {directories}.")
             return
 
         # Save a record of the found I3 files in the output directory.

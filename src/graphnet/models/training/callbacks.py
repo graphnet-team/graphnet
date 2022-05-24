@@ -5,6 +5,11 @@ import warnings
 from torch.optim.lr_scheduler import _LRScheduler
 from pytorch_lightning.callbacks import TQDMProgressBar
 
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
+
 
 class PiecewiseLinearLR(_LRScheduler):
     """Interpolates learning rate linearly between milestones.

@@ -13,6 +13,10 @@ from graphnet.models.coarsening import Coarsening
 from graphnet.models.detector.detector import Detector
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.task import Task
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
 
 
 class Model(LightningModule):
@@ -125,7 +129,7 @@ class Model(LightningModule):
             for task, pred in zip(self._tasks, preds)
         ]
         if verbose:
-            print(losses)
+            logger.info(losses)
         assert all(
             loss.dim() == 0 for loss in losses
         ), "Please reduce loss for each task separately"
@@ -134,12 +138,14 @@ class Model(LightningModule):
     def save(self, path: str):
         """Saves entire model to `path`."""
         if not path.endswith(".pth"):
-            print("It is recommended to use the .pth suffix for model files.")
+            logger.info(
+                "It is recommended to use the .pth suffix for model files."
+            )
         dirname = os.path.dirname(path)
         if dirname:
             os.makedirs(dirname, exist_ok=True)
         torch.save(self.cpu(), path, pickle_module=dill)
-        print(f"Model saved to {path}")
+        logger.info(f"Model saved to {path}")
 
     @classmethod
     def load(cls, path: str) -> "Model":
@@ -149,11 +155,11 @@ class Model(LightningModule):
     def save_state_dict(self, path: str):
         """Saves model `state_dict` to `path`."""
         if not path.endswith(".pth"):
-            print(
+            logger.info(
                 "It is recommended to use the .pth suffix for state_dict files."
             )
         torch.save(self.cpu().state_dict(), path)
-        print(f"Model state_dict saved to {path}")
+        logger.info(f"Model state_dict saved to {path}")
 
     def load_state_dict(
         self, path: str

@@ -38,12 +38,12 @@ EXTRAS_REQUIRE = {
         "awkward",
         "black",
         "pyarrow",
-        "pytest",
-        "pylint",
-        "pydocstyle",
+        "colorlog",
         "coverage",
-        "anybadge",
         "pre-commit",
+        "pydocstyle",
+        "pylint",
+        "pytest",
         "sphinx",
         "sphinx_rtd_theme",
         "versioneer",
@@ -55,7 +55,7 @@ EXTRAS_REQUIRE = {
 try:
     import torch  # pyright: reportMissingImports=false
 except ImportError:
-    install("torch==1.9.0")
+    install("torch==1.10.1")
 
 setup(
     name="graphnet",

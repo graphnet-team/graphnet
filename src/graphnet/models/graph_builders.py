@@ -6,6 +6,10 @@ from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
 
 from graphnet.models.utils import calculate_distance_matrix
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
 
 
 class GraphBuilder(ABC):  # pylint: disable=too-few-public-methods
@@ -35,9 +39,11 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
     def __call__(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            print(
-                "WARNING: GraphBuilder received graph with pre-existing structure. ",
-                "Will overwrite.",
+            logger.info(
+                (
+                    "WARNING: GraphBuilder received graph with pre-existing structure. "
+                    "Will overwrite.",
+                )
             )
 
         data.edge_index = knn_graph(
@@ -70,9 +76,11 @@ class RadialGraphBuilder(GraphBuilder):
     def __call__(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            print(
-                "WARNING: GraphBuilder received graph with pre-existing structure. ",
-                "Will overwrite.",
+            logger.info(
+                (
+                    "WARNING: GraphBuilder received graph with pre-existing structure. "
+                    "Will overwrite.",
+                )
             )
 
         data.edge_index = radius_graph(
@@ -107,9 +115,11 @@ class EuclideanGraphBuilder(
     def __call__(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            print(
-                "WARNING: GraphBuilder received graph with pre-existing structure. ",
-                "Will overwrite.",
+            logger.info(
+                (
+                    "WARNING: GraphBuilder received graph with pre-existing structure. "
+                    "Will overwrite.",
+                )
             )
 
         xyz_coords = data.x[:, self._columns]

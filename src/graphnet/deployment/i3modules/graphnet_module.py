@@ -6,6 +6,17 @@ import numpy as np
 import torch
 from torch_geometric.data import Data
 
+from graphnet.data.i3extractor import (
+    I3FeatureExtractorIceCube86,
+    I3FeatureExtractorIceCubeDeepCore,
+    I3FeatureExtractorIceCubeUpgrade,
+)
+from graphnet.data.constants import FEATURES
+from graphnet.models import Model
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
+
 try:
     from icecube.icetray import (
         I3Module,
@@ -15,15 +26,7 @@ try:
         I3Double,
     )  # pyright: reportMissingImports=false
 except ImportError:
-    print("icecube package not available.")
-
-from graphnet.data.i3extractor import (
-    I3FeatureExtractorIceCube86,
-    I3FeatureExtractorIceCubeDeepCore,
-    I3FeatureExtractorIceCubeUpgrade,
-)
-from graphnet.data.constants import FEATURES
-from graphnet.models import Model
+    logger.info("icecube package not available.")
 
 
 class GraphNeTModuleBase(I3Module):
@@ -126,7 +129,7 @@ class GraphNeTModuleBase(I3Module):
                 predictions
             )  # @TODO: Special case for single task
         except:  # noqa: E722
-            print(data)
+            logger.warning(data)
             raise
 
         # Write predictions to frame
