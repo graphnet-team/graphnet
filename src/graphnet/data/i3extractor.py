@@ -301,7 +301,7 @@ class I3TruthExtractor(I3Extractor):
                 output['MuonFilter_13'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'MuonFilter_13',default_value=-1))
                 output['OnlineL2Filter_17'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'OnlineL2Filter_17',default_value=-1))
 
-            elif frame_has_key(frame,key='DeepCoreFilter_13'):
+            elif frame_has_key(frame, key='DeepCoreFilter_13'):
                 output['DeepCoreFilter_13'] = int(bool(frame['DeepCoreFilter_13']))
             
             if frame_has_key(frame, key='L3_oscNext_bool'):
