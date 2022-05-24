@@ -75,9 +75,6 @@ class SQLiteDataConverter(DataConverter):
     def _process_files(self, i3_files, gcd_files):
         """Starts the parallelized extraction using map_async."""
 
-        os.makedirs(self._outdir + "/%s/data" % self._db_name, exist_ok=True)
-        os.makedirs(self._outdir + "/%s/tmp" % self._db_name, exist_ok=True)
-
         i3_files, gcd_files = pairwise_shuffle(i3_files, gcd_files)
         self._save_filenames(i3_files)
 
@@ -121,8 +118,8 @@ class SQLiteDataConverter(DataConverter):
         self._merge_databases()
 
     def _initialise(self):
-        if self._verbose == 0:
-            icetray.I3Logger.global_logger = icetray.I3NullLogger()
+        os.makedirs(self._outdir + "/%s/data" % self._db_name, exist_ok=True)
+        os.makedirs(self._outdir + "/%s/tmp" % self._db_name, exist_ok=True)
 
     # Non-inherited private method(s)
     def _parallel_extraction(self, settings):
@@ -204,14 +201,6 @@ class SQLiteDataConverter(DataConverter):
                     db_name,
                     outdir,
                 )
-
-    def _save_filenames(self, i3_files: List[str]):
-        """Saves I3 file names in CSV format."""
-        os.makedirs(self._outdir + "/%s/config" % self._db_name, exist_ok=True)
-        i3_files = pd.DataFrame(data=i3_files, columns=["filename"])
-        i3_files.to_csv(
-            self._outdir + "/%s/config/i3files.csv" % self._db_name
-        )
 
     def _merge_databases(self):
         """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""

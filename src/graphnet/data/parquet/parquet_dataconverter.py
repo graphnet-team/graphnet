@@ -1,3 +1,4 @@
+import re
 import awkward
 from glob import glob
 from multiprocessing import Pool
@@ -26,14 +27,18 @@ from graphnet.data.dataconverter import DataConverter
 from graphnet.data.utilities.random import pairwise_shuffle
 
 
-class ParquetConverter(DataConverter):
+class ParquetDataConverter(DataConverter):
     def __init__(
         self,
         extractors: List[I3Extractor],
         outdir: str,
         gcd_rescue: str,
+        *,
+        verbose: int = 0,
     ):
         """Implementation of DataConverter for saving to Parquet files."""
+
+        self._verbose = verbose
 
         # Base class constructor
         super().__init__(extractors, outdir, gcd_rescue)
@@ -49,6 +54,7 @@ class ParquetConverter(DataConverter):
             for extractor in self._extractors
             if isinstance(extractor, I3FeatureExtractor)
         ]
+        print("Created ParquetDataConverter")
 
     # Abstract method implementation(s)
     def _process_files(self, i3_files, gcd_files):
@@ -72,11 +78,9 @@ class ParquetConverter(DataConverter):
         Args:
             settings (list): List of arguments.
         """
-
-        """ TEMP
+        print(f"Processing file {i3_file}")
         self._extractors.set_files(i3_file, gcd_file)
         i3_file_io = dataio.I3File(i3_file, "r")
-        #dtype = None
         arrays = list()
         while i3_file_io.more():
             try:
@@ -89,221 +93,13 @@ class ParquetConverter(DataConverter):
             data_dict = OrderedDict(zip(self._table_names, results))
 
             # Concatenate data
-            for key, data in data_dict.items():
-                df = apply_event_no(data, event_no_list, event_count)
+            arrays.append(data_dict)
 
-                if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
-                    # only include data_dict in temp. databases if at least one pulsemap is non-empty,
-                    # and the current extractor (df) is also non-empty (also since truth is always non-empty)
-                    dataframes_big[key] = dataframes_big[key].append(
-                        df, ignore_index=True, sort=True
-                    )
-
-            if self.any_pulsemap_is_non_empty(
-                data_dict
-            ):  # Event count only increases if we actually add data to the temporary database
-                event_count += 1
-
-        awkward.to_parquet(
-            arrays,
-        )
-        """
-
-    def _save_filenames(self, i3_files: List[str]):
-        """Saves I3 file names in CSV format."""
-        os.makedirs(self._outdir + "/%s/config" % self._db_name, exist_ok=True)
-        i3_files = pd.DataFrame(data=i3_files, columns=["filename"])
-        i3_files.to_csv(
-            self._outdir + "/%s/config/i3files.csv" % self._db_name
-        )
-
-    def _merge_databases(self):
-        """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""
-        path_tmp = self._outdir + "/" + self._db_name + "/tmp"
-        database_path = (
-            self._outdir + "/" + self._db_name + "/data/" + self._db_name
-        )
-        db_paths = glob(os.path.join(path_tmp, "*.db"))
-        db_files = [os.path.split(db_file)[1] for db_file in db_paths]
-        if len(db_files) > 0:
-            print("Found %s .db-files in %s" % (len(db_files), path_tmp))
-            print(db_files)
-
-            # Create one empty database table for each extraction
-            for ix_table, table_name in enumerate(self._table_names):
-                column_names = self._extract_column_names(db_paths, table_name)
-                if len(column_names) > 1:
-                    is_pulse_map = is_pulsemap_check(table_name)
-                    self._create_table(
-                        database_path,
-                        table_name,
-                        column_names,
-                        is_pulse_map=is_pulse_map,
-                    )  # (ix_table >= 2))
-
-            # Merge temporary databases into newly created one
-            self._merge_temporary_databases(database_path, db_files, path_tmp)
-            os.system("rm -r %s" % path_tmp)
-        else:
-            print("No temporary database files found!")
-
-    def _extract_column_names(self, db_paths, table_name):
-        for db_path in db_paths:
-            with sqlite3.connect(db_path) as con:
-                query = f"select * from {table_name} limit 1"
-                columns = pd.read_sql(query, con).columns
-            if len(columns):
-                return columns
-        return []
-
-    def any_pulsemap_is_non_empty(self, data_dict: OrderedDict) -> bool:
-        """Check whether there are any non-empty pulsemaps extracted from P frame.
-        Takes in the data extracted from the P frame, then retrieves the values, if
-        there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least
-        one of the pulsemaps is non-empty then return true.
-        """
-        pulsemap_dicts = map(data_dict.get, self._pulsemaps)
-        return any(d["dom_x"] for d in pulsemap_dicts)
-
-    def _attach_index(self, database: str, table_name: str):
-        """Attaches the table index. Important for query times!"""
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            "BEGIN TRANSACTION;\n"
-            f"CREATE INDEX event_no_{table_name} ON {table_name} (event_no);\n"
-            "COMMIT TRANSACTION;\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(database, code)
-
-    def _create_table(self, database, table_name, columns, is_pulse_map=False):
-        """Creates a table.
-
-        Args:
-            database (str): path to the database
-            table_name (str): name of the table
-            columns (str): the names of the columns of the table
-            is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.
-        """
-        query_columns = list()
-        for column in columns:
-            if column == "event_no":
-                if not is_pulse_map:
-                    type_ = "INTEGER PRIMARY KEY NOT NULL"
-                else:
-                    type_ = "NOT NULL"
-            else:
-                type_ = "FLOAT"
-            query_columns.append(f"{column} {type_}")
-        query_columns = ", ".join(query_columns)
-
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            f"CREATE TABLE {table_name} ({query_columns});\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(database, code)
-
-        if is_pulse_map:
-            print(table_name)
-            print("Attaching indices")
-            self._attach_index(database, table_name)
-        return
-
-    def _submit_to_database(self, database: str, key: str, data: pd.DataFrame):
-        """Submits data to the database with specified key."""
-        if len(data) == 0:
-            if self._verbose:
-                print(f"No data provided for {key}.")
-            return
-        engine = sqlalchemy.create_engine("sqlite:///" + database + ".db")
-        data.to_sql(key, engine, index=False, if_exists="append")
-        engine.dispose()
-
-    def _extract_everything(self, db: str) -> "OrderedDict[str, pd.DataFrame]":
-        """Extracts everything from the temporary database `db`.
-
-        Args:
-            db (str): Path to temporary database
-
-        Returns:
-            results (dict): Contains the data for each extracted table
-        """
-        results = OrderedDict()
-        with sqlite3.connect(db) as conn:
-            for table_name in self._table_names:
-                query = f"select * from {table_name}"
-                try:
-                    data = pd.read_sql(query, conn)
-                except:  # noqa: E722
-                    data = []
-                results[table_name] = data
-        return results
-
-    def _merge_temporary_databases(
-        self, database: str, db_files: List[str], path_to_tmp: str
-    ):
-        """Merges the temporary databases.
-
-        Args:
-            database (str): path to the final database
-            db_files (list): list of names of temporary databases
-            path_to_tmp (str): path to temporary database directory
-        """
-        for df_file in tqdm(db_files, colour="green"):
-            results = self._extract_everything(path_to_tmp + "/" + df_file)
-            for table_name, data in results.items():
-                self._submit_to_database(database, table_name, data)
-
-    def _save_dataframes_to_sql_and_reset(
-        self,
-        dataframes_big: Dict[str, pd.DataFrame],
-        id: int,
-        output_count: int,
-        database: str,
-        outdir: str,
-    ):
-        # Format output path
-        output_path = os.path.join(
-            outdir, f"{database}/tmp/worker-{id}-{output_count}.db"
-        )
-
-        # Save each dataframe to SQLite database
-        for key, df in dataframes_big.items():
-            if len(df) > 0:
-                save_to_sql(df, key, output_path)
-
-        # Reset dictionary of dataframes
-        dataframes_big = OrderedDict(
-            [(key, pd.DataFrame()) for key in self._table_names]
-        )
-
-        return dataframes_big, output_count + 1
-
-
-# Implementation-specific utility function(s)
-def apply_event_no(
-    extraction: Dict[str, Any], event_no_list: List[int], event_counter: int
-) -> pd.DataFrame:
-    """Converts extraction to pandas.DataFrame and applies the event_no index to extraction.
-
-    Args:
-        extraction: Dictionary with the extracted data.
-        event_no_list: List of allocated event_no's.
-        event_counter: Index for event_no_list.
-
-    Returns:
-        Extraction as pandas.DataFrame with event_no column.
-    """
-    all_scalars = all(map(np.isscalar, extraction.values()))
-    out = pd.DataFrame(extraction, index=[0] if all_scalars else None)
-    out["event_no"] = event_no_list[event_counter]
-    return out
-
-
-def is_pulsemap_check(table_name: str) -> bool:
-    """Check whether `table_name` corresponds to a pulsemap, and not a truth or RETRO table."""
-    if "retro" in table_name.lower() or "truth" in table_name.lower():
-        return False
-    else:  # Could have to include the lower case word 'pulse'?
-        return True
+        # Save to parquet file
+        print("Saving to file")
+        if len(arrays) > 0:
+            basename = os.path.basename(i3_file)
+            outfile = os.path.join(
+                self._outdir, re.sub(r"\.i3\..*", ".parquet", basename)
+            )
+            awkward.to_parquet(awkward.from_iter(arrays), outfile)
