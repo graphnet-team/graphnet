@@ -13,6 +13,9 @@ from tqdm import tqdm
 
 from graphnet.data.sqlite_dataset import SQLiteDataset
 from graphnet.models import Model
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 
 def make_dataloader(
@@ -201,4 +204,4 @@ def save_results(db, tag, results, archive, model):
     results.to_csv(path + "/results.csv")
     model.save_state_dict(path + "/" + tag + "_state_dict.pth")
     model.save(path + "/" + tag + "_model.pth")
-    print("Results saved at: \n %s" % path)
+    logger.info("Results saved at: \n %s" % path)

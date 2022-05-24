@@ -3,6 +3,11 @@ from typing import List
 import numpy as np
 import matplotlib.path as mpath
 
+from graphnet.data.utils import frame_has_key
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
+
 try:
     from icecube import (
         dataclasses,
@@ -11,7 +16,7 @@ try:
         phys_services,
     )  # pyright: reportMissingImports=false
 except ImportError:
-    print("icecube package not available.")
+    logger.info("icecube package not available.")
 
 
 class I3Extractor(ABC):
@@ -127,7 +132,6 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         try:
             om_keys, data = self._get_om_keys_and_pulseseries(frame)
         except KeyError:
-            # print(f"WARN: Pulsemap {self._pulsemap} was not found in frame.")
             return output
 
         for om_key in om_keys:
@@ -586,7 +590,7 @@ def find_data_type(mc, input_file):
     if "L2" in input_file:  # not robust
         sim_type = "dbang"
     if sim_type == "lol":
-        print("SIM TYPE NOT FOUND!")
+        logger.info("SIM TYPE NOT FOUND!")
     return sim_type
 
 

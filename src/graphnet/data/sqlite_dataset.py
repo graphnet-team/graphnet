@@ -6,6 +6,11 @@ import torch
 from torch_geometric.data import Data
 import time
 
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
+
 
 class SQLiteDataset(torch.utils.data.Dataset):
     """Pytorch dataset for reading from SQLite."""
@@ -51,7 +56,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             self._node_truth_string = ", ".join(self._node_truth)
 
         if string_selection is not None:
-            print(
+            logger.info(
                 "WARNING - STRING SELECTION DETECTED. \n Accepted strings: %s \n all other strings are ignored!"
                 % string_selection
             )

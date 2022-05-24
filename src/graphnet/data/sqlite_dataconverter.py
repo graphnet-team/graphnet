@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from glob import glob
 from multiprocessing import Pool
 import numpy as np
@@ -5,20 +6,21 @@ import os
 import pandas as pd
 import sqlalchemy
 import sqlite3
-from collections import OrderedDict
 from tqdm import tqdm
 from typing import Any, Dict, List
 
 from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
 from graphnet.data.utilities.sqlite import run_sql_code, save_to_sql
+from graphnet.data.dataconverter import DataConverter
+from graphnet.data.utils import pairwise_shuffle
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 try:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 except ImportError:
-    print("icecube package not available.")
-
-from graphnet.data.dataconverter import DataConverter
-from graphnet.data.utilities.random import pairwise_shuffle
+    logger.warning("icecube package not available.")
 
 
 class SQLiteDataConverter(DataConverter):
@@ -101,7 +103,7 @@ class SQLiteDataConverter(DataConverter):
             )
 
         if workers > 1:
-            print(
+            logger.info(
                 f"Starting pool of {workers} workers to process {len(i3_files)} I3 file(s)"
             )
             p = Pool(processes=workers)
@@ -109,12 +111,12 @@ class SQLiteDataConverter(DataConverter):
             p.close()
             p.join()
         else:
-            print(
+            logger.info(
                 f"Processing {len(i3_files)} I3 file(s) in main thread (not multiprocessing)"
             )
             self._parallel_extraction(settings[0])
 
-        print("Merging databases")
+        logger.info("Merging databases")
         self._merge_databases()
 
     def _initialise(self):
@@ -211,8 +213,8 @@ class SQLiteDataConverter(DataConverter):
         db_paths = glob(os.path.join(path_tmp, "*.db"))
         db_files = [os.path.split(db_file)[1] for db_file in db_paths]
         if len(db_files) > 0:
-            print("Found %s .db-files in %s" % (len(db_files), path_tmp))
-            print(db_files)
+            logger.info("Found %s .db-files in %s" % (len(db_files), path_tmp))
+            logger.info(db_files)
 
             # Create one empty database table for each extraction
             for ix_table, table_name in enumerate(self._table_names):
@@ -230,7 +232,7 @@ class SQLiteDataConverter(DataConverter):
             self._merge_temporary_databases(database_path, db_files, path_tmp)
             os.system("rm -r %s" % path_tmp)
         else:
-            print("No temporary database files found!")
+            logger.info("No temporary database files found!")
 
     def _extract_column_names(self, db_paths, table_name):
         for db_path in db_paths:
@@ -290,8 +292,8 @@ class SQLiteDataConverter(DataConverter):
         run_sql_code(database, code)
 
         if is_pulse_map:
-            print(table_name)
-            print("Attaching indices")
+            logger.info(table_name)
+            logger.info("Attaching indices")
             self._attach_index(database, table_name)
         return
 
@@ -299,7 +301,7 @@ class SQLiteDataConverter(DataConverter):
         """Submits data to the database with specified key."""
         if len(data) == 0:
             if self._verbose:
-                print(f"No data provided for {key}.")
+                logger.info(f"No data provided for {key}.")
             return
         engine = sqlalchemy.create_engine("sqlite:///" + database + ".db")
         data.to_sql(key, engine, index=False, if_exists="append")
