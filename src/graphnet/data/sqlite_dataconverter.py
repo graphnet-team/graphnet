@@ -1,5 +1,4 @@
 from glob import glob
-from multiprocessing import Pool
 import numpy as np
 import os
 import pandas as pd
@@ -13,7 +12,6 @@ from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
 from graphnet.data.utilities.sqlite import run_sql_code, save_to_sql
 
 from graphnet.data.dataconverter import DataConverter
-from graphnet.data.utils import pairwise_shuffle
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
