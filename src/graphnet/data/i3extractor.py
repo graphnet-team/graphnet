@@ -3,7 +3,6 @@ from typing import List
 import numpy as np
 import matplotlib.path as mpath
 
-from graphnet.data.utils import frame_has_key
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
