@@ -20,6 +20,9 @@ from graphnet.models.training.utils import (
     make_train_validation_dataloader,
     save_results,
 )
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 # Configurations
 torch.multiprocessing.set_sharing_strategy("file_system")
@@ -40,8 +43,8 @@ wandb_logger = WandbLogger(
 # Main function definition
 def main():
 
-    print(f"features: {features}")
-    print(f"truth: {truth}")
+    logger.info(f"features: {features}")
+    logger.info(f"truth: {truth}")
 
     # Configuration
     config = {
@@ -130,7 +133,7 @@ def main():
     try:
         trainer.fit(model, training_dataloader, validation_dataloader)
     except KeyboardInterrupt:
-        print("[ctrl+c] Exiting gracefully.")
+        logger.warning("[ctrl+c] Exiting gracefully.")
         pass
 
     # Saving predictions to file
