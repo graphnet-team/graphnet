@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from glob import glob
 from multiprocessing import Pool
 import numpy as np
@@ -6,11 +5,13 @@ import os
 import pandas as pd
 import sqlalchemy
 import sqlite3
+from collections import OrderedDict
 from tqdm import tqdm
 from typing import Any, Dict, List
 
 from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
 from graphnet.data.utilities.sqlite import run_sql_code, save_to_sql
+
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.utils import pairwise_shuffle
 from graphnet.utilities.logging import get_logger
@@ -30,10 +31,10 @@ class SQLiteDataConverter(DataConverter):
         outdir,
         gcd_rescue,
         *,
+        workers=0,
+        verbose=0,
         db_name,
-        workers,
         max_dictionary_size=10000,
-        verbose=1,
     ):
         """Implementation of DataConverter for saving to SQLite database.
 
@@ -54,12 +55,12 @@ class SQLiteDataConverter(DataConverter):
         """
         # Additional member variables
         self._db_name = db_name
-        self._verbose = verbose
-        self._workers = workers
         self._max_dict_size = max_dictionary_size
 
         # Base class constructor
-        super().__init__(extractors, outdir, gcd_rescue)
+        super().__init__(
+            extractors, outdir, gcd_rescue, workers=workers, verbose=verbose
+        )
 
         assert isinstance(extractors[0], I3TruthExtractor), (
             f"The first extractor in {self.__class__.__name__} should always be of type "
@@ -74,54 +75,13 @@ class SQLiteDataConverter(DataConverter):
         ]
 
     # Abstract method implementation(s)
-    def _process_files(self, i3_files, gcd_files):
-        """Starts the parallelized extraction using map_async."""
-
-        i3_files, gcd_files = pairwise_shuffle(i3_files, gcd_files)
-        self._save_filenames(i3_files)
-
-        workers = min(self._workers, len(i3_files))
-
-        # SETTINGS
-        settings = []
-        event_nos = np.array_split(
-            np.arange(0, 99999999, 1), workers
-        )  # Notice that this choice means event_no is NOT unique between different databases.
-        file_list = np.array_split(np.array(i3_files), workers)
-        gcd_file_list = np.array_split(np.array(gcd_files), workers)
-        for i in range(workers):
-            settings.append(
-                [
-                    file_list[i],
-                    str(i),
-                    gcd_file_list[i],
-                    event_nos[i],
-                    self._max_dict_size,
-                    self._db_name,
-                    self._outdir,
-                ]
-            )
-
-        if workers > 1:
-            logger.info(
-                f"Starting pool of {workers} workers to process {len(i3_files)} I3 file(s)"
-            )
-            p = Pool(processes=workers)
-            p.map_async(self._parallel_extraction, settings)
-            p.close()
-            p.join()
-        else:
-            logger.info(
-                f"Processing {len(i3_files)} I3 file(s) in main thread (not multiprocessing)"
-            )
-            self._parallel_extraction(settings[0])
-
-        logger.info("Merging databases")
-        self._merge_databases()
-
     def _initialise(self):
         os.makedirs(self._outdir + "/%s/data" % self._db_name, exist_ok=True)
         os.makedirs(self._outdir + "/%s/tmp" % self._db_name, exist_ok=True)
+
+    def _finalise(self):
+        logger.info("Merging databases")
+        self._merge_databases()
 
     # Non-inherited private method(s)
     def _parallel_extraction(self, settings):
