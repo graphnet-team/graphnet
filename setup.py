@@ -37,6 +37,7 @@ EXTRAS_REQUIRE = {
     "develop": [
         "awkward",
         "black",
+        "pyarrow",
         "pytest",
         "pylint",
         "pydocstyle",
