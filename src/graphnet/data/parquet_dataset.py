@@ -75,7 +75,10 @@ class ParquetDataset(torch.utils.data.Dataset):
         index: int,
         selection: Optional[str] = None,
     ):
-        return ak.to_pandas(self._parquet_hook[table][[index], columns])
+        query = self._parquet_hook[table][index][columns].to_list()
+        c = np.array([query[column] for column in columns]).T
+        # c = np.array([query['x'],query['y'],query['z'],query['t']]).T
+        return c  # ak.to_pandas(self._parquet_hook[table][[index], columns])
 
     def __getitem__(self, i):
         features, truth, node_truth = self._get_event_data(i)
@@ -127,9 +130,7 @@ class ParquetDataset(torch.utils.data.Dataset):
             torch.Data: Graph object.
         """
         # Convert nested list to simple dict
-        truth_dict = {
-            key: truth[key].to_numpy().tolist() for key in truth.keys()
-        }
+        truth_dict = {key: truth[ix] for ix, key in enumerate(self._truth)}
 
         # assert len(truth) == len(self._truth)
 
@@ -142,7 +143,7 @@ class ParquetDataset(torch.utils.data.Dataset):
             }
 
         # Construct graph data object
-        x = torch.tensor(features.to_numpy(), dtype=self._dtype)
+        x = torch.tensor(features, dtype=self._dtype)
         n_pulses = torch.tensor(len(x), dtype=torch.int32)
         graph = Data(x=x, edge_index=None)
         graph.n_pulses = n_pulses
