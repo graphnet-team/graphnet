@@ -11,9 +11,127 @@ import os
 import random
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import configparser
+import io
+from configupdater import ConfigUpdater
+from contextlib import contextmanager
 
 mpl.use("pdf")
 plt.rc("font", family="serif")
+
+
+@contextmanager
+def config_updater(
+    config_path: str,
+    new_config_path: str = None,
+    dummy_section: str = "temp",
+) -> ConfigUpdater:
+    """Updates config files and saves them to file.
+
+    Args:
+        config_path (str): Path to original config file.
+        new_config_path (str, optional): Path to save updated config file.
+            Defaults to None.
+        dummy_section (str, optional): Dummy section name to use for config
+            files without section headers. Defaults to "temp".
+
+    Yields:
+        ConfigUpdater: Instance for programatically updating config file.
+    """
+    # Modify original config file is no new config path is provided.
+    if new_config_path is None:
+        new_config_path = config_path
+
+    # Load config file
+    updater = ConfigUpdater()
+    has_dummy_section = False
+    try:
+        updater.read(config_path)
+
+    # If it is missing section headers (e.g., binning.cfg), add a dummy section
+    # header before reading file contents.
+    except configparser.MissingSectionHeaderError:
+        with open(config_path, "r") as configfile:
+            updater.read_string(f"[{dummy_section}]\n" + configfile.read())
+        has_dummy_section = True
+
+    # Expose updater instance in contest (i.e.,
+    # `with config_updater(...) as updater:``).
+    try:
+        yield updater
+
+    # Write new config to file
+    finally:
+        with open(new_config_path, "w") as configfile:
+            if has_dummy_section:
+                # Removing dummy section header if necessary
+                with io.StringIO() as buffer:
+                    updater.write(buffer)
+                    buffer.seek(0)
+                    lines = buffer.readlines()[1:]
+                configfile.writelines(lines)
+            else:
+                updater.write(configfile)
+
+
+def create_configs(path, config_dict):
+    # Update binning config
+    root = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+    if config_dict["post_fix"] is not None:
+        config_name = "config%s.cfg" % config_dict["post_fix"]
+    else:
+        config_name = "config.cfg"
+
+    with config_updater(
+        root
+        + "/resources/configuration_templates/binning_config_template.cfg",
+        "%s/binning_%s.cfg" % (path, config_name),
+        dummy_section="binning",
+    ) as updater:
+        updater["binning"]["graphnet_dynamic_binning.reco_energy"].value = (
+            "{'num_bins':%s, 'is_log':True, 'domain':[0.5,55] * units.GeV, 'tex': r'E_{\\rm reco}'}"
+            % config_dict["reco_energy"]["num_bins"]
+        )  # noqa: W605
+        updater["binning"]["graphnet_dynamic_binning.reco_coszen"].value = (
+            "{'num_bins':%s, 'is_lin':True, 'domain':[-1,1], 'tex':r'\\cos{\\theta}_{\\rm reco}'}"
+            % config_dict["reco_coszen"]["num_bins"]
+        )  # noqa: W605
+        updater["binning"]["graphnet_dynamic_binning.pid"].value = (
+            "{'bin_edges': %s, 'tex':r'{\\rm PID}'}"
+            % config_dict["pid"]["bin_edges"]
+        )  # noqa: W605
+        updater["binning"]["true_allsky_fine.true_energy"].value = (
+            "{'num_bins':%s, 'is_log':True, 'domain':[1,1000] * units.GeV, 'tex': r'E_{\\rm true}'}"
+            % config_dict["true_energy"]["num_bins"]
+        )  # noqa: W605
+        updater["binning"]["true_allsky_fine.true_coszen"].value = (
+            "{'num_bins':%s, 'is_lin':True, 'domain':[-1,1], 'tex':r'\\cos\,\\theta_{Z,{\\rm true}}'}"  # noqa: W605
+            % config_dict["true_coszen"]["num_bins"]
+        )  # noqa: W605
+
+    # Update pipeline config
+    with config_updater(
+        root
+        + "/resources/configuration_templates/pipeline_config_template.cfg",
+        "%s/pipeline_%s.cfg" % (path, config_name),
+    ) as updater:
+        updater["pipeline"].add_before.comment(
+            "# include %s/%s.cfg as binning" % (path, config_name)
+        )
+        updater["data.sqlite_loader"]["post_fix"].value = config_dict[
+            "post_fix"
+        ]
+        updater["data.sqlite_loader"]["database"].value = config_dict[
+            "pipeline"
+        ]
+        if "livetime" in config_dict.keys():
+            updater["aeff.aeff"]["param.livetime"].value = (
+                "%s * units.common_year" % config_dict["livetime"]
+            )
+
+    return "%s/pipeline_%s.cfg" % (path, config_name)
 
 
 def make_binning_cfg(config_dict, outdir):
@@ -192,9 +310,10 @@ def make_configs(
         config_dict["post_fix"] = "_retro"
     else:
         config_dict["post_fix"] = post_fix
-    binning_cfg_path = make_binning_cfg(config_dict, outdir + "/" + run_name)
-    config_dict["binning_cfg"] = binning_cfg_path
-    pipeline_cfg_path = make_pipeline_cfg(config_dict, outdir + "/" + run_name)
+    # binning_cfg_path = make_binning_cfg(config_dict, outdir + "/" + run_name)
+    # config_dict["binning_cfg"] = binning_cfg_path
+    # pipeline_cfg_path = make_pipeline_cfg(config_dict, outdir + "/" + run_name)
+    pipeline_cfg_path = create_configs(config_dict, outdir + "/" + run_name)
     return pipeline_cfg_path
 
 
