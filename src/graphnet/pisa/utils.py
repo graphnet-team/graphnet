@@ -160,9 +160,6 @@ def make_configs(
         config_dict["post_fix"] = "_retro"
     else:
         config_dict["post_fix"] = post_fix
-    # binning_cfg_path = make_binning_cfg(config_dict, outdir + "/" + run_name)
-    # config_dict["binning_cfg"] = binning_cfg_path
-    # pipeline_cfg_path = make_pipeline_cfg(config_dict, outdir + "/" + run_name)
     pipeline_cfg_path = create_configs(config_dict, outdir + "/" + run_name)
     return pipeline_cfg_path
 
@@ -444,11 +441,11 @@ def calculate_2D_contours(
                 count += 1
     random.shuffle(settings)
     chunked_settings = np.array_split(settings, n_workers)
-    parallel_fit_2D_contour(chunked_settings[0])  # for debugging
-    # p = multiprocessing.Pool(processes=len(chunked_settings))
-    # _ = p.map_async(parallel_fit_2D_contour, chunked_settings)
-    # p.close()
-    # p.join()
+    # parallel_fit_2D_contour(chunked_settings[0])  # for debugging
+    p = multiprocessing.Pool(processes=len(chunked_settings))
+    _ = p.map_async(parallel_fit_2D_contour, chunked_settings)
+    p.close()
+    p.join()
     df = merge_temporary_files(outdir, run_name)
     df.to_csv(outdir + "/" + run_name + "/merged_results.csv")
     return
