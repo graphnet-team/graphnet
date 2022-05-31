@@ -1,0 +1,4 @@
+# Specifies only development-specific requirements
+# This includes tasks such as code development or training.
+# But imports the common ones too
+-r common.txt

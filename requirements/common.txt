@@ -1,0 +1,21 @@
+# Contains requirements common to all environments
+cx_Freeze==6.10
+Cython==0.29.30
+dill==0.3.4
+dl==0.1.0
+docutils==0.17.1
+matplotlib==3.5.0
+numpy>=1.21.2
+ordereddict==1.1
+pandas>=1.1.0
+py2exe==0.11.1.0
+pytest==6.2.5
+pytorch_lightning==1.5.9
+scikit_learn==1.1.1
+scipy==1.7.1
+SQLAlchemy==1.4.27
+timer==0.2.2
+torch==1.9.1
+torch_geometric==2.0.1
+torch_scatter==2.0.9
+tqdm==4.62.3

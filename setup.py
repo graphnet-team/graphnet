@@ -1,8 +1,11 @@
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from distutils.core import setup
+
 import subprocess
 import sys
-from setuptools import setup, find_packages
 import versioneer
-
 
 # Utility method(s)
 def install(package):
@@ -10,11 +13,15 @@ def install(package):
         [sys.executable, "-m", "pip", "install", "--user", package]
     )
 
+with open('requirements.txt') as dependencies_file:
+    dependencies = dependencies_file.read()
 
 # Requirements definitions
 SETUP_REQUIRES = [
     "setuptools == 59.5.0",
 ]
+
+INSTALL_REQUIRES = [dependencies]
 
 INSTALL_REQUIRES = [
     "sqlalchemy",
@@ -46,6 +53,9 @@ EXTRAS_REQUIRE = {
         "sphinx_rtd_theme",
         "versioneer",
     ],
+    "build": [
+        "pytest",
+    ]
 }
 
 # Ensure pytorch is already installed (see e.g.
