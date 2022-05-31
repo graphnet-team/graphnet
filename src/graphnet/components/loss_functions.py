@@ -4,11 +4,14 @@ All loss functions inherit from `LossFunction` which (...)
 """
 
 from abc import abstractmethod
-from typing import Callable, Optional
+
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
-    final = lambda f: f  # Identity decorator
+
+    def final(f):  # Identity decorator
+        return f
+
 
 import numpy as np
 import scipy.special
@@ -16,9 +19,10 @@ import torch
 from torch import Tensor
 from torch.nn.modules.loss import _WeightedLoss
 
+
 class LossFunction(_WeightedLoss):
-    """Base class for loss functions in graphnet.
-    """
+    """Base class for loss functions in graphnet."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -42,8 +46,9 @@ class LossFunction(_WeightedLoss):
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
         elements = self._forward(prediction, target)
-        assert elements.size(dim=0) == target.size(dim=0), \
-            "`_forward` should return elementwise loss terms."
+        assert elements.size(dim=0) == target.size(
+            dim=0
+        ), "`_forward` should return elementwise loss terms."
 
         return elements if return_elements else torch.mean(elements)
 
@@ -57,6 +62,7 @@ class LogCoshLoss(LossFunction):
 
     Acts like x^2 for small x; and like |x| for large x.
     """
+
     @classmethod
     def _log_cosh(cls, x: Tensor) -> Tensor:  # pylint: disable=invalid-name
         """Numerically stable version on log(cosh(x)).
@@ -64,21 +70,27 @@ class LogCoshLoss(LossFunction):
         Used to avoid `inf` for even moderately large differences.
         See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]
         """
-        return x + torch.nn.functional.softplus(-2. * x) - np.log(2.0)
+        return x + torch.nn.functional.softplus(-2.0 * x) - np.log(2.0)
+
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
         diff = prediction - target
         elements = self._log_cosh(diff)
         return elements
 
+
 class BinaryCrossEntropyLoss(LossFunction):
-    """ Computes binary cross entropy for a vector of predictions (between 0 and 1),
+    """Computes binary cross entropy for a vector of predictions (between 0 and 1),
     targets should be 0 and 1 for muon and neutrino respectively
     where prediction is prob. the PID is neutrino (12,14,16)
     loss should be reported elementwise, so set reduction to None
     """
+
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        return torch.nn.functional.binary_cross_entropy(prediction.float(), target.float(), reduction='none')
+        return torch.nn.functional.binary_cross_entropy(
+            prediction.float(), target.float(), reduction="none"
+        )
+
 
 class LogCMK(torch.autograd.Function):
     """MIT License
@@ -110,8 +122,11 @@ class LogCMK(torch.autograd.Function):
     Sec. 8.2 of this paper. The change has been validated through comparison with
     exact calculations for `m=2` and `m=3` and found to yield the correct results.
     """
+
     @staticmethod
-    def forward(ctx, m, kappa):  # pylint: disable=invalid-name,arguments-differ
+    def forward(
+        ctx, m, kappa
+    ):  # pylint: disable=invalid-name,arguments-differ
         dtype = kappa.dtype
         ctx.save_for_backward(kappa)
         ctx.m = m
@@ -121,20 +136,29 @@ class LogCMK(torch.autograd.Function):
             scipy.special.iv(m / 2.0 - 1, kappa.cpu().numpy())
         ).to(kappa.device)
         return (
-            (m / 2.0 - 1) * torch.log(kappa) - torch.log(iv) - (m / 2) * np.log(2 * np.pi)
+            (m / 2.0 - 1) * torch.log(kappa)
+            - torch.log(iv)
+            - (m / 2) * np.log(2 * np.pi)
         ).type(dtype)
 
     @staticmethod
-    def backward(ctx, grad_output):  # pylint: disable=invalid-name,arguments-differ
+    def backward(
+        ctx, grad_output
+    ):  # pylint: disable=invalid-name,arguments-differ
         kappa = ctx.saved_tensors[0]
         m = ctx.m
         dtype = ctx.dtype
         kappa = kappa.double().cpu().numpy()
-        grads = -((scipy.special.iv(m / 2.0, kappa)) / (scipy.special.iv(m / 2.0 - 1, kappa)))
+        grads = -(
+            (scipy.special.iv(m / 2.0, kappa))
+            / (scipy.special.iv(m / 2.0 - 1, kappa))
+        )
         return (
             None,
-            grad_output * torch.from_numpy(grads).to(grad_output.device).type(dtype),
+            grad_output
+            * torch.from_numpy(grads).to(grad_output.device).type(dtype),
         )
+
 
 class VonMisesFisherLoss(LossFunction):
     """General class for calculating von Mises-Fisher loss.
@@ -142,23 +166,30 @@ class VonMisesFisherLoss(LossFunction):
     Requires implementation for specific dimension `m` in which the target and
     prediction vectors need to be prepared.
     """
+
     @classmethod
-    def log_cmk_exact(cls, m: int, kappa: Tensor) -> Tensor:  # pylint: disable=invalid-name
+    def log_cmk_exact(
+        cls, m: int, kappa: Tensor
+    ) -> Tensor:  # pylint: disable=invalid-name
         """Exact calculation of $log C_{m}(k)$ term in von Mises-Fisher loss."""
         return LogCMK.apply(m, kappa)
 
     @classmethod
-    def log_cmk_approx(cls, m: int, kappa: Tensor) -> Tensor:  # pylint: disable=invalid-name
+    def log_cmk_approx(
+        cls, m: int, kappa: Tensor
+    ) -> Tensor:  # pylint: disable=invalid-name
         """Approx. calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
         [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additional minus sign.
         """
-        v = m / 2. - 0.5
-        a = torch.sqrt((v + 1)**2 + kappa**2)
-        b = (v - 1)
+        v = m / 2.0 - 0.5
+        a = torch.sqrt((v + 1) ** 2 + kappa**2)
+        b = v - 1
         return -a + b * torch.log(b + a)
 
     @classmethod
-    def log_cmk(cls, m: int, kappa: Tensor, kappa_switch: float = 100.) -> Tensor:  # pylint: disable=invalid-name
+    def log_cmk(
+        cls, m: int, kappa: Tensor, kappa_switch: float = 100.0
+    ) -> Tensor:  # pylint: disable=invalid-name
         """Calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
 
         Since `log_cmk_exact` is diverges for `kappa` >~ 700 (using float64
@@ -167,10 +198,12 @@ class VonMisesFisherLoss(LossFunction):
         ensuring continuity at this point.
         """
         kappa_switch = torch.tensor([kappa_switch]).to(kappa.device)
-        mask_exact = (kappa < kappa_switch)
+        mask_exact = kappa < kappa_switch
 
         # Ensure continuity at `kappa_switch`
-        offset = cls.log_cmk_approx(m, kappa_switch) - cls.log_cmk_exact(m, kappa_switch)
+        offset = cls.log_cmk_approx(m, kappa_switch) - cls.log_cmk_exact(
+            m, kappa_switch
+        )
         ret = cls.log_cmk_approx(m, kappa) - offset
         ret[mask_exact] = cls.log_cmk_exact(m, kappa[mask_exact])
         return ret
@@ -204,8 +237,10 @@ class VonMisesFisherLoss(LossFunction):
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         raise NotImplementedError
 
+
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
     """von Mises-Fisher loss function vectors in the 2D plane."""
+
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the von Mises-Fisher loss for an angle in the 2D plane.
 
@@ -223,19 +258,25 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         assert prediction.size()[0] == target.size()[0]
 
         # Formatting target
-        angle_true = target[:,0]
-        t = torch.stack([
-            torch.cos(angle_true),
-            torch.sin(angle_true),
-        ], dim=1)
+        angle_true = target[:, 0]
+        t = torch.stack(
+            [
+                torch.cos(angle_true),
+                torch.sin(angle_true),
+            ],
+            dim=1,
+        )
 
         # Formatting prediction
-        angle_pred = prediction[:,0]
-        kappa = prediction[:,1]
-        p = kappa.unsqueeze(1) * torch.stack([
-            torch.cos(angle_pred),
-            torch.sin(angle_pred),
-        ], dim=1)
+        angle_pred = prediction[:, 0]
+        kappa = prediction[:, 1]
+        p = kappa.unsqueeze(1) * torch.stack(
+            [
+                torch.cos(angle_pred),
+                torch.sin(angle_pred),
+            ],
+            dim=1,
+        )
 
         return self._evaluate(p, t)
 
@@ -250,7 +291,8 @@ class EuclideanDistance(LossFunction):
         Returns:
             Tensor: Loss. Shape [n,1]
         """
-        return torch.sqrt((prediction[:,0] - target[:,0])**2 + (prediction[:,1] - target[:,1])**2 + (prediction[:,2] - target[:,2])**2) 
-
-
-
+        return torch.sqrt(
+            (prediction[:, 0] - target[:, 0]) ** 2
+            + (prediction[:, 1] - target[:, 1]) ** 2
+            + (prediction[:, 2] - target[:, 2]) ** 2
+        )

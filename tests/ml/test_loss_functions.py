@@ -7,8 +7,9 @@ from torch import Tensor
 from torch.autograd import grad
 
 from graphnet.components.loss_functions import LogCoshLoss, VonMisesFisherLoss
-from graphnet.utils import eps_like
+from graphnet.utilities.maths import eps_like
 from torch_geometric.data import Data
+
 
 # Utility method(s)
 def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
@@ -25,21 +26,24 @@ def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
 
     # Compute list of elementwise gradients
     nb_elements = inputs.size(dim=0)
-    elementwise_gradients = torch.stack([
-        grad(
-            outputs=outputs[ix],
-            inputs=inputs,
-            retain_graph=True,
-        )[0][ix] for ix in range(nb_elements)
-    ])
+    elementwise_gradients = torch.stack(
+        [
+            grad(outputs=outputs[ix], inputs=inputs, retain_graph=True,)[
+                0
+            ][ix]
+            for ix in range(nb_elements)
+        ]
+    )
     return elementwise_gradients
 
 
 # Unit test(s)
 def test_log_cosh(dtype=torch.float32):
     # Prepare test data
-    x = torch.tensor([-100, -10, -1, 0, 1, 10, 100], dtype=dtype).unsqueeze(1)  # Shape [N, 1]
-    y = 0. * x.clone()  # Shape [N,1]
+    x = torch.tensor([-100, -10, -1, 0, 1, 10, 100], dtype=dtype).unsqueeze(
+        1
+    )  # Shape [N, 1]
+    y = 0.0 * x.clone()  # Shape [N,1]
     # Calculate losses using loss function, and manually
     log_cosh_loss = LogCoshLoss()
     losses = log_cosh_loss(x, y, return_elements=True)
@@ -54,7 +58,9 @@ def test_log_cosh(dtype=torch.float32):
     # (2) For the inputs where the reference loss _is_ valid, the two
     #     calculations should agree exactly.
     reference_is_valid = torch.isfinite(losses_reference)
-    assert torch.allclose(losses_reference[reference_is_valid], losses[reference_is_valid])
+    assert torch.allclose(
+        losses_reference[reference_is_valid], losses[reference_is_valid]
+    )
 
 
 def test_von_mises_fisher_exact_m3(dtype=torch.float64):
@@ -65,13 +71,15 @@ def test_von_mises_fisher_exact_m3(dtype=torch.float64):
     # Define test parameters
     m = 3
     k = torch.tensor(
-        data=[0.0001, 0.001, 0.01, 0.1, 1., 3., 10., 30., 100.],
+        data=[0.0001, 0.001, 0.01, 0.1, 1.0, 3.0, 10.0, 30.0, 100.0],
         requires_grad=True,
         dtype=dtype,
     )
 
     # Compute values
-    res_reference = torch.log(k) - k - torch.log(2 * np.pi * (1 - torch.exp(-2 * k)))
+    res_reference = (
+        torch.log(k) - k - torch.log(2 * np.pi * (1 - torch.exp(-2 * k)))
+    )
     res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
 
     # Compute gradients
@@ -94,7 +102,7 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
 
     # Define test parameters
     k = torch.tensor(
-        data=[0.0001, 0.001, 0.01, 0.1, 1., 3., 10., 30., 100.],
+        data=[0.0001, 0.001, 0.01, 0.1, 1.0, 3.0, 10.0, 30.0, 100.0],
         requires_grad=True,
         dtype=dtype,
     )
@@ -103,7 +111,9 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
     res_approx = VonMisesFisherLoss.log_cmk_approx(m, k)
     res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
 
-    C = res_exact[0] - res_approx[0] # Normalisation constant from integrating gradient
+    C = (
+        res_exact[0] - res_approx[0]
+    )  # Normalisation constant from integrating gradient
     res_approx += C - eps_like(C)
 
     # Compute gradients
@@ -114,10 +124,11 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
     assert torch.all(res_exact >= res_approx), (m, res_exact, res_approx)
 
     # Test value approximation
-    assert torch.allclose(res_approx, res_exact, rtol=1e+0, atol=1e-01)
+    assert torch.allclose(res_approx, res_exact, rtol=1e0, atol=1e-01)
 
     # Test gradient approximation
-    assert torch.allclose(grads_approx, grads_exact, rtol=1e+0)
+    assert torch.allclose(grads_approx, grads_exact, rtol=1e0)
+
 
 @pytest.mark.parametrize("m", [2, 3])
 def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
@@ -128,7 +139,7 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
 
     # Define test parameters
     k = torch.tensor(
-        data=[100., 200., 300., 500., 1000.],
+        data=[100.0, 200.0, 300.0, 500.0, 1000.0],
         requires_grad=True,
         dtype=dtype,
     )
@@ -137,7 +148,7 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
     res_approx = VonMisesFisherLoss.log_cmk_approx(m, k)
     res_exact = VonMisesFisherLoss.log_cmk_exact(m, k)
 
-    C = res_exact[0] - res_approx[0] # Normalisation constant
+    C = res_exact[0] - res_approx[0]  # Normalisation constant
     res_approx += C
 
     # Compute gradients
@@ -147,8 +158,11 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
     exact_is_valid = torch.isfinite(res_exact)
 
     # Test value approximation
-    assert torch.allclose(res_approx[exact_is_valid], res_exact[exact_is_valid], rtol=1e-2)
+    assert torch.allclose(
+        res_approx[exact_is_valid], res_exact[exact_is_valid], rtol=1e-2
+    )
 
     # Test gradient approximation
-    assert torch.allclose(grads_approx[exact_is_valid], grads_exact[exact_is_valid], rtol=1e-2)
-
+    assert torch.allclose(
+        grads_approx[exact_is_valid], grads_exact[exact_is_valid], rtol=1e-2
+    )

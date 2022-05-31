@@ -1,0 +1,68 @@
+# This is a simple workflow to run data/icetray specific unit tests
+name: build-icetray
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push and PRs
+  push:
+  pull_request_target:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-icetray:
+    runs-on: ubuntu-latest
+    container: icecube/icetray:combo-stable
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install package
+        uses: ./.github/actions/install-cpu
+        with:
+          editable: true
+      - name: Check secrets
+        run: |
+          echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
+      - name: Retrieve test data
+        if: "${{ env.PUB_WISC_USERNAME != '' }}"
+        run: |
+          # Create test data directory
+          mkdir -p $TEST_DATA_DIR
+
+          # Copy test data
+          apt-get install sshpass
+          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA_DIR
+          ls -l $TEST_DATA_DIR
+
+          # Check integrity of test data
+          find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g'
+          MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g' | md5sum | cut -d" " -f1)"
+          echo "$MD5CHECK vs. $MD5HASH"
+          if [[ $MD5CHECK == $MD5HASH ]]; then echo "Checksums agree"; else exit 1; fi
+        env:
+          HOST: ${{ secrets.PUB_WISC_HOST }}
+          USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
+          PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
+          SOURCE: "graphnet/data/test/*.i3.*"
+          TEST_DATA_DIR: ./test_data/
+          MD5HASH: 80006a6d58338eb8ea153d2b7b02c0a1
+        shell: bash
+      - name: Run unit tests and generate coverage report
+        if: "${{ env.PUB_WISC_USERNAME != '' }}"
+        run: |
+          coverage run --source=graphnet -m pytest tests/
+          coverage xml -o coverage.xml
+      - name: Work around permission issue
+        if: "${{ env.PUB_WISC_USERNAME != '' }}"
+        run: |
+          git config --global --add safe.directory /__w/graphnet/graphnet
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        if: "${{ env.CC_TEST_REPORTER_ID != '' }} && ${{ env.PUB_WISC_USERNAME != '' }}"
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: coverage report
+          coverageLocations: coverage.xml:coverage.py

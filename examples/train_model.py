@@ -6,7 +6,7 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.components.loss_functions import  LogCoshLoss
+from graphnet.components.loss_functions import LogCoshLoss
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.utils import get_equal_proportion_neutrino_indices
 from graphnet.models import Model
@@ -15,10 +15,17 @@ from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
-from graphnet.models.training.utils import get_predictions, make_train_validation_dataloader, save_results
+from graphnet.models.training.utils import (
+    get_predictions,
+    make_train_validation_dataloader,
+    save_results,
+)
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 # Configurations
-torch.multiprocessing.set_sharing_strategy('file_system')
+torch.multiprocessing.set_sharing_strategy("file_system")
 
 # Constants
 features = FEATURES.DEEPCORE
@@ -28,24 +35,25 @@ truth = TRUTH.DEEPCORE
 wandb_logger = WandbLogger(
     project="example-script",
     entity="graphnet-team",
-    save_dir='./wandb/',
+    save_dir="./wandb/",
     log_model=True,
 )
+
 
 # Main function definition
 def main():
 
-    print(f"features: {features}")
-    print(f"truth: {truth}")
+    logger.info(f"features: {features}")
+    logger.info(f"truth: {truth}")
 
     # Configuration
     config = {
-        "db": '/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db',
-        "pulsemap": 'SRTTWOfflinePulsesDC',
+        "db": "/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db",
+        "pulsemap": "SRTTWOfflinePulsesDC",
         "batch_size": 512,
         "num_workers": 10,
         "gpus": [1],
-        "target": 'energy',
+        "target": "energy",
         "n_epochs": 5,
         "patience": 5,
     }
@@ -59,7 +67,10 @@ def main():
     train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
     train_selection = train_selection[0:50000]
 
-    training_dataloader, validation_dataloader = make_train_validation_dataloader(
+    (
+        training_dataloader,
+        validation_dataloader,
+    ) = make_train_validation_dataloader(
         config["db"],
         train_selection,
         config["pulsemap"],
@@ -87,21 +98,25 @@ def main():
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,
-        optimizer_kwargs={'lr': 1e-03, 'eps': 1e-03},
+        optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
         scheduler_class=PiecewiseLinearLR,
         scheduler_kwargs={
-            'milestones': [0, len(training_dataloader) / 2, len(training_dataloader) * config["n_epochs"]],
-            'factors': [1e-2, 1, 1e-02],
+            "milestones": [
+                0,
+                len(training_dataloader) / 2,
+                len(training_dataloader) * config["n_epochs"],
+            ],
+            "factors": [1e-2, 1, 1e-02],
         },
         scheduler_config={
-            'interval': 'step',
+            "interval": "step",
         },
-     )
+    )
 
     # Training model
     callbacks = [
         EarlyStopping(
-            monitor='val_loss',
+            monitor="val_loss",
             patience=config["patience"],
         ),
         ProgressBar(),
@@ -118,7 +133,7 @@ def main():
     try:
         trainer.fit(model, training_dataloader, validation_dataloader)
     except KeyboardInterrupt:
-        print("[ctrl+c] Exiting gracefully.")
+        logger.warning("[ctrl+c] Exiting gracefully.")
         pass
 
     # Saving predictions to file
@@ -126,11 +141,12 @@ def main():
         trainer,
         model,
         validation_dataloader,
-        [config["target"] + '_pred'],
-        [config["target"], 'event_no'],
+        [config["target"] + "_pred"],
+        additional_attributes=[config["target"], "event_no"],
     )
 
     save_results(config["db"], run_name, results, archive, model)
+
 
 # Main function call
 if __name__ == "__main__":
