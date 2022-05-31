@@ -1,0 +1,3 @@
+# install packages in the category from setup.py
+-r requirements/prod.txt
+-e requirements/dev.txt
