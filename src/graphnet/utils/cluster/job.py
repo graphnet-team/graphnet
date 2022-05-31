@@ -8,7 +8,7 @@ it should be able to run on clusters where the fridge is not installed.
 Tom Stuttard
 """
 
-import os, socket, subprocess, datetime, json, math, collections, sys, numbers, codecs, stat
+import os, socket, subprocess, datetime, json, collections, sys, numbers, codecs, stat
 
 #
 # Globals
@@ -32,7 +32,6 @@ STATUS_COLORS = collections.OrderedDict(
         ("success", "green"),
     ]
 )
-
 
 #
 # Cluster job classes
@@ -78,7 +77,6 @@ class ClusterCommand(object):
         self.return_status = None  # The status returned by the command
 
     def to_dict(self):
-        # TODO Could I use the native __dict__ method instead?
         return collections.OrderedDict(
             command=self.command,
             description=self.description,
@@ -155,8 +153,6 @@ class ClusterJob(object):
 
         return steering_file_path
 
-    # TODO also load_from_steering_file
-
     def prepare_to_submit(
         self,
         job_dir,
@@ -182,8 +178,6 @@ class ClusterJob(object):
         which can be useful for running clusters without shared file systems.
         """
 
-        # TODO store variable in json?
-
         #
         # Check inputs
         #
@@ -203,7 +197,6 @@ class ClusterJob(object):
             #     assert (cmd.allowed_return_status is None) or (len(cmd.allowed_return_status) == 0), "Cannot provide job `allowed_return_status` in `lite_mode`"
 
         # Not all behaviour is supported by "no_wrapper"
-        # TODO
 
         #
         # Create a bunch of steering stuff
@@ -224,7 +217,6 @@ class ClusterJob(object):
         self.err_file = os.path.abspath(
             os.path.join(self.dir, self.name + ".err")
         )
-        # TODO log dir?
 
         # Create the steering file
         if self.mode == "wrapper":
@@ -348,12 +340,6 @@ class ClusterJob(object):
                 os.stat(self.wrapper_script).st_mode | stat.S_IEXEC,
             )
 
-            # In "light mode", use a relative file path (since typically use this in modes
-            # where schedulers copy files to remote destinations).
-            # TODO Make this more general
-            # if self.mode == "lite_wrapper" :
-            #     self.wrapper_script = os.path.basename(self.wrapper_script)
-
         # Return the directory
         return self.dir
 
@@ -472,9 +458,6 @@ def run_job(steering_file, re_run=False):
     Main function for running a job defined in a steering file
     """
 
-    # TODO Force stderr to stdout ???
-    # TODO Record end time for failed commands too so can see how much time was wasted (need to therefore record a success flag too)
-
     #
     # Start up
     #
@@ -575,8 +558,6 @@ def run_job(steering_file, re_run=False):
                 print(("---   %s : %s" % (var_name, var_val)))
                 # TODO Warn if overwriting an existing variable
 
-        # TODO dump all env variables?
-
         #
         # Run command
         #
@@ -611,8 +592,6 @@ def run_job(steering_file, re_run=False):
             ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
         )
         print("")
-
-        # TODO Record host
 
         # Flush stdout before running the command
         # This is to make the output from this script line up with the output from the command itself
@@ -713,7 +692,6 @@ def run_job(steering_file, re_run=False):
             print(
                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             )
-            # TODO Add flag to terminate job in a commands fails
 
     #
     # Tear down

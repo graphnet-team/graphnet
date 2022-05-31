@@ -21,11 +21,10 @@ from builtins import object
 from future import standard_library
 
 standard_library.install_aliases()
-import os, collections
-from shutil import copy2
+import os
 
 from graphnet.utils.cluster.filesys_tools import make_dir, is_executable
-from graphnet.utils.cluster.unix_tools import which, tail
+from graphnet.utils.cluster.unix_tools import tail
 
 from graphnet.utils.cluster.job import JOB_INDEX_FMT, JOB_NAME_FMT
 
@@ -35,13 +34,9 @@ from graphnet.utils.cluster.job import JOB_INDEX_FMT, JOB_NAME_FMT
 
 CONDOR_SUBMIT_EXE = "condor_submit_dag"
 
-
 #
 # Submission
 #
-
-# TODO These are now coupled to job.py. Iddeally make this generic and all the job.py stuff be contained in cluster.py so that this can be used standalone
-# TODO Oeiginals are preserved below
 
 
 def percentage(numerator, denominator):
@@ -69,11 +64,6 @@ def create_condor_submit_file(
     Create a condor submit file.
     Assumes it will be run as a DAG, using a DAGMan scriped generated using `create_dagman_submit_file` (below).
     """
-
-    # TODO Make this more configurable
-    # TODO Maybe make it part of the dagman function since it is so tightly coupled
-
-    # TODO https://wiki.icecube.wisc.edu/index.php/Condor/Grid
 
     # Check inputs
     assert not (
@@ -217,8 +207,6 @@ def create_dagman_submit_file(
     jobs,
     **submit_file_kw,
 ):
-
-    # TODO Remove dependence on job.py (instead make this generic and put the job.py dependence in cluster.py)
 
     #
     # Handle inputs

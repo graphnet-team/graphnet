@@ -14,8 +14,6 @@ Tom Stuttard
 """
 
 import os, math, collections
-from shutil import copy2
-
 
 #
 # Globals
@@ -26,7 +24,6 @@ PBS_SUBMIT_EXE = "qsub"
 
 SLURM_SCRIPT_DIRECTIVE = "#SBATCH"
 PBS_SCRIPT_DIRECTIVE = "$PBS"
-
 
 #
 # Submission
@@ -53,8 +50,6 @@ def create_slurm_submit_file(
     """
     Create a SLURM/PBS submit file
     """
-
-    # TODO Not sure this handles running WITHOUT job arrays right now, investigate
 
     #
     # Handle inputs
