@@ -1,4 +1,0 @@
-# Specifies only production-specific requirements
-# This includes tasks such as running inference.
-# But imports the common ones too
--r common.txt
