@@ -19,7 +19,7 @@ $ git clone git@github.com:<your-username>/graphnet.git
 $ cd graphnet
 $ conda env create -f envs/gnn_py38.yml
 $ conda activate gnn_py38
-(gnn_py38) $ pip install -e .[develop]
+(gnn_py38) $ pip install -r requirements.txt -e .[develop]
 ```
 
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
