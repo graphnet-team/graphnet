@@ -13,7 +13,7 @@ scikit_learn~=1.1.1
 scipy>=1.8
 --find-links https://download.pytorch.org/whl/torch_stable.html
 torch==1.11+cu115
---find-links https://data.pyg.org/whl/torch-1.10.0+cu113.html
+--find-links https://data.pyg.org/whl/torch-1.11.0+cu115.html
 torch-cluster==1.6.0
 torch_scatter==2.0.9
 torch-sparse==0.6.13
