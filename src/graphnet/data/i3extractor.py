@@ -199,7 +199,7 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
             string = om_key[0]
             dom_number = om_key[1]
             pmt_number = om_key[2]
-            dom_type = self._gcd_dict[om_key].omtype
+            dom_type = str(self._gcd_dict[om_key].omtype)
 
             # Loop over pulses for each OM
             pulses = data[om_key]
@@ -246,7 +246,7 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
             string = om_key[0]
             dom_number = om_key[1]
             pmt_number = om_key[2]
-            dom_type = self._gcd_dict[om_key].omtype
+            dom_type = str(self._gcd_dict[om_key].omtype)
 
             # Loop over pulses for each OM
             pulses = data[om_key]
