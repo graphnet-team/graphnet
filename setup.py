@@ -13,31 +13,31 @@ def install(package):
 
 # Requirements definitions
 SETUP_REQUIRES = [
-    "setuptools == 59.5.0",
+    "setuptools==59.5.0",
 ]
 
 INSTALL_REQUIRES = [
-    "sqlalchemy",
-    "pandas>=1.1.0",
+    "awkward",
+    "dill",
+    "matplotlib",
     "numpy",
+    "pandas>=1.1.0",
+    "pyarrow",
+    "pytorch-lightning==1.5.6",
+    "sqlalchemy",
     "timer",
-    "tqdm",
     "torch-cluster==1.5.9",
     "torch-scatter==2.0.9",
     "torch-sparse==0.6.12",
     "torch-spline-conv==1.2.1",
     "torch-geometric==2.0.1",
-    "pytorch-lightning==1.5.6",
-    "dill",
+    "tqdm",
     "wandb",
-    "matplotlib",
 ]
 
 EXTRAS_REQUIRE = {
     "develop": [
-        "awkward",
         "black",
-        "pyarrow",
         "colorlog",
         "coverage",
         "pre-commit",
