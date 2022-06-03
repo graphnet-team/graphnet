@@ -7,11 +7,11 @@ from graphnet.data.i3extractor import (
     I3TruthExtractor,
     I3RetroExtractor,
 )
-from graphnet.data.sqlite_dataconverter import (
+from graphnet.data.sqlite.sqlite_dataconverter import (
     SQLiteDataConverter,
     is_pulsemap_check,
 )
-from graphnet.data.sqlite_dataset import SQLiteDataset
+from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.utilities.imports import requires_icecube
 
 TEST_DATA_DIR = os.path.abspath("./test_data/")

@@ -4,7 +4,7 @@ import sqlite3
 import torch
 from torch_geometric.data import Data
 import time
-from graphnet.data.sqlite_dataset import SQLiteDataset
+from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 
 
 class SQLiteDatasetPerturbed(SQLiteDataset):

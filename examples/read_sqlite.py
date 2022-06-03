@@ -8,7 +8,7 @@ from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.sqlite_dataset import SQLiteDataset
+from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.utilities.logging import get_logger
 
 
