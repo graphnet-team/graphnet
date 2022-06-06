@@ -103,9 +103,7 @@ class I3FeatureExtractor(I3Extractor):
                     frame["I3Calibration"] = self._calibration
                     data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
-                    del frame[
-                        "I3Calibration"
-                    ]  # Avoid adding unneccesary data to frame
+                    del frame["I3Calibration"]  # Avoid adding unneccesary data to frame
             except:  # noqa: E722
                 data = dataclasses.I3RecoPulseSeriesMap.from_frame(
                     frame, self._pulsemap
@@ -157,9 +155,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         return output
 
     def _get_relative_dom_efficiency(self, frame, om_key):
-        if (
-            "I3Calibration" in frame
-        ):  # Not available for e.g. mDOMs in IceCube Upgrade
+        if "I3Calibration" in frame:  # Not available for e.g. mDOMs in IceCube Upgrade
             rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
         else:
             try:
@@ -312,82 +308,122 @@ class I3TruthExtractor(I3Extractor):
         sim_type = find_data_type(is_mc, self._i3_file)
 
         output = {
-            'energy': padding_value,
-            'position_x': padding_value,
-            'position_y': padding_value,
-            'position_z': padding_value,
-            'azimuth': padding_value,
-            'zenith': padding_value,
-            'pid': padding_value,
-            'event_time': frame['I3EventHeader'].start_time.utc_daq_time,
-            'sim_type': sim_type,
-            'interaction_type': padding_value,
-            'elasticity': padding_value,
-            'RunID': frame['I3EventHeader'].run_id,
-            'SubrunID': frame['I3EventHeader'].sub_run_id,
-            'EventID': frame['I3EventHeader'].event_id,
-            'SubEventID': frame['I3EventHeader'].sub_event_id,
-            'dbang_decay_length': padding_value,
-            'track_length': padding_value,
-            'stopped_muon': padding_value,
-            'DeepCoreFilter_13': padding_value,
-            'CascadeFilter_13': padding_value,
-            'MuonFilter_13': padding_value,
-            'OnlineL2Filter_17': padding_value,
-            'L3_oscNext_bool': padding_value,
-            'L4_oscNext_bool': padding_value,
-            'L5_oscNext_bool': padding_value,
-            'L6_oscNext_bool': padding_value,
-            'L7_oscNext_bool': padding_value,
+            "energy": padding_value,
+            "position_x": padding_value,
+            "position_y": padding_value,
+            "position_z": padding_value,
+            "azimuth": padding_value,
+            "zenith": padding_value,
+            "pid": padding_value,
+            "event_time": frame["I3EventHeader"].start_time.utc_daq_time,
+            "sim_type": sim_type,
+            "interaction_type": padding_value,
+            "elasticity": padding_value,
+            "RunID": frame["I3EventHeader"].run_id,
+            "SubrunID": frame["I3EventHeader"].sub_run_id,
+            "EventID": frame["I3EventHeader"].event_id,
+            "SubEventID": frame["I3EventHeader"].sub_event_id,
+            "dbang_decay_length": padding_value,
+            "track_length": padding_value,
+            "stopped_muon": padding_value,
+            "DeepCoreFilter_13": padding_value,
+            "CascadeFilter_13": padding_value,
+            "MuonFilter_13": padding_value,
+            "OnlineL2Filter_17": padding_value,
+            "L3_oscNext_bool": padding_value,
+            "L4_oscNext_bool": padding_value,
+            "L5_oscNext_bool": padding_value,
+            "L6_oscNext_bool": padding_value,
+            "L7_oscNext_bool": padding_value,
         }
 
-        if frame['I3EventHeader'].sub_event_stream == 'InIceSplit': #only inicesplit p frames have filters calculated
+        if (
+            frame["I3EventHeader"].sub_event_stream == "InIceSplit"
+        ):  # only inicesplit p frames have filters calculated
 
-            if frame_has_key(frame, key='FilterMask'):
-                output['DeepCoreFilter_13'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'DeepCoreFilter_13',default_value=-1))# what if frame doesnt have deepcorefilter and it says true (bool(-1)=true)
-                output['CascadeFilter_13'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'CascadeFilter_13',default_value=-1))
-                output['MuonFilter_13'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'MuonFilter_13',default_value=-1))
-                output['OnlineL2Filter_17'] = turn_bool_into_number(try_get_key(frame["FilterMask"],'OnlineL2Filter_17',default_value=-1))
+            if frame_has_key(frame, key="FilterMask"):
+                output["DeepCoreFilter_13"] = turn_bool_into_number(
+                    try_get_key(
+                        frame["FilterMask"], "DeepCoreFilter_13", default_value=-1
+                    )
+                )  # what if frame doesnt have deepcorefilter and it says true (bool(-1)=true)
+                output["CascadeFilter_13"] = turn_bool_into_number(
+                    try_get_key(
+                        frame["FilterMask"], "CascadeFilter_13", default_value=-1
+                    )
+                )
+                output["MuonFilter_13"] = turn_bool_into_number(
+                    try_get_key(frame["FilterMask"], "MuonFilter_13", default_value=-1)
+                )
+                output["OnlineL2Filter_17"] = turn_bool_into_number(
+                    try_get_key(
+                        frame["FilterMask"], "OnlineL2Filter_17", default_value=-1
+                    )
+                )
 
-            elif frame_has_key(frame, key='DeepCoreFilter_13'):
-                output['DeepCoreFilter_13'] = int(bool(frame['DeepCoreFilter_13']))
-            
-            if frame_has_key(frame, key='L3_oscNext_bool'):
-                output.update({
-                    'L3_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L3_oscNext_bool',default_value=-1)),
-                    'L4_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L4_oscNext_bool',default_value=-1)),
-                    'L5_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L5_oscNext_bool',default_value=-1)),
-                    'L6_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L6_oscNext_bool',default_value=-1)),
-                    'L7_oscNext_bool': turn_bool_into_number(try_get_key(frame, 'L7_oscNext_bool',default_value=-1)),
-                    })
+            elif frame_has_key(frame, key="DeepCoreFilter_13"):
+                output["DeepCoreFilter_13"] = int(bool(frame["DeepCoreFilter_13"]))
 
+            if frame_has_key(frame, key="L3_oscNext_bool"):
+                output.update(
+                    {
+                        "L3_oscNext_bool": turn_bool_into_number(
+                            try_get_key(frame, "L3_oscNext_bool", default_value=-1)
+                        ),
+                        "L4_oscNext_bool": turn_bool_into_number(
+                            try_get_key(frame, "L4_oscNext_bool", default_value=-1)
+                        ),
+                        "L5_oscNext_bool": turn_bool_into_number(
+                            try_get_key(frame, "L5_oscNext_bool", default_value=-1)
+                        ),
+                        "L6_oscNext_bool": turn_bool_into_number(
+                            try_get_key(frame, "L6_oscNext_bool", default_value=-1)
+                        ),
+                        "L7_oscNext_bool": turn_bool_into_number(
+                            try_get_key(frame, "L7_oscNext_bool", default_value=-1)
+                        ),
+                    }
+                )
 
         if is_mc == True and is_noise == False:
-            MCInIcePrimary, interaction_type, elasticity = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
-            output.update({
-                'energy': MCInIcePrimary.energy,
-                'position_x': MCInIcePrimary.pos.x,
-                'position_y': MCInIcePrimary.pos.y,
-                'position_z': MCInIcePrimary.pos.z,
-                'azimuth': MCInIcePrimary.dir.azimuth,
-                'zenith': MCInIcePrimary.dir.zenith,
-                'pid': MCInIcePrimary.pdg_encoding,
-                'interaction_type': interaction_type,
-                'elasticity': elasticity,
-                'dbang_decay_length': self._extract_dbang_decay_length(frame, padding_value),
-            })
-            if abs(output['pid'])==13:
-                output.update({
-                    'track_length': MCInIcePrimary.length,
-                })
-                muon_final = muon_stopped(output,self._borders)
-                output.update({
-                    'position_x': muon_final['x'], #position_xyz has no meaning for muons. These will now be updated to muon final position, given track length/azimuth/zenith
-                    'position_y': muon_final['y'],
-                    'position_z': muon_final['z'],
-                    'stopped_muon': muon_final['stopped'],
-                })                
-
+            (
+                MCInIcePrimary,
+                interaction_type,
+                elasticity,
+            ) = get_primary_particle_interaction_type_and_elasticity(frame, sim_type)
+            output.update(
+                {
+                    "energy": MCInIcePrimary.energy,
+                    "position_x": MCInIcePrimary.pos.x,
+                    "position_y": MCInIcePrimary.pos.y,
+                    "position_z": MCInIcePrimary.pos.z,
+                    "azimuth": MCInIcePrimary.dir.azimuth,
+                    "zenith": MCInIcePrimary.dir.zenith,
+                    "pid": MCInIcePrimary.pdg_encoding,
+                    "interaction_type": interaction_type,
+                    "elasticity": elasticity,
+                    "dbang_decay_length": self._extract_dbang_decay_length(
+                        frame, padding_value
+                    ),
+                }
+            )
+            if abs(output["pid"]) == 13:
+                output.update(
+                    {
+                        "track_length": MCInIcePrimary.length,
+                    }
+                )
+                muon_final = muon_stopped(output, self._borders)
+                output.update(
+                    {
+                        "position_x": muon_final[
+                            "x"
+                        ],  # position_xyz has no meaning for muons. These will now be updated to muon final position, given track length/azimuth/zenith
+                        "position_y": muon_final["y"],
+                        "position_z": muon_final["z"],
+                        "stopped_muon": muon_final["stopped"],
+                    }
+                )
 
         return output
 
@@ -408,20 +444,14 @@ class I3TruthExtractor(I3Extractor):
                 hnl_daughters = []
 
             if len(hnl_daughters) > 0:
-                for count_hnl_daughters, hnl_daughter in enumerate(
-                    hnl_daughters
-                ):
+                for count_hnl_daughters, hnl_daughter in enumerate(hnl_daughters):
                     if not count_hnl_daughters:
                         casc_1_true = hnl_daughter
                     else:
                         assert casc_1_true.pos == hnl_daughter.pos
-                        casc_1_true.energy = (
-                            casc_1_true.energy + hnl_daughter.energy
-                        )
+                        casc_1_true.energy = casc_1_true.energy + hnl_daughter.energy
                 decay_length = (
-                    phys_services.I3Calculator.distance(
-                        casc_0_true, casc_1_true
-                    )
+                    phys_services.I3Calculator.distance(casc_0_true, casc_1_true)
                     / icetray.I3Units.m
                 )
 
@@ -445,34 +475,18 @@ class I3RetroExtractor(I3Extractor):
                 {
                     "azimuth_retro": frame["L7_reconstructed_azimuth"].value,
                     "time_retro": frame["L7_reconstructed_time"].value,
-                    "energy_retro": frame[
-                        "L7_reconstructed_total_energy"
-                    ].value,
-                    "position_x_retro": frame[
-                        "L7_reconstructed_vertex_x"
-                    ].value,
-                    "position_y_retro": frame[
-                        "L7_reconstructed_vertex_y"
-                    ].value,
-                    "position_z_retro": frame[
-                        "L7_reconstructed_vertex_z"
-                    ].value,
+                    "energy_retro": frame["L7_reconstructed_total_energy"].value,
+                    "position_x_retro": frame["L7_reconstructed_vertex_x"].value,
+                    "position_y_retro": frame["L7_reconstructed_vertex_y"].value,
+                    "position_z_retro": frame["L7_reconstructed_vertex_z"].value,
                     "zenith_retro": frame["L7_reconstructed_zenith"].value,
                     "azimuth_sigma": frame[
                         "L7_retro_crs_prefit__azimuth_sigma_tot"
                     ].value,
-                    "position_x_sigma": frame[
-                        "L7_retro_crs_prefit__x_sigma_tot"
-                    ].value,
-                    "position_y_sigma": frame[
-                        "L7_retro_crs_prefit__y_sigma_tot"
-                    ].value,
-                    "position_z_sigma": frame[
-                        "L7_retro_crs_prefit__z_sigma_tot"
-                    ].value,
-                    "time_sigma": frame[
-                        "L7_retro_crs_prefit__time_sigma_tot"
-                    ].value,
+                    "position_x_sigma": frame["L7_retro_crs_prefit__x_sigma_tot"].value,
+                    "position_y_sigma": frame["L7_retro_crs_prefit__y_sigma_tot"].value,
+                    "position_z_sigma": frame["L7_retro_crs_prefit__z_sigma_tot"].value,
+                    "time_sigma": frame["L7_retro_crs_prefit__time_sigma_tot"].value,
                     "zenith_sigma": frame[
                         "L7_retro_crs_prefit__zenith_sigma_tot"
                     ].value,
@@ -482,12 +496,8 @@ class I3RetroExtractor(I3Extractor):
                     "cascade_energy_retro": frame[
                         "L7_reconstructed_cascade_energy"
                     ].value,
-                    "track_energy_retro": frame[
-                        "L7_reconstructed_track_energy"
-                    ].value,
-                    "track_length_retro": frame[
-                        "L7_reconstructed_track_length"
-                    ].value,
+                    "track_energy_retro": frame["L7_reconstructed_track_energy"].value,
+                    "track_length_retro": frame["L7_reconstructed_track_length"].value,
                 }
             )
 
@@ -535,9 +545,7 @@ def frame_contains_classifiers(frame):
 
 
 def frame_is_montecarlo(frame):
-    return frame_has_key(frame, "MCInIcePrimary") or frame_has_key(
-        frame, "I3MCTree"
-    )
+    return frame_has_key(frame, "MCInIcePrimary") or frame_has_key(frame, "I3MCTree")
 
 
 def frame_is_noise(frame):
@@ -555,15 +563,15 @@ def frame_is_noise(frame):
 def frame_is_lvl7(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")
 
+
 def turn_bool_into_number(i3_bool):
-    #i3bool is either I3Bool(true or False) or -1 as defined by the try_get_key function
+    # i3bool is either I3Bool(true or False) or -1 as defined by the try_get_key function
     if i3_bool and type(i3_bool) == icetray.I3Bool:
         return 1
     elif i3_bool == -1:
         return -1
     else:
         return int(bool(i3_bool))
-
 
 
 def find_data_type(mc, input_file):
@@ -665,21 +673,15 @@ def muon_stopped(truth, borders, horizontal_pad=100.0, vertical_pad=100.0):
 
     travel_vec = -1 * np.array(
         [
-            truth["track_length"]
-            * np.cos(truth["azimuth"])
-            * np.sin(truth["zenith"]),
-            truth["track_length"]
-            * np.sin(truth["azimuth"])
-            * np.sin(truth["zenith"]),
+            truth["track_length"] * np.cos(truth["azimuth"]) * np.sin(truth["zenith"]),
+            truth["track_length"] * np.sin(truth["azimuth"]) * np.sin(truth["zenith"]),
             truth["track_length"] * np.cos(truth["zenith"]),
         ]
     )
 
     end_pos = start_pos + travel_vec
 
-    stopped_xy = border.contains_point(
-        (end_pos[0], end_pos[1]), radius=-horizontal_pad
-    )
+    stopped_xy = border.contains_point((end_pos[0], end_pos[1]), radius=-horizontal_pad)
     stopped_z = (end_pos[2] > borders[1][0] + vertical_pad) * (
         end_pos[2] < borders[1][1] - vertical_pad
     )
