@@ -36,6 +36,11 @@ class TRUTH:
         "sim_type",
         "interaction_type",
         "interaction_time",  # Added for vertex reconstruction
+        "inelasticity",
+        "RunID",
+        "SubrunID",
+        "EventID",
+        "SubEventID",
     ]
     DEEPCORE = ICECUBE86
     UPGRADE = DEEPCORE
