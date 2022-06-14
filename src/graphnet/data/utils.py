@@ -450,12 +450,3 @@ def find_i3_files(directories: Union[str, List[str]], gcd_rescue: str):
             pass
 
     return i3_files, gcd_files
-
-
-def frame_has_key(frame, key: str):
-    """Returns whether `frame` contains `key`."""
-    try:
-        frame[key]
-        return True
-    except KeyError:
-        return False
