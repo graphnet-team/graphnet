@@ -57,6 +57,30 @@ class LossFunction(_WeightedLoss):
         """Syntax similar to `.forward` for implentation in inheriting classes."""
 
 
+class MSELoss(LossFunction):
+    """Mean squared error loss."""
+
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Implementation of loss calculation."""
+        # Check(s)
+        assert prediction.dim() == 2
+        assert prediction.size() == target.size()
+
+        elements = torch.mean((prediction - target) ** 2, dim=-1)
+        return elements
+
+
+class RMSELoss(MSELoss):
+    """Root mean squared error loss."""
+
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Implementation of loss calculation."""
+        # Check(s)
+        elements = super()._forward(prediction, target)
+        elements = torch.sqrt(elements)
+        return elements
+
+
 class LogCoshLoss(LossFunction):
     """Log-cosh loss function.
 
@@ -281,7 +305,7 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         return self._evaluate(p, t)
 
 
-class EuclideanDistance(LossFunction):
+class EuclideanDistanceLoss(LossFunction):
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the 3D Euclidean distance between predicted and target.
 
