@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch_geometric.data import Data
 
-from graphnet.data.i3extractor import (
+from graphnet.data.extractors import (
     I3FeatureExtractorIceCube86,
     I3FeatureExtractorIceCubeDeepCore,
     I3FeatureExtractorIceCubeUpgrade,
