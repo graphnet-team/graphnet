@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from graphnet.data.i3extractor import (
+from graphnet.data.extractors import (
     I3Extractor,
     I3ExtractorCollection,
     I3TruthExtractor,
