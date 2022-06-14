@@ -9,7 +9,7 @@ import sqlite3
 from tqdm import tqdm
 from typing import Any, Dict, List
 
-from graphnet.data.i3extractor import I3TruthExtractor, I3FeatureExtractor
+from graphnet.data.extractors import I3TruthExtractor, I3FeatureExtractor
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.utils import create_out_directory, pairwise_shuffle
 from graphnet.utilities.logging import get_logger
