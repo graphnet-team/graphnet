@@ -1,10 +1,6 @@
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from distutils.core import setup
-
 import subprocess
 import sys
+from setuptools import setup, find_packages
 import versioneer
 
 # Requirements definitions
