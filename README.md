@@ -26,6 +26,30 @@ This should allow you to e.g. run the scripts in [examples/](./examples/) out of
 
 You can also install the package in a python virtual environment, or in your system python, but then you will have to contend with C++ compiler versions; the non-standard interplay between [pytorch](https://pytorch.org/) and [pytorch-geometric](https://pytorch-geometric.readthedocs.io/en/latest/) (see e.g. [here](https://github.com/pyg-team/pytorch_geometric/issues/861#issuecomment-566424944)), which `graphnet` uses internally; etc.
 
+## :gear: Database creation and Installation on IceTray
+
+Within the IceTray enviroment, the Graphnet module is used to create SQL databases from I3 files, using the provided 'convert_i3_to_sqlite.py' script. The recommended set up is as follows:
+
+```bash
+$ cd graphnet
+$ nano cvmfs.sh
+```
+
+Within the 'cvmfs.sh' copy the following and press 'ctrl+X'
+```bash
+eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/setup.sh`
+/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/RHEL_7_x86_64/metaprojects/combo/stable/env-shell.sh
+```
+
+Next, launch it and install the Graphnet module at a user level.
+```bash
+$ source cvmfs.sh
+$ conda create --name gnn_icetray
+$ conda activate gnn_icetray
+$ pip install --user -r requirements.txt -e .[develop]
+```
+
+This should allow you to run 'convert_i3_to_sqlite.py' in [examples/](./examples/) with your preferred I3 files.
 
 ## :handshake:  Contributing
 
