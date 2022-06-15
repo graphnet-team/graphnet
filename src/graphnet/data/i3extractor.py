@@ -409,7 +409,7 @@ class I3TruthExtractor(I3Extractor):
                     }
                 )
 
-        if is_mc == True and is_noise == False:
+        if is_mc and (not is_noise):
             (
                 MCInIcePrimary,
                 interaction_type,
