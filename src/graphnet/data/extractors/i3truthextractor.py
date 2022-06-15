@@ -300,7 +300,8 @@ class I3TruthExtractor(I3Extractor):
         return MCInIcePrimary, interaction_type, elasticity
 
     def _get_primary_track_energy_and_inelasticity(
-        self, frame: icetray.I3Frame
+        self,
+        frame: "icetray.I3Frame",
     ) -> Tuple[float, float]:
         """Get the total energy of tracks from primary, and corresponding inelasticity.
 
