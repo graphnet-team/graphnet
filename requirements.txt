@@ -1,5 +1,5 @@
 # Contains packages recommended for functional performance
-setuptools>=62.3
+setuptools>=62.3.0
 docutils>=0.18
 SQLAlchemy>=1.4.37
 pandas>=1.4

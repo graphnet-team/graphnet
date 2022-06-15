@@ -9,7 +9,7 @@ import versioneer
 
 # Requirements definitions
 SETUP_REQUIRES = [
-    "setuptools==62.3",
+    "setuptools>=62.3.0",
 ]
 
 INSTALL_REQUIRES = [
@@ -50,9 +50,9 @@ EXTRAS_REQUIRE = {
 # https://pypi.org/classifiers/
 CLASSIFIER = {
     "Development Status :: 3 - Alpha",
-    "Programming Language :: Python :: 3.7"
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Environment :: CPU",
     "Environment :: GPU",
 }

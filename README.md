@@ -13,11 +13,11 @@
 
 ## :gear:  Install
 
-We recommend installing `graphnet` in a separate environment, e.g. using Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)). The fastest way to get up and running is to install the package in the provided conda environment:
+We recommend installing `graphnet` in a separate environment, e.g. using Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)). The fastest way to get up and running is to install the package in the provided conda environment, specifying the python version {>3.8} and ensuring that the gcc compilers are up to date:
 ```bash
 $ git clone git@github.com:<your-username>/graphnet.git
 $ cd graphnet
-$ conda env create -f envs/gnn_py38.yml
+$ conda create --name gnn_py38 python=3.xx gcc_linux-64 gxx_linux-64 libgcc -y
 $ conda activate gnn_py38
 (gnn_py38) $ pip install -r requirements.txt -e .[develop]
 ```
