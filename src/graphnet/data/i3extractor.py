@@ -345,7 +345,7 @@ class I3TruthExtractor(I3Extractor):
             frame["I3EventHeader"].sub_event_stream == "InIceSplit"
         ):  # only inicesplit p frames have filters calculated
 
-            if frame_has_key(frame, key="FilterMask"):
+            if "FilterMask" in frame:
                 output["DeepCoreFilter_13"] = turn_bool_into_number(
                     try_get_key(
                         frame["FilterMask"],
