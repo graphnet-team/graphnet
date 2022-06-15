@@ -348,13 +348,8 @@ class I3TruthExtractor(I3Extractor):
             if "FilterMask" in frame:
                 if "DeepCoreFilter_13" in frame["FilterMask"]:
                     output["DeepCoreFilter_13"] = int(frame["FilterMask"]["DeepCoreFilter_13"])
-                output["CascadeFilter_13"] = turn_bool_into_number(
-                    try_get_key(
-                        frame["FilterMask"],
-                        "CascadeFilter_13",
-                        default_value=-1,
-                    )
-                )
+                if "CascadeFilter_13" in frame["FilterMask"]:
+                    output["CascadeFilter_13"] = int(frame["FilterMask"]["CascadeFilter_13"])
                 output["MuonFilter_13"] = turn_bool_into_number(
                     try_get_key(
                         frame["FilterMask"], "MuonFilter_13", default_value=-1
