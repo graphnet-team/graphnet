@@ -600,16 +600,6 @@ def frame_is_lvl7(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")
 
 
-def turn_bool_into_number(i3_bool):
-    # i3bool is either I3Bool(true or False) or -1 as defined by the try_get_key function
-    if i3_bool and type(i3_bool) == icetray.I3Bool:
-        return 1
-    elif i3_bool == -1:
-        return -1
-    else:
-        return int(bool(i3_bool))
-
-
 def find_data_type(mc, input_file):
     """Determines the data type
 
