@@ -26,6 +26,7 @@ class FEATURES:
 class TRUTH:
     ICECUBE86 = [
         "energy",
+        "energy_track",
         "position_x",
         "position_y",
         "position_z",
