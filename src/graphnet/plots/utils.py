@@ -7,6 +7,11 @@ import numpy as np
 from pathlib import Path
 from scipy import stats
 
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
+
 
 def add_energy(db, df):
     """Adds `energy` from database `db` to dataframe `df`."""
@@ -315,8 +320,10 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                 )
 
                 if key == "energy":
-                    print(data_interaction_indexed_sliced[key + post_fix][0:5])
-                    print(data_interaction_indexed_sliced[key][0:5])
+                    logger.info(
+                        data_interaction_indexed_sliced[key + post_fix][0:5]
+                    )
+                    logger.info(data_interaction_indexed_sliced[key][0:5])
                     bias_tmp_percent = (
                         (
                             10
@@ -342,7 +349,7 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                         bias_tmp[bias_tmp <= -180] + 360
                     )
                     if np.max(bias_tmp) > 180:
-                        print(np.max(bias_tmp))
+                        logger.info(np.max(bias_tmp))
                 if len(data_interaction_indexed_sliced) > 0:
                     biases[key]["all_pid"][str(interaction_type)][
                         "mean"
@@ -448,7 +455,7 @@ def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
                 bias_tmp[bias_tmp >= 180] = 360 - bias_tmp[bias_tmp >= 180]
                 bias_tmp[bias_tmp <= -180] = bias_tmp[bias_tmp <= -180] + 360
                 if np.max(bias_tmp) > 180:
-                    print(np.max(bias_tmp))
+                    logger.info(np.max(bias_tmp))
             if len(data_interaction_indexed_sliced) > 0:
                 biases[key]["cascade"]["mean"].append(
                     np.mean(data_interaction_indexed_sliced["energy"])
