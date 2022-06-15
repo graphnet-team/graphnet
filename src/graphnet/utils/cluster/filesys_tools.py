@@ -8,12 +8,6 @@ import os, datetime, stat
 
 # from graphnet.utils.cluster import containers
 
-# py2 vs 3 compatibility
-try:
-    input = raw_input
-except NameError:
-    pass
-
 #
 # Tools for handling files and directories
 #
