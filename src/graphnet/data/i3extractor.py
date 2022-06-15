@@ -378,7 +378,7 @@ class I3TruthExtractor(I3Extractor):
                     bool(frame["DeepCoreFilter_13"])
                 )
 
-            if frame_has_key(frame, key="L3_oscNext_bool"):
+            if "L3_oscNext_bool" in frame:
                 output.update(
                     {
                         "L3_oscNext_bool": turn_bool_into_number(
