@@ -7,7 +7,10 @@ from graphnet.data.utils import get_equal_proportion_neutrino_indices
 from graphnet.models.detector.icecube import IceCubeUpgrade, IceCubeUpgrade_V2
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.training.utils import make_train_validation_dataloader
+from graphnet.utilities.logging import get_logger
 
+
+logger = get_logger()
 
 # Constants
 features = FEATURES.UPGRADE
@@ -23,8 +26,8 @@ def main():
         # not found in list
         pass
 
-    print(f"features: {features}")
-    print(f"truth: {truth}")
+    logger.info(f"features: {features}")
+    logger.info(f"truth: {truth}")
 
     # Configuration
     db = "/groups/icecube/asogaard/data/sqlite/dev_upgrade_step4_preselection_decemberv2/data/dev_upgrade_step4_preselection_decemberv2.db"
@@ -68,8 +71,8 @@ def main():
     x_original = np.concatenate(x_original, axis=0)
     x_preprocessed = np.concatenate(x_preprocessed, axis=0)
 
-    print("Number of NaNs:", np.sum(np.isnan(x_original)))
-    print("Number of infs:", np.sum(np.isinf(x_original)))
+    logger.info("Number of NaNs:", np.sum(np.isnan(x_original)))
+    logger.info("Number of infs:", np.sum(np.isinf(x_original)))
 
     # Plot feature distributions
     nb_features_original = x_original.shape[1]

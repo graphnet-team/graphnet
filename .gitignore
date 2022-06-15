@@ -135,7 +135,9 @@ docs/**/*.rst
 # Badges
 assets/badges
 lightning_logs/
+logs/
 wandb/
+test_data/
 **.png
 **.pth
 **.ipynb
