@@ -12,7 +12,6 @@ from torch.utils.data import DataLoader
 
 from graphnet.components.loss_functions import (
     MSELoss,
-    NLLLoss,
     LogCoshLoss,
     VonMisesFisher2DLoss,
 )
@@ -24,7 +23,6 @@ from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import (
     EnergyReconstruction,
     InelasticityReconstruction,
-    InelasticityReconstructionPDF,
     ZenithReconstructionWithKappa,
 )
 from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
@@ -45,7 +43,7 @@ torch.multiprocessing.set_sharing_strategy("file_system")
 features = FEATURES.UPGRADE
 truth = TRUTH.UPGRADE
 
-TARGETS = ["zenith", "energy", "inelasticity"]
+TARGETS = ["zenith", "energy", "energy_track", "inelasticity"]
 
 
 def get_ids(
@@ -193,12 +191,12 @@ def main(target: str):
             target_labels=config["target"],
             loss_function=VonMisesFisher2DLoss(),
         )
-    elif config["target"] == "energy":
+    elif config["target"] in ["energy", "energy_track"]:
         task = EnergyReconstruction(
             hidden_size=gnn.nb_outputs,
             target_labels=config["target"],
             loss_function=LogCoshLoss(),
-            transform_prediction_and_target=torch.log10,
+            transform_prediction_and_target=lambda p: torch.log10(p + 1),
         )
     else:
         task = InelasticityReconstruction(
@@ -206,12 +204,6 @@ def main(target: str):
             target_labels=config["target"],
             loss_function=MSELoss(),
         )
-
-        # task = InelasticityReconstructionPDF(
-        #    hidden_size=gnn.nb_outputs,
-        #    target_labels=config["target"],
-        #    loss_function=NLLLoss(torch.distributions.Beta),
-        # )
 
     model = Model(
         detector=detector,
@@ -268,12 +260,7 @@ def main(target: str):
             config["target"] + "_kappa",
         ]
 
-    elif target == "energy":
-        prediction_columns = [
-            config["target"] + "_pred",
-        ]
-
-    elif target == "inelasticity":
+    elif target in ["energy", "energy_track", "inelasticity"]:
         prediction_columns = [
             config["target"] + "_pred",
         ]
@@ -300,4 +287,5 @@ def main(target: str):
 if __name__ == "__main__":
     # main("zenith")
     # main("energy")
-    main("inelasticity")
+    main("energy_track")
+    # main("inelasticity")
