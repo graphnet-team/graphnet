@@ -15,6 +15,9 @@ from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 
 from graphnet.models.graph_builders import GraphBuilder
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 
 class Detector(LightningModule):
@@ -35,9 +38,11 @@ class Detector(LightningModule):
         self._graph_builder = graph_builder
         self._scalers = scalers
         if self._scalers:
-            print(
-                "Will use scalers rather than standard preprocessing",
-                f"in {self.__class__.__name__}.",
+            logger.info(
+                (
+                    "Will use scalers rather than standard preprocessing "
+                    f"in {self.__class__.__name__}.",
+                )
             )
 
     @final
