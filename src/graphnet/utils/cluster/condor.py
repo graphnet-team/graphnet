@@ -23,10 +23,10 @@ from future import standard_library
 standard_library.install_aliases()
 import os
 
-from graphnet.utils.cluster.filesys_tools import make_dir, is_executable
-from graphnet.utils.cluster.unix_tools import tail
+from graphnet.utilities.cluster.filesys_tools import make_dir, is_executable
+from graphnet.utilities.cluster.unix_tools import tail
 
-from graphnet.utils.cluster.job import JOB_INDEX_FMT, JOB_NAME_FMT
+from graphnet.utilities.cluster.job import JOB_INDEX_FMT, JOB_NAME_FMT
 
 #
 # Globals
