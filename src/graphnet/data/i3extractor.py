@@ -373,7 +373,7 @@ class I3TruthExtractor(I3Extractor):
                     )
                 )
 
-            elif frame_has_key(frame, key="DeepCoreFilter_13"):
+            elif "DeepCoreFilter_13" in frame:
                 output["DeepCoreFilter_13"] = int(
                     bool(frame["DeepCoreFilter_13"])
                 )
