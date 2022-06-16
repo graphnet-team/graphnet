@@ -27,7 +27,9 @@ contour_data_2D.append(
 )
 
 figure = plot_2D_contour(contour_data_2D, width=6.3, height=2.3 * 2)
-figure.savefig("/home/iwsatlas1/oersoe/phd/oscillations/plots/2d_contour.pdf")
+figure.savefig(
+    "/home/iwsatlas1/oersoe/phd/oscillations/plots/2d_contour_test.pdf"
+)
 
 # 1D CONTOUR PLOT EXAMPLE
 contour_data_1D = []
@@ -50,4 +52,6 @@ contour_data_1D.append(
     }
 )
 figure = plot_1D_contour(contour_data_1D)
-figure.savefig("/home/iwsatlas1/oersoe/phd/oscillations/plots/1d_contour.pdf")
+figure.savefig(
+    "/home/iwsatlas1/oersoe/phd/oscillations/plots/1d_contour_test.pdf"
+)
