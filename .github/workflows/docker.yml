@@ -7,9 +7,6 @@ on:
     branches: [ container ]
     tags: [ 'v*' ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
 env:
   IMAGE: asogaard/graphnet-test
 
@@ -20,12 +17,6 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
       -
         name: Docker meta
         id: meta
