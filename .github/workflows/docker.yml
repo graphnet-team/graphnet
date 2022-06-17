@@ -31,7 +31,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: asogaard/graphnet-test
+          images: ${{ env.IMAGE }}
       -
         name: Login to DockerHub
         uses: docker/login-action@v2
@@ -44,4 +44,5 @@ jobs:
         with:
           context: "{{ defaultContext }}:docker"
           push: true
-          tags: ${{ env.IMAGE }}:test
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
