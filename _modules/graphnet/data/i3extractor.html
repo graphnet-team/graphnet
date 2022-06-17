@@ -391,34 +391,61 @@
             <span class="s2">&quot;SubrunID&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_run_id</span><span class="p">,</span>
             <span class="s2">&quot;EventID&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">event_id</span><span class="p">,</span>
             <span class="s2">&quot;SubEventID&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_id</span><span class="p">,</span>
+            <span class="s2">&quot;dbang_decay_length&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;track_length&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;stopped_muon&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
-            <span class="s2">&quot;dbang_decay_length&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
-            <span class="s2">&quot;track_length&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
-            <span class="s2">&quot;stopped_muon&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L3_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L4_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L5_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L6_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L7_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="o">==</span> <span class="s2">&quot;InIceSplit&quot;</span>
-        <span class="p">):</span>  <span class="c1"># only inicesplit p frames have filters calculated</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">])</span>
-                    <span class="p">),</span>
-                    <span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">])</span>
-                    <span class="p">),</span>
-                    <span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">])</span>
-                    <span class="p">),</span>
-                    <span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">])</span>
-                    <span class="p">),</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
+        <span class="c1"># Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.</span>
+        <span class="c1"># At low levels i3files contain several other P frame splits (e.g NullSplit),</span>
+        <span class="c1"># we remove those here.</span>
+        <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="o">!=</span> <span class="s2">&quot;InIceSplit&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">if</span> <span class="s2">&quot;FilterMask&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;DeepCoreFilter_13&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">]:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;CascadeFilter_13&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">]:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;MuonFilter_13&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">]:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;OnlineL2Filter_17&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">]:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="s2">&quot;DeepCoreFilter_13&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L3_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L3_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L3_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L4_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L4_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L4_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L5_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L5_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L5_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L6_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L6_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L6_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L7_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L7_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_oscNext_bool&quot;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">is_mc</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_noise</span><span class="p">):</span>
             <span class="p">(</span>
