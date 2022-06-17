@@ -1,6 +1,7 @@
 """Consistent and configurable logging across the project."""
 
 import re
+from typing import Optional
 import colorlog
 import datetime
 import logging
@@ -13,8 +14,16 @@ LOG_FOLDER = "logs"
 LOGGER = None
 
 
+def set_logging_level(level: int = logging.INFO):
+    global LOGGER
+    if LOGGER is None:
+        get_logger(level)
+    else:
+        LOGGER.setLevel(level)
+
+
 def get_logger(
-    level: int = logging.INFO, log_folder: str = LOG_FOLDER
+    level: Optional[int] = None, log_folder: str = LOG_FOLDER
 ) -> logging.Logger:
     """Get `logger` instance, to be used in place of `print()`.
 
@@ -23,7 +32,12 @@ def get_logger(
     """
     global LOGGER
     if LOGGER:
+        if level is not None:
+            set_logging_level(level)
         return LOGGER
+
+    if level is None:
+        level = logging.INFO
 
     # Common configuration
     colorlog_format = (
