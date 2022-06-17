@@ -36,7 +36,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: {{ defaultContext }}:docker
+          context: "{{ defaultContext }}:docker"
           push: true
           tags: ${{ env.TEST_TAG }}
       -
@@ -47,6 +47,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: {{ defaultContext }}:docker
+          context: "{{ defaultContext }}:docker"
           push: true
           tags: ${{ env.LATEST_TAG }}
