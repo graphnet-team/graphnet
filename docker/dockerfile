@@ -13,10 +13,8 @@ RUN pip install --upgrade pip && \
     pip install torch-spline-conv==1.2.1 -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html && \
     pip install torch-geometric==${PYG} -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 
-RUN git clone https://github.com/icecube/graphnet.git
+RUN pip install git+https://github.com/icecube/graphnet.git#egg=graphnet[develop]
 
-WORKDIR graphnet/
-
-RUN pip install -e .[develop]
+WORKDIR /root
 
 CMD [ "/bin/bash" ]

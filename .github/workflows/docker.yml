@@ -4,11 +4,11 @@ name: docker
 on:
   # Triggers the workflow on push/tag
   push:
-    branches: [ container ]
+    branches: [ main ]
     tags: [ 'v*' ]
 
 env:
-  IMAGE: asogaard/graphnet-test
+  IMAGE: asogaard/graphnet
 
 jobs:
   docker:

@@ -15,8 +15,13 @@ on:
 jobs:
   build-icetray:
     runs-on: ubuntu-latest
-    container: asogaard/graphnet-test:container
+    container: icecube/icetray:combo-stable
     steps:
+      - uses: actions/checkout@v2
+      - name: Install package
+        uses: ./.github/actions/install-cpu
+        with:
+          editable: true
       - name: Check secrets
         run: |
           echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
