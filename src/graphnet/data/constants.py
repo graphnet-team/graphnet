@@ -36,6 +36,7 @@ class TRUTH:
         "sim_type",
         "interaction_type",
         "interaction_time",  # Added for vertex reconstruction
+        "stopped_muon",
     ]
     DEEPCORE = ICECUBE86
     UPGRADE = DEEPCORE
