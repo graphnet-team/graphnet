@@ -42,6 +42,7 @@ class TRUTH:
         "SubrunID",
         "EventID",
         "SubEventID",
+        "stopped_muon",
     ]
     DEEPCORE = ICECUBE86
     UPGRADE = DEEPCORE
