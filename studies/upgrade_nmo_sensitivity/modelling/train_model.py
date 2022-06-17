@@ -1,3 +1,4 @@
+import argparse
 import os
 import sqlite3
 from typing import List, Optional
@@ -120,8 +121,8 @@ def main(target: str):
         "num_workers": 30,
         "gpus": [0],
         "target": target,
-        "n_epochs": 100,
-        "patience": 20,
+        "n_epochs": 50,
+        "patience": 5,
         "gnn/type": "DynEdge_V2",
         "gnn/size_scale": 3,
     }
@@ -177,53 +178,57 @@ def main(target: str):
     )
 
     # Building model
-    detector = IceCubeUpgrade(
-        graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
-    )
-    gnn = DynEdge_V2(
-        nb_inputs=detector.nb_outputs,
-        layer_size_scale=config["gnn/size_scale"],
-    )
-
-    if config["target"] == "zenith":
-        task = ZenithReconstructionWithKappa(
-            hidden_size=gnn.nb_outputs,
-            target_labels=config["target"],
-            loss_function=VonMisesFisher2DLoss(),
+    def model_factory():
+        detector = IceCubeUpgrade(
+            graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
         )
-    elif config["target"] in ["energy", "energy_track"]:
-        task = EnergyReconstruction(
-            hidden_size=gnn.nb_outputs,
-            target_labels=config["target"],
-            loss_function=LogCoshLoss(),
-            transform_prediction_and_target=lambda p: torch.log10(p + 1),
-        )
-    else:
-        task = InelasticityReconstruction(
-            hidden_size=gnn.nb_outputs,
-            target_labels=config["target"],
-            loss_function=MSELoss(),
+        gnn = DynEdge_V2(
+            nb_inputs=detector.nb_outputs,
+            layer_size_scale=config["gnn/size_scale"],
         )
 
-    model = Model(
-        detector=detector,
-        gnn=gnn,
-        tasks=[task],
-        optimizer_class=Adam,
-        optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
-        scheduler_class=PiecewiseLinearLR,
-        scheduler_kwargs={
-            "milestones": [
-                0,
-                len(training_dataloader) / 2,
-                len(training_dataloader) * config["n_epochs"],
-            ],
-            "factors": [1e-2, 1, 1e-02],
-        },
-        scheduler_config={
-            "interval": "step",
-        },
-    )
+        if config["target"] == "zenith":
+            task = ZenithReconstructionWithKappa(
+                hidden_size=gnn.nb_outputs,
+                target_labels=config["target"],
+                loss_function=VonMisesFisher2DLoss(),
+            )
+        elif config["target"] in ["energy", "energy_track"]:
+            task = EnergyReconstruction(
+                hidden_size=gnn.nb_outputs,
+                target_labels=config["target"],
+                loss_function=LogCoshLoss(),
+                transform_prediction_and_target=lambda p: torch.log10(p + 1),
+            )
+        else:
+            task = InelasticityReconstruction(
+                hidden_size=gnn.nb_outputs,
+                target_labels=config["target"],
+                loss_function=MSELoss(),
+            )
+
+        model = Model(
+            detector=detector,
+            gnn=gnn,
+            tasks=[task],
+            optimizer_class=Adam,
+            optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
+            scheduler_class=PiecewiseLinearLR,
+            scheduler_kwargs={
+                "milestones": [
+                    0,
+                    len(training_dataloader) / 2,
+                    len(training_dataloader) * config["n_epochs"],
+                ],
+                "factors": [1e-2, 1, 1e-02],
+            },
+            scheduler_config={
+                "interval": "step",
+            },
+        )
+        return model
+
+    model = model_factory()
 
     # Training model
     callbacks = [
@@ -248,10 +253,6 @@ def main(target: str):
     except KeyboardInterrupt:
         logger.warning("[ctrl+c] Exiting gracefully.")
         pass
-
-    # Saving model
-    model.save(os.path.join(archive, f"{run_name}.pth"))
-    model.save_state_dict(os.path.join(archive, f"{run_name}_state_dict.pth"))
 
     # Saving predictions to file
     if target == "zenith":
@@ -280,12 +281,19 @@ def main(target: str):
         ],
     )
 
+    # Resetting model (to avoid saving Trainer, DataLoader, etc.)
+    model.save_state_dict("state_dict.pth")
+    model = model_factory()
+    model.load_state_dict("state_dict.pth")
+
     save_results(config["db"], run_name, results, archive, model)
 
 
 # Main function call
 if __name__ == "__main__":
-    # main("zenith")
-    # main("energy")
-    main("energy_track")
-    # main("inelasticity")
+    # Choose target
+    parser = argparse.ArgumentParser()
+    parser.add_argument("target", choices=TARGETS)
+    args = parser.parse_args()
+
+    main(args.target)
