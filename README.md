@@ -30,7 +30,9 @@ This should allow you to e.g. run the scripts in [examples/](./examples/) out of
 
 ### Installing with IceTray
 
-Within the IceTray enviroment, the Graphnet module is used to create SQL databases from I3 files, using the provided 'convert_i3_to_sqlite.py' script. The recommended set up is as follows:
+In some instances, you might want `graphnet` to be able to interface with IceTray, e.g., when converting I3 files to an intermediate file format for training GNN models(e.g., SQLite or parquet), as shown in the [examples/convert_i3_to_sqlite.py](examples/convert_i3_to_sqlite.py) script, or when running GNN inference as part of an IceTray chain. In these cases, you need to install `graphnet` in a python runtime that has IceTray installed.
+
+To achieve this, we recommend running the following commands in a clean bash shell:
 
 ```bash
 $ eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/setup.sh`
