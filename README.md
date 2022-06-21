@@ -38,7 +38,7 @@ $ /cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/RHEL_7_x86_64/metaprojects/combo
 ```
 Optionally, you can alias these commands or save them as a bash script for convenience, as you will have to run these commands every time you want to use IceTray (with `graphnet`) in a clean shell.
 
-Next, launch it and install the Graphnet module at a user level.
+With the IceTray environment active, you can now install `graphnet` at a user level. In the example below, we are installing a light-weight version of `graphnet` without the `torch` extras, i.e., without the machine learning packages (pytorch and pytorch-geometric). This is useful when you just want to convert data from I3 files to, e.g., SQLite, and won't be running inference on I3 files later on. In this case, you don't need to specify a requirements file, compared to the example below.
 ```bash
 $ source cvmfs.sh
 $ conda create --name graphnet_icetray
