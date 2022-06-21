@@ -49,7 +49,6 @@ EXTRAS_REQUIRE = {
 CLASSIFIERS = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
@@ -57,8 +56,9 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.10",
     "Environment :: CPU",
     "Environment :: GPU",
-    "License :: OSI Approved :: BSD License",
+    "License :: OSI Approved :: Apache Software License",
     "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development",
