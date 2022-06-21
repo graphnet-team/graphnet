@@ -46,7 +46,7 @@ $ conda activate graphnet_icetray
 $ pip install --user -e .[develop]
 ```
 
-This should allow you to run 'convert_i3_to_sqlite.py' in [examples/](./examples/) with your preferred I3 files.
+This should allow you to run the [examples/convert_i3_to_sqlite.py](examples/convert_i3_to_sqlite.py) script with your preferred I3 files.
 
 ## :handshake:  Contributing
 
