@@ -100,6 +100,10 @@ class GraphNeTModuleBase(I3Module):
         else:
             self.model = model
 
+        # Toggle inference mode on, to ensure that any transforms of the model
+        # predictions are applied.
+        self.model.inference()
+
     def Physics(self, frame: I3Frame):  # pylint: disable=invalid-name
         """Process Physics I3Frame and write predictions."""
 
