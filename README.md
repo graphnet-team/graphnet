@@ -28,7 +28,7 @@ $ conda activate graphnet
 
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
-### :gear: Database creation and Installation on IceTray
+### Installing with IceTray
 
 Within the IceTray enviroment, the Graphnet module is used to create SQL databases from I3 files, using the provided 'convert_i3_to_sqlite.py' script. The recommended set up is as follows:
 
