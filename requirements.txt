@@ -10,7 +10,7 @@ dill>=0.3
 wandb>=0.12
 matplotlib>=3.5
 scikit_learn>=1.0
-scipy>=1.8
+scipy>=1.7
 --find-links https://download.pytorch.org/whl/torch_stable.html
 torch==1.11+cu115
 --find-links https://data.pyg.org/whl/torch-1.11.0+cu115.html
