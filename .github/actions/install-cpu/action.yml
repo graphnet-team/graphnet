@@ -26,5 +26,5 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        pip install ${{ env.PIP_FLAGS }} -r requirements.txt .${{ inputs.extras }}
+        pip install ${{ env.PIP_FLAGS }} -r requirements_cpu.txt .${{ inputs.extras }}
       shell: bash
