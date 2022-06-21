@@ -9,8 +9,8 @@ SETUP_REQUIRES = [
 ]
 
 INSTALL_REQUIRES = [
-    "sqlalchemy>=1.4.37",
-    "pandas>=1.4",
+    "sqlalchemy>=1.4",
+    "pandas>=1.3",
     "numpy>=1.22",
     "timer>=0.2",
     "tqdm>=4.64",
@@ -19,13 +19,13 @@ INSTALL_REQUIRES = [
     "matplotlib>=3.5",
     "scikit_learn~=1.1.1",
     "scipy>=1.8",
-    "torch~=1.11",
+    "torch==1.11",
     "torch-cluster==1.6.0",
     "torch-scatter==2.0.9",
     "torch-sparse==0.6.13",
     "torch-spline-conv==1.2.1",
     "torch-geometric==2.0.4",
-    "pytorch-lightning>=1.6.0",
+    "pytorch-lightning>=1.6",
 ]
 
 EXTRAS_REQUIRE = {
