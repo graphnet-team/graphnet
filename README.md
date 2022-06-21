@@ -13,7 +13,11 @@
 
 ## :gear:  Install
 
-We recommend installing `graphnet` in a separate environment, e.g. using Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)) or python virtual environment. The fastest way to get up and running is to install the package as shown below, specifying the python version and ensuring that the gcc compilers are up to date:
+We recommend installing `graphnet` in a separate environment, e.g. using Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)) or python virtual environment. This requires specifying a supported python version (see above) and ensuring that the C++ compilers (gcc) are up to date. 
+
+### Installing stand-alone
+
+If you don't need to interface with [IceTray](https://github.com/icecube/icetray/) (e.g., for reading data from I3 files or running inference on these), the following commands should provide a fast way to get up and running on most UNIX systems:
 ```bash
 $ git clone git@github.com:<your-username>/graphnet.git
 $ cd graphnet
@@ -29,17 +33,12 @@ This should allow you to e.g. run the scripts in [examples/](./examples/) out of
 Within the IceTray enviroment, the Graphnet module is used to create SQL databases from I3 files, using the provided 'convert_i3_to_sqlite.py' script. The recommended set up is as follows:
 
 ```bash
-$ cd graphnet
-$ nano cvmfs.sh
+$ eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/setup.sh`
+$ /cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/RHEL_7_x86_64/metaprojects/combo/stable/env-shell.sh
 ```
+Optionally, you can alias these commands or save them as a bash script for convenience, as you will have to run these commands every time you want to use IceTray (with `graphnet`) in a clean shell.
 
-Within the 'cvmfs.sh' copy the following and press 'ctrl+X'
-```bash
-eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/setup.sh`
-/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/RHEL_7_x86_64/metaprojects/combo/stable/env-shell.sh
-```
-
-Next, launch it and install the Graphnet module at a user level.
+With the IceTray environment active, you can now install `graphnet` at a user level. In the example below, we are installing a light-weight version of `graphnet` without the `torch` extras, i.e., without the machine learning packages (pytorch and pytorch-geometric). This is useful when you just want to convert data from I3 files to, e.g., SQLite, and won't be running inference on I3 files later on. In this case, you don't need to specify a requirements file, compared to the example below.
 ```bash
 $ source cvmfs.sh
 $ conda create --name graphnet_icetray
@@ -47,7 +46,7 @@ $ conda activate graphnet_icetray
 $ pip install --user -e .[develop]
 ```
 
-This should allow you to run 'convert_i3_to_sqlite.py' in [examples/](./examples/) with your preferred I3 files.
+This should allow you to run the [examples/convert_i3_to_sqlite.py](examples/convert_i3_to_sqlite.py) script with your preferred I3 files.
 
 ## :handshake:  Contributing
 
