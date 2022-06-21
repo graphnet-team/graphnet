@@ -49,7 +49,6 @@ EXTRAS_REQUIRE = {
 CLASSIFIERS = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
