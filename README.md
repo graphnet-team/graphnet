@@ -13,7 +13,11 @@
 
 ## :gear:  Install
 
-We recommend installing `graphnet` in a separate environment, e.g. using Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)) or python virtual environment. The fastest way to get up and running is to install the package as shown below, specifying the python version and ensuring that the gcc compilers are up to date:
+We recommend installing `graphnet` in a separate environment, e.g. using Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)) or python virtual environment. This requires specifying a supported python version (see above) and ensuring that the C++ compilers (gcc) are up to date. 
+
+### Installing stand-alone
+
+If you don't need to interface with [IceTray](https://github.com/icecube/icetray/) (e.g., for reading data from I3 files or running inference on these), the following commands should provide a fast way to get up and running on most UNIX systems:
 ```bash
 $ git clone git@github.com:<your-username>/graphnet.git
 $ cd graphnet
