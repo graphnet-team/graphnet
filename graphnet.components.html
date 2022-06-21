@@ -173,7 +173,8 @@ exact calculations for <cite>m=2</cite> and <cite>m=3</cite> and found to yield 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.components.loss_functions.LogCMK.backward">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/components/loss_functions.html#LogCMK.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.loss_functions.LogCMK.backward" title="Permalink to this definition"></a></dt>
-<dd><p>Defines a formula for differentiating the operation.</p>
+<dd><p>Defines a formula for differentiating the operation with backward mode
+automatic differentiation (alias to the vjp function).</p>
 <p>This function is to be overridden by all subclasses.</p>
 <p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
 as many outputs as the <a class="reference internal" href="#graphnet.components.loss_functions.LogCMK.forward" title="graphnet.components.loss_functions.LogCMK.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in
@@ -199,7 +200,12 @@ output.</p>
 <p>It must accept a context ctx as the first argument, followed by any
 number of arguments (tensors or other types).</p>
 <p>The context can be used to store arbitrary data that can be then
-retrieved during the backward pass.</p>
+retrieved during the backward pass. Tensors should not be stored
+directly on <cite>ctx</cite> (though this is not currently enforced for
+backward compatibility). Instead, tensors should be saved either with
+<code class="xref py py-func docutils literal notranslate"><span class="pre">ctx.save_for_backward()</span></code> if they are intended to be used in
+<code class="docutils literal notranslate"><span class="pre">backward</span></code> (equivalently, <code class="docutils literal notranslate"><span class="pre">vjp</span></code>) or <code class="xref py py-func docutils literal notranslate"><span class="pre">ctx.save_for_forward()</span></code>
+if they are intended to be used for in <code class="docutils literal notranslate"><span class="pre">jvp</span></code>.</p>
 </dd></dl>
 
 </dd></dl>
