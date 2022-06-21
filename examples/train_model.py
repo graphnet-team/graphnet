@@ -51,7 +51,7 @@ def main():
         "db": "/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db",
         "pulsemap": "SRTTWOfflinePulsesDC",
         "batch_size": 512,
-        "num_workers":10,
+        "num_workers": 10,
         "gpus": [1],
         "target": "energy",
         "n_epochs": 5,
