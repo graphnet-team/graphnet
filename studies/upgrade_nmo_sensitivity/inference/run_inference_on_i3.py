@@ -76,8 +76,8 @@ if __name__ == "__main__":
     parser.add_argument("input_folder")
     parser.add_argument("output_folder")
     parser.add_argument("model_path")
-    parser.add_argument("keys", nargs="?", default="gnn_zenith")
-    parser.add_argument("events_max", nargs="?", type=int, default=0)
+    parser.add_argument("--keys", nargs="+", default="gnn_zenith")
+    parser.add_argument("--events_max", type=int, default=0)
 
     args = parser.parse_args()
 
