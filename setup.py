@@ -17,7 +17,7 @@ INSTALL_REQUIRES = [
     "dill>=0.3",
     "wandb>=0.12",
     "matplotlib>=3.5",
-    "scikit_learn~=1.1.1",
+    "scikit_learn>=1.0",
     "scipy>=1.8",
     "torch==1.11",
     "torch-cluster==1.6.0",
