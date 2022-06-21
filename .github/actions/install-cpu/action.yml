@@ -23,6 +23,7 @@ runs:
       run: |
         pip install --upgrade pip
         pip install wheel setuptools>=62.3.0
+      shell: bash
     - name: Install package
       run: |
         pip install ${{ env.PIP_FLAGS }} -r requirements.txt .${{ inputs.extras }}
