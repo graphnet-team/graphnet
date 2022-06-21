@@ -44,7 +44,7 @@ EXTRAS_REQUIRE = {
 }
 
 # https://pypi.org/classifiers/
-CLASSIFIER = {
+CLASSIFIERS = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
@@ -53,7 +53,7 @@ CLASSIFIER = {
     "Programming Language :: Python :: 3.10",
     "Environment :: CPU",
     "Environment :: GPU",
-}
+]
 
 setup(
     name="graphnet",
@@ -71,5 +71,5 @@ setup(
     setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
-    classifiers=CLASSIFIER,
+    classifiers=CLASSIFIERS,
 )
