@@ -71,5 +71,5 @@ setup(
     setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
-    classifier=CLASSIFIER,
+    classifiers=CLASSIFIER,
 )
