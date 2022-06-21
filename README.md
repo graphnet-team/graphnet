@@ -39,8 +39,8 @@ $ nano cvmfs.sh
 
 Within the 'cvmfs.sh' copy the following and press 'ctrl+X'
 ```bash
-eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/setup.sh`
-/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/RHEL_7_x86_64/metaprojects/combo/stable/env-shell.sh
+$ eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/setup.sh`
+$ /cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/RHEL_7_x86_64/metaprojects/combo/stable/env-shell.sh
 ```
 
 Next, launch it and install the Graphnet module at a user level.
