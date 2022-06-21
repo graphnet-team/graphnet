@@ -57,7 +57,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.10",
     "Environment :: CPU",
     "Environment :: GPU",
-    "License :: OSI Approved :: BSD License",
+    "License :: OSI Approved :: Apache Software License",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
