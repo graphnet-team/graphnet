@@ -19,13 +19,6 @@ INSTALL_REQUIRES = [
     "matplotlib>=3.5",
     "scikit_learn>=1.0",
     "scipy>=1.7",
-    "torch==1.11",
-    "torch-cluster==1.6.0",
-    "torch-scatter==2.0.9",
-    "torch-sparse==0.6.13",
-    "torch-spline-conv==1.2.1",
-    "torch-geometric==2.0.4",
-    "pytorch-lightning>=1.6",
 ]
 
 EXTRAS_REQUIRE = {
@@ -40,19 +33,37 @@ EXTRAS_REQUIRE = {
         "sphinx",
         "sphinx_rtd_theme",
         "versioneer",
+    ],
+    "torch": [
+        "torch==1.11",
+        "torch-cluster==1.6.0",
+        "torch-scatter==2.0.9",
+        "torch-sparse==0.6.13",
+        "torch-spline-conv==1.2.1",
+        "torch-geometric==2.0.4",
+        "pytorch-lightning>=1.6",
     ]
 }
 
 # https://pypi.org/classifiers/
 CLASSIFIERS = [
     "Development Status :: 3 - Alpha",
-    "Programming Language :: Python :: 3.6",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Environment :: CPU",
     "Environment :: GPU",
+    "License :: OSI Approved :: BSD License",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 setup(

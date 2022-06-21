@@ -9,24 +9,22 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-
+![Supported python versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue)
 
 ## :gear:  Install
 
-We recommend installing `graphnet` in a separate environment, e.g. using Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)). The fastest way to get up and running is to install the package in the provided conda environment, specifying the python version {>3.8} and ensuring that the gcc compilers are up to date:
+We recommend installing `graphnet` in a separate environment, e.g. using Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)) or python virtual environment. The fastest way to get up and running is to install the package as shown below, specifying the python version and ensuring that the gcc compilers are up to date:
 ```bash
 $ git clone git@github.com:<your-username>/graphnet.git
 $ cd graphnet
-$ conda create --name gnn_py38 python=3.xx gcc_linux-64 gxx_linux-64 libgcc -y
-$ conda activate gnn_py38
-(gnn_py38) $ pip install -r requirements.txt -e .[develop]
+$ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc -y
+$ conda activate graphnet
+(graphnet) $ pip install -r requirements/torch_[gpu/cpu].txt -e .[develop,torch]
 ```
 
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
-You can also install the package in a python virtual environment, or in your system python, but then you will have to contend with C++ compiler versions; the non-standard interplay between [pytorch](https://pytorch.org/) and [pytorch-geometric](https://pytorch-geometric.readthedocs.io/en/latest/) (see e.g. [here](https://github.com/pyg-team/pytorch_geometric/issues/861#issuecomment-566424944)), which `graphnet` uses internally; etc.
-
-## :gear: Database creation and Installation on IceTray
+### :gear: Database creation and Installation on IceTray
 
 Within the IceTray enviroment, the Graphnet module is used to create SQL databases from I3 files, using the provided 'convert_i3_to_sqlite.py' script. The recommended set up is as follows:
 
@@ -44,9 +42,9 @@ eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/setup.sh`
 Next, launch it and install the Graphnet module at a user level.
 ```bash
 $ source cvmfs.sh
-$ conda create --name gnn_icetray
-$ conda activate gnn_icetray
-$ pip install --user -r requirements.txt -e .[develop]
+$ conda create --name graphnet_icetray
+$ conda activate graphnet_icetray
+$ pip install --user -e .[develop]
 ```
 
 This should allow you to run 'convert_i3_to_sqlite.py' in [examples/](./examples/) with your preferred I3 files.
