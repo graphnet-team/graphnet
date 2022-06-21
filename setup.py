@@ -42,7 +42,7 @@ EXTRAS_REQUIRE = {
         "torch-spline-conv==1.2.1",
         "torch-geometric==2.0.4",
         "pytorch-lightning>=1.6",
-    ]
+    ],
 }
 
 # https://pypi.org/classifiers/
