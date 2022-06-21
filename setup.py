@@ -18,7 +18,7 @@ INSTALL_REQUIRES = [
     "wandb>=0.12",
     "matplotlib>=3.5",
     "scikit_learn>=1.0",
-    "scipy>=1.8",
+    "scipy>=1.7",
     "torch==1.11",
     "torch-cluster==1.6.0",
     "torch-scatter==2.0.9",
