@@ -58,6 +58,7 @@ CLASSIFIERS = [
     "Environment :: GPU",
     "License :: OSI Approved :: Apache Software License",
     "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development",
