@@ -26,7 +26,7 @@ $ conda activate graphnet
 (graphnet) $ pip install -r requirements/torch_[gpu/cpu].txt -e .[develop,torch]
 ```
 
-This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
+This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already have recent versions (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
 
 ### Installing with IceTray
 
