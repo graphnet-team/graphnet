@@ -19,6 +19,10 @@ runs:
         PIP_FLAGS=`[[ ${{ inputs.editable }} =~ (T|t)rue ]] && printf "%s\n" "-e" || echo " "`
         echo "PIP_FLAGS=${PIP_FLAGS}" >> $GITHUB_ENV
       shell: bash
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install wheel setuptools>=62.3.0
     - name: Install package
       run: |
         pip install ${{ env.PIP_FLAGS }} -r requirements.txt .${{ inputs.extras }}
