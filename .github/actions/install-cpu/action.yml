@@ -1,15 +1,7 @@
 name: 'Install graphnet'
-description: 'Installs graphnet package, with pytorch and pytorch-geometric for CPU'
+description: 'Installs graphnet package'
 
 inputs:
-  torch-verison:
-    description: 'Version of pytorch to install'
-    required: true
-    default: '1.11.0'
-  pyg-verison:
-    description: 'Version of pytorch-geometric to install'
-    required: true
-    default: '2.0.4'
   editable:
     description: "Whether to install graphnet as editable"
     required: true
@@ -22,17 +14,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: "Install dependencies"
-      run: |
-        pip install --upgrade pip
-        pip install wheel setuptools>=62.3.0
-        pip install torch==${{ inputs.torch-verison }}+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
-        pip install torch-cluster==1.6.0 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
-        pip install torch-scatter==2.0.9 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
-        pip install torch-sparse==0.6.13 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
-        pip install torch-spline-conv==1.2.1 -f https://data.pyg.org/whl/torch-${{ inputs.torch-verison }}+cpu.html
-        pip install torch-geometric==${{ inputs.pyg-verison }}
-      shell: bash
     - name: Infer installation flags
       run: |
         PIP_FLAGS=`[[ ${{ inputs.editable }} =~ (T|t)rue ]] && printf "%s\n" "-e" || echo " "`
@@ -40,5 +21,5 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        pip install ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
+        pip install ${{ env.PIP_FLAGS }} -r requirements.txt .${{ inputs.extras }}
       shell: bash
