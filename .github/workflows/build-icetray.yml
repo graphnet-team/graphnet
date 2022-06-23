@@ -26,9 +26,10 @@ jobs:
         with:
           editable: true
           user: false
-      - name: Upgrade astropy, already installed on icecube/icetray [https://github.com/astropy/astropy/issues/12534]
+      - name: Upgrade packages already installed on icecube/icetray
         run: |
-          pip install --upgrade astropy
+          pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
+          pip install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
       - name: Check secrets
         run: |
           echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
