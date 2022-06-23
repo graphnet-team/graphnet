@@ -22,7 +22,8 @@ jobs:
       - name: Check secrets
         id: setvar
         run: |
-         if [[ "${{ secrets.PUB_WISC_USERNAME }}" != "" && \
+         if [[ "${{ secrets.PUB_WISC_HOST }}" != "" && \
+               "${{ secrets.PUB_WISC_USERNAME }}" != "" && \
                "${{ secrets.PUB_WISC_PASSWORD }}" != "" ]]; \
          then
            echo "Credentials to access Cobalt found"
@@ -64,10 +65,6 @@ jobs:
         uses: ./.github/actions/install-cpu
         with:
           editable: true
-      - name: Check secrets
-        run: |
-          echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
-          echo "CC_TEST_REPORTER_ID=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
       - name: Retrieve test data
         run: |
           # Create test data directory
