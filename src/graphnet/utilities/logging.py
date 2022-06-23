@@ -31,9 +31,9 @@ def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
 
     # Common configuration
     colorlog_format = (
-        "\033[1;34m%(name)s\033[0m "
+        "\033[1;34m%(name)s\033[0m: "
         "%(log_color)s%(levelname)-8s\033[0m "
-        "%(asctime)s %(className)s%(funcName)s: %(message)s"
+        "%(asctime)s - %(funcName)s - %(message)s"
     )
     basic_format = re.sub(r"\x1b\[[0-9;,]*m", "", colorlog_format).replace(
         "%(log_color)s", ""
