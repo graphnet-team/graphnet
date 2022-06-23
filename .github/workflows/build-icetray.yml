@@ -13,8 +13,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
   check-cobalt-credentials:
-    description: Check if Cobalt credentials were set on secrets
     runs-on: ubuntu-latest
     outputs:
       has-credentials: ${{ steps.setvar.outputs.has-credentials }}
@@ -25,14 +25,30 @@ jobs:
                "${{ secrets.PUB_WISC_PASSWORD }}" != "" ]]; \
          then
            echo "Credentials to access Cobalt found"
-           echo "::set-output name=has_credentials::true"
+           echo "::set-output name=has-credentials::true"
          else
            echo "Credentials to access Cobalt not found"
-           echo "::set-output name=has_credentials::false"
+           echo "::set-output name=has-credentials::false"
+         fi
+
+  check-codeclimate-credentials:
+    runs-on: ubuntu-latest
+    outputs:
+      has-credentials: ${{ steps.setvar.outputs.has-credentials }}
+    steps:
+      - name: Check secrets
+        run: |
+         if [[ "${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}" != "" ]]; \
+         then
+           echo "Credentials to access CodeClimate found"
+           echo "::set-output name=has-credentials::true"
+         else
+           echo "Credentials to access CodeClimate not found"
+           echo "::set-output name=has-credentials::false"
          fi
 
   build-icetray:
-    needs: [ check-cobalt-credentials ]
+    needs: [ check-cobalt-credentials, check-codeclimate-credentials ]
     if: ${{ needs.check-cobalt-credentials.outputs.has-credentials == 'true' }}
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
@@ -85,7 +101,7 @@ jobs:
           git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
-        if: "${{ (env.PUB_WISC_USERNAME != '') && (env.CC_TEST_REPORTER_ID != '') }}"
+        if: ${{ needs.check-codeclimate-credentials.outputs.has-credentials == 'true' }}
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
         with:
