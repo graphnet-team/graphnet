@@ -18,7 +18,7 @@ except ImportError:  # Python version < 3.8
 
 
 from graphnet.data.utilities.random import pairwise_shuffle
-from graphnet.data.i3extractor import (
+from graphnet.data.extractors import (
     I3Extractor,
     I3ExtractorCollection,
     I3FeatureExtractor,

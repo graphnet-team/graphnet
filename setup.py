@@ -3,36 +3,22 @@ import sys
 from setuptools import setup, find_packages
 import versioneer
 
-
-# Utility method(s)
-def install(package):
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "--user", package]
-    )
-
-
 # Requirements definitions
 SETUP_REQUIRES = [
-    "setuptools==59.5.0",
+    "setuptools>=59.5.0",
 ]
 
 INSTALL_REQUIRES = [
-    "awkward",
-    "dill",
-    "matplotlib",
-    "numpy",
-    "pandas>=1.1.0",
-    "pyarrow",
-    "pytorch-lightning==1.5.6",
-    "sqlalchemy",
-    "timer",
-    "torch-cluster==1.5.9",
-    "torch-scatter==2.0.9",
-    "torch-sparse==0.6.12",
-    "torch-spline-conv==1.2.1",
-    "torch-geometric==2.0.1",
-    "tqdm",
-    "wandb",
+    "sqlalchemy>=1.4",
+    "pandas>=1.3",
+    "numpy>=1.21",
+    "timer>=0.2",
+    "tqdm>=4.64",
+    "dill>=0.3",
+    "wandb>=0.12",
+    "matplotlib>=3.5",
+    "scikit_learn>=1.0",
+    "scipy>=1.7",
 ]
 
 EXTRAS_REQUIRE = {
@@ -48,14 +34,37 @@ EXTRAS_REQUIRE = {
         "sphinx_rtd_theme",
         "versioneer",
     ],
+    "torch": [
+        "torch==1.11",
+        "torch-cluster==1.6.0",
+        "torch-scatter==2.0.9",
+        "torch-sparse==0.6.13",
+        "torch-spline-conv==1.2.1",
+        "torch-geometric==2.0.4",
+        "pytorch-lightning>=1.6",
+    ],
 }
 
-# Ensure pytorch is already installed (see e.g.
-# https://github.com/pyg-team/pytorch_geometric/issues/861#issuecomment-566424944)
-try:
-    import torch  # pyright: reportMissingImports=false
-except ImportError:
-    install("torch==1.10.1")
+# https://pypi.org/classifiers/
+CLASSIFIERS = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Environment :: CPU",
+    "Environment :: GPU",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 
 setup(
     name="graphnet",
@@ -73,7 +82,5 @@ setup(
     setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
-    dependency_links=[
-        "https://data.pyg.org/whl/torch-1.9.0+cpu.html",
-    ],
+    classifiers=CLASSIFIERS,
 )

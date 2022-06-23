@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch_geometric.data import Data
 
-from graphnet.data.i3extractor import (
+from graphnet.data.extractors import (
     I3FeatureExtractorIceCube86,
     I3FeatureExtractorIceCubeDeepCore,
     I3FeatureExtractorIceCubeUpgrade,
@@ -99,6 +99,10 @@ class GraphNeTModuleBase(I3Module):
             self.model = Model.load(model)
         else:
             self.model = model
+
+        # Toggle inference mode on, to ensure that any transforms of the model
+        # predictions are applied.
+        self.model.inference()
 
     def Physics(self, frame: I3Frame):  # pylint: disable=invalid-name
         """Process Physics I3Frame and write predictions."""
