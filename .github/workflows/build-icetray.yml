@@ -29,6 +29,7 @@ jobs:
       - name: Check secrets
         run: |
           echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
+          echo "CC_TEST_REPORTER_ID=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
       - name: Retrieve test data
         if: "${{ env.PUB_WISC_USERNAME != '' }}"
         run: |
@@ -64,7 +65,7 @@ jobs:
           git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
-        if: "${{ env.CC_TEST_REPORTER_ID != '' }} && ${{ env.PUB_WISC_USERNAME != '' }}"
+        if: "${{ (env.PUB_WISC_USERNAME != '') && (env.CC_TEST_REPORTER_ID != '') }}"
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
         with:
