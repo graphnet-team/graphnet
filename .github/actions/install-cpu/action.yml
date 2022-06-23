@@ -6,6 +6,10 @@ inputs:
     description: "Whether to install graphnet as editable"
     required: true
     default: false
+  user:
+    description: "Whether to install graphnet as user"
+    required: true
+    default: false
   extras:
     description: "Extras flags for pip installation of graphnet"
     required: true
@@ -16,8 +20,9 @@ runs:
   steps:
     - name: Infer installation flags
       run: |
-        PIP_FLAGS=`[[ ${{ inputs.editable }} =~ (T|t)rue ]] && printf "%s\n" "-e" || echo " "`
-        echo "PIP_FLAGS=${PIP_FLAGS}" >> $GITHUB_ENV
+        PIP_FLAG_EDITABLE=`[[ ${{ inputs.editable }} =~ (T|t)rue ]] && printf "%s\n" "-e " || echo " "`
+        PIP_FLAG_USER=`[[ ${{ inputs.user }} =~ (T|t)rue ]] && printf "%s\n" "--user " || echo " "`
+        echo "PIP_FLAGS=${PIP_FLAG_EDITABLE}${PIP_FLAG_USER}" >> $GITHUB_ENV
       shell: bash
     - name: Install dependencies
       run: |
