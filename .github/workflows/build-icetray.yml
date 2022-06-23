@@ -24,6 +24,7 @@ jobs:
           ls -lart .
           ls -lart requirements/
           ls -lart requirements/torch_cpu.txt
+          pip list
       - name: Update PATH
         run: |
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
@@ -32,9 +33,9 @@ jobs:
         with:
           editable: true
           user: true
-      - name: Debug
+      - name: Upgrade astropy, already installed on icecube/icetray [https://github.com/astropy/astropy/issues/12534]
         run: |
-          ls -lart $HOME/.local/bin
+          pip install --user --upgrade astropy
       - name: Check secrets
         run: |
           echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
