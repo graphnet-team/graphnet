@@ -22,6 +22,8 @@ jobs:
         run: |
           pwd
           ls -lart .
+          ls -lart requirements/
+          ls -lart requirements/torch_cpu.txt
       - name: Install package
         uses: ./.github/actions/install-cpu
         with:
