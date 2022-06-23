@@ -3,7 +3,7 @@ import numpy as np
 from tqdm import tqdm
 
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.utilities.sqlite_selection import (
+from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
 from graphnet.models.detector.icecube import IceCubeUpgrade, IceCubeUpgrade_V2
