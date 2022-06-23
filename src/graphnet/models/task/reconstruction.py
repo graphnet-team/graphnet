@@ -69,7 +69,7 @@ class PassOutput3(Task):
 class ZenithReconstruction(Task):
     """Reconstructs zenith angle."""
 
-    # Requires two features: untransformed points in (x,y)-space.
+    # Requires two features: zenith angle itself.
     nb_inputs = 1
 
     def _forward(self, x):
@@ -167,3 +167,14 @@ class BinaryClassificationTaskLogits(Task):
 
     def _forward(self, x):
         return x
+
+
+class InelasticityReconstruction(Task):
+    """Reconstructs interaction inelasticity (i.e., tracks vs. hadronic energy)."""
+
+    # Requires one features: inelasticity itself
+    nb_inputs = 1
+
+    def _forward(self, x):
+        # Transform output to unit range
+        return torch.sigmoid(x)
