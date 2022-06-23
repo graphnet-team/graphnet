@@ -18,9 +18,6 @@ jobs:
     container: icecube/icetray:combo-stable
     steps:
       - uses: actions/checkout@v2
-      - name: Update PATH to make scripts available, since we're installing graphnet as user
-        run: |
-          echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
       - name: Upgrade packages already installed on icecube/icetray
         run: |
           pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
@@ -29,7 +26,6 @@ jobs:
         uses: ./.github/actions/install-cpu
         with:
           editable: true
-          user: false
       - name: Check secrets
         run: |
           echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
