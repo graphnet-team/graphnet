@@ -25,10 +25,10 @@ jobs:
         uses: ./.github/actions/install-cpu
         with:
           editable: true
-          user: true
+          user: false
       - name: Upgrade astropy, already installed on icecube/icetray [https://github.com/astropy/astropy/issues/12534]
         run: |
-          pip install --user --upgrade astropy
+          pip install --upgrade astropy
       - name: Check secrets
         run: |
           echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
