@@ -18,14 +18,7 @@ jobs:
     container: icecube/icetray:combo-stable
     steps:
       - uses: actions/checkout@v2
-      - name: Debug
-        run: |
-          pwd
-          ls -lart .
-          ls -lart requirements/
-          ls -lart requirements/torch_cpu.txt
-          pip list
-      - name: Update PATH
+      - name: Update PATH to make scripts available, since we're installing graphnet as user
         run: |
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
       - name: Install package
