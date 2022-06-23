@@ -13,16 +13,16 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  has-cobalt-credentials:
-    name: Check if Cobalt credentials were set on secrets
+  check-cobalt-credentials:
+    description: Check if Cobalt credentials were set on secrets
     runs-on: ubuntu-latest
     outputs:
-      has_credentials: ${{ steps.setvar.outputs.has_credentials }}
+      has-credentials: ${{ steps.setvar.outputs.has-credentials }}
     steps:
-      - id: setvar
+      - name: Check secrets
         run: |
          if [[ "${{ secrets.PUB_WISC_USERNAME }}" != "" && \
-               "${{ secrets.secrets.PUB_WISC_PASSWORD }}" != "" ]]; \
+               "${{ secrets.PUB_WISC_PASSWORD }}" != "" ]]; \
          then
            echo "Credentials to access Cobalt found"
            echo "::set-output name=has_credentials::true"
@@ -32,8 +32,8 @@ jobs:
          fi
 
   build-icetray:
-    needs: [ has-cobalt-credentials ]
-    if: ${{ needs.has-cobalt-credentials.outputs.has_credentials == 'true' }}
+    needs: [ check-cobalt-credentials ]
+    if: ${{ needs.check-cobalt-credentials.outputs.has-credentials == 'true' }}
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
     steps:
