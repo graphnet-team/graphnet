@@ -14,7 +14,7 @@ from graphnet.components.loss_functions import (
 )
 from graphnet.components.utils import fit_scaler
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.utilities.sqlite_selection import (
+from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
 from graphnet.models import Model
