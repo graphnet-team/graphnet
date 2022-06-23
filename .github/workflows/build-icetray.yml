@@ -20,6 +20,7 @@ jobs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
     steps:
       - name: Check secrets
+        id: setvar
         run: |
          if [[ "${{ secrets.PUB_WISC_USERNAME }}" != "" && \
                "${{ secrets.PUB_WISC_PASSWORD }}" != "" ]]; \
@@ -37,6 +38,7 @@ jobs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
     steps:
       - name: Check secrets
+        id: setvar
         run: |
          if [[ "${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}" != "" ]]; \
          then
