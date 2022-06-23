@@ -133,7 +133,7 @@
 <div class="viewcode-block" id="ZenithReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction">[docs]</a><span class="k">class</span> <span class="nc">ZenithReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reconstructs zenith angle.&quot;&quot;&quot;</span>
 
-    <span class="c1"># Requires two features: untransformed points in (x,y)-space.</span>
+    <span class="c1"># Requires two features: zenith angle itself.</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -231,6 +231,17 @@
 
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="InelasticityReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction">[docs]</a><span class="k">class</span> <span class="nc">InelasticityReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reconstructs interaction inelasticity (i.e., tracks vs. hadronic energy).&quot;&quot;&quot;</span>
+
+    <span class="c1"># Requires one features: inelasticity itself</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Transform output to unit range</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

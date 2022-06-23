@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.data.extractors package &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">graphnet.data.extractors package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.i3extractor">graphnet.data.extractors.i3extractor module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.i3featureextractor">graphnet.data.extractors.i3featureextractor module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.i3retroextractor">graphnet.data.extractors.i3retroextractor module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.i3truthextractor">graphnet.data.extractors.i3truthextractor module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.utilities">graphnet.data.extractors.utilities module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>graphnet.data.extractors package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/graphnet.data.extractors.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="graphnet-data-extractors-package">
+<h1>graphnet.data.extractors package<a class="headerlink" href="#graphnet-data-extractors-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-graphnet.data.extractors.i3extractor">
+<span id="graphnet-data-extractors-i3extractor-module"></span><h2>graphnet.data.extractors.i3extractor module<a class="headerlink" href="#module-graphnet.data.extractors.i3extractor" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3extractor.I3Extractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3extractor.html#I3Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3extractor.I3Extractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Extracts relevant information from physics frames.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3extractor.I3Extractor.__call__">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3extractor.html#I3Extractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3extractor.I3Extractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts relevant information from frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3extractor.I3Extractor._load_gcd_data">
+<span class="sig-name descname"><span class="pre">_load_gcd_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3extractor.html#I3Extractor._load_gcd_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3extractor.I3Extractor._load_gcd_data" title="Permalink to this definition"></a></dt>
+<dd><p>Loads the geospatial information contained in the gcd-file.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3extractor.I3Extractor.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.data.extractors.i3extractor.I3Extractor.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3extractor.I3Extractor.set_files">
+<span class="sig-name descname"><span class="pre">set_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3extractor.html#I3Extractor.set_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3extractor.I3Extractor.set_files" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3extractor.I3ExtractorCollection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3ExtractorCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">extractors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3extractor.html#I3ExtractorCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3extractor.I3ExtractorCollection" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>Class to manage multiple I3Extractors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3extractor.I3ExtractorCollection.set_files">
+<span class="sig-name descname"><span class="pre">set_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3extractor.html#I3ExtractorCollection.set_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3extractor.I3ExtractorCollection.set_files" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.i3featureextractor">
+<span id="graphnet-data-extractors-i3featureextractor-module"></span><h2>graphnet.data.extractors.i3featureextractor module<a class="headerlink" href="#module-graphnet.data.extractors.i3featureextractor" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3featureextractor.</span></span><span class="sig-name descname"><span class="pre">I3FeatureExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3FeatureExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor._get_om_keys_and_pulseseries">
+<span class="sig-name descname"><span class="pre">_get_om_keys_and_pulseseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3FeatureExtractor._get_om_keys_and_pulseseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor._get_om_keys_and_pulseseries" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the indicies for the gcd_dict and the pulse series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>i3 physics frame</em>) – i3 physics frame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the indicies for the gcd_dict
+data    (??)   : the pulse series</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>om_keys (index)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3featureextractor.</span></span><span class="sig-name descname"><span class="pre">I3FeatureExtractorIceCube86</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3FeatureExtractorIceCube86"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3FeatureExtractorIceCube86.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extract features to be used as inputs to GNN models.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeDeepCore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3featureextractor.</span></span><span class="sig-name descname"><span class="pre">I3FeatureExtractorIceCubeDeepCore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3FeatureExtractorIceCubeDeepCore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeDeepCore" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCube86</span></code></a></p>
+<p>…</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3featureextractor.</span></span><span class="sig-name descname"><span class="pre">I3FeatureExtractorIceCubeUpgrade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3FeatureExtractorIceCubeUpgrade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCube86</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3FeatureExtractorIceCubeUpgrade.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extract features to be used as inputs to GNN models.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3featureextractor.</span></span><span class="sig-name descname"><span class="pre">I3PulseNoiseTruthFlagIceCubeUpgrade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3PulseNoiseTruthFlagIceCubeUpgrade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCube86</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3featureextractor.html#I3PulseNoiseTruthFlagIceCubeUpgrade.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extract features to be used as inputs to GNN models.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.i3retroextractor">
+<span id="graphnet-data-extractors-i3retroextractor-module"></span><h2>graphnet.data.extractors.i3retroextractor module<a class="headerlink" href="#module-graphnet.data.extractors.i3retroextractor" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3retroextractor.I3RetroExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3retroextractor.</span></span><span class="sig-name descname"><span class="pre">I3RetroExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'retro'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3retroextractor.html#I3RetroExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3retroextractor.I3RetroExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3retroextractor.I3RetroExtractor.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3retroextractor.html#I3RetroExtractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3retroextractor.I3RetroExtractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts RETRO reco. and associated quantities if available.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3retroextractor.I3RetroExtractor._try_get_key">
+<span class="sig-name descname"><span class="pre">_try_get_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3retroextractor.html#I3RetroExtractor._try_get_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3retroextractor.I3RetroExtractor._try_get_key" title="Permalink to this definition"></a></dt>
+<dd><p>Return <cite>key</cite> in <cite>frame</cite> if it exists; otherwise return <a href="#id1"><span class="problematic" id="id2">`</span></a>default_value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.i3truthextractor">
+<span id="graphnet-data-extractors-i3truthextractor-module"></span><h2>graphnet.data.extractors.i3truthextractor module<a class="headerlink" href="#module-graphnet.data.extractors.i3truthextractor" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3truthextractor.I3TruthExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3truthextractor.</span></span><span class="sig-name descname"><span class="pre">I3TruthExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3truthextractor.html#I3TruthExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3truthextractor.html#I3TruthExtractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts truth features.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type">
+<span class="sig-name descname"><span class="pre">_find_data_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3truthextractor.html#I3TruthExtractor._find_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type" title="Permalink to this definition"></a></dt>
+<dd><p>Determines the data type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mc</strong> (<em>boolean</em>) – is this montecarlo?</p></li>
+<li><p><strong>input_file</strong> (<em>str</em>) – path to i3 file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the simulation/data type</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity">
+<span class="sig-name descname"><span class="pre">_get_primary_particle_interaction_type_and_elasticity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3truthextractor.html#I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity" title="Permalink to this definition"></a></dt>
+<dd><p>“Returns primary particle, interaction type, and elasticity.</p>
+<dl class="simple">
+<dt>A case handler that does two things</dt><dd><ol class="arabic simple">
+<li><p>Catches issues related to determining the primary MC particle.</p></li>
+<li><p>Error handles cases where interaction type and elasticity doesnt exist</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> (<em>i3 physics frame</em>) – <p>…</p>
+</p></li>
+<li><p><strong>sim_type</strong> (<em>string</em>) – Simulation type</p></li>
+<li><p><strong>padding_value</strong> (<em>int</em><em> | </em><em>float</em>) – The value used for padding.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>McInIcePrimary (?): The primary particle
+interaction_type (int): Either 1 (charged current), 2 (neutral current), 0 (neither)
+elasticity (float): In ]0,1[</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_track_energy_and_inelasticity">
+<span class="sig-name descname"><span class="pre">_get_primary_track_energy_and_inelasticity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3truthextractor.html#I3TruthExtractor._get_primary_track_energy_and_inelasticity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_track_energy_and_inelasticity" title="Permalink to this definition"></a></dt>
+<dd><p>Get the total energy of tracks from primary, and corresponding inelasticity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>icetray.I3Frame</em>) – Physics frame containing MC record.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Energy of tracks from primary, and corresponding</dt><dd><p>inelasticity.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3truthextractor.I3TruthExtractor._muon_stopped">
+<span class="sig-name descname"><span class="pre">_muon_stopped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical_pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3truthextractor.html#I3TruthExtractor._muon_stopped"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._muon_stopped" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates where a simulated muon stops and if this is inside the detectors fiducial volume.
+IMPORTANT: The final position of the muon is saved in truth extractor/databases as position_x,position_y and position_z.</p>
+<blockquote>
+<div><p>This is analogoues to the neutrinos whose interaction vertex is saved under the same name.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>dict</em>) – dictionary of already extracted values</p></li>
+<li><p><strong>borders</strong> (<em>tuple</em>) – first entry xy outline, second z min/max depth. See I3TruthExtractor for hard-code example.</p></li>
+<li><p><strong>horizontal_pad</strong> (<em>float</em>) – shrink xy plane further with exclusion zone</p></li>
+<li><p><strong>vertical_pad</strong> (<em>float</em>) – further shrink detector depth with exclusion height</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>containing the x,y,z co-ordinates of final muon position and contained boolean (0 or 1)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.utilities">
+<span id="graphnet-data-extractors-utilities-module"></span><h2>graphnet.data.extractors.utilities module<a class="headerlink" href="#module-graphnet.data.extractors.utilities" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frame_is_montecarlo">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frame_is_montecarlo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frame_is_noise">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.</span></span><span class="sig-name descname"><span class="pre">frame_is_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities.html#frame_is_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frame_is_noise" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.data.extractors" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

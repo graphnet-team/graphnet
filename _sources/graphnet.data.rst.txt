@@ -1,6 +1,14 @@
 graphnet.data package
 =====================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   graphnet.data.extractors
+
 Submodules
 ----------
 

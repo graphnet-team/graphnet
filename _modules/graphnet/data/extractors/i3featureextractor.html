@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.data.extractors.i3featureextractor &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>graphnet.data.extractors.i3featureextractor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphnet.data.extractors.i3featureextractor</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="k">import</span> <span class="n">I3Extractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="p">(</span>
+        <span class="n">dataclasses</span><span class="p">,</span>
+    <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;icecube package not available.&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="I3FeatureExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span> <span class="o">=</span> <span class="n">pulsemap</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pulsemap</span><span class="p">)</span>
+
+<div class="viewcode-block" id="I3FeatureExtractor._get_om_keys_and_pulseseries"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor._get_om_keys_and_pulseseries">[docs]</a>    <span class="k">def</span> <span class="nf">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the indicies for the gcd_dict and the pulse series</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame (i3 physics frame): i3 physics frame</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            om_keys (index): the indicies for the gcd_dict</span>
+<span class="sd">            data    (??)   : the pulse series</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+                    <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+                    <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                    <span class="k">del</span> <span class="n">frame</span><span class="p">[</span>
+                        <span class="s2">&quot;I3Calibration&quot;</span>
+                    <span class="p">]</span>  <span class="c1"># Avoid adding unneccesary data to frame</span>
+            <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span>
+                <span class="p">)</span>
+                <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span></div></div>
+
+
+<div class="viewcode-block" id="I3FeatureExtractorIceCube86"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCube86</span><span class="p">(</span><span class="n">I3FeatureExtractor</span><span class="p">):</span>
+<div class="viewcode-block" id="I3FeatureExtractorIceCube86.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;charge&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;dom_time&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;dom_x&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;dom_y&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;dom_z&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_area&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;rde&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
+            <span class="c1"># Common values for each OM</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">area</span>
+            <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_relative_dom_efficiency</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">)</span>
+
+            <span class="c1"># Loop over pulses for each OM</span>
+            <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">pulse</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_area&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;rde&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rde</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_relative_dom_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span>
+        <span class="p">):</span>  <span class="c1"># Not available for e.g. mDOMs in IceCube Upgrade</span>
+            <span class="n">rde</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
+            <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+                <span class="n">rde</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">rde</span></div>
+
+
+<div class="viewcode-block" id="I3FeatureExtractorIceCubeDeepCore"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeDeepCore">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCubeDeepCore</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;...&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="I3FeatureExtractorIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
+<div class="viewcode-block" id="I3FeatureExtractorIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_number&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;dom_number&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_dir_y&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_dir_z&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;dom_type&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># Target pulsemap does not exist in `frame`</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
+            <span class="c1"># Common values for each OM</span>
+            <span class="n">pmt_dir_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">pmt_dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">pmt_dir_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">z</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dom_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pmt_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">dom_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">omtype</span>
+
+            <span class="c1"># Loop over pulses for each OM</span>
+            <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_number&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_number</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_number&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_number</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_x</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_y</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_z</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_type</span><span class="p">)</span>
+
+        <span class="c1"># Add features from IceCube86</span>
+        <span class="n">output_icecube86</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_icecube86</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span></div></div>
+
+
+<div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3PulseNoiseTruthFlagIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
+<div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_number&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;dom_number&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_dir_y&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;pmt_dir_z&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;dom_type&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;truth_flag&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># Target pulsemap does not exist in `frame`</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
+            <span class="c1"># Common values for each OM</span>
+            <span class="n">pmt_dir_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">pmt_dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">pmt_dir_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">z</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dom_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pmt_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">dom_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">omtype</span>
+
+            <span class="c1"># Loop over pulses for each OM</span>
+            <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">truth_flag</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_number&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_number</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_number&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_number</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_x</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_y</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_z</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_type</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;truth_flag&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">truth_flag</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

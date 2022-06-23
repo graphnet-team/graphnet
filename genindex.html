@@ -92,18 +92,18 @@
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3Extractor.__call__">__call__() (graphnet.data.i3extractor.I3Extractor method)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.__call__">__call__() (graphnet.data.extractors.i3extractor.I3Extractor method)</a>
 
       <ul>
-        <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractorIceCube86.__call__">(graphnet.data.i3extractor.I3FeatureExtractorIceCube86 method)</a>
+        <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__">(graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86 method)</a>
 </li>
-        <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractorIceCubeUpgrade.__call__">(graphnet.data.i3extractor.I3FeatureExtractorIceCubeUpgrade method)</a>
+        <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade.__call__">(graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade method)</a>
 </li>
-        <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__">(graphnet.data.i3extractor.I3PulseNoiseTruthFlagIceCubeUpgrade method)</a>
+        <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__">(graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade method)</a>
 </li>
-        <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3RetroExtractor.__call__">(graphnet.data.i3extractor.I3RetroExtractor method)</a>
+        <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor.__call__">(graphnet.data.extractors.i3retroextractor.I3RetroExtractor method)</a>
 </li>
-        <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3TruthExtractor.__call__">(graphnet.data.i3extractor.I3TruthExtractor method)</a>
+        <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__">(graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
 </li>
         <li><a href="graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline.__call__">(graphnet.data.pipeline.InSQLitePipeline method)</a>
 </li>
@@ -148,14 +148,18 @@
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._extract_everything">_extract_everything() (graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance._forward">_forward() (graphnet.components.loss_functions.EuclideanDistance method)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type">_find_data_type() (graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
+</li>
+      <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistanceLoss._forward">_forward() (graphnet.components.loss_functions.EuclideanDistanceLoss method)</a>
 
       <ul>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.LogCoshLoss._forward">(graphnet.components.loss_functions.LogCoshLoss method)</a>
 </li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.LossFunction._forward">(graphnet.components.loss_functions.LossFunction method)</a>
+</li>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.MSELoss._forward">(graphnet.components.loss_functions.MSELoss method)</a>
+</li>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.RMSELoss._forward">(graphnet.components.loss_functions.RMSELoss method)</a>
 </li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisher2DLoss._forward">(graphnet.components.loss_functions.VonMisesFisher2DLoss method)</a>
 </li>
@@ -170,17 +174,25 @@
         <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task._forward">(graphnet.models.task.task.Task method)</a>
 </li>
       </ul></li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractor._get_om_keys_and_pulseseries">_get_om_keys_and_pulseseries() (graphnet.data.i3extractor.I3FeatureExtractor method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor._get_om_keys_and_pulseseries">_get_om_keys_and_pulseseries() (graphnet.data.extractors.i3featureextractor.I3FeatureExtractor method)</a>
+</li>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity">_get_primary_particle_interaction_type_and_elasticity() (graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
+</li>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_track_energy_and_inelasticity">_get_primary_track_energy_and_inelasticity() (graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
 </li>
       <li><a href="graphnet.components.html#graphnet.components.pool._group_identical">_group_identical() (in module graphnet.components.pool)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3Extractor._load_gcd_data">_load_gcd_data() (graphnet.data.i3extractor.I3Extractor method)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor._load_gcd_data">_load_gcd_data() (graphnet.data.extractors.i3extractor.I3Extractor method)</a>
 </li>
       <li><a href="graphnet.components.html#graphnet.components.loss_functions.LogCoshLoss._log_cosh">_log_cosh() (graphnet.components.loss_functions.LogCoshLoss class method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._merge_databases">_merge_databases() (graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases">_merge_temporary_databases() (graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
+</li>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._muon_stopped">_muon_stopped() (graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._parallel_extraction">_parallel_extraction() (graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
@@ -201,6 +213,8 @@
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._submit_to_database">_submit_to_database() (graphnet.data.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
       <li><a href="graphnet.models.html#graphnet.models.coarsening.Coarsening._transfer_attributes">_transfer_attributes() (graphnet.models.coarsening.Coarsening method)</a>
+</li>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor._try_get_key">_try_get_key() (graphnet.data.extractors.i3retroextractor.I3RetroExtractor method)</a>
 </li>
       <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task._validate_and_set_transforms">_validate_and_set_transforms() (graphnet.models.task.task.Task method)</a>
 </li>
@@ -326,7 +340,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset.establish_connection">establish_connection() (graphnet.data.sqlite_dataset.SQLiteDataset method)</a>
 </li>
-      <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance">EuclideanDistance (class in graphnet.components.loss_functions)</a>
+      <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistanceLoss">EuclideanDistanceLoss (class in graphnet.components.loss_functions)</a>
 </li>
       <li><a href="graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder">EuclideanGraphBuilder (class in graphnet.models.graph_builders)</a>
 </li>
@@ -348,8 +362,6 @@
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade_V2.features">(graphnet.models.detector.icecube.IceCubeUpgrade_V2 attribute)</a>
 </li>
       </ul></li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.find_data_type">find_data_type() (in module graphnet.data.i3extractor)</a>
-</li>
       <li><a href="graphnet.data.html#graphnet.data.utils.find_i3_files">find_i3_files() (in module graphnet.data.utils)</a>
 </li>
       <li><a href="graphnet.components.html#graphnet.components.utils.fit_scaler">fit_scaler() (in module graphnet.components.utils)</a>
@@ -380,17 +392,9 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.frame_contains_classifiers">frame_contains_classifiers() (in module graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.utilities.frame_is_montecarlo">frame_is_montecarlo() (in module graphnet.data.extractors.utilities)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.frame_contains_retro">frame_contains_retro() (in module graphnet.data.i3extractor)</a>
-</li>
-      <li><a href="graphnet.data.html#graphnet.data.utils.frame_has_key">frame_has_key() (in module graphnet.data.utils)</a>
-</li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.frame_is_lvl7">frame_is_lvl7() (in module graphnet.data.i3extractor)</a>
-</li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.frame_is_montecarlo">frame_is_montecarlo() (in module graphnet.data.i3extractor)</a>
-</li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.frame_is_noise">frame_is_noise() (in module graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.utilities.frame_is_noise">frame_is_noise() (in module graphnet.data.extractors.utilities)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -415,8 +419,6 @@
       <li><a href="graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.get_metrics">get_metrics() (graphnet.models.training.callbacks.ProgressBar method)</a>
 </li>
       <li><a href="graphnet.models.training.html#graphnet.models.training.utils.get_predictions">get_predictions() (in module graphnet.models.training.utils)</a>
-</li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.get_primary_particle_interaction_type_and_elasticity">get_primary_particle_interaction_type_and_elasticity() (in module graphnet.data.i3extractor)</a>
 </li>
       <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN">GNN (class in graphnet.models.gnn.gnn)</a>
 </li>
@@ -486,10 +488,45 @@
 </li>
       </ul></li>
       <li>
-    graphnet.data.i3extractor
+    graphnet.data.extractors
 
       <ul>
-        <li><a href="graphnet.data.html#module-graphnet.data.i3extractor">module</a>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.i3extractor
+
+      <ul>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3extractor">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.i3featureextractor
+
+      <ul>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3featureextractor">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.i3retroextractor
+
+      <ul>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3retroextractor">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.i3truthextractor
+
+      <ul>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3truthextractor">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.utilities
+
+      <ul>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.utilities">module</a>
 </li>
       </ul></li>
       <li>
@@ -520,6 +557,8 @@
         <li><a href="graphnet.data.html#module-graphnet.data.sqlite_dataset_perturbed">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.utils
 
@@ -534,8 +573,6 @@
         <li><a href="graphnet.models.html#module-graphnet.models">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.models.coarsening
 
@@ -707,23 +744,23 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3Extractor">I3Extractor (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor">I3Extractor (class in graphnet.data.extractors.i3extractor)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3ExtractorCollection">I3ExtractorCollection (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection">I3ExtractorCollection (class in graphnet.data.extractors.i3extractor)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractor">I3FeatureExtractor (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor">I3FeatureExtractor (class in graphnet.data.extractors.i3featureextractor)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractorIceCube86">I3FeatureExtractorIceCube86 (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86">I3FeatureExtractorIceCube86 (class in graphnet.data.extractors.i3featureextractor)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractorIceCubeDeepCore">I3FeatureExtractorIceCubeDeepCore (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeDeepCore">I3FeatureExtractorIceCubeDeepCore (class in graphnet.data.extractors.i3featureextractor)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3FeatureExtractorIceCubeUpgrade">I3FeatureExtractorIceCubeUpgrade (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade">I3FeatureExtractorIceCubeUpgrade (class in graphnet.data.extractors.i3featureextractor)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3PulseNoiseTruthFlagIceCubeUpgrade">I3PulseNoiseTruthFlagIceCubeUpgrade (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade">I3PulseNoiseTruthFlagIceCubeUpgrade (class in graphnet.data.extractors.i3featureextractor)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3RetroExtractor">I3RetroExtractor (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor">I3RetroExtractor (class in graphnet.data.extractors.i3retroextractor)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3TruthExtractor">I3TruthExtractor (class in graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor">I3TruthExtractor (class in graphnet.data.extractors.i3truthextractor)</a>
 </li>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86">IceCube86 (class in graphnet.models.detector.icecube)</a>
 </li>
@@ -733,13 +770,15 @@
         <li><a href="graphnet.data.html#graphnet.data.constants.TRUTH.ICECUBE86">(graphnet.data.constants.TRUTH attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore">IceCubeDeepCore (class in graphnet.models.detector.icecube)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade">IceCubeUpgrade (class in graphnet.models.detector.icecube)</a>
 </li>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade_V2">IceCubeUpgrade_V2 (class in graphnet.models.detector.icecube)</a>
+</li>
+      <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction">InelasticityReconstruction (class in graphnet.models.task.reconstruction)</a>
 </li>
       <li><a href="graphnet.models.html#graphnet.models.model.Model.inference">inference() (graphnet.models.model.Model method)</a>
 
@@ -835,7 +874,17 @@
 </li>
         <li><a href="graphnet.data.html#module-graphnet.data.dataconverter">graphnet.data.dataconverter</a>
 </li>
-        <li><a href="graphnet.data.html#module-graphnet.data.i3extractor">graphnet.data.i3extractor</a>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors">graphnet.data.extractors</a>
+</li>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3extractor">graphnet.data.extractors.i3extractor</a>
+</li>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3featureextractor">graphnet.data.extractors.i3featureextractor</a>
+</li>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3retroextractor">graphnet.data.extractors.i3retroextractor</a>
+</li>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3truthextractor">graphnet.data.extractors.i3truthextractor</a>
+</li>
+        <li><a href="graphnet.data.extractors.html#module-graphnet.data.extractors.utilities">graphnet.data.extractors.utilities</a>
 </li>
         <li><a href="graphnet.data.html#module-graphnet.data.pipeline">graphnet.data.pipeline</a>
 </li>
@@ -894,7 +943,7 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.muon_stopped">muon_stopped() (in module graphnet.data.i3extractor)</a>
+      <li><a href="graphnet.components.html#graphnet.components.loss_functions.MSELoss">MSELoss (class in graphnet.components.loss_functions)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -902,7 +951,7 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3Extractor.name">name (graphnet.data.i3extractor.I3Extractor property)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.name">name (graphnet.data.extractors.i3extractor.I3Extractor property)</a>
 </li>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.nb_inputs">nb_inputs (graphnet.models.detector.detector.Detector property)</a>
 
@@ -920,6 +969,8 @@
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.nb_inputs">(graphnet.models.task.reconstruction.EnergyReconstruction attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.nb_inputs">(graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.nb_inputs">(graphnet.models.task.reconstruction.InelasticityReconstruction attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.nb_inputs">(graphnet.models.task.reconstruction.PassOutput1 attribute)</a>
 </li>
@@ -1021,11 +1072,15 @@
       <li><a href="graphnet.components.html#graphnet.components.loss_functions.BinaryCrossEntropyLoss.reduction">reduction (graphnet.components.loss_functions.BinaryCrossEntropyLoss attribute)</a>
 
       <ul>
-        <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance.reduction">(graphnet.components.loss_functions.EuclideanDistance attribute)</a>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.EuclideanDistanceLoss.reduction">(graphnet.components.loss_functions.EuclideanDistanceLoss attribute)</a>
 </li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.LogCoshLoss.reduction">(graphnet.components.loss_functions.LogCoshLoss attribute)</a>
 </li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.LossFunction.reduction">(graphnet.components.loss_functions.LossFunction attribute)</a>
+</li>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.MSELoss.reduction">(graphnet.components.loss_functions.MSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.RMSELoss.reduction">(graphnet.components.loss_functions.RMSELoss attribute)</a>
 </li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisher2DLoss.reduction">(graphnet.components.loss_functions.VonMisesFisher2DLoss attribute)</a>
 </li>
@@ -1034,7 +1089,11 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.data.html#graphnet.data.sqlite_dataset.SQLiteDataset.remove_missing_columns">remove_missing_columns() (graphnet.data.sqlite_dataset.SQLiteDataset method)</a>
+</li>
       <li><a href="graphnet.utilities.html#graphnet.utilities.imports.requires_icecube">requires_icecube() (in module graphnet.utilities.imports)</a>
+</li>
+      <li><a href="graphnet.components.html#graphnet.components.loss_functions.RMSELoss">RMSELoss (class in graphnet.components.loss_functions)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.utils.run_sql_code">run_sql_code() (in module graphnet.data.utils)</a>
 </li>
@@ -1052,12 +1111,14 @@
 </li>
       <li><a href="graphnet.data.html#graphnet.data.utils.save_to_sql">save_to_sql() (in module graphnet.data.utils)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3Extractor.set_files">set_files() (graphnet.data.i3extractor.I3Extractor method)</a>
+      <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.set_files">set_files() (graphnet.data.extractors.i3extractor.I3Extractor method)</a>
 
       <ul>
-        <li><a href="graphnet.data.html#graphnet.data.i3extractor.I3ExtractorCollection.set_files">(graphnet.data.i3extractor.I3ExtractorCollection method)</a>
+        <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.set_files">(graphnet.data.extractors.i3extractor.I3ExtractorCollection method)</a>
 </li>
       </ul></li>
+      <li><a href="graphnet.utilities.html#graphnet.utilities.logging.set_logging_level">set_logging_level() (in module graphnet.utilities.logging)</a>
+</li>
       <li><a href="graphnet.models.html#graphnet.models.model.Model.shared_step">shared_step() (graphnet.models.model.Model method)</a>
 </li>
   </ul></td>
@@ -1106,9 +1167,13 @@
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.trainer">(graphnet.models.task.reconstruction.ZenithReconstructionWithKappa attribute)</a>
 </li>
       </ul></li>
-      <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisher2DLoss.training">training (graphnet.components.loss_functions.VonMisesFisher2DLoss attribute)</a>
+      <li><a href="graphnet.components.html#graphnet.components.loss_functions.MSELoss.training">training (graphnet.components.loss_functions.MSELoss attribute)</a>
 
       <ul>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.RMSELoss.training">(graphnet.components.loss_functions.RMSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisher2DLoss.training">(graphnet.components.loss_functions.VonMisesFisher2DLoss attribute)</a>
+</li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisherLoss.training">(graphnet.components.loss_functions.VonMisesFisherLoss attribute)</a>
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.training">(graphnet.models.detector.detector.Detector attribute)</a>
@@ -1145,6 +1210,8 @@
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.training">(graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty attribute)</a>
 </li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.training">(graphnet.models.task.reconstruction.InelasticityReconstruction attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.training">(graphnet.models.task.reconstruction.PassOutput1 attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.training">(graphnet.models.task.reconstruction.PassOutput2 attribute)</a>
@@ -1169,8 +1236,6 @@
       <li><a href="graphnet.models.html#graphnet.models.model.Model.training_step">training_step() (graphnet.models.model.Model method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.constants.TRUTH">TRUTH (class in graphnet.data.constants)</a>
-</li>
-      <li><a href="graphnet.data.html#graphnet.data.i3extractor.try_get_key">try_get_key() (in module graphnet.data.i3extractor)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1206,9 +1271,13 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisher2DLoss.weight">weight (graphnet.components.loss_functions.VonMisesFisher2DLoss attribute)</a>
+      <li><a href="graphnet.components.html#graphnet.components.loss_functions.MSELoss.weight">weight (graphnet.components.loss_functions.MSELoss attribute)</a>
 
       <ul>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.RMSELoss.weight">(graphnet.components.loss_functions.RMSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisher2DLoss.weight">(graphnet.components.loss_functions.VonMisesFisher2DLoss attribute)</a>
+</li>
         <li><a href="graphnet.components.html#graphnet.components.loss_functions.VonMisesFisherLoss.weight">(graphnet.components.loss_functions.VonMisesFisherLoss attribute)</a>
 </li>
       </ul></li>

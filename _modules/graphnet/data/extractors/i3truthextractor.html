@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.data.extractors.i3truthextractor &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>graphnet.data.extractors.i3truthextractor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphnet.data.extractors.i3truthextractor</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="k">import</span> <span class="n">I3Extractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">frame_is_montecarlo</span><span class="p">,</span>
+    <span class="n">frame_is_noise</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="p">(</span>
+        <span class="n">dataclasses</span><span class="p">,</span>
+        <span class="n">icetray</span><span class="p">,</span>
+        <span class="n">phys_services</span><span class="p">,</span>
+    <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;icecube package not available.&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="I3TruthExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3TruthExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;truth&quot;</span><span class="p">,</span> <span class="n">borders</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">borders</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">border_xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">256.1400146484375</span><span class="p">,</span> <span class="o">-</span><span class="mf">521.0800170898438</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">132.8000030517578</span><span class="p">,</span> <span class="o">-</span><span class="mf">501.45001220703125</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">9.13000011444092</span><span class="p">,</span> <span class="o">-</span><span class="mf">481.739990234375</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">114.38999938964844</span><span class="p">,</span> <span class="o">-</span><span class="mf">461.989990234375</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">237.77999877929688</span><span class="p">,</span> <span class="o">-</span><span class="mf">442.4200134277344</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">361.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">422.8299865722656</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">405.8299865722656</span><span class="p">,</span> <span class="o">-</span><span class="mf">306.3800048828125</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">443.6000061035156</span><span class="p">,</span> <span class="o">-</span><span class="mf">194.16000366210938</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">500.42999267578125</span><span class="p">,</span> <span class="o">-</span><span class="mf">58.45000076293945</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">544.0700073242188</span><span class="p">,</span> <span class="mf">55.88999938964844</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">576.3699951171875</span><span class="p">,</span> <span class="mf">170.9199981689453</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">505.2699890136719</span><span class="p">,</span> <span class="mf">257.8800048828125</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">429.760009765625</span><span class="p">,</span> <span class="mf">351.0199890136719</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">338.44000244140625</span><span class="p">,</span> <span class="mf">463.7200012207031</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">224.5800018310547</span><span class="p">,</span> <span class="mf">432.3500061035156</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">101.04000091552734</span><span class="p">,</span> <span class="mf">412.7900085449219</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mf">22.11000061035156</span><span class="p">,</span> <span class="mf">509.5</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">101.05999755859375</span><span class="p">,</span> <span class="mf">490.2200012207031</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">224.08999633789062</span><span class="p">,</span> <span class="mf">470.8599853515625</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">347.8800048828125</span><span class="p">,</span> <span class="mf">451.5199890136719</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">392.3800048828125</span><span class="p">,</span> <span class="mf">334.239990234375</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">437.0400085449219</span><span class="p">,</span> <span class="mf">217.8000030517578</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">481.6000061035156</span><span class="p">,</span> <span class="mf">101.38999938964844</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">526.6300048828125</span><span class="p">,</span> <span class="o">-</span><span class="mf">15.60000038146973</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">570.9000244140625</span><span class="p">,</span> <span class="o">-</span><span class="mf">125.13999938964844</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">492.42999267578125</span><span class="p">,</span> <span class="o">-</span><span class="mf">230.16000366210938</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">413.4599914550781</span><span class="p">,</span> <span class="o">-</span><span class="mf">327.2699890136719</span><span class="p">),</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mf">334.79998779296875</span><span class="p">,</span> <span class="o">-</span><span class="mf">424.5</span><span class="p">),</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">border_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">512.82</span><span class="p">,</span> <span class="mf">524.56</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="p">[</span><span class="n">border_xy</span><span class="p">,</span> <span class="n">border_z</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="n">borders</span>
+
+<div class="viewcode-block" id="I3TruthExtractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extracts truth features.&quot;&quot;&quot;</span>
+        <span class="n">is_mc</span> <span class="o">=</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">is_noise</span> <span class="o">=</span> <span class="n">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_data_type</span><span class="p">(</span><span class="n">is_mc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span><span class="p">)</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;position_x&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;position_y&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;position_z&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;azimuth&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;zenith&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;pid&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;event_time&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">start_time</span><span class="o">.</span><span class="n">utc_daq_time</span><span class="p">,</span>
+            <span class="s2">&quot;sim_type&quot;</span><span class="p">:</span> <span class="n">sim_type</span><span class="p">,</span>
+            <span class="s2">&quot;interaction_type&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;elasticity&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;RunID&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span>
+            <span class="s2">&quot;SubrunID&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_run_id</span><span class="p">,</span>
+            <span class="s2">&quot;EventID&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">event_id</span><span class="p">,</span>
+            <span class="s2">&quot;SubEventID&quot;</span><span class="p">:</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_id</span><span class="p">,</span>
+            <span class="s2">&quot;dbang_decay_length&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;track_length&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;stopped_muon&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;energy_track&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;inelasticity&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L3_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L4_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L5_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L6_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">&quot;L7_oscNext_bool&quot;</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.</span>
+        <span class="c1"># At low levels i3files contain several other P frame splits (e.g NullSplit),</span>
+        <span class="c1"># we remove those here.</span>
+        <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="o">!=</span> <span class="s2">&quot;InIceSplit&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">if</span> <span class="s2">&quot;FilterMask&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;DeepCoreFilter_13&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">]:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;CascadeFilter_13&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">]:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;CascadeFilter_13&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;MuonFilter_13&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">]:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;MuonFilter_13&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;OnlineL2Filter_17&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">]:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;FilterMask&quot;</span><span class="p">][</span><span class="s2">&quot;OnlineL2Filter_17&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="s2">&quot;DeepCoreFilter_13&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;DeepCoreFilter_13&quot;</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L3_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L3_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L3_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L4_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L4_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L4_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L5_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L5_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L5_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L6_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L6_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L6_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;L7_oscNext_bool&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;L7_oscNext_bool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="s2">&quot;L7_oscNext_bool&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">is_mc</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_noise</span><span class="p">):</span>
+            <span class="p">(</span>
+                <span class="n">MCInIcePrimary</span><span class="p">,</span>
+                <span class="n">interaction_type</span><span class="p">,</span>
+                <span class="n">elasticity</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span>
+            <span class="p">)</span>
+            <span class="p">(</span>
+                <span class="n">energy_track</span><span class="p">,</span>
+                <span class="n">inelasticity</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_track_energy_and_inelasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span>
+                    <span class="s2">&quot;position_x&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                    <span class="s2">&quot;position_y&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                    <span class="s2">&quot;position_z&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+                    <span class="s2">&quot;azimuth&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">azimuth</span><span class="p">,</span>
+                    <span class="s2">&quot;zenith&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">zenith</span><span class="p">,</span>
+                    <span class="s2">&quot;pid&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">pdg_encoding</span><span class="p">,</span>
+                    <span class="s2">&quot;interaction_type&quot;</span><span class="p">:</span> <span class="n">interaction_type</span><span class="p">,</span>
+                    <span class="s2">&quot;elasticity&quot;</span><span class="p">:</span> <span class="n">elasticity</span><span class="p">,</span>
+                    <span class="s2">&quot;dbang_decay_length&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_dbang_decay_length</span><span class="p">(</span>
+                        <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;energy_track&quot;</span><span class="p">:</span> <span class="n">energy_track</span><span class="p">,</span>
+                    <span class="s2">&quot;inelasticity&quot;</span><span class="p">:</span> <span class="n">inelasticity</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;pid&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">13</span><span class="p">:</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;track_length&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+                <span class="n">muon_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muon_stopped</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span><span class="p">)</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;position_x&quot;</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span>
+                            <span class="s2">&quot;x&quot;</span>
+                        <span class="p">],</span>  <span class="c1"># position_xyz has no meaning for muons. These will now be updated to muon final position, given track length/azimuth/zenith</span>
+                        <span class="s2">&quot;position_y&quot;</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
+                        <span class="s2">&quot;position_z&quot;</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
+                        <span class="s2">&quot;stopped_muon&quot;</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s2">&quot;stopped&quot;</span><span class="p">],</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span></div>
+
+    <span class="k">def</span> <span class="nf">_extract_dbang_decay_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">):</span>
+        <span class="n">mctree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCTree&quot;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">p_true</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">primaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">p_daughters</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">p_true</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_daughters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">p_daughter</span> <span class="ow">in</span> <span class="n">p_daughters</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">p_daughter</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">Hadrons</span><span class="p">:</span>
+                        <span class="n">casc_0_true</span> <span class="o">=</span> <span class="n">p_daughter</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">hnl_true</span> <span class="o">=</span> <span class="n">p_daughter</span>
+                <span class="n">hnl_daughters</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">hnl_true</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">decay_length</span> <span class="o">=</span> <span class="n">padding_value</span>
+                <span class="n">hnl_daughters</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hnl_daughters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">count_hnl_daughters</span><span class="p">,</span> <span class="n">hnl_daughter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                    <span class="n">hnl_daughters</span>
+                <span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">count_hnl_daughters</span><span class="p">:</span>
+                        <span class="n">casc_1_true</span> <span class="o">=</span> <span class="n">hnl_daughter</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">assert</span> <span class="n">casc_1_true</span><span class="o">.</span><span class="n">pos</span> <span class="o">==</span> <span class="n">hnl_daughter</span><span class="o">.</span><span class="n">pos</span>
+                        <span class="n">casc_1_true</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">casc_1_true</span><span class="o">.</span><span class="n">energy</span> <span class="o">+</span> <span class="n">hnl_daughter</span><span class="o">.</span><span class="n">energy</span>
+                        <span class="p">)</span>
+                <span class="n">decay_length</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">phys_services</span><span class="o">.</span><span class="n">I3Calculator</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span>
+                        <span class="n">casc_0_true</span><span class="p">,</span> <span class="n">casc_1_true</span>
+                    <span class="p">)</span>
+                    <span class="o">/</span> <span class="n">icetray</span><span class="o">.</span><span class="n">I3Units</span><span class="o">.</span><span class="n">m</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">decay_length</span> <span class="o">=</span> <span class="n">padding_value</span>
+            <span class="k">return</span> <span class="n">decay_length</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+            <span class="k">return</span> <span class="n">padding_value</span>
+
+<div class="viewcode-block" id="I3TruthExtractor._muon_stopped"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._muon_stopped">[docs]</a>    <span class="k">def</span> <span class="nf">_muon_stopped</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">borders</span><span class="p">,</span> <span class="n">horizontal_pad</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">vertical_pad</span><span class="o">=</span><span class="mf">100.0</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates where a simulated muon stops and if this is inside the detectors fiducial volume.</span>
+<span class="sd">        IMPORTANT: The final position of the muon is saved in truth extractor/databases as position_x,position_y and position_z.</span>
+<span class="sd">                This is analogoues to the neutrinos whose interaction vertex is saved under the same name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            truth (dict) : dictionary of already extracted values</span>
+<span class="sd">            borders (tuple) : first entry xy outline, second z min/max depth. See I3TruthExtractor for hard-code example.</span>
+<span class="sd">            horizontal_pad (float) : shrink xy plane further with exclusion zone</span>
+<span class="sd">            vertical_pad (float) : further shrink detector depth with exclusion height</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dictionary (dict) : containing the x,y,z co-ordinates of final muon position and contained boolean (0 or 1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># to do:remove hard-coded border coords and replace with GCD file contents using string no&#39;s</span>
+        <span class="n">border</span> <span class="o">=</span> <span class="n">mpath</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">borders</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">start_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;position_x&quot;</span><span class="p">],</span> <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;position_y&quot;</span><span class="p">],</span> <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;position_z&quot;</span><span class="p">]]</span>
+        <span class="p">)</span>
+
+        <span class="n">travel_vec</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;track_length&quot;</span><span class="p">]</span>
+                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;azimuth&quot;</span><span class="p">])</span>
+                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;zenith&quot;</span><span class="p">]),</span>
+                <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;track_length&quot;</span><span class="p">]</span>
+                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;azimuth&quot;</span><span class="p">])</span>
+                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;zenith&quot;</span><span class="p">]),</span>
+                <span class="n">truth</span><span class="p">[</span><span class="s2">&quot;track_length&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s2">&quot;zenith&quot;</span><span class="p">]),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">end_pos</span> <span class="o">=</span> <span class="n">start_pos</span> <span class="o">+</span> <span class="n">travel_vec</span>
+
+        <span class="n">stopped_xy</span> <span class="o">=</span> <span class="n">border</span><span class="o">.</span><span class="n">contains_point</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">radius</span><span class="o">=-</span><span class="n">horizontal_pad</span>
+        <span class="p">)</span>
+        <span class="n">stopped_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vertical_pad</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertical_pad</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="s2">&quot;stopped&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">stopped_xy</span> <span class="o">*</span> <span class="n">stopped_z</span><span class="p">),</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity">[docs]</a>    <span class="k">def</span> <span class="nf">_get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;Returns primary particle, interaction type, and elasticity.</span>
+
+<span class="sd">        A case handler that does two things</span>
+<span class="sd">            1) Catches issues related to determining the primary MC particle.</span>
+<span class="sd">            2) Error handles cases where interaction type and elasticity doesnt exist</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame (i3 physics frame): ...</span>
+<span class="sd">            sim_type (string): Simulation type</span>
+<span class="sd">            padding_value (int | float): The value used for padding.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">            McInIcePrimary (?): The primary particle</span>
+<span class="sd">            interaction_type (int): Either 1 (charged current), 2 (neutral current), 0 (neither)</span>
+<span class="sd">            elasticity (float): In ]0,1[</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sim_type</span> <span class="o">!=</span> <span class="s2">&quot;noise&quot;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;MCInIcePrimary&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCTree&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span> <span class="o">!=</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span>
+            <span class="p">):</span>  <span class="c1"># This is a nan check. Only happens for some muons where second item in MCTree is primary. Weird!</span>
+                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCTree&quot;</span><span class="p">][</span>
+                    <span class="mi">1</span>
+                <span class="p">]</span>  <span class="c1"># For some strange reason the second entry is identical in all variables and has no nans (always muon)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">interaction_type</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCWeightDict&quot;</span><span class="p">][</span><span class="s2">&quot;InteractionType&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">interaction_type</span> <span class="o">=</span> <span class="n">padding_value</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">elasticity</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3GENIEResultDict&quot;</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">elasticity</span> <span class="o">=</span> <span class="n">padding_value</span>
+
+        <span class="k">return</span> <span class="n">MCInIcePrimary</span><span class="p">,</span> <span class="n">interaction_type</span><span class="p">,</span> <span class="n">elasticity</span></div>
+
+<div class="viewcode-block" id="I3TruthExtractor._get_primary_track_energy_and_inelasticity"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_track_energy_and_inelasticity">[docs]</a>    <span class="k">def</span> <span class="nf">_get_primary_track_energy_and_inelasticity</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the total energy of tracks from primary, and corresponding inelasticity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame (icetray.I3Frame): Physics frame containing MC record.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[float, float]: Energy of tracks from primary, and corresponding</span>
+<span class="sd">                inelasticity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mc_tree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCTree&quot;</span><span class="p">]</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">mc_tree</span><span class="o">.</span><span class="n">primaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">daughters</span> <span class="o">=</span> <span class="n">mc_tree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
+        <span class="n">tracks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">daughter</span> <span class="ow">in</span> <span class="n">daughters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">daughter</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;StartingTrack&quot;</span>
+                <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">daughter</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Dark&quot;</span>
+            <span class="p">):</span>
+                <span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">daughter</span><span class="p">)</span>
+
+        <span class="n">energy_total</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">total_energy</span>
+        <span class="n">energy_track</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">total_energy</span> <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">)</span>
+        <span class="n">inelasticity</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">energy_track</span> <span class="o">/</span> <span class="n">energy_total</span>
+
+        <span class="k">return</span> <span class="n">energy_track</span><span class="p">,</span> <span class="n">inelasticity</span></div>
+
+    <span class="c1"># Utility methods</span>
+<div class="viewcode-block" id="I3TruthExtractor._find_data_type"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">_find_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">input_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determines the data type</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mc (boolean): is this montecarlo?</span>
+<span class="sd">            input_file (str): path to i3 file</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: the simulation/data type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># @TODO: Rewrite to make automaticallu infer `mc` from `input_file`?</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mc</span><span class="p">:</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;NuGen&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;muon&quot;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;muongun&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;corsika&quot;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;corsika&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;genie&quot;</span> <span class="ow">in</span> <span class="n">input_file</span> <span class="ow">or</span> <span class="s2">&quot;nu&quot;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;genie&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;noise&quot;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;noise&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;L2&quot;</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>  <span class="c1"># not robust</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;dbang&quot;</span>
+        <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">&quot;lol&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;SIM TYPE NOT FOUND!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sim_type</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

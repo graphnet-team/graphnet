@@ -121,6 +121,30 @@
         <span class="sd">&quot;&quot;&quot;Syntax similar to `.forward` for implentation in inheriting classes.&quot;&quot;&quot;</span></div></div>
 
 
+<div class="viewcode-block" id="MSELoss"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.MSELoss">[docs]</a><span class="k">class</span> <span class="nc">MSELoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mean squared error loss.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MSELoss._forward"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.MSELoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Implementation of loss calculation.&quot;&quot;&quot;</span>
+        <span class="c1"># Check(s)</span>
+        <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">prediction</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">elements</span></div></div>
+
+
+<div class="viewcode-block" id="RMSELoss"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.RMSELoss">[docs]</a><span class="k">class</span> <span class="nc">RMSELoss</span><span class="p">(</span><span class="n">MSELoss</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Root mean squared error loss.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RMSELoss._forward"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.RMSELoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Implementation of loss calculation.&quot;&quot;&quot;</span>
+        <span class="c1"># Check(s)</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">elements</span></div></div>
+
+
 <div class="viewcode-block" id="LogCoshLoss"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.LogCoshLoss">[docs]</a><span class="k">class</span> <span class="nc">LogCoshLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Log-cosh loss function.</span>
 
@@ -345,8 +369,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="EuclideanDistance"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance">[docs]</a><span class="k">class</span> <span class="nc">EuclideanDistance</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
-<div class="viewcode-block" id="EuclideanDistance._forward"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.EuclideanDistance._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<div class="viewcode-block" id="EuclideanDistanceLoss"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.EuclideanDistanceLoss">[docs]</a><span class="k">class</span> <span class="nc">EuclideanDistanceLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="EuclideanDistanceLoss._forward"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.loss_functions.EuclideanDistanceLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculates the 3D Euclidean distance between predicted and target.</span>
 
 <span class="sd">        Args:</span>
