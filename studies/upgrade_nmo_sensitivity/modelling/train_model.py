@@ -47,57 +47,6 @@ truth = TRUTH.UPGRADE
 TARGETS = ["zenith", "energy", "energy_track", "inelasticity"]
 
 
-def get_ids(
-    dataloader: DataLoader,
-    id_keys: List[str],
-) -> pd.DataFrame:
-    all_ids = list()
-    for batch in dataloader:
-        ids = torch.stack([batch[id_key] for id_key in id_keys]).T
-        all_ids.append(ids)
-
-    all_ids = torch.cat(all_ids, dim=0)
-
-    pdf_all_ids = (
-        pd.DataFrame(
-            data=all_ids,
-            columns=id_keys,
-            dtype=int,
-        )
-        .sort_values(id_keys)
-        .reset_index(drop=True)
-    )
-
-    return pdf_all_ids
-
-
-def export_ids(
-    training_dataloader: DataLoader,
-    testing_dataloader: DataLoader,
-    output_dir: str,
-    id_keys: Optional[List[str]] = None,
-):
-    # Check(s)
-    if id_keys is None:
-        id_keys = [
-            "event_no",
-            "RunID",
-            "SubrunID",
-            "EventID",
-            "SubEventID",
-        ]
-
-    # Get and format run and event ID
-    training_ids = get_ids(training_dataloader, id_keys)
-    testing_ids = get_ids(testing_dataloader, id_keys)
-
-    # Save to file
-    logger.info(f"Saving run and event IDs to {output_dir}")
-    os.makedirs(output_dir, exist_ok=True)
-    training_ids.to_csv(os.path.join(output_dir, "training_events.csv"))
-    testing_ids.to_csv(os.path.join(output_dir, "testing_events.csv"))
-
-
 # Main function definition
 def main(target: str):
 
@@ -168,13 +117,6 @@ def main(target: str):
         shuffle=False,
         selection=testing_selection,
         **dataloader_opts,
-    )
-
-    # Export Run IDs / Sub-run IDs / Event IDs for the validation dataset as a CSV-file.
-    export_ids(
-        training_dataloader,
-        testing_dataloader,
-        os.path.join(archive, run_name),
     )
 
     # Building model

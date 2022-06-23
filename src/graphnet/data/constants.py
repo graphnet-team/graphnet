@@ -38,10 +38,6 @@ class TRUTH:
         "interaction_type",
         "interaction_time",  # Added for vertex reconstruction
         "inelasticity",
-        "RunID",
-        "SubrunID",
-        "EventID",
-        "SubEventID",
         "stopped_muon",
     ]
     DEEPCORE = ICECUBE86
