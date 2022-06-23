@@ -10,7 +10,7 @@ from graphnet.components.loss_functions import BinaryCrossEntropyLoss
 from graphnet.components.loss_functions import (
     LogCoshLoss,
     VonMisesFisher2DLoss,
-    EuclideanDistance,
+    EuclideanDistanceLoss,
 )
 from graphnet.components.utils import fit_scaler
 from graphnet.data.constants import FEATURES, TRUTH
@@ -158,7 +158,7 @@ def train_and_predict_on_validation_set(
         task = PositionReconstruction(
             hidden_size=gnn.nb_outputs,
             target_label=target,
-            loss_function=EuclideanDistance(),
+            loss_function=EuclideanDistanceLoss(),
             transform_target=scale_XYZ,
             transform_inference=unscale_XYZ,
         )
