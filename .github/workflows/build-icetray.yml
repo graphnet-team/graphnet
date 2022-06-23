@@ -26,12 +26,15 @@ jobs:
           ls -lart requirements/torch_cpu.txt
       - name: Update PATH
         run: |
-          echo "PATH=~/.local/bin:$PATH" >> $GITHUB_ENV
+          echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
       - name: Install package
         uses: ./.github/actions/install-cpu
         with:
           editable: true
           user: true
+      - name: Debug
+        run: |
+          ls -lart $HOME/.local/bin
       - name: Check secrets
         run: |
           echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
