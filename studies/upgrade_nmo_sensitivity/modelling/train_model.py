@@ -1,7 +1,7 @@
+"""Training GNN models for neutrino mass ordering studies for IceCube-Upgrade."""
+
 import argparse
-import os
 import sqlite3
-from typing import List, Optional
 import pandas as pd
 
 from pytorch_lightning import Trainer
@@ -9,7 +9,6 @@ from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
-from torch.utils.data import DataLoader
 
 from graphnet.components.loss_functions import (
     MSELoss,

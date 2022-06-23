@@ -1,5 +1,4 @@
-"""Minimum working example (MWE) to use SQLiteDataConverter
-"""
+"""Making SQLite database for neutrino mass ordering studies for IceCube-Upgrade."""
 
 import os
 

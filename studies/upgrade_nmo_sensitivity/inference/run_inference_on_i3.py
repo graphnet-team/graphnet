@@ -1,4 +1,7 @@
+"""Running inference on GraphSAGE-cleaned pulses in IceCube-Upgrade."""
+
 import argparse
+from typing import List
 import dill
 from glob import glob
 import logging
@@ -6,8 +9,6 @@ from os import makedirs
 from os.path import join, dirname
 
 import torch
-
-from graphnet.models.model import Model
 
 from I3Tray import I3Tray  # pyright: reportMissingImports=false
 
@@ -21,7 +22,14 @@ torch.multiprocessing.set_sharing_strategy("file_system")
 
 
 # Main function definition
-def main(input_files, output_file, model_path, keys, events_max):
+def main(
+    input_files: List[str],
+    output_file: str,
+    model_path: str,
+    keys,
+    events_max: int,
+):
+    """Runs inference on `input_files` using the model in `model_path` and produces `output_file`."""
 
     # Make sure output directory exists
     makedirs(dirname(output_file), exist_ok=True)
@@ -65,12 +73,6 @@ def main(input_files, output_file, model_path, keys, events_max):
 
 # Main function call
 if __name__ == "__main__":
-    """
-    The main function must get an input folder and output folder!
-    Args:
-        input_folder (str): The input folder where i3 files of a given dataset are located.
-        output_folder (str): The output folder where processed i3 files will be saved.
-    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input_folder")
