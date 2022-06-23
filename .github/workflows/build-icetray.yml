@@ -18,6 +18,10 @@ jobs:
     container: icecube/icetray:combo-stable
     steps:
       - uses: actions/checkout@v2
+      - name: Debug
+        run: |
+          pwd
+          ls -lart .
       - name: Install package
         uses: ./.github/actions/install-cpu
         with:
