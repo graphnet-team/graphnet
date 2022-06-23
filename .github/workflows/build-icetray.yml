@@ -49,7 +49,7 @@ jobs:
 
   build-icetray:
     needs: [ check-cobalt-credentials, check-codeclimate-credentials ]
-    if: ${{ needs.check-cobalt-credentials.outputs.has-credentials == 'true' }}
+    if: needs.check-cobalt-credentials.outputs.has-credentials == 'true'
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
     steps:
@@ -67,7 +67,6 @@ jobs:
           echo "PUB_WISC_USERNAME=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
           echo "CC_TEST_REPORTER_ID=${{ secrets.PUB_WISC_USERNAME }}" >> $GITHUB_ENV
       - name: Retrieve test data
-        if: "${{ env.PUB_WISC_USERNAME != '' }}"
         run: |
           # Create test data directory
           mkdir -p $TEST_DATA_DIR
@@ -91,17 +90,15 @@ jobs:
           MD5HASH: 80006a6d58338eb8ea153d2b7b02c0a1
         shell: bash
       - name: Run unit tests and generate coverage report
-        if: "${{ env.PUB_WISC_USERNAME != '' }}"
         run: |
           coverage run --source=graphnet -m pytest tests/
           coverage xml -o coverage.xml
       - name: Work around permission issue
-        if: "${{ env.PUB_WISC_USERNAME != '' }}"
         run: |
           git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
-        if: ${{ needs.check-codeclimate-credentials.outputs.has-credentials == 'true' }}
+        if: needs.check-codeclimate-credentials.outputs.has-credentials == 'true'
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
         with:
