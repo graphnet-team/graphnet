@@ -1,6 +1,6 @@
 ![logo](./assets/identity/graphnet-logo-and-wordmark.png)
 
-[![DOI](https://zenodo.org/badge/357105872.svg)](https://zenodo.org/badge/latestdoi/357105872)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6720188.svg)](https://doi.org/10.5281/zenodo.6720188)
 
 ![build](https://github.com/icecube/graphnet/actions/workflows/build-matrix.yml/badge.svg)
 ![build](https://github.com/icecube/graphnet/actions/workflows/build-icetray.yml/badge.svg)
