@@ -37,10 +37,15 @@ class SQLiteDataConverter(DataConverter):
 
         # Save each dataframe to SQLite database
         self.logger.debug(f"Saving to {output_file}")
+        saved_any = False
         for key, df in dataframe.items():
             if len(df) > 0:
                 save_to_sql(df, key, output_file)
-        self.logger.debug("- Done saving")
+                saved_any = True
+        if saved_any:
+            self.logger.debug("- Done saving")
+        else:
+            self.logger.warning(f"No data saved to {output_file}")
 
     def merge_files(self, input_files: List[str], output_file: str):
         """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""
