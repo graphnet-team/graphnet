@@ -18,7 +18,7 @@ try:
         phys_services,
     )  # pyright: reportMissingImports=false
 except ImportError:
-    logger.info("icecube package not available.")
+    logger.warning("icecube package not available.")
 
 
 class I3TruthExtractor(I3Extractor):
