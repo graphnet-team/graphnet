@@ -7,7 +7,7 @@ try:
         dataclasses,
     )  # pyright: reportMissingImports=false
 except ImportError:
-    logger.info("icecube package not available.")
+    logger.warning("icecube package not available.")
 
 
 class I3FeatureExtractor(I3Extractor):
@@ -25,7 +25,14 @@ class I3FeatureExtractor(I3Extractor):
             om_keys (index): the indicies for the gcd_dict
             data    (??)   : the pulse series
         """
-        data = frame[self._pulsemap]
+        try:
+            data = frame[self._pulsemap]
+        except KeyError:
+            self.logger.error(
+                f"Pulsemap {self._pulsemap} does not exist in `frame`"
+            )
+            raise
+
         try:
             om_keys = data.keys()
         except:  # noqa: E722
@@ -63,10 +70,8 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "rde": [],
         }
 
-        try:
-            om_keys, data = self._get_om_keys_and_pulseseries(frame)
-        except KeyError:
-            return output
+        # Get OM data
+        om_keys, data = self._get_om_keys_and_pulseseries(frame)
 
         for om_key in om_keys:
             # Common values for each OM
@@ -121,10 +126,12 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
             "dom_type": [],
         }
 
-        try:
-            om_keys, data = self._get_om_keys_and_pulseseries(frame)
-        except KeyError:  # Target pulsemap does not exist in `frame`
-            return output
+        # Add features from IceCube86
+        output_icecube86 = super().__call__(frame)
+        output.update(output_icecube86)
+
+        # Get OM data
+        om_keys, data = self._get_om_keys_and_pulseseries(frame)
 
         for om_key in om_keys:
             # Common values for each OM
@@ -147,9 +154,6 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
                 output["pmt_dir_z"].append(pmt_dir_z)
                 output["dom_type"].append(dom_type)
 
-        # Add features from IceCube86
-        output_icecube86 = super().__call__(frame)
-        output.update(output_icecube86)
         return output
 
 
@@ -168,10 +172,12 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
             "truth_flag": [],
         }
 
-        try:
-            om_keys, data = self._get_om_keys_and_pulseseries(frame)
-        except KeyError:  # Target pulsemap does not exist in `frame`
-            return output
+        # Add features from IceCube86
+        output_icecube86 = super().__call__(frame)
+        output.update(output_icecube86)
+
+        # Get OM data
+        om_keys, data = self._get_om_keys_and_pulseseries(frame)
 
         for om_key in om_keys:
             # Common values for each OM
