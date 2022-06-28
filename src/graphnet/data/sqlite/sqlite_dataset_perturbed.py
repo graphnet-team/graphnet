@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from graphnet.data.sqlite import SQLiteDataset
+from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 
 
 class SQLiteDatasetPerturbed(SQLiteDataset):
