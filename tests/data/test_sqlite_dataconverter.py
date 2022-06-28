@@ -28,6 +28,7 @@ def test_is_pulsemap_check():
 
 @requires_icecube
 def test_sqlite_database(test_data_dir: str = TEST_DATA_DIR):
+    print("IN `test_sqlite_database` !!!")
     database = os.path.join(
         test_data_dir, "{0}/data/{0}.db".format("test_database")
     )
