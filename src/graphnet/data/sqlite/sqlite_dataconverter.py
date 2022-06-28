@@ -8,7 +8,7 @@ from tqdm import tqdm
 from typing import Any, Dict, List
 
 from graphnet.data.dataconverter import DataConverter
-from graphnet.data.utilities.sqlite import run_sql_code, save_to_sql
+from graphnet.data.sqlite import run_sql_code, save_to_sql
 
 
 class SQLiteDataConverter(DataConverter):
