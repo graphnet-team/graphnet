@@ -1,5 +1,6 @@
 """Consistent and configurable logging across the project."""
 
+from collections import Counter
 import re
 from typing import Optional
 import colorlog
@@ -33,7 +34,7 @@ def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
     colorlog_format = (
         "\033[1;34m%(name)s\033[0m: "
         "%(log_color)s%(levelname)-8s\033[0m "
-        "%(asctime)s - %(funcName)s - %(message)s"
+        "%(asctime)s - %(className)s%(funcName)s - %(message)s"
     )
     basic_format = re.sub(r"\x1b\[[0-9;,]*m", "", colorlog_format).replace(
         "%(log_color)s", ""
@@ -50,6 +51,25 @@ def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
         datefmt=datefmt,
     )
     return basic_formatter, colored_formatter
+
+
+class RepeatFilter(object):
+    """Filter out repeat messages."""
+
+    def __init__(self):
+        self._messages = Counter()
+        self.nb_repeats_allowed = 20
+
+    def filter(self, record):
+        count = self._messages[record.msg]
+        ret = count <= self.nb_repeats_allowed
+        if count == self.nb_repeats_allowed:
+            get_logger().debug(
+                f"Will not print the below message again ({self.nb_repeats_allowed} repeats reached)."
+            )
+
+        self._messages[record.msg] += 1
+        return ret
 
 
 def get_logger(
@@ -74,6 +94,9 @@ def get_logger(
     # Create logger
     logger = colorlog.getLogger(LOGGER_NAME)
     logger.setLevel(level)
+
+    # Add duplicate filter
+    logger.addFilter(RepeatFilter())
 
     # Add stream handler
     stream_handler = colorlog.StreamHandler(stream=sys.stdout)
