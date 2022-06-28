@@ -36,6 +36,14 @@ graphnet.data.i3extractor module
    :undoc-members:
    :show-inheritance:
 
+graphnet.data.parquet\_dataset module
+-------------------------------------
+
+.. automodule:: graphnet.data.parquet_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.data.pipeline module
 -----------------------------
 
