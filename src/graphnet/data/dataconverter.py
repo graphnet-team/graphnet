@@ -112,7 +112,7 @@ class DataConverter(ABC, LoggerMixin):
 
         # Set verbosity
         if self._verbose == 0:
-            icetray.I3self.logger.global_logger = icetray.I3NullLogger()
+            icetray.I3Logger.global_logger = icetray.I3NullLogger()
 
     @final
     def __call__(self, directories: Union[str, List[str]]):
