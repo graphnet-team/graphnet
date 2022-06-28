@@ -1,6 +1,7 @@
-import awkward
 from collections import OrderedDict
 from typing import List
+
+import awkward
 
 from graphnet.data.dataconverter import DataConverter
 
