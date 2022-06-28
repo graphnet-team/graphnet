@@ -239,7 +239,7 @@ class DataConverter(ABC, LoggerMixin):
 
         # Iterate over files
         for _ in map_fn(
-            self._process_file, tqdm(args, unit="file(s)", ascii=" ▖▘▝▗▚▞█")
+            self._process_file, tqdm(args, unit="file(s)", colour="green")
         ):
             self.logger.debug(
                 "Saving with 1:1 strategy on the individual worker processes"
@@ -257,7 +257,7 @@ class DataConverter(ABC, LoggerMixin):
         for ix, data in enumerate(
             map_fn(
                 self._process_file,
-                tqdm(args, unit="file(s)", ascii=" ▖▘▝▗▚▞█"),
+                tqdm(args, unit="file(s)", colour="green"),
             )
         ):
             dataset.extend(data)
@@ -268,7 +268,7 @@ class DataConverter(ABC, LoggerMixin):
                 self.save_data(
                     dataset,
                     self._get_output_file(
-                        self._batched_output_file_pattern.format(ix_batch)
+                        self._sequential_batch_pattern.format(ix_batch)
                     ),
                 )
                 ix_batch += 1
@@ -279,7 +279,7 @@ class DataConverter(ABC, LoggerMixin):
             self.save_data(
                 dataset,
                 self._get_output_file(
-                    self._batched_output_file_pattern.format(ix_batch)
+                    self._sequential_batch_pattern.format(ix_batch)
                 ),
             )
 
@@ -291,7 +291,7 @@ class DataConverter(ABC, LoggerMixin):
 
         # Iterate over batches of files
         for _ in map_fn(
-            self._process_batch, tqdm(args, unit="batch(es)", ascii=" ▖▘▝▗▚▞█")
+            self._process_batch, tqdm(args, unit="batch(es)", colour="green")
         ):
             self.logger.debug("Saving with batched strategy")
 
