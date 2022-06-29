@@ -31,6 +31,7 @@ EXTRAS_REQUIRE = {
         "pydocstyle",
         "pylint",
         "pytest",
+        "pytest-dependency",
         "sphinx",
         "sphinx_rtd_theme",
         "versioneer",
