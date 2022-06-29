@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import os
 from typing import List
 
 import awkward
@@ -14,6 +15,11 @@ class ParquetDataConverter(DataConverter):
     # Abstract method implementation(s)
     def save_data(self, data: List[OrderedDict], output_file: str):
         """Save data to parquet file."""
+        # Check(s)
+        if os.path.exists(output_file):
+            self.logger.warning(
+                f"Output file {output_file} already exists. Overwriting."
+            )
 
         self.logger.debug(f"Saving to {output_file}")
         self.logger.debug(
