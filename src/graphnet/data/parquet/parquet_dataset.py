@@ -161,9 +161,9 @@ class ParquetDataset(torch.utils.data.Dataset, LoggerMixin):
         dictionary = ak_array.to_list()
         assert list(dictionary.keys()) == columns
         if all(map(np.isscalar, dictionary.values())):
-            result = list(dictionary.values())
+            result = tuple(dictionary.values())
         else:
-            result = list(zip(*dictionary.values()))
+            result = list(map(tuple, zip(*dictionary.values())))
 
         return result
 
