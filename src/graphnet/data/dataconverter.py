@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
+from dataclasses import dataclass
+from functools import wraps
 import itertools
 from multiprocessing import Array, Lock, Manager, Pool, Value
 import os
@@ -43,6 +45,13 @@ SAVE_STRATEGIES = [
 ]
 
 
+# Utility classes
+@dataclass
+class FileSet:
+    i3_file: str
+    gcd_file: str
+
+
 # Utility method(s)
 def init_global_index(index: Value, output_files: List[str]):
     """Make `global_index` available to pool workers."""
@@ -51,7 +60,23 @@ def init_global_index(index: Value, output_files: List[str]):
     global_output_files = output_files
 
 
-# GLOBAL_INDEX = Value("i", 0)
+def cache_output_files(process_method):
+    """Decorator to cache output file names."""
+
+    @wraps(process_method)
+    def wrapper(self, *args):
+        try:
+            # Using multiprocessing
+            output_files = global_output_files
+        except NameError:  # `global_output_files` not set
+            # Running on main process
+            output_files = self._output_files
+
+        output_file = process_method(self, *args)
+        output_files.append(output_file)
+        return output_file
+
+    return wrapper
 
 
 class DataConverter(ABC, LoggerMixin):
@@ -141,7 +166,7 @@ class DataConverter(ABC, LoggerMixin):
         # Find all I3 and GCD files in the specified directories.
         i3_files, gcd_files = find_i3_files(directories, self._gcd_rescue)
         if len(i3_files) == 0:
-            self.logger.info(f"ERROR: No files found in: {directories}.")
+            self.logger.error(f"No files found in {directories}.")
             return
 
         # Save a record of the found I3 files in the output directory.
@@ -154,69 +179,86 @@ class DataConverter(ABC, LoggerMixin):
         self.initialise()
 
         # Process the files
-        self.execute(i3_files, gcd_files)
+        filesets = [
+            FileSet(i3_file, gcd_file)
+            for i3_file, gcd_file in zip(i3_files, gcd_files)
+        ]
+        self.execute(filesets)
 
         # Implementation-specific finalisation
         self.finalise()
 
     @final
-    def execute(self, i3_files: List[str], gcd_files: List[str]):
+    def execute(self, filesets: List[FileSet]):
         """General method for processing a set of I3 files.
 
         The files are converted individually according to the inheriting class/
         intermediate file format.
 
         Args:
-            i3_files (List[str]): List of paths to I3 files.
-            gcd_files (List[str]): List of paths to corresponding GCD files.
+            filesets (List[FileSet]): List of paths to I3 and corresponding GCD files.
         """
 
         # Make sure output directory exists.
         self.logger.info(f"Saving results to {self._outdir}")
         os.makedirs(self._outdir, exist_ok=True)
 
-        # Construct the list of arguments to be passed to `_process_file`.
-        args = list(zip(i3_files, gcd_files))
-
         # Iterate over batches of files.
         try:
             if self._save_strategy == "sequential_batched":
+                # Define batches
                 batches = np.array_split(
-                    args,
-                    int(np.ceil(len(args) / self._nb_files_to_batch)),
+                    filesets,
+                    int(np.ceil(len(filesets) / self._nb_files_to_batch)),
                 )
-                self._iterate_over_and_sequentially_batch_individual_files(
-                    args
+                batches = [
+                    (group, self._sequential_batch_pattern.format(ix_batch))
+                    for ix_batch, group in enumerate(batches)
+                ]
+                self.logger.info(
+                    f"Will batch {len(filesets)} input files into {len(batches)} groups."
                 )
 
+                # Iterate over batches
+                pool = self._iterate_over_batches_of_files(batches)
+
             elif self._save_strategy == "pattern_batched":
+                # Define batches
                 groups = OrderedDict()
-                for i3_file, gcd_file in sorted(args, key=lambda p: p[0]):
+                for fileset in sorted(filesets, key=lambda f: f.i3_file):
                     group = re.sub(
-                        self._sub_from, self._sub_to, os.path.basename(i3_file)
+                        self._sub_from,
+                        self._sub_to,
+                        os.path.basename(fileset.i3_file),
                     )
                     if group not in groups:
                         groups[group] = list()
-                    groups[group].append((i3_file, gcd_file))
+                    groups[group].append(fileset)
 
                 self.logger.info(
-                    f"Will batch {len(i3_files)} input files into {len(groups)} groups"
+                    f"Will batch {len(filesets)} input files into {len(groups)} groups"
                 )
                 if len(groups) <= 20:
-                    for group, files in groups.items():
-                        self.logger.info(f"> {group}: {len(files):3d} file(s)")
+                    for group, group_filesets in groups.items():
+                        self.logger.info(
+                            f"> {group}: {len(group_filesets):3d} file(s)"
+                        )
 
                 batches = [
-                    (list(group_args), group)
-                    for group, group_args in groups.items()
+                    (list(group_filesets), group)
+                    for group, group_filesets in groups.items()
                 ]
-                self._iterate_over_batches_of_files(batches)
+
+                # Iterate over batches
+                pool = self._iterate_over_batches_of_files(batches)
 
             elif self._save_strategy == "1:1":
-                self._iterate_over_individual_files(args)
+                pool = self._iterate_over_individual_files(filesets)
 
             else:
                 assert False, "Shouldn't reach here."
+
+            self._update_shared_variables(pool)
 
         except KeyboardInterrupt:
             self.logger.warning("[ctrl+c] Exciting gracefully.")
@@ -251,7 +293,7 @@ class DataConverter(ABC, LoggerMixin):
         """Implementation-specific finalisation after each call."""
 
     # Internal methods
-    def _iterate_over_individual_files(self, args: List[Tuple[str, str]]):
+    def _iterate_over_individual_files(self, args: List[FileSet]):
         # Get appropriate mapping function
         map_fn, pool = self.get_map_function(len(args))
 
@@ -263,56 +305,14 @@ class DataConverter(ABC, LoggerMixin):
                 "Saving with 1:1 strategy on the individual worker processes"
             )
 
-        if pool:
-            # Extract information from shared variables
-            index, output_files = pool._initargs
-            self._index += index.value
-            self._output_files.extend(list(sorted(output_files[:])))
-
-    def _iterate_over_and_sequentially_batch_individual_files(
-        self, args: List[Tuple[str, str]]
-    ):
-        # Get appropriate mapping function
-        map_fn, _ = self.get_map_function(len(args))
-
-        # Iterate over files
-        dataset = list()
-        ix_batch = 0
-        for ix, data in enumerate(
-            map_fn(
-                self._process_file,
-                tqdm(args, unit="file(s)", colour="green"),
-            )
-        ):
-            dataset.extend(data)
-            if (ix + 1) % self._nb_files_to_batch == 0:
-                self.logger.debug(
-                    "Saving with batched strategy on the main processs"
-                )
-                self.save_data(
-                    dataset,
-                    self._get_output_file(
-                        self._sequential_batch_pattern.format(ix_batch)
-                    ),
-                )
-                ix_batch += 1
-                del dataset
-                dataset = list()
-
-        if len(dataset) > 0:
-            self.save_data(
-                dataset,
-                self._get_output_file(
-                    self._sequential_batch_pattern.format(ix_batch)
-                ),
-            )
+        return pool
 
     def _iterate_over_batches_of_files(
-        self, args: List[Tuple[List[Tuple[str, str]], str]]
+        self, args: List[Tuple[List[FileSet], str]]
     ):
         """Iterate over a batch of files and save results on worker processes (if applicable)"""
         # Get appropriate mapping function
-        map_fn, _ = self.get_map_function(len(args), unit="batch(es)")
+        map_fn, pool = self.get_map_function(len(args), unit="batch(es)")
 
         # Iterate over batches of files
         for _ in map_fn(
@@ -320,25 +320,54 @@ class DataConverter(ABC, LoggerMixin):
         ):
             self.logger.debug("Saving with batched strategy")
 
-    def _process_batch(
-        self, args: Tuple[List[Tuple[str, str]], str]
-    ) -> Optional[List[OrderedDict]]:
+        return pool
+
+    def _update_shared_variables(self, pool: Optional[Pool]):
+        """Update `self._index` and `self._output_files`.
+
+        If `pool` is set, it means that multiprocessing was used. In this case,
+        the worker processes will not have been able to write directly to
+        `self._index` and `self._output_files`, and we need to get them synced
+        up.
+        """
+        if pool:
+            # Extract information from shared variables to member variables.
+            index, output_files = pool._initargs
+            self._index += index.value
+            self._output_files.extend(list(sorted(output_files[:])))
+
+    @cache_output_files
+    def _process_file(
+        self,
+        fileset: FileSet,
+    ) -> str:
+
+        # Process individual files
+        data = self._extract_data(fileset)
+
+        # Save data
+        output_file = self._get_output_file(fileset.i3_file)
+        self.save_data(data, output_file)
+
+        return output_file
+
+    @cache_output_files
+    def _process_batch(self, args: Tuple[List[FileSet], str]) -> str:
         # Unpack arguments
-        batch_args, output_file_name = args
+        filesets, output_file_name = args
 
         # Process individual files
         data = list(
-            itertools.chain.from_iterable(map(self._process_file, batch_args))
+            itertools.chain.from_iterable(map(self._extract_data, filesets))
         )
 
-        # (Opt.) Save batched data
-        self.save_data(data, self._get_output_file(output_file_name))
+        # Save batched data
+        output_file = self._get_output_file(output_file_name)
+        self.save_data(data, output_file)
 
-        return data
+        return output_file
 
-    def _process_file(
-        self, args: Tuple[str, str]
-    ) -> Optional[List[OrderedDict]]:
+    def _extract_data(self, fileset: FileSet) -> List[OrderedDict]:
         """Extracts data from single I3 file.
 
         If the saving strategy is 1:1 (i.e., each I3 file is converted to a
@@ -348,23 +377,22 @@ class DataConverter(ABC, LoggerMixin):
         The above distincting is to allow worker processes to save files rather
         than sending it back to the main process.
 
-        @TODO: Rename to  _extract_data, *always*  return data and * don't*
-            save. Then, add a separate _process_file (cf. _process_) that just
-            saves data extracted data for each file.
-
         Args:
-            str: Path to I3 file.
-            str: Path to corresponding GCD file.
+            fileset: Path to I3 file and corresponding GCD file.
+            index: Value for sequentially numbering events.
 
         Returns:
-            (Optional) Extracted data, if the saving strategy mandates it, i.e.
-                if the data is saved outside of this file.
+            Extracted data.
         """
-        # Unpack arguments
-        i3_file, gcd_file = args
+        # Infer whether method is being run using multiprocessing
+        try:
+            global_index
+            multi_processing = True
+        except NameError:
+            multi_processing = False
 
-        self._extractors.set_files(i3_file, gcd_file)
-        i3_file_io = dataio.I3File(i3_file, "r")
+        self._extractors.set_files(fileset.i3_file, fileset.gcd_file)
+        i3_file_io = dataio.I3File(fileset.i3_file, "r")
         data = list()
         while i3_file_io.more():
             try:
@@ -377,21 +405,19 @@ class DataConverter(ABC, LoggerMixin):
             data_dict = OrderedDict(zip(self._table_names, results))
 
             # Get new, unique index and increment value
-            with global_index.get_lock():
-                index = global_index.value
-                global_index.value += 1
+            if multi_processing:
+                with global_index.get_lock():
+                    index = global_index.value
+                    global_index.value += 1
+            else:
+                index = self._index
+                self._index += 1
 
             # Attach index to all tables
             for table in data_dict.keys():
                 data_dict[table][self._index_column] = index
 
             data.append(data_dict)
-
-        if self._save_strategy == "1:1":
-            output_file = self._get_output_file(i3_file)
-            self.save_data(data, output_file)
-            global_output_files.append(output_file)
-            return
 
         return data
 
