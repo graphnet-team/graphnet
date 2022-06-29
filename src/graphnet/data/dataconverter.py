@@ -59,9 +59,9 @@ class DataConverter(ABC, LoggerMixin):
         nb_files_to_batch: Optional[int] = None,
         sequential_batch_pattern: Optional[str] = None,
         input_file_batch_pattern: Optional[str] = None,
-        workers: int = 0,
+        workers: int = 1,
         index_column: str = "event_no",
-        verbose: int = 0,
+        icetray_verbose: int = 0,
     ):
         """Constructor"""
 
@@ -98,7 +98,6 @@ class DataConverter(ABC, LoggerMixin):
         self._sequential_batch_pattern = sequential_batch_pattern
         self._input_file_batch_pattern = input_file_batch_pattern
         self._workers = workers
-        self._verbose = verbose
 
         # Create I3Extractors
         self._extractors = I3ExtractorCollection(*extractors)
@@ -116,7 +115,7 @@ class DataConverter(ABC, LoggerMixin):
         self._index = Value("i", 0)
 
         # Set verbosity
-        if self._verbose == 0:
+        if icetray_verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
 
     @final
