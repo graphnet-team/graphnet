@@ -47,6 +47,7 @@ class SQLiteDataConverter(DataConverter):
             if len(df) > 0:
                 save_to_sql(df, key, output_file)
                 saved_any = True
+
         if saved_any:
             self.logger.debug("- Done saving")
         else:
@@ -59,11 +60,13 @@ class SQLiteDataConverter(DataConverter):
             self.logger.info("Merging files output by current instance.")
             input_files = self._output_files
 
+        if os.path.exists(output_file):
+            self.logger.warning(
+                f"Target path for merged database, {output_file}, already exists."
+            )
+
         if len(input_files) > 0:
             self.logger.info(f"Merging {len(input_files)} database files")
-            if len(input_files) <= 20:
-                for input_file in input_files:
-                    self.logger.info("> " + input_file)
 
             # Create one empty database table for each extraction
             for table_name in self._table_names:
@@ -143,8 +146,8 @@ class SQLiteDataConverter(DataConverter):
         run_sql_code(database, code)
 
         if is_pulse_map:
-            self.logger.info(table_name)
-            self.logger.info("Attaching indices")
+            self.logger.debug(table_name)
+            self.logger.debug("Attaching indices")
             self._attach_index(database, table_name)
         return
 
@@ -154,7 +157,7 @@ class SQLiteDataConverter(DataConverter):
             if self._verbose:
                 self.logger.info(f"No data provided for {key}.")
             return
-        engine = sqlalchemy.create_engine("sqlite:///" + database + ".db")
+        engine = sqlalchemy.create_engine("sqlite:///" + database)
         data.to_sql(key, engine, index=False, if_exists="append")
         engine.dispose()
 
