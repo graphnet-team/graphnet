@@ -1,13 +1,17 @@
-from typing import List, Optional, Union
-import pandas as pd
+from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import awkward as ak
 import torch
 from torch_geometric.data import Data
-import time
+
+from graphnet.utilities.logging import LoggerMixin
 
 
-class ParquetDataset(torch.utils.data.Dataset):
+# Global variables
+MISSING_VARIABLES = dict()
+
+
+class ParquetDataset(torch.utils.data.Dataset, LoggerMixin):
     """Pytorch dataset for reading from SQLite."""
 
     def __init__(
@@ -27,30 +31,27 @@ class ParquetDataset(torch.utils.data.Dataset):
 
         # Check(s)
         if isinstance(path, list):
-            print("multiple folders not supported")
-            assert isinstance(1, str)
+            self.logger.error("Multiple folders not supported")
         assert isinstance(path, str)
 
         if isinstance(pulsemaps, str):
-            pulsemaps = pulsemaps
+            pulsemaps = [pulsemaps]
 
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
 
-        self._node_truth = None
-        if node_truth is not None:
-            print("node truth is not supported")
-            assert isinstance(1, str)
+        assert (
+            node_truth is None
+        ), "Argument `node_truth` is currently not supported."
+        assert (
+            node_truth_table is None
+        ), "Argument `node_truth_table` is currently not supported."
 
-        if string_selection is not None:
-            print("string selection not supported")
-            assert isinstance(1, str)
+        assert (
+            string_selection is None
+        ), "Argument `string_selection` is currently not supported"
 
-        self._string_selection = string_selection
-        self._selection = ""
-        if self._string_selection:
-            self._selection = f"string in {str(tuple(self._string_selection))}"
-
+        self._selection = None
         self._path = path
         self._pulsemaps = pulsemaps
         self._features = features
@@ -60,6 +61,8 @@ class ParquetDataset(torch.utils.data.Dataset):
         self._dtype = dtype
         self._parquet_hook = ak.from_parquet(path)
 
+        self.remove_missing_columns()
+
         if selection is None:
             self._indices = self._get_all_indices()
         else:
@@ -68,28 +71,57 @@ class ParquetDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self._indices)
 
-    def _query_parquet(
-        self,
-        columns: Union[List, str],
-        table: str,
-        index: int,
-        selection: Optional[str] = None,
-    ):
-        query = self._parquet_hook[table][index][columns].to_list()
-        c = np.array([query[column] for column in columns]).T
-        # c = np.array([query['x'],query['y'],query['z'],query['t']]).T
-        return c  # ak.to_pandas(self._parquet_hook[table][[index], columns])
+    def remove_missing_columns(self):
+        missing_features = set(self._features)
+        for pulsemap in self._pulsemaps:
+            missing = self._check_missing_columns(self._features, pulsemap)
+            missing_features = missing_features.intersection(missing)
+        missing_features = list(missing_features)
+        missing_truth_variables = self._check_missing_columns(
+            self._truth, self._truth_table
+        )
 
-    def __getitem__(self, i):
-        features, truth, node_truth = self._get_event_data(i)
+        if missing_features:
+            self.logger.warning(
+                f"Removing the following (missing) features: {', '.join(missing_features)}"
+            )
+            for missing_feature in missing_features:
+                self._features.remove(missing_feature)
+
+        if missing_truth_variables:
+            self.logger.warning(
+                f"Removing the following (missing) truth variables: {', '.join(missing_truth_variables)}"
+            )
+            for missing_truth_variable in missing_truth_variables:
+                self._truth.remove(missing_truth_variable)
+
+    def _check_missing_columns(
+        self,
+        columns: List[str],
+        table: str,
+    ) -> List[str]:
+        for column in columns:
+            try:
+                self._parquet_hook[table][column]
+            except ValueError:
+                if table not in MISSING_VARIABLES:
+                    MISSING_VARIABLES[table] = []
+                MISSING_VARIABLES[table].append(column)
+
+        return MISSING_VARIABLES.get(table, [])
+
+    def __getitem__(self, i: int) -> Data:
+        features, truth, node_truth = self._query_parquet(i)
         graph = self._create_graph(features, truth, node_truth)
         return graph
 
     def _get_all_indices(self):
-        return ak.to_numpy(self._parquet_hook[self._index_column]).tolist()
+        return ak.to_numpy(
+            self._parquet_hook[self._truth_table][self._index_column]
+        ).tolist()
 
-    def _get_event_data(self, i):
-        """Query SQLite database for event feature and truth information.
+    def _query_parquet(self, i: int) -> Tuple[np.ndarray]:
+        """Query Parquet file for event feature and truth information.
 
         Args:
             i (int): Sequentially numbered index (i.e. in [0,len(self))) of the
@@ -100,12 +132,40 @@ class ParquetDataset(torch.utils.data.Dataset):
             list: List of tuples, containing truth information.
             list: List of tuples, containing node-level truth information.
         """
-        features = self._query_parquet(
-            self._features, self._pulsemaps, i, self._selection
-        )
-        truth = self._query_parquet(self._truth, self._truth_table, i)
+
+        features = []
+        for pulsemap in self._pulsemaps:
+            features_pulsemap = self._query_table(
+                self._features, pulsemap, i, self._selection
+            )
+            features.extend(features_pulsemap)
+
+        truth = self._query_table(self._truth, self._truth_table, i)
         node_truth = None
         return features, truth, node_truth
+
+    def _query_table(
+        self,
+        columns: List[str],
+        table: str,
+        index: int,
+        selection: Optional[str] = None,
+    ) -> List[Tuple]:
+        """Query a table at a specific index, optionally subject to some selection."""
+        # Check(s)
+        assert (
+            selection is None
+        ), "Argument `selection` is currently not supported"
+
+        ak_array = self._parquet_hook[table][columns][index]
+        dictionary = ak_array.to_list()
+        assert list(dictionary.keys()) == columns
+        if all(map(np.isscalar, dictionary.values())):
+            result = list(dictionary.values())
+        else:
+            result = list(zip(*dictionary.values()))
+
+        return result
 
     def _get_dbang_label(self, truth_dict):
         try:
@@ -156,9 +216,11 @@ class ParquetDataset(torch.utils.data.Dataset):
         for write_dict in add_these_to_graph:
             for key, value in write_dict.items():
                 try:
-                    if key not in ["x", "y", "z"]:
-                        graph[key] = torch.tensor(value)
+                    graph[key] = torch.tensor(value)
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
-                    pass
+                    self.logger.debug(
+                        f"Could not assign `{key}` with type '{type(value).__name__}' as attribute to graph."
+                    )
+
         return graph
