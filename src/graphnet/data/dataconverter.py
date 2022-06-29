@@ -3,13 +3,12 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from functools import wraps
 import itertools
-from multiprocessing import Array, Lock, Manager, Pool, Value
+from multiprocessing import Manager, Pool, Value
 import os
-from queue import Queue
 import re
 import numpy as np
 import pandas as pd
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 from tqdm import tqdm
 
 try:
@@ -285,12 +284,6 @@ class DataConverter(ABC, LoggerMixin):
                 to the specific implementation. Default to None, meaning that
                 all files output by the current instance are merged.
         """
-
-    def initialise(self):
-        """Implementation-specific initialisation before each call."""
-
-    def finalise(self):
-        """Implementation-specific finalisation after each call."""
 
     # Internal methods
     def _iterate_over_individual_files(self, args: List[FileSet]):
