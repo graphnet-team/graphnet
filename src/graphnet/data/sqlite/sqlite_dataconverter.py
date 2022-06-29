@@ -19,6 +19,11 @@ class SQLiteDataConverter(DataConverter):
     # Abstract method implementation(s)
     def save_data(self, data: List[OrderedDict], output_file: str):
         """Save data to SQLite database."""
+        # Check(s)
+        if os.path.exists(output_file):
+            self.logger.warning(
+                f"Output file {output_file} already exists. Appending."
+            )
 
         # Concatenate data
         dataframe = OrderedDict(
