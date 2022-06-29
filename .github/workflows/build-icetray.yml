@@ -92,6 +92,10 @@ jobs:
         run: |
           coverage run --source=graphnet -m pytest tests/
           coverage xml -o coverage.xml
+      - name: DEBUG
+        run: |
+          ls -l .
+          ls -l $TEST_DATA_DIR
       - name: Work around permission issue
         run: |
           git config --global --add safe.directory /__w/graphnet/graphnet
