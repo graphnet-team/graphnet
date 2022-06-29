@@ -53,7 +53,42 @@ def test_is_pulsemap_check():
     assert is_pulsemap_check("retro") is False
 
 
-@pytest.mark.dependency(depends=["test_dataconverter"])
+@pytest.mark.order(1)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@requires_icecube
+def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
+    """Test the implementation of `DataConverter` for `backend`."""
+    # Constructor DataConverter instance
+    opt = dict(
+        extractors=[
+            I3TruthExtractor(),
+            I3RetroExtractor(),
+            I3FeatureExtractorIceCube86("SRTInIcePulses"),
+        ],
+        outdir=test_data_dir,
+        gcd_rescue=os.path.join(
+            test_data_dir,
+            GCD_FILE,
+        ),
+        workers=1,
+    )
+
+    if backend == "sqlite":
+        converter = SQLiteDataConverter(**opt)
+    elif backend == "parquet":
+        converter = ParquetDataConverter(**opt)
+    else:
+        assert False, "Shouldn't reach here"
+
+    # Perform conversion from I3 to `backend`
+    converter(test_data_dir)
+
+    # Check output
+    path = get_file_path(backend, test_data_dir)
+    assert os.path.exists(path)
+
+
+@pytest.mark.order(2)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
 @requires_icecube
 def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR):
@@ -114,38 +149,3 @@ def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR):
         assert event.x.size(dim=0) == event.n_pulses
         assert event.x.size(dim=1) == len(event.features)
         assert len(event.features) == len(opt["features"])
-
-
-@pytest.mark.dependency()
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-@requires_icecube
-def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
-    """Test the implementation of `DataConverter` for `backend`."""
-    # Constructor DataConverter instance
-    opt = dict(
-        extractors=[
-            I3TruthExtractor(),
-            I3RetroExtractor(),
-            I3FeatureExtractorIceCube86("SRTInIcePulses"),
-        ],
-        outdir=test_data_dir,
-        gcd_rescue=os.path.join(
-            test_data_dir,
-            GCD_FILE,
-        ),
-        workers=1,
-    )
-
-    if backend == "sqlite":
-        converter = SQLiteDataConverter(**opt)
-    elif backend == "parquet":
-        converter = ParquetDataConverter(**opt)
-    else:
-        assert False, "Shouldn't reach here"
-
-    # Perform conversion from I3 to `backend`
-    converter(test_data_dir)
-
-    # Check output
-    path = get_file_path(backend, test_data_dir)
-    assert os.path.exists(path)
