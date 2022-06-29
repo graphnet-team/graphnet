@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 import itertools
-from multiprocessing import Pool, Value
+from multiprocessing import Array, Lock, Manager, Pool, Value
 import os
+from queue import Queue
 import re
 import numpy as np
 import pandas as pd
@@ -42,6 +43,17 @@ SAVE_STRATEGIES = [
 ]
 
 
+# Utility method(s)
+def init_global_index(index: Value, output_files: List[str]):
+    """Make `global_index` available to pool workers."""
+    global global_index, global_output_files
+    global_index = index
+    global_output_files = output_files
+
+
+# GLOBAL_INDEX = Value("i", 0)
+
+
 class DataConverter(ABC, LoggerMixin):
     """Abstract base class for specialised (SQLite, parquet, etc.) converters."""
 
@@ -63,8 +75,6 @@ class DataConverter(ABC, LoggerMixin):
         index_column: str = "event_no",
         icetray_verbose: int = 0,
     ):
-        """Constructor"""
-
         # Check(s)
         if not isinstance(extractors, (list, tuple)):
             extractors = [extractors]
@@ -98,7 +108,6 @@ class DataConverter(ABC, LoggerMixin):
         self._sequential_batch_pattern = sequential_batch_pattern
         self._input_file_batch_pattern = input_file_batch_pattern
         self._workers = workers
-        self._output_files = []
 
         # Create I3Extractors
         self._extractors = I3ExtractorCollection(*extractors)
@@ -111,9 +120,10 @@ class DataConverter(ABC, LoggerMixin):
             if isinstance(extractor, I3FeatureExtractor)
         ]
 
-        # Shared variable for sequential event indices
+        # Placeholders for keeping track of sequential event indices and output files
         self._index_column = index_column
-        self._index = Value("i", 0)
+        self._index = 0
+        self._output_files = []
 
         # Set verbosity
         if icetray_verbose == 0:
@@ -243,7 +253,7 @@ class DataConverter(ABC, LoggerMixin):
     # Internal methods
     def _iterate_over_individual_files(self, args: List[Tuple[str, str]]):
         # Get appropriate mapping function
-        map_fn = self.get_map_function(len(args))
+        map_fn, pool = self.get_map_function(len(args))
 
         # Iterate over files
         for _ in map_fn(
@@ -253,11 +263,17 @@ class DataConverter(ABC, LoggerMixin):
                 "Saving with 1:1 strategy on the individual worker processes"
             )
 
+        if pool:
+            # Extract information from shared variables
+            index, output_files = pool._initargs
+            self._index += index.value
+            self._output_files.extend(list(sorted(output_files[:])))
+
     def _iterate_over_and_sequentially_batch_individual_files(
         self, args: List[Tuple[str, str]]
     ):
         # Get appropriate mapping function
-        map_fn = self.get_map_function(len(args))
+        map_fn, _ = self.get_map_function(len(args))
 
         # Iterate over files
         dataset = list()
@@ -294,8 +310,9 @@ class DataConverter(ABC, LoggerMixin):
     def _iterate_over_batches_of_files(
         self, args: List[Tuple[List[Tuple[str, str]], str]]
     ):
+        """Iterate over a batch of files and save results on worker processes (if applicable)"""
         # Get appropriate mapping function
-        map_fn = self.get_map_function(len(args), unit="batch(es)")
+        map_fn, _ = self.get_map_function(len(args), unit="batch(es)")
 
         # Iterate over batches of files
         for _ in map_fn(
@@ -322,15 +339,27 @@ class DataConverter(ABC, LoggerMixin):
     def _process_file(
         self, args: Tuple[str, str]
     ) -> Optional[List[OrderedDict]]:
-        """Implementation-specific method for converting single I3 file.
+        """Extracts data from single I3 file.
 
-        Also works recursively on a list of I3 files.
+        If the saving strategy is 1:1 (i.e., each I3 file is converted to a
+        corresponding intermediate file) the data is saved to such a file, and
+        no data is return from the method.
+
+        The above distincting is to allow worker processes to save files rather
+        than sending it back to the main process.
+
+        @TODO: Rename to  _extract_data, *always*  return data and * don't*
+            save. Then, add a separate _process_file (cf. _process_) that just
+            saves data extracted data for each file.
 
         Args:
-            i3_file (str): Path to I3 file.
-            gcd_file (str): Path to corresponding GCD file.
-        """
+            str: Path to I3 file.
+            str: Path to corresponding GCD file.
 
+        Returns:
+            (Optional) Extracted data, if the saving strategy mandates it, i.e.
+                if the data is saved outside of this file.
+        """
         # Unpack arguments
         i3_file, gcd_file = args
 
@@ -348,9 +377,9 @@ class DataConverter(ABC, LoggerMixin):
             data_dict = OrderedDict(zip(self._table_names, results))
 
             # Get new, unique index and increment value
-            with self._index.get_lock():
-                index = self._index.value
-                self._index.value += 1
+            with global_index.get_lock():
+                index = global_index.value
+                global_index.value += 1
 
             # Attach index to all tables
             for table in data_dict.keys():
@@ -359,14 +388,16 @@ class DataConverter(ABC, LoggerMixin):
             data.append(data_dict)
 
         if self._save_strategy == "1:1":
-            self.save_data(data, self._get_output_file(i3_file))
+            output_file = self._get_output_file(i3_file)
+            self.save_data(data, output_file)
+            global_output_files.append(output_file)
             return
 
         return data
 
     def get_map_function(
         self, nb_files: int, unit: str = "I3 file(s)"
-    ) -> Callable:
+    ) -> Tuple[Callable, Optional[Pool]]:
         """Identify the type of map function to use (pure python or multiprocess)."""
 
         # Choose relevant map-function given the requested number of workers.
@@ -375,16 +406,28 @@ class DataConverter(ABC, LoggerMixin):
             self.logger.info(
                 f"Starting pool of {workers} workers to process {nb_files} {unit}"
             )
-            p = Pool(processes=workers)
-            map_fn = p.imap
+
+            # index = Value("i", 0)
+            # output_files = Queue()
+            manager = Manager()
+            index = Value("i", 0)
+            output_files = manager.list()
+
+            pool = Pool(
+                processes=workers,
+                initializer=init_global_index,
+                initargs=(index, output_files),
+            )
+            map_fn = pool.imap
 
         else:
             self.logger.info(
                 f"Processing {nb_files} {unit} in main thread (not multiprocessing)"
             )
             map_fn = map
+            pool = None
 
-        return map_fn
+        return map_fn, pool
 
     def _infer_save_strategy(
         self,
