@@ -130,9 +130,10 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         return len(self._indices)
 
     def __getitem__(self, index: int) -> Data:
-        assert (
-            0 <= index < len(self)
-        ), f"Index {index} not in range [0, {len(self) - 1}]"
+        if not (0 <= index < len(self)):
+            raise IndexError(
+                f"Index {index} not in range [0, {len(self) - 1}]"
+            )
         features, truth, node_truth = self._query(index)
         graph = self._create_graph(features, truth, node_truth)
         return graph
