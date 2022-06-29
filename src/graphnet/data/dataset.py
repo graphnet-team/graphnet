@@ -84,7 +84,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             self._indices = selection
 
         # Purely internal member variables
-        self._missing_variables = dict()
+        self._missing_variables = {}
         self._remove_missing_columns()
 
     # Abstract method(s)
@@ -130,8 +130,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         return len(self._indices)
 
     def __getitem__(self, index: int) -> Data:
-        assert index >= 0 and index < len(
-            self
+        assert (
+            0 <= index < len(self)
         ), f"Index {index} not in range [0, {len(self) - 1}]"
         features, truth, node_truth = self._query(index)
         graph = self._create_graph(features, truth, node_truth)
@@ -167,7 +167,10 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         # Remove missing truth variables
         if missing_truth_variables:
             self.logger.warning(
-                f"Removing the following (missing) truth variables: {', '.join(missing_truth_variables)}"
+                (
+                    "Removing the following (missing) truth variables: ",
+                    ", ".join(missing_truth_variables),
+                )
             )
             for missing_truth_variable in missing_truth_variables:
                 self._truth.remove(missing_truth_variable)
@@ -244,7 +247,9 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             torch.Data: Graph object.
         """
         # Convert nested list to simple dict
-        truth_dict = {key: truth[0][ix] for ix, key in enumerate(self._truth)}
+        truth_dict = {
+            key: truth[0][index] for index, key in enumerate(self._truth)
+        }
         assert len(truth) == 1
 
         # Define custom labels
@@ -254,8 +259,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         if node_truth is not None:
             node_truth_array = np.asarray(node_truth)
             node_truth_dict = {
-                key: node_truth_array[:, ix]
-                for ix, key in enumerate(self._node_truth)
+                key: node_truth_array[:, index]
+                for index, key in enumerate(self._node_truth)
             }
 
         # Catch cases with no reconstructed pulses
@@ -265,7 +270,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             data = np.array([]).reshape((0, len(self._features) - 1))
 
         # Construct graph data object
-        x = torch.tensor(data, dtype=self._dtype)
+        x = torch.tensor(data, dtype=self._dtype)  # pylint: disable=C0103
         n_pulses = torch.tensor(len(x), dtype=torch.int32)
         graph = Data(x=x, edge_index=None)
         graph.n_pulses = n_pulses
@@ -282,12 +287,15 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
                     self.logger.debug(
-                        f"Could not assign `{key}` with type '{type(value).__name__}' as attribute to graph."
+                        (
+                            f"Could not assign `{key}` with type ",
+                            f"'{type(value).__name__}' as attribute to graph.",
+                        )
                     )
 
         # Additionally add original features as (static) attributes
-        for ix, feature in enumerate(graph.features):
-            graph[feature] = graph.x[:, ix].detach()
+        for index, feature in enumerate(graph.features):
+            graph[feature] = graph.x[:, index].detach()
 
         return graph
 
