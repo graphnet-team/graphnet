@@ -8,17 +8,14 @@ import torch
 from torch_geometric.data import Data
 import time
 
-from graphnet.utilities.logging import get_logger
-
-
-logger = get_logger()
+from graphnet.utilities.logging import LoggerMixin, get_logger
 
 
 # Global variables
 MISSING_VARIABLES = dict()
 
 
-class SQLiteDataset(torch.utils.data.Dataset):
+class SQLiteDataset(torch.utils.data.Dataset, LoggerMixin):
     """Pytorch dataset for reading from SQLite."""
 
     def __init__(
@@ -62,7 +59,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             self._node_truth_string = ", ".join(self._node_truth)
 
         if string_selection is not None:
-            logger.info(
+            self.logger.info(
                 "WARNING - STRING SELECTION DETECTED. \n Accepted strings: %s \n all other strings are ignored!"
                 % string_selection
             )
@@ -110,14 +107,14 @@ class SQLiteDataset(torch.utils.data.Dataset):
         )
 
         if missing_features:
-            logger.warning(
+            self.logger.warning(
                 f"Removing the following (missing) features: {', '.join(missing_features)}"
             )
             for missing_feature in missing_features:
                 self._features.remove(missing_feature)
 
         if missing_truth_variables:
-            logger.warning(
+            self.logger.warning(
                 f"Removing the following (missing) truth variables: {', '.join(missing_truth_variables)}"
             )
             for missing_truth_variable in missing_truth_variables:
@@ -139,7 +136,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             if table not in MISSING_VARIABLES:
                 MISSING_VARIABLES[table] = []
             if missing_variable not in MISSING_VARIABLES[table]:
-                logger.debug(str(e) + f" in table: {table}")
+                self.logger.debug(str(e) + f" in table: {table}")
                 MISSING_VARIABLES[table].append(missing_variable)
             columns = deepcopy(columns)
             columns.remove(missing_variable)
