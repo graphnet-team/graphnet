@@ -95,7 +95,7 @@ jobs:
       - name: DEBUG
         run: |
           ls -l .
-          ls -l $TEST_DATA_DIR
+          ls -l test_data/
       - name: Work around permission issue
         run: |
           git config --global --add safe.directory /__w/graphnet/graphnet
