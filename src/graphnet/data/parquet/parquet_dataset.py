@@ -51,8 +51,10 @@ class ParquetDataset(Dataset):
             selection is None
         ), "Argument `selection` is currently not supported"
 
+        sequential_index = self._indices.index(index)
+
         try:
-            ak_array = self._parquet_hook[table][columns][index]
+            ak_array = self._parquet_hook[table][columns][sequential_index]
         except ValueError as e:
             if "does not exist (not in record)" in str(e):
                 raise ColumnMissingException(str(e))
