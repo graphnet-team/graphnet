@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 import itertools
-from multiprocessing import Pool
+from multiprocessing import Pool, Value
 import os
 import re
 import numpy as np
@@ -60,6 +60,7 @@ class DataConverter(ABC, LoggerMixin):
         sequential_batch_pattern: Optional[str] = None,
         input_file_batch_pattern: Optional[str] = None,
         workers: int = 0,
+        index_column: str = "event_no",
         verbose: int = 0,
     ):
         """Constructor"""
@@ -109,6 +110,10 @@ class DataConverter(ABC, LoggerMixin):
             for extractor in self._extractors
             if isinstance(extractor, I3FeatureExtractor)
         ]
+
+        # Shared variable for sequential event indices
+        self._index_column = index_column
+        self._index = Value("i", 0)
 
         # Set verbosity
         if self._verbose == 0:
@@ -235,7 +240,7 @@ class DataConverter(ABC, LoggerMixin):
     # Internal methods
     def _iterate_over_individual_files(self, args: List[Tuple[str, str]]):
         # Get appropriate mapping function
-        map_fn = self._get_map_fn(len(args))
+        map_fn = self.get_map_function(len(args))
 
         # Iterate over files
         for _ in map_fn(
@@ -249,7 +254,7 @@ class DataConverter(ABC, LoggerMixin):
         self, args: List[Tuple[str, str]]
     ):
         # Get appropriate mapping function
-        map_fn = self._get_map_fn(len(args))
+        map_fn = self.get_map_function(len(args))
 
         # Iterate over files
         dataset = list()
@@ -287,7 +292,7 @@ class DataConverter(ABC, LoggerMixin):
         self, args: List[Tuple[List[Tuple[str, str]], str]]
     ):
         # Get appropriate mapping function
-        map_fn = self._get_map_fn(len(args), unit="batch(es)")
+        map_fn = self.get_map_function(len(args), unit="batch(es)")
 
         # Iterate over batches of files
         for _ in map_fn(
@@ -338,6 +343,16 @@ class DataConverter(ABC, LoggerMixin):
             # Extract data from I3Frame
             results = self._extractors(frame)
             data_dict = OrderedDict(zip(self._table_names, results))
+
+            # Get new, unique index and increment value
+            with self._index.get_lock():
+                index = self._index.value
+                self._index.value += 1
+
+            # Attach index to all tables
+            for table in data_dict.keys():
+                data_dict[table][self._index_column] = index
+
             data.append(data_dict)
 
         if self._save_strategy == "1:1":
@@ -346,7 +361,10 @@ class DataConverter(ABC, LoggerMixin):
 
         return data
 
-    def _get_map_fn(self, nb_files: int, unit: str = "I3 file(s)") -> Callable:
+    def get_map_function(
+        self, nb_files: int, unit: str = "I3 file(s)"
+    ) -> Callable:
+        """Identify the type of map function to use (pure python or multiprocess)."""
 
         # Choose relevant map-function given the requested number of workers.
         workers = min(self._workers, nb_files)
