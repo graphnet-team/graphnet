@@ -53,9 +53,9 @@ def test_is_pulsemap_check():
     assert is_pulsemap_check("retro") is False
 
 
+# @requires_icecube
 @pytest.mark.order(1)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-@requires_icecube
 def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
     """Test the implementation of `DataConverter` for `backend`."""
     # Constructor DataConverter instance
@@ -88,9 +88,9 @@ def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
     assert os.path.exists(path)
 
 
+# @requires_icecube
 @pytest.mark.order(2)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-@requires_icecube
 def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR):
     """Test the implementation of `Dataset` for `backend`."""
     path = get_file_path(backend, test_data_dir)
