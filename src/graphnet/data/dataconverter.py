@@ -174,18 +174,12 @@ class DataConverter(ABC, LoggerMixin):
         # Shuffle I3 files to get a more uniform load on worker nodes.
         i3_files, gcd_files = pairwise_shuffle(i3_files, gcd_files)
 
-        # Implementation-specific initialisation.
-        self.initialise()
-
         # Process the files
         filesets = [
             FileSet(i3_file, gcd_file)
             for i3_file, gcd_file in zip(i3_files, gcd_files)
         ]
         self.execute(filesets)
-
-        # Implementation-specific finalisation
-        self.finalise()
 
     @final
     def execute(self, filesets: List[FileSet]):
