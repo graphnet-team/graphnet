@@ -49,23 +49,21 @@ class SQLiteDataConverter(DataConverter):
                 saved_any = True
         if saved_any:
             self.logger.debug("- Done saving")
-            self._output_files.append(output_file)
         else:
             self.logger.warning(f"No data saved to {output_file}")
 
     def merge_files(
         self, output_file: str, input_files: Optional[List[str]] = None
     ):
-        """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""
         if input_files is None:
             self.logger.info("Merging files output by current instance.")
             input_files = self._output_files
 
         if len(input_files) > 0:
-            self.logger.info(
-                f"Found merging {len(input_files)} database files"
-            )
-            self.logger.info(input_files)
+            self.logger.info(f"Merging {len(input_files)} database files")
+            if len(input_files) <= 20:
+                for input_file in input_files:
+                    self.logger.info("> " + input_file)
 
             # Create one empty database table for each extraction
             for table_name in self._table_names:
@@ -82,7 +80,7 @@ class SQLiteDataConverter(DataConverter):
                     )
 
             # Merge temporary databases into newly created one
-            self._merge_temporary_databases(input_files, output_file)
+            self._merge_temporary_databases(output_file, input_files)
         else:
             self.logger.warning("No temporary database files found!")
 
@@ -181,15 +179,15 @@ class SQLiteDataConverter(DataConverter):
         return results
 
     def _merge_temporary_databases(
-        input_files: List[str],
         self,
         output_file: str,
+        input_files: List[str],
     ):
         """Merges the temporary databases.
 
         Args:
-            input_files (list): list of names of temporary databases
             output_file (str): path to the final database
+            input_files (list): list of names of temporary databases
         """
         for input_file in tqdm(input_files, colour="green"):
             results = self._extract_everything(input_file)
