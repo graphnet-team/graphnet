@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import os
-from typing import List
+from typing import List, Optional
 
 import awkward
 
@@ -29,6 +29,9 @@ class ParquetDataConverter(DataConverter):
         awkward.to_parquet(awkward.from_iter(data), output_file)
 
         self.logger.debug("- Done saving")
+        self._output_files.append(output_file)
 
-    def merge_files(self, input_files: List[str], output_file: str):
+    def merge_files(
+        self, output_file: str, input_files: Optional[List[str]] = None
+    ):
         raise NotImplementedError()
