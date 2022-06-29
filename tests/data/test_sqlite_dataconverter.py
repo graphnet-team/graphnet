@@ -28,9 +28,8 @@ def test_is_pulsemap_check():
 
 @requires_icecube
 def test_sqlite_database(test_data_dir: str = TEST_DATA_DIR):
-    print("IN `test_sqlite_database` !!!")
     database = os.path.join(
-        test_data_dir, "{0}/data/{0}.db".format("test_database")
+        test_data_dir, "oscNext_genie_level7_v03.01_pass2.160000.000001.db"
     )
     pulsemap = "SRTInIcePulses"
     features = FEATURES.DEEPCORE
@@ -92,7 +91,6 @@ def convert_i3_to_sqlite(test_data_dir: str = TEST_DATA_DIR):
         "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz",
     )
     outdir = test_data_dir
-    db_name = "test_database"
     workers = 1
 
     converter = SQLiteDataConverter(
@@ -103,7 +101,6 @@ def convert_i3_to_sqlite(test_data_dir: str = TEST_DATA_DIR):
         ],
         outdir,
         gcd_rescue,
-        db_name=db_name,
         workers=workers,
     )
     converter(paths)
