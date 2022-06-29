@@ -168,7 +168,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         if missing_truth_variables:
             self.logger.warning(
                 (
-                    "Removing the following (missing) truth variables: ",
+                    "Removing the following (missing) truth variables: "
                     ", ".join(missing_truth_variables),
                 )
             )
@@ -288,7 +288,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
                     # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
                     self.logger.debug(
                         (
-                            f"Could not assign `{key}` with type ",
+                            f"Could not assign `{key}` with type "
                             f"'{type(value).__name__}' as attribute to graph.",
                         )
                     )
