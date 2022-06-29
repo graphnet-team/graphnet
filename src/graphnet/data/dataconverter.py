@@ -98,6 +98,7 @@ class DataConverter(ABC, LoggerMixin):
         self._sequential_batch_pattern = sequential_batch_pattern
         self._input_file_batch_pattern = input_file_batch_pattern
         self._workers = workers
+        self._output_files = []
 
         # Create I3Extractors
         self._extractors = I3ExtractorCollection(*extractors)
@@ -211,23 +212,26 @@ class DataConverter(ABC, LoggerMixin):
             self.logger.warning("[ctrl+c] Exciting gracefully.")
 
     @abstractmethod
-    def save_data(self, data: List[OrderedDict], i3_file: str):
+    def save_data(self, data: List[OrderedDict], output_file: str):
         """Implementation-specific method for saving data to file.
 
         Args:
             data (List[OrderedDict]): List of extracted features.
-            i3_file (str): Name of input file.
+            output_file (str): Name of output file.
         """
 
     @abstractmethod
-    def merge_files(self, input_files: List[str], output_file: str):
+    def merge_files(
+        self, output_file: str, input_files: Optional[List[str]] = None
+    ):
         """Implementation-specific method for merging output files.
 
         Args:
-            input_files (List[str]): Intermediate files to be merged, according
-                to the specific implementation.
             output_file (str): Name of the output file containing the merged
                 results.
+            input_files (List[str]): Intermediate files to be merged, according
+                to the specific implementation. Default to None, meaning that
+                all files output by the current instance are merged.
         """
 
     def initialise(self):
