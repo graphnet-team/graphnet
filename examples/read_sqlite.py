@@ -38,7 +38,7 @@ dataset = SQLiteDataset(
 
 logger.info(dataset[1])
 logger.info(dataset[1].x)
-dataset.close_connection()  # This is necessary iff `dataset` has been indexed between instantiation and passing to `DataLoader`
+dataset._close_connection()  # This is necessary iff `dataset` has been indexed between instantiation and passing to `DataLoader`
 
 dataloader = torch.utils.data.DataLoader(
     dataset,

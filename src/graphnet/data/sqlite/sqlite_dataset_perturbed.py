@@ -39,7 +39,7 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
         ]
 
     def __getitem__(self, i):
-        self.establish_connection(i)
+        self._establish_connection(i)
         features, truth = self._query_database(i)
         perturbed_features = self._perturb_features(features)
         graph = self._create_graph(perturbed_features, truth)
