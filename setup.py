@@ -9,16 +9,17 @@ SETUP_REQUIRES = [
 ]
 
 INSTALL_REQUIRES = [
-    "sqlalchemy>=1.4",
-    "pandas>=1.3",
-    "numpy>=1.21",
-    "timer>=0.2",
-    "tqdm>=4.64",
+    "awkward>=1.8",
     "dill>=0.3",
-    "wandb>=0.12",
     "matplotlib>=3.5",
+    "numpy>=1.21",
+    "pandas>=1.3",
     "scikit_learn>=1.0",
     "scipy>=1.7",
+    "sqlalchemy>=1.4",
+    "timer>=0.2",
+    "tqdm>=4.64",
+    "wandb>=0.12",
 ]
 
 EXTRAS_REQUIRE = {
