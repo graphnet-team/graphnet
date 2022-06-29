@@ -1,12 +1,6 @@
-from copy import deepcopy
-import re
 from typing import List, Optional, Union
 import pandas as pd
-import numpy as np
 import sqlite3
-import torch
-from torch_geometric.data import Data
-import time
 
 from graphnet.data.dataset import Dataset, ColumnMissingException
 
