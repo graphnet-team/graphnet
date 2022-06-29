@@ -65,6 +65,11 @@ jobs:
         uses: ./.github/actions/install-cpu
         with:
           editable: true
+      - name: DEBUG
+        run: |
+          python -c "import graphnet"
+          python -c "import icecube"
+          python -c "from icecube import icetray"
       - name: Retrieve test data
         run: |
           # Create test data directory
