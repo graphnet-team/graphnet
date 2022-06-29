@@ -5,7 +5,7 @@ import pandas as pd
 import sqlalchemy
 import sqlite3
 from tqdm import tqdm
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
@@ -49,11 +49,18 @@ class SQLiteDataConverter(DataConverter):
                 saved_any = True
         if saved_any:
             self.logger.debug("- Done saving")
+            self._output_files.append(output_file)
         else:
             self.logger.warning(f"No data saved to {output_file}")
 
-    def merge_files(self, input_files: List[str], output_file: str):
+    def merge_files(
+        self, output_file: str, input_files: Optional[List[str]] = None
+    ):
         """Merges the temporary databases into a single sqlite database, then deletes the temporary databases."""
+        if input_files is None:
+            self.logger.info("Merging files output by current instance.")
+            input_files = self._output_files
+
         if len(input_files) > 0:
             self.logger.info(
                 f"Found merging {len(input_files)} database files"
