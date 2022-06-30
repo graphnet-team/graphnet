@@ -57,6 +57,10 @@ jobs:
     container:
       image: icecube/icetray:combo-stable
     steps:
+      - name: Set environment variables
+        run: |
+          echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
+          echo "PYTHONPATH=/usr/local/icetray/lib:$PYTHONPATH" >> $GITHUB_ENV
       - name: DEBUG
         run: |
           ls /.dockerenv
@@ -64,12 +68,12 @@ jobs:
           echo $PYTHONPATH
           which python
           python -V
-          #python -c "import icecube"
           ls -l /usr/
           ls -l /usr/local/
           ls -l /usr/local/icetray/
           ls -l /usr/local/icetray/lib/
           ls -l /usr/local/icetray/lib/icecube/
+          python -c "import icecube"
       - uses: actions/checkout@v2
       - name: Upgrade packages already installed on icecube/icetray
         run: |
