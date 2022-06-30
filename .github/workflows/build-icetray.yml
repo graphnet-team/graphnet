@@ -54,12 +54,13 @@ jobs:
     needs: [ check-cobalt-credentials, check-codeclimate-credentials ]
     if: needs.check-cobalt-credentials.outputs.has_credentials == 'true'
     runs-on: ubuntu-latest
-    container: icecube/icetray:combo-stable
+    container:
+      image: icecube/icetray:combo-stable
     steps:
       - name: DEBUG
         run: |
+          ls /.dockerenv
           which python
-          type -a python
           python -V
           python -c "import icecube"
       - uses: actions/checkout@v2
