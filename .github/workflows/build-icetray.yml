@@ -60,9 +60,16 @@ jobs:
       - name: DEBUG
         run: |
           ls /.dockerenv
+          echo $PATH
+          echo $PYTHONPATH
           which python
           python -V
-          python -c "import icecube"
+          #python -c "import icecube"
+          ls -l /usr/
+          ls -l /usr/local/
+          ls -l /usr/local/icetray/
+          ls -l /usr/local/icetray/lib/
+          ls -l /usr/local/icetray/lib/icecube/
       - uses: actions/checkout@v2
       - name: Upgrade packages already installed on icecube/icetray
         run: |
