@@ -56,6 +56,12 @@ jobs:
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
     steps:
+      - name: DEBUG
+        run: |
+          which python
+          type -a python
+          python -V
+          python -c "import icecube"
       - uses: actions/checkout@v2
       - name: Upgrade packages already installed on icecube/icetray
         run: |
