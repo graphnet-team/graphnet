@@ -19,6 +19,8 @@ class SQLiteDataset(torch.utils.data.Dataset):
         node_truth: Optional[List[str]] = None,
         index_column: str = "event_no",
         truth_table: str = "truth",
+        loss_weight_table: str = None,
+        loss_weight_column: str = None,
         node_truth_table: Optional[str] = None,
         string_selection: Optional[List[int]] = None,
         selection: Optional[List[int]] = None,
@@ -58,6 +60,21 @@ class SQLiteDataset(torch.utils.data.Dataset):
             if isinstance(string_selection, int):
                 string_selection = [string_selection]
 
+        if (
+            self._loss_weight_table
+            is None & self._loss_weight_column
+            is not None
+        ):
+            print("Error: no loss weight table specified")
+            assert isinstance(self._loss_weight_table, str)
+        if (
+            self._loss_weight_table
+            is not None & self._loss_weight_column
+            is None
+        ):
+            print("Error: no loss weight column specified")
+            assert isinstance(self._loss_weight_column, str)
+
         self._string_selection = string_selection
         self._selection = ""
         if self._string_selection:
@@ -70,6 +87,8 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self._index_column = index_column
         self._truth_table = truth_table
         self._dtype = dtype
+        self._loss_weight_column = loss_weight_column
+        self._loss_weight_table = loss_weight_table
 
         self._features_string = ", ".join(self._features)
         self._truth_string = ", ".join(self._truth)
@@ -114,8 +133,8 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, i):
         self.establish_connection(i)
-        features, truth, node_truth = self._query_database(i)
-        graph = self._create_graph(features, truth, node_truth)
+        features, truth, node_truth, loss_weight = self._query_database(i)
+        graph = self._create_graph(features, truth, node_truth, loss_weight)
         return graph
 
     def _get_all_indices(self):
@@ -153,7 +172,14 @@ class SQLiteDataset(torch.utils.data.Dataset):
             )
         else:
             node_truth = None
-        return features, truth, node_truth
+
+        if self._loss_weight_column is not None:
+            if self._loss_weight_table is not None:
+                loss_weight = self._query_table(
+                    self._loss_weight_column, self._loss_weight_table, i
+                )
+
+        return features, truth, node_truth, loss_weight
 
     def _get_dbang_label(self, truth_dict):
         try:
@@ -162,7 +188,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
         except KeyError:
             return -1
 
-    def _create_graph(self, features, truth, node_truth=None):
+    def _create_graph(
+        self, features, truth, loss_weight=None, node_truth=None
+    ):
         """Create Pytorch Data (i.e.graph) object.
 
         No preprocessing is performed at this stage, just as no node adjancency
@@ -223,6 +251,9 @@ class SQLiteDataset(torch.utils.data.Dataset):
         graph = Data(x=x, edge_index=None)
         graph.n_pulses = n_pulses
         graph.features = self._features[1:]
+        graph.self._loss_weight_column = torch.tensor(
+            loss_weight, dtype=self._dtype
+        ).reshape(-1, 1)
 
         # Write attributes, either target labels, truth info or original features.
         add_these_to_graph = [labels_dict, truth_dict]
