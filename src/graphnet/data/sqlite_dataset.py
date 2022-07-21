@@ -21,6 +21,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         truth_table: str = "truth",
         loss_weight_table: str = None,
         loss_weight_column: str = None,
+        loss_weight_padding_value: float = 1.0,
         node_truth_table: Optional[str] = None,
         string_selection: Optional[List[int]] = None,
         selection: Optional[List[int]] = None,
@@ -60,17 +61,15 @@ class SQLiteDataset(torch.utils.data.Dataset):
             if isinstance(string_selection, int):
                 string_selection = [string_selection]
 
-        if (
-            self._loss_weight_table
-            is None & self._loss_weight_column
-            is not None
+        self._loss_weight_column = loss_weight_column
+        self._loss_weight_table = loss_weight_table
+        if (self._loss_weight_table is None) and (
+            self._loss_weight_column is not None
         ):
             print("Error: no loss weight table specified")
             assert isinstance(self._loss_weight_table, str)
-        if (
-            self._loss_weight_table
-            is not None & self._loss_weight_column
-            is None
+        if (self._loss_weight_table is not None) and (
+            self._loss_weight_column is None
         ):
             print("Error: no loss weight column specified")
             assert isinstance(self._loss_weight_column, str)
@@ -87,8 +86,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self._index_column = index_column
         self._truth_table = truth_table
         self._dtype = dtype
-        self._loss_weight_column = loss_weight_column
-        self._loss_weight_table = loss_weight_table
+        self._loss_weight_padding_value = loss_weight_padding_value
 
         self._features_string = ", ".join(self._features)
         self._truth_string = ", ".join(self._truth)
@@ -178,6 +176,8 @@ class SQLiteDataset(torch.utils.data.Dataset):
                 loss_weight = self._query_table(
                     self._loss_weight_column, self._loss_weight_table, i
                 )
+        else:
+            loss_weight = [self._loss_weight_padding_value]
 
         return features, truth, node_truth, loss_weight
 
@@ -189,7 +189,11 @@ class SQLiteDataset(torch.utils.data.Dataset):
             return -1
 
     def _create_graph(
-        self, features, truth, loss_weight=None, node_truth=None
+        self,
+        features,
+        truth,
+        node_truth=None,
+        loss_weight=None,
     ):
         """Create Pytorch Data (i.e.graph) object.
 
@@ -251,9 +255,15 @@ class SQLiteDataset(torch.utils.data.Dataset):
         graph = Data(x=x, edge_index=None)
         graph.n_pulses = n_pulses
         graph.features = self._features[1:]
-        graph.self._loss_weight_column = torch.tensor(
-            loss_weight, dtype=self._dtype
-        ).reshape(-1, 1)
+        if loss_weight is not None and self._loss_weight_column is not None:
+            if len(loss_weight) == 0:
+                graph[self._loss_weight_column] = torch.tensor(
+                    self._loss_weight_padding_value, dtype=self._dtype
+                ).reshape(-1, 1)
+            else:
+                graph[self._loss_weight_column] = torch.tensor(
+                    loss_weight, dtype=self._dtype
+                ).reshape(-1, 1)
 
         # Write attributes, either target labels, truth info or original features.
         add_these_to_graph = [labels_dict, truth_dict]
