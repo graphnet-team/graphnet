@@ -1,3 +1,5 @@
+from copy import deepcopy
+import re
 from typing import List, Optional, Union
 import pandas as pd
 import numpy as np
@@ -5,6 +7,15 @@ import sqlite3
 import torch
 from torch_geometric.data import Data
 import time
+
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
+
+
+# Global variables
+MISSING_VARIABLES = dict()
 
 
 class SQLiteDataset(torch.utils.data.Dataset):
@@ -54,7 +65,7 @@ class SQLiteDataset(torch.utils.data.Dataset):
             self._node_truth_string = ", ".join(self._node_truth)
 
         if string_selection is not None:
-            print(
+            logger.info(
                 "WARNING - STRING SELECTION DETECTED. \n Accepted strings: %s \n all other strings are ignored!"
                 % string_selection
             )
@@ -86,13 +97,18 @@ class SQLiteDataset(torch.utils.data.Dataset):
         self._index_column = index_column
         self._truth_table = truth_table
         self._dtype = dtype
-        self._loss_weight_padding_value = loss_weight_padding_value
 
+        self._loss_weight_padding_value = loss_weight_padding_value
         self._features_string = ", ".join(self._features)
         self._truth_string = ", ".join(self._truth)
         if self._database_list is not None:
             self._current_database = None
         self._conn = None  # Handle for sqlite3.connection
+
+        self.remove_missing_columns()
+
+        self._features_string = ", ".join(self._features)
+        self._truth_string = ", ".join(self._truth)
 
         if selection is None:
             self._indices = self._get_all_indices()
@@ -102,6 +118,55 @@ class SQLiteDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self._indices)
+
+    def remove_missing_columns(self):
+        missing_features = set(self._features)
+        for pulsemap in self._pulsemaps:
+            missing = self._check_missing_columns(self._features, pulsemap)
+            missing_features = missing_features.intersection(missing)
+        missing_features = list(missing_features)
+        missing_truth_variables = self._check_missing_columns(
+            self._truth, self._truth_table
+        )
+
+        if missing_features:
+            logger.warning(
+                f"Removing the following (missing) features: {', '.join(missing_features)}"
+            )
+            for missing_feature in missing_features:
+                self._features.remove(missing_feature)
+
+        if missing_truth_variables:
+            logger.warning(
+                f"Removing the following (missing) truth variables: {', '.join(missing_truth_variables)}"
+            )
+            for missing_truth_variable in missing_truth_variables:
+                self._truth.remove(missing_truth_variable)
+
+    def _check_missing_columns(
+        self,
+        columns: List[str],
+        table: str,
+    ) -> List[str]:
+        self.establish_connection(0)
+        try:
+            _ = self._conn.execute(
+                f"SELECT {','.join(columns)} FROM {table}"
+            ).fetchall()
+        except sqlite3.OperationalError as e:
+            global MISSING_VARIABLES
+            missing_variable = re.sub(".*: *", "", str(e))
+            if table not in MISSING_VARIABLES:
+                MISSING_VARIABLES[table] = []
+            if missing_variable not in MISSING_VARIABLES[table]:
+                logger.debug(str(e) + f" in table: {table}")
+                MISSING_VARIABLES[table].append(missing_variable)
+            columns = deepcopy(columns)
+            columns.remove(missing_variable)
+            return self._check_missing_columns(columns, table)
+
+        self.close_connection()
+        return MISSING_VARIABLES.get(table, [])
 
     def _query_table(
         self,

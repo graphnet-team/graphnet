@@ -26,6 +26,7 @@ class FEATURES:
 class TRUTH:
     ICECUBE86 = [
         "energy",
+        "energy_track",
         "position_x",
         "position_y",
         "position_z",
@@ -36,6 +37,8 @@ class TRUTH:
         "sim_type",
         "interaction_type",
         "interaction_time",  # Added for vertex reconstruction
+        "inelasticity",
+        "stopped_muon",
     ]
     DEEPCORE = ICECUBE86
     UPGRADE = DEEPCORE
