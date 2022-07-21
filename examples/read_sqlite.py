@@ -9,10 +9,13 @@ from tqdm import tqdm
 
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite_dataset import SQLiteDataset
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
 
 # Configurations
 timer.set_level(logging.INFO)
-logging.basicConfig(level=logging.INFO)
 torch.multiprocessing.set_sharing_strategy("file_system")
 
 # Constants
@@ -33,8 +36,8 @@ dataset = SQLiteDataset(
     truth,
 )
 
-print(dataset[1])
-print(dataset[1].x)
+logger.info(dataset[1])
+logger.info(dataset[1].x)
 dataset.close_connection()  # This is necessary iff `dataset` has been indexed between instantiation and passing to `DataLoader`
 
 dataloader = torch.utils.data.DataLoader(
@@ -51,5 +54,5 @@ with timer("torch dataloader"):
     for batch in tqdm(dataloader, unit=" batches", colour="green"):
         time.sleep(wait_time)
 
-print(batch)
-print(batch.size(), batch.num_graphs)
+logger.info(batch)
+logger.info(batch.size(), batch.num_graphs)
