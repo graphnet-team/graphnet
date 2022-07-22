@@ -123,8 +123,10 @@ class Task(LightningModule):
         if self._loss_weight_column is not None:
             weights = data[self._loss_weight_column]
         else:  # if no weights are given, applies weights of 1.
-            weights = torch.repeat(1, len(pred), dtype=torch.int).reshape(
-                -1, 1
+            weights = (
+                torch.ones(len(pred), dtype=torch.int)
+                .reshape(-1, 1)
+                .to(pred.device)
             )
         loss = (
             self._loss_function(pred, target, weights=weights)
