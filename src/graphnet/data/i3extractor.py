@@ -3,6 +3,11 @@ from typing import List
 import numpy as np
 import matplotlib.path as mpath
 
+from graphnet.data.utils import frame_has_key
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
+
 try:
     from icecube import (
         dataclasses,
@@ -11,9 +16,7 @@ try:
         phys_services,
     )  # pyright: reportMissingImports=false
 except ImportError:
-    print("icecube package not available.")
-
-from graphnet.data.utils import frame_has_key
+    logger.info("icecube package not available.")
 
 
 class I3Extractor(ABC):
@@ -129,7 +132,6 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         try:
             om_keys, data = self._get_om_keys_and_pulseseries(frame)
         except KeyError:
-            # print(f"WARN: Pulsemap {self._pulsemap} was not found in frame.")
             return output
 
         for om_key in om_keys:
@@ -325,34 +327,61 @@ class I3TruthExtractor(I3Extractor):
             "SubrunID": frame["I3EventHeader"].sub_run_id,
             "EventID": frame["I3EventHeader"].event_id,
             "SubEventID": frame["I3EventHeader"].sub_event_id,
+            "dbang_decay_length": padding_value,
+            "track_length": padding_value,
+            "stopped_muon": padding_value,
             "DeepCoreFilter_13": padding_value,
             "CascadeFilter_13": padding_value,
             "MuonFilter_13": padding_value,
             "OnlineL2Filter_17": padding_value,
-            "dbang_decay_length": padding_value,
-            "track_length": padding_value,
-            "stopped_muon": padding_value,
+            "L3_oscNext_bool": padding_value,
+            "L4_oscNext_bool": padding_value,
+            "L5_oscNext_bool": padding_value,
+            "L6_oscNext_bool": padding_value,
+            "L7_oscNext_bool": padding_value,
         }
 
-        if (
-            frame["I3EventHeader"].sub_event_stream == "InIceSplit"
-        ):  # only inicesplit p frames have filters calculated
-            output.update(
-                {
-                    "DeepCoreFilter_13": int(
-                        bool(frame["FilterMask"]["DeepCoreFilter_13"])
-                    ),
-                    "CascadeFilter_13": int(
-                        bool(frame["FilterMask"]["CascadeFilter_13"])
-                    ),
-                    "MuonFilter_13": int(
-                        bool(frame["FilterMask"]["MuonFilter_13"])
-                    ),
-                    "OnlineL2Filter_17": int(
-                        bool(frame["FilterMask"]["OnlineL2Filter_17"])
-                    ),
-                }
-            )
+        # Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.
+        # At low levels i3files contain several other P frame splits (e.g NullSplit),
+        # we remove those here.
+        if frame["I3EventHeader"].sub_event_stream != "InIceSplit":
+            return output
+
+        if "FilterMask" in frame:
+            if "DeepCoreFilter_13" in frame["FilterMask"]:
+                output["DeepCoreFilter_13"] = int(
+                    frame["FilterMask"]["DeepCoreFilter_13"]
+                )
+            if "CascadeFilter_13" in frame["FilterMask"]:
+                output["CascadeFilter_13"] = int(
+                    frame["FilterMask"]["CascadeFilter_13"]
+                )
+            if "MuonFilter_13" in frame["FilterMask"]:
+                output["MuonFilter_13"] = int(
+                    frame["FilterMask"]["MuonFilter_13"]
+                )
+            if "OnlineL2Filter_17" in frame["FilterMask"]:
+                output["OnlineL2Filter_17"] = int(
+                    frame["FilterMask"]["OnlineL2Filter_17"]
+                )
+
+        elif "DeepCoreFilter_13" in frame:
+            output["DeepCoreFilter_13"] = int(bool(frame["DeepCoreFilter_13"]))
+
+        if "L3_oscNext_bool" in frame:
+            output["L3_oscNext_bool"] = int(frame["L3_oscNext_bool"])
+
+        if "L4_oscNext_bool" in frame:
+            output["L4_oscNext_bool"] = int(frame["L4_oscNext_bool"])
+
+        if "L5_oscNext_bool" in frame:
+            output["L5_oscNext_bool"] = int(frame["L5_oscNext_bool"])
+
+        if "L6_oscNext_bool" in frame:
+            output["L6_oscNext_bool"] = int(frame["L6_oscNext_bool"])
+
+        if "L7_oscNext_bool" in frame:
+            output["L7_oscNext_bool"] = int(frame["L7_oscNext_bool"])
 
         if is_mc and (not is_noise):
             (
@@ -589,7 +618,7 @@ def find_data_type(mc, input_file):
     if "L2" in input_file:  # not robust
         sim_type = "dbang"
     if sim_type == "lol":
-        print("SIM TYPE NOT FOUND!")
+        logger.info("SIM TYPE NOT FOUND!")
     return sim_type
 
 

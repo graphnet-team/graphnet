@@ -1,12 +1,19 @@
 from abc import ABC, abstractmethod
 
+from graphnet.data.extractors import (
+    I3Extractor,
+    I3ExtractorCollection,
+    I3TruthExtractor,
+)
+from graphnet.data.utils import find_i3_files
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
+
 try:
     from icecube import dataio  # pyright: reportMissingImports=false
 except ImportError:
-    print("icecube package not available.")
-
-from .i3extractor import I3Extractor, I3ExtractorCollection, I3TruthExtractor
-from .utils import find_i3_files
+    logger.info("icecube package not available.")
 
 
 class DataConverter(ABC):
@@ -39,7 +46,7 @@ class DataConverter(ABC):
     def __call__(self, directories):
         i3_files, gcd_files = find_i3_files(directories, self._gcd_rescue)
         if len(i3_files) == 0:
-            print(f"ERROR: No files found in: {directories}.")
+            logger.info(f"ERROR: No files found in: {directories}.")
             return
         self._process_files(i3_files, gcd_files)
 
