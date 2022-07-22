@@ -1,6 +1,5 @@
 """Utility function relevant to the graphnet.data package."""
 
-from ast import Is
 from glob import glob
 import os
 import numpy as np
@@ -10,6 +9,11 @@ import re
 from typing import List, Tuple, Union
 import sqlite3
 import sqlalchemy
+
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
 
 
 def run_sql_code(database: str, code: str):
@@ -78,7 +82,7 @@ def get_desired_event_numbers(
         if len(tot_event_nos) < desired_size:
             desired_size = len(tot_event_nos)
             numbers_desired = [int(x * desired_size) for x in fracs]
-            print(
+            logger.info(
                 "Only {} events in database, using this number instead.".format(
                     len(tot_event_nos)
                 )
@@ -103,13 +107,13 @@ def get_desired_event_numbers(
                     )  # could add weights (re-weigh) here with replace=True
                 except ValueError:
                     if len(tmp_dataframe) == 0:
-                        print(
+                        logger.info(
                             "There are no particles of type {} in this database please make new request.".format(
                                 particle_type
                             )
                         )
                         return None
-                    print(
+                    logger.info(
                         "There have been {} requested of particle {}, we can only supply {}. \nRenormalising...".format(
                             number, particle_type, len(tmp_dataframe)
                         )
@@ -163,7 +167,7 @@ def get_equal_proportion_neutrino_indices(
     # Subsample events for each PID to the smallest sample size
     samples_sizes = list(map(len, pid_indicies.values()))
     smallest_sample_size = min(samples_sizes)
-    print(f"Smallest sample size: {smallest_sample_size}")
+    logger.info(f"Smallest sample size: {smallest_sample_size}")
 
     indices = [
         (
@@ -287,7 +291,7 @@ def get_even_dbang_selection(
     # Subsample events for each PID to the smallest sample size
     samples_sizes = list(map(len, non_dbangs_indicies.values()))
     smallest_sample_size = min(samples_sizes)
-    print(f"Smallest non dbang sample size: {smallest_sample_size}")
+    logger.info(f"Smallest non dbang sample size: {smallest_sample_size}")
     indices = [
         (
             non_dbangs_indicies[pid]
@@ -305,7 +309,7 @@ def get_even_dbang_selection(
                 "SELECT event_no FROM truth where dbang_decay_length != -1",
                 conn,
             )
-        print(f"dbang sample size: {len(dbangs_indicies)}")
+        logger.info(f"dbang sample size: {len(dbangs_indicies)}")
     elif min_max_decay_length[1] is None:
         with sqlite3.connect(db) as conn:
             dbangs_indicies = pd.read_sql_query(
@@ -328,8 +332,10 @@ def get_even_dbang_selection(
             len(indices_equal_proprtions)
         ).reset_index(drop=True)
 
-    print("dbangs in joint sample: %s" % len(dbangs_indicies))
-    print("non-dbangs in joint sample: %s" % len(indices_equal_proprtions))
+    logger.info("dbangs in joint sample: %s" % len(dbangs_indicies))
+    logger.info(
+        "non-dbangs in joint sample: %s" % len(indices_equal_proprtions)
+    )
 
     joint_indicies = (
         dbangs_indicies.append(indices_equal_proprtions, ignore_index=True)
@@ -444,12 +450,3 @@ def find_i3_files(directories: Union[str, List[str]], gcd_rescue: str):
             pass
 
     return i3_files, gcd_files
-
-
-def frame_has_key(frame, key: str):
-    """Returns whether `frame` contains `key`."""
-    try:
-        frame[key]
-        return True
-    except KeyError:
-        return False

@@ -1,5 +1,10 @@
 """Common functionns for icetray/data-based unit tests."""
 
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
+
 
 def has_icecube_package() -> bool:
     """Check whether the `icecube` package is available."""
@@ -18,7 +23,7 @@ def requires_icecube(test_function):
         if has_icecube_package():
             return test_function(*args, **kwargs)
         else:
-            print(
+            logger.info(
                 f"Function `{test_function.__name__}` not used since `icecube` isn't available."
             )
             return

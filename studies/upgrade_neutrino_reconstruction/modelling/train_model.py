@@ -1,6 +1,4 @@
-import logging
 import os
-from timer import timer
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
@@ -29,10 +27,12 @@ from graphnet.models.training.utils import (
     make_train_validation_dataloader,
     save_results,
 )
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
+
 
 # Configurations
-timer.set_level(logging.INFO)
-logging.basicConfig(level=logging.INFO)
 torch.multiprocessing.set_sharing_strategy("file_system")
 
 # Constants
@@ -74,8 +74,8 @@ def main():
         # not found in list
         pass
 
-    print(f"features: {features}")
-    print(f"truth: {truth}")
+    logger.info(f"features: {features}")
+    logger.info(f"truth: {truth}")
 
     # Run management
     archive = "/groups/icecube/asogaard/gnn/results/upgrade_test_1/"
@@ -153,7 +153,7 @@ def main():
     try:
         trainer.fit(model, training_dataloader, validation_dataloader)
     except KeyboardInterrupt:
-        print("[ctrl+c] Exiting gracefully.")
+        logger.warning("[ctrl+c] Exiting gracefully.")
         pass
 
     # Saving model
