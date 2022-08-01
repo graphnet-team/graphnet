@@ -160,7 +160,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         # Remove missing features
         if missing_features:
             self.logger.warning(
-                f"Removing the following (missing) features: {', '.join(missing_features)}"
+                "Removing the following (missing) features: "
+                + ", ".join(missing_features)
             )
             for missing_feature in missing_features:
                 self._features.remove(missing_feature)
