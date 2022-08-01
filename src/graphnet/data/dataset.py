@@ -171,7 +171,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             self.logger.warning(
                 (
                     "Removing the following (missing) truth variables: "
-                    ", ".join(missing_truth_variables)
+                    + ", ".join(missing_truth_variables)
                 )
             )
             for missing_truth_variable in missing_truth_variables:
