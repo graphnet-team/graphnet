@@ -15,6 +15,7 @@ import configparser
 import io
 from configupdater import ConfigUpdater
 from contextlib import contextmanager
+from graphnet.data.utils import run_sql_code, save_to_sql
 
 mpl.use("pdf")
 plt.rc("font", family="serif")
@@ -72,6 +73,174 @@ def config_updater(
                 configfile.writelines(lines)
             else:
                 updater.write(configfile)
+
+
+class WeightFitter:
+    def __init__(
+        self,
+        database_path,
+        truth_table="truth",
+        index_column="event_no",
+        statistical_fit=False,
+    ):
+        self._database_path = database_path
+        self._truth_table = truth_table
+        self._index_column = index_column
+        self._statistical_fit = statistical_fit
+
+    def fit_weights(
+        self,
+        config_outdir,
+        weight_name=None,
+        pisa_config_dict=None,
+        add_to_database=False,
+    ):
+        # if its a standard weight
+        if pisa_config_dict is None:
+            if isinstance(weight_name, str) is False:
+                print(weight_name)
+                weight_name = "pisa_weight_graphnet_standard"
+        # if it is a custom weight without name
+        elif pisa_config_dict is not None:
+            if isinstance(weight_name, str) is False:
+                weight_name = "pisa_custom_weight"
+        pisa_config_path = self._make_config(
+            config_outdir, weight_name, pisa_config_dict
+        )
+        model = Pipeline(pisa_config_path)
+        if self._statistical_fit == "True":
+            # Only free parameters will be [aeff_scale] - corresponding to a statistical fit
+            free_params = model.params.free.names
+            for free_param in free_params:
+                if free_param not in ["aeff_scale"]:
+                    model.params[free_param].is_fixed = True
+
+        # for stage in range(len(model.stages)):
+        model.stages[-1].apply_mode = "events"
+        model.stages[-1].calc_mode = "events"
+        model.run()
+        results = pd.DataFrame()
+        for container in model.data:
+            data = pd.DataFrame(container["event_no"], columns=["event_no"])
+            data[weight_name] = container["weights"]
+            results = results.append(data)
+
+        if add_to_database:
+            self._create_table(self._database_path, weight_name, results)
+            save_to_sql(results, weight_name, self._database_path)
+        return results.sort_values("event_no").reset_index(drop=True)
+
+    def _create_table(self, database, table_name, df):
+        """Creates a table.
+        Args:
+            pipeline_database (str): path to the pipeline database
+            df (str): pandas.DataFrame of combined predictions
+        """
+        query_columns = list()
+        for column in df.columns:
+            if column == "event_no":
+                type_ = "INTEGER PRIMARY KEY NOT NULL"
+            else:
+                type_ = "FLOAT"
+            query_columns.append(f"{column} {type_}")
+        query_columns = ", ".join(query_columns)
+
+        code = (
+            "PRAGMA foreign_keys=off;\n"
+            f"CREATE TABLE {table_name} ({query_columns});\n"
+            "PRAGMA foreign_keys=on;"
+        )
+        run_sql_code(database, code)
+        return
+
+    def _make_config(
+        self,
+        config_outdir,
+        weight_name,
+        pisa_config_dict,
+    ):
+        os.makedirs(config_outdir + "/" + weight_name, exist_ok=True)
+        if pisa_config_dict is None:
+            # Run on standard settings
+            pisa_config_dict = {
+                "reco_energy": {"num_bins": 8},
+                "reco_coszen": {"num_bins": 8},
+                "pid": {"bin_edges": [0, 0.5, 1]},
+                "true_energy": {"num_bins": 200},
+                "true_coszen": {"num_bins": 200},
+                "livetime": 10
+                * 0.01,  # set to 1% of 10 years - correspond to the size of the oscNext burn sample
+            }
+
+        pisa_config_dict["pipeline"] = self._database_path
+        pisa_config_dict["post_fix"] = None
+        pipeline_cfg_path = self._create_configs(
+            pisa_config_dict, config_outdir + "/" + weight_name
+        )
+        return pipeline_cfg_path
+
+    def _create_configs(self, config_dict, path):
+        # Update binning config
+        root = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        if config_dict["post_fix"] is not None:
+            config_name = "config%s" % config_dict["post_fix"]
+        else:
+            # config_dict["post_fix"] = '_pred'
+            config_name = "config"
+
+        with config_updater(
+            root
+            + "/resources/configuration_templates/binning_config_template.cfg",
+            "%s/binning_%s.cfg" % (path, config_name),
+            dummy_section="binning",
+        ) as updater:
+            updater["binning"][
+                "graphnet_dynamic_binning.reco_energy"
+            ].value = (
+                "{'num_bins':%s, 'is_log':True, 'domain':[0.5,55] * units.GeV, 'tex': r'E_{\\rm reco}'}"
+                % config_dict["reco_energy"]["num_bins"]
+            )  # noqa: W605
+            updater["binning"][
+                "graphnet_dynamic_binning.reco_coszen"
+            ].value = (
+                "{'num_bins':%s, 'is_lin':True, 'domain':[-1,1], 'tex':r'\\cos{\\theta}_{\\rm reco}'}"
+                % config_dict["reco_coszen"]["num_bins"]
+            )  # noqa: W605
+            updater["binning"]["graphnet_dynamic_binning.pid"].value = (
+                "{'bin_edges': %s, 'tex':r'{\\rm PID}'}"
+                % config_dict["pid"]["bin_edges"]
+            )  # noqa: W605
+            updater["binning"]["true_allsky_fine.true_energy"].value = (
+                "{'num_bins':%s, 'is_log':True, 'domain':[1,1000] * units.GeV, 'tex': r'E_{\\rm true}'}"
+                % config_dict["true_energy"]["num_bins"]
+            )  # noqa: W605
+            updater["binning"]["true_allsky_fine.true_coszen"].value = (
+                "{'num_bins':%s, 'is_lin':True, 'domain':[-1,1], 'tex':r'\\cos\,\\theta_{Z,{\\rm true}}'}"  # noqa: W605
+                % config_dict["true_coszen"]["num_bins"]
+            )  # noqa: W605
+
+        # Update pipeline config
+        with config_updater(
+            root
+            + "/resources/configuration_templates/pipeline_config_weight_template.cfg",
+            "%s/pipeline_%s.cfg" % (path, config_name),
+        ) as updater:
+            updater["pipeline"].add_before.comment(
+                "#include %s/binning_%s.cfg as binning" % (path, config_name)
+            )
+            updater["data.sqlite_loader"]["post_fix"].value = config_dict[
+                "post_fix"
+            ]
+            updater["data.sqlite_loader"]["database"].value = config_dict[
+                "pipeline"
+            ]
+            if "livetime" in config_dict.keys():
+                updater["aeff.aeff"]["param.livetime"].value = (
+                    "%s * units.common_year" % config_dict["livetime"]
+                )
+        return "%s/pipeline_%s.cfg" % (path, config_name)
 
 
 class ContourFitter:
