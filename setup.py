@@ -28,6 +28,7 @@ EXTRAS_REQUIRE = {
         "black",
         "colorlog",
         "coverage",
+        "MarkupSafe<=2.1",
         "pre-commit",
         "pydocstyle",
         "pylint",
