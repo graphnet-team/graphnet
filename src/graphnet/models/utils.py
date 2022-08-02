@@ -39,17 +39,20 @@ def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
     return torch.sqrt(torch.sum(diff**2, dim=1))
 
 
-def knn_graph_batch(batch: Batch, k: List[int]):
+def knn_graph_batch(batch: Batch, k: List[int], columns: List[int]):
     """Calculates the k-nearest-neighbours with an individual k for each event in batch.
 
     Args:
         batch (Batch): A torch_geometric.data.Batch of events
         k (List[int]): A list of k's
+        columns (List[int]): The columns of Data.x used for computing the distances. Eg. Data.x[:,[0,1,2]]
 
     Returns:
         Batch: returns the same batch of events, but with updated edges.
     """
     data_list = batch.to_data_list()
     for i in range(len(data_list)):
-        data_list[i].edge_index = knn_graph(x=data_list[i].x[:, 0:3], k=k[i])
+        data_list[i].edge_index = knn_graph(
+            x=data_list[i].x[:, columns], k=k[i]
+        )
     return Batch.from_data_list(data_list)
