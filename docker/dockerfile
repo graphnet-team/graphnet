@@ -6,6 +6,8 @@ ARG CUDA=cpu
 
 RUN pip install --upgrade pip && \
     pip install wheel setuptools==59.5.0 && \
+    pip install --upgrade astropy && \
+    pip install --ignore-installed PyYAML && \
     pip install torch==${TORCH}+${CUDA} -f https://download.pytorch.org/whl/${CUDA}/torch_stable.html && \
     pip install torch-cluster==1.5.9 -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html && \
     pip install torch-scatter==2.0.9 -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html && \
