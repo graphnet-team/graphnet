@@ -99,6 +99,37 @@ class DataConverter(ABC, LoggerMixin):
         index_column: str = "event_no",
         icetray_verbose: int = 0,
     ):
+        """Converts I3 files to an intermediate format.
+
+        When using `input_file_batch_pattern`, regular expressions are used to
+        group files according to their names. All files that match a certain
+        pattern up to wildcards are grouped into the same output file. This
+        output file has the same name as the input files that are group into it,
+        with wildcards replaced with "x". Periods (.) and wildcards (*) have a
+        special meaning: Periods are interpreted as literal periods, and not as
+        matching any character (as in standard regex); and wildcards are
+        interpreted as ".*" in standard regex.
+
+        For instance, the pattern "[A-Z]{1}_[0-9]{5}*.i3.zst" will find all I3
+        files whose names contain:
+         - one capital letter, followed by
+         - an underscore, followed by
+         - five numbers, followed by
+         - any string of characters ending in ".i3.zst"
+
+        This means that, e.g., the files:
+         - upgrade_genie_step4_141020_A_000000.i3.zst
+         - upgrade_genie_step4_141020_A_000001.i3.zst
+         - ...
+         - upgrade_genie_step4_141020_A_000008.i3.zst
+         - upgrade_genie_step4_141020_A_000009.i3.zst
+        would be grouped into the output file named
+        "upgrade_genie_step4_141020_A_00000x.<suffix>" but the file
+         - upgrade_genie_step4_141020_A_000010.i3.zst
+        would end up in a separate group, named
+        "upgrade_genie_step4_141020_A_00001x.<suffix>".
+
+        """
         # Check(s)
         if not isinstance(extractors, (list, tuple)):
             extractors = [extractors]
