@@ -14,7 +14,9 @@ from graphnet.components.loss_functions import (
 )
 from graphnet.components.utils import fit_scaler
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.utils import get_equal_proportion_neutrino_indices
+from graphnet.data.sqlite.sqlite_selection import (
+    get_equal_proportion_neutrino_indices,
+)
 from graphnet.models import Model
 from graphnet.models.detector.icecube import IceCubeUpgrade
 from graphnet.models.gnn import DynEdge_V2

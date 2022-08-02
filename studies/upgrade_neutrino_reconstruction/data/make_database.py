@@ -5,7 +5,7 @@ from graphnet.data.extractors import (
     I3FeatureExtractorIceCubeUpgrade,
     I3TruthExtractor,
 )
-from graphnet.data.sqlite_dataconverter import SQLiteDataConverter
+from graphnet.data.sqlite.sqlite_dataconverter import SQLiteDataConverter
 
 
 def make_database():

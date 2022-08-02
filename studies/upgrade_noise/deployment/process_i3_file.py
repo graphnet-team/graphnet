@@ -4,13 +4,13 @@ from os import makedirs
 from os.path import join, dirname
 
 from I3Tray import I3Tray
-from graphnet.data.utils import is_gcd_file
+from graphnet.utilities.filesys import is_gcd_file
 from icecube import dataclasses
 
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.modules import GraphNeTModuleIceCubeUpgrade
+from graphnet.deployment.i3modules import GraphNeTModuleIceCubeUpgrade
 
 # Constants
 BASE_DIR = "/groups/icecube/asogaard/gnn/upgrade_sensitivity"

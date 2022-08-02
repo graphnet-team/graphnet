@@ -24,6 +24,7 @@ $ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc -y  #
 $ conda activate graphnet  # Optional
 (graphnet) $ pip install -r requirements/torch_[gpu/cpu].txt -e .[develop,torch]
 ```
+If you have an old system version of GCC installed (`< 4.9`), you should add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/lib/` to your `.bashrc` script or similar.
 
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already have recent versions (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
 

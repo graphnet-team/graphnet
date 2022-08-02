@@ -8,7 +8,7 @@ from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.sqlite_dataset import SQLiteDataset
+from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.utilities.logging import get_logger
 
 
@@ -38,7 +38,7 @@ dataset = SQLiteDataset(
 
 logger.info(dataset[1])
 logger.info(dataset[1].x)
-dataset.close_connection()  # This is necessary iff `dataset` has been indexed between instantiation and passing to `DataLoader`
+dataset._close_connection()  # This is necessary iff `dataset` has been indexed between instantiation and passing to `DataLoader`
 
 dataloader = torch.utils.data.DataLoader(
     dataset,
