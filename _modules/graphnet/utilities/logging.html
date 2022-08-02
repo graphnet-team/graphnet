@@ -64,6 +64,7 @@
   <h1>Source code for graphnet.utilities.logging</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Consistent and configurable logging across the project.&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">colorlog</span>
@@ -71,19 +72,68 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span>
 
 
 <span class="c1"># Constants</span>
-<span class="n">LOG_FOLDER</span> <span class="o">=</span> <span class="s2">&quot;logs&quot;</span>
+<span class="n">LOGGER_NAME</span> <span class="o">=</span> <span class="s2">&quot;graphnet&quot;</span>
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">LOG_FOLDER</span> <span class="o">=</span> <span class="s2">&quot;logs&quot;</span>
 
 
+<span class="c1"># Utility method(s)</span>
 <div class="viewcode-block" id="set_logging_level"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.logging.set_logging_level">[docs]</a><span class="k">def</span> <span class="nf">set_logging_level</span><span class="p">(</span><span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the logging level for all loggers.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">LOGGER</span>
     <span class="k">if</span> <span class="n">LOGGER</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">get_logger</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_formatters"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.logging.get_formatters">[docs]</a><span class="k">def</span> <span class="nf">get_formatters</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">,</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">ColoredFormatter</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Get coloured and non-coloured logging formatters&quot;&quot;&quot;</span>
+
+    <span class="c1"># Common configuration</span>
+    <span class="n">colorlog_format</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;34m</span><span class="si">%(name)s</span><span class="se">\033</span><span class="s2">[0m: &quot;</span>
+        <span class="s2">&quot;</span><span class="si">%(log_color)s%(levelname)-8s</span><span class="se">\033</span><span class="s2">[0m &quot;</span>
+        <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(className)s%(funcName)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">basic_format</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\x1b\[[0-9;,]*m&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">colorlog_format</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">%(log_color)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">datefmt</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+
+    <span class="c1"># Formatters</span>
+    <span class="n">colored_formatter</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">ColoredFormatter</span><span class="p">(</span>
+        <span class="n">colorlog_format</span><span class="p">,</span>
+        <span class="n">datefmt</span><span class="o">=</span><span class="n">datefmt</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">basic_formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+        <span class="n">basic_format</span><span class="p">,</span>
+        <span class="n">datefmt</span><span class="o">=</span><span class="n">datefmt</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">basic_formatter</span><span class="p">,</span> <span class="n">colored_formatter</span></div>
+
+
+<div class="viewcode-block" id="RepeatFilter"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.logging.RepeatFilter">[docs]</a><span class="k">class</span> <span class="nc">RepeatFilter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Filter out repeat messages.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span> <span class="o">=</span> <span class="mi">20</span>
+
+<div class="viewcode-block" id="RepeatFilter.filter"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.logging.RepeatFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">]</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span><span class="p">:</span>
+            <span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;Will not print the below message again (</span><span class="si">{self.nb_repeats_allowed}</span><span class="s2"> repeats reached).&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">ret</span></div></div>
 
 
 <div class="viewcode-block" id="get_logger"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.logging.get_logger">[docs]</a><span class="k">def</span> <span class="nf">get_logger</span><span class="p">(</span>
@@ -103,30 +153,14 @@
     <span class="k">if</span> <span class="n">level</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
 
-    <span class="c1"># Common configuration</span>
-    <span class="n">colorlog_format</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;34m</span><span class="si">%(name)s</span><span class="se">\033</span><span class="s2">[0m: &quot;</span>
-        <span class="s2">&quot;</span><span class="si">%(log_color)s%(levelname)-8s</span><span class="se">\033</span><span class="s2">[0m &quot;</span>
-        <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(funcName)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
-    <span class="n">basic_format</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\x1b\[[0-9;,]*m&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">colorlog_format</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="si">%(log_color)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
-    <span class="p">)</span>
-    <span class="n">datefmt</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
-
-    <span class="c1"># Formatters</span>
-    <span class="n">colored_formatter</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">ColoredFormatter</span><span class="p">(</span>
-        <span class="n">colorlog_format</span><span class="p">,</span>
-        <span class="n">datefmt</span><span class="o">=</span><span class="n">datefmt</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">basic_formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-        <span class="n">basic_format</span><span class="p">,</span>
-        <span class="n">datefmt</span><span class="o">=</span><span class="n">datefmt</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">basic_formatter</span><span class="p">,</span> <span class="n">colored_formatter</span> <span class="o">=</span> <span class="n">get_formatters</span><span class="p">()</span>
 
     <span class="c1"># Create logger</span>
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;graphnet&quot;</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+
+    <span class="c1"># Add duplicate filter</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">RepeatFilter</span><span class="p">())</span>
 
     <span class="c1"># Add stream handler</span>
     <span class="n">stream_handler</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
@@ -143,12 +177,15 @@
         <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">log_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_folder</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;graphnet_</span><span class="si">{timestamp}</span><span class="s2">.log&quot;</span><span class="p">)</span>
+    <span class="n">log_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_folder</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{LOGGER_NAME}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.log&quot;</span><span class="p">)</span>
 
     <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
     <span class="n">stream_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
     <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">basic_formatter</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+
+    <span class="c1"># Make className empty by default</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;className&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Writing log to </span><span class="si">{log_path}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -156,6 +193,16 @@
     <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logger</span>
 
     <span class="k">return</span> <span class="n">LOGGER</span></div>
+
+
+<div class="viewcode-block" id="LoggerMixin"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin">[docs]</a><span class="k">class</span> <span class="nc">LoggerMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">(</span>
+            <span class="n">logger</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;className&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span></div>
 </pre></div>
 
            </div>

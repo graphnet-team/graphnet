@@ -40,6 +40,7 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.utilities package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-graphnet.utilities.filesys">graphnet.utilities.filesys module</a></li>
 <li><a class="reference internal" href="#module-graphnet.utilities.imports">graphnet.utilities.imports module</a></li>
 <li><a class="reference internal" href="#module-graphnet.utilities.logging">graphnet.utilities.logging module</a></li>
 <li><a class="reference internal" href="#module-graphnet.utilities.maths">graphnet.utilities.maths module</a></li>
@@ -77,6 +78,53 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
+<section id="module-graphnet.utilities.filesys">
+<span id="graphnet-utilities-filesys-module"></span><h2>graphnet.utilities.filesys module<a class="headerlink" href="#module-graphnet.utilities.filesys" title="Permalink to this heading"></a></h2>
+<p>File system-related utility functions relevant to the graphnet package.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.filesys.find_i3_files">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.filesys.</span></span><span class="sig-name descname"><span class="pre">find_i3_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/filesys.html#find_i3_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.filesys.find_i3_files" title="Permalink to this definition"></a></dt>
+<dd><p>Finds I3 files and corresponding GCD files in <cite>directories</cite>.</p>
+<p>Finds I3 files in dir and matches each file with a corresponding GCD file if
+present in the directory, matches with gcd_rescue if gcd is not present in
+the directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directories</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Directories to search recursively for I3 files.</p></li>
+<li><p><strong>gcd_rescue</strong> (<em>str</em>) – Path to the GCD that will be default if no GCD is
+present in the directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Paths to I3 files in <cite>directories</cite>
+gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>i3_list (list[str])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.filesys.has_extension">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.filesys.</span></span><span class="sig-name descname"><span class="pre">has_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extensions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/utilities/filesys.html#has_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.filesys.has_extension" title="Permalink to this definition"></a></dt>
+<dd><p>Checks whether <cite>filename</cite> has one of the desired extensions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.filesys.is_gcd_file">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.filesys.</span></span><span class="sig-name descname"><span class="pre">is_gcd_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/utilities/filesys.html#is_gcd_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.filesys.is_gcd_file" title="Permalink to this definition"></a></dt>
+<dd><p>Checks whether <cite>filename</cite> is a GCD file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.filesys.is_i3_file">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.filesys.</span></span><span class="sig-name descname"><span class="pre">is_i3_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/utilities/filesys.html#is_i3_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.filesys.is_i3_file" title="Permalink to this definition"></a></dt>
+<dd><p>Checks whether <cite>filename</cite> is an I3 file.</p>
+</dd></dl>
+
+</section>
 <section id="module-graphnet.utilities.imports">
 <span id="graphnet-utilities-imports-module"></span><h2>graphnet.utilities.imports module<a class="headerlink" href="#module-graphnet.utilities.imports" title="Permalink to this heading"></a></h2>
 <p>Common functionns for icetray/data-based unit tests.</p>
@@ -96,6 +144,35 @@
 <section id="module-graphnet.utilities.logging">
 <span id="graphnet-utilities-logging-module"></span><h2>graphnet.utilities.logging module<a class="headerlink" href="#module-graphnet.utilities.logging" title="Permalink to this heading"></a></h2>
 <p>Consistent and configurable logging across the project.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">LoggerMixin</span></span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#LoggerMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.logger">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.logger" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.RepeatFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">RepeatFilter</span></span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#RepeatFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.RepeatFilter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Filter out repeat messages.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.RepeatFilter.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#RepeatFilter.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.RepeatFilter.filter" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.get_formatters">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">get_formatters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Formatter</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ColoredFormatter</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#get_formatters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.get_formatters" title="Permalink to this definition"></a></dt>
+<dd><p>Get coloured and non-coloured logging formatters</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.utilities.logging.get_logger">
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">get_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'logs'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Logger</span></span></span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#get_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.get_logger" title="Permalink to this definition"></a></dt>
@@ -107,7 +184,8 @@ will also save debug output to file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.utilities.logging.set_logging_level">
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">set_logging_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#set_logging_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.set_logging_level" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Set the logging level for all loggers.</p>
+</dd></dl>
 
 </section>
 <section id="module-graphnet.utilities.maths">

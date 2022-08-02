@@ -1,0 +1,21 @@
+graphnet.data.utilities package
+===============================
+
+Submodules
+----------
+
+graphnet.data.utilities.random module
+-------------------------------------
+
+.. automodule:: graphnet.data.utilities.random
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.data.utilities
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -4,6 +4,14 @@ graphnet.utilities package
 Submodules
 ----------
 
+graphnet.utilities.filesys module
+---------------------------------
+
+.. automodule:: graphnet.utilities.filesys
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.utilities.imports module
 ---------------------------------
 

@@ -43,13 +43,8 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.constants">graphnet.data.constants module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.dataconverter">graphnet.data.dataconverter module</a></li>
-<li><a class="reference internal" href="#graphnet-data-i3extractor-module">graphnet.data.i3extractor module</a></li>
-<li><a class="reference internal" href="#graphnet-data-parquet-dataset-module">graphnet.data.parquet_dataset module</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.dataset">graphnet.data.dataset module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.pipeline">graphnet.data.pipeline module</a></li>
-<li><a class="reference internal" href="#module-graphnet.data.sqlite_dataconverter">graphnet.data.sqlite_dataconverter module</a></li>
-<li><a class="reference internal" href="#module-graphnet.data.sqlite_dataset">graphnet.data.sqlite_dataset module</a></li>
-<li><a class="reference internal" href="#module-graphnet.data.sqlite_dataset_perturbed">graphnet.data.sqlite_dataset_perturbed module</a></li>
-<li><a class="reference internal" href="#module-graphnet.data.utils">graphnet.data.utils module</a></li>
 <li><a class="reference internal" href="#module-graphnet.data">Module contents</a></li>
 </ul>
 </li>
@@ -93,6 +88,29 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3truthextractor">graphnet.data.extractors.i3truthextractor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.utilities">graphnet.data.extractors.utilities module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.parquet.html">graphnet.data.parquet package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#module-graphnet.data.parquet.parquet_dataconverter">graphnet.data.parquet.parquet_dataconverter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#module-graphnet.data.parquet.parquet_dataset">graphnet.data.parquet.parquet_dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#module-graphnet.data.parquet">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.sqlite.html">graphnet.data.sqlite package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataconverter">graphnet.data.sqlite.sqlite_dataconverter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset">graphnet.data.sqlite.sqlite_dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset_perturbed">graphnet.data.sqlite.sqlite_dataset_perturbed module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_selection">graphnet.data.sqlite.sqlite_selection module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_utilities">graphnet.data.sqlite.sqlite_utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.utilities.html">graphnet.data.utilities package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities.random">graphnet.data.utilities.random module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -151,23 +169,329 @@
 <span id="graphnet-data-dataconverter-module"></span><h2>graphnet.data.dataconverter module<a class="headerlink" href="#module-graphnet.data.dataconverter" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Abstract base class for specialised (SQLite, numpy, etc.) data converter classes.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><span class="pre">I3Extractor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
+<p>Abstract base class for specialised (SQLite, parquet, etc.) converters.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.__call__">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Main call to convert I3 files in <a href="#id1"><span class="problematic" id="id2">`</span></a>directories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>directories</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – One or more directories, the I3
+files within which should be converted to an intermediate file
+format.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Constructor</p>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><span class="pre">I3Extractor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Converts I3 files to an intermediate format.</p>
+<p>When using <cite>input_file_batch_pattern</cite>, regular expressions are used to
+group files according to their names. All files that match a certain
+pattern up to wildcards are grouped into the same output file. This
+output file has the same name as the input files that are group into it,
+with wildcards replaced with “x”. Periods (.) and wildcards (*) have a
+special meaning: Periods are interpreted as literal periods, and not as
+matching any character (as in standard regex); and wildcards are
+interpreted as “.*” in standard regex.</p>
+<p>For instance, the pattern “[A-Z]{1}_[0-9]{5}*.i3.zst” will find all I3
+files whose names contain:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>one capital letter, followed by</p></li>
+<li><p>an underscore, followed by</p></li>
+<li><p>five numbers, followed by</p></li>
+<li><p>any string of characters ending in “.i3.zst”</p></li>
+</ul>
+</div></blockquote>
+<dl class="simple">
+<dt>This means that, e.g., the files:</dt><dd><ul class="simple">
+<li><p>upgrade_genie_step4_141020_A_000000.i3.zst</p></li>
+<li><p>upgrade_genie_step4_141020_A_000001.i3.zst</p></li>
+<li><p>…</p></li>
+<li><p>upgrade_genie_step4_141020_A_000008.i3.zst</p></li>
+<li><p>upgrade_genie_step4_141020_A_000009.i3.zst</p></li>
+</ul>
+</dd>
+</dl>
+<p>would be grouped into the output file named
+“upgrade_genie_step4_141020_A_00000x.&lt;suffix&gt;” but the file</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>upgrade_genie_step4_141020_A_000010.i3.zst</p></li>
+</ul>
+</div></blockquote>
+<p>would end up in a separate group, named
+“upgrade_genie_step4_141020_A_00001x.&lt;suffix&gt;”.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter._extract_data">
+<span class="sig-name descname"><span class="pre">_extract_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#graphnet.data.dataconverter.FileSet" title="graphnet.data.dataconverter.FileSet"><span class="pre">FileSet</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">OrderedDict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter._extract_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter._extract_data" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts data from single I3 file.</p>
+<p>If the saving strategy is 1:1 (i.e., each I3 file is converted to a
+corresponding intermediate file) the data is saved to such a file, and
+no data is return from the method.</p>
+<p>The above distincting is to allow worker processes to save files rather
+than sending it back to the main process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fileset</strong> – Path to I3 file and corresponding GCD file.</p></li>
+<li><p><strong>index</strong> – Value for sequentially numbering events.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Extracted data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter._iterate_over_batches_of_files">
+<span class="sig-name descname"><span class="pre">_iterate_over_batches_of_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphnet.data.dataconverter.FileSet" title="graphnet.data.dataconverter.FileSet"><span class="pre">FileSet</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter._iterate_over_batches_of_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter._iterate_over_batches_of_files" title="Permalink to this definition"></a></dt>
+<dd><p>Iterate over a batch of files and save results on worker processes (if applicable)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter._save_filenames">
+<span class="sig-name descname"><span class="pre">_save_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter._save_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter._save_filenames" title="Permalink to this definition"></a></dt>
+<dd><p>Saves I3 file names in CSV format.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter._update_shared_variables">
+<span class="sig-name descname"><span class="pre">_update_shared_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Pool</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter._update_shared_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter._update_shared_variables" title="Permalink to this definition"></a></dt>
+<dd><p>Update <cite>self._index</cite> and <cite>self._output_files</cite>.</p>
+<p>If <cite>pool</cite> is set, it means that multiprocessing was used. In this case,
+the worker processes will not have been able to write directly to
+<cite>self._index</cite> and <cite>self._output_files</cite>, and we need to get them synced
+up.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.execute">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filesets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphnet.data.dataconverter.FileSet" title="graphnet.data.dataconverter.FileSet"><span class="pre">FileSet</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.execute" title="Permalink to this definition"></a></dt>
+<dd><p>General method for processing a set of I3 files.</p>
+<p>The files are converted individually according to the inheriting class/
+intermediate file format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filesets</strong> (<em>List</em><em>[</em><a class="reference internal" href="#graphnet.data.dataconverter.FileSet" title="graphnet.data.dataconverter.FileSet"><em>FileSet</em></a><em>]</em>) – List of paths to I3 and corresponding GCD files.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.file_suffix">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_suffix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.file_suffix" title="Permalink to this definition"></a></dt>
+<dd><p>Suffix to use on output files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.get_map_function">
+<span class="sig-name descname"><span class="pre">get_map_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'I3</span> <span class="pre">file(s)'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Pool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.get_map_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.get_map_function" title="Permalink to this definition"></a></dt>
+<dd><p>Identify the type of map function to use (pure python or multiprocess).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.merge_files">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.merge_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.merge_files" title="Permalink to this definition"></a></dt>
+<dd><p>Implementation-specific method for merging output files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_file</strong> (<em>str</em>) – Name of the output file containing the merged
+results.</p></li>
+<li><p><strong>input_files</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Intermediate files to be merged, according
+to the specific implementation. Default to None, meaning that
+all files output by the current instance are merged.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.save_data">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">OrderedDict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.save_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.save_data" title="Permalink to this definition"></a></dt>
+<dd><p>Implementation-specific method for saving data to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>List</em><em>[</em><em>OrderedDict</em><em>]</em>) – List of extracted features.</p></li>
+<li><p><strong>output_file</strong> (<em>str</em>) – Name of output file.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.FileSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">FileSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#FileSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.FileSet" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.FileSet.gcd_file">
+<span class="sig-name descname"><span class="pre">gcd_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.data.dataconverter.FileSet.gcd_file" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.FileSet.i3_file">
+<span class="sig-name descname"><span class="pre">i3_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.data.dataconverter.FileSet.i3_file" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.cache_output_files">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">cache_output_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#cache_output_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.cache_output_files" title="Permalink to this definition"></a></dt>
+<dd><p>Decorator to cache output file names.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.init_global_index">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">init_global_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#init_global_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.init_global_index" title="Permalink to this definition"></a></dt>
+<dd><p>Make <cite>global_index</cite> available to pool workers.</p>
+</dd></dl>
+
 </section>
-<section id="graphnet-data-i3extractor-module">
-<h2>graphnet.data.i3extractor module<a class="headerlink" href="#graphnet-data-i3extractor-module" title="Permalink to this heading"></a></h2>
-</section>
-<section id="graphnet-data-parquet-dataset-module">
-<h2>graphnet.data.parquet_dataset module<a class="headerlink" href="#graphnet-data-parquet-dataset-module" title="Permalink to this heading"></a></h2>
+<section id="module-graphnet.data.dataset">
+<span id="graphnet-data-dataset-module"></span><h2>graphnet.data.dataset module<a class="headerlink" href="#module-graphnet.data.dataset" title="Permalink to this heading"></a></h2>
+<p>Module defining the base <cite>Dataset</cite> class used in GraphNeT.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="graphnet.data.dataset.ColumnMissingException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.</span></span><span class="sig-name descname"><span class="pre">ColumnMissingException</span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#ColumnMissingException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.ColumnMissingException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception to indicate a missing column in a dataset.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemaps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string_selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
+<p>Base Dataset class for reading from any intermediate file format.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._check_missing_columns">
+<span class="sig-name descname"><span class="pre">_check_missing_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._check_missing_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._check_missing_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Return a list missing columns in <cite>table</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._create_graph">
+<span class="sig-name descname"><span class="pre">_create_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Data</span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._create_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._create_graph" title="Permalink to this definition"></a></dt>
+<dd><p>Create Pytorch Data (i.e.graph) object.</p>
+<p>No preprocessing is performed at this stage, just as no node adjancency
+is imposed. This means that the <cite>edge_attr</cite> and <cite>edge_weight</cite> attributes
+are not set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>list</em>) – List of tuples, containing event features.</p></li>
+<li><p><strong>truth</strong> (<em>list</em>) – List of tuples, containing truth information.</p></li>
+<li><p><strong>node_truth</strong> (<em>list</em>) – List of tuples, containing node-level truth.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Graph object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._get_all_indices">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_get_all_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._get_all_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._get_all_indices" title="Permalink to this definition"></a></dt>
+<dd><p>Return a list of all available values in <cite>self._index_column</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._get_dbang_label">
+<span class="sig-name descname"><span class="pre">_get_dbang_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._get_dbang_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._get_dbang_label" title="Permalink to this definition"></a></dt>
+<dd><p>Get label for double-bang classification.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._get_labels">
+<span class="sig-name descname"><span class="pre">_get_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._get_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._get_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Return dictionary of custom labels to be added to graph as attributed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._initialise">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_initialise</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._initialise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._initialise" title="Permalink to this definition"></a></dt>
+<dd><p>Set any internal representation needed to read data from input file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._query">
+<span class="sig-name descname"><span class="pre">_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._query" title="Permalink to this definition"></a></dt>
+<dd><p>Query file for event features and truth information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – Sequentially numbered index (i.e. in [0,len(self))) of
+the event to query. This _may_ differ from the indexation used
+in <cite>self._indices</cite>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pulse-level event features.
+List[Tuple]: Event-level truth information. List has length 1.
+List[Tuple]: Pulse-level truth information.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[Tuple]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._query_table">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_query_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._query_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._query_table" title="Permalink to this definition"></a></dt>
+<dd><p>Query a table at a specific index, optionally subject to some selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>str</em>) – Table to be queried.</p></li>
+<li><p><strong>columns</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Columns to read out.</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – Sequentially numbered index (i.e. in [0,len(self))) of
+the event to query. This _may_ differ from the indexation used
+in <cite>self._indices</cite>.</p></li>
+<li><p><strong>selection</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Selection to be imposed before
+reading out data. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Returns a list of tuples containing the values in</dt><dd><p><cite>columns</cite>. If the <cite>table</cite> contains only scalar data for <cite>columns</cite>,
+a list of length 1 is returned</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[Tuple[Any]]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#graphnet.data.dataset.ColumnMissingException" title="graphnet.data.dataset.ColumnMissingException"><strong>ColumnMissingException</strong></a> – If one or more element in <cite>columns</cite> is not
+    present in <cite>table</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._remove_missing_columns">
+<span class="sig-name descname"><span class="pre">_remove_missing_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._remove_missing_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._remove_missing_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Remove columns that are not present in the input file.</p>
+<p>Columns are removed from <cite>self._features</cite> and <cite>self._truth</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-graphnet.data.pipeline">
 <span id="graphnet-data-pipeline-module"></span><h2>graphnet.data.pipeline module<a class="headerlink" href="#module-graphnet.data.pipeline" title="Permalink to this heading"></a></h2>
@@ -222,412 +546,6 @@
 :type df: str</p>
 </dd></dl>
 
-</dd></dl>
-
-</section>
-<section id="module-graphnet.data.sqlite_dataconverter">
-<span id="graphnet-data-sqlite-dataconverter-module"></span><h2>graphnet.data.sqlite_dataconverter module<a class="headerlink" href="#module-graphnet.data.sqlite_dataconverter" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">SQLiteDataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dictionary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.data.dataconverter.DataConverter" title="graphnet.data.dataconverter.DataConverter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataConverter</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dictionary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Implementation of DataConverter for saving to SQLite database.</p>
-<p>Converts the i3-files in paths to several temporary SQLite databases in
-parallel, that are then merged to a single SQLite database</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>feature_extractor_class</strong> (<em>class</em>) – Class inheriting from I3FeatureExtractor
-that should be used to extract experiement data.</p></li>
-<li><p><strong>outdir</strong> (<em>str</em>) – the directory to which the SQLite database is written</p></li>
-<li><p><strong>gcd_rescue</strong> (<em>str</em>) – path to gcd_file that the extraction defaults to
-if none is found in the folders</p></li>
-<li><p><strong>db_name</strong> (<em>str</em>) – database name. please omit extensions.</p></li>
-<li><p><strong>workers</strong> (<em>int</em>) – number of workers used for parallel extraction.</p></li>
-<li><p><strong>max_dictionary_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of events in
-a temporary database. Defaults to 10000.</p></li>
-<li><p><strong>verbose</strong> (<em>int</em><em>, </em><em>optional</em>) – Silent extraction if 0. Defaults to 1.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._attach_index">
-<span class="sig-name descname"><span class="pre">_attach_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._attach_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._attach_index" title="Permalink to this definition"></a></dt>
-<dd><p>Attaches the table index. Important for query times!</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._create_table">
-<span class="sig-name descname"><span class="pre">_create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_pulse_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._create_table" title="Permalink to this definition"></a></dt>
-<dd><p>Creates a table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<em>str</em>) – path to the database</p></li>
-<li><p><strong>table_name</strong> (<em>str</em>) – name of the table</p></li>
-<li><p><strong>columns</strong> (<em>str</em>) – the names of the columns of the table</p></li>
-<li><p><strong>is_pulse_map</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether or not this is a pulse map table. Defaults to False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._extract_everything">
-<span class="sig-name descname"><span class="pre">_extract_everything</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pd.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._extract_everything"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._extract_everything" title="Permalink to this definition"></a></dt>
-<dd><p>Extracts everything from the temporary database <cite>db</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>db</strong> (<em>str</em>) – Path to temporary database</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Contains the data for each extracted table</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>results (dict)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._merge_databases">
-<span class="sig-name descname"><span class="pre">_merge_databases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._merge_databases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._merge_databases" title="Permalink to this definition"></a></dt>
-<dd><p>Merges the temporary databases into a single sqlite database, then deletes the temporary databases.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases">
-<span class="sig-name descname"><span class="pre">_merge_temporary_databases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_tmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._merge_temporary_databases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases" title="Permalink to this definition"></a></dt>
-<dd><p>Merges the temporary databases.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<em>str</em>) – path to the final database</p></li>
-<li><p><strong>db_files</strong> (<em>list</em>) – list of names of temporary databases</p></li>
-<li><p><strong>path_to_tmp</strong> (<em>str</em>) – path to temporary database directory</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._parallel_extraction">
-<span class="sig-name descname"><span class="pre">_parallel_extraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._parallel_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._parallel_extraction" title="Permalink to this definition"></a></dt>
-<dd><p>The function that every worker runs.</p>
-<p>Performs all requested extractions and saves the results as temporary SQLite databases.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>settings</strong> (<em>list</em>) – List of arguments.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._process_files">
-<span class="sig-name descname"><span class="pre">_process_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._process_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._process_files" title="Permalink to this definition"></a></dt>
-<dd><p>Starts the parallelized extraction using map_async.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._save_filenames">
-<span class="sig-name descname"><span class="pre">_save_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._save_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._save_filenames" title="Permalink to this definition"></a></dt>
-<dd><p>Saves I3 file names in CSV format.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter._submit_to_database">
-<span class="sig-name descname"><span class="pre">_submit_to_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter._submit_to_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter._submit_to_database" title="Permalink to this definition"></a></dt>
-<dd><p>Submits data to the database with specified key.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty">
-<span class="sig-name descname"><span class="pre">any_pulsemap_is_non_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OrderedDict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#SQLiteDataConverter.any_pulsemap_is_non_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty" title="Permalink to this definition"></a></dt>
-<dd><p>Check whether there are any non-empty pulsemaps extracted from P frame.
-Takes in the data extracted from the P frame, then retrieves the values, if
-there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least
-one of the pulsemaps is non-empty then return true.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.apply_event_no">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">apply_event_no</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_no_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_counter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#apply_event_no"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.apply_event_no" title="Permalink to this definition"></a></dt>
-<dd><p>Converts extraction to pandas.DataFrame and applies the event_no index to extraction.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>extraction</strong> – Dictionary with the extracted data.</p></li>
-<li><p><strong>event_no_list</strong> – List of allocated event_no’s.</p></li>
-<li><p><strong>event_counter</strong> – Index for event_no_list.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Extraction as pandas.DataFrame with event_no column.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataconverter.is_pulsemap_check">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_pulsemap_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataconverter.html#is_pulsemap_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataconverter.is_pulsemap_check" title="Permalink to this definition"></a></dt>
-<dd><p>Check whether <cite>table_name</cite> corresponds to a pulsemap, and not a truth or RETRO table.</p>
-</dd></dl>
-
-</section>
-<section id="module-graphnet.data.sqlite_dataset">
-<span id="graphnet-data-sqlite-dataset-module"></span><h2>graphnet.data.sqlite_dataset module<a class="headerlink" href="#module-graphnet.data.sqlite_dataset" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataset.</span></span><span class="sig-name descname"><span class="pre">SQLiteDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemaps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string_selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
-<p>Pytorch dataset for reading from SQLite.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset._create_graph">
-<span class="sig-name descname"><span class="pre">_create_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset._create_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset._create_graph" title="Permalink to this definition"></a></dt>
-<dd><p>Create Pytorch Data (i.e.graph) object.</p>
-<p>No preprocessing is performed at this stage, just as no node adjancency
-is imposed. This means that the <cite>edge_attr</cite> and <cite>edge_weight</cite> attributes
-are not set.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>features</strong> (<em>list</em>) – List of tuples, containing event features.</p></li>
-<li><p><strong>truth</strong> (<em>list</em>) – List of tuples, containing truth information.</p></li>
-<li><p><strong>node_truth</strong> (<em>list</em>) – List of tuples, containing node-level truth.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Graph object.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Data</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset._query_database">
-<span class="sig-name descname"><span class="pre">_query_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset._query_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset._query_database" title="Permalink to this definition"></a></dt>
-<dd><p>Query SQLite database for event feature and truth information.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>i</strong> (<em>int</em>) – Sequentially numbered index (i.e. in [0,len(self))) of the
-event to query.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>List of tuples, containing event features.
-list: List of tuples, containing truth information.
-list: List of tuples, containing node-level truth information.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset._query_table">
-<span class="sig-name descname"><span class="pre">_query_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset._query_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset._query_table" title="Permalink to this definition"></a></dt>
-<dd><p>Query a table at a specific index, optionally subject to some selection.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset.close_connection">
-<span class="sig-name descname"><span class="pre">close_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset.close_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset.close_connection" title="Permalink to this definition"></a></dt>
-<dd><p>Make sure that no sqlite3 connection is open.</p>
-<p>This is necessary to calls this before passing to <cite>torch.DataLoader</cite>
-such that the dataset replica on each worker is required to create its
-own connection (thereby avoiding <cite>sqlite3.DatabaseError: database disk
-image is malformed</cite> errors due to inability to use sqlite3 connection
-accross processes.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset.establish_connection">
-<span class="sig-name descname"><span class="pre">establish_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset.establish_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset.establish_connection" title="Permalink to this definition"></a></dt>
-<dd><p>Make sure that a sqlite3 connection is open.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset.SQLiteDataset.remove_missing_columns">
-<span class="sig-name descname"><span class="pre">remove_missing_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset.html#SQLiteDataset.remove_missing_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset.SQLiteDataset.remove_missing_columns" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="module-graphnet.data.sqlite_dataset_perturbed">
-<span id="graphnet-data-sqlite-dataset-perturbed-module"></span><h2>graphnet.data.sqlite_dataset_perturbed module<a class="headerlink" href="#module-graphnet.data.sqlite_dataset_perturbed" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.data.sqlite_dataset_perturbed.SQLiteDatasetPerturbed">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite_dataset_perturbed.</span></span><span class="sig-name descname"><span class="pre">SQLiteDatasetPerturbed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perturbation_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite_dataset_perturbed.html#SQLiteDatasetPerturbed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite_dataset_perturbed.SQLiteDatasetPerturbed" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.data.sqlite_dataset.SQLiteDataset" title="graphnet.data.sqlite_dataset.SQLiteDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLiteDataset</span></code></a></p>
-<p>Pytorch dataset for reading from SQLite including a perturbation step to test the stability of a trained model.</p>
-</dd></dl>
-
-</section>
-<section id="module-graphnet.data.utils">
-<span id="graphnet-data-utils-module"></span><h2>graphnet.data.utils module<a class="headerlink" href="#module-graphnet.data.utils" title="Permalink to this heading"></a></h2>
-<p>Utility function relevant to the graphnet.data package.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.create_out_directory">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">create_out_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#create_out_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.create_out_directory" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.find_i3_files">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">find_i3_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#find_i3_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.find_i3_files" title="Permalink to this definition"></a></dt>
-<dd><p>Finds I3 files and corresponding GCD files in <cite>directories</cite>.</p>
-<p>Finds I3 files in dir and matches each file with a corresponding GCD file if
-present in the directory, matches with gcd_rescue if gcd is not present in
-the directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>directories</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Directories to search recursively for I3 files.</p></li>
-<li><p><strong>gcd_rescue</strong> (<em>str</em>) – Path to the GCD that will be default if no GCD is
-present in the directory.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Paths to I3 files in <cite>directories</cite>
-gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>i3_list (list[str])</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.get_desired_event_numbers">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">get_desired_event_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_nu_e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_muon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_nu_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_nu_tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#get_desired_event_numbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.get_desired_event_numbers" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.get_equal_proportion_neutrino_indices">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">get_equal_proportion_neutrino_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/utils.html#get_equal_proportion_neutrino_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.get_equal_proportion_neutrino_indices" title="Permalink to this definition"></a></dt>
-<dd><p>Utility method to get indices for neutrino events in equal flavour proportions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>db</strong> (<em>str</em>) – Path to database.</p></li>
-<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random number generator seed. Defaults to 42.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Training and test indices, resp.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.get_even_dbang_selection">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">get_even_dbang_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_max_decay_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/utils.html#get_even_dbang_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.get_even_dbang_selection" title="Permalink to this definition"></a></dt>
-<dd><p>Utility method to get indices for neutrino events with equal dbang / non-dbang labels.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>db</strong> (<em>str</em>) – Path to database.</p></li>
-<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random number generator seed. Defaults to 42.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Training and test indices, resp.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.get_even_signal_background_indicies">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">get_even_signal_background_indicies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#get_even_signal_background_indicies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.get_even_signal_background_indicies" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.get_even_track_cascade_indicies">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">get_even_track_cascade_indicies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#get_even_track_cascade_indicies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.get_even_track_cascade_indicies" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.has_extension">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">has_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extensions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/utils.html#has_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.has_extension" title="Permalink to this definition"></a></dt>
-<dd><p>Checks whether <cite>filename</cite> has one of the desired extensions.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.is_gcd_file">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">is_gcd_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/utils.html#is_gcd_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.is_gcd_file" title="Permalink to this definition"></a></dt>
-<dd><p>Checks whether <cite>filename</cite> is a GCD file.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.is_i3_file">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">is_i3_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/utils.html#is_i3_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.is_i3_file" title="Permalink to this definition"></a></dt>
-<dd><p>Checks whether <cite>filename</cite> is an I3 file.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.pairwise_shuffle">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">pairwise_shuffle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#pairwise_shuffle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.pairwise_shuffle" title="Permalink to this definition"></a></dt>
-<dd><p>Shuffles the I3 file list and the correponding gcd file list.</p>
-<p>This is handy because it ensures a more even extraction load for each worker.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>files_list</strong> (<em>list</em>) – List of I3 file paths.</p></li>
-<li><p><strong>gcd_list</strong> (<em>list</em>) – List of corresponding gcd file paths.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>List of shuffled I3 file paths.
-gcd_shuffled (list): List of corresponding gcd file paths.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>i3_shuffled (list)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.run_sql_code">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">run_sql_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#run_sql_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.run_sql_code" title="Permalink to this definition"></a></dt>
-<dd><p>executes SQLite coded</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<em>str</em>) – path to databases</p></li>
-<li><p><strong>code</strong> (<em>str</em>) – SQLite code</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.utils.save_to_sql">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.utils.</span></span><span class="sig-name descname"><span class="pre">save_to_sql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utils.html#save_to_sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utils.save_to_sql" title="Permalink to this definition"></a></dt>
-<dd><p>saves a dataframe df to a table table_name in SQLite database database. Table must exist already.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – dataframe with data to be stored in sqlite table</p></li>
-<li><p><strong>table_name</strong> (<em>str</em>) – name of table. Must exist already</p></li>
-<li><p><strong>database</strong> (<em>SQLite database</em>) – path to SQLite database</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 </section>

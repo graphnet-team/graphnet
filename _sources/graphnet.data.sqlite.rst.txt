@@ -1,0 +1,53 @@
+graphnet.data.sqlite package
+============================
+
+Submodules
+----------
+
+graphnet.data.sqlite.sqlite\_dataconverter module
+-------------------------------------------------
+
+.. automodule:: graphnet.data.sqlite.sqlite_dataconverter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.sqlite.sqlite\_dataset module
+-------------------------------------------
+
+.. automodule:: graphnet.data.sqlite.sqlite_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.sqlite.sqlite\_dataset\_perturbed module
+------------------------------------------------------
+
+.. automodule:: graphnet.data.sqlite.sqlite_dataset_perturbed
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.sqlite.sqlite\_selection module
+---------------------------------------------
+
+.. automodule:: graphnet.data.sqlite.sqlite_selection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.data.sqlite.sqlite\_utilities module
+---------------------------------------------
+
+.. automodule:: graphnet.data.sqlite.sqlite_utilities
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.data.sqlite
+   :members:
+   :undoc-members:
+   :show-inheritance:
