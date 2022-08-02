@@ -31,7 +31,7 @@ class LossFunction(_WeightedLoss):
         self,
         prediction: Tensor,
         target: Tensor,
-        weights: Tensor,
+        weights: Tensor = 1,
         return_elements: bool = False,
     ) -> Tensor:
         """Forward pass for all loss functions.
@@ -63,25 +63,29 @@ class LossFunction(_WeightedLoss):
 class MSELoss(LossFunction):
     """Mean squared error loss."""
 
-    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+    def _forward(
+        self, prediction: Tensor, target: Tensor, weights: Tensor
+    ) -> Tensor:
         """Implementation of loss calculation."""
         # Check(s)
         assert prediction.dim() == 2
         assert prediction.size() == target.size()
 
         elements = torch.mean((prediction - target) ** 2, dim=-1)
-        return elements
+        return elements * weights
 
 
 class RMSELoss(MSELoss):
     """Root mean squared error loss."""
 
-    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+    def _forward(
+        self, prediction: Tensor, target: Tensor, weights: Tensor
+    ) -> Tensor:
         """Implementation of loss calculation."""
         # Check(s)
         elements = super()._forward(prediction, target)
         elements = torch.sqrt(elements)
-        return elements
+        return elements * weights
 
 
 class LogCoshLoss(LossFunction):
@@ -315,7 +319,6 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         )
 
         return self._evaluate(p, t) * weights
-
 
 
 class EuclideanDistanceLoss(LossFunction):
