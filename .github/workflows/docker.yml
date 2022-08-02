@@ -12,6 +12,7 @@ env:
 
 jobs:
   docker:
+    if: github.repository == 'icecube/graphnet'
     runs-on: ubuntu-latest
     permissions:
       packages: write
