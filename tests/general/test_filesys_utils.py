@@ -1,6 +1,6 @@
-"""Unit tests for I3Extractor class."""
+"""Unit tests for file system utility methods."""
 
-from graphnet.data.utils import is_i3_file, has_extension
+from graphnet.utilities.filesys import is_i3_file, has_extension
 
 
 def test_is_i3_file():

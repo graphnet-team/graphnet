@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import LoggerMixin, get_logger
 
 logger = get_logger()
 
@@ -11,10 +11,10 @@ try:
         dataio,
     )  # pyright: reportMissingImports=false
 except ImportError:
-    logger.info("icecube package not available.")
+    logger.warning("icecube package not available.")
 
 
-class I3Extractor(ABC):
+class I3Extractor(ABC, LoggerMixin):
     """Extracts relevant information from physics frames."""
 
     def __init__(self, name):

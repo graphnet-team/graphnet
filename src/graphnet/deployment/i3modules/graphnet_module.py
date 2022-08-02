@@ -26,7 +26,7 @@ try:
         I3Double,
     )  # pyright: reportMissingImports=false
 except ImportError:
-    logger.info("icecube package not available.")
+    logger.warning("icecube package not available.")
 
 
 class GraphNeTModuleBase(I3Module):
