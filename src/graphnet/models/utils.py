@@ -1,5 +1,10 @@
+from abc import ABC, abstractmethod
+from typing import List
+from torch_geometric.nn import knn_graph
+from torch_geometric.data import Data, Batch
 import torch
 from torch import Tensor
+
 from torch_geometric.utils.homophily import homophily
 
 
@@ -32,3 +37,19 @@ def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
     """
     diff = xyz_coords.unsqueeze(dim=2) - xyz_coords.T.unsqueeze(dim=0)
     return torch.sqrt(torch.sum(diff**2, dim=1))
+
+
+def knn_graph_batch(batch: Batch, k: List[int]):
+    """Calculates the k-nearest-neighbours with an individual k for each event in batch.
+
+    Args:
+        batch (Batch): A torch_geometric.data.Batch of events
+        k (List[int]): A list of k's
+
+    Returns:
+        Batch: returns the same batch of events, but with updated edges.
+    """
+    data_list = batch.to_data_list()
+    for i in range(len(data_list)):
+        data_list[i].edge_index = knn_graph(x=data_list[i].x[:, 0:3], k=k[i])
+    return Batch.from_data_list(data_list)
