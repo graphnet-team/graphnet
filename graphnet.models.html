@@ -680,6 +680,27 @@ features in x.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.utils.knn_graph_batch">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.utils.</span></span><span class="sig-name descname"><span class="pre">knn_graph_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/utils.html#knn_graph_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.utils.knn_graph_batch" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the k-nearest-neighbours with an individual k for each event in batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Batch</em>) – A torch_geometric.data.Batch of events</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A list of k’s</p></li>
+<li><p><strong>columns</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – The columns of Data.x used for computing the distances. Eg. Data.x[:,[0,1,2]]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>returns the same batch of events, but with updated edges.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Batch</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-graphnet.models">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.models" title="Permalink to this heading"></a></h2>
