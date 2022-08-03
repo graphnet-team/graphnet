@@ -33,7 +33,7 @@ With the IceTray environment active, you can now install `graphnet`, either at a
 <summary><b>Install <i>without</i> torch</b></summary>
 
 ```bash
-$ pip install --user -e .[develop]  # Without pytorch, i.e. only for file conversion
+$ pip install --user -e .[develop]  # Without torch, i.e. only for file conversion
 ```
 
 </details>
@@ -42,8 +42,8 @@ $ pip install --user -e .[develop]  # Without pytorch, i.e. only for file conver
 <summary><b>Install <i>with</i> torch</b></summary>
 
 ```bash
-$ pip install --user -r requirements/torch_cpu.txt -e .[develop,torch]  # CPU-only
-$ pip install --user -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU-support
+$ pip install --user -r requirements/torch_cpu.txt -e .[develop,torch]  # CPU-only torch
+$ pip install --user -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU support
 ```
 
 </details>
@@ -63,8 +63,8 @@ $ git clone git@github.com:<your-username>/graphnet.git
 $ cd graphnet
 $ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc -y  # Optional
 $ conda activate graphnet  # Optional
-(graphnet) $ pip install -r requirements/torch_cpu.txt -e .[develop,torch]  # For CPU-only torch
-(graphnet) $ pip install -r requirements/torch_gpu.txt -e .[develop,torch]  # For GPU support
+(graphnet) $ pip install -r requirements/torch_cpu.txt -e .[develop,torch]  # CPU-only torch
+(graphnet) $ pip install -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU support
 ```
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
