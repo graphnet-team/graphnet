@@ -30,7 +30,7 @@ Optionally, you can alias these commands or save them as a bash script for conve
 With the IceTray environment active, you can now install `graphnet`, either at a user level or in a python virtual environment. You can either install a light-weight version of `graphnet` without the `torch` extras, i.e., without the machine learning packages (pytorch and pytorch-geometric); this is useful when you just want to convert data from I3 files to, e.g., SQLite, and won't be running inference on I3 files later on. In this case, you don't need to specify a requirements file. If you want torch, you do.
 
 <details>
-<summary><b>↪ Install <i>without</i> torch</b></summary>
+<summary><b>Install <i>without</i> torch</b></summary>
 
 ```bash
 $ pip install --user -e .[develop]  # Without pytorch, i.e. only for file conversion
@@ -39,7 +39,7 @@ $ pip install --user -e .[develop]  # Without pytorch, i.e. only for file conver
 </details>
 
 <details>
-<summary><b>↪ Install <i>with</i> torch</b></summary>
+<summary><b>Install <i>with</i> torch</b></summary>
 
 ```bash
 $ pip install --user -r requirements/torch_cpu.txt -e .[develop,torch]  # CPU-only
