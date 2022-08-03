@@ -54,7 +54,6 @@ A stand-alone installation requires specifying a supported python version (see a
 If you have an older system version of GCC than this installed and you install newer compiler though the above command, you should add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/lib/` to your `.bashrc` script or similar.
 
 </details>
-&nbsp;
 
 ## :handshake:  Contributing
 
