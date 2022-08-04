@@ -15,7 +15,7 @@ import configparser
 import io
 from configupdater import ConfigUpdater
 from contextlib import contextmanager
-from graphnet.data.utils import run_sql_code, save_to_sql
+from graphnet.data.sqlite import run_sql_code, save_to_sql
 
 mpl.use("pdf")
 plt.rc("font", family="serif")
