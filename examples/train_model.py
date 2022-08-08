@@ -8,7 +8,9 @@ from torch.optim.adam import Adam
 
 from graphnet.components.loss_functions import LogCoshLoss
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.utils import get_equal_proportion_neutrino_indices
+from graphnet.data.sqlite.sqlite_selection import (
+    get_equal_proportion_neutrino_indices,
+)
 from graphnet.models import Model
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn import DynEdge
@@ -29,7 +31,7 @@ torch.multiprocessing.set_sharing_strategy("file_system")
 
 # Constants
 features = FEATURES.DEEPCORE
-truth = TRUTH.DEEPCORE
+truth = TRUTH.DEEPCORE[:-1]
 
 # Initialise Weights & Biases (W&B) run
 wandb_logger = WandbLogger(

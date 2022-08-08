@@ -1,5 +1,7 @@
 """Common functionns for icetray/data-based unit tests."""
 
+from functools import wraps
+
 from graphnet.utilities.logging import get_logger
 
 
@@ -19,6 +21,7 @@ def has_icecube_package() -> bool:
 def requires_icecube(test_function):
     """Decorator for only exposing function if `icecube` module is present."""
 
+    @wraps(test_function)
     def wrapper(*args, **kwargs):
         if has_icecube_package():
             return test_function(*args, **kwargs)
@@ -28,5 +31,4 @@ def requires_icecube(test_function):
             )
             return
 
-    wrapper.__name__ = test_function.__name__
     return wrapper
