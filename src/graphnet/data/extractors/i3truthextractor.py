@@ -18,7 +18,7 @@ try:
         phys_services,
     )  # pyright: reportMissingImports=false
 except ImportError:
-    logger.info("icecube package not available.")
+    logger.warning("icecube package not available.")
 
 
 class I3TruthExtractor(I3Extractor):
@@ -109,38 +109,38 @@ class I3TruthExtractor(I3Extractor):
         if "FilterMask" in frame:
             if "DeepCoreFilter_13" in frame["FilterMask"]:
                 output["DeepCoreFilter_13"] = int(
-                    frame["FilterMask"]["DeepCoreFilter_13"]
+                    bool(frame["FilterMask"]["DeepCoreFilter_13"])
                 )
             if "CascadeFilter_13" in frame["FilterMask"]:
                 output["CascadeFilter_13"] = int(
-                    frame["FilterMask"]["CascadeFilter_13"]
+                    bool(frame["FilterMask"]["CascadeFilter_13"])
                 )
             if "MuonFilter_13" in frame["FilterMask"]:
                 output["MuonFilter_13"] = int(
-                    frame["FilterMask"]["MuonFilter_13"]
+                    bool(frame["FilterMask"]["MuonFilter_13"])
                 )
             if "OnlineL2Filter_17" in frame["FilterMask"]:
                 output["OnlineL2Filter_17"] = int(
-                    frame["FilterMask"]["OnlineL2Filter_17"]
+                    bool(frame["FilterMask"]["OnlineL2Filter_17"])
                 )
 
         elif "DeepCoreFilter_13" in frame:
             output["DeepCoreFilter_13"] = int(bool(frame["DeepCoreFilter_13"]))
 
         if "L3_oscNext_bool" in frame:
-            output["L3_oscNext_bool"] = int(frame["L3_oscNext_bool"])
+            output["L3_oscNext_bool"] = int(bool(frame["L3_oscNext_bool"]))
 
         if "L4_oscNext_bool" in frame:
-            output["L4_oscNext_bool"] = int(frame["L4_oscNext_bool"])
+            output["L4_oscNext_bool"] = int(bool(frame["L4_oscNext_bool"]))
 
         if "L5_oscNext_bool" in frame:
-            output["L5_oscNext_bool"] = int(frame["L5_oscNext_bool"])
+            output["L5_oscNext_bool"] = int(bool(frame["L5_oscNext_bool"]))
 
         if "L6_oscNext_bool" in frame:
-            output["L6_oscNext_bool"] = int(frame["L6_oscNext_bool"])
+            output["L6_oscNext_bool"] = int(bool(frame["L6_oscNext_bool"]))
 
         if "L7_oscNext_bool" in frame:
-            output["L7_oscNext_bool"] = int(frame["L7_oscNext_bool"])
+            output["L7_oscNext_bool"] = int(bool(frame["L7_oscNext_bool"]))
 
         if is_mc and (not is_noise):
             (

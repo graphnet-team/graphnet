@@ -1,4 +1,4 @@
-"""Minimum working example (MWE) to use SQLiteDataConverter."""
+"""Minimum working example (MWE) to use ParquetDataConverter."""
 
 import logging
 import os
@@ -11,9 +11,9 @@ from graphnet.data.extractors import (
     I3RetroExtractor,
     I3TruthExtractor,
 )
-from graphnet.data.sqlite.sqlite_dataconverter import SQLiteDataConverter
+from graphnet.data.parquet.parquet_dataconverter import ParquetDataConverter
 
-logger = get_logger(level=logging.DEBUG)
+logger = get_logger(level=logging.INFO)
 
 
 def main_icecube86():
@@ -23,9 +23,9 @@ def main_icecube86():
     ]
     pulsemap = "SRTInIcePulses"
     gcd_rescue = "resources/GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz"
-    outdir = "/groups/icecube/asogaard/temp/sqlite_test_ic86"
+    outdir = "/groups/icecube/asogaard/temp/parquet_test_ic86"
 
-    converter = SQLiteDataConverter(
+    converter = ParquetDataConverter(
         [
             I3TruthExtractor(),
             I3RetroExtractor(),
@@ -44,10 +44,10 @@ def main_icecube_upgrade():
     gcd_rescue = os.path.join(
         basedir, "gcd/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2"
     )
-    outdir = "/groups/icecube/asogaard/temp/sqlite_test_upgrade"
+    outdir = "/groups/icecube/asogaard/temp/parquet_test_upgrade"
     workers = 10
 
-    converter = SQLiteDataConverter(
+    converter = ParquetDataConverter(
         [
             I3TruthExtractor(),
             I3RetroExtractor(),
