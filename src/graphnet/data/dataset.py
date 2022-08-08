@@ -30,6 +30,9 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         string_selection: Optional[List[int]] = None,
         selection: Optional[List[int]] = None,
         dtype: torch.dtype = torch.float32,
+        loss_weight_table: str = None,
+        loss_weight_column: str = None,
+        loss_weight_padding_value: float = 1.0,
     ):
         # Check(s)
         if isinstance(pulsemaps, str):
@@ -46,6 +49,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self._truth = [index_column] + truth
         self._index_column = index_column
         self._truth_table = truth_table
+        self._loss_weight_padding_value = loss_weight_padding_value
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
@@ -71,6 +75,19 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self._selection = None
         if self._string_selection:
             self._selection = f"string in {str(tuple(self._string_selection))}"
+
+        self._loss_weight_column = loss_weight_column
+        self._loss_weight_table = loss_weight_table
+        if (self._loss_weight_table is None) and (
+            self._loss_weight_column is not None
+        ):
+            self.logger.warning("Error: no loss weight table specified")
+            assert isinstance(self._loss_weight_table, str)
+        if (self._loss_weight_table is not None) and (
+            self._loss_weight_column is None
+        ):
+            self.logger.warning("Error: no loss weight column specified")
+            assert isinstance(self._loss_weight_column, str)
 
         self._dtype = dtype
 
@@ -134,8 +151,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             raise IndexError(
                 f"Index {index} not in range [0, {len(self) - 1}]"
             )
-        features, truth, node_truth = self._query(index)
-        graph = self._create_graph(features, truth, node_truth)
+        features, truth, node_truth, loss_weight = self._query(index)
+        graph = self._create_graph(features, truth, node_truth, loss_weight)
         return graph
 
     # Internal method(s)
@@ -226,13 +243,23 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             )
         else:
             node_truth = None
-        return features, truth, node_truth
+
+        if self._loss_weight_column is not None:
+            if self._loss_weight_table is not None:
+                loss_weight = self._query_table(
+                    self._loss_weight_column, self._loss_weight_table, index
+                )
+        else:
+            loss_weight = [self._loss_weight_padding_value]
+
+        return features, truth, node_truth, loss_weight
 
     def _create_graph(
         self,
         features: List[Tuple[Any]],
         truth: List[Tuple[Any]],
         node_truth: Optional[List[Tuple[Any]]] = None,
+        loss_weight: float = None,
     ) -> Data:
         """Create Pytorch Data (i.e.graph) object.
 
@@ -244,6 +271,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             features (list): List of tuples, containing event features.
             truth (list): List of tuples, containing truth information.
             node_truth (list): List of tuples, containing node-level truth.
+            loss_weight (float): A weight associated with the event for weighing the loss.
 
         Returns:
             torch.Data: Graph object.
@@ -277,6 +305,16 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         graph = Data(x=x, edge_index=None)
         graph.n_pulses = n_pulses
         graph.features = self._features[1:]
+        # Write add loss weight to graph.
+        if loss_weight is not None and self._loss_weight_column is not None:
+            if len(loss_weight) == 0:
+                graph[self._loss_weight_column] = torch.tensor(
+                    self._loss_weight_padding_value, dtype=self._dtype
+                ).reshape(-1, 1)
+            else:
+                graph[self._loss_weight_column] = torch.tensor(
+                    loss_weight, dtype=self._dtype
+                ).reshape(-1, 1)
 
         # Write attributes, either target labels, truth info or original features.
         add_these_to_graph = [labels_dict, truth_dict]
