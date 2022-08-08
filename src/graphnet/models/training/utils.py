@@ -32,6 +32,8 @@ def make_dataloader(
     node_truth: str = None,
     node_truth_table: str = None,
     string_selection: List[int] = None,
+    loss_weight_table: str = None,
+    loss_weight_column: str = None,
 ) -> DataLoader:
 
     # Check(s)
@@ -47,6 +49,8 @@ def make_dataloader(
         node_truth=node_truth,
         node_truth_table=node_truth_table,
         string_selection=string_selection,
+        loss_weight_table=loss_weight_table,
+        loss_weight_column=loss_weight_column,
     )
 
     def collate_fn(graphs):
@@ -83,6 +87,8 @@ def make_train_validation_dataloader(
     node_truth: str = None,
     node_truth_table: str = None,
     string_selection: List[int] = None,
+    loss_weight_column: str = None,
+    loss_weight_table: str = None,
 ) -> Tuple[DataLoader]:
 
     # Reproducibility
@@ -122,6 +128,8 @@ def make_train_validation_dataloader(
         node_truth=node_truth,
         node_truth_table=node_truth_table,
         string_selection=string_selection,
+        loss_weight_column=loss_weight_column,
+        loss_weight_table=loss_weight_table,
     )
 
     training_dataloader = make_dataloader(
@@ -151,6 +159,7 @@ def get_predictions(
     node_level=False,
     additional_attributes=None,
 ):
+    # Gets predictions from model on the events in the dataloader. NOTE: dataloader must NOT have shuffle = True!
     # Check(s)
     if additional_attributes is None:
         additional_attributes = []
