@@ -247,7 +247,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         if self._loss_weight_column is not None:
             if self._loss_weight_table is not None:
                 loss_weight = self._query_table(
-                    self._loss_weight_column, self._loss_weight_table, index
+                    self._loss_weight_table, self._loss_weight_column, index
                 )
         else:
             loss_weight = [self._loss_weight_padding_value]
