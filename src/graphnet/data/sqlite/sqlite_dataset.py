@@ -56,6 +56,8 @@ class SQLiteDataset(Dataset):
         # Query table
         self._establish_connection(index)
         try:
+            # a = f"SELECT {columns} FROM {table} WHERE {self._index_column} = {index} and {selection}"
+            # print(a)
             result = self._conn.execute(
                 f"SELECT {columns} FROM {table} WHERE {self._index_column} = {index} and {selection}"
             ).fetchall()
