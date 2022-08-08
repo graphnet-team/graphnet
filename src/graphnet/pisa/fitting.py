@@ -78,10 +78,10 @@ def config_updater(
 class WeightFitter:
     def __init__(
         self,
-        database_path,
-        truth_table="truth",
-        index_column="event_no",
-        statistical_fit=False,
+        database_path: str,
+        truth_table: str = "truth",
+        index_column: str = "event_no",
+        statistical_fit: bool = False,
     ):
         self._database_path = database_path
         self._truth_table = truth_table
@@ -90,11 +90,22 @@ class WeightFitter:
 
     def fit_weights(
         self,
-        config_outdir,
-        weight_name=None,
-        pisa_config_dict=None,
-        add_to_database=False,
+        config_outdir: str,
+        weight_name: str = None,
+        pisa_config_dict: dict = None,
+        add_to_database: bool = False,
     ):
+        """Fits flux weights to each neutrino event in self._database_path. If statistical_fit = True, only statistical effects are accounted for. If True, certain systematic effects are included, but not hypersurfaces.
+
+        Args:
+            config_outdir (str): The outdir to store the configuration in.
+            weight_name (str, optional): The name of the weight. If add_to_database = True, this will be the name of the table. Defaults to None.
+            pisa_config_dict (dict, optional): The dictionary of pisa configurations. Can be used to change assumptions regarding the fit. Defaults to None.
+            add_to_database (bool, optional): If True, a table will be added to the database called weight_name with two columns; index_column, weight_name. Defaults to False.
+
+        Returns:
+            pandas.DataFrame: A dataframe with columns index_column, weight_name .
+        """
         # if its a standard weight
         if pisa_config_dict is None:
             if isinstance(weight_name, str) is False:
