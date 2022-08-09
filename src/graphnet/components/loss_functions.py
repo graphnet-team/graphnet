@@ -57,9 +57,7 @@ class LossFunction(_WeightedLoss):
         return elements if return_elements else torch.mean(elements)
 
     @abstractmethod
-    def _forward(
-        self, prediction: Tensor, target: Tensor, weights: Tensor
-    ) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Syntax similar to `.forward` for implentation in inheriting classes."""
 
 
