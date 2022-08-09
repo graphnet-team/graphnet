@@ -47,7 +47,7 @@ class LossFunction(_WeightedLoss):
             Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
-        elements = self._forward(prediction, target)  # , weights)
+        elements = self._forward(prediction, target)
         if weights is not None:
             elements = elements * weights
         assert elements.size(dim=0) == target.size(
