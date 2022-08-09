@@ -122,12 +122,8 @@ class Task(LightningModule):
         target = self._transform_target(target)
         if self._loss_weight is not None:
             weights = data[self._loss_weight]
-        else:  # if no weights are given, applies weights of 1.
-            weights = (
-                torch.ones(len(pred), dtype=torch.int)
-                .reshape(-1, 1)
-                .to(pred.device)
-            )
+        else:
+            weights = None
         loss = (
             self._loss_function(pred, target, weights=weights)
             + self._regularisation_loss
