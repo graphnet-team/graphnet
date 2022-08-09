@@ -385,8 +385,8 @@ all files output by the current instance are merged.</p></li>
 <span class="sig-name descname"><span class="pre">_create_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Data</span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._create_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._create_graph" title="Permalink to this definition"></a></dt>
 <dd><p>Create Pytorch Data (i.e.graph) object.</p>
 <p>No preprocessing is performed at this stage, just as no node adjancency
-is imposed. This means that the <cite>edge_attr</cite> and <cite>edge_weight</cite> attributes
-are not set.</p>
+is imposed. This means that the <cite>edge_attr</cite> and <cite>edge_weight</cite>
+attributes are not set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -419,13 +419,19 @@ are not set.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._get_labels">
 <span class="sig-name descname"><span class="pre">_get_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._get_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._get_labels" title="Permalink to this definition"></a></dt>
-<dd><p>Return dictionary of custom labels to be added to graph as attributed.</p>
+<dd><p>Return dictionary of  labels, to be added as graph attributes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._initialise">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_initialise</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._initialise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._initialise" title="Permalink to this definition"></a></dt>
-<dd><p>Set any internal representation needed to read data from input file.</p>
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._init">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._init" title="Permalink to this definition"></a></dt>
+<dd><p>Set internal representation needed to read data from input file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._post_init">
+<span class="sig-name descname"><span class="pre">_post_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._post_init" title="Permalink to this definition"></a></dt>
+<dd><p>Implemenation-specific code to be run after the main constructor.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -452,7 +458,7 @@ List[Tuple]: Pulse-level truth information.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._query_table">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_query_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._query_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._query_table" title="Permalink to this definition"></a></dt>
-<dd><p>Query a table at a specific index, optionally subject to some selection.</p>
+<dd><p>Query a table at a specific index, optionally with some selection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -467,8 +473,8 @@ reading out data. Defaults to None.</p></li>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Returns a list of tuples containing the values in</dt><dd><p><cite>columns</cite>. If the <cite>table</cite> contains only scalar data for <cite>columns</cite>,
-a list of length 1 is returned</p>
+<dt>Returns a list of tuples containing the values in</dt><dd><p><cite>columns</cite>. If the <cite>table</cite> contains only scalar data for
+<cite>columns</cite>, a list of length 1 is returned</p>
 </dd>
 </dl>
 </p>
