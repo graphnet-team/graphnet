@@ -74,8 +74,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         self._dtype = dtype
 
-        # Implementation specific initialisation.
-        self._initialise()
+        # Implementation-specific initialisation.
+        self._init()
 
         # Set unique indices
         if selection is None:
@@ -87,10 +87,16 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self._missing_variables = {}
         self._remove_missing_columns()
 
+        # Implementation-specific post-init code.
+        self._post_init()
+
     # Abstract method(s)
     @abstractmethod
-    def _initialise(self):
-        """Set any internal representation needed to read data from input file."""
+    def _init(self):
+        """Set internal representation needed to read data from input file."""
+
+    def _post_init(self):
+        """Implemenation-specific code to be run after the main constructor."""
 
     @abstractmethod
     def _get_all_indices(self) -> List[int]:
@@ -104,7 +110,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         index: int,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any]]:
-        """Query a table at a specific index, optionally subject to some selection.
+        """Query a table at a specific index, optionally with some selection.
 
         Args:
             table (str): Table to be queried.
@@ -117,8 +123,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         Returns:
             List[Tuple[Any]]: Returns a list of tuples containing the values in
-                `columns`. If the `table` contains only scalar data for `columns`,
-                a list of length 1 is returned
+                `columns`. If the `table` contains only scalar data for
+                `columns`, a list of length 1 is returned
 
         Raises:
             ColumnMissingException: If one or more element in `columns` is not
@@ -237,8 +243,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         """Create Pytorch Data (i.e.graph) object.
 
         No preprocessing is performed at this stage, just as no node adjancency
-        is imposed. This means that the `edge_attr` and `edge_weight` attributes
-        are not set.
+        is imposed. This means that the `edge_attr` and `edge_weight`
+        attributes are not set.
 
         Args:
             features (list): List of tuples, containing event features.
@@ -278,7 +284,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         graph.n_pulses = n_pulses
         graph.features = self._features[1:]
 
-        # Write attributes, either target labels, truth info or original features.
+        # Write attributes, either target labels, truth info or original
+        # features.
         add_these_to_graph = [labels_dict, truth_dict]
         if node_truth is not None:
             add_these_to_graph.append(node_truth_dict)
@@ -287,7 +294,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
                 try:
                     graph[key] = torch.tensor(value)
                 except TypeError:
-                    # Cannot convert `value` to Tensor due to its data type, e.g. `str`.
+                    # Cannot convert `value` to Tensor due to its data type,
+                    # e.g. `str`.
                     self.logger.debug(
                         (
                             f"Could not assign `{key}` with type "
@@ -302,7 +310,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         return graph
 
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
-        """Return dictionary of custom labels to be added to graph as attributed."""
+        """Return dictionary of  labels, to be added as graph attributes."""
         abs_pid = abs(truth_dict["pid"])
         sim_type = truth_dict["sim_type"]
 
