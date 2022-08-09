@@ -9,7 +9,7 @@ class SQLiteDataset(Dataset):
     """Pytorch dataset for reading from SQLite."""
 
     # Implementing abstract method(s)
-    def _initialise(self):
+    def _init(self):
         # Check(s)
         if isinstance(self._path, list):
             self._database_list = self._path
@@ -33,6 +33,9 @@ class SQLiteDataset(Dataset):
 
         self._conn = None  # Handle for sqlite3.connection
 
+    def _post_init(self):
+        self._close_connection()
+
     def _query_table(
         self,
         table: str,
@@ -40,7 +43,7 @@ class SQLiteDataset(Dataset):
         index: int,
         selection: Optional[str] = None,
     ):
-        """Query a table at a specific index, optionally subject to some selection."""
+        """Query table at a specific index, optionally with some selection."""
         # Check(s)
         if isinstance(columns, list):
             columns = ", ".join(columns)
@@ -57,7 +60,8 @@ class SQLiteDataset(Dataset):
         self._establish_connection(index)
         try:
             result = self._conn.execute(
-                f"SELECT {columns} FROM {table} WHERE {self._index_column} = {index} and {selection}"
+                f"SELECT {columns} FROM {table} WHERE "
+                f"{self._index_column} = {index} and {selection}"
             ).fetchall()
         except sqlite3.OperationalError as e:
             if "no such column" in str(e):

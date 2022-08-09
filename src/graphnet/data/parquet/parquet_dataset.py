@@ -11,7 +11,7 @@ class ParquetDataset(Dataset):
     """Pytorch dataset for reading from parquet files."""
 
     # Implementing abstract method(s)
-    def _initialise(self):
+    def _init(self):
         # Check(s)
         if isinstance(self._path, list):
             self.logger.error("Multiple files not supported")
