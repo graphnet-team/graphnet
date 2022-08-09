@@ -13,6 +13,7 @@ except ImportError:  # Python version < 3.8
         return f
 
 
+from typing import Optional
 import numpy as np
 import scipy.special
 import torch
@@ -31,7 +32,7 @@ class LossFunction(_WeightedLoss):
         self,
         prediction: Tensor,
         target: Tensor,
-        weights: Tensor = 1,
+        weights: Optional[Tensor] = None,
         return_elements: bool = False,
     ) -> Tensor:
         """Forward pass for all loss functions.
@@ -46,7 +47,9 @@ class LossFunction(_WeightedLoss):
             Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
-        elements = self._forward(prediction, target, weights)
+        elements = self._forward(prediction, target)  # , weights)
+        if weights is not None:
+            elements = elements * weights
         assert elements.size(dim=0) == target.size(
             dim=0
         ), "`_forward` should return elementwise loss terms."
@@ -63,29 +66,25 @@ class LossFunction(_WeightedLoss):
 class MSELoss(LossFunction):
     """Mean squared error loss."""
 
-    def _forward(
-        self, prediction: Tensor, target: Tensor, weights: Tensor
-    ) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
         # Check(s)
         assert prediction.dim() == 2
         assert prediction.size() == target.size()
 
         elements = torch.mean((prediction - target) ** 2, dim=-1)
-        return elements * weights
+        return elements
 
 
 class RMSELoss(MSELoss):
     """Root mean squared error loss."""
 
-    def _forward(
-        self, prediction: Tensor, target: Tensor, weights: Tensor
-    ) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
         # Check(s)
         elements = super()._forward(prediction, target)
         elements = torch.sqrt(elements)
-        return elements * weights
+        return elements
 
 
 class LogCoshLoss(LossFunction):
@@ -103,12 +102,10 @@ class LogCoshLoss(LossFunction):
         """
         return x + torch.nn.functional.softplus(-2.0 * x) - np.log(2.0)
 
-    def _forward(
-        self, prediction: Tensor, target: Tensor, weights: Tensor
-    ) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
         diff = prediction - target
-        elements = self._log_cosh(diff) * weights
+        elements = self._log_cosh(diff)
         return elements
 
 
@@ -119,14 +116,9 @@ class BinaryCrossEntropyLoss(LossFunction):
     loss should be reported elementwise, so set reduction to None
     """
 
-    def _forward(
-        self, prediction: Tensor, target: Tensor, weights: Tensor
-    ) -> Tensor:
-        return (
-            torch.nn.functional.binary_cross_entropy(
-                prediction.float(), target.float(), reduction="none"
-            )
-            * weights
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        return torch.nn.functional.binary_cross_entropy(
+            prediction.float(), target.float(), reduction="none"
         )
 
 
@@ -279,9 +271,7 @@ class VonMisesFisherLoss(LossFunction):
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
     """von Mises-Fisher loss function vectors in the 2D plane."""
 
-    def _forward(
-        self, prediction: Tensor, target: Tensor, weights: Tensor
-    ) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the von Mises-Fisher loss for an angle in the 2D plane.
 
         Args:
@@ -318,13 +308,11 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
             dim=1,
         )
 
-        return self._evaluate(p, t) * weights
+        return self._evaluate(p, t)
 
 
 class EuclideanDistanceLoss(LossFunction):
-    def _forward(
-        self, prediction: Tensor, target: Tensor, weights: Tensor
-    ) -> Tensor:
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculates the 3D Euclidean distance between predicted and target.
 
         Args:
@@ -333,11 +321,8 @@ class EuclideanDistanceLoss(LossFunction):
         Returns:
             Tensor: Loss. Shape [n,1]
         """
-        return (
-            torch.sqrt(
-                (prediction[:, 0] - target[:, 0]) ** 2
-                + (prediction[:, 1] - target[:, 1]) ** 2
-                + (prediction[:, 2] - target[:, 2]) ** 2
-            )
-            * weights
+        return torch.sqrt(
+            (prediction[:, 0] - target[:, 0]) ** 2
+            + (prediction[:, 1] - target[:, 1]) ** 2
+            + (prediction[:, 2] - target[:, 2]) ** 2
         )
