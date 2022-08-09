@@ -79,7 +79,7 @@ class Task(LightningModule):
         self._target_labels = target_labels
         self._loss_function = loss_function
         self._inference = False
-        self._loss_weight_column = loss_weight_column
+        self._loss_weight = loss_weight
 
         self._transform_prediction_training = lambda x: x
         self._transform_prediction_inference = lambda x: x
