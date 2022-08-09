@@ -64,7 +64,7 @@ class Task(LightningModule):
         transform_target: Optional[Callable] = None,
         transform_inference: Optional[Callable] = None,
         transform_support: Optional[tuple] = None,
-        loss_weight_column: Optional[str] = None,
+        loss_weight: Optional[str] = None,
     ):
 
         # Base class constructor
