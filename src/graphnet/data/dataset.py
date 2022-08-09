@@ -264,7 +264,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         features: List[Tuple[Any]],
         truth: List[Tuple[Any]],
         node_truth: Optional[List[Tuple[Any]]] = None,
-        loss_weight: float = None,
+        loss_weight: Optional[float] = None,
     ) -> Data:
         """Create Pytorch Data (i.e.graph) object.
 
