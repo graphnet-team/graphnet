@@ -76,6 +76,7 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="k">import</span> <span class="n">EdgeConv</span>
 <span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter_max</span><span class="p">,</span> <span class="n">scatter_mean</span><span class="p">,</span> <span class="n">scatter_min</span><span class="p">,</span> <span class="n">scatter_sum</span>
 <span class="kn">from</span> <span class="nn">graphnet.components.layers</span> <span class="k">import</span> <span class="n">DynEdgeConv</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.coarsening</span> <span class="k">import</span> <span class="n">DOMCoarsening</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="k">import</span> <span class="n">GNN</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.utils</span> <span class="k">import</span> <span class="n">calculate_xyzt_homophily</span>
@@ -221,6 +222,29 @@
 
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lrelu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
+        <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<div class="viewcode-block" id="DOMCoarsenedDynEdge"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DOMCoarsenedDynEdge">[docs]</a><span class="k">class</span> <span class="nc">DOMCoarsenedDynEdge</span><span class="p">(</span><span class="n">DynEdge</span><span class="p">):</span>
+<div class="viewcode-block" id="DOMCoarsenedDynEdge.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DOMCoarsenedDynEdge.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">layer_size_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;DynEdge model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nb_inputs (int): Number of input features.</span>
+<span class="sd">            layer_size_scale (int, optional): Integer that scales the size of</span>
+<span class="sd">                hidden layers. Defaults to 4.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nb_inputs</span><span class="p">,</span> <span class="n">layer_size_scale</span><span class="p">)</span>
+
+        <span class="c1"># Graph operations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coarsening</span> <span class="o">=</span> <span class="n">DOMCoarsening</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DOMCoarsenedDynEdge.forward"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DOMCoarsenedDynEdge.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Model forward pass.&quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coarsening</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span></div></div>
 
 
