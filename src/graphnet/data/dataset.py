@@ -314,8 +314,14 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         # Add loss weight to graph.
         if loss_weight is not None and self._loss_weight_column is not None:
             if len(loss_weight) == 0:
+                if self._loss_weight_default_value is None:
+                    raise ValueError(
+                        "At least one event is missing an entry in "
+                        f"{self._loss_weight_column} "
+                        "but loss_weight_default_value is None."
+                    )
                 graph[self._loss_weight_column] = torch.tensor(
-                    self._loss_weight_padding_value, dtype=self._dtype
+                    self._loss_weight_default_value, dtype=self._dtype
                 ).reshape(-1, 1)
             else:
                 graph[self._loss_weight_column] = torch.tensor(
