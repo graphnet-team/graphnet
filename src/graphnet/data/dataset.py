@@ -313,6 +313,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         # Add loss weight to graph.
         if loss_weight is not None and self._loss_weight_column is not None:
+            # No loss weight was retrieved, i.e., it is missing for the current event
             if len(loss_weight) == 0:
                 if self._loss_weight_default_value is None:
                     raise ValueError(
