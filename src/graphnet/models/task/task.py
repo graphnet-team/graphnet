@@ -64,6 +64,7 @@ class Task(LightningModule):
         transform_target: Optional[Callable] = None,
         transform_inference: Optional[Callable] = None,
         transform_support: Optional[tuple] = None,
+        loss_weight: Optional[str] = None,
     ):
 
         # Base class constructor
@@ -78,6 +79,7 @@ class Task(LightningModule):
         self._target_labels = target_labels
         self._loss_function = loss_function
         self._inference = False
+        self._loss_weight = loss_weight
 
         self._transform_prediction_training = lambda x: x
         self._transform_prediction_inference = lambda x: x
@@ -118,7 +120,14 @@ class Task(LightningModule):
             [data[label] for label in self._target_labels], dim=1
         )
         target = self._transform_target(target)
-        loss = self._loss_function(pred, target) + self._regularisation_loss
+        if self._loss_weight is not None:
+            weights = data[self._loss_weight]
+        else:
+            weights = None
+        loss = (
+            self._loss_function(pred, target, weights=weights)
+            + self._regularisation_loss
+        )
         return loss
 
     @final
