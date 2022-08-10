@@ -48,7 +48,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self._truth = [index_column] + truth
         self._index_column = index_column
         self._truth_table = truth_table
-        self._loss_weight_padding_value = loss_weight_padding_value
+        self._loss_weight_default_value = loss_weight_default_value
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
