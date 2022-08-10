@@ -31,7 +31,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         dtype: torch.dtype = torch.float32,
         loss_weight_table: str = None,
         loss_weight_column: str = None,
-        loss_weight_padding_value: float = 1.0,
+        loss_weight_default_value: Optional[float] = None,
     ):
         # Check(s)
         if isinstance(pulsemaps, str):
