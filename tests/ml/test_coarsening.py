@@ -8,81 +8,102 @@ from graphnet.models.coarsening import Coarsening
 
 
 # Utility method(s)
-def _get_test_data() -> Data:
+def _get_test_data() -> Batch:
     """Produce toy data for unit tests."""
 
-    x = torch.tensor(
-        [
-            [1, 0, 0.1],  # 0
-            [2, 1, 0.1],  # 1
-            [1, 1, 0.2],  # 2
-            [2, 1, 0.1],  # 1
-            [1, 1, 0.2],  # 2
-            [1, 0, 0.1],  # 3
-            [2, 1, 0.3],  # 4
-            [1, 1, 0.1],  # 5
-            [2, 1, 0.3],  # 4
-            [1, 1, 0.1],  # 6
-        ],
-        dtype=torch.float32,
+    data1 = Data(
+        x=torch.tensor(
+            [
+                [1, 0, 0.1],  # 0
+                [2, 1, 0.1],  # 1
+                [1, 1, 0.2],  # 2
+                [2, 1, 0.1],  # 1
+                [1, 1, 0.2],  # 2
+            ],
+            dtype=torch.float32,
+        ),
+        attr1=torch.tensor(
+            [
+                10,
+                11,
+                12,
+                13,
+                14,
+            ],
+            dtype=torch.int32,
+        ),
+        attr2=torch.tensor(
+            [
+                1.0,
+                2.0,
+                2.0,
+                3.0,
+                4.0,
+            ],
+            dtype=torch.float32,
+        ),
     )
 
-    batch = torch.tensor(
-        [
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            2,
-        ],
-        dtype=torch.int64,
+    data2 = Data(
+        x=torch.tensor(
+            [
+                [1, 0, 0.1],  # 3
+                [2, 1, 0.3],  # 4
+                [1, 1, 0.1],  # 5
+                [2, 1, 0.3],  # 4
+            ],
+            dtype=torch.float32,
+        ),
+        attr1=torch.tensor(
+            [
+                15,
+                16,
+                17,
+                18,
+            ],
+            dtype=torch.int32,
+        ),
+        attr2=torch.tensor(
+            [
+                1.0,
+                4.0,
+                3.0,
+                1.0,
+            ],
+            dtype=torch.float32,
+        ),
     )
 
-    attr1 = torch.tensor(
-        [
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19,
-        ],
-        dtype=torch.int32,
+    data3 = Data(
+        x=torch.tensor(
+            [
+                [1, 1, 0.1],  # 6
+            ],
+            dtype=torch.float32,
+        ),
+        attr1=torch.tensor(
+            [
+                19,
+            ],
+            dtype=torch.int32,
+        ),
+        attr2=torch.tensor(
+            [
+                6.0,
+            ],
+            dtype=torch.float32,
+        ),
     )
 
-    attr2 = torch.tensor(
-        [
-            1.0,
-            2.0,
-            2.0,
-            3.0,
-            4.0,
-            1.0,
-            4.0,
-            3.0,
-            1.0,
-            6.0,
-        ],
-        dtype=torch.float32,
-    )
+    data_list = [data1, data2, data3]
+    for ix in range(len(data_list)):
+        data_list[ix]["x0"] = data_list[ix].x[:, 0]
+        data_list[ix]["x1"] = data_list[ix].x[:, 1]
+        data_list[ix]["x2"] = data_list[ix].x[:, 2]
 
-    data = Batch(batch=batch, x=x)
-    data["x0"] = x[:, 0]
-    data["x1"] = x[:, 1]
-    data["x2"] = x[:, 2]
-    data["attr1"] = attr1
-    data["attr2"] = attr2
+    batch = Batch.from_data_list([data1, data2, data3])
 
-    return data
+    return batch
 
 
 class SimpleCoarsening(Coarsening):

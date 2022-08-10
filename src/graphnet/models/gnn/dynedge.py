@@ -12,6 +12,7 @@ from torch_geometric.data import Data
 from torch_geometric.nn import EdgeConv
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
 from graphnet.components.layers import DynEdgeConv
+from graphnet.models.coarsening import DOMCoarsening
 
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.utils import calculate_xyzt_homophily
@@ -157,6 +158,29 @@ class DynEdge(GNN):
 
         x = self.lrelu(x)
 
+        return x
+
+
+class DOMCoarsenedDynEdge(DynEdge):
+    def __init__(self, nb_inputs, layer_size_scale=4):
+        """DynEdge model.
+
+        Args:
+            nb_inputs (int): Number of input features.
+            layer_size_scale (int, optional): Integer that scales the size of
+                hidden layers. Defaults to 4.
+        """
+
+        # Base class constructor
+        super().__init__(nb_inputs, layer_size_scale)
+
+        # Graph operations
+        self.coarsening = DOMCoarsening()
+
+    def forward(self, data: Data) -> Tensor:
+        """Model forward pass."""
+        data = self.coarsening(data)
+        x = super().forward(data)
         return x
 
 
