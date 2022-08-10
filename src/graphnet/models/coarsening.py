@@ -1,11 +1,14 @@
 """Classes for coarsening operations (i.e., clustering, or local pooling."""
 
 from abc import ABC, abstractmethod
+from multiprocessing import pool
+from typing import List, Union
 
 import torch
 from torch import LongTensor, Tensor
-from torch_geometric.data import Data
+from torch_geometric.data import Data, Batch
 
+# from torch_geometric.utils import unbatch_edge_index
 from graphnet.components.pool import (
     group_by,
     avg_pool,
@@ -18,9 +21,35 @@ from graphnet.components.pool import (
     sum_pool_x,
     std_pool_x,
 )
+from graphnet.utilities.logging import LoggerMixin
+
+# Utility method(s)
+from torch_geometric.utils import degree
+
+# NOTE: From [https://github.com/pyg-team/pytorch_geometric/pull/4903]
+# TODO: Remove once bumping to torch_geometric>=2.1.0
+#       See [https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md]
 
 
-class Coarsening(ABC):
+def unbatch_edge_index(edge_index: Tensor, batch: Tensor) -> List[Tensor]:
+    r"""Splits the :obj:`edge_index` according to a :obj:`batch` vector.
+    Args:
+        edge_index (Tensor): The edge_index tensor. Must be ordered.
+        batch (LongTensor): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            node to a specific example. Must be ordered.
+    :rtype: :class:`List[Tensor]`
+    """
+    deg = degree(batch, dtype=torch.int64)
+    ptr = torch.cat([deg.new_zeros(1), deg.cumsum(dim=0)[:-1]], dim=0)
+
+    edge_batch = batch[edge_index[0]]
+    edge_index = edge_index - ptr[edge_batch]
+    sizes = degree(edge_batch, dtype=torch.int64).cpu().tolist()
+    return edge_index.split(sizes, dim=1)
+
+
+class Coarsening(ABC, LoggerMixin):
     """Base class for coarsening operations."""
 
     # Class variables
@@ -54,36 +83,73 @@ class Coarsening(ABC):
         By default the nominal `pooling_method` is used for features as well.
         This method can be overwritten for bespoke coarsening operations.
         """
-        return None
 
     def _transfer_attributes(
         self, cluster: LongTensor, original_data: Data, pooled_data: Data
     ) -> Data:
         """Transfer attributes on `original_data` to `pooled_data`."""
+        # Check(s)
         if not self._do_transfer_attributes:
             return pooled_data
+
+        if (
+            isinstance(original_data, Batch)
+            or isinstance(pooled_data, Batch)
+            or (original_data.batch is not None)
+        ):
+            raise ValueError(
+                "Please coarsen events individually, not in batches."
+            )
 
         attributes = list(original_data._store.keys())
         for attr in attributes:
             if attr not in pooled_data._store:
                 values = getattr(original_data, attr)
 
-                if (
-                    isinstance(values, Tensor)
-                    and values.size() == original_data.batch.size()
-                ):  # Node-level tensor
+                attr_is_node_level_tensor = False
+                if isinstance(values, Tensor):
+                    attr_is_node_level_tensor = (
+                        values.dim() > 1 or values.size(dim=0) > 1
+                    )
+
+                if attr_is_node_level_tensor:
+                    batch = torch.zeros_like(values, dtype=torch.int32)
                     values = self._attribute_reduce_method(
-                        cluster, values, original_data.batch
+                        cluster,
+                        values,
+                        batch=batch,
                     )[0]
 
                 setattr(pooled_data, attr, values)
 
         return pooled_data
 
-    def __call__(self, data: Data) -> Data:
+    def __call__(self, data: Union[Data, Batch]) -> Union[Data, Batch]:
         """Coarsening operation."""
+
+        # Coarsen individual events if a batch is passed.
+        if isinstance(data, Batch):
+            data_list = data.to_data_list()
+
+            # Ensure that edge_index is kept when unbatching
+            if data.edge_index is not None:
+                edge_index_list = unbatch_edge_index(
+                    data.edge_index, data.batch
+                )
+                for i in range(len(data_list)):
+                    data_list[i].edge_index = (
+                        edge_index_list[i].contiguous().to(data.x.device)
+                    )
+
+            for i in range(len(data_list)):
+                data_list[i] = self.__call__(data_list[i])
+
+            batch = Batch.from_data_list(data_list)
+            batch.batch = batch.batch.to(data.batch.device)
+            return batch
+
         # Get tensor of cluster indices for each node.
-        cluster = self._perform_clustering(data)
+        cluster: LongTensor = self._perform_clustering(data)
 
         # Check whether a graph has already been built. Otherwise, set a dummy
         # connectivity, as this is required by pooling functions.
@@ -92,7 +158,13 @@ class Coarsening(ABC):
             data.edge_index = torch.tensor([[]], dtype=torch.int64)
 
         # Pool `data` object, including `x`, `batch`. and `edge_index`.
-        pooled_data = self._reduce_method(cluster, data)
+        pooled_data: Batch = self._reduce_method(cluster, data)
+        if isinstance(pooled_data, Batch):
+            pooled_data = Data(
+                x=pooled_data.x,
+                edge_index=pooled_data.edge_index,
+                edge_attr=pooled_data.edge_attr,
+            )
 
         # Optionally overwrite feature tensor
         x = self._additional_features(cluster, data)
