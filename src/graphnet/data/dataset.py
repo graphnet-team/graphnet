@@ -310,7 +310,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         graph = Data(x=x, edge_index=None)
         graph.n_pulses = n_pulses
         graph.features = self._features[1:]
-        # Write add loss weight to graph.
+
+        # Add loss weight to graph.
         if loss_weight is not None and self._loss_weight_column is not None:
             if len(loss_weight) == 0:
                 graph[self._loss_weight_column] = torch.tensor(
