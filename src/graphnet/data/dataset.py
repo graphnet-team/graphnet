@@ -254,8 +254,6 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
                 loss_weight = self._query_table(
                     self._loss_weight_table, self._loss_weight_column, index
                 )
-        else:
-            loss_weight = [self._loss_weight_default_value]
 
         return features, truth, node_truth, loss_weight
 
