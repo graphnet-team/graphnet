@@ -96,7 +96,7 @@ class Detector(LoggerMixin, LightningModule):
 
     def _validate_features(self, data: Data):
         if isinstance(data, Batch):
-            data_features = [features[0] for features in data.features]
+            data_features = data.features[0]
         else:
             data_features = data.features
         assert (
