@@ -6,13 +6,10 @@ from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
 
 from graphnet.models.utils import calculate_distance_matrix
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import LoggerMixin
 
 
-logger = get_logger()
-
-
-class GraphBuilder(ABC):  # pylint: disable=too-few-public-methods
+class GraphBuilder(LoggerMixin, ABC):  # pylint: disable=too-few-public-methods
     @abstractmethod
     def __call__(self, data: Data) -> Data:
         pass
@@ -39,7 +36,7 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
     def __call__(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            logger.info(
+            self.logger.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",
@@ -76,7 +73,7 @@ class RadialGraphBuilder(GraphBuilder):
     def __call__(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            logger.info(
+            self.logger.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",
@@ -115,7 +112,7 @@ class EuclideanGraphBuilder(
     def __call__(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            logger.info(
+            self.logger.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",
