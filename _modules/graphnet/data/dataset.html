@@ -313,6 +313,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">node_truth</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="n">loss_weight</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Default</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">loss_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
