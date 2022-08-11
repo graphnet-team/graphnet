@@ -249,6 +249,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         else:
             node_truth = None
 
+        loss_weight = None  # Default
         if self._loss_weight_column is not None:
             if self._loss_weight_table is not None:
                 loss_weight = self._query_table(
