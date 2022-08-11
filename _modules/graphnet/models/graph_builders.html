@@ -70,13 +70,10 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.utils</span> <span class="k">import</span> <span class="n">calculate_distance_matrix</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">LoggerMixin</span>
 
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
-
-
-<div class="viewcode-block" id="GraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.GraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">GraphBuilder</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+<div class="viewcode-block" id="GraphBuilder"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.graph_builders.GraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">GraphBuilder</span><span class="p">(</span><span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="k">pass</span></div>
@@ -103,7 +100,7 @@
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="c1"># Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span>
                     <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">,</span>
@@ -140,7 +137,7 @@
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="c1"># Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span>
                     <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">,</span>
@@ -179,7 +176,7 @@
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="c1"># Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="s2">&quot;WARNING: GraphBuilder received graph with pre-existing structure. &quot;</span>
                     <span class="s2">&quot;Will overwrite.&quot;</span><span class="p">,</span>
