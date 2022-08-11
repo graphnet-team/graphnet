@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 import torch
 from torch import LongTensor, Tensor
@@ -62,11 +62,11 @@ def _group_identical(
             identical rows to the same group.
     """
     if batch is not None:
-        tensor = tensor.cat((tensor, batch.unsqueeze(dim=1)), dim=1)
-    return torch.unique(tensor, return_inverse=True, dim=0)[1]
+        tensor = torch.cat((batch.unsqueeze(dim=1), tensor), dim=1)
+    return torch.unique(tensor, return_inverse=True, sorted=False, dim=0)[1]
 
 
-def group_by(data: Data, keys: List[str]) -> LongTensor:
+def group_by(data: Union[Data, Batch], keys: List[str]) -> LongTensor:
     """Group nodes in `data` that have identical values of `keys`.
 
     This grouping is done with in each event in case of batching. This allows
@@ -86,7 +86,7 @@ def group_by(data: Data, keys: List[str]) -> LongTensor:
     """
     features = [getattr(data, key) for key in keys]
     tensor = torch.stack(features).T  # .int()  @TODO: Required? Use rounding?
-    batch = getattr(tensor, "batch", None)
+    batch = getattr(data, "batch", None)
     index = _group_identical(tensor, batch)
     return index
 
