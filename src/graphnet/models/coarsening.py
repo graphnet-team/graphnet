@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from multiprocessing import pool
-from typing import List, Union
+from typing import List, Optional, Union
 
 import torch
 from torch import LongTensor, Tensor
@@ -74,10 +74,10 @@ class Coarsening(ABC, LoggerMixin):
         self._do_transfer_attributes = transfer_attributes
 
     @abstractmethod
-    def _perform_clustering(self, data: Data) -> LongTensor:
+    def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
 
-    def _additional_features(self, cluster: LongTensor, data: Data) -> Tensor:
+    def _additional_features(self, cluster: LongTensor, data: Batch) -> Tensor:
         """Additional poolings of feature tensor `x` on `data`.
 
         By default the nominal `pooling_method` is used for features as well.
@@ -85,39 +85,35 @@ class Coarsening(ABC, LoggerMixin):
         """
 
     def _transfer_attributes(
-        self, cluster: LongTensor, original_data: Data, pooled_data: Data
-    ) -> Data:
+        self, cluster: LongTensor, original_data: Batch, pooled_data: Batch
+    ) -> Batch:
         """Transfer attributes on `original_data` to `pooled_data`."""
         # Check(s)
         if not self._do_transfer_attributes:
             return pooled_data
 
-        if (
-            isinstance(original_data, Batch)
-            or isinstance(pooled_data, Batch)
-            or (original_data.batch is not None)
-        ):
-            raise ValueError(
-                "Please coarsen events individually, not in batches."
-            )
-
         attributes = list(original_data._store.keys())
-        for attr in attributes:
+        batch: Optional[LongTensor] = original_data.batch
+        for ix, attr in enumerate(attributes):
             if attr not in pooled_data._store:
                 values = getattr(original_data, attr)
 
                 attr_is_node_level_tensor = False
                 if isinstance(values, Tensor):
-                    attr_is_node_level_tensor = (
-                        values.dim() > 1 or values.size(dim=0) > 1
-                    )
+                    if batch is None:
+                        attr_is_node_level_tensor = (
+                            values.dim() > 1 or values.size(dim=0) > 1
+                        )
+                    else:
+                        attr_is_node_level_tensor = (
+                            values.size() == original_data.batch.size()
+                        )
 
                 if attr_is_node_level_tensor:
-                    batch = torch.zeros_like(values, dtype=torch.int32)
-                    values = self._attribute_reduce_method(
+                    values: Tensor = self._attribute_reduce_method(
                         cluster,
                         values,
-                        batch=batch,
+                        batch=torch.zeros_like(values, dtype=torch.int32),
                     )[0]
 
                 setattr(pooled_data, attr, values)
@@ -126,27 +122,6 @@ class Coarsening(ABC, LoggerMixin):
 
     def __call__(self, data: Union[Data, Batch]) -> Union[Data, Batch]:
         """Coarsening operation."""
-
-        # Coarsen individual events if a batch is passed.
-        if isinstance(data, Batch):
-            data_list = data.to_data_list()
-
-            # Ensure that edge_index is kept when unbatching
-            if data.edge_index is not None:
-                edge_index_list = unbatch_edge_index(
-                    data.edge_index, data.batch
-                )
-                for i in range(len(data_list)):
-                    data_list[i].edge_index = (
-                        edge_index_list[i].contiguous().to(data.x.device)
-                    )
-
-            for i in range(len(data_list)):
-                data_list[i] = self.__call__(data_list[i])
-
-            batch = Batch.from_data_list(data_list)
-            batch.batch = batch.batch.to(data.batch.device)
-            return batch
 
         # Get tensor of cluster indices for each node.
         cluster: LongTensor = self._perform_clustering(data)
@@ -159,12 +134,6 @@ class Coarsening(ABC, LoggerMixin):
 
         # Pool `data` object, including `x`, `batch`. and `edge_index`.
         pooled_data: Batch = self._reduce_method(cluster, data)
-        if isinstance(pooled_data, Batch):
-            pooled_data = Data(
-                x=pooled_data.x,
-                edge_index=pooled_data.edge_index,
-                edge_attr=pooled_data.edge_attr,
-            )
 
         # Optionally overwrite feature tensor
         x = self._additional_features(cluster, data)
@@ -189,7 +158,7 @@ class Coarsening(ABC, LoggerMixin):
 
 
 class DOMCoarsening(Coarsening):
-    def _perform_clustering(self, data: Data) -> LongTensor:
+    def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
         # dom_index = group_pulses_to_dom(data)
         dom_index = group_by(
