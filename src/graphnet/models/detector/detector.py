@@ -99,7 +99,7 @@ class Detector(LoggerMixin, LightningModule):
             data_features = [features[0] for features in data.features]
             try:
                 assert data_features == [
-                    self.features[0] for i in range(len(data))
+                    self.features[0] for i in range(len(data_features))
                 ]  # if true, data_features is a repeat of self.features[0] len(data) times - unwanted
                 data_features = data.features[
                     0
