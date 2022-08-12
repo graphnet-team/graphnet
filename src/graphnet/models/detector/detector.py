@@ -96,16 +96,18 @@ class Detector(LoggerMixin, LightningModule):
 
     def _validate_features(self, data: Data):
         if isinstance(data, Batch):
-            data_features = [features[0] for features in data.features]
-            try:
-                assert data_features == [
-                    self.features[0] for i in range(len(data_features))
-                ]  # if true, data_features is a repeat of self.features[0] len(data) times - unwanted
-                data_features = data.features[
-                    0
-                ]  # if assert is true, data_features are set correctly
-            except AssertionError:
-                pass  # if the assert fails, data_features are not transposed.
+            # `data.features` is "transposed" and each list element contains
+            # only duplicate entries.
+            if (
+                len(data.features[0]) == data.num_graphs
+                and len(set(data.features[0])) == 1
+            ):
+                data_features = [features[0] for features in data.features]
+            
+            # `data.features` is not "transposed" and each list element
+            # contains the original features.
+            else:
+                data_features = data.features[0]
         else:
             data_features = data.features
         assert (
