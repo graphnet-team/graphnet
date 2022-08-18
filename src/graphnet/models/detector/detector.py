@@ -96,7 +96,18 @@ class Detector(LoggerMixin, LightningModule):
 
     def _validate_features(self, data: Data):
         if isinstance(data, Batch):
-            data_features = data.features[0]
+            # `data.features` is "transposed" and each list element contains only duplicate entries.
+
+            if (
+                len(data.features[0]) == data.num_graphs
+                and len(set(data.features[0])) == 1
+            ):
+                data_features = [features[0] for features in data.features]
+
+            # `data.features` is not "transposed" and each list element
+            # contains the original features.
+            else:
+                data_features = data.features[0]
         else:
             data_features = data.features
         assert (
