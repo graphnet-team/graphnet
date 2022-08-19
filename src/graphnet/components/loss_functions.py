@@ -13,6 +13,7 @@ except ImportError:  # Python version < 3.8
         return f
 
 
+from typing import Optional
 import numpy as np
 import scipy.special
 import torch
@@ -31,6 +32,7 @@ class LossFunction(_WeightedLoss):
         self,
         prediction: Tensor,
         target: Tensor,
+        weights: Optional[Tensor] = None,
         return_elements: bool = False,
     ) -> Tensor:
         """Forward pass for all loss functions.
@@ -46,6 +48,8 @@ class LossFunction(_WeightedLoss):
                 or elementwise terms with shape [N,] (if `return_elements = True`).
         """
         elements = self._forward(prediction, target)
+        if weights is not None:
+            elements = elements * weights
         assert elements.size(dim=0) == target.size(
             dim=0
         ), "`_forward` should return elementwise loss terms."

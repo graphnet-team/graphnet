@@ -15,12 +15,10 @@ from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 
 from graphnet.models.graph_builders import GraphBuilder
-from graphnet.utilities.logging import get_logger
-
-logger = get_logger()
+from graphnet.utilities.logging import LoggerMixin
 
 
-class Detector(LightningModule):
+class Detector(LoggerMixin, LightningModule):
     """Base class for all detector-specific read-ins in graphnet."""
 
     @property
@@ -38,7 +36,7 @@ class Detector(LightningModule):
         self._graph_builder = graph_builder
         self._scalers = scalers
         if self._scalers:
-            logger.info(
+            self.logger.info(
                 (
                     "Will use scalers rather than standard preprocessing "
                     f"in {self.__class__.__name__}.",
@@ -98,9 +96,20 @@ class Detector(LightningModule):
 
     def _validate_features(self, data: Data):
         if isinstance(data, Batch):
-            data_features = data[0].features
+            # `data.features` is "transposed" and each list element contains only duplicate entries.
+
+            if (
+                len(data.features[0]) == data.num_graphs
+                and len(set(data.features[0])) == 1
+            ):
+                data_features = [features[0] for features in data.features]
+
+            # `data.features` is not "transposed" and each list element
+            # contains the original features.
+            else:
+                data_features = data.features[0]
         else:
             data_features = data.features
         assert (
             data_features == self.features
-        ), "Features on Data and Detector differ: {data_features} vs. {self.features}"
+        ), f"Features on Data and Detector differ: {data_features} vs. {self.features}"
