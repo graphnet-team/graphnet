@@ -80,16 +80,20 @@
 
 
 <div class="viewcode-block" id="min_pool"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.min_pool">[docs]</a><span class="k">def</span> <span class="nf">min_pool</span><span class="p">(</span><span class="n">cluster</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Like `max_pool, just negating `data`.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">max_pool</span><span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;Like `max_pool, just negating `data.x`.&quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">data</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">data_pooled</span> <span class="o">=</span> <span class="n">max_pool</span><span class="p">(</span>
         <span class="n">cluster</span><span class="p">,</span>
-        <span class="o">-</span><span class="n">data</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
         <span class="n">transform</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">data</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">data_pooled</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">data_pooled</span><span class="o">.</span><span class="n">x</span>
+    <span class="k">return</span> <span class="n">data_pooled</span></div>
 
 
 <div class="viewcode-block" id="min_pool_x"><a class="viewcode-back" href="../../../graphnet.components.html#graphnet.components.pool.min_pool_x">[docs]</a><span class="k">def</span> <span class="nf">min_pool_x</span><span class="p">(</span><span class="n">cluster</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Like `max_pool_x, just negating `data`.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Like `max_pool_x, just negating `x`.&quot;&quot;&quot;</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="n">max_pool_x</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="o">-</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ret</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
