@@ -12,6 +12,10 @@ def is_boost_enum(obj: Any) -> bool:
     return False
 
 
+def is_boost_class(obj: Any) -> bool:
+    return "Boost.Python.class" in str(type(obj))
+
+
 def is_icecube_class(obj: Any) -> bool:
     """Check whether `obj` is an IceCube-specific class."""
     classname = str(type(obj))
