@@ -76,9 +76,8 @@ class I3GenericExtractor(I3Extractor):
         results = {}
         self._frame = frame
         for key in [
-            "I3Triggers",
             # "I3TriggerHierarchy"
-            # "I3MCTree",
+            "I3MCTree",
         ]:  # frame.keys():
             try:
                 obj = frame[key]
@@ -128,11 +127,27 @@ class I3GenericExtractor(I3Extractor):
                     ]
                     result = {key_: result[key_] for key_ in keep_keys}
 
+            elif isinstance(obj, dataclasses.I3MCTree):
+                self.logger.info(f"Got MC tree {key} in frame.")
+                result = self._cast_object_to_pure_python(obj)
+
+                # Assing parent and children links to all particles in tree
+                result["particles"] = result.pop("_list")
+                for ix, particle in enumerate(obj):
+                    try:
+                        parent = obj.parent(particle).minor_id
+                    except IndexError:
+                        parent = None
+
+                    children = [p.minor_id for p in obj.children(particle)]
+
+                    result["particles"][ix]["parent"] = parent
+                    result["particles"][ix]["children"] = children
+
             # Generic case
             else:
 
                 self.logger.info(f"Got generic object {key} in frame.")
-                print(type(obj))
                 result = self._cast_object_to_pure_python(obj)
 
             results[key] = flatten_nested_dictionary(result)
@@ -236,8 +251,8 @@ class I3GenericExtractor(I3Extractor):
             if results is None:
                 results = results_dict
             else:
-                assert "dict" not in results
-                results["dict"] = results_dict
+                assert "_dict" not in results
+                results["_dict"] = results_dict
 
         # List-like
         if hasattr(obj, "__len__") and hasattr(obj, "__getitem__"):
@@ -247,8 +262,8 @@ class I3GenericExtractor(I3Extractor):
             if results is None:
                 results = results_list
             else:
-                assert "list" not in results
-                results["list"] = results_list
+                assert "_list" not in results
+                results["_list"] = results_list
 
         if results is None:
             self.logger.warning(
