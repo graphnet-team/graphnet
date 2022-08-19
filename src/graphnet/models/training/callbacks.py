@@ -105,7 +105,6 @@ class ProgressBar(TQDMProgressBar):
         to overwrite the progress bar from previous epochs.
         """
         if trainer.current_epoch > 0:
-            self._update_bar(self.main_progress_bar)
             self.main_progress_bar.set_postfix(
                 self.get_metrics(trainer, model)
             )
