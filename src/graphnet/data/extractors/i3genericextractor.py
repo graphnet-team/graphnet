@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.types import (
+    is_boost_class,
     is_boost_enum,
     is_icecube_class,
     is_method,
@@ -153,6 +154,7 @@ class I3GenericExtractor(I3Extractor):
             "is_type": [],
             "is_method": [],
             "is_boost_enum": [],
+            "is_boost_class": [],
         }
         for attr in dir(obj):
             if attr.startswith("__"):
@@ -167,6 +169,8 @@ class I3GenericExtractor(I3Extractor):
                 discarded_member_variables["is_method"].append(attr)
             elif is_boost_enum(value):
                 discarded_member_variables["is_boost_enum"].append(attr)
+            elif is_boost_class(value):
+                discarded_member_variables["is_boost_class"].append(attr)
             else:
                 valid_member_variables.append(attr)
 
@@ -222,31 +226,35 @@ class I3GenericExtractor(I3Extractor):
                 result = self._cast_object_to_pure_python(value)
                 results[attr] = result
 
-        else:
-            self.logger.debug(
-                "Found no member variables! Trying to check for python "
-                "object-like signatures."
+        # Dict-like
+        if hasattr(obj, "items"):
+            self.logger.critical("Is dict-like")
+            # Call function again
+            results_dict = NonFlattenableDict(
+                self._cast_object_to_pure_python(dict(obj))
             )
-
-            # Dict-like
-            if hasattr(obj, "items"):
-                self.logger.critial("Is dict-like")
-                # Call function again
-                results = NonFlattenableDict(
-                    self._cast_object_to_pure_python(dict(obj))
-                )
-
-            # List-like
-            elif hasattr(obj, "__len__") and hasattr(obj, "__getitem__"):
-                self.logger.critial("Is list-like")
-                # Call function again
-                results = self._cast_object_to_pure_python(list(obj))
-
+            if results is None:
+                results = results_dict
             else:
-                self.logger.warning(
-                    f"Cannot extract any information to pure python from {obj}"
-                )
-                results = "!!! NOT PARSED !!!"
+                assert "dict" not in results
+                results["dict"] = results_dict
+
+        # List-like
+        if hasattr(obj, "__len__") and hasattr(obj, "__getitem__"):
+            self.logger.critical("Is list-like")
+            # Call function again
+            results_list = self._cast_object_to_pure_python(list(obj))
+            if results is None:
+                results = results_list
+            else:
+                assert "list" not in results
+                results["list"] = results_list
+
+        if results is None:
+            self.logger.warning(
+                f"Cannot extract any information to pure python from {obj}"
+            )
+            results = "!!! NOT PARSED !!!"
 
         return results
 
