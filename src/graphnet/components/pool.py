@@ -16,16 +16,20 @@ from torch_geometric.nn.pool import (
 
 
 def min_pool(cluster: Any, data: Any, transform: Optional[Any] = None):
-    """Like `max_pool, just negating `data`."""
-    return -max_pool(
+    """Like `max_pool, just negating `data.x`."""
+    data.x = -data.x
+    data_pooled = max_pool(
         cluster,
-        -data,
+        data,
         transform,
     )
+    data.x = -data.x
+    data_pooled.x = -data_pooled.x
+    return data_pooled
 
 
 def min_pool_x(cluster: Any, x: Any, batch: Any, size: Optional[int] = None):
-    """Like `max_pool_x, just negating `data`."""
+    """Like `max_pool_x, just negating `x`."""
     ret = max_pool_x(cluster, -x, batch, size)
     if size is None:
         return (-ret[0], ret[1])
