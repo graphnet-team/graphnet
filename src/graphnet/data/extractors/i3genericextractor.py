@@ -1,5 +1,4 @@
 from collections.abc import MutableMapping
-import inspect
 from typing import Any, Dict, List, Optional
 
 from graphnet.data.extractors.i3extractor import I3Extractor
