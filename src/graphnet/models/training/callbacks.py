@@ -1,10 +1,7 @@
 import logging
-import sys
 import numpy as np
-import torch
 import warnings
 
-from tqdm import tqdm
 from torch.optim.lr_scheduler import _LRScheduler
 from pytorch_lightning.callbacks import TQDMProgressBar
 
