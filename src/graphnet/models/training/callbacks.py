@@ -1,7 +1,10 @@
+import logging
+import sys
 import numpy as np
 import torch
 import warnings
 
+from tqdm import tqdm
 from torch.optim.lr_scheduler import _LRScheduler
 from pytorch_lightning.callbacks import TQDMProgressBar
 
@@ -113,3 +116,15 @@ class ProgressBar(TQDMProgressBar):
         self.main_progress_bar.set_description(
             f"Epoch {trainer.current_epoch:2d}"
         )
+
+    def on_train_epoch_end(self, trainer, model):
+        super().on_train_epoch_end(trainer, model)
+
+        # Log the final progress bar for the epoch to file (and don't duplciate
+        # to stdout).
+        h = logger.logger.handlers[0]
+        assert isinstance(h, logging.StreamHandler)
+        level = h.level
+        h.setLevel(logging.ERROR)
+        logger.info(str(super().main_progress_bar))
+        h.setLevel(level)
