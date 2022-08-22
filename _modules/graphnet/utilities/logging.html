@@ -153,7 +153,7 @@
     <span class="k">if</span> <span class="n">level</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
 
-    <span class="n">basic_formatter</span><span class="p">,</span> <span class="n">colored_formatter</span> <span class="o">=</span> <span class="n">get_formatters</span><span class="p">()</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">colored_formatter</span> <span class="o">=</span> <span class="n">get_formatters</span><span class="p">()</span>
 
     <span class="c1"># Create logger</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
@@ -181,13 +181,18 @@
 
     <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
     <span class="n">stream_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">basic_formatter</span><span class="p">)</span>
+    <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">colored_formatter</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
 
     <span class="c1"># Make className empty by default</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;className&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Writing log to </span><span class="si">{log_path}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Writing log to </span><span class="se">\033</span><span class="s2">[1m</span><span class="si">{log_path}</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Have pytorch lightning write to same log file</span>
+    <span class="n">pl_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pytorch_lightning&quot;</span><span class="p">)</span>
+    <span class="n">pl_file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+    <span class="n">pl_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">pl_file_handler</span><span class="p">)</span>
 
     <span class="c1"># Store as global variable</span>
     <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logger</span>

@@ -159,6 +159,17 @@ Implement this to override the items displayed in the progress bar.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar.on_train_epoch_end">
+<span class="sig-name descname"><span class="pre">on_train_epoch_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar.on_train_epoch_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar.on_train_epoch_end" title="Permalink to this definition"></a></dt>
+<dd><p>Called when the train epoch ends.</p>
+<p>To access all batch outputs at the end of the epoch, either:</p>
+<ol class="arabic simple">
+<li><p>Implement <cite>training_epoch_end</cite> in the <cite>LightningModule</cite> and access outputs via the module OR</p></li>
+<li><p>Cache data across train batch hooks inside the callback implementation to post-process in this hook.</p></li>
+</ol>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.training.callbacks.ProgressBar.on_train_epoch_start">
 <span class="sig-name descname"><span class="pre">on_train_epoch_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/training/callbacks.html#ProgressBar.on_train_epoch_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.training.callbacks.ProgressBar.on_train_epoch_start" title="Permalink to this definition"></a></dt>
 <dd><p>Prints the results of the previous epoch on a separate line.</p>

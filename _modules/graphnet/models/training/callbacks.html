@@ -62,8 +62,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.models.training.callbacks</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">torch</span>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="k">import</span> <span class="n">_LRScheduler</span>
@@ -169,7 +169,6 @@
 <span class="sd">        to overwrite the progress bar from previous epochs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_update_bar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
             <span class="p">)</span>
@@ -177,7 +176,19 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_epoch_start</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
             <span class="n">f</span><span class="s2">&quot;Epoch </span><span class="si">{trainer.current_epoch:2d}</span><span class="s2">&quot;</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProgressBar.on_train_epoch_end"><a class="viewcode-back" href="../../../../graphnet.models.training.html#graphnet.models.training.callbacks.ProgressBar.on_train_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_epoch_end</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># Log the final progress bar for the epoch to file (and don&#39;t duplciate</span>
+        <span class="c1"># to stdout).</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">)</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">level</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="p">))</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

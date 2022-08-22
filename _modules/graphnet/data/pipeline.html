@@ -199,7 +199,7 @@
         <span class="n">dataframes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="c1"># dataloader = iter(dataloader)</span>
-            <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">gpus</span><span class="o">=</span><span class="p">[</span><span class="n">device</span><span class="p">])</span>
+            <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">devices</span><span class="o">=</span><span class="p">[</span><span class="n">device</span><span class="p">],</span> <span class="n">accelerator</span><span class="o">=</span><span class="s2">&quot;gpu&quot;</span><span class="p">)</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="p">[</span><span class="n">target</span><span class="p">][</span><span class="s2">&quot;path&quot;</span><span class="p">],</span>
                 <span class="n">map_location</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
