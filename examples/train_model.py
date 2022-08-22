@@ -54,7 +54,8 @@ def main():
         "pulsemap": "SRTTWOfflinePulsesDC",
         "batch_size": 512,
         "num_workers": 10,
-        "gpus": [1],
+        "accelerator": "gpu",
+        "devices": [0],
         "target": "energy",
         "n_epochs": 5,
         "patience": 5,
@@ -125,7 +126,8 @@ def main():
     ]
 
     trainer = Trainer(
-        gpus=config["gpus"],
+        accelerator=config["accelerator"],
+        devices=config["devices"],
         max_epochs=config["n_epochs"],
         callbacks=callbacks,
         log_every_n_steps=1,
