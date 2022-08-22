@@ -135,7 +135,7 @@ class InSQLitePipeline(ABC):
         dataframes = []
         for target in self._module_dict.keys():
             # dataloader = iter(dataloader)
-            trainer = Trainer(gpus=[device])
+            trainer = Trainer(devices=[device], accelerator="gpu")
             model = torch.load(
                 self._module_dict[target]["path"],
                 map_location="cpu",

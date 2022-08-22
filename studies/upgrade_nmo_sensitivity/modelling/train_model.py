@@ -67,7 +67,8 @@ def main(target: str):
         ],
         "batch_size": 256,
         "num_workers": 30,
-        "gpus": [0],
+        "accelerator": "gpu",
+        "devices": [0],
         "target": target,
         "n_epochs": 50,
         "patience": 5,
@@ -182,7 +183,8 @@ def main(target: str):
 
     trainer = Trainer(
         default_root_dir=archive,
-        gpus=config["gpus"],
+        accelerator=config["accelerator"],
+        devices=config["devices"],
         max_epochs=config["n_epochs"],
         callbacks=callbacks,
         log_every_n_steps=1,
