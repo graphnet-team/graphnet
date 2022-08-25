@@ -155,7 +155,7 @@ class Coarsening(ABC, LoggerMixin):
         pooled_data = self._transfer_attributes(cluster, data, pooled_data)
 
         # Reconstruct Batch Attributes
-        if data.batch:  # if a Batch object
+        if isinstance(data, Batch):  # if a Batch object
             pooled_data = self._reconstruct_batch(data, pooled_data)
         return pooled_data
 
