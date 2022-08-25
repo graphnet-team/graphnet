@@ -68,7 +68,7 @@ class RepeatFilter(object):
                 f"Will not print the below message again ({self.nb_repeats_allowed} repeats reached)."
             )
 
-        return count < self.nb_repeats_allowed
+        return count <= self.nb_repeats_allowed
 
 
 def get_logger(
