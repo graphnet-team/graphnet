@@ -1,5 +1,8 @@
-from collections.abc import MutableMapping
-from typing import Any, Dict, List, Optional
+from collections.abc import MutableMapping, Iterable
+import json
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
+
+import pandas as pd
 
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.types import (
@@ -8,6 +11,11 @@ from graphnet.data.extractors.utilities.types import (
     is_icecube_class,
     is_method,
     is_type,
+)
+from graphnet.data.extractors.utilities.collections import (
+    transpose_list_of_dicts,
+    serialise,
+    flatten_nested_dictionary,
 )
 from graphnet.data.extractors.utilities.frames import (
     get_om_keys_and_pulseseries,
@@ -25,63 +33,69 @@ except ImportError:
     logger.warning("icecube package not available.")
 
 
-# Utility class(es)
-class NonFlattenableDict(dict):
-    pass
-
-
-# Utility function(s)
-def flatten_nested_dictionary(
-    results: Dict, parent_key: str = "", separator: str = "."
-) -> Dict:
-    """Turn nested dictionary into flat one, with nested key seperated by `separator`."""
-    if not isinstance(results, dict):
-        return results
-
-    items = []
-    for key, value in results.items():
-        new_key = parent_key + separator + key if parent_key else key
-        if isinstance(value, MutableMapping) and not isinstance(
-            value, NonFlattenableDict
-        ):
-            items.extend(
-                flatten_nested_dictionary(
-                    value, new_key, separator=separator
-                ).items()
-            )
-        else:
-            items.append((new_key, value))
-    return dict(items)
+GENERIC_EXTRACTOR_NAME = "<GENERIC>"
 
 
 class I3GenericExtractor(I3Extractor):
     """Dynamically and generically extract all information from frames."""
 
-    def __init__(self):
+    def __init__(
+        self,
+        keys: Optional[Union[str, List[str]]] = None,
+        exclude_keys: Optional[Union[str, List[str]]] = None,
+    ):
+        # Check(s)
+        if (keys is not None) and (exclude_keys is not None):
+            raise ValueError(
+                "Only one of `keys` and `exclude_keys` should be set."
+            )
+
+        # Cast(s)
+        if isinstance(keys, str):
+            keys = [keys]
+        if isinstance(exclude_keys, str):
+            exclude_keys = [exclude_keys]
+
         # Reference to frame currently being processed
         self._frame: Optional[icetray.I3Frame] = None
+        self._keys: List[str] = keys
+        self._exclude_keys: List[str] = exclude_keys
 
-        super().__init__("Generic")
+        super().__init__(GENERIC_EXTRACTOR_NAME)
 
     @property
-    def frame(self):
+    def frame(self) -> "icetray.I3Frame":
+        """Return the current frame."""
         if self._frame is None:
             raise ValueError("No I3Frame currently being processed.")
         return self._frame
 
-    def __call__(self, frame: "icetray.I3Frame") -> dict:
+    def _get_keys(self, frame: "icetray.I3Frame") -> List[str]:
+        """Get the effective list of keys to be queried from `frame`."""
+        if self._keys is None:
+            keys = list(frame.keys())
+            if self._exclude_keys is not None:
+                keys = [key for key in keys if key not in self._exclude_keys]
+        else:
+            keys = self._keys
+        return keys
+
+    def __call__(self, frame: "icetray.I3Frame") -> dict:  # noqa: C901
         """Extract all possible data from `frame`."""
 
         results = {}
         self._frame = frame
-        for key in [
-            # "I3TriggerHierarchy"
-            "I3MCTree",
-        ]:  # frame.keys():
+
+        for key in self._get_keys():
             try:
                 obj = frame[key]
-            except (KeyError, RuntimeError):
-                self.logger.debug(f"Frame {key} not supported. Skipping.")
+            except RuntimeError:
+                self.logger.debug(
+                    f"Key {key} in frame not supported. Skipping."
+                )
+            except KeyError:
+                if self._keys is not None:
+                    self.logger.warning(f"Key {key} not in frame. Skipping")
                 continue
 
             # Special case(s)
@@ -94,8 +108,12 @@ class I3GenericExtractor(I3Extractor):
                     dataclasses.I3RecoPulseSeriesMapUnion,
                 ),
             ):
-                self.logger.info(f"Got pulse series - {key}!")
+                self.logger.debug(f"Got pulse series - {key}!")
                 result = self._cast_pulse_series_to_pure_python(frame, key)
+                if result is None:
+                    self.logger.debug(
+                        f"Pulse series map {key} didn't return anything."
+                    )
 
             elif isinstance(
                 obj,
@@ -106,7 +124,7 @@ class I3GenericExtractor(I3Extractor):
                     dataclasses.I3MapKeyVectorDouble,
                 ),
             ):
-                self.logger.info(f"Got per-pulse map - {key}!")
+                self.logger.debug(f"Got per-pulse map - {key}!")
                 result = self._cast_pulse_series_to_pure_python(frame, key)
 
                 if result is None:
@@ -127,7 +145,7 @@ class I3GenericExtractor(I3Extractor):
                     result = {key_: result[key_] for key_ in keep_keys}
 
             elif isinstance(obj, dataclasses.I3MCTree):
-                self.logger.info(f"Got MC tree {key} in frame.")
+                self.logger.debug(f"Got MC tree {key} in frame.")
                 result = self._cast_object_to_pure_python(obj)
 
                 # Assing parent and children links to all particles in tree
@@ -143,14 +161,58 @@ class I3GenericExtractor(I3Extractor):
                     result["particles"][ix]["parent"] = parent
                     result["particles"][ix]["children"] = children
 
+            elif isinstance(obj, dataclasses.I3TriggerHierarchy):
+                self.logger.debug(f"Got I3TriggerHierarchy {key} in frame.")
+                result = self._cast_object_to_pure_python(obj)
+                assert isinstance(result, list)
+                result = transpose_list_of_dicts(result)
+
             # Generic case
             else:
 
-                self.logger.info(f"Got generic object {key} in frame.")
+                self.logger.debug(f"Got generic object {key} in frame.")
                 result = self._cast_object_to_pure_python(obj)
 
-            results[key] = flatten_nested_dictionary(result)
+            # Skip empty extractions
+            if result is None:
+                continue
 
+            if isinstance(obj, dataclasses.I3MCTree):
+                assert len(result.keys()) == 2
+                result_primaries: List[Dict[str, Any]] = result["primaries"]
+                result_particles: List[Dict[str, Any]] = result["particles"]
+
+                result_primaries: List[Dict[str, Any]] = [
+                    flatten_nested_dictionary(res) for res in result_primaries
+                ]
+                result_particles: List[Dict[str, Any]] = [
+                    flatten_nested_dictionary(res) for res in result_particles
+                ]
+
+                result_primaries: Dict[
+                    str, List[Any]
+                ] = transpose_list_of_dicts(result_primaries)
+                result_particles: Dict[
+                    str, List[Any]
+                ] = transpose_list_of_dicts(result_particles)
+
+                results[key + ".particles"] = result_particles
+                results[key + ".primaries"] = result_primaries
+
+            else:
+                result = flatten_nested_dictionary(result)
+
+                # If the object is a non-dict object, ensure that it has a non-
+                # empty key (required for saving).
+                if list(result.keys()) == [""]:
+                    result["value"] = result.pop("")
+
+                results[key] = result
+
+        # Serialise list of iterables to JSON
+        results = {key: serialise(value) for key, value in results.items()}
+
+        # Unset current frame
         self._frame = None
 
         return results
@@ -166,6 +228,7 @@ class I3GenericExtractor(I3Extractor):
         discarded_member_variables = {
             "mangled": [],
             "is_type": [],
+            "invalid_attr": [],
             "is_method": [],
             "is_boost_enum": [],
             "is_boost_class": [],
@@ -175,7 +238,11 @@ class I3GenericExtractor(I3Extractor):
                 discarded_member_variables["mangled"].append(attr)
                 continue
 
-            value = getattr(obj, attr)
+            try:
+                value = getattr(obj, attr)
+            except RuntimeError:
+                discarded_member_variables["invalid_attr"].append(attr)
+                continue
 
             if is_type(value):
                 discarded_member_variables["is_type"].append(attr)
@@ -230,8 +297,8 @@ class I3GenericExtractor(I3Extractor):
         results = None  # Default
 
         # Has valid member variables -- stick to these, then.
+        results = {}
         if len(member_variables) > 0:
-            results = {}
             for attr in member_variables:
                 value = getattr(obj, attr)
                 self.logger.debug(
@@ -242,27 +309,25 @@ class I3GenericExtractor(I3Extractor):
 
         # Dict-like
         if hasattr(obj, "items"):
-            self.logger.critical("Is dict-like")
             # Call function again
-            results_dict = NonFlattenableDict(
-                self._cast_object_to_pure_python(dict(obj))
-            )
-            if results is None:
-                results = results_dict
-            else:
-                assert "_dict" not in results
-                results["_dict"] = results_dict
+            results_dict = self._cast_object_to_pure_python(dict(obj))
+            assert "_dict" not in results
+            results["_dict"] = results_dict
 
         # List-like
-        if hasattr(obj, "__len__") and hasattr(obj, "__getitem__"):
-            self.logger.critical("Is list-like")
+        elif hasattr(obj, "__len__") and hasattr(obj, "__getitem__"):
             # Call function again
             results_list = self._cast_object_to_pure_python(list(obj))
-            if results is None:
-                results = results_list
-            else:
-                assert "_list" not in results
-                results["_list"] = results_list
+            assert "_list" not in results
+            results["_list"] = results_list
+
+        # If `obj` has no actual member variables, but is otherwise python
+        # dict- or list-like, there is no need to wrap the data in a single-
+        # key dict.
+        if list(results.keys()) == ["_dict"]:
+            results = results.pop("_dict")
+        elif list(results.keys()) == ["_list"]:
+            results = results.pop("_list")
 
         if results is None:
             self.logger.warning(
@@ -307,7 +372,11 @@ class I3GenericExtractor(I3Extractor):
             om_indices = self._cast_object_to_pure_python(om_key)
             om_data["index"] = om_indices
 
-            om_data = flatten_nested_dictionary(om_data)
+            try:
+                om_data = flatten_nested_dictionary(om_data)
+            except TypeError:
+                print(om_data)
+                raise
 
             pulses = data[om_key]
 
@@ -328,10 +397,7 @@ class I3GenericExtractor(I3Extractor):
                 pulse_data[ix].update(om_data)
 
             # "Transpose" list of dicts to dict of lists
-            pulse_data = {
-                key: [pulse[key] for pulse in pulse_data]
-                for key in pulse_data[0]
-            }
+            pulse_data: dict = transpose_list_of_dicts(pulse_data)
             result.append(pulse_data)
 
         # Concatenate list of pulses from different OMs
