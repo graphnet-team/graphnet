@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from multiprocessing import pool
 from typing import List, Optional, Union
-
+from copy import deepcopy
 import torch
 from torch import LongTensor, Tensor
 from torch_geometric.data import Data, Batch
@@ -154,7 +154,38 @@ class Coarsening(ABC, LoggerMixin):
         # Transfer attributes on `data`, pooling as required.
         pooled_data = self._transfer_attributes(cluster, data, pooled_data)
 
+        # Reconstruct Batch Attributes
+        if isinstance(data, Batch):  # if a Batch object
+            pooled_data = self._reconstruct_batch(data, pooled_data)
         return pooled_data
+
+    def _reconstruct_batch(self, original, pooled):
+        pooled = self._add_slice_dict(original, pooled)
+        pooled = self._add_inc_dict(original, pooled)
+        return pooled
+
+    def _add_slice_dict(self, original, pooled):
+        # Copy original slice_dict and count nodes in each graph in pooled batch
+        slice_dict = deepcopy(original._slice_dict)
+        _, counts = torch.unique_consecutive(pooled.batch, return_counts=True)
+        # Reconstruct the entry in slice_dict for pulsemaps - only these are affected by pooling
+        pulsemap_slice = [0]
+        for i in range(len(counts)):
+            pulsemap_slice.append(pulsemap_slice[i] + counts[i].item())
+
+        # Identifies pulsemap entries in slice_dict and set them to pulsemap_slice
+        for field in slice_dict.keys():
+            if (original._num_graphs) == slice_dict[field][-1]:
+                pass  # not pulsemap, so skip
+            else:
+                slice_dict[field] = pulsemap_slice
+        pooled._slice_dict = slice_dict
+        return pooled
+
+    def _add_inc_dict(self, original, pooled):
+        # not changed by coarsening
+        pooled._inc_dict = deepcopy(original._inc_dict)
+        return pooled
 
 
 class DOMCoarsening(Coarsening):
