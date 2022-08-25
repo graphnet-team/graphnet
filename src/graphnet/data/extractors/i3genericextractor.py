@@ -68,7 +68,7 @@ class I3GenericExtractor(I3Extractor):
         """Extract all possible data from `frame`."""
 
         results = {}
-        for key in self._get_keys():
+        for key in self._get_keys(frame):
 
             # Extract object from frame
             try:
@@ -93,7 +93,9 @@ class I3GenericExtractor(I3Extractor):
                     dataclasses.I3RecoPulseSeriesMapUnion,
                 ),
             ):
-                result = cast_pulse_series_to_pure_python(frame, key)
+                result = cast_pulse_series_to_pure_python(
+                    frame, key, self._calibration, self._gcd_dict
+                )
 
                 if result is None:
                     self.logger.debug(
