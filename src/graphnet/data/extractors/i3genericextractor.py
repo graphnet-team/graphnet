@@ -35,6 +35,7 @@ class I3GenericExtractor(I3Extractor):
         keys: Optional[Union[str, List[str]]] = None,
         exclude_keys: Optional[Union[str, List[str]]] = None,
     ):
+        """Constructor."""
         # Check(s)
         if (keys is not None) and (exclude_keys is not None):
             raise ValueError(
@@ -48,18 +49,10 @@ class I3GenericExtractor(I3Extractor):
             exclude_keys = [exclude_keys]
 
         # Reference to frame currently being processed
-        self._frame: Optional[icetray.I3Frame] = None
         self._keys: List[str] = keys
         self._exclude_keys: List[str] = exclude_keys
 
         super().__init__(GENERIC_EXTRACTOR_NAME)
-
-    @property
-    def frame(self) -> "icetray.I3Frame":
-        """Return the current frame."""
-        if self._frame is None:
-            raise ValueError("No I3Frame currently being processed.")
-        return self._frame
 
     def _get_keys(self, frame: "icetray.I3Frame") -> List[str]:
         """Get the effective list of keys to be queried from `frame`."""
@@ -75,9 +68,9 @@ class I3GenericExtractor(I3Extractor):
         """Extract all possible data from `frame`."""
 
         results = {}
-        self._frame = frame
-
         for key in self._get_keys():
+
+            # Extract object from frame
             try:
                 obj = frame[key]
             except RuntimeError:
@@ -90,6 +83,7 @@ class I3GenericExtractor(I3Extractor):
                 continue
 
             # Special case(s)
+            # -- Pulse series mao
             if isinstance(
                 obj,
                 (
@@ -99,13 +93,14 @@ class I3GenericExtractor(I3Extractor):
                     dataclasses.I3RecoPulseSeriesMapUnion,
                 ),
             ):
-                self.logger.debug(f"Got pulse series - {key}!")
                 result = cast_pulse_series_to_pure_python(frame, key)
+
                 if result is None:
                     self.logger.debug(
                         f"Pulse series map {key} didn't return anything."
                     )
 
+            # -- Per-pulse map
             elif isinstance(
                 obj,
                 (
@@ -115,7 +110,6 @@ class I3GenericExtractor(I3Extractor):
                     dataclasses.I3MapKeyVectorDouble,
                 ),
             ):
-                self.logger.debug(f"Got per-pulse map - {key}!")
                 result = cast_pulse_series_to_pure_python(
                     frame, key, self._calibration, self._gcd_dict
                 )
@@ -124,7 +118,6 @@ class I3GenericExtractor(I3Extractor):
                     self.logger.debug(
                         f"Per-pulse map {key} didn't return anything."
                     )
-                    # result = {}
 
                 else:
                     # If we get a per-pulse map, which isn't a
@@ -137,8 +130,8 @@ class I3GenericExtractor(I3Extractor):
                     ]
                     result = {key_: result[key_] for key_ in keep_keys}
 
+            # -- MC Tree
             elif isinstance(obj, dataclasses.I3MCTree):
-                self.logger.debug(f"Got MC tree {key} in frame.")
                 result = cast_object_to_pure_python(obj)
 
                 # Assing parent and children links to all particles in tree
@@ -154,13 +147,13 @@ class I3GenericExtractor(I3Extractor):
                     result["particles"][ix]["parent"] = parent
                     result["particles"][ix]["children"] = children
 
+            # -- Triggers
             elif isinstance(obj, dataclasses.I3TriggerHierarchy):
-                self.logger.debug(f"Got I3TriggerHierarchy {key} in frame.")
                 result = cast_object_to_pure_python(obj)
                 assert isinstance(result, list)
                 result = transpose_list_of_dicts(result)
 
-            # Generic case
+            # -- Generic case
             else:
 
                 self.logger.debug(f"Got generic object {key} in frame.")
@@ -170,6 +163,7 @@ class I3GenericExtractor(I3Extractor):
             if result is None:
                 continue
 
+            # Flatten and transpose MC Tree
             if isinstance(obj, dataclasses.I3MCTree):
                 assert len(result.keys()) == 2
                 result_primaries: List[Dict[str, Any]] = result["primaries"]
@@ -192,6 +186,7 @@ class I3GenericExtractor(I3Extractor):
                 results[key + ".particles"] = result_particles
                 results[key + ".primaries"] = result_primaries
 
+            # Flatten all other objects
             else:
                 result = flatten_nested_dictionary(result)
 
@@ -204,8 +199,5 @@ class I3GenericExtractor(I3Extractor):
 
         # Serialise list of iterables to JSON
         results = {key: serialise(value) for key, value in results.items()}
-
-        # Unset current frame
-        self._frame = None
 
         return results
