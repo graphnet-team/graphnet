@@ -96,4 +96,13 @@ $ wandb online
 
 The [examples/train_model.py](examples/train_model.py) script shows how to train a model and log the results to W&B.
 
+## :memo: License
+
+GraphNeT has an Apache 2.0 license, as found in the [LICENSE](LICENSE) file.
+
+## :raised_hands: Acknowledgements
+
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
+
+
 [^1]: Examples of this are shown in the [examples/convert_i3_to_sqlite.py](examples/convert_i3_to_sqlite.py) and [examples/convert_i3_to_parquet.py](examples/convert_i3_to_parquet.py) scripts
