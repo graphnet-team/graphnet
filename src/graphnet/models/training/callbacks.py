@@ -1,9 +1,15 @@
+import logging
 import numpy as np
-import torch
 import warnings
 
 from torch.optim.lr_scheduler import _LRScheduler
 from pytorch_lightning.callbacks import TQDMProgressBar
+
+from graphnet.utilities.logging import get_logger
+
+
+logger = get_logger()
+
 
 class PiecewiseLinearLR(_LRScheduler):
     """Interpolates learning rate linearly between milestones.
@@ -23,13 +29,17 @@ class PiecewiseLinearLR(_LRScheduler):
         verbose (bool): If ``True``, prints a message to stdout for
             each update. Default: ``False``.
     """
-    def __init__(self, optimizer, milestones, factors, last_epoch=-1,
-                 verbose=False):
+
+    def __init__(
+        self, optimizer, milestones, factors, last_epoch=-1, verbose=False
+    ):
         # Check(s)
         if milestones != sorted(milestones):
             raise ValueError("Milestones must be increasing")
         if len(milestones) != len(factors):
-            raise ValueError("Only multiplicative factor must be specified for each milestone.")
+            raise ValueError(
+                "Only multiplicative factor must be specified for each milestone."
+            )
 
         self.milestones = milestones
         self.factors = factors
@@ -41,8 +51,11 @@ class PiecewiseLinearLR(_LRScheduler):
 
     def get_lr(self):
         if not self._get_lr_called_within_step:
-            warnings.warn("To get the last learning rate computed by the scheduler, "
-                          "please use `get_last_lr()`.", UserWarning)
+            warnings.warn(
+                "To get the last learning rate computed by the scheduler, "
+                "please use `get_last_lr()`.",
+                UserWarning,
+            )
 
         return [base_lr * self._get_factor() for base_lr in self.base_lrs]
 
@@ -52,9 +65,10 @@ class ProgressBar(TQDMProgressBar):
 
     Customises the default progress in pytorch-lightning.
     """
+
     def _common_config(self, bar):
-        bar.unit = ' batch(es)'
-        bar.colour = 'green'
+        bar.unit = " batch(es)"
+        bar.colour = "green"
         return bar
 
     def init_validation_tqdm(self):
@@ -91,8 +105,23 @@ class ProgressBar(TQDMProgressBar):
         to overwrite the progress bar from previous epochs.
         """
         if trainer.current_epoch > 0:
-            self._update_bar(self.main_progress_bar)
-            self.main_progress_bar.set_postfix(self.get_metrics(trainer, model))
+            self.main_progress_bar.set_postfix(
+                self.get_metrics(trainer, model)
+            )
             print("")
         super().on_train_epoch_start(trainer, model)
-        self.main_progress_bar.set_description(f"Epoch {trainer.current_epoch:2d}")
+        self.main_progress_bar.set_description(
+            f"Epoch {trainer.current_epoch:2d}"
+        )
+
+    def on_train_epoch_end(self, trainer, model):
+        super().on_train_epoch_end(trainer, model)
+
+        # Log the final progress bar for the epoch to file (and don't duplciate
+        # to stdout).
+        h = logger.logger.handlers[0]
+        assert isinstance(h, logging.StreamHandler)
+        level = h.level
+        h.setLevel(logging.ERROR)
+        logger.info(str(super().main_progress_bar))
+        h.setLevel(level)
