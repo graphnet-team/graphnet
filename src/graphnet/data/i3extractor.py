@@ -93,7 +93,7 @@ class I3FeatureExtractor(I3Extractor):
                     frame["I3Calibration"] = self._calibration
                     data = frame[self._pulsemap].apply(frame)
                     om_keys = data.keys()
-                    del frame["I3Calibration"]  # Avoid modifying the frame in-place
+                    #del frame["I3Calibration"]  # Avoid modifying the frame in-place
             except:
                 data = dataclasses.I3RecoPulseSeriesMap.from_frame(frame, self._pulsemap)
                 om_keys = data.keys()
@@ -128,7 +128,10 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             z = self._gcd_dict[om_key].position.z
             area = self._gcd_dict[om_key].area
             if "I3Calibration" in frame:  # Not available for e.g. mDOMs in IceCube Upgrade
-                rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
+                try:
+                    rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
+                except:
+                    rde = -1.
             else:
                 rde = -1.
 
@@ -196,6 +199,51 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         return output
 
 
+class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
+
+    def __call__(self, frame) -> dict:
+        """Extract features to be used as inputs to GNN models."""
+
+        output = {
+            'string': [],
+            'pmt_number': [],
+            'dom_number': [],
+            'pmt_dir_x': [],
+            'pmt_dir_y': [],
+            'pmt_dir_z': [],
+            'dom_type': [],
+            'truth_flag': [],
+        }
+
+        try:
+            om_keys, data = self._get_om_keys_and_pulseseries(frame)
+        except KeyError:  # Target pulsemap does not exist in `frame`
+            return output
+            
+        for om_key in om_keys:
+            # Common values for each OM
+            pmt_dir_x = self._gcd_dict[om_key].orientation.x
+            pmt_dir_y = self._gcd_dict[om_key].orientation.y
+            pmt_dir_z = self._gcd_dict[om_key].orientation.z
+            string = om_key[0]
+            dom_number = om_key[1]
+            pmt_number = om_key[2]
+            dom_type = self._gcd_dict[om_key].omtype
+
+            # Loop over pulses for each OM
+            pulses = data[om_key]
+            for truth_flag in pulses:
+                output['string'].append(string)
+                output['pmt_number'].append(pmt_number)
+                output['dom_number'].append(dom_number)
+                output['pmt_dir_x'].append(pmt_dir_x)
+                output['pmt_dir_y'].append(pmt_dir_y)
+                output['pmt_dir_z'].append(pmt_dir_z)
+                output['dom_type'].append(dom_type)
+                output['truth_flag'].append(truth_flag)
+        return output
+
+
 class I3TruthExtractor(I3Extractor):
     def __init__(self, name="truth"):
         super().__init__(name)
@@ -222,7 +270,11 @@ class I3TruthExtractor(I3Extractor):
             'SubrunID': frame['I3EventHeader'].sub_run_id,
             'EventID': frame['I3EventHeader'].event_id,
             'SubEventID': frame['I3EventHeader'].sub_event_id,
-            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value)
+            'dbang_decay_length': self.__extract_dbang_decay_length__(frame, padding_value),
+            'osc_weight'         : padding_value,
+            'OneWeight'          : padding_value,
+            'gen_ratio'          : padding_value,
+            'NEvents'            : padding_value,
         }
 
         if is_mc == True and is_noise == False:
@@ -238,12 +290,36 @@ class I3TruthExtractor(I3Extractor):
                 'interaction_type': interaction_type,
                 'elasticity': elasticity,
             })
+            if frame_contains_retro(frame):
+                if abs(MCInIcePrimary.pdg_encoding) != 13: # if not muon
+                    output.update({
+                        'osc_weight'         : frame["I3MCWeightDict"]["weight"],
+                        'OneWeight'          : frame["I3MCWeightDict"]["OneWeight"],
+                        'gen_ratio'          : frame["I3MCWeightDict"]["gen_ratio"],
+                        'NEvents'            : frame["I3MCWeightDict"]["NEvents"],
+                    })
+                else:
+                    output.update({
+                        'osc_weight'        : frame["I3MCWeightDict"]["weight"],
+                        'OneWeight'         : padding_value,
+                        'gen_ratio'         : padding_value,
+                        'NEvents'           : padding_value,
+                    })
+            else:
+                output.update({
+                            'osc_weight'    : padding_value,
+                            'OneWeight'     : padding_value,
+                            'gen_ratio'     : padding_value,
+                            'NEvents'       : padding_value,
+                        })
+            
+
 
         return output
 
     def __extract_dbang_decay_length__(self,frame, padding_value):
-        mctree = frame['I3MCTree']
         try:
+            mctree = frame['I3MCTree']
             p_true = mctree.primaries[0]
             p_daughters = mctree.get_daughters(p_true)        
             if (len(p_daughters) == 2):
@@ -316,16 +392,84 @@ class I3RetroExtractor(I3Extractor):
             #    'L7_PIDClassifier_FullSky_ProbTrack': frame["L7_PIDClassifier_FullSky_ProbTrack"].value,
             #})
 
-        if frame_is_montecarlo(frame):
-            if frame_contains_retro(frame):
-                output.update({
-                    'osc_weight': frame["I3MCWeightDict"]["weight"],
-                })
-            else:
-                output.update({
-                    'osc_weight': -1.,
-                })
+        return output
 
+class I3MonopodExtractor(I3Extractor):
+
+    def __init__(self, name="monopod"):
+        super().__init__(name)
+
+    def __call__(self, frame, padding_value = -1) -> dict:
+        """Extracts L4MonopodFit and L5MonopodFit4 reco."""
+        output = {}
+        vars = ['zenith', 'azimuth', 'x', 'y', 'z', 'time', 'energy', 'status']
+
+        for var in vars:
+            if var in ['x', 'y', 'z']:
+                label = 'position_' + var
+            elif var == 'time':
+                label = 'interaction_time'
+            else:
+                label = var
+            try:
+                output['l4_' + label + '_' + self.name] = frame['L4MonopodFit'][var.capitalize()].value
+            except:
+                output['l4_' + label + '_' + self.name] = padding_value
+            try:
+                output['l5_Fit4' + label + '_' + self.name] = frame['L5MonopodFit4'][var.capitalize()].value
+            except:
+                output['l5_Fit4' + label + '_' + self.name] = padding_value
+            
+        return output
+
+class I3LineFitExtractor(I3Extractor):
+
+    def __init__(self, name="linefit"):
+        super().__init__(name)
+
+    def __call__(self, frame, padding_value = -1) -> dict:
+        """Extracts LineFit_offline and ImprovedLineFit_split reco. """
+        output = {}
+        vars = ['zenith', 'azimuth', 'x', 'y', 'z', 'time', 'energy', 'status']
+
+        for var in vars:
+            if var in ['x', 'y', 'z']:
+                label = 'position_' + var
+            elif var == 'time':
+                label = 'interaction_time'
+            else:
+                label = var
+            try:
+                output[label + '_' + self.name +'split_offline'] = frame['LineFit_offline'][var.capitalize()].value
+            except:
+                output[label + '_' + self.name +'split_offline'] = padding_value
+            try:
+                output[label + '_' + self.name +'split_improved'] = frame['ImprovedLineFit_split'][var.capitalize()].value
+            except:
+                output[label + '_' + self.name +'split_improved'] = padding_value
+            
+        return output
+
+class I3SplineMPEExtractor(I3Extractor):
+    def __init__(self, name="spline_mpe"):
+        super().__init__(name)
+        
+    def __call__(self, frame, padding_value = -1) -> dict:
+        """Extracts SplineMPE reco."""
+        output = {}
+        vars = ['zenith', 'azimuth', 'x', 'y', 'z', 'time', 'status']
+
+        for var in vars:
+            if var in ['x', 'y', 'z']:
+                label = 'position_' + var
+            elif var == 'time':
+                label = 'interaction_time'
+            else:
+                label = var
+            try:
+                output[label + '_' + self.name +'_split'] = frame['SplineMPE_split'][var.capitalize()].value
+            except:
+                output[label + '_' + self.name +'_split'] = padding_value
         return output
 
 
@@ -341,13 +485,18 @@ def frame_is_montecarlo(frame):
         frame_has_key(frame, "MCInIcePrimary") or
         frame_has_key(frame, "I3MCTree")
     )
+
 def frame_is_noise(frame):
-    if frame_has_key(frame, "noise_weight"):
-        return True
-    elif frame_has_key(frame, "NoiseEngine_bool"):
-        return True
-    else:
+    try:
+        frame['I3MCTree'][0].energy
         return False
+    except:
+        try:
+            frame['MCInIcePrimary'].energy
+            return False
+        except:
+            return True
+    
 
 def frame_is_lvl7(frame):
     return frame_has_key(frame, "L7_reconstructed_zenith")

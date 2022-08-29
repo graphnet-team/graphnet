@@ -137,13 +137,11 @@ class SQLiteDataConverter(DataConverter):
         for u in range(len(input_files)):
             self._extractors.set_files(input_files[u], gcd_files[u])
             i3_file = dataio.I3File(input_files[u], "r")
-
-            while i3_file.more():
+            while i3_file.more():   
                 try:
                     frame = i3_file.pop_physics()
                 except:
-                    continue
-
+                    continue 
                 # Extract data from I3Frame
                 results = self._extractors(frame)
                 data_dict = OrderedDict(zip(self._table_names, results))
@@ -189,7 +187,7 @@ class SQLiteDataConverter(DataConverter):
             for ix_table, table_name in enumerate(self._table_names):
                 column_names = self._extract_column_names(db_paths, table_name)
                 if len(column_names) > 1:
-                    if 'retro' in table_name.lower() or 'truth' in table_name.lower():
+                    if 'retro' in table_name.lower() or ('truth' in table_name.lower() and 'pulses' not in  table_name.lower()):
                         is_pulse_map = False
                     else:
                         is_pulse_map = True
