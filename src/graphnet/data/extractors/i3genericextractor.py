@@ -188,6 +188,15 @@ class I3GenericExtractor(I3Extractor):
                 results[key + ".particles"] = result_particles
                 results[key + ".primaries"] = result_primaries
 
+                # Remove `majorID`, which has unsupported unit64 dtype.
+                # Keep only one instances of `minorID`.
+                del results[key + ".primaries"]["id.minorID"]
+                del results[key + ".particles"]["id.minorID"]
+                del results[key + ".primaries"]["id.majorID"]
+                del results[key + ".particles"]["id.majorID"]
+                del results[key + ".primaries"]["major_id"]
+                del results[key + ".particles"]["major_id"]
+
             # Flatten all other objects
             else:
                 result = flatten_nested_dictionary(result)
