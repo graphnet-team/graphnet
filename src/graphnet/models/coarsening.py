@@ -7,6 +7,7 @@ from copy import deepcopy
 import torch
 from torch import LongTensor, Tensor
 from torch_geometric.data import Data, Batch
+from sklearn.cluster import DBSCAN
 
 # from torch_geometric.utils import unbatch_edge_index
 from graphnet.components.pool import (
@@ -20,6 +21,7 @@ from graphnet.components.pool import (
     min_pool_x,
     sum_pool_x,
     std_pool_x,
+    time_window_clustering,
 )
 from graphnet.utilities.logging import LoggerMixin
 
@@ -229,6 +231,17 @@ class CustomDOMCoarsening(DOMCoarsening):
         )
 
         return x
+
+
+class TimeWindowCoarsening(Coarsening):
+    def __init__(self, time_window: float, reduce: str = "avg", transfer_attributes: bool = True,):
+        super().__init__(reduce, transfer_attributes)
+        self._time_window = time_window
+        self._cluster_method = DBSCAN(self._time_window, min_samples=1)
+
+    def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
+        time_clusters = time_window_clustering(data, self._cluster_method, self._time_window)
+        return time_clusters
 
 
 class LoopBasedCoarsening:
