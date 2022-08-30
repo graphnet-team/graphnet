@@ -2,7 +2,7 @@
 
 # Utility function(s)
 import json
-from typing import Any, Dict, Iterable, List, MutableMapping, Tuple, Union
+from typing import Any, Dict, Iterable, List, Tuple, Union
 
 import pandas as pd
 
@@ -14,7 +14,7 @@ def flatten_nested_dictionary(
 ) -> Union[Dict, Any]:
 
     # Dict-like
-    if isinstance(obj, MutableMapping):
+    if isinstance(obj, dict):
         items: List[Tuple[str, Any]] = []
         for key, value in obj.items():
             new_key = parent_key + separator + key if parent_key else key
@@ -38,7 +38,7 @@ def serialise(obj: Union[Dict, Any]) -> Union[Dict, Any]:
     be possible to de-serialise corresponding elements when reading them from
     file.
     """
-    if isinstance(obj, MutableMapping):
+    if isinstance(obj, dict):
         for key in list(obj.keys()):
             value = obj[key]
             if (
