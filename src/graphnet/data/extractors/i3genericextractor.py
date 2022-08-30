@@ -134,7 +134,7 @@ class I3GenericExtractor(I3Extractor):
                         f"Pulse series map {key} didn't return anything."
                     )
 
-            # -- Per-pulse map
+            # -- Per-pulse attribute
             elif isinstance(
                 obj,
                 (
@@ -154,7 +154,7 @@ class I3GenericExtractor(I3Extractor):
                     )
 
                 else:
-                    # If we get a per-pulse map, which isn't a
+                    # If we get a per-pulse attribute map, which isn't a
                     # "I3RecoPulseSeriesMap*", we don't care about area,
                     # direction, orientation, and position -- we only care
                     # about the OM index for future reference. We therefore
