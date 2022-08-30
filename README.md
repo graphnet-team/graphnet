@@ -57,15 +57,22 @@ If you don't need to interface with [IceTray](https://github.com/icecube/icetray
 ```bash
 $ git clone git@github.com:<your-username>/graphnet.git
 $ cd graphnet
-$ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc -y  # Optional
+$ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc cudatoolkit=11.5 -c conda-forge -y  # Optional
 $ conda activate graphnet  # Optional
 (graphnet) $ pip install -r requirements/torch_cpu.txt -e .[develop,torch]  # CPU-only torch
 (graphnet) $ pip install -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU support
 ```
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
-A stand-alone installation requires specifying a supported python version (see above) and ensuring that the C++ compilers (gcc) are up to date. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already have recent versions (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
-If you have an older system version of GCC than this installed and you install newer compiler though the above command, you should add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/lib/` to your `.bashrc` script or similar.
+A stand-alone installation requires specifying a supported python version (see above), ensuring that the C++ compilers (gcc) are up to date, and possible installing the CUDA Toolkit. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already have recent versions (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
+If you install the CUDA Toolkit and/or newer compilers the  though the above command, you should add **one of**:
+```bash
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/lib/
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/miniconda3/lib/
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/envs/graphnet/lib/
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/miniconda3/envs/graphnet/lib/
+```
+depending on your setup to your `.bashrc` script or similar to make sure that the corresponding library files are accessible. Check which one of the above path contains the `.so`-files your looking to use, and add that path
 
 </blockquote>
 </details>
