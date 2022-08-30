@@ -158,8 +158,8 @@ class I3GenericExtractor(I3Extractor):
             # Flatten and transpose MC Tree
             if isinstance(obj, dataclasses.I3MCTree):
                 (
-                    results[key + ".primaries"],
-                    results[key + ".particles"],
+                    results[key + "__primaries"],
+                    results[key + "__particles"],
                 ) = self._flatten_result_mctree(result)
 
             # Flatten all other objects
@@ -265,10 +265,10 @@ class I3GenericExtractor(I3Extractor):
 
         # Remove `majorID`, which has unsupported unit64 dtype.
         # Keep only one instances of `minorID`.
-        del result_primaries["id.minorID"]
-        del result_particles["id.minorID"]
-        del result_primaries["id.majorID"]
-        del result_particles["id.majorID"]
+        del result_primaries["id__minorID"]
+        del result_particles["id__minorID"]
+        del result_primaries["id__majorID"]
+        del result_particles["id__majorID"]
         del result_primaries["major_id"]
         del result_particles["major_id"]
 
