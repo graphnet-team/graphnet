@@ -1,6 +1,7 @@
 """Consistent and configurable logging across the project."""
 
 from collections import Counter
+from functools import lru_cache
 import re
 from typing import Optional
 import colorlog
@@ -51,6 +52,12 @@ def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
         datefmt=datefmt,
     )
     return basic_formatter, colored_formatter
+
+
+@lru_cache(1)
+def warn_once(logger: logging.Logger, message: str):
+    """Print `message` as warning exactly once."""
+    logger.warn(message)
 
 
 class RepeatFilter(object):
