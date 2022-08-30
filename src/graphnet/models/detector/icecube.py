@@ -45,6 +45,61 @@ class IceCube86(Detector):
         return data
 
 
+class IceCubeAddedFeatures(IceCube86):
+    """More features from summary statistics"""
+    features = FEATURES.ICECUBE86 +\
+        [
+            "min_pool_time",
+            "max_pool_time",
+            "std_pool_time",
+            "min_pool_charge",
+            "max_pool_charge",
+            "std_pool_charge",
+            "pulses_per_dom"
+        ]
+
+    def _forward(self, data: Data) -> Data:
+        """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
+
+        Args:
+            data (Data): Input graph data.
+
+        Returns:
+            Data: Connected and preprocessed graph data.
+        """
+
+        # Check(s)
+        self._validate_features(data)
+
+        # Preprocessing
+        data.x[:, 0] /= 100.0  # dom_x
+        data.x[:, 1] /= 100.0  # dom_y
+        data.x[:, 2] += 350.0  # dom_z
+        data.x[:, 2] /= 100.0
+        data.x[:, 3] /= 1.05e04  # dom_time
+        data.x[:, 3] -= 1.0
+        data.x[:, 3] *= 20.0
+        data.x[:, 4] /= 1.0  # charge
+        data.x[:, 5] -= 1.25  # rde
+        data.x[:, 5] /= 0.25
+        data.x[:, 6] /= 0.05  # pmt_area
+        data.x[:, 7] -= 1.3e4
+        data.x[:, 7] /= 5e3
+        data.x[:, 8] -= 1.4e4
+        data.x[:, 8] /= 5e3
+        data.x[:, 9] -= 300
+        data.x[:, 9] /= 300
+        data.x[:, 10] -= 0.6
+        data.x[:, 10] /= 0.5
+        data.x[:, 11] -= 6
+        data.x[:, 11] /= 30
+        data.x[:, 12] -= 1
+        data.x[:, 12] /= 6
+        data.x[:, 13] -= 15
+        data.x[:, 13] /= 28
+
+        return data
+
 class IceCubeDeepCore(IceCube86):
     """`Detector` class for IceCube-DeepCore."""
 

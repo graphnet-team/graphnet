@@ -138,8 +138,9 @@ class Coarsening(ABC, LoggerMixin):
         pooled_data: Batch = self._reduce_method(cluster, data)
 
         # Optionally overwrite feature tensor
-        x = self._additional_features(cluster, data)
-        if x is not None:
+        add_feats = self._additional_features(cluster, data)
+        if add_feats is not None:
+            x, add_labels = add_feats
             pooled_data.x = torch.cat(
                 (
                     pooled_data.x,
@@ -155,10 +156,13 @@ class Coarsening(ABC, LoggerMixin):
 
         # Transfer attributes on `data`, pooling as required.
         pooled_data = self._transfer_attributes(cluster, data, pooled_data)
+        if add_feats is not None:
+            pooled_data.features = [feats + add_labels for feats in pooled_data.features]
 
         # Reconstruct Batch Attributes
         if isinstance(data, Batch):  # if a Batch object
             pooled_data = self._reconstruct_batch(data, pooled_data)
+
         return pooled_data
 
     def _reconstruct_batch(self, original, pooled):
@@ -230,7 +234,18 @@ class CustomDOMCoarsening(DOMCoarsening):
             dim=1,
         )
 
-        return x
+        additional_feature_labels = \
+            [
+                "min_pool_time",
+                "max_pool_time",
+                "std_pool_time",
+                "min_pool_charge",
+                "max_pool_charge",
+                "std_pool_charge",
+                "pulses_per_dom"
+            ]
+
+        return x, additional_feature_labels
 
 
 class TimeWindowCoarsening(Coarsening):
