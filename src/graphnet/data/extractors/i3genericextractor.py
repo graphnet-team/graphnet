@@ -28,7 +28,19 @@ GENERIC_EXTRACTOR_NAME = "<GENERIC>"
 
 
 class I3GenericExtractor(I3Extractor):
-    """Dynamically and generically extract all information from frames."""
+    """Dynamically and generically extract information from frames.
+
+    This class parses all keys in the I3Frame objects it is called on, and
+    tries to automatically cast all of the available information to pure-python
+    classes. This is done recursively, for each object in the I3Frame, by
+    looking for member variables that can be parsed; by looking for objects
+    that have signatures similar to python lists and dicts; and by handling a
+    handful of special cases:
+    - Pulse series maps,
+    - Per-pulse maps,
+    - MC tree, and
+    - Triggers.
+    """
 
     def __init__(
         self,
