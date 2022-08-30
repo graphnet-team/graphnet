@@ -96,7 +96,23 @@ def get_member_variables(
 
 
 def cast_object_to_pure_python(obj: Any) -> Any:
-    """Extracts all possible pure-python data from `obj`."""
+    """Casts `obj`, and any members/elements, to pure-python classes.
+
+    The function takes any object `obj` and tries to cast it to a pure python
+    class. This is mainly relevant for IceCube-specific classes (I3*) that
+    cannot be cast trivially.
+
+    For IceCube-specific classes, we check whether the object has any member,
+    variables and if does, we recursively try to cast these to pure python.
+    Similarly, if an IceCube-specific class has a signature similar to a python
+    list or dict (e.g, it has a length and supports indexation), we cast it to
+    the corresponding pure python equivalent, and recursively try to cast its
+    elements.
+
+    For regular-python, non-Icecube-specific, classes, we cast to list-like
+    objects to list and dict-like objects to list, and otherwise return the
+    object itself if it deemed "pythonic" in this way.
+    """
 
     logger.debug(f"Value: {obj}")
     logger.debug(f"Type: {str(type(obj))}")
@@ -123,8 +139,6 @@ def cast_object_to_pure_python(obj: Any) -> Any:
         "Discarded the following member variables: "
         f"{discarded_member_variables}"
     )
-
-    results = None  # Default
 
     # Has valid member variables -- stick to these, then.
     results = {}
@@ -159,11 +173,10 @@ def cast_object_to_pure_python(obj: Any) -> Any:
     elif list(results.keys()) == ["_list"]:
         results = results.pop("_list")
 
-    if results is None:
+    if len(results) == 0:
         logger.warning(
             f"Cannot extract any information to pure python from {obj}"
         )
-        results = "!!! NOT PARSED !!!"
 
     return results
 
