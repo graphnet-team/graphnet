@@ -29,6 +29,15 @@ def flatten_nested_dictionary(
 
 
 def serialise(obj: Union[Dict, Any]) -> Union[Dict, Any]:
+    """Serialise the necessary keys in `obj` to JSON for saving to file.
+
+    It is typically not possible to save nested collections (lists, dicts) to
+    file. Therefore, if `obj` is, e.g., a list of lists, we need to serialise
+    each element in the outer list to JSON (i.e., convert it to a JSON-
+    formatted string) in order to be able to save `obj` to file. It will then
+    be possible to de-serialise corresponding elements when reading them from
+    file.
+    """
     if isinstance(obj, MutableMapping):
         for key in list(obj.keys()):
             value = obj[key]
