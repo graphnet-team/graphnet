@@ -34,7 +34,7 @@ class I3GenericExtractor(I3Extractor):
     tries to automatically cast all of the available information to pure-python
     classes. This is done recursively, for each object in the I3Frame, by
     looking for member variables that can be parsed; by looking for objects
-    that have signatures similar to python lists and dicts; and by handling a
+    that have signatures similar to python lists or dicts; and by handling a
     handful of special cases:
     - Pulse series maps,
     - Per-pulse maps,
@@ -81,8 +81,23 @@ class I3GenericExtractor(I3Extractor):
             keys = self._keys
         return keys
 
-    def __call__(self, frame: "icetray.I3Frame") -> dict:
-        """Extract all possible data from `frame`."""
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
+        """Extract all possible data from `frame`.
+
+        The following types of objects are handled as special cases:
+        - Pulse series maps,
+        - Per-pulse maps,
+        - MC tree, and
+        - Triggers.
+
+        All other fields are cast to pure-python classes by generically parsing
+        member variables, and checking if the object has a signature similar to
+        python lists or dicts.
+
+        Returns:
+            Dictionary containing each parsed key in `frame`, and the
+                corresponding, extracted data in pure-python format.
+        """
 
         results = {}
         for key in self._get_keys(frame):
