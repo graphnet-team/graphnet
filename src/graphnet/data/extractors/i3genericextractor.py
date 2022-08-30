@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.types import (
@@ -115,7 +115,7 @@ class I3GenericExtractor(I3Extractor):
                 continue
 
             # Special case(s)
-            # -- Pulse series mao
+            # -- Pulse series map
             if isinstance(
                 obj,
                 (
@@ -125,14 +125,7 @@ class I3GenericExtractor(I3Extractor):
                     dataclasses.I3RecoPulseSeriesMapUnion,
                 ),
             ):
-                result = cast_pulse_series_to_pure_python(
-                    frame, key, self._calibration, self._gcd_dict
-                )
-
-                if result is None:
-                    self.logger.debug(
-                        f"Pulse series map {key} didn't return anything."
-                    )
+                result = self._extract_pulse_series_map(frame, key)
 
             # -- Per-pulse attribute
             elif isinstance(
@@ -144,53 +137,18 @@ class I3GenericExtractor(I3Extractor):
                     dataclasses.I3MapKeyVectorDouble,
                 ),
             ):
-                result = cast_pulse_series_to_pure_python(
-                    frame, key, self._calibration, self._gcd_dict
-                )
-
-                if result is None:
-                    self.logger.debug(
-                        f"Per-pulse map {key} didn't return anything."
-                    )
-
-                else:
-                    # If we get a per-pulse attribute map, which isn't a
-                    # "I3RecoPulseSeriesMap*", we don't care about area,
-                    # direction, orientation, and position -- we only care
-                    # about the OM index for future reference. We therefore
-                    # only keep these indices and the associated mapping value.
-                    keep_keys = ["value"] + [
-                        key_ for key_ in result if key_.startswith("index.")
-                    ]
-                    result = {key_: result[key_] for key_ in keep_keys}
+                result = self._extract_per_pulse_attribute(frame, key)
 
             # -- MC Tree
             elif isinstance(obj, dataclasses.I3MCTree):
-                result = cast_object_to_pure_python(obj)
-
-                # Assing parent and children links to all particles in tree
-                result["particles"] = result.pop("_list")
-                for ix, particle in enumerate(obj):
-                    try:
-                        parent = obj.parent(particle).minor_id
-                    except IndexError:
-                        parent = None
-
-                    children = [p.minor_id for p in obj.children(particle)]
-
-                    result["particles"][ix]["parent"] = parent
-                    result["particles"][ix]["children"] = children
+                result = self._cast_mc_tree(obj)
 
             # -- Triggers
             elif isinstance(obj, dataclasses.I3TriggerHierarchy):
-                result = cast_object_to_pure_python(obj)
-                assert isinstance(result, list)
-                result = transpose_list_of_dicts(result)
+                result = self._cast_triggers(obj)
 
             # -- Generic case
             else:
-
-                self.logger.debug(f"Got generic object {key} in frame.")
                 result = cast_object_to_pure_python(obj)
 
             # Skip empty extractions
@@ -199,48 +157,130 @@ class I3GenericExtractor(I3Extractor):
 
             # Flatten and transpose MC Tree
             if isinstance(obj, dataclasses.I3MCTree):
-                assert len(result.keys()) == 2
-                result_primaries: List[Dict[str, Any]] = result["primaries"]
-                result_particles: List[Dict[str, Any]] = result["particles"]
-
-                result_primaries: List[Dict[str, Any]] = [
-                    flatten_nested_dictionary(res) for res in result_primaries
-                ]
-                result_particles: List[Dict[str, Any]] = [
-                    flatten_nested_dictionary(res) for res in result_particles
-                ]
-
-                result_primaries: Dict[
-                    str, List[Any]
-                ] = transpose_list_of_dicts(result_primaries)
-                result_particles: Dict[
-                    str, List[Any]
-                ] = transpose_list_of_dicts(result_particles)
-
-                results[key + ".particles"] = result_particles
-                results[key + ".primaries"] = result_primaries
-
-                # Remove `majorID`, which has unsupported unit64 dtype.
-                # Keep only one instances of `minorID`.
-                del results[key + ".primaries"]["id.minorID"]
-                del results[key + ".particles"]["id.minorID"]
-                del results[key + ".primaries"]["id.majorID"]
-                del results[key + ".particles"]["id.majorID"]
-                del results[key + ".primaries"]["major_id"]
-                del results[key + ".particles"]["major_id"]
+                (
+                    results[key + ".primaries"],
+                    results[key + ".particles"],
+                ) = self._flatten_result_mctree(result)
 
             # Flatten all other objects
             else:
-                result = flatten_nested_dictionary(result)
-
-                # If the object is a non-dict object, ensure that it has a non-
-                # empty key (required for saving).
-                if list(result.keys()) == [""]:
-                    result["value"] = result.pop("")
-
-                results[key] = result
+                results[key] = self._flatten_result(result)
 
         # Serialise list of iterables to JSON
         results = {key: serialise(value) for key, value in results.items()}
 
         return results
+
+    def _extract_pulse_series_map(
+        self, frame: "icetray.I3Frame", key: str
+    ) -> Optional[Dict[str, Any]]:
+        """Extract pulse-series map `key` from `frame`"""
+        result = cast_pulse_series_to_pure_python(
+            frame, key, self._calibration, self._gcd_dict
+        )
+
+        if result is None:
+            self.logger.debug(f"Pulse map {key} didn't return anything.")
+
+        return result
+
+    def _extract_per_pulse_attribute(
+        self, frame: "icetray.I3Frame", key: str
+    ) -> Optional[Dict[str, Any]]:
+        """Extract per-pulse attribute `key` from `frame`
+
+        A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a dictionary-
+        like mapping from an OM key to some attribute, e.g., an integer or a
+        vector properties.
+        """
+
+        result = self._extract_pulse_series_map(
+            frame, key, self._calibration, self._gcd_dict
+        )
+
+        if result is not None:
+            # If we get a per-pulse attribute map, which isn't a
+            # "I3RecoPulseSeriesMap*", we don't care about area,
+            # direction, orientation, and position -- we only care
+            # about the OM index for future reference. We therefore
+            # only keep these indices and the associated mapping value.
+            keep_keys = ["value"] + [
+                key_ for key_ in result if key_.startswith("index.")
+            ]
+            result = {key_: result[key_] for key_ in keep_keys}
+
+        return result
+
+    def _cast_mc_tree(self, obj: "dataclasses.I3MCTree") -> Dict[str, Any]:
+        """Cast I3MCTree to dict."""
+
+        result = cast_object_to_pure_python(obj)
+
+        # Assign parent and children links to all particles in tree
+        result["particles"] = result.pop("_list")
+        for ix, particle in enumerate(obj):
+            try:
+                parent = obj.parent(particle).minor_id
+            except IndexError:
+                parent = None
+
+            children = [p.minor_id for p in obj.children(particle)]
+
+            result["particles"][ix]["parent"] = parent
+            result["particles"][ix]["children"] = children
+
+        return result
+
+    def _cast_triggers(
+        self, obj: "dataclasses.I3TriggerHierarchy"
+    ) -> Dict[str, List[Any]]:
+        """Cast trigger hierarchy to dict"""
+        result = cast_object_to_pure_python(obj)
+        assert isinstance(result, list)
+        result = transpose_list_of_dicts(result)
+        return result
+
+    def _flatten_result_mctree(
+        self, result: Dict[str, Any]
+    ) -> Tuple[Dict[str, Any]]:
+        """Flatten results from casting I3MCTree to pure python."""
+        # Flatten and transpose MC Tree
+        assert len(result.keys()) == 2
+        result_primaries: List[Dict[str, Any]] = result["primaries"]
+        result_particles: List[Dict[str, Any]] = result["particles"]
+
+        result_primaries: List[Dict[str, Any]] = [
+            flatten_nested_dictionary(res) for res in result_primaries
+        ]
+        result_particles: List[Dict[str, Any]] = [
+            flatten_nested_dictionary(res) for res in result_particles
+        ]
+
+        result_primaries: Dict[str, List[Any]] = transpose_list_of_dicts(
+            result_primaries
+        )
+        result_particles: Dict[str, List[Any]] = transpose_list_of_dicts(
+            result_particles
+        )
+
+        # Remove `majorID`, which has unsupported unit64 dtype.
+        # Keep only one instances of `minorID`.
+        del result_primaries["id.minorID"]
+        del result_particles["id.minorID"]
+        del result_primaries["id.majorID"]
+        del result_particles["id.majorID"]
+        del result_primaries["major_id"]
+        del result_particles["major_id"]
+
+        return result_primaries, result_particles
+
+    def _flatten_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        """Flatten results from casting any other instance to pure python."""
+        result = flatten_nested_dictionary(result)
+
+        # If the object is a non-dict object, ensure that it has a non-
+        # empty key (required for saving).
+        if list(result.keys()) == [""]:
+            result["value"] = result.pop("")
+
+        return result
