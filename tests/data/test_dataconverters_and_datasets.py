@@ -8,6 +8,7 @@ from graphnet.data.extractors import (
     I3FeatureExtractorIceCube86,
     I3TruthExtractor,
     I3RetroExtractor,
+    I3GenericExtractor,
 )
 from graphnet.data.parquet import (
     ParquetDataset,
@@ -25,6 +26,9 @@ from graphnet.utilities.imports import requires_icecube
 
 # Global variable(s)
 TEST_DATA_DIR = os.path.abspath("./test_data/")
+TEST_DATA_DIR_GENERIC_EXTRACTOR = os.path.abspath(
+    "./test_data/generic_extractor/"
+)
 FILE_NAME = "oscNext_genie_level7_v03.01_pass2.160000.000001"
 GCD_FILE = (
     "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz"
@@ -53,7 +57,6 @@ def test_is_pulsemap_check():
     assert is_pulsemap_check("retro") is False
 
 
-# @requires_icecube
 @pytest.mark.order(1)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
 def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
@@ -85,11 +88,48 @@ def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
 
     # Check output
     path = get_file_path(backend, test_data_dir)
-    assert os.path.exists(path)
+    assert os.path.exists(path), path
 
 
-# @requires_icecube
 @pytest.mark.order(2)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+def test_generic_extractor(backend: str, test_data_dir: str = TEST_DATA_DIR):
+    """Test the implementation of `DataConverter` for `backend`."""
+    # Constructor DataConverter instance
+    opt = dict(
+        extractors=[
+            I3GenericExtractor(
+                keys=[
+                    "I3MCTree",
+                    "SRTInIcePulses",
+                ],
+            ),
+        ],
+        outdir=TEST_DATA_DIR_GENERIC_EXTRACTOR,
+        gcd_rescue=os.path.join(
+            test_data_dir,
+            GCD_FILE,
+        ),
+        workers=1,
+    )
+
+    if backend == "sqlite":
+        converter = SQLiteDataConverter(**opt)
+    elif backend == "parquet":
+        converter = ParquetDataConverter(**opt)
+    else:
+        assert False, "Shouldn't reach here"
+
+    # Perform conversion from I3 to `backend`
+    os.makedirs(test_data_dir, exist_ok=True)
+    converter(test_data_dir)
+
+    # Check output
+    path = get_file_path(backend, test_data_dir)
+    assert os.path.exists(path), path
+
+
+@pytest.mark.order(3)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
 def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR):
     """Test the implementation of `Dataset` for `backend`."""
@@ -149,3 +189,8 @@ def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR):
         assert event.x.size(dim=0) == event.n_pulses
         assert event.x.size(dim=1) == len(event.features)
         assert len(event.features) == len(opt["features"])
+
+
+if __name__ == "__main__":
+    test_dataconverter("sqlite")
+    test_generic_extractor("sqlite")
