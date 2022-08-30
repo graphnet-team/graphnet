@@ -207,7 +207,7 @@ class CustomDOMCoarsening(DOMCoarsening):
 
         features = data.features
         if batch is not None:
-            features = [feats[0] for feats in features]
+            features = features[0]
 
         ix_time = features.index("dom_time")
         ix_charge = features.index("charge")
