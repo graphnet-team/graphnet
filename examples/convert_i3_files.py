@@ -27,21 +27,23 @@ def main_icecube86(backend: str):
     # Check(s)
     assert backend in CONVERTER_CLASS
 
-    paths = [
-        # "/groups/icecube/asogaard/data/i3/i3_to_sqlite_workshop_test/level7_v02.00"
-        "./test_data/"
-    ]
+    basedir = "./test_data/"
+    paths = [basedir]
 
-    # gcd_rescue = "resources/GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz"
     gcd_rescue = os.path.join(
-        paths[0],
+        basedir,
         "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz",
     )
-    outdir = "/groups/icecube/asogaard/temp/parquet_test_ic86"
+    outdir = "./temp/parquet_test_ic86"
 
     converter = CONVERTER_CLASS[backend](
         [
-            I3GenericExtractor(),
+            I3GenericExtractor(
+                keys=[
+                    "SRTInIcePulses",
+                    "I3MCTree",
+                ]
+            ),
         ],
         outdir,
         gcd_rescue,
@@ -54,16 +56,13 @@ def main_icecube_upgrade(backend: str):
     # Check(s)
     assert backend in CONVERTER_CLASS
 
-    # basedir = "/groups/icecube/asogaard/data/IceCubeUpgrade/nu_simulation/detector/step4/"
     basedir = "test_data_upgrade_2"
-    # paths = [os.path.join(basedir, "step4")]
     paths = [basedir]
     gcd_rescue = os.path.join(
-        # basedir, "gcd/GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2"
         basedir,
         "GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2",
     )
-    outdir = "/groups/icecube/asogaard/temp/parquet_test_upgrade"
+    outdir = "./temp/parquet_test_upgrade"
     workers = 1
 
     converter = CONVERTER_CLASS[backend](
@@ -89,7 +88,7 @@ def main_icecube_upgrade(backend: str):
 
 
 if __name__ == "__main__":
-    backend = "parquet"
-    # backend = "sqlite"
+    # backend = "parquet"
+    backend = "sqlite"
     main_icecube86(backend)
     # main_icecube_upgrade(backend)
