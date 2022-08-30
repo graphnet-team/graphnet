@@ -10,7 +10,7 @@ import pandas as pd
 def flatten_nested_dictionary(
     obj: Union[Dict, Any],
     parent_key: str = "",
-    separator: str = ".",
+    separator: str = "__",
 ) -> Union[Dict, Any]:
 
     # Dict-like
