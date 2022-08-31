@@ -7,18 +7,14 @@ from graphnet.data.extractors.utilities import (
     frame_is_montecarlo,
     frame_is_noise,
 )
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.imports import has_icecube_package
 
-logger = get_logger()
-
-try:
+if has_icecube_package():
     from icecube import (
         dataclasses,
         icetray,
         phys_services,
     )  # pyright: reportMissingImports=false
-except ImportError:
-    logger.warning("icecube package not available.")
 
 
 class I3TruthExtractor(I3Extractor):
@@ -385,5 +381,5 @@ class I3TruthExtractor(I3Extractor):
         if "L2" in input_file:  # not robust
             sim_type = "dbang"
         if sim_type == "lol":
-            logger.info("SIM TYPE NOT FOUND!")
+            self.logger.info("SIM TYPE NOT FOUND!")
         return sim_type
