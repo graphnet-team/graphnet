@@ -194,9 +194,7 @@ class I3GenericExtractor(I3Extractor):
         vector properties.
         """
 
-        result = self._extract_pulse_series_map(
-            frame, key, self._calibration, self._gcd_dict
-        )
+        result = self._extract_pulse_series_map(frame, key)
 
         if result is not None:
             # If we get a per-pulse attribute map, which isn't a
