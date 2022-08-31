@@ -1,13 +1,8 @@
 from graphnet.data.extractors.i3extractor import I3Extractor
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.imports import has_icecube_package
 
-logger = get_logger()
-try:
-    from icecube import (
-        dataclasses,
-    )  # pyright: reportMissingImports=false
-except ImportError:
-    logger.warning("icecube package not available.")
+if has_icecube_package():
+    from icecube import dataclasses  # pyright: reportMissingImports=false
 
 
 class I3FeatureExtractor(I3Extractor):
