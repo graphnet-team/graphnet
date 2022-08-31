@@ -2,7 +2,7 @@
 
 from functools import wraps
 
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import get_logger, warn_once
 
 
 logger = get_logger()
@@ -15,6 +15,23 @@ def has_icecube_package() -> bool:
 
         return True
     except ImportError:
+        warn_once(
+            logger,
+            "`icecube` not available. Some functionality may be missing.",
+        )
+        return False
+
+
+def has_torch_package() -> bool:
+    """Check whether the `torch` package is available."""
+    try:
+        import torch
+
+        return True
+    except ImportError:
+        warn_once(
+            logger, "`torch` not available. Some functionality may be missing."
+        )
         return False
 
 

@@ -1,17 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from graphnet.utilities.logging import LoggerMixin, get_logger
+from graphnet.utilities.imports import has_icecube_package
+from graphnet.utilities.logging import LoggerMixin
 
-logger = get_logger()
-
-try:
-    from icecube import (
-        icetray,
-        dataio,
-    )  # pyright: reportMissingImports=false
-except ImportError:
-    logger.warning("icecube package not available.")
+if has_icecube_package():
+    from icecube import icetray, dataio  # pyright: reportMissingImports=false
 
 
 class I3Extractor(ABC, LoggerMixin):
