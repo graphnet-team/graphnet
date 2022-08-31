@@ -18,14 +18,14 @@ standard_library.install_aliases()
 
 import os, socket, subprocess, datetime, shutil
 
-from graphnet.utils.cluster.filesys_tools import TMP_FILE_STRFTIME
+from graphnet.utilities.cluster.filesys_tools import TMP_FILE_STRFTIME
 
-from graphnet.utils.cluster.unix_tools import BASH_SHEBANG
+from graphnet.utilities.cluster.unix_tools import BASH_SHEBANG
 
-from graphnet.utils.cluster.condor import *
-from graphnet.utils.cluster.slurm import *
-from graphnet.utils.cluster.gridengine import *
-from graphnet.utils.cluster.job import *
+from graphnet.utilities.cluster.condor import *
+from graphnet.utilities.cluster.slurm import *
+from graphnet.utilities.cluster.gridengine import *
+from graphnet.utilities.cluster.job import *
 
 # py2 vs 3 compatibility
 try:
