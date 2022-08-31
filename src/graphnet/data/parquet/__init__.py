@@ -1,2 +1,8 @@
+from graphnet.utilities.imports import has_torch_package
+
 from .parquet_dataconverter import ParquetDataConverter
-from .parquet_dataset import ParquetDataset
+
+if has_torch_package():
+    from .parquet_dataset import ParquetDataset
+
+del has_torch_package

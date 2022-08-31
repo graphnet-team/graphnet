@@ -49,8 +49,8 @@ def make_dataloader(
         node_truth=node_truth,
         node_truth_table=node_truth_table,
         string_selection=string_selection,
-        # loss_weight_table=loss_weight_table,
-        # loss_weight_column=loss_weight_column,
+        loss_weight_table=loss_weight_table,
+        loss_weight_column=loss_weight_column,
     )
 
     def collate_fn(graphs):
