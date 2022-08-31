@@ -66,7 +66,7 @@
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">warn_once</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
@@ -79,6 +79,23 @@
 
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">warn_once</span><span class="p">(</span>
+            <span class="n">logger</span><span class="p">,</span>
+            <span class="s2">&quot;`icecube` not available. Some functionality may be missing.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="has_torch_package"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.imports.has_torch_package">[docs]</a><span class="k">def</span> <span class="nf">has_torch_package</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check whether the `torch` package is available.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">torch</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">warn_once</span><span class="p">(</span>
+            <span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;`torch` not available. Some functionality may be missing.&quot;</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 

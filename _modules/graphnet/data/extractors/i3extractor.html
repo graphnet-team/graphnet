@@ -65,17 +65,11 @@
 <span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="k">import</span> <span class="n">has_icecube_package</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">LoggerMixin</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="p">(</span>
-        <span class="n">icetray</span><span class="p">,</span>
-        <span class="n">dataio</span><span class="p">,</span>
-    <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;icecube package not available.&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="n">icetray</span><span class="p">,</span> <span class="n">dataio</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 
 
 <div class="viewcode-block" id="I3Extractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor">[docs]</a><span class="k">class</span> <span class="nc">I3Extractor</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">):</span>
