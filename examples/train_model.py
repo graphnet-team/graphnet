@@ -1,4 +1,4 @@
-import os.path
+import os
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
@@ -40,6 +40,9 @@ wandb_logger = WandbLogger(
     save_dir="./wandb/",
     log_model=True,
 )
+
+# -- Ensure that custom output directory exists
+os.makedirs(wandb_logger.save_dir, exists_ok=True)
 
 
 # Main function definition
