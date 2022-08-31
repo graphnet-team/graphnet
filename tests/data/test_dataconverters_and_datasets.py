@@ -1,6 +1,7 @@
 """Unit tests for SQLiteDataConverter."""
 import os
 
+import numpy as np
 import pytest
 
 from graphnet.data.constants import FEATURES, TRUTH
@@ -21,14 +22,14 @@ from graphnet.data.sqlite import (
 from graphnet.data.sqlite.sqlite_dataconverter import (
     is_pulsemap_check,
 )
-from graphnet.utilities.imports import requires_icecube
+from graphnet.utilities.imports import has_icecube_package
+
+if has_icecube_package():
+    from icecube import dataio
 
 
 # Global variable(s)
 TEST_DATA_DIR = os.path.abspath("./test_data/")
-TEST_DATA_DIR_GENERIC_EXTRACTOR = os.path.abspath(
-    "./test_data/generic_extractor/"
-)
 FILE_NAME = "oscNext_genie_level7_v03.01_pass2.160000.000001"
 GCD_FILE = (
     "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz"
@@ -91,42 +92,76 @@ def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
     assert os.path.exists(path), path
 
 
-@pytest.mark.order(2)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-def test_generic_extractor(backend: str, test_data_dir: str = TEST_DATA_DIR):
-    """Test the implementation of `DataConverter` for `backend`."""
-    # Constructor DataConverter instance
-    opt = dict(
-        extractors=[
-            I3GenericExtractor(
-                keys=[
-                    "I3MCTree",
-                    "SRTInIcePulses",
-                ],
-            ),
-        ],
-        outdir=TEST_DATA_DIR_GENERIC_EXTRACTOR,
-        gcd_rescue=os.path.join(
-            test_data_dir,
-            GCD_FILE,
-        ),
-        workers=1,
-    )
+def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR):
+    """Test the implementation of `I3GenericExtractor`."""
 
-    if backend == "sqlite":
-        converter = SQLiteDataConverter(**opt)
-    elif backend == "parquet":
-        converter = ParquetDataConverter(**opt)
-    else:
-        assert False, "Shouldn't reach here"
+    # Constants(s)
+    mc_tree = "I3MCTree"
+    pulse_series = "SRTInIcePulses"
 
-    # Perform conversion from I3 to `backend`
-    os.makedirs(test_data_dir, exist_ok=True)
-    converter(test_data_dir)
+    # Constructor I3Extractor instance(s)
+    generic_extractor = I3GenericExtractor(keys=[mc_tree, pulse_series])
+    truth_extractor = I3TruthExtractor()
+    feature_extractor = I3FeatureExtractorIceCube86(pulse_series)
 
-    # Check output
-    path = get_file_path(backend, test_data_dir)
-    assert os.path.exists(path), path
+    i3_file = os.path.join(test_data_dir, FILE_NAME) + ".i3.zst"
+    gcd_file = os.path.join(test_data_dir, GCD_FILE)
+
+    generic_extractor.set_files(i3_file, gcd_file)
+    truth_extractor.set_files(i3_file, gcd_file)
+    feature_extractor.set_files(i3_file, gcd_file)
+
+    i3_file_io = dataio.I3File(i3_file, "r")
+    ix_test = 10
+    while i3_file_io.more():
+        try:
+            frame = i3_file_io.pop_physics()
+        except:  # noqa: E722
+            continue
+
+        generic_data = generic_extractor(frame)
+        truth_data = truth_extractor(frame)
+        feature_data = feature_extractor(frame)
+
+        if ix_test == 10:
+            print(list(generic_data[pulse_series].keys()))
+            print(list(truth_data.keys()))
+            print(list(feature_data.keys()))
+
+        # Truth vs. generic
+        key_pairs = [
+            ("energy", "energy"),
+            ("zenith", "dir__zenith"),
+            ("azimuth", "dir__azimuth"),
+            ("pid", "pdg_encoding"),
+        ]
+
+        for truth_key, generic_key in key_pairs:
+            assert (
+                truth_data[truth_key]
+                == generic_data[f"{mc_tree}__primaries"][generic_key][0]
+            )
+
+        # Reco vs. generic
+        key_pairs = [
+            ("charge", "charge"),
+            ("dom_time", "time"),
+            ("dom_x", "position__x"),
+            ("dom_y", "position__y"),
+            ("dom_z", "position__z"),
+            ("width", "width"),
+            ("pmt_area", "area"),
+            # ("rde", "relative_dom_efficiency"),  <-- Missing
+        ]
+
+        for reco_key, generic_key in key_pairs:
+            assert np.allclose(
+                feature_data[reco_key], generic_data[pulse_series][generic_key]
+            )
+
+        ix_test -= 1
+        if ix_test == 0:
+            break
 
 
 @pytest.mark.order(3)
@@ -192,5 +227,5 @@ def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR):
 
 
 if __name__ == "__main__":
-    test_dataconverter("sqlite")
-    test_generic_extractor("sqlite")
+    # test_dataconverter("sqlite")
+    test_i3genericextractor()
