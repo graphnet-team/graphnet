@@ -144,3 +144,24 @@ def test_attribute_transfer():
 
     assert pooled_data.x.size(dim=0) == pooled_data["x0"].size(dim=0)
     assert pooled_data.x.size(dim=0) == pooled_data["attr1"].size(dim=0)
+
+
+def test_batch_reconstruction():
+    """Testing the batch reconstruction"""
+    # Check(s)
+    data = _get_test_data()
+    original_batch_idx = data.batch
+    # Perform coarsening
+    coarsening = SimpleCoarsening(reduce="avg", transfer_attributes=False)
+    pooled_data = coarsening(data)
+
+    # Check that the number of batches is as expected.
+    assert len(torch.unique(original_batch_idx)) == len(
+        torch.unique(pooled_data.batch)
+    )
+
+    # Check that each event can be recovered
+    assert len(pooled_data.to_data_list()) == len(
+        torch.unique(original_batch_idx)
+    )
+    assert all([pooled_data[ix] for ix in range(len(pooled_data))])
