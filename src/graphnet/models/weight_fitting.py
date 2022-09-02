@@ -61,7 +61,7 @@ class UniformWeightFitter:
         if selection is None:
             query = f"select {self._index_column}, {variable} from {self._truth_table}"
         else:
-            query = f"select {self._index_column}, {variable} from {self._truth_table} where {self._index_column} in {selection}"
+            query = f"select {self._index_column}, {variable} from {self._truth_table} where {self._index_column} in {str(tuple(selection))}"
         with sqlite3.connect(self._database_path) as con:
             data = pd.read_sql(query, con)
         return data
