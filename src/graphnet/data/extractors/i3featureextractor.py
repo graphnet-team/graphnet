@@ -69,10 +69,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "is_errata_dom_list": [],
         }
 
-        try:
-            om_keys, data = self._get_om_keys_and_pulseseries(frame)
-        except KeyError:
-            return output
+        om_keys, data = self._get_om_keys_and_pulseseries(frame)
 
         # Added these:
         if "BrightDOMs" in frame:
