@@ -53,7 +53,6 @@ class I3FeatureExtractor(I3Extractor):
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
     def __call__(self, frame) -> dict:
         """Extract features to be used as inputs to GNN models."""
-
         output = {
             "charge": [],
             "dom_time": [],
