@@ -62,15 +62,19 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "width": [],
             "pmt_area": [],
             "rde": [],
-            "is_bright_dom_list": [],
-            "is_bad_dom_list": [],
-            "is_saturated_dom_list": [],
-            "is_errata_dom_list": [],
+            "is_bright_dom": [],
+            "is_bad_dom": [],
+            "is_saturated_dom": [],
+            "is_errata_dom": [],
         }
 
         om_keys, data = self._get_om_keys_and_pulseseries(frame)
 
         # Added these:
+        bright_doms = None
+        bad_doms = None
+        saturation_windows = None
+        calibration_errata = None
         if "BrightDOMs" in frame:
             bright_doms = frame.Get("BrightDOMs")
 
@@ -91,25 +95,35 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             area = self._gcd_dict[om_key].area
             rde = self._get_relative_dom_efficiency(frame, om_key)
 
-            if om_key in bright_doms:
-                is_bright_dom = 1
+            if bright_doms:
+                if om_key in bright_doms:
+                    is_bright_dom = 1
+                else:
+                    is_bright_dom = 0
             else:
-                is_bright_dom = 0
+                is_bright_dom = -1
+            if bad_doms:
+                if om_key in bad_doms:
+                    is_bad_dom = 1
+                else:
+                    is_bad_dom = 0
+            else:
+                is_bad_dom = -1
+            if saturation_windows:
+                if om_key in saturation_windows:
+                    is_saturated_dom = 1
+                else:
+                    is_saturated_dom = 0
+            else:
+                is_saturated_dom = -1
 
-            if om_key in bad_doms:
-                is_bad_dom = 1
+            if calibration_errata:
+                if om_key in calibration_errata:
+                    is_errata_dom = 1
+                else:
+                    is_errata_dom = 0
             else:
-                is_bad_dom = 0
-
-            if om_key in saturation_windows:
-                is_saturated_dom = 1
-            else:
-                is_saturated_dom = 0
-
-            if om_key in calibration_errata:
-                is_errata_dom = 1
-            else:
-                is_errata_dom = 0
+                is_errata_dom = -1
 
             # Loop over pulses for each OM
             pulses = data[om_key]
@@ -123,7 +137,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output["dom_y"].append(y)
                 output["dom_z"].append(z)
                 # New
-                output["is_bright_dom_list"].append(
+                output["is_bright_dom"].append(
                     is_bright_dom
                 )  # 0 or 1 or padding_value if list is not in file
                 output["is_bad_dom"].append(
