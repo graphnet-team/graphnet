@@ -70,7 +70,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
 
         om_keys, data = self._get_om_keys_and_pulseseries(frame)
 
-        # Added these:
+        # Added these :
         bright_doms = None
         bad_doms = None
         saturation_windows = None
