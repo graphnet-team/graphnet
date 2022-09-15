@@ -1,3 +1,7 @@
+# This is a simple action, based on https://github.com/marketplace/actions/open-journals-pdf-generator
+# to generate the draft PDF for a JOSS paper.
+name: joss-draft-pdf
+
 on:
   push:
     branches: [ joss-paper-action ]
@@ -5,7 +9,7 @@ on:
 jobs:
   paper:
     runs-on: ubuntu-latest
-    name: Paper Draft
+    name: JOSS paper draft
     steps:
       - name: Checkout
         uses: actions/checkout@v2
