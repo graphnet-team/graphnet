@@ -6,7 +6,7 @@ on:
     branches: [ joss-paper-action ]
 
 jobs:
-  2022-joss:
+  paper-2022-joss:
     runs-on: ubuntu-latest
     name: JOSS paper draft
     steps:
