@@ -55,7 +55,14 @@ bibliography: paper.bib
 
 # Statement of need
 
-`GraphNeT` is (...) GraphNet Github Zenodo [@graphnet_zenodo:2022], RETRO [@retro:2022], DNN reco.[@Abbasi_2021], "Graph neural networks in particle physics"  [@Shlomi_2021], `pytorch` [@NEURIPS2019_9015], `pytorch-geometric` [@Fey_Fast_Graph_Representation_2019]
+`GraphNeT` is (...)
+
+* GraphNet Github Zenodo [@graphnet_zenodo:2022],
+* RETRO [@IceCube:2022kff]
+* DNN reco. [@Abbasi:2021ryj]
+* Review "Graph neural networks in particle physics" [@Shlomi_2021]
+* `pytorch` [@NEURIPS2019_9015]
+* `pytorch-geometric` [@Fey_Fast_Graph_Representation_2019]
 
 
 # Acknowledgements
