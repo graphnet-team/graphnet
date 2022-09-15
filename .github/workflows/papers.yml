@@ -8,7 +8,7 @@ on:
 jobs:
   paper-2022-joss:
     runs-on: ubuntu-latest
-    name: JOSS paper draft
+    name: JOSS (2022) paper draft
     steps:
       - name: Checkout
         uses: actions/checkout@v2
