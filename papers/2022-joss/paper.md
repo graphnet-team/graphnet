@@ -44,7 +44,7 @@ bibliography: paper.bib
 
 # Statement of need
 
-`GraphNeT` is (...) [@andreas_sogaard_2022_6720189].
+`GraphNeT` is (...) [@graphnet_zenodo:2022], [@retro:2022], [@Abbasi_2021]
 
 
 # Acknowledgements
