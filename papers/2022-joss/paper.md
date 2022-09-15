@@ -7,6 +7,7 @@ authors:
   - name: Andreas Søgaard
     orcid: 0000-0002-0823-056X
     affiliation: 1  # "1, 2" (Multiple affiliations must be quoted)
+    corresponding: true
   - name: Rasmus F. Ørsøe
     orcid: 0000-0001-8890-4124
     affiliation: 2
@@ -48,6 +49,6 @@ bibliography: paper.bib
 
 # Acknowledgements
 
-This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
+Andreas S{\ø}gaard has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
 
 # References
