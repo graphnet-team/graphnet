@@ -6,39 +6,26 @@ tags:
 authors:
   - name: Andreas Søgaard
     orcid: 0000-0002-0823-056X
-    equal-contrib: true
     affiliation: 1  # "1, 2" (Multiple affiliations must be quoted)
   - name: Rasmus F. Ørsøe
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
+    orcid: 0000-0001-8890-4124
     affiliation: 2
   - name: Leon Bozianu
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
     affiliation: 1
   - name: Morten Holm
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
     affiliation: 1
   - name: Kaare Endrup Iversen
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
     affiliation: 1
   - name: Tim Guggenmos
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
     affiliation: 2
   - name: Martin Ha Minh
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
+    orcid: 0000-0001-7776-4875
     affiliation: 2
   - name: Philipp Eller
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
+    orcid: 0000-0001-6354-5209
     affiliation: 2
   - name: Troels C. Petersen
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
+    orcid: 0000-0003-0221-3037
     affiliation: 1
 affiliations:
  - name: Niels Bohr Institute, University of Copenhagen, Denmark
