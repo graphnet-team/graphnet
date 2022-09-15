@@ -8,12 +8,38 @@ authors:
     orcid: 0000-0002-0823-056X
     equal-contrib: true
     affiliation: 1  # "1, 2" (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
+  - name: Rasmus F. Ørsøe
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
     affiliation: 2
-  - name: Author with no affiliation
-    corresponding: true # (This is how to denote the corresponding author)
+  - name: Leon Bozianu
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
+    affiliation: 1
+  - name: Morten Holm
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
+    affiliation: 1
+  - name: Kaare Endrup Iversen
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
+    affiliation: 1
+  - name: Tim Guggenmos
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
     affiliation: 2
+  - name: Martin Ha Minh
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
+    affiliation: 2
+  - name: Philipp Eller
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
+    affiliation: 2
+  - name: Troels C. Petersen
+    orcid: 0000-0000-0000-0000
+    equal-contrib: true
+    affiliation: 1
 affiliations:
  - name: Niels Bohr Institute, University of Copenhagen, Denmark
    index: 1
@@ -35,7 +61,6 @@ bibliography: paper.bib
 
 # Acknowledgements
 
-We acknowledge contributions from Brigitta Sipocz, Syrtis Major, and Semyeong
-Oh, and support from Kathryn Johnston during the genesis of this project.
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
 
 # References
