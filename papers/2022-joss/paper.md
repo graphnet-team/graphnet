@@ -1,8 +1,16 @@
 ---
 title: 'GraphNeT: Graph neural networks for neutrino telescope event reconstruction'
+
 tags:
-  - Python
-  - <--->
+  - python
+  - machine learning
+  - deep learning
+  - neural networks
+  - graph neural networks
+  - astrophysics
+  - particle physics
+  - neutrinos
+
 authors:
   - name: Andreas Søgaard
     orcid: 0000-0002-0823-056X
@@ -28,12 +36,15 @@ authors:
   - name: Troels C. Petersen
     orcid: 0000-0003-0221-3037
     affiliation: 1
+
 affiliations:
  - name: Niels Bohr Institute, University of Copenhagen, Denmark
    index: 1
  - name: Technical University of Munich, Germany
    index: 2
+
 date: 15 September 2022
+
 bibliography: paper.bib
 
 ---
