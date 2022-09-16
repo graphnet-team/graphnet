@@ -69,7 +69,9 @@ bibliography: paper.bib
 
 
 Figures can be included like this:
+
 ![Caption for example figure.\label{fig:flowchart}](flowchart.pdf)
+
 and referenced from text using \autoref{fig:flowchart}.
 
 
