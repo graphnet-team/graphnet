@@ -136,36 +136,36 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <details>
 <summary><b>Real-time analysis/alerts</b></summary>
 <blockquote>
-  <b></b>.<br>
-  <br>
-  <b></b>.<br>
-  <br>
+  <b>Producing low energy (< 10 TeV) neutrino alert(s)</b>.<br>
+  Currently, no such alerts currently exists, leaving four orders of magnitude in energy uncovered. Candidate events are Blazars, Tidal disruption events, AGNs, etc.<br>
+  <b>Improving high energy (> 10 TeV) neutrino alert(s)</b>.<br>
+  The current alerts are (as far as I can read) not as effective as they could be.<br>
 </blockquote>
 </details>
 
 <details>
 <summary><b>Algorithm development</b></summary>
 <blockquote>
-  <b></b>.<br>
-  <br>
-  <b></b>.<br>
-  <br>
-  <b></b>.<br>
-  <br>
-  <b></b>.<br>
-  <br>
-  <b></b>.<br>
-  <br>
+  <b>GNN autoencoder (for general search)</b>.<br>
+  If an AE learned to encode general IceCube events (say noise, muons, and neutrinos from simulation), it could be used to detect other objects.<br>
+  <b>Hierarchical Graph Pooling</b>.<br>
+  Would this work better? Or better only at high energies? This should be tested.<br>
+  <b>GNN optimisation (architecture, training sample and reweighting, ensemble combination)</b>.<br>
+  Much has been done, but we should push it to the limit, though simplicity is also a virtue.<br>
+  <b>Using "non-signal" DOMs as input</b>.<br>
+  Do these contain information to be incorporated, or not?<br>
+  <b>Adversarial training for better performance in data</b>.<br>
+  Do common data+MC training (Andreas’ idea).<br>
 </blockquote>
 </details>
 
 <details>
 <summary><b>Explaining / visualising GNN output</b></summary>
 <blockquote>
-  <b>Producing low energy (< 10 TeV) neutrino alert(s)</b>.<br>
-  Currently, no such alerts currently exists, leaving four orders of magnitude in energy uncovered. Candidate events are Blazars, Tidal disruption events, AGNs, etc.<br>
-  <b>Improving high energy (> 10 TeV) neutrino alert(s)</b>.<br>
-  The current alerts are (as far as I can read) not as effective as they could be.<br>
+  <b>Overall feature ranking for each task</b>.<br>
+  Determine which are the important features for energy regression and directional regression.<br>
+  <b>Explaining output for individual events</b>.<br>
+  This requires SHAP for GNNs, or possibly the approach of Mahdi Saleh (TUM computer scientist).<br>
 </blockquote>
 </details>
 
