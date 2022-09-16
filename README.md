@@ -81,8 +81,7 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 ## :ringed_planet:  Analysis ideas
 
 <details>
-<summary><b>Tasks using Monte Carlo only<br>
-            (High Energy reconstruction, GNN pulse cleaning, Upgrade reconstruction, and Elasticity regression)</b></summary>
+<summary><b>Tasks using Monte Carlo only</b></summary>
 <blockquote>
   <b>High Energy neutrino classification and reconstruction</b>.<br>
   Proof of concept and performance estimates of GNN on high energy (SnowStorm sample: 100 GeV - 10 PeV), with focus on directional estimates (and also energy), but omitting systematic variations.<br>
@@ -98,6 +97,16 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <details>
 <summary><b>Large/full scale neutrino selection in data</b></summary>
 <blockquote>
+  <b>Neutrino classification and data-MC correspondence</b>.<br>
+  Event (multi?) classification on Level 2 data. First on 1% burn sample and MC to check that it performs as expected. Eventually on all data, reducing this through a loose selection to e.g. 20M neutrino + 20M stopped muon events, which can be reconstructed overnight on a single GPU. From such a sample "everyone" can continue.<br>
+  <b>Neutrino oscillations</b>.<br>
+  <br>
+  <b>Spectra measurements</b>.<br>
+  <br>
+  <b>Post-factual alerts guiding alert design</b>.<br>
+  <br>
+  <b>Testing neutrino angular resolution using IceTop events</b>.<br>
+  <br>
 </blockquote>
 </details>
 
