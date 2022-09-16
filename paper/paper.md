@@ -51,15 +51,11 @@ bibliography: paper.bib
 
 # Summary
 
-Optical neutrino telescopes, such as ANTARES [@ANTARES:2011hfw], IceCube [@Aartsen:2016nxy; @DeepCore], KM3NeT [@KM3Net:2016zxf], and Baikal-GVD [@Baikal-GVD:2018isr], detect thousands of particle interaction per seconds, of which neutrino events constitute a miniscule fraction.
+Optical neutrino telescopes, such as ANTARES [@ANTARES:2011hfw], IceCube [@Aartsen:2016nxy; @DeepCore], KM3NeT [@KM3Net:2016zxf], and Baikal-GVD [@Baikal-GVD:2018isr], detect thousands of particle interaction per seconds, with a science goal of detecting neutrinos and measuring their properties and origins. Reconstruction at these experiments is concerned with classifying the type of event, estimating the properties of the incident particles, etc.
 
-The goal of reconstruction at these experiments is to analyse the patterns of light detected in optical modules to infer what particle interaction took place, what the properties of the particles were, etc. The current state-of-the-art reconstruction [@IceCube:2022kff] leverages detailed per-event likelihood optimisation, providing precise reconstruction with inference times of O(30 sec./event).
+`GraphNeT` [@graphnet_zenodo:2022] is an open-source python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks in neutrino telescope experiments using graph neural networks (GNNs). `GraphNeT` makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques by separating training and inference [@gnn_icecube].
 
-`GraphNeT` [@graphnet_zenodo:2022] is a python package aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks in neutrino telescope experiments using graph neural networks (GNNs). `GraphNeT` makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than classical reconstruction techniques by separating training and inference [@gnn_icecube].
-
-GNNs from `GraphNeT` are flexible enough to be applicable applied to data from all optical neutrino telescopes, including future projects such as IceCube extensions [@IceCube-PINGU:2014okk; @IceCube:2016xxt;@IceCube-Gen2:2020qha] or P-ONE [@P-ONE:2020ljt].
-
-This means that GNN-based reconstruction can be used to provide state-of-the-art performance on most reconstruction tasks in neutrino telescopes, at O(kHz) event rates, across experiments and physics analyses, with vast potential impact for neutrino physics.
+GNNs from `GraphNeT` are flexible enough to be applicable applied to data from all optical neutrino telescopes, including future projects such as IceCube extensions [@IceCube-PINGU:2014okk; @IceCube:2016xxt; @IceCube-Gen2:2020qha] or P-ONE [@P-ONE:2020ljt]. This means that GNN-based reconstruction can be used to provide state-of-the-art performance on most reconstruction tasks in neutrino telescopes, at near–real-time event rates, across experiments and physics analyses, with vast potential impact for neutrino physics.
 
 
 # Statement of need
@@ -77,11 +73,18 @@ This means that GNN-based reconstruction can be used to provide state-of-the-art
 
 # Usage
 
-Figures can be included like this:
+`GraphNeT` provides a number of modules providing the necessary tools to build workflow from ingesting raw training data in domain-specific formats to deploying trained models in domain-specific reconstruction chains, as illustrated in \autoref{fig:flowchart}.
 
-![High-level overview of a typical workflow using `GraphNeT`. Domain-specific data is converted and read using the components in `graphnet.data`. Models are configured, built, trained, and logged using the components in `graphnet.models`. Finally, trained models are deployed to a domain-specific reconstruction chain, yielding predictions, using the components in `graphnet.deployment`.\label{fig:flowchart}](flowchart.pdf)
+![High-level overview of a typical workflow using `GraphNeT`.\label{fig:flowchart}](flowchart.pdf)
 
-and referenced from text using \autoref{fig:flowchart}.
+Domain-specific data is converted and read using the components in `graphnet.data`. This is necessary because neutrino telescope data is often stored in domain-specific file format that is often not suitable for the high I/O loads required when training machine learning (ML) models on large batches of events.
+
+Models are configured, built, trained, and logged using the components in `graphnet.models`. This module contains modular components subclassing `torch.nn.Module`, meaning that users only need to import a few, existing, purpose-built components and chain them together to form a complete GNN. ML developers can contribute to `GraphNeT` by extending this suite of model components — through new layer types, physics tasks, graph connectivities, etc. — and experiment with optimising these for different reconstruction tasks using experiment tracking.
+
+Finally, trained models are deployed to a domain-specific reconstruction chain, yielding predictions, using the components in `graphnet.deployment`. This can either be through model artefacts or container images, making deployment as portable and dependency-free as possible.
+
+By splitting up the GNN development in this way, `GraphNeT` allows physics users to interface only with high-level building block or pre-trained models that can be used directly in their reconstruction chains, while allowing ML developers to continuously improve and expand the framework’s capabilities.
+
 
 
 # Acknowledgements
