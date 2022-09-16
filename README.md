@@ -125,7 +125,7 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <details>
 <summary><b>Atmospheric tagger (trained in data)</b></summary>
 <blockquote>
-  By considering neutrinos in DATA, and dividing them according to their direction (up- or down-going), and removing the pulses from the neutrinos, one obtains a sample to train an “atmospheric tagger” on, since only downgoing neutrinos will potentially have "atmospheric" signal. This can be used for:
+  By considering neutrinos in DATA, and dividing them according to their direction (up- or down-going), and removing the pulses from the neutrinos, one obtains a sample to train an “atmospheric tagger” on, since only downgoing neutrinos will potentially have "atmospheric" signal. This can be used for:<br>
   <b>Measuring hard atmospheric component</b>.<br>
   Heavy quarks produced by cosmic rays provide a neutrino spectrum, that falls less sharply, thus becoming the dominant atmospheric neutrinos at higher (around 100 TeV for nu_e) energies. But here the cosmic neutrinos dominate! However, by requiring that neutrinos have an atmospheric “tag”, the cosmic component should disappear (idea from Mirco). <br>
   <b>Improving (low energy) cosmic alerts</b>.<br>
@@ -136,18 +136,36 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <details>
 <summary><b>Real-time analysis/alerts</b></summary>
 <blockquote>
+  <b></b>.<br>
+  <br>
+  <b></b>.<br>
+  <br>
 </blockquote>
 </details>
 
 <details>
 <summary><b>Algorithm development</b></summary>
 <blockquote>
+  <b></b>.<br>
+  <br>
+  <b></b>.<br>
+  <br>
+  <b></b>.<br>
+  <br>
+  <b></b>.<br>
+  <br>
+  <b></b>.<br>
+  <br>
 </blockquote>
 </details>
 
 <details>
 <summary><b>Explaining / visualising GNN output</b></summary>
 <blockquote>
+  <b>Producing low energy (< 10 TeV) neutrino alert(s)</b>.<br>
+  Currently, no such alerts currently exists, leaving four orders of magnitude in energy uncovered. Candidate events are Blazars, Tidal disruption events, AGNs, etc.<br>
+  <b>Improving high energy (> 10 TeV) neutrino alert(s)</b>.<br>
+  The current alerts are (as far as I can read) not as effective as they could be.<br>
 </blockquote>
 </details>
 
