@@ -80,10 +80,11 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 
 ## :ringed_planet:  Analysis ideas
 
-
 <details>
 <summary><b>Tasks using Monte Carlo only</b></summary>
 <blockquote>
+  <b>High Energy neutrino classification and reconstruction</b>.<br>
+  Proof of concept and performance estimates of GNN on high energy (100 GeV - 10 PeV), with focus on directional estimates (and also energy), but omitting systematic variations.
 </blockquote>
 </details>
 
