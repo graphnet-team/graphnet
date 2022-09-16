@@ -77,6 +77,13 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 </blockquote>
 </details>
 
+
+## :ringed_planet:  Analysis ideas
+
+
+
+
+
 ## :handshake:  Contributing
 
 To make sure that the process of contributing is as smooth and effective as possible, we provide a few guidelines in the [contributing guide](CONTRIBUTING.md) that we encourage contributors to follow.
