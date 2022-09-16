@@ -81,6 +81,34 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 ## :ringed_planet:  Analysis ideas
 
 
+<details>
+<summary><b>Tasks using Monte Carlo only</b></summary>
+<blockquote>
+
+<details>
+<summary><b>Large/full scale neutrino selection in data</b></summary>
+<blockquote>
+
+<details>
+<summary><b>Larger scale muon selection in data</b></summary>
+<blockquote>
+
+<details>
+<summary><b>Atmospheric tagger (trained in data)</b></summary>
+<blockquote>
+
+<details>
+<summary><b>Real-time analysis/alerts</b></summary>
+<blockquote>
+
+<details>
+<summary><b>Algorithm development</b></summary>
+<blockquote>
+
+<details>
+<summary><b>Explaining / visualising GNN output</b></summary>
+<blockquote>
+
 
 
 
