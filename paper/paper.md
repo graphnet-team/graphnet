@@ -43,7 +43,7 @@ affiliations:
  - name: Technical University of Munich, Germany
    index: 2
 
-date: 15 September 2022
+date: 16 September 2022
 
 bibliography: paper.bib
 
@@ -51,7 +51,15 @@ bibliography: paper.bib
 
 # Summary
 
-(...)
+Optical neutrino telescopes, such as ANTARES [@ANTARES:2011hfw], IceCube [@Aartsen:2016nxy; @DeepCore], KM3NeT [@KM3Net:2016zxf], and Baikal-GVD [@Baikal-GVD:2018isr], detect thousands of particle interaction per seconds, of which neutrino events constitute a miniscule fraction.
+
+The goal of reconstruction at these experiments is to analyse the patterns of light detected in optical modules to infer what particle interaction took place, what the properties of the particles were, etc. The current state-of-the-art reconstruction [@IceCube:2022kff] leverages detailed per-event likelihood optimisation, providing precise reconstruction with inference times of O(30 sec./event).
+
+`GraphNeT` [@graphnet_zenodo:2022] is a python package aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks in neutrino telescope experiments using graph neural networks (GNNs). `GraphNeT` makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than classical reconstruction techniques by separating training and inference [@gnn_icecube].
+
+GNNs from `GraphNeT` are flexible enough to be applicable applied to data from all optical neutrino telescopes, including future projects such as IceCube extensions [@IceCube-PINGU:2014okk; @IceCube:2016xxt;@IceCube-Gen2:2020qha] or P-ONE [@P-ONE:2020ljt].
+
+This means that GNN-based reconstruction can be used to provide state-of-the-art performance on most reconstruction tasks in neutrino telescopes, at O(kHz) event rates, across experiments and physics analyses, with vast potential impact for neutrino physics.
 
 
 # Statement of need
