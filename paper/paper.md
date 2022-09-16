@@ -53,6 +53,7 @@ bibliography: paper.bib
 
 (...)
 
+
 # Statement of need
 
 `GraphNeT` is (...)
@@ -63,14 +64,14 @@ bibliography: paper.bib
 * Review "Graph neural networks in particle physics" [@Shlomi_2021]
 * `pytorch` [@NEURIPS2019_9015]
 * `pytorch-geometric` [@Fey_Fast_Graph_Representation_2019]
-* Detectors [@Aartsen:2016nxy; @DeepCore; @IceCube-Gen2:2020qha; @IceCube:2016xxt; @ANTARES:2011hfw; @KM3Net:2016zxf; @Baikal-GVD:2018isr; @P-ONE:2020ljt; ]
+* Detectors [@Aartsen:2016nxy; @DeepCore; @IceCube-Gen2:2020qha; @IceCube:2016xxt; @ANTARES:2011hfw; @KM3Net:2016zxf; @Baikal-GVD:2018isr; @P-ONE:2020ljt]
+
 
 # Usage
 
-
 Figures can be included like this:
 
-![High-level overview of a typical workflow using `GraphNeT`. Domain-specific data is converted and read using the components in `graphnet.data`. Models are configured, build, trained, and logged using the components in `graphnet.models`. Finally, trained models are deployed to a domain-specific reconstruction chain, yielding predictions, using the components in `graphnet.deployment`.\label{fig:flowchart}](flowchart.pdf)
+![High-level overview of a typical workflow using `GraphNeT`. Domain-specific data is converted and read using the components in `graphnet.data`. Models are configured, built, trained, and logged using the components in `graphnet.models`. Finally, trained models are deployed to a domain-specific reconstruction chain, yielding predictions, using the components in `graphnet.deployment`.\label{fig:flowchart}](flowchart.pdf)
 
 and referenced from text using \autoref{fig:flowchart}.
 
@@ -78,5 +79,6 @@ and referenced from text using \autoref{fig:flowchart}.
 # Acknowledgements
 
 Andreas Søgaard has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
+
 
 # References
