@@ -98,15 +98,15 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <summary><b>Large/full scale neutrino selection in data</b></summary>
 <blockquote>
   <b>Neutrino classification and data-MC correspondence</b>.<br>
-  Event (multi?) classification on Level 2 data. First on 1% burn sample and MC to check that it performs as expected. Eventually on all data, reducing this through a loose selection to e.g. 20M neutrino + 20M stopped muon events, which can be reconstructed overnight on a single GPU. From such a sample "everyone" can continue.<br>
-  <b>Neutrino oscillations</b>.<br>
-  <br>
+  Event (multi?) classification on Level 2 data, first on 1% burn sample and MC to check that it performs as expected. This also requires high energy classification. Eventually on all data, reducing this through a loose selection to e.g. 20M neutrino + 20M stopped muon events, which can be reconstructed overnight on a single GPU. From such a sample "everyone" can continue.<br>
+  <b>Neutrino oscillations (large subject!)</b>.<br>
+  The above "Loose GNN neutrino sample" would be a natural starting point for a new analysis. The main issue is to make MC look like data, and here an Variable AutoEncoder might be used, as a low (10?) dimensional latent space could possibly allow the MC to be linearly transformed into having the same PDF as data. Many other ideas apply.<br>
   <b>Spectra measurements</b>.<br>
-  <br>
+  The above "Loose GNN neutrino sample" would be a natural starting point for a spectral analysis, possibly also using an "atmospheric tagger" (see below) to discriminate between contributions.<br>
   <b>Post-factual alerts guiding alert design</b>.<br>
-  <br>
+  The above "Loose GNN neutrino sample" would allow optimisation and a test of sensitivity for a low-medium (1-10000 GeV) energy neutrino alert.<br>
   <b>Testing neutrino angular resolution using IceTop events</b>.<br>
-  <br>
+  For atmospheric neutrinos with an associated shower observed in IceTop, the latter can provide directional information within about 3 degrees, which can be compared to the reconstructed value.<br>
 </blockquote>
 </details>
 
