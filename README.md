@@ -81,7 +81,8 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 ## :ringed_planet:  Analysis ideas
 
 <details>
-<summary><b>Tasks using Monte Carlo only (High Energy reconstruction, GNN pulse cleaning, Upgrade reconstruction, and Elasticity regression)</b></summary>
+<summary><b>Tasks using Monte Carlo only<br>
+            (High Energy reconstruction, GNN pulse cleaning, Upgrade reconstruction, and Elasticity regression)</b></summary>
 <blockquote>
   <b>High Energy neutrino classification and reconstruction</b>.<br>
   Proof of concept and performance estimates of GNN on high energy (SnowStorm sample: 100 GeV - 10 PeV), with focus on directional estimates (and also energy), but omitting systematic variations.<br>
