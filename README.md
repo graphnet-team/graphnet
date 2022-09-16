@@ -84,30 +84,44 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <details>
 <summary><b>Tasks using Monte Carlo only</b></summary>
 <blockquote>
+</blockquote>
+</details>
 
 <details>
 <summary><b>Large/full scale neutrino selection in data</b></summary>
 <blockquote>
+</blockquote>
+</details>
 
 <details>
 <summary><b>Larger scale muon selection in data</b></summary>
 <blockquote>
+</blockquote>
+</details>
 
 <details>
 <summary><b>Atmospheric tagger (trained in data)</b></summary>
 <blockquote>
+</blockquote>
+</details>
 
 <details>
 <summary><b>Real-time analysis/alerts</b></summary>
 <blockquote>
+</blockquote>
+</details>
 
 <details>
 <summary><b>Algorithm development</b></summary>
 <blockquote>
+</blockquote>
+</details>
 
 <details>
 <summary><b>Explaining / visualising GNN output</b></summary>
 <blockquote>
+</blockquote>
+</details>
 
 
 
