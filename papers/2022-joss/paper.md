@@ -63,6 +63,7 @@ bibliography: paper.bib
 * Review "Graph neural networks in particle physics" [@Shlomi_2021]
 * `pytorch` [@NEURIPS2019_9015]
 * `pytorch-geometric` [@Fey_Fast_Graph_Representation_2019]
+* Detectors [@Aartsen:2016nxy; @DeepCore; @IceCube-Gen2:2020qha; @IceCube:2016xxt; @ANTARES:2011hfw; @KM3Net:2016zxf; @Baikal-GVD:2018isr; @P-ONE:2020ljt; ]
 
 
 # Acknowledgements
