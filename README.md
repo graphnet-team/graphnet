@@ -84,7 +84,13 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <summary><b>Tasks using Monte Carlo only</b></summary>
 <blockquote>
   <b>High Energy neutrino classification and reconstruction</b>.<br>
-  Proof of concept and performance estimates of GNN on high energy (100 GeV - 10 PeV), with focus on directional estimates (and also energy), but omitting systematic variations.
+  Proof of concept and performance estimates of GNN on high energy (SnowStorm sample: 100 GeV - 10 PeV), with focus on directional estimates (and also energy), but omitting systematic variations.<br>
+  <b>GNN pulse cleaning</b>.<br>
+  GNNs make very good predictions about individual nodes in the graph, which should be used to discard pulses deemed noise. Given pulse labels in simulated data, this is a classification task.<br>
+  <b>Upgrade reconstruction</b>.<br>
+  Important for detector optimisation and eventual usage. Given no alternative algorithms (for now), and since the GNN approach is straight forward to extend to other DOM types, this is an obvious project.<br>
+  <b>Elasticity regression (for distinguishing nu vs. anti-nu)</b>.<br>
+  Ideally, one would like this ability in the energy range relevant for oscillations (1-30 GeV), but it has only been seen to work for 100+ GeV muon neutrinos.<br>
 </blockquote>
 </details>
 
