@@ -1,5 +1,5 @@
 # This is a simple action to generate paper draft PDFs.
-name: papers
+name: paper
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 jobs:
   paper-2022-joss:
     runs-on: ubuntu-latest
-    name: JOSS (2022) paper draft
+    name: Paper draft PDF
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -20,12 +20,12 @@ jobs:
         with:
           journal: joss
           # This should be the path to the paper within your repo.
-          paper-path: papers/2022-joss/paper.md
+          paper-path: paper/paper.md
       - name: Upload
         uses: actions/upload-artifact@v1
         with:
-          name: paper-2022-joss
+          name: paper
           # This is the output path where Pandoc will write the compiled
           # PDF. Note, this should be the same directory as the input
           # paper.md
-          path: papers/2022-joss/paper.pdf
+          path: paper/paper.pdf
