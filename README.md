@@ -125,6 +125,11 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <details>
 <summary><b>Atmospheric tagger (trained in data)</b></summary>
 <blockquote>
+  By considering neutrinos in DATA, and dividing them according to their direction (up- or down-going), and removing the pulses from the neutrinos, one obtains a sample to train an “atmospheric tagger” on, since only downgoing neutrinos will potentially have "atmospheric" signal. This can be used for:
+  <b>Measuring hard atmospheric component</b>.<br>
+  Heavy quarks produced by cosmic rays provide a neutrino spectrum, that falls less sharply, thus becoming the dominant atmospheric neutrinos at higher (around 100 TeV for nu_e) energies. But here the cosmic neutrinos dominate! However, by requiring that neutrinos have an atmospheric “tag”, the cosmic component should disappear (idea from Mirco). <br>
+  <b>Improving (low energy) cosmic alerts</b>.<br>
+  Removing neutrino candidates with an atmospheric “tag” will yield less background, especially at low energy. However, this only works for down-going neutrinos.<br>
 </blockquote>
 </details>
 
