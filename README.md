@@ -113,6 +113,12 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 <details>
 <summary><b>Larger scale muon selection in data</b></summary>
 <blockquote>
+  <b>Stopped Muons data-MC comparison (for Efficiencies / Systematics / Corrections)</b>.<br>
+  This is (IMHO) the obvious data-MC calibration sample, from which one can extract differential efficiency corrections and related systematics. Also, it would allow one to find the transformations needed to make MC look (more) like data. This follows Leon’s work.<br>
+  <b>Moon pointing analysis with muons</b>.<br>
+  The moon pointing analysis is the only way to convince ourselves and others, that the GNN angular resolution is very good and measure it. If it is indeed very good, this is an obvious paper.<br>
+  <b>Muon decay detection (for nu vs. anti-nu detection)</b>.<br>
+  Using stopped muons, one would search for a later pulse at the stopping point from the muon decay, which is different between mu+ and mu-. If observed, it could be applied to muon neutrino samples (very hard!).<br>
 </blockquote>
 </details>
 
