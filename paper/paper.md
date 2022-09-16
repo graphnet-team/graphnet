@@ -70,7 +70,7 @@ bibliography: paper.bib
 
 Figures can be included like this:
 
-![Caption for example figure.\label{fig:flowchart}](flowchart.pdf)
+![High-level overview of a typical workflow using `GraphNeT`. Domain-specific data is converted and read using the components in `graphnet.data`. Models are configured, build, trained, and logged using the components in `graphnet.models`. Finally, trained models are deployed to a domain-specific reconstruction chain, yielding predictions, using the components in `graphnet.deployment`.\label{fig:flowchart}](flowchart.pdf)
 
 and referenced from text using \autoref{fig:flowchart}.
 
