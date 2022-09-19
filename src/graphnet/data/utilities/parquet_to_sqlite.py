@@ -74,6 +74,7 @@ class ParquetToSQLiteConverter:
                         parquet_file.fields[j],
                         n_events_in_file,
                     )
+            self._event_counter += n_events_in_file
         self._save_config(outdir, database_name)
         print(
             f"Database saved at \n{outdir}/{database_name}/data/{database_name}.db"
@@ -114,7 +115,7 @@ class ParquetToSQLiteConverter:
             len(df) != n_events_in_file
         ):  # if true, the dataframe contains more than 1 row pr. event (e.g. Pulsemap).
             event_nos = []
-            for event_no in range(n_events_in_file):
+            for event_no in range(n_events_in_file + self._event_counter):
                 try:
                     event_nos.extend(
                         np.repeat(
@@ -187,9 +188,32 @@ class ParquetToSQLiteConverter:
             "PRAGMA foreign_keys=on;"
         )
         run_sql_code(
-            outdir + "/" + database_name + "/data/" + database_name + "db",
+            outdir + "/" + database_name + "/data/" + database_name + ".db",
             code,
         )
+        print(is_pulse_map, field_name)
+        if is_pulse_map:
+            self._attach_index(
+                outdir
+                + "/"
+                + database_name
+                + "/data/"
+                + database_name
+                + ".db",
+                table_name=field_name,
+            )
+        return
+
+    def _attach_index(self, database: str, table_name: str):
+        """Attaches the table index. Important for query times!"""
+        code = (
+            "PRAGMA foreign_keys=off;\n"
+            "BEGIN TRANSACTION;\n"
+            f"CREATE INDEX event_no_{table_name} ON {table_name} (event_no);\n"
+            "COMMIT TRANSACTION;\n"
+            "PRAGMA foreign_keys=on;"
+        )
+        run_sql_code(database, code)
         return
 
     def _setup_directory(self, outdir: str = None, database_name: str = None):
