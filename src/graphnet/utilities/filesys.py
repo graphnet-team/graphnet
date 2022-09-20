@@ -29,7 +29,9 @@ def has_extension(filename: str, extensions: List[str]) -> bool:
     return re.search("(" + "|".join(extensions) + ")$", filename) is not None
 
 
-def find_i3_files(directories: Union[str, List[str]], gcd_rescue: Optional[str]):
+def find_i3_files(
+    directories: Union[str, List[str]], gcd_rescue: Optional[str]
+):
     """Finds I3 files and corresponding GCD files in `directories`.
 
     Finds I3 files in dir and matches each file with a corresponding GCD file if
