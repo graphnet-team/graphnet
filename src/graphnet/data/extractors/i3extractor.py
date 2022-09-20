@@ -33,15 +33,17 @@ class I3Extractor(ABC, LoggerMixin):
                 g_frame = i3_file.pop_frame(icetray.I3Frame.Geometry)
                 self._gcd_dict = g_frame["I3Geometry"].omgeo
             except RuntimeError:
-                self.logger.error("No GCD file was provided and no G frame was found, exiting.")
+                self.logger.error(
+                    "No GCD file was provided and no G frame was found, exiting."
+                )
                 raise
-            
+
             try:
                 c_frame = i3_file.pop_frame(icetray.I3Frame.Calibration)
                 self._calibration = c_frame["I3Calibration"]
             except RuntimeError:
                 pass
-            
+
         else:
             gcd_file = dataio.I3File(self._gcd_file)
             g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
