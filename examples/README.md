@@ -1,4 +1,5 @@
-# convert_i3_to_sqlite.py
+<details>
+<summary><b>convert_i3_to_sqlite.py</b></summary>
 
 The script will look in the provided filepath for both the i3 files and the gcd file.
 
