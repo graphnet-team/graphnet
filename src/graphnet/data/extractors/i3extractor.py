@@ -21,20 +21,33 @@ class I3Extractor(ABC, LoggerMixin):
         self._name = name
 
     def set_files(self, i3_file, gcd_file):
-        # @TODO: Is it necessary to set the `i3_file`? It is only used in one
-        #        place in `I3TruthExtractor`, and there only in a way that might
-        #        be solved another way.
         self._i3_file = i3_file
         self._gcd_file = gcd_file
         self._load_gcd_data()
 
     def _load_gcd_data(self):
         """Loads the geospatial information contained in the gcd-file."""
-        gcd_file = dataio.I3File(self._gcd_file)
-        g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
-        c_frame = gcd_file.pop_frame(icetray.I3Frame.Calibration)
-        self._gcd_dict = g_frame["I3Geometry"].omgeo
-        self._calibration = c_frame["I3Calibration"]
+        if self._gcd_file is None:
+            i3_file = dataio.I3File(self._i3_file)
+            try:
+                g_frame = i3_file.pop_frame(icetray.I3Frame.Geometry)
+                self._gcd_dict = g_frame["I3Geometry"].omgeo
+            except RuntimeError:
+                self.logger.error("No GCD file was provided and no G frame was found, exiting.")
+                raise
+            
+            try:
+                c_frame = i3_file.pop_frame(icetray.I3Frame.Calibration)
+                self._calibration = c_frame["I3Calibration"]
+            except RuntimeError:
+                pass
+            
+        else:
+            gcd_file = dataio.I3File(self._gcd_file)
+            g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
+            c_frame = gcd_file.pop_frame(icetray.I3Frame.Calibration)
+            self._gcd_dict = g_frame["I3Geometry"].omgeo
+            self._calibration = c_frame["I3Calibration"]
 
     @abstractmethod
     def __call__(self, frame) -> dict:
