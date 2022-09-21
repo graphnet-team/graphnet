@@ -170,7 +170,12 @@ class DynEdge(GNN):
 
 
 class DynEdge_V2(GNN):
-    def __init__(self, nb_inputs, layer_size_scale=4):
+    def __init__(
+        self,
+        nb_inputs,
+        layer_size_scale=4,
+        node_pooling: Coarsening = None,
+    ):
         """DynEdge model.
 
         Args:
@@ -190,7 +195,8 @@ class DynEdge_V2(GNN):
             c * 32 * 2,
             c * 16 * 2,
         )
-
+        # Node Pooling via Coarsening Module
+        self._coarsening = node_pooling
         # Base class constructor
         super().__init__(nb_inputs, l6)
 
@@ -261,7 +267,8 @@ class DynEdge_V2(GNN):
         Returns:
             Tensor: Model output.
         """
-
+        if self._coarsening is not None:
+            data = self._coarsening(data)
         # Convenience variables
         x, edge_index, batch = data.x, data.edge_index, data.batch
 
