@@ -4,6 +4,7 @@ from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
+
 import pandas as pd
 from graphnet.components.loss_functions import VonMisesFisher2DLoss
 from graphnet.data.constants import FEATURES, TRUTH
@@ -54,15 +55,16 @@ def save_results(db, tag, results, archive):
     os.makedirs(path, exist_ok=True)
     results.to_csv(path + "/results.csv")
     print("Results saved at: \n %s" % path)
-
-
+    
 def train(config):
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
 
     # Common variables
+
     selection, _ = get_equal_proportion_neutrino_indices(config["db"])
     selection = selection[0 : config["max_events"]]
+
 
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
@@ -73,6 +75,7 @@ def train(config):
     ) = make_train_validation_dataloader(
         config["db"],
         selection,
+        train_selection,
         config["pulsemap"],
         features,
         truth,
@@ -84,6 +87,7 @@ def train(config):
     detector = IceCubeDeepCore(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
+
     if config["node_pooling"] == "custom_coarsening":
         gnn = DynEdge_V2(
             nb_inputs=detector.nb_outputs, node_pooling=CustomDOMCoarsening()
@@ -94,8 +98,7 @@ def train(config):
         )
     else:
         gnn = DynEdge_V2(
-            nb_inputs=detector.nb_outputs,
-        )
+
     if config["target"] == "zenith":
         task = ZenithReconstructionWithKappa(
             hidden_size=gnn.nb_outputs,
