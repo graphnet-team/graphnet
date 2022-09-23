@@ -27,14 +27,8 @@ def main_icecube86(backend: str):
     # Check(s)
     assert backend in CONVERTER_CLASS
 
-    basedir = "./test_data/"
-    paths = [basedir]
-
-    gcd_rescue = os.path.join(
-        basedir,
-        "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz",
-    )
-    outdir = "./temp/parquet_test_ic86"
+    inputs = ["./test_data/"]
+    outdir = "./temp/test_ic86"
 
     converter = CONVERTER_CLASS[backend](
         [
@@ -46,9 +40,9 @@ def main_icecube86(backend: str):
             ),
         ],
         outdir,
-        gcd_rescue,
     )
-    converter(paths)
+    converter(inputs)
+    converter.merge_files("merged")
 
 
 def main_icecube_upgrade(backend: str):
@@ -56,13 +50,8 @@ def main_icecube_upgrade(backend: str):
     # Check(s)
     assert backend in CONVERTER_CLASS
 
-    basedir = "test_data_upgrade_2"
-    paths = [basedir]
-    gcd_rescue = os.path.join(
-        basedir,
-        "GeoCalibDetectorStatus_ICUpgrade.v55.mixed.V5.i3.bz2",
-    )
-    outdir = "./temp/parquet_test_upgrade"
+    inputs = ["test_data_upgrade_2"]
+    outdir = "./temp/test_upgrade"
     workers = 1
 
     converter = CONVERTER_CLASS[backend](
@@ -77,14 +66,14 @@ def main_icecube_upgrade(backend: str):
             ),
         ],
         outdir,
-        gcd_rescue,
         workers=workers,
         # nb_files_to_batch=10,
         # sequential_batch_pattern="temp_{:03d}",
         # input_file_batch_pattern="[A-Z]{1}_[0-9]{5}*.i3.zst",
         icetray_verbose=1,
     )
-    converter(paths)
+    converter(inputs)
+    converter.merge_files("merged")
 
 
 if __name__ == "__main__":
