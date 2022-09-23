@@ -61,7 +61,7 @@ class LossFunction(_WeightedLoss):
         """Syntax similar to `.forward` for implentation in inheriting classes."""
 
 
-class GaussLoss(LossFunction):
+class GaussianNLLLoss(LossFunction):
     """Gaussian negative log likelihood loss."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
