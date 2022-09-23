@@ -30,7 +30,7 @@ def has_extension(filename: str, extensions: List[str]) -> bool:
 
 
 def find_i3_files(
-    directories: Union[str, List[str]], gcd_rescue: Optional[str]
+    directories: Union[str, List[str]], gcd_rescue: Optional[str] = None
 ):
     """Finds I3 files and corresponding GCD files in `directories`.
 
