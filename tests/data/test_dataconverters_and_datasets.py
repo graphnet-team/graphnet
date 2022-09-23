@@ -25,7 +25,7 @@ from graphnet.data.sqlite.sqlite_dataconverter import (
 from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package():
-    from icecube import dataio
+    from icecube import dataio  # pyright: reportMissingImports=false
 
 
 # Global variable(s)
