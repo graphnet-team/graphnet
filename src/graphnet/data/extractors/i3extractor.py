@@ -33,7 +33,7 @@ class I3Extractor(ABC, LoggerMixin):
         # If no GCD file is provided, search the I3 file for frames containing
         # geometry (G) and calibration (C) information.
         gcd_file = dataio.I3File(self._gcd_file or self._i3_file)
-        
+
         try:
             g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
         except RuntimeError:
@@ -43,7 +43,7 @@ class I3Extractor(ABC, LoggerMixin):
             raise
         else:
             self._gcd_dict = g_frame["I3Geometry"].omgeo
-            
+
         try:
             c_frame = gcd_file.pop_frame(icetray.I3Frame.Calibration)
         except RuntimeError:
