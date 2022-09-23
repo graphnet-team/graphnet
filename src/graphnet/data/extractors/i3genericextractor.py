@@ -23,7 +23,7 @@ if has_icecube_package():
     )  # pyright: reportMissingImports=false
 
 
-GENERIC_EXTRACTOR_NAME = "<GENERIC>"
+GENERIC_EXTRACTOR_NAME = "GENERIC"
 
 
 class I3GenericExtractor(I3Extractor):
