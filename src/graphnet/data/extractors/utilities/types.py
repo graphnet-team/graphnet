@@ -1,7 +1,9 @@
 """Utility methods for checking the types of objects."""
 
+from copy import deepcopy
+from functools import wraps
 import inspect
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from graphnet.data.extractors.utilities.collections import (
     transpose_list_of_dicts,
@@ -11,7 +13,7 @@ from graphnet.data.extractors.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import get_logger, warn_once
 
 logger = get_logger()
 
@@ -47,6 +49,33 @@ def is_type(obj: Any) -> bool:
 def is_method(obj: Any) -> bool:
     """Check whether `obj` is a method."""
     return inspect.ismethod(obj) or "Boost.Python.function" in str(type(obj))
+
+
+BEING_EVALUATED = set()
+
+
+def break_cyclic_recursion(fn: Callable) -> Callable:
+    """Ensure that method isn't called recursively on the same object."""
+
+    @wraps(fn)
+    def wrapper(obj: Any) -> Any:
+        global BEING_EVALUATED
+        try:
+            hash_ = (hash(fn), hash(obj))
+            if hash_ in BEING_EVALUATED:
+                warn_once(
+                    logger,
+                    "break_cyclic_recursion - Already evaluating object. Skipping recusion.",
+                )
+                return
+            BEING_EVALUATED.add(hash_)
+            ret = fn(obj)
+            BEING_EVALUATED.remove(hash_)
+            return ret
+        except TypeError:
+            return fn(obj)
+
+    return wrapper
 
 
 def get_member_variables(
@@ -93,6 +122,7 @@ def get_member_variables(
     return valid_member_variables
 
 
+@break_cyclic_recursion
 def cast_object_to_pure_python(obj: Any) -> Any:
     """Casts `obj`, and any members/elements, to pure-python classes.
 
@@ -207,7 +237,6 @@ def cast_pulse_series_to_pure_python(
         om_data = cast_object_to_pure_python(gcd_dict[om_key])
 
         # Add calibration information
-        print(calibration.dom_cal[om_key])
         om_data.update(cast_object_to_pure_python(calibration.dom_cal[om_key]))
 
         # Remove all "orientation.*"-type keys. They provide no
@@ -222,6 +251,7 @@ def cast_pulse_series_to_pure_python(
         try:
             om_data = flatten_nested_dictionary(om_data)
         except TypeError:
+            logger.warning("Couldn't call `flatten_nested_dictionary` on:")
             print(om_data)
             raise
 
