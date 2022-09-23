@@ -5,22 +5,20 @@ from typing import Any, Dict, List, Optional
 
 from graphnet.data.extractors.utilities.collections import (
     transpose_list_of_dicts,
-    serialise,
     flatten_nested_dictionary,
 )
 from graphnet.data.extractors.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
+from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
 
-try:
+if has_icecube_package():
     from icecube import (
         icetray,
     )  # pyright: reportMissingImports=false
-except ImportError:
-    logger.warning("icecube package not available.")
 
 
 def is_boost_enum(obj: Any) -> bool:

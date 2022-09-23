@@ -11,17 +11,16 @@ from graphnet.data.extractors.utilities.collections import (
     flatten_nested_dictionary,
 )
 
+from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
 
-try:
+if has_icecube_package():
     from icecube import (
         dataclasses,
         icetray,
     )  # pyright: reportMissingImports=false
-except ImportError:
-    logger.warning("icecube package not available.")
 
 
 GENERIC_EXTRACTOR_NAME = "<GENERIC>"
