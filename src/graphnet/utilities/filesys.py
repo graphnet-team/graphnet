@@ -4,7 +4,7 @@ from glob import glob
 import os
 from pathlib import Path
 import re
-from typing import List, Union
+from typing import List, Optional, Union
 
 
 def is_gcd_file(filename: str) -> bool:
@@ -29,7 +29,9 @@ def has_extension(filename: str, extensions: List[str]) -> bool:
     return re.search("(" + "|".join(extensions) + ")$", filename) is not None
 
 
-def find_i3_files(directories: Union[str, List[str]], gcd_rescue: str):
+def find_i3_files(
+    directories: Union[str, List[str]], gcd_rescue: Optional[str] = None
+):
     """Finds I3 files and corresponding GCD files in `directories`.
 
     Finds I3 files in dir and matches each file with a corresponding GCD file if

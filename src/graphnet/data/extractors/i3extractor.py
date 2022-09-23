@@ -30,11 +30,28 @@ class I3Extractor(ABC, LoggerMixin):
 
     def _load_gcd_data(self):
         """Loads the geospatial information contained in the gcd-file."""
-        gcd_file = dataio.I3File(self._gcd_file)
-        g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
-        c_frame = gcd_file.pop_frame(icetray.I3Frame.Calibration)
-        self._gcd_dict = g_frame["I3Geometry"].omgeo
-        self._calibration = c_frame["I3Calibration"]
+        # If no GCD file is provided, search the I3 file for frames containing
+        # geometry (G) and calibration (C) information.
+        gcd_file = dataio.I3File(self._gcd_file or self._i3_file)
+
+        try:
+            g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
+        except RuntimeError:
+            self.logger.error(
+                "No GCD file was provided and no G-frame was found. Exiting."
+            )
+            raise
+        else:
+            self._gcd_dict = g_frame["I3Geometry"].omgeo
+
+        try:
+            c_frame = gcd_file.pop_frame(icetray.I3Frame.Calibration)
+        except RuntimeError:
+            self.logger.warning(
+                "No GCD file was provided and no C-frame was found."
+            )
+        else:
+            self._calibration = c_frame["I3Calibration"]
 
     @abstractmethod
     def __call__(self, frame) -> dict:
