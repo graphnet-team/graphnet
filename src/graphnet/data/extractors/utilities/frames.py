@@ -1,16 +1,15 @@
 from typing import Optional, Tuple
 
+from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
 
-try:
+if has_icecube_package():
     from icecube import (
         dataclasses,
         icetray,
     )  # pyright: reportMissingImports=false
-except ImportError:
-    logger.warning("icecube package not available.")
 
 
 def frame_is_montecarlo(frame: "icetray.I3Frame") -> bool:
