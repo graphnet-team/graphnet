@@ -65,9 +65,7 @@ class GaussLoss(LossFunction):
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
-        # Check(s)
-        assert prediction.dim() == 2
-        assert prediction.size() == target.size()
+
         variance = 1/prediction[:,2]
 
         loss = torch.nn.GaussianNLLLoss()

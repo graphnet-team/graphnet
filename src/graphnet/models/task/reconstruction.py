@@ -4,6 +4,25 @@ import torch
 from graphnet.models.task import Task
 from graphnet.utilities.maths import eps_like
 
+class ZenithAndAzimuthReconstructionWithKappa(Task):
+    """Reconstructs azimuthal and zenith angle and associated kappa (1/var)"""
+
+    # Requires three features: untransformed points in (x,y,z)-space.
+    nb_inputs = 3
+    #0 = x, 1 = y, 2 = z
+
+    def _forward(self, x):
+        # Transform outputs to angle and prepare prediction
+        kappa = torch.linalg.vector_norm(x, dim=1) + eps_like(x)
+        
+        zenith = torch.atan2(torch.linalg.vector_norm(x[:,:2]), x[:, 2])
+
+        azimuth = torch.atan2(x[:, 1], x[:, 0])
+        azimuth = torch.where(
+            azimuth < 0, azimuth + 2 * np.pi, azimuth
+        )  # atan(y,x) -> [-pi, pi]
+
+        return torch.stack((zenith,azimuth, kappa), dim=1)
 
 class AzimuthReconstructionWithKappa(Task):
     """Reconstructs azimuthal angle and associated kappa (1/var)."""
@@ -178,3 +197,4 @@ class InelasticityReconstruction(Task):
     def _forward(self, x):
         # Transform output to unit range
         return torch.sigmoid(x)
+
