@@ -51,7 +51,7 @@ bibliography: paper.bib
 
 # Summary
 
-Neutrino telescopes, such as ANTARES [@ANTARES:2011hfw], IceCube [@Aartsen:2016nxy; @DeepCore], KM3NeT [@KM3Net:2016zxf], and Baikal-GVD [@Baikal-GVD:2018isr], detect thousands of particle interaction per seconds, with a science goal of detecting neutrinos and measuring their properties and origins. Reconstruction at these experiments is concerned with classifying the type of event, estimating the properties of the incident particles, etc.
+Neutrino telescopes, such as ANTARES [@ANTARES:2011hfw], IceCube [@Aartsen:2016nxy; @DeepCore], KM3NeT [@KM3Net:2016zxf], and Baikal-GVD [@Baikal-GVD:2018isr], detect thousands of particle interaction per seconds, with a science goal of detecting neutrinos and measuring their properties and origins. Reconstruction at these experiments is concerned with classifying the type of event or estimating properties of the interaction..
 
 `GraphNeT` [@graphnet_zenodo:2022] is an open-source python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). `GraphNeT` makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques [@gnn_icecube].
 
@@ -65,22 +65,23 @@ Reconstructing the data from these experiments is a challenge due to irregular d
 
 Multiple approaches have been employed, including relatively simple methods [@Aguilar:2011zz; @IceCube:2022kff] that are robust but limited in precision and likelihood-based methods [@ANTARES:2017ivh; @Ahrens:2003fg; @Aartsen:2013vja; @Abbasi_2013; @Aartsen:2013bfa; @IceCube:2021oqo; @IceCube:2022kff; @Chirkin:2013avz] that can attain a high accuracy at the price of high computational cost and detector specific assumptions.
 
-Recently, ML methods have started to be used, such as convolutional neural networks (CNNs) [@Abbasi:2021ryj; @Aiello:2020orq] that are comparably fast, but require detector data being transformed into a regular pixel or voxel grid. Other approaches get around the geometric limitations, but increase the computational cost to a similar level as the traditional likelihood methods [@Eller:2022xvi].
+Recently, machine learning (ML) methods have started to be used, such as convolutional neural networks (CNNs) [@Abbasi:2021ryj; @Aiello:2020orq] that are comparably fast, but require detector data being transformed into a regular pixel or voxel grid. Other approaches get around the geometric limitations, but increase the computational cost to a similar level as the traditional likelihood methods [@Eller:2022xvi].
 
 Instead, GNNs can be thought of as  generalised CNNs that work on data with any geometry. Therefore, the GNN paradigm shapes the tool to the problem, not the problem to the tool.
 
 The `GraphNeT` framework provides the end-to-end tools to train and deploy GNN reconstruction models. `GraphNeT` leverages industry-standard tools such as `pytorch` [@NEURIPS2019_9015], `PyG` [@Fey_Fast_Graph_Representation_2019], `lightning` [@Falcon_PyTorch_Lightning_2019], and `wand` [@wandb] for building and training GNNs as well as particle physics-standard tools such as `awkward` [@jim_pivarski_2020_3952674] for handling the variable-size data representing particle interaction events in neutrino telescopes. The inference speed on a single GPU in principle allows for processing the full online datastream of current neutrino telescopes in real-time.
 
 
-# Impact on Physics
+# Impact on physics
 
 `GraphNeT` provides a common framework for ML developers and physicists that wish to use the state-of-the-art GNN tools in their research. By uniting both user groups, `GraphNeT` increases the longevity and useability of individual code contributions from ML developers by building a general, reusable software package based on software engineering practices, and lowers the technical threshold for physicists that wish to use the most performant tools for their scientific problems.
 
-The `GraphNeT` models can improve event classification and yield more accurate reconstruction, e.g., for low energy neutrinos observed in IceCube. Here, a GNN implemented in `GraphNeT` was applied to the problem of neutrino oscillations in IceCube, leading to significant improvements in both energy and angular reconstruction in the energy range relevant to oscillation studies. Furthermore, it is evident that the GNN is able to improve upon the efficiency and purity of the neutrino sample.
+The `GraphNeT` models can improve event classification and yield more accurate reconstruction, e.g., for low energy neutrinos observed in IceCube. Here, a GNN implemented in `GraphNeT` was applied to the problem of neutrino oscillations in IceCube, leading to significant improvements in both energy and angular reconstruction in the energy range relevant to oscillation studies [@gnn_icecube]. Furthermore, it was shown that the GNN could improve  muon vs. neutrino classification and thereby the efficiency and purity of a neutrino sample for such an analysis.
 
-Similarly, improved angular reconstruction has a great impact on, e.g., point source analyses, as the sensitivity increases with the inverse square of the pointing resolution.
+Similarly, improved angular reconstruction has a great impact on, e.g., neutrino point source analyses, as the sensitivity increases with the inverse square of the pointing resolution.
 
-Finally, the fast (order of millisecond) reconstruction allows for a whole new type of cosmic alerts at lower energies, which were previously unfeasible. GNN-based reconstruction makes it possible to identify low energy (< 10 TeV) neutrinos and monitor their rate, direction, and energy in real-time. This will enable cosmic alerts based on such neutrinos for the first time ever, despite a large background of neutrinos that are not of cosmic origin.
+Finally, the fast (order of millisecond) reconstruction allows for a whole new type of cosmic alerts at lower energies, which were previously unfeasible. GNN-based reconstruction makes it possible to identify low energy (< 10 TeV) neutrinos and monitor their rate, direction, and energy in real-time. This will enable cosmic neutrino alerts based on such neutrinos for the first time ever, despite a large background of neutrinos that are not of cosmic origin.
+
 
 
 # Usage
@@ -89,7 +90,7 @@ Finally, the fast (order of millisecond) reconstruction allows for a whole new t
 
 ![High-level overview of a typical workflow using `GraphNeT`.\label{fig:flowchart}](flowchart.pdf)
 
-Domain-specific data is converted and read using the components in `graphnet.data`. This is necessary because neutrino telescope data is often stored in domain-specific file format that is often not suitable for the high I/O loads required when training machine learning (ML) models on large batches of events.
+Domain-specific data is converted and read using the components in `graphnet.data`. This is necessary because neutrino telescope data is often stored in domain-specific file format that is often not suitable for the high I/O loads required when training machine learning models on large batches of events.
 
 Models are configured, built, trained, and logged using the components in `graphnet.models`. This module contains modular components subclassing `torch.nn.Module`, meaning that users only need to import a few, existing, purpose-built components and chain them together to form a complete GNN. ML developers can contribute to `GraphNeT` by extending this suite of model components — through new layer types, physics tasks, graph connectivities, etc. — and experiment with optimising these for different reconstruction tasks using experiment tracking.
 
@@ -101,8 +102,7 @@ By splitting up the GNN development in this way, `GraphNeT` allows physics users
 # Acknowledgements
 
 Andreas Søgaard has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
-
-(...)
+The work of Rasmus Ørsøe was partly performed in the framework of the PUNCH4NFDI consortium supported by DFG fund "NFDI 39/1", Germany.
 
 
 # References
