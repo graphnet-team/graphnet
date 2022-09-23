@@ -5,12 +5,11 @@ from graphnet.models.task import Task
 from graphnet.utilities.maths import eps_like
 
 
-class ZenithAndAzimuthReconstructionWithKappa(Task):
+class PointingReconstructionWithKappa(Task):
     """Reconstructs azimuthal and zenith angle and associated kappa (1/var)"""
 
     # Requires three features: untransformed points in (x,y,z)-space.
     nb_inputs = 3
-    # 0 = x, 1 = y, 2 = z
 
     def _forward(self, x):
         # Transform outputs to angle and prepare prediction
