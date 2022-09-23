@@ -206,6 +206,10 @@ def cast_pulse_series_to_pure_python(
     for om_key in om_keys:
         om_data = cast_object_to_pure_python(gcd_dict[om_key])
 
+        # Add calibration information
+        print(calibration.dom_cal[om_key])
+        om_data.update(cast_object_to_pure_python(calibration.dom_cal[om_key]))
+
         # Remove all "orientation.*"-type keys. They provide no
         # information apart from the (hopefully!) standard
         # coordinate system and the OM direction, which is covered
