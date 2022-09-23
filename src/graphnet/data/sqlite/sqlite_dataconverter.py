@@ -6,7 +6,7 @@ import pandas as pd
 import sqlalchemy
 import sqlite3
 from tqdm import tqdm
-from typing import Any, Dict, List, MutableMapping, Optional
+from typing import Any, Dict, List, MutableMapping, Optional, Tuple, Union
 
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
@@ -62,6 +62,9 @@ class SQLiteDataConverter(DataConverter):
             self.logger.info("Merging files output by current instance.")
             input_files = self._output_files
 
+        if "." not in output_file:
+            output_file = ".".join([output_file, self.file_suffix])
+
         if os.path.exists(output_file):
             self.logger.warning(
                 f"Target path for merged database, {output_file}, already exists."
@@ -71,7 +74,8 @@ class SQLiteDataConverter(DataConverter):
             self.logger.info(f"Merging {len(input_files)} database files")
 
             # Create one empty database table for each extraction
-            for table_name in self._table_names:
+            table_names = self._extract_table_names(input_files)
+            for table_name in table_names:
                 column_names = self._extract_column_names(
                     input_files, table_name
                 )
@@ -90,6 +94,28 @@ class SQLiteDataConverter(DataConverter):
             self.logger.warning("No temporary database files found!")
 
     # Internal methods
+    def _extract_table_names(self, db: Union[str, List[str]]) -> Tuple[str]:
+        """Get the names of all tables in database `db`."""
+        if isinstance(db, list):
+            results = [self._extract_table_names(path) for path in db]
+            # @TODO: Check...
+            assert all([results[0] == r for r in results])
+            return results[0]
+
+        with sqlite3.connect(db) as conn:
+            table_names = tuple(
+                [
+                    p[0]
+                    for p in (
+                        conn.execute(
+                            "SELECT name FROM sqlite_master WHERE type='table';"
+                        ).fetchall()
+                    )
+                ]
+            )
+
+        return table_names
+
     def _extract_column_names(self, db_paths, table_name):
         for db_path in db_paths:
             with sqlite3.connect(db_path) as con:
@@ -180,8 +206,9 @@ class SQLiteDataConverter(DataConverter):
             results (dict): Contains the data for each extracted table
         """
         results = OrderedDict()
+        table_names = self._extract_table_names(db)
         with sqlite3.connect(db) as conn:
-            for table_name in self._table_names:
+            for table_name in table_names:
                 query = f"select * from {table_name}"
                 try:
                     data = pd.read_sql(query, conn)
