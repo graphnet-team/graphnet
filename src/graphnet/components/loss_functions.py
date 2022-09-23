@@ -67,11 +67,12 @@ class GaussianNLLLoss(LossFunction):
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
 
-        variance = 1 / prediction[:, 2]
-
         loss = torch.nn.GaussianNLLLoss()
 
-        return loss(prediction, target, variance, eps=1e-06, reduction="mean")
+        variance = 1.0 / prediction[:, 2]
+        elements = loss(prediction, target, variance, eps=1e-06, reduction="none")
+        elements = torch.sum(elements, dim=-1)  # Sum along coordinate dimension
+        return elements
 
 
 class MSELoss(LossFunction):
