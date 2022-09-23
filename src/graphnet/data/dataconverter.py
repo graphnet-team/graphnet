@@ -87,7 +87,7 @@ class DataConverter(ABC, LoggerMixin):
         self,
         extractors: List[I3Extractor],
         outdir: str,
-        gcd_rescue: str,
+        gcd_rescue: Optional[str] = None,
         *,
         nb_files_to_batch: Optional[int] = None,
         sequential_batch_pattern: Optional[str] = None,
