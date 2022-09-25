@@ -9,7 +9,8 @@ from typing import List, Optional, Union
 import torch
 from torch import Tensor
 from torch_geometric.data import Data
-from torch_geometric.nn import EdgeConv
+from torch_geometric.nn import EdgeConv, GCNConv
+from torch_geometric.nn import ASAPooling
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
 from graphnet.components.layers import DynEdgeConv
 from graphnet.models.coarsening import Coarsening
@@ -175,6 +176,7 @@ class DynEdge_V2(GNN):
         nb_inputs,
         layer_size_scale=4,
         node_pooling: Coarsening = None,
+        nb_neighbors: int = 8,
     ):
         """DynEdge model.
 
@@ -309,6 +311,407 @@ class DynEdge_V2(GNN):
 
         # Skip-cat
         x = torch.cat((x, a, b, c, d), dim=1)
+
+        # Post-processing
+        x = self.nn1(x)
+        x = self.lrelu(x)
+        x = self.nn2(x)
+
+        # Aggregation across nodes
+        a, _ = scatter_max(x, batch, dim=0)
+        b, _ = scatter_min(x, batch, dim=0)
+        c = scatter_mean(x, batch, dim=0)
+
+        # Concatenate aggregations and scalar features
+        x = torch.cat(
+            (
+                a,
+                b,
+                c,
+            ),
+            dim=1,
+        )
+
+        # Read-out
+        x = self.lrelu(x)
+        x = self.nn3(x)
+
+        x = self.lrelu(x)
+
+        return x
+
+
+class DynEdge_V2_asa(GNN):
+    def __init__(
+        self,
+        nb_inputs,
+        layer_size_scale=4,
+        node_pooling: Coarsening = None,
+        nb_neighbors: int = 8,
+    ):
+        """DynEdge model.
+
+        Args:
+            nb_inputs (int): Number of input features.
+            nb_outputs (int): Number of output features.
+            layer_size_scale (int, optional): Integer that scales the size of
+                hidden layers. Defaults to 4.
+        """
+
+        # Architecture configuration
+        c = layer_size_scale
+        l1, l2, l3, l4, l5, l6 = (
+            nb_inputs * 2 + 5,
+            c * 16 * 2,
+            c * 32 * 2,
+            c * 42 * 2,
+            c * 32 * 2,
+            c * 16 * 2,
+        )
+        # Node Pooling via Coarsening Module
+        self._coarsening = node_pooling
+        # Base class constructor
+        super().__init__(nb_inputs, l6)
+
+        # Graph convolutional operations
+        features_subset = slice(0, 3)
+        nb_neighbors = 8
+
+        self.conv_add1 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l1 * 2, l2),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l2, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+
+        self.conv_add2 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+
+        self.conv_add3 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+
+        self.conv_add4 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+        # Mem pooling
+        self._pool = ASAPooling(
+            in_channels=self._nb_inputs,
+            out_channels=self._nb_inputs,
+            gnn=GCNConv,
+        )
+
+        # Post-processing operations
+        self.nn1 = torch.nn.Linear(l3 * 4 + l1, l4)
+        self.nn2 = torch.nn.Linear(l4, l5)
+        self.nn3 = torch.nn.Linear(3 * l5 + 0, l6)  # 4*l5 + 5
+        self.lrelu = torch.nn.LeakyReLU()
+
+    def forward(self, data: Data) -> Tensor:
+        """Model forward pass.
+
+        Args:
+            data (Data): Graph of input features.
+
+        Returns:
+            Tensor: Model output.
+        """
+        if self._coarsening is not None:
+            data = self._coarsening(data)
+        # Convenience variables
+        x, edge_index, batch = data.x, data.edge_index, data.batch
+
+        x, edge_index, _, batch, _ = self._pool(
+            x=x, edge_index=edge_index, batch=batch
+        )
+
+        # Calculate homophily (scalar variables)
+        h_x, h_y, h_z, h_t = calculate_xyzt_homophily(x, edge_index, batch)
+
+        # Calculate mean features
+        global_means = scatter_mean(x, batch, dim=0)
+
+        # Add global variables
+        distribute = (
+            batch.unsqueeze(dim=1) == torch.unique(batch).unsqueeze(dim=0)
+        ).type(torch.float)
+
+        global_variables = torch.cat(
+            [
+                global_means,
+                torch.log10(data.n_pulses).unsqueeze(dim=1),
+                h_x,
+                h_y,
+                h_z,
+                h_t,
+            ],
+            dim=1,
+        )
+
+        global_variables_distributed = torch.sum(
+            distribute.unsqueeze(dim=2) * global_variables.unsqueeze(dim=0),
+            dim=1,
+        )
+
+        x = torch.cat((x, global_variables_distributed), dim=1)
+
+        a, edge_index = self.conv_add1(x, edge_index, batch)
+        b, edge_index = self.conv_add2(a, edge_index, batch)
+        c, edge_index = self.conv_add3(b, edge_index, batch)
+        d, edge_index = self.conv_add4(c, edge_index, batch)
+
+        # Skip-cat
+        x = torch.cat((x, a, b, c, d), dim=1)
+
+        # Post-processing
+        x = self.nn1(x)
+        x = self.lrelu(x)
+        x = self.nn2(x)
+
+        # Aggregation across nodes
+        a, _ = scatter_max(x, batch, dim=0)
+        b, _ = scatter_min(x, batch, dim=0)
+        c = scatter_mean(x, batch, dim=0)
+
+        # Concatenate aggregations and scalar features
+        x = torch.cat(
+            (
+                a,
+                b,
+                c,
+            ),
+            dim=1,
+        )
+
+        # Read-out
+        x = self.lrelu(x)
+        x = self.nn3(x)
+
+        x = self.lrelu(x)
+
+        return x
+
+
+class DynEdge_V2_Deep(GNN):
+    def __init__(
+        self,
+        nb_inputs,
+        layer_size_scale=4,
+        node_pooling: Coarsening = None,
+        nb_neighbors: int = 8,
+    ):
+        """DynEdge model.
+
+        Args:
+            nb_inputs (int): Number of input features.
+            nb_outputs (int): Number of output features.
+            layer_size_scale (int, optional): Integer that scales the size of
+                hidden layers. Defaults to 4.
+        """
+
+        # Architecture configuration
+        c = layer_size_scale
+        l1, l2, l3, l4, l5, l6 = (
+            nb_inputs * 2 + 5,
+            c * 16 * 2,
+            c * 32 * 2,
+            c * 42 * 2,
+            c * 32 * 2,
+            c * 16 * 2,
+        )
+        # Node Pooling via Coarsening Module
+        self._coarsening = node_pooling
+        # Base class constructor
+        super().__init__(nb_inputs, l6)
+
+        # Graph convolutional operations
+        features_subset = slice(0, 3)
+        nb_neighbors = 8
+
+        self.conv_add1 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l1 * 2, l2),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l2, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+
+        self.conv_add2 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+
+        self.conv_add3 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+
+        self.conv_add4 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+
+        self.conv_add5 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+        self.conv_add6 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+        self.conv_add7 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+        self.conv_add8 = DynEdgeConv(
+            torch.nn.Sequential(
+                torch.nn.Linear(l3 * 2, l4),
+                torch.nn.LeakyReLU(),
+                torch.nn.Linear(l4, l3),
+                torch.nn.LeakyReLU(),
+            ),
+            aggr="add",
+            nb_neighbors=nb_neighbors,
+            features_subset=features_subset,
+        )
+
+        # Post-processing operations
+        self.nn1 = torch.nn.Linear(l3 * 7 + l1, l4)
+        self.nn2 = torch.nn.Linear(l4, l5)
+        self.nn3 = torch.nn.Linear(3 * l5 + 0, l6)  # 4*l5 + 5
+        self.lrelu = torch.nn.LeakyReLU()
+
+    def forward(self, data: Data) -> Tensor:
+        """Model forward pass.
+
+        Args:
+            data (Data): Graph of input features.
+
+        Returns:
+            Tensor: Model output.
+        """
+        if self._coarsening is not None:
+            data = self._coarsening(data)
+        # Convenience variables
+        x, edge_index, batch = data.x, data.edge_index, data.batch
+
+        # Calculate homophily (scalar variables)
+        h_x, h_y, h_z, h_t = calculate_xyzt_homophily(x, edge_index, batch)
+
+        # Calculate mean features
+        global_means = scatter_mean(x, batch, dim=0)
+
+        # Add global variables
+        distribute = (
+            batch.unsqueeze(dim=1) == torch.unique(batch).unsqueeze(dim=0)
+        ).type(torch.float)
+
+        global_variables = torch.cat(
+            [
+                global_means,
+                torch.log10(data.n_pulses).unsqueeze(dim=1),
+                h_x,
+                h_y,
+                h_z,
+                h_t,
+            ],
+            dim=1,
+        )
+
+        global_variables_distributed = torch.sum(
+            distribute.unsqueeze(dim=2) * global_variables.unsqueeze(dim=0),
+            dim=1,
+        )
+
+        x = torch.cat((x, global_variables_distributed), dim=1)
+
+        a, edge_index = self.conv_add1(x, edge_index, batch)
+        b, edge_index = self.conv_add2(a, edge_index, batch)
+        c, edge_index = self.conv_add3(b, edge_index, batch)
+        d, edge_index = self.conv_add4(c, edge_index, batch)
+        e, edge_index = self.conv_add5(d, edge_index, batch)
+        f, edge_index = self.conv_add6(e, edge_index, batch)
+        g, edge_index = self.conv_add7(f, edge_index, batch)
+        h, edge_index = self.conv_add8(g, edge_index, batch)
+
+        # Skip-cat
+        x = torch.cat((x, a, b, c, d, e, f, g), dim=1)
 
         # Post-processing
         x = self.nn1(x)

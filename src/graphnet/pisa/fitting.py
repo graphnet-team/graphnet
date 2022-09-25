@@ -375,7 +375,7 @@ class ContourFitter:
                 _ = p.map_async(self._parallel_fit_1d_contour, settings)
                 p.close()
                 p.join()
-                # self._parallel_fit_1d_contour(settings[0])
+                self._parallel_fit_1d_contour(settings[0])
             elif contour_type.lower() == "2d":
                 settings = self._make_2d_settings(
                     cfgs=cfgs,

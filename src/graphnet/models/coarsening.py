@@ -206,12 +206,11 @@ class CustomDOMCoarsening(DOMCoarsening):
         features = data.features
         if batch is not None:
             features = [feats[0] for feats in features]
+        # ix_time = features.index("dom_time")
+        # ix_charge = features.index("charge")
 
-        ix_time = features.index("dom_time")
-        ix_charge = features.index("charge")
-
-        time = data.x[:, ix_time]
-        charge = data.x[:, ix_charge]
+        time = data.x[:, 3]  # ix_time]
+        charge = data.x[:, 4]  # ix_charge]
 
         x = torch.stack(
             (
