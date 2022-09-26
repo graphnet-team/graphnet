@@ -42,7 +42,7 @@ def main_icecube86(backend: str):
         outdir,
     )
     converter(inputs)
-    converter.merge_files("merged")
+    converter.merge_files(os.path.join(outdir, "merged"))
 
 
 def main_icecube_upgrade(backend: str):
@@ -73,7 +73,7 @@ def main_icecube_upgrade(backend: str):
         icetray_verbose=1,
     )
     converter(inputs)
-    converter.merge_files("merged")
+    converter.merge_files(os.path.join(outdir, "merged"))
 
 
 if __name__ == "__main__":
