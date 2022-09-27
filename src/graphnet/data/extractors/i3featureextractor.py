@@ -136,19 +136,11 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output["dom_x"].append(x)
                 output["dom_y"].append(y)
                 output["dom_z"].append(z)
-                # New
-                output["is_bright_dom"].append(
-                    is_bright_dom
-                )  # 0 or 1 or padding_value if list is not in file
-                output["is_bad_dom"].append(
-                    is_bad_dom
-                )  # 0 or 1 or padding_value if list is not in file
-                output["is_saturated_dom"].append(
-                    is_saturated_dom
-                )  # 0 or 1 or padding_value if list is not in file
-                output["is_errata_dom"].append(
-                    is_errata_dom
-                )  # 0 or 1 or padding_value if list is not in file
+                # DOM flags
+                output["is_bright_dom"].append(is_bright_dom)
+                output["is_bad_dom"].append(is_bad_dom)
+                output["is_saturated_dom"].append(is_saturated_dom)
+                output["is_errata_dom"].append(is_errata_dom)
         return output
 
     def _get_relative_dom_efficiency(self, frame, om_key):
