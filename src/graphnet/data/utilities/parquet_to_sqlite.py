@@ -39,7 +39,7 @@ class ParquetToSQLiteConverter(LoggerMixin):
         assert isinstance(
             mc_truth_table, str
         ), "Argument `mc_truth_table` must be a string"
-        self._parquet_files = self._find_files(parquet_path)
+        self._parquet_files = self._find_parquet_files(parquet_path)
         if excluded_fields is not None:
             self._excluded_fields = excluded_fields
         else:
@@ -48,7 +48,7 @@ class ParquetToSQLiteConverter(LoggerMixin):
         self._event_counter = 0
         self._created_tables = []
 
-    def _find_files(self, parquet_path: str = None):
+    def _find_parquet_files(self, parquet_path: str = None):
         if isinstance(parquet_path, str):
             if parquet_path.endswith(".parquet"):
                 files = [parquet_path]
