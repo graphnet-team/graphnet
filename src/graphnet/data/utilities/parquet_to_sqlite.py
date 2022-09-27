@@ -8,7 +8,7 @@ from typing import List, Optional, Union
 from tqdm.auto import trange
 import numpy as np
 import sqlalchemy
-from graphnet.data.sqlite.sqlite_utilities import run_sql_code
+from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
 
 from graphnet.utilities.logging import LoggerMixin
 
@@ -105,13 +105,31 @@ class ParquetToSQLiteConverter(LoggerMixin):
     ):
         df = self._make_df(ak_array, field_name, n_events_in_file)
         if field_name in self._created_tables:
-            self._submit_to_database(outdir, database_name, field_name, df)
+            save_to_sql(
+                outdir
+                + "/"
+                + database_name
+                + "/data/"
+                + database_name
+                + ".db",
+                field_name,
+                df,
+            )
         else:
             self._create_table(
                 df, field_name, outdir, database_name, n_events_in_file
             )
             self._created_tables.append(field_name)
-            self._submit_to_database(outdir, database_name, field_name, df)
+            save_to_sql(
+                outdir
+                + "/"
+                + database_name
+                + "/data/"
+                + database_name
+                + ".db",
+                field_name,
+                df,
+            )
 
     def _make_df(
         self,
@@ -143,26 +161,6 @@ class ParquetToSQLiteConverter(LoggerMixin):
         print(len(df), len(event_nos))
         df["event_no"] = event_nos
         return df
-
-    def _submit_to_database(
-        self, outdir: str, database_name: str, key: str, data: pd.DataFrame
-    ):
-        """Submits data to the database with specified key."""
-        if len(data) == 0:
-            if self._verbose:
-                self.logger.info(f"No data provided for {key}.")
-            return
-        engine = sqlalchemy.create_engine(
-            "sqlite:///"
-            + outdir
-            + "/"
-            + database_name
-            + "/data/"
-            + database_name
-            + ".db"
-        )
-        data.to_sql(key, engine, index=False, if_exists="append")
-        engine.dispose()
 
     def _create_table(
         self,
