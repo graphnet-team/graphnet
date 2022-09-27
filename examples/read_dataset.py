@@ -24,7 +24,16 @@ DATASET_CLASS = {
 }
 
 # Constants
-features = FEATURES.UPGRADE
+# features = FEATURES.UPGRADE  # From I3FeatureExtractor
+features = [  # From I3GenericExtractor
+    "position__x",
+    "position__y",
+    "position__z",
+    "time",
+    "charge",
+    "relative_dom_eff",
+    "area",
+]
 truth = TRUTH.UPGRADE
 
 
@@ -95,6 +104,6 @@ def main(backend: str):
 
 
 if __name__ == "__main__":
-    # backend = "parquet"
-    backend = "sqlite"
+    backend = "parquet"
+    # backend = "sqlite"
     main(backend)
