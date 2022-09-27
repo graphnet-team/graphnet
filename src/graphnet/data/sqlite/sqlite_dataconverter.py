@@ -62,7 +62,7 @@ class SQLiteDataConverter(DataConverter):
             self.logger.info("Merging files output by current instance.")
             input_files = self._output_files
 
-        if "." not in output_file:
+        if not output_file.endswith("." + self.file_suffix):
             output_file = ".".join([output_file, self.file_suffix])
 
         if os.path.exists(output_file):
