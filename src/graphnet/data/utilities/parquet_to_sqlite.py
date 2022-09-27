@@ -101,12 +101,12 @@ class ParquetToSQLiteConverter:
             self._created_tables.append(field_name)
             self._submit_to_database(outdir, database_name, field_name, df)
 
-    def _make_df(
+    def _convert_to_dataframe(
         self,
-        ak_array: awkward.Array = None,
-        field_name: str = None,
-        n_events_in_file: int = None,
-    ):
+        ak_array: awkward.Array,
+        field_name: str,
+        n_events_in_file: int,
+    ) -> pd.DataFrame:
         df = pd.DataFrame(ak.to_pandas(ak_array[field_name]))
         if len(df.columns) == 1:
             if df.columns == ["values"]:
