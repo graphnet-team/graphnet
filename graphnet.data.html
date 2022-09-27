@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -41,10 +42,71 @@
 <li><a class="reference internal" href="#">graphnet.data package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-graphnet.data.constants">graphnet.data.constants module</a></li>
-<li><a class="reference internal" href="#module-graphnet.data.dataconverter">graphnet.data.dataconverter module</a></li>
-<li><a class="reference internal" href="#module-graphnet.data.dataset">graphnet.data.dataset module</a></li>
-<li><a class="reference internal" href="#module-graphnet.data.pipeline">graphnet.data.pipeline module</a></li>
+<li><a class="reference internal" href="#graphnet-data-constants-module">graphnet.data.constants module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.constants.FEATURES"><code class="docutils literal notranslate"><span class="pre">FEATURES</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.constants.FEATURES.DEEPCORE"><code class="docutils literal notranslate"><span class="pre">FEATURES.DEEPCORE</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.constants.FEATURES.ICECUBE86"><code class="docutils literal notranslate"><span class="pre">FEATURES.ICECUBE86</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.constants.FEATURES.UPGRADE"><code class="docutils literal notranslate"><span class="pre">FEATURES.UPGRADE</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.data.constants.TRUTH"><code class="docutils literal notranslate"><span class="pre">TRUTH</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.constants.TRUTH.DEEPCORE"><code class="docutils literal notranslate"><span class="pre">TRUTH.DEEPCORE</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.constants.TRUTH.ICECUBE86"><code class="docutils literal notranslate"><span class="pre">TRUTH.ICECUBE86</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.constants.TRUTH.UPGRADE"><code class="docutils literal notranslate"><span class="pre">TRUTH.UPGRADE</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.data.dataconverter">graphnet.data.dataconverter module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter"><code class="docutils literal notranslate"><span class="pre">DataConverter</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter.__call__"><code class="docutils literal notranslate"><span class="pre">DataConverter.__call__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter.__init__"><code class="docutils literal notranslate"><span class="pre">DataConverter.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter._extract_data"><code class="docutils literal notranslate"><span class="pre">DataConverter._extract_data()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter._iterate_over_batches_of_files"><code class="docutils literal notranslate"><span class="pre">DataConverter._iterate_over_batches_of_files()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter._save_filenames"><code class="docutils literal notranslate"><span class="pre">DataConverter._save_filenames()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter._update_shared_variables"><code class="docutils literal notranslate"><span class="pre">DataConverter._update_shared_variables()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter.execute"><code class="docutils literal notranslate"><span class="pre">DataConverter.execute()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter.file_suffix"><code class="docutils literal notranslate"><span class="pre">DataConverter.file_suffix</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter.get_map_function"><code class="docutils literal notranslate"><span class="pre">DataConverter.get_map_function()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter.merge_files"><code class="docutils literal notranslate"><span class="pre">DataConverter.merge_files()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.DataConverter.save_data"><code class="docutils literal notranslate"><span class="pre">DataConverter.save_data()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.FileSet"><code class="docutils literal notranslate"><span class="pre">FileSet</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.FileSet.gcd_file"><code class="docutils literal notranslate"><span class="pre">FileSet.gcd_file</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.FileSet.i3_file"><code class="docutils literal notranslate"><span class="pre">FileSet.i3_file</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.cache_output_files"><code class="docutils literal notranslate"><span class="pre">cache_output_files()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataconverter.init_global_index"><code class="docutils literal notranslate"><span class="pre">init_global_index()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet-data-dataset-module">graphnet.data.dataset module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.dataset.ColumnMissingException"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._check_missing_columns"><code class="docutils literal notranslate"><span class="pre">Dataset._check_missing_columns()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._create_graph"><code class="docutils literal notranslate"><span class="pre">Dataset._create_graph()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._get_all_indices"><code class="docutils literal notranslate"><span class="pre">Dataset._get_all_indices()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._get_dbang_label"><code class="docutils literal notranslate"><span class="pre">Dataset._get_dbang_label()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._get_labels"><code class="docutils literal notranslate"><span class="pre">Dataset._get_labels()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._init"><code class="docutils literal notranslate"><span class="pre">Dataset._init()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._post_init"><code class="docutils literal notranslate"><span class="pre">Dataset._post_init()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._query"><code class="docutils literal notranslate"><span class="pre">Dataset._query()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._query_table"><code class="docutils literal notranslate"><span class="pre">Dataset._query_table()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._remove_missing_columns"><code class="docutils literal notranslate"><span class="pre">Dataset._remove_missing_columns()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.data.pipeline">graphnet.data.pipeline module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.pipeline.InSQLitePipeline"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.pipeline.InSQLitePipeline.__call__"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline.__call__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.pipeline.InSQLitePipeline.__init__"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.pipeline.InSQLitePipeline._create_table"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline._create_table()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.data">Module contents</a></li>
 </ul>
 </li>
@@ -82,34 +144,139 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.extractors.html">graphnet.data.extractors package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3extractor">graphnet.data.extractors.i3extractor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3featureextractor">graphnet.data.extractors.i3featureextractor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3retroextractor">graphnet.data.extractors.i3retroextractor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3truthextractor">graphnet.data.extractors.i3truthextractor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.utilities">graphnet.data.extractors.utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3extractor">graphnet.data.extractors.i3extractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor"><code class="docutils literal notranslate"><span class="pre">I3Extractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3Extractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor._load_gcd_data"><code class="docutils literal notranslate"><span class="pre">I3Extractor._load_gcd_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.name"><code class="docutils literal notranslate"><span class="pre">I3Extractor.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.set_files"><code class="docutils literal notranslate"><span class="pre">I3Extractor.set_files()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection"><code class="docutils literal notranslate"><span class="pre">I3ExtractorCollection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.set_files"><code class="docutils literal notranslate"><span class="pre">I3ExtractorCollection.set_files()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3featureextractor">graphnet.data.extractors.i3featureextractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor._get_om_keys_and_pulseseries"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractor._get_om_keys_and_pulseseries()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCube86</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCube86.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeDeepCore"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCubeDeepCore</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCubeUpgrade</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade.__call__"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCubeUpgrade.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade"><code class="docutils literal notranslate"><span class="pre">I3PulseNoiseTruthFlagIceCubeUpgrade</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__"><code class="docutils literal notranslate"><span class="pre">I3PulseNoiseTruthFlagIceCubeUpgrade.__call__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3retroextractor">graphnet.data.extractors.i3retroextractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor._try_get_key"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor._try_get_key()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3truthextractor">graphnet.data.extractors.i3truthextractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._find_data_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_track_energy_and_inelasticity"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._get_primary_track_energy_and_inelasticity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._muon_stopped"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._muon_stopped()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.utilities">graphnet.data.extractors.utilities module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.utilities.frame_is_montecarlo"><code class="docutils literal notranslate"><span class="pre">frame_is_montecarlo()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.utilities.frame_is_noise"><code class="docutils literal notranslate"><span class="pre">frame_is_noise()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.parquet.html">graphnet.data.parquet package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#module-graphnet.data.parquet.parquet_dataconverter">graphnet.data.parquet.parquet_dataconverter module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#module-graphnet.data.parquet.parquet_dataset">graphnet.data.parquet.parquet_dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#module-graphnet.data.parquet.parquet_dataconverter">graphnet.data.parquet.parquet_dataconverter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter"><code class="docutils literal notranslate"><span class="pre">ParquetDataConverter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter.file_suffix"><code class="docutils literal notranslate"><span class="pre">ParquetDataConverter.file_suffix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter.merge_files"><code class="docutils literal notranslate"><span class="pre">ParquetDataConverter.merge_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter.save_data"><code class="docutils literal notranslate"><span class="pre">ParquetDataConverter.save_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#graphnet-data-parquet-parquet-dataset-module">graphnet.data.parquet.parquet_dataset module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataset.ParquetDataset"><code class="docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.html#module-graphnet.data.parquet">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.sqlite.html">graphnet.data.sqlite package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataconverter">graphnet.data.sqlite.sqlite_dataconverter module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset">graphnet.data.sqlite.sqlite_dataset module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset_perturbed">graphnet.data.sqlite.sqlite_dataset_perturbed module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_selection">graphnet.data.sqlite.sqlite_selection module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_utilities">graphnet.data.sqlite.sqlite_utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataconverter">graphnet.data.sqlite.sqlite_dataconverter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._attach_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._create_table"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._create_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_everything"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._extract_everything()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._merge_temporary_databases()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._submit_to_database"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._submit_to_database()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter.any_pulsemap_is_non_empty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.file_suffix"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter.file_suffix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.merge_files"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter.merge_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.save_data"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter.save_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe"><code class="docutils literal notranslate"><span class="pre">construct_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.is_pulsemap_check"><code class="docutils literal notranslate"><span class="pre">is_pulsemap_check()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset">graphnet.data.sqlite.sqlite_dataset module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset"><code class="docutils literal notranslate"><span class="pre">SQLiteDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._close_connection"><code class="docutils literal notranslate"><span class="pre">SQLiteDataset._close_connection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._establish_connection"><code class="docutils literal notranslate"><span class="pre">SQLiteDataset._establish_connection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._query_table"><code class="docutils literal notranslate"><span class="pre">SQLiteDataset._query_table()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset_perturbed">graphnet.data.sqlite.sqlite_dataset_perturbed module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed"><code class="docutils literal notranslate"><span class="pre">SQLiteDatasetPerturbed</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet-data-sqlite-sqlite-selection-module">graphnet.data.sqlite.sqlite_selection module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_desired_event_numbers"><code class="docutils literal notranslate"><span class="pre">get_desired_event_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_equal_proportion_neutrino_indices"><code class="docutils literal notranslate"><span class="pre">get_equal_proportion_neutrino_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_even_dbang_selection"><code class="docutils literal notranslate"><span class="pre">get_even_dbang_selection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_even_signal_background_indicies"><code class="docutils literal notranslate"><span class="pre">get_even_signal_background_indicies()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_even_track_cascade_indicies"><code class="docutils literal notranslate"><span class="pre">get_even_track_cascade_indicies()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet-data-sqlite-sqlite-utilities-module">graphnet.data.sqlite.sqlite_utilities module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.run_sql_code"><code class="docutils literal notranslate"><span class="pre">run_sql_code()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.save_to_sql"><code class="docutils literal notranslate"><span class="pre">save_to_sql()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.utilities.html">graphnet.data.utilities package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities.random">graphnet.data.utilities.random module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#graphnet-data-utilities-random-module">graphnet.data.utilities.random module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.utilities.html#graphnet.data.utilities.random.pairwise_shuffle"><code class="docutils literal notranslate"><span class="pre">pairwise_shuffle()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities">Module contents</a></li>
 </ul>
 </li>
@@ -119,10 +286,10 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
-<section id="module-graphnet.data.constants">
-<span id="graphnet-data-constants-module"></span><h2>graphnet.data.constants module<a class="headerlink" href="#module-graphnet.data.constants" title="Permalink to this heading"></a></h2>
+<section id="graphnet-data-constants-module">
+<h2>graphnet.data.constants module<a class="headerlink" href="#graphnet-data-constants-module" title="Permalink to this heading"></a></h2>
 <p>Global constants that are used across modules.</p>
-<dl class="py class">
+<span class="target" id="module-graphnet.data.constants"></span><dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.constants.FEATURES">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.constants.</span></span><span class="sig-name descname"><span class="pre">FEATURES</span></span><a class="reference internal" href="_modules/graphnet/data/constants.html#FEATURES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.constants.FEATURES" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -359,10 +526,10 @@ all files output by the current instance are merged.</p></li>
 </dd></dl>
 
 </section>
-<section id="module-graphnet.data.dataset">
-<span id="graphnet-data-dataset-module"></span><h2>graphnet.data.dataset module<a class="headerlink" href="#module-graphnet.data.dataset" title="Permalink to this heading"></a></h2>
+<section id="graphnet-data-dataset-module">
+<h2>graphnet.data.dataset module<a class="headerlink" href="#graphnet-data-dataset-module" title="Permalink to this heading"></a></h2>
 <p>Module defining the base <cite>Dataset</cite> class used in GraphNeT.</p>
-<dl class="py exception">
+<span class="target" id="module-graphnet.data.dataset"></span><dl class="py exception">
 <dt class="sig sig-object py" id="graphnet.data.dataset.ColumnMissingException">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.</span></span><span class="sig-name descname"><span class="pre">ColumnMissingException</span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#ColumnMissingException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.ColumnMissingException" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>

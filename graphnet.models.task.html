@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -40,8 +41,104 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.models.task package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-graphnet.models.task.reconstruction">graphnet.models.task.reconstruction module</a></li>
-<li><a class="reference internal" href="#module-graphnet.models.task.task">graphnet.models.task.task module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.task.reconstruction">graphnet.models.task.reconstruction module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.AzimuthReconstruction"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.AzimuthReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.AzimuthReconstruction.training"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.nb_inputs"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.training"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.BinaryClassificationTask"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.BinaryClassificationTask.nb_inputs"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.BinaryClassificationTask.training"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.nb_inputs"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.training"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstruction"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstruction.training"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty"><code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithUncertainty</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithUncertainty.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.nb_inputs"><code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithUncertainty.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.precision"><code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithUncertainty.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithUncertainty.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.training"><code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithUncertainty.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.InelasticityReconstruction"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.InelasticityReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.InelasticityReconstruction.training"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput1"><code class="docutils literal notranslate"><span class="pre">PassOutput1</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput1.nb_inputs"><code class="docutils literal notranslate"><span class="pre">PassOutput1.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput1.training"><code class="docutils literal notranslate"><span class="pre">PassOutput1.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput2"><code class="docutils literal notranslate"><span class="pre">PassOutput2</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput2.nb_inputs"><code class="docutils literal notranslate"><span class="pre">PassOutput2.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput2.training"><code class="docutils literal notranslate"><span class="pre">PassOutput2.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput3"><code class="docutils literal notranslate"><span class="pre">PassOutput3</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput3.nb_inputs"><code class="docutils literal notranslate"><span class="pre">PassOutput3.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PassOutput3.training"><code class="docutils literal notranslate"><span class="pre">PassOutput3.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PositionReconstruction"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PositionReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.PositionReconstruction.training"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.TimeReconstruction"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.TimeReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.TimeReconstruction.training"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.VertexReconstruction"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.VertexReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.VertexReconstruction.training"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstruction"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstruction.training"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa"><code class="docutils literal notranslate"><span class="pre">ZenithReconstructionWithKappa</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">ZenithReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.nb_inputs"><code class="docutils literal notranslate"><span class="pre">ZenithReconstructionWithKappa.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.precision"><code class="docutils literal notranslate"><span class="pre">ZenithReconstructionWithKappa.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">ZenithReconstructionWithKappa.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.training"><code class="docutils literal notranslate"><span class="pre">ZenithReconstructionWithKappa.training</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.models.task.task">graphnet.models.task.task module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task"><code class="docutils literal notranslate"><span class="pre">Task</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task._forward"><code class="docutils literal notranslate"><span class="pre">Task._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task._validate_and_set_transforms"><code class="docutils literal notranslate"><span class="pre">Task._validate_and_set_transforms()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task.compute_loss"><code class="docutils literal notranslate"><span class="pre">Task.compute_loss()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task.forward"><code class="docutils literal notranslate"><span class="pre">Task.forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task.inference"><code class="docutils literal notranslate"><span class="pre">Task.inference()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task.nb_inputs"><code class="docutils literal notranslate"><span class="pre">Task.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task.train_eval"><code class="docutils literal notranslate"><span class="pre">Task.train_eval()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.Task.training"><code class="docutils literal notranslate"><span class="pre">Task.training</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.models.task">Module contents</a></li>
 </ul>
 </li>

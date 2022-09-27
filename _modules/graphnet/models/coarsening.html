@@ -15,6 +15,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -64,16 +65,16 @@
   <h1>Source code for graphnet.models.coarsening</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Classes for coarsening operations (i.e., clustering, or local pooling.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">pool</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">pool</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">Tensor</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
 
 <span class="c1"># from torch_geometric.utils import unbatch_edge_index</span>
-<span class="kn">from</span> <span class="nn">graphnet.components.pool</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">graphnet.components.pool</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">group_by</span><span class="p">,</span>
     <span class="n">avg_pool</span><span class="p">,</span>
     <span class="n">max_pool</span><span class="p">,</span>
@@ -85,10 +86,10 @@
     <span class="n">sum_pool_x</span><span class="p">,</span>
     <span class="n">std_pool_x</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="k">import</span> <span class="n">LoggerMixin</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
 
 <span class="c1"># Utility method(s)</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">degree</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">degree</span>
 
 <span class="c1"># NOTE: From [https://github.com/pyg-team/pytorch_geometric/pull/4903]</span>
 <span class="c1"># TODO: Remove once bumping to torch_geometric&gt;=2.1.0</span>
@@ -124,7 +125,7 @@
         <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">sum_pool</span><span class="p">,</span> <span class="n">sum_pool_x</span><span class="p">),</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span>
         <span class="n">transfer_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -184,7 +185,7 @@
 
         <span class="k">return</span> <span class="n">pooled_data</span></div>
 
-<div class="viewcode-block" id="Coarsening.__call__"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.Coarsening.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">]:</span>
+<div class="viewcode-block" id="Coarsening.__call__"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.Coarsening.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Coarsening operation.&quot;&quot;&quot;</span>
 
         <span class="c1"># Get tensor of cluster indices for each node.</span>
@@ -296,7 +297,7 @@
 
 
 <div class="viewcode-block" id="LoopBasedCoarsening"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.LoopBasedCoarsening">[docs]</a><span class="k">class</span> <span class="nc">LoopBasedCoarsening</span><span class="p">:</span>
-<div class="viewcode-block" id="LoopBasedCoarsening.__call__"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.LoopBasedCoarsening.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<div class="viewcode-block" id="LoopBasedCoarsening.__call__"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.LoopBasedCoarsening.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Coarsening to DOM-level.&quot;&quot;&quot;</span>
         <span class="n">unique_doms</span><span class="p">,</span> <span class="n">inverse_idx</span><span class="p">,</span> <span class="n">n_pulses_pr_dom</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
             <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span>

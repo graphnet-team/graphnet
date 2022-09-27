@@ -15,6 +15,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -64,11 +65,11 @@
   <h1>Source code for graphnet.data.parquet.parquet_dataset</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module defining a `Dataset` class for reading from parquet files.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">awkward</span> <span class="k">as</span> <span class="nn">ak</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data.dataset</span> <span class="k">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">ColumnMissingException</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">ColumnMissingException</span>
 
 
 <div class="viewcode-block" id="ParquetDataset"><a class="viewcode-back" href="../../../../graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataset.ParquetDataset">[docs]</a><span class="k">class</span> <span class="nc">ParquetDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
@@ -83,7 +84,7 @@
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
             <span class="s2">&quot;.parquet&quot;</span>
-        <span class="p">),</span> <span class="n">f</span><span class="s2">&quot;Format of input file `</span><span class="si">{self._path}</span><span class="s2">` is not supported&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Format of input file `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="si">}</span><span class="s2">` is not supported&quot;</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -140,7 +141,7 @@
             <span class="p">]</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">array_lengths</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="p">),</span> <span class="n">f</span><span class="s2">&quot;Arrays in </span><span class="si">{dictionary}</span><span class="s2"> have differing lengths&quot;</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Arrays in </span><span class="si">{</span><span class="n">dictionary</span><span class="si">}</span><span class="s2"> have differing lengths&quot;</span>
             <span class="n">nb_elements</span> <span class="o">=</span> <span class="n">array_lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="c1"># Broadcast scalars</span>

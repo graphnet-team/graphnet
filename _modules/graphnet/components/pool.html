@@ -15,6 +15,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -62,16 +63,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.components.pool</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">Tensor</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool.consecutive</span> <span class="k">import</span> <span class="n">consecutive_cluster</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool.pool</span> <span class="k">import</span> <span class="n">pool_edge</span><span class="p">,</span> <span class="n">pool_batch</span><span class="p">,</span> <span class="n">pool_pos</span>
-<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter</span><span class="p">,</span> <span class="n">scatter_std</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool.consecutive</span> <span class="kn">import</span> <span class="n">consecutive_cluster</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool.pool</span> <span class="kn">import</span> <span class="n">pool_edge</span><span class="p">,</span> <span class="n">pool_batch</span><span class="p">,</span> <span class="n">pool_pos</span>
+<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="kn">import</span> <span class="n">scatter</span><span class="p">,</span> <span class="n">scatter_std</span>
 
-<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">avg_pool</span><span class="p">,</span>
     <span class="n">max_pool</span><span class="p">,</span>
     <span class="n">avg_pool_x</span><span class="p">,</span>

@@ -15,6 +15,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -64,23 +65,26 @@
   <h1>Source code for graphnet.utilities.filesys</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;File system-related utility functions relevant to the graphnet package.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 
 <div class="viewcode-block" id="is_gcd_file"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.filesys.is_gcd_file">[docs]</a><span class="k">def</span> <span class="nf">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Checks whether `filename` is a GCD file.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;(gcd|geo)&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;(gcd|geo)&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="ow">or</span> <span class="s2">&quot;GeoCalibDetector&quot;</span> <span class="ow">in</span> <span class="n">filename</span>
+    <span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="is_i3_file"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.filesys.is_i3_file">[docs]</a><span class="k">def</span> <span class="nf">is_i3_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Checks whether `filename` is an I3 file.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="n">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">elif</span> <span class="n">has_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;bz2&quot;</span><span class="p">,</span> <span class="s2">&quot;zst&quot;</span><span class="p">,</span> <span class="s2">&quot;gz&quot;</span><span class="p">]):</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -121,28 +125,32 @@
     <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">directories</span><span class="p">:</span>
 
         <span class="c1"># Recursively find all I3-like files in `directory`.</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">i3_patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.bz2&quot;</span><span class="p">,</span> <span class="s2">&quot;*.zst&quot;</span><span class="p">,</span> <span class="s2">&quot;*.gz&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i3_pattern</span> <span class="ow">in</span> <span class="n">i3_patterns</span><span class="p">:</span>
-            <span class="n">paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">))</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">)))</span>
 
-            <span class="c1"># Loop over all folders containing such I3-like files.</span>
-            <span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]))</span>
-            <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+        <span class="c1"># Loop over all folders containing such I3-like files.</span>
+        <span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
 
-                <span class="c1"># List all I3 and GCD files, respectively, in the current folder.</span>
-                <span class="n">folder_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">i3_pattern</span><span class="p">))</span>
-                <span class="n">folder_i3_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_i3_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
-                <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_gcd_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
+            <span class="c1"># List all I3 and GCD files, respectively, in the current folder.</span>
+            <span class="n">folder_files</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="n">folder</span>
+            <span class="p">]</span>
+            <span class="n">folder_i3_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_i3_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
+            <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_gcd_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
 
-                <span class="c1"># Make sure that no more than one GCD file is found; and use rescue file of none is found.</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd_rescue</span><span class="p">]</span>
+            <span class="c1"># Make sure that no more than one GCD file is found; and use rescue file of none is found.</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd_rescue</span><span class="p">]</span>
 
-                <span class="c1"># Store list of I3 files and corresponding GCD files.</span>
-                <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="n">folder_gcd_files</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
-                <span class="n">gcd_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span>
-                <span class="n">i3_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+            <span class="c1"># Store list of I3 files and corresponding GCD files.</span>
+            <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="n">folder_gcd_files</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+
+            <span class="n">gcd_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span>
+            <span class="n">i3_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span></div>
 </pre></div>

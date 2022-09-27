@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -40,9 +41,68 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.models.detector package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-graphnet.models.detector.detector">graphnet.models.detector.detector module</a></li>
-<li><a class="reference internal" href="#module-graphnet.models.detector.icecube">graphnet.models.detector.icecube module</a></li>
-<li><a class="reference internal" href="#module-graphnet.models.detector.prototype">graphnet.models.detector.prototype module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.detector.detector">graphnet.models.detector.detector module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.detector.Detector"><code class="docutils literal notranslate"><span class="pre">Detector</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.detector.Detector._forward"><code class="docutils literal notranslate"><span class="pre">Detector._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.detector.Detector.features"><code class="docutils literal notranslate"><span class="pre">Detector.features</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.detector.Detector.forward"><code class="docutils literal notranslate"><span class="pre">Detector.forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.detector.Detector.nb_inputs"><code class="docutils literal notranslate"><span class="pre">Detector.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.detector.Detector.nb_outputs"><code class="docutils literal notranslate"><span class="pre">Detector.nb_outputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.detector.Detector.training"><code class="docutils literal notranslate"><span class="pre">Detector.training</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.models.detector.icecube">graphnet.models.detector.icecube module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCube86"><code class="docutils literal notranslate"><span class="pre">IceCube86</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCube86._forward"><code class="docutils literal notranslate"><span class="pre">IceCube86._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCube86.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">IceCube86.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCube86.features"><code class="docutils literal notranslate"><span class="pre">IceCube86.features</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCube86.precision"><code class="docutils literal notranslate"><span class="pre">IceCube86.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCube86.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">IceCube86.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCube86.training"><code class="docutils literal notranslate"><span class="pre">IceCube86.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeDeepCore"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeDeepCore.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeDeepCore.precision"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeDeepCore.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeDeepCore.training"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade._forward"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade.features"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade.features</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade.precision"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade.training"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade_V2"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade_V2</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade_V2._forward"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade_V2._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade_V2.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade_V2.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade_V2.features"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade_V2.features</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade_V2.nb_outputs"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade_V2.nb_outputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade_V2.precision"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade_V2.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade_V2.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade_V2.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.icecube.IceCubeUpgrade_V2.training"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade_V2.training</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.models.detector.prototype">graphnet.models.detector.prototype module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype"><code class="docutils literal notranslate"><span class="pre">Prototype</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype._forward"><code class="docutils literal notranslate"><span class="pre">Prototype._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">Prototype.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype.features"><code class="docutils literal notranslate"><span class="pre">Prototype.features</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype.precision"><code class="docutils literal notranslate"><span class="pre">Prototype.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">Prototype.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype.training"><code class="docutils literal notranslate"><span class="pre">Prototype.training</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.models.detector">Module contents</a></li>
 </ul>
 </li>

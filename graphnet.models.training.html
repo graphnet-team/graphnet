@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -40,8 +41,30 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.models.training package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-graphnet.models.training.callbacks">graphnet.models.training.callbacks module</a></li>
-<li><a class="reference internal" href="#module-graphnet.models.training.utils">graphnet.models.training.utils module</a></li>
+<li><a class="reference internal" href="#module-graphnet.models.training.callbacks">graphnet.models.training.callbacks module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.PiecewiseLinearLR"><code class="docutils literal notranslate"><span class="pre">PiecewiseLinearLR</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.PiecewiseLinearLR.get_lr"><code class="docutils literal notranslate"><span class="pre">PiecewiseLinearLR.get_lr()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.ProgressBar"><code class="docutils literal notranslate"><span class="pre">ProgressBar</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.ProgressBar.get_metrics"><code class="docutils literal notranslate"><span class="pre">ProgressBar.get_metrics()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.ProgressBar.init_predict_tqdm"><code class="docutils literal notranslate"><span class="pre">ProgressBar.init_predict_tqdm()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.ProgressBar.init_test_tqdm"><code class="docutils literal notranslate"><span class="pre">ProgressBar.init_test_tqdm()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.ProgressBar.init_train_tqdm"><code class="docutils literal notranslate"><span class="pre">ProgressBar.init_train_tqdm()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.ProgressBar.init_validation_tqdm"><code class="docutils literal notranslate"><span class="pre">ProgressBar.init_validation_tqdm()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.ProgressBar.on_train_epoch_end"><code class="docutils literal notranslate"><span class="pre">ProgressBar.on_train_epoch_end()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.callbacks.ProgressBar.on_train_epoch_start"><code class="docutils literal notranslate"><span class="pre">ProgressBar.on_train_epoch_start()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.models.training.utils">graphnet.models.training.utils module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.training.utils.get_predictions"><code class="docutils literal notranslate"><span class="pre">get_predictions()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.utils.make_dataloader"><code class="docutils literal notranslate"><span class="pre">make_dataloader()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.utils.make_train_validation_dataloader"><code class="docutils literal notranslate"><span class="pre">make_train_validation_dataloader()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.training.utils.save_results"><code class="docutils literal notranslate"><span class="pre">save_results()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.models.training">Module contents</a></li>
 </ul>
 </li>
@@ -123,7 +146,7 @@ Implement this to override the items displayed in the progress bar.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
     <span class="c1"># don&#39;t show the version number</span>
     <span class="n">items</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-    <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;v_num&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;v_num&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">items</span>
 </pre></div>
 </div>

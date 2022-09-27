@@ -15,6 +15,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -62,17 +63,17 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.sqlite.sqlite_dataconverter</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="k">import</span> <span class="n">DataConverter</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_utilities</span> <span class="k">import</span> <span class="n">run_sql_code</span><span class="p">,</span> <span class="n">save_to_sql</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="kn">import</span> <span class="n">DataConverter</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_utilities</span> <span class="kn">import</span> <span class="n">run_sql_code</span><span class="p">,</span> <span class="n">save_to_sql</span>
 
 
 <div class="viewcode-block" id="SQLiteDataConverter"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter">[docs]</a><span class="k">class</span> <span class="nc">SQLiteDataConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
@@ -86,7 +87,7 @@
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;Output file </span><span class="si">{output_file}</span><span class="s2"> already exists. Appending.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Output file </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2"> already exists. Appending.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Concatenate data</span>
@@ -105,7 +106,7 @@
                     <span class="p">)</span>
 
         <span class="c1"># Save each dataframe to SQLite database</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Saving to </span><span class="si">{output_file}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">saved_any</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -115,7 +116,7 @@
         <span class="k">if</span> <span class="n">saved_any</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;- Done saving&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;No data saved to </span><span class="si">{output_file}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No data saved to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SQLiteDataConverter.merge_files"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.merge_files">[docs]</a>    <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">input_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -126,11 +127,11 @@
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;Target path for merged database, </span><span class="si">{output_file}</span><span class="s2">, already exists.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Target path for merged database, </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">, already exists.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Merging {len(input_files)} database files&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Merging </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> database files&quot;</span><span class="p">)</span>
 
             <span class="c1"># Create one empty database table for each extraction</span>
             <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
@@ -155,7 +156,7 @@
     <span class="k">def</span> <span class="nf">_extract_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_paths</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">db_path</span> <span class="ow">in</span> <span class="n">db_paths</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-                <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;select * from </span><span class="si">{table_name}</span><span class="s2"> limit 1&quot;</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;select * from </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> limit 1&quot;</span>
                 <span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">columns</span>
@@ -175,7 +176,7 @@
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;PRAGMA foreign_keys=off;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;BEGIN TRANSACTION;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">f</span><span class="s2">&quot;CREATE INDEX event_no_</span><span class="si">{table_name}</span><span class="s2"> ON </span><span class="si">{table_name}</span><span class="s2"> (event_no);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;CREATE INDEX event_no_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> ON </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (event_no);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;COMMIT TRANSACTION;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;PRAGMA foreign_keys=on;&quot;</span>
         <span class="p">)</span>
@@ -199,12 +200,12 @@
                     <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;NOT NULL&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;FLOAT&quot;</span>
-            <span class="n">query_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{column}</span><span class="s2"> </span><span class="si">{type_}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">query_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">query_columns</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">query_columns</span><span class="p">)</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;PRAGMA foreign_keys=off;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">f</span><span class="s2">&quot;CREATE TABLE </span><span class="si">{table_name}</span><span class="s2"> (</span><span class="si">{query_columns}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;CREATE TABLE </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">query_columns</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;PRAGMA foreign_keys=on;&quot;</span>
         <span class="p">)</span>
         <span class="n">run_sql_code</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
@@ -219,7 +220,7 @@
         <span class="sd">&quot;&quot;&quot;Submits data to the database with specified key.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;No data provided for </span><span class="si">{key}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No data provided for </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="s2">&quot;sqlite:///&quot;</span> <span class="o">+</span> <span class="n">database</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">engine</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">)</span>
@@ -237,7 +238,7 @@
         <span class="n">results</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
-                <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;select * from </span><span class="si">{table_name}</span><span class="s2">&quot;</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;select * from </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
                 <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>

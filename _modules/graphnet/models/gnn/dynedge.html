@@ -15,6 +15,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -69,21 +70,21 @@
 <span class="sd">Author: Rasmus Oersoe</span>
 <span class="sd">Email: ###@###.###</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">Tensor</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="k">import</span> <span class="n">EdgeConv</span>
-<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter_max</span><span class="p">,</span> <span class="n">scatter_mean</span><span class="p">,</span> <span class="n">scatter_min</span><span class="p">,</span> <span class="n">scatter_sum</span>
-<span class="kn">from</span> <span class="nn">graphnet.components.layers</span> <span class="k">import</span> <span class="n">DynEdgeConv</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.coarsening</span> <span class="k">import</span> <span class="n">Coarsening</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="kn">import</span> <span class="n">EdgeConv</span>
+<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="kn">import</span> <span class="n">scatter_max</span><span class="p">,</span> <span class="n">scatter_mean</span><span class="p">,</span> <span class="n">scatter_min</span><span class="p">,</span> <span class="n">scatter_sum</span>
+<span class="kn">from</span> <span class="nn">graphnet.components.layers</span> <span class="kn">import</span> <span class="n">DynEdgeConv</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.coarsening</span> <span class="kn">import</span> <span class="n">Coarsening</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="k">import</span> <span class="n">GNN</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.utils</span> <span class="k">import</span> <span class="n">calculate_xyzt_homophily</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="kn">import</span> <span class="n">GNN</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.utils</span> <span class="kn">import</span> <span class="n">calculate_xyzt_homophily</span>
 
 
 <div class="viewcode-block" id="DynEdge"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge">[docs]</a><span class="k">class</span> <span class="nc">DynEdge</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
-<div class="viewcode-block" id="DynEdge.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="DynEdge.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nb_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">layer_size_scale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
@@ -234,7 +235,7 @@
 
 
 <div class="viewcode-block" id="DynEdge_V2"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2">[docs]</a><span class="k">class</span> <span class="nc">DynEdge_V2</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
-<div class="viewcode-block" id="DynEdge_V2.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">layer_size_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<div class="viewcode-block" id="DynEdge_V2.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">layer_size_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;DynEdge model.</span>
 
 <span class="sd">        Args:</span>
@@ -397,7 +398,7 @@
 
 
 <div class="viewcode-block" id="DynEdge_V3"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V3">[docs]</a><span class="k">class</span> <span class="nc">DynEdge_V3</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
-<div class="viewcode-block" id="DynEdge_V3.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V3.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">layer_size_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<div class="viewcode-block" id="DynEdge_V3.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V3.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">layer_size_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;DynEdge model.</span>
 <span class="sd">        Args:</span>
 <span class="sd">            nb_inputs (int): Number of input features.</span>

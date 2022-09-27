@@ -15,6 +15,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -64,17 +65,17 @@
   <h1>Source code for graphnet.data.extractors.i3truthextractor</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="k">import</span> <span class="n">I3Extractor</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">frame_is_montecarlo</span><span class="p">,</span>
     <span class="n">frame_is_noise</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="k">import</span> <span class="n">has_icecube_package</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
 
 <span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">icecube</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="p">(</span>
         <span class="n">dataclasses</span><span class="p">,</span>
         <span class="n">icetray</span><span class="p">,</span>
         <span class="n">phys_services</span><span class="p">,</span>
@@ -82,7 +83,7 @@
 
 
 <div class="viewcode-block" id="I3TruthExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3TruthExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;truth&quot;</span><span class="p">,</span> <span class="n">borders</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;truth&quot;</span><span class="p">,</span> <span class="n">borders</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">borders</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">border_xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -122,7 +123,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="n">borders</span>
 
-<div class="viewcode-block" id="I3TruthExtractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="I3TruthExtractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Extracts truth features.&quot;&quot;&quot;</span>
         <span class="n">is_mc</span> <span class="o">=</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
         <span class="n">is_noise</span> <span class="o">=</span> <span class="n">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>

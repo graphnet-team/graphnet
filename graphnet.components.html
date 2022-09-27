@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -41,10 +42,92 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.components package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-graphnet.components.layers">graphnet.components.layers module</a></li>
-<li><a class="reference internal" href="#module-graphnet.components.loss_functions">graphnet.components.loss_functions module</a></li>
-<li><a class="reference internal" href="#module-graphnet.components.pool">graphnet.components.pool module</a></li>
-<li><a class="reference internal" href="#module-graphnet.components.utils">graphnet.components.utils module</a></li>
+<li><a class="reference internal" href="#module-graphnet.components.layers">graphnet.components.layers module</a><ul>
+<li><a class="reference internal" href="#graphnet.components.layers.DynEdgeConv"><code class="docutils literal notranslate"><span class="pre">DynEdgeConv</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.layers.DynEdgeConv.forward"><code class="docutils literal notranslate"><span class="pre">DynEdgeConv.forward()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet-components-loss-functions-module">graphnet.components.loss_functions module</a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.BinaryCrossEntropyLoss"><code class="docutils literal notranslate"><span class="pre">BinaryCrossEntropyLoss</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.BinaryCrossEntropyLoss.reduction"><code class="docutils literal notranslate"><span class="pre">BinaryCrossEntropyLoss.reduction</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.EuclideanDistanceLoss"><code class="docutils literal notranslate"><span class="pre">EuclideanDistanceLoss</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.EuclideanDistanceLoss._forward"><code class="docutils literal notranslate"><span class="pre">EuclideanDistanceLoss._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.EuclideanDistanceLoss.reduction"><code class="docutils literal notranslate"><span class="pre">EuclideanDistanceLoss.reduction</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LogCMK"><code class="docutils literal notranslate"><span class="pre">LogCMK</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LogCMK.backward"><code class="docutils literal notranslate"><span class="pre">LogCMK.backward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LogCMK.forward"><code class="docutils literal notranslate"><span class="pre">LogCMK.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LogCoshLoss"><code class="docutils literal notranslate"><span class="pre">LogCoshLoss</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LogCoshLoss._forward"><code class="docutils literal notranslate"><span class="pre">LogCoshLoss._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LogCoshLoss._log_cosh"><code class="docutils literal notranslate"><span class="pre">LogCoshLoss._log_cosh()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LogCoshLoss.reduction"><code class="docutils literal notranslate"><span class="pre">LogCoshLoss.reduction</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LossFunction"><code class="docutils literal notranslate"><span class="pre">LossFunction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LossFunction._forward"><code class="docutils literal notranslate"><span class="pre">LossFunction._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LossFunction.forward"><code class="docutils literal notranslate"><span class="pre">LossFunction.forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.LossFunction.reduction"><code class="docutils literal notranslate"><span class="pre">LossFunction.reduction</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.MSELoss"><code class="docutils literal notranslate"><span class="pre">MSELoss</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.MSELoss._forward"><code class="docutils literal notranslate"><span class="pre">MSELoss._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.MSELoss.reduction"><code class="docutils literal notranslate"><span class="pre">MSELoss.reduction</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.MSELoss.training"><code class="docutils literal notranslate"><span class="pre">MSELoss.training</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.MSELoss.weight"><code class="docutils literal notranslate"><span class="pre">MSELoss.weight</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.RMSELoss"><code class="docutils literal notranslate"><span class="pre">RMSELoss</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.RMSELoss._forward"><code class="docutils literal notranslate"><span class="pre">RMSELoss._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.RMSELoss.reduction"><code class="docutils literal notranslate"><span class="pre">RMSELoss.reduction</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.RMSELoss.training"><code class="docutils literal notranslate"><span class="pre">RMSELoss.training</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.RMSELoss.weight"><code class="docutils literal notranslate"><span class="pre">RMSELoss.weight</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisher2DLoss"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher2DLoss</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisher2DLoss._forward"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher2DLoss._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisher2DLoss.reduction"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher2DLoss.reduction</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisher2DLoss.training"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher2DLoss.training</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisher2DLoss.weight"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher2DLoss.weight</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisherLoss"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisherLoss._evaluate"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss._evaluate()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisherLoss.log_cmk"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss.log_cmk()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisherLoss.log_cmk_approx"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss.log_cmk_approx()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisherLoss.log_cmk_exact"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss.log_cmk_exact()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisherLoss.reduction"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss.reduction</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisherLoss.training"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss.training</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.loss_functions.VonMisesFisherLoss.weight"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss.weight</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.components.pool">graphnet.components.pool module</a><ul>
+<li><a class="reference internal" href="#graphnet.components.pool._group_identical"><code class="docutils literal notranslate"><span class="pre">_group_identical()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.group_by"><code class="docutils literal notranslate"><span class="pre">group_by()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.group_pulses_to_dom"><code class="docutils literal notranslate"><span class="pre">group_pulses_to_dom()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.group_pulses_to_pmt"><code class="docutils literal notranslate"><span class="pre">group_pulses_to_pmt()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.min_pool"><code class="docutils literal notranslate"><span class="pre">min_pool()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.min_pool_x"><code class="docutils literal notranslate"><span class="pre">min_pool_x()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.std_pool"><code class="docutils literal notranslate"><span class="pre">std_pool()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.std_pool_x"><code class="docutils literal notranslate"><span class="pre">std_pool_x()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.sum_pool"><code class="docutils literal notranslate"><span class="pre">sum_pool()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.sum_pool_and_distribute"><code class="docutils literal notranslate"><span class="pre">sum_pool_and_distribute()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.pool.sum_pool_x"><code class="docutils literal notranslate"><span class="pre">sum_pool_x()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.components.utils">graphnet.components.utils module</a><ul>
+<li><a class="reference internal" href="#graphnet.components.utils.check_db_size"><code class="docutils literal notranslate"><span class="pre">check_db_size()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.components.utils.fit_scaler"><code class="docutils literal notranslate"><span class="pre">fit_scaler()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.components">Module contents</a></li>
 </ul>
 </li>
@@ -93,11 +176,11 @@
 </dd></dl>
 
 </section>
-<section id="module-graphnet.components.loss_functions">
-<span id="graphnet-components-loss-functions-module"></span><h2>graphnet.components.loss_functions module<a class="headerlink" href="#module-graphnet.components.loss_functions" title="Permalink to this heading"></a></h2>
+<section id="graphnet-components-loss-functions-module">
+<h2>graphnet.components.loss_functions module<a class="headerlink" href="#graphnet-components-loss-functions-module" title="Permalink to this heading"></a></h2>
 <p>Collection of loss functions.</p>
 <p>All loss functions inherit from <cite>LossFunction</cite> which (…)</p>
-<dl class="py class">
+<span class="target" id="module-graphnet.components.loss_functions"></span><dl class="py class">
 <dt class="sig sig-object py" id="graphnet.components.loss_functions.BinaryCrossEntropyLoss">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.components.loss_functions.</span></span><span class="sig-name descname"><span class="pre">BinaryCrossEntropyLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/components/loss_functions.html#BinaryCrossEntropyLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.components.loss_functions.BinaryCrossEntropyLoss" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.components.loss_functions.LossFunction" title="graphnet.components.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>

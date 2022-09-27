@@ -15,6 +15,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -62,13 +63,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.parquet.parquet_dataconverter</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">awkward</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="k">import</span> <span class="n">DataConverter</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="kn">import</span> <span class="n">DataConverter</span>
 
 
 <div class="viewcode-block" id="ParquetDataConverter"><a class="viewcode-back" href="../../../../graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter">[docs]</a><span class="k">class</span> <span class="nc">ParquetDataConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
@@ -82,12 +83,12 @@
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;Output file </span><span class="si">{output_file}</span><span class="s2"> already exists. Overwriting.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Output file </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2"> already exists. Overwriting.&quot;</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Saving to </span><span class="si">{output_file}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="n">f</span><span class="s2">&quot;- Data has {len(data)} events and {len(data[0])} tables for each&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;- Data has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> events and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> tables for each&quot;</span>
         <span class="p">)</span>
 
         <span class="n">awkward</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">awkward</span><span class="o">.</span><span class="n">from_iter</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">output_file</span><span class="p">)</span>

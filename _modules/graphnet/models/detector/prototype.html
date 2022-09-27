@@ -15,6 +15,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -63,15 +64,15 @@
              
   <h1>Source code for graphnet.models.detector.prototype</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.components.pool</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">graphnet.components.pool</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">group_pulses_to_dom</span><span class="p">,</span>
     <span class="n">group_pulses_to_pmt</span><span class="p">,</span>
     <span class="n">sum_pool_and_distribute</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.constants</span> <span class="k">import</span> <span class="n">FEATURES</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.detector.detector</span> <span class="k">import</span> <span class="n">Detector</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.constants</span> <span class="kn">import</span> <span class="n">FEATURES</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.detector.detector</span> <span class="kn">import</span> <span class="n">Detector</span>
 
 
 <div class="viewcode-block" id="Prototype"><a class="viewcode-back" href="../../../../graphnet.models.detector.html#graphnet.models.detector.prototype.Prototype">[docs]</a><span class="k">class</span> <span class="nc">Prototype</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
