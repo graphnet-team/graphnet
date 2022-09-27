@@ -2,6 +2,6 @@ from .i3extractor import *
 from .i3featureextractor import *
 from .i3truthextractor import *
 from .i3retroextractor import *
-from .i3splinempeextractor import *
-from .i3tumextractor import *
+from .i3splinempeextractor import I3SplineMPEICExtractor
+from .i3tumextractor import I3TUMExtractor
 
