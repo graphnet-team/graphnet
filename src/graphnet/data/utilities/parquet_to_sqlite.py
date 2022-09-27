@@ -48,20 +48,17 @@ class ParquetToSQLiteConverter(LoggerMixin):
         self._event_counter = 0
         self._created_tables = []
 
-    def _find_parquet_files(self, parquet_path: str = None):
-        if isinstance(parquet_path, str):
-            if parquet_path.endswith(".parquet"):
-                files = [parquet_path]
+    def _find_parquet_files(self, paths: Union[str, List[str]]) -> List[str]:
+        if isinstance(paths, str):
+            if paths.endswith(".parquet"):
+                files = [paths]
             else:
-                files = glob.glob(f"{parquet_path}/*.parquet")
-        elif isinstance(parquet_path, list):
+                files = glob.glob(f"{paths}/*.parquet")
+        elif isinstance(paths, list):
             files = []
-            for path in parquet_path:
-                if path.endswith(".parquet"):
-                    files.append(path)
-                else:
-                    files.extend(glob.glob(f"{path}/*.parquet"))
-        assert len(files) > 0, f"No Files Found in {parquet_path}"
+            for path in paths:
+                files.extend(self._find_parquet_files(path))
+        assert len(files) > 0, f"No files found in {paths}"
         return files
 
     def run(self, outdir: str = None, database_name: str = None):
@@ -131,12 +128,12 @@ class ParquetToSQLiteConverter(LoggerMixin):
                 df,
             )
 
-    def _make_df(
+    def _convert_to_dataframe(
         self,
-        ak_array: ak.Array = None,
-        field_name: str = None,
-        n_events_in_file: int = None,
-    ):
+        ak_array: ak.Array,
+        field_name: str,
+        n_events_in_file: int,
+    ) -> pd.DataFrame:
         df = pd.DataFrame(ak.to_pandas(ak_array[field_name]))
         if len(df.columns) == 1:
             if df.columns == ["values"]:
