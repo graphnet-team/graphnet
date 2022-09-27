@@ -38,6 +38,7 @@ def main_icecube86(backend: str):
                     "I3MCTree",
                 ]
             ),
+            I3TruthExtractor(),
         ],
         outdir,
     )
@@ -79,7 +80,7 @@ def main_icecube_upgrade(backend: str):
 
 
 if __name__ == "__main__":
-    # backend = "parquet"
-    backend = "sqlite"
+    backend = "parquet"
+    # backend = "sqlite"
     main_icecube86(backend)
     # main_icecube_upgrade(backend)
