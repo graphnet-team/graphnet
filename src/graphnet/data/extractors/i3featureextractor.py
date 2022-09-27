@@ -95,33 +95,24 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             area = self._gcd_dict[om_key].area
             rde = self._get_relative_dom_efficiency(frame, om_key)
 
+            # DOM flags
             if bright_doms:
-                if om_key in bright_doms:
-                    is_bright_dom = 1
-                else:
-                    is_bright_dom = 0
+                is_bright_dom = 1 if om_key in bright_doms else 0
             else:
                 is_bright_dom = -1
+
             if bad_doms:
-                if om_key in bad_doms:
-                    is_bad_dom = 1
-                else:
-                    is_bad_dom = 0
+                is_bad_dom = 1 if om_key in bad_doms else 0
             else:
                 is_bad_dom = -1
+
             if saturation_windows:
-                if om_key in saturation_windows:
-                    is_saturated_dom = 1
-                else:
-                    is_saturated_dom = 0
+                is_saturated_dom = 1 if om_key in saturation_windows else 0
             else:
                 is_saturated_dom = -1
 
             if calibration_errata:
-                if om_key in calibration_errata:
-                    is_errata_dom = 1
-                else:
-                    is_errata_dom = 0
+                is_errata_dom = 1 if om_key in calibration_errata else 0
             else:
                 is_errata_dom = -1
 
