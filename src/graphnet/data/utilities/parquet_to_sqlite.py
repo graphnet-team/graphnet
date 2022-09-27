@@ -61,8 +61,11 @@ class ParquetToSQLiteConverter(LoggerMixin):
         assert len(files) > 0, f"No files found in {paths}"
         return files
 
-    def run(self, outdir: str = None, database_name: str = None):
+    def run(self, outdir: str, database_name: str):
         self._setup_directory(outdir, database_name)
+        database_path = os.path.join(
+            outdir, database_name, "data", database_name + ".db"
+        )
         for i in trange(
             len(self._parquet_files), desc="Main", colour="#0000ff", position=0
         ):
@@ -77,8 +80,7 @@ class ParquetToSQLiteConverter(LoggerMixin):
             ):
                 if parquet_file.fields[j] not in self._excluded_fields:
                     self._save_to_sql(
-                        outdir,
-                        database_name,
+                        database_path,
                         parquet_file,
                         parquet_file.fields[j],
                         n_events_in_file,
@@ -86,16 +88,15 @@ class ParquetToSQLiteConverter(LoggerMixin):
             self._event_counter += n_events_in_file
         self._save_config(outdir, database_name)
         print(
-            f"Database saved at \n{outdir}/{database_name}/data/{database_name}.db"
+            f"Database saved at: \n{outdir}/{database_name}/data/{database_name}.db"
         )
 
-    def _count_events(self, open_parquet_file: str = None):
+    def _count_events(self, open_parquet_file: ak.Array) -> int:
         return len(open_parquet_file[self._mc_truth_table])
 
     def _save_to_sql(
         self,
-        outdir: str = None,
-        database_name: str = None,
+        database_path: str,
         ak_array: ak.Array = None,
         field_name: str = None,
         n_events_in_file: int = None,
@@ -103,27 +104,15 @@ class ParquetToSQLiteConverter(LoggerMixin):
         df = self._make_df(ak_array, field_name, n_events_in_file)
         if field_name in self._created_tables:
             save_to_sql(
-                outdir
-                + "/"
-                + database_name
-                + "/data/"
-                + database_name
-                + ".db",
+                database_path,
                 field_name,
                 df,
             )
         else:
-            self._create_table(
-                df, field_name, outdir, database_name, n_events_in_file
-            )
+            self._create_table(df, field_name, database_path, n_events_in_file)
             self._created_tables.append(field_name)
             save_to_sql(
-                outdir
-                + "/"
-                + database_name
-                + "/data/"
-                + database_name
-                + ".db",
+                database_path,
                 field_name,
                 df,
             )
@@ -226,12 +215,13 @@ class ParquetToSQLiteConverter(LoggerMixin):
         run_sql_code(database, code)
         return
 
-    def _setup_directory(self, outdir: str = None, database_name: str = None):
+    def _setup_directory(self, outdir: str, database_name: str):
         os.makedirs(outdir + "/" + database_name + "/data", exist_ok=True)
         os.makedirs(outdir + "/" + database_name + "/config", exist_ok=True)
         return
 
-    def _save_config(self, outdir: str = None, database_name: str = None):
+    def _save_config(self, outdir: str, database_name: str):
+        """Save the list of converted Parquet files to a CSV file."""
         df = pd.DataFrame(data=self._parquet_files, columns=["files"])
         df.to_csv(outdir + "/" + database_name + "/config/files.csv")
         return
