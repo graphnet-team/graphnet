@@ -1,9 +1,8 @@
-from dataclasses import field
 import pandas as pd
 import os
 import sqlite3
 import awkward as ak
-import awkward
+
 import glob
 from typing import List, Optional, Union
 from tqdm.auto import trange
@@ -11,8 +10,10 @@ import numpy as np
 import sqlalchemy
 from graphnet.data.sqlite.sqlite_utilities import run_sql_code
 
+from graphnet.utilities.logging import LoggerMixin
 
-class ParquetToSQLiteConverter:
+
+class ParquetToSQLiteConverter(LoggerMixin):
     """Converts Parquet files to a SQLite database. Each event in the parquet file(s) are assigned a unique event id.
     By default, every field in the parquet file(s) are extracted. One can choose to exclude certain fields by using the argument exclude_fields.
     """
@@ -24,9 +25,17 @@ class ParquetToSQLiteConverter:
         excluded_fields: Optional[Union[str, List[str]]] = None,
     ):
         # checks
-        assert isinstance(
-            parquet_path, str
-        ), "Argument `parquet_path` must be a string or list of strings"
+        if isinstance(parquet_path, str):
+            pass
+        elif isinstance(parquet_path, list):
+            assert isinstance(
+                parquet_path[0], str
+            ), "Argument `parquet_path` must be a string or list of strings"
+        else:
+            assert isinstance(
+                parquet_path, str
+            ), "Argument `parquet_path` must be a string or list of strings"
+
         assert isinstance(
             mc_truth_table, str
         ), "Argument `mc_truth_table` must be a string"
@@ -48,7 +57,10 @@ class ParquetToSQLiteConverter:
         elif isinstance(parquet_path, list):
             files = []
             for path in parquet_path:
-                files.extend(glob.glob(f"{path}/*.parquet"))
+                if path.endswith(".parquet"):
+                    files.append(path)
+                else:
+                    files.extend(glob.glob(f"{path}/*.parquet"))
         assert len(files) > 0, f"No Files Found in {parquet_path}"
         return files
 
@@ -87,7 +99,7 @@ class ParquetToSQLiteConverter:
         self,
         outdir: str = None,
         database_name: str = None,
-        ak_array: awkward.Array = None,
+        ak_array: ak.Array = None,
         field_name: str = None,
         n_events_in_file: int = None,
     ):
@@ -103,7 +115,7 @@ class ParquetToSQLiteConverter:
 
     def _make_df(
         self,
-        ak_array: awkward.Array = None,
+        ak_array: ak.Array = None,
         field_name: str = None,
         n_events_in_file: int = None,
     ):
@@ -115,17 +127,20 @@ class ParquetToSQLiteConverter:
             len(df) != n_events_in_file
         ):  # if true, the dataframe contains more than 1 row pr. event (e.g. Pulsemap).
             event_nos = []
-            for event_no in range(n_events_in_file + self._event_counter):
+            c = 0
+            for event_no in range(
+                self._event_counter, self._event_counter + n_events_in_file, 1
+            ):
                 try:
                     event_nos.extend(
-                        np.repeat(
-                            event_no, len(df[df.columns[0]][event_no])
-                        ).tolist()
+                        np.repeat(event_no, len(df[df.columns[0]][c])).tolist()
                     )
                 except KeyError:  # KeyError indicates that this df has no entry for event_no (e.g. an event with no detector response)
                     pass
+                c += 1
         else:
             event_nos = np.arange(0, n_events_in_file, 1) + self._event_counter
+        print(len(df), len(event_nos))
         df["event_no"] = event_nos
         return df
 
