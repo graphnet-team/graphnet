@@ -20,8 +20,8 @@ class ParquetToSQLiteConverter(LoggerMixin):
 
     def __init__(
         self,
+        parquet_path: Union[str, List[str]],
         mc_truth_table: str = "mc_truth",
-        parquet_path: Union[str, List[str]] = None,
         excluded_fields: Optional[Union[str, List[str]]] = None,
     ):
         # checks
