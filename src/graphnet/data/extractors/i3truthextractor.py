@@ -387,4 +387,4 @@ class I3TruthExtractor(I3Extractor):
             sim_type = "dbang"
         if sim_type == "lol":
             self.logger.info("SIM TYPE NOT FOUND!")
-        return sim_type
+        return sim_type#a
