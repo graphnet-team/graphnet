@@ -8,7 +8,7 @@ class I3TUMExtractor(I3Extractor):
     def __call__(self, frame) -> dict:
         """Extracts TUM DNN Recos and associated variables"""
         output = {}
-        if 'TUM_dnn_energy_hive' in frame:
+        if "TUM_dnn_energy_hive" in frame:
             output.update(
                 {
                     "tum_dnn_energy_hive": 10
@@ -17,6 +17,6 @@ class I3TUMExtractor(I3Extractor):
                     ** frame["TUM_dnn_energy_dst"]["mu_E_on_entry"],
                     "tum_bdt_sigma": frame["TUM_bdt_sigma"].value,
                 }
-            )#a
+            )
 
         return output
