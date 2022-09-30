@@ -17,6 +17,6 @@ class I3SplineMPEICExtractor(I3Extractor):
                         "SplineMPEIC"
                     ].dir.azimuth,
                 }
-            )
+            )#a
 
         return output
