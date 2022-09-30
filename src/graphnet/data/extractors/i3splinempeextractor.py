@@ -5,7 +5,7 @@ class I3SplineMPEICExtractor(I3Extractor):
         super().__init__(name)
 
     def __call__(self, frame) -> dict:
-        """Extracts TUM DNN Recos and associated variables"""
+        """Extracts SplineMPE pointing predictions."""
         output = {}
         if "SplineMPEIC" in frame:
             output.update(
