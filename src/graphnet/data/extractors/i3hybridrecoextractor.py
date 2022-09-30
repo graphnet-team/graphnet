@@ -19,7 +19,7 @@ class I3GalacticPlaneHybridRecoExtractor(I3Extractor):
             output.update(
                     {
                     'zenith_hybrid': reco_object["zen"],
-                    'azimuth_hybrid': reco_object["az"],
+                    'azimuth_hybrid': reco_object["azi"],
                     'energy_hybrid_log': reco_object["logE"]
                     }
                 )
