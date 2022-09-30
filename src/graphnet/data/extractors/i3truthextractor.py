@@ -99,7 +99,10 @@ class I3TruthExtractor(I3Extractor):
         # Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.
         # At low levels i3files contain several other P frame splits (e.g NullSplit),
         # we remove those here.
-        if frame["I3EventHeader"].sub_event_stream not in ["InIceSplit", "Final"]:
+        if frame["I3EventHeader"].sub_event_stream not in [
+            "InIceSplit",
+            "Final",
+        ]:
             return output
 
         if "FilterMask" in frame:
@@ -151,9 +154,9 @@ class I3TruthExtractor(I3Extractor):
                     energy_track,
                     inelasticity,
                 ) = self._get_primary_track_energy_and_inelasticity(frame)
-            except RuntimeError: # track energy fails on northeren tracks with ""Hadrons" has no mass implemented. Cannot get total energy."
-                energy_track = padding_value,
-                inelasticity = padding_value,
+            except RuntimeError:  # track energy fails on northeren tracks with ""Hadrons" has no mass implemented. Cannot get total energy."
+                energy_track = (padding_value,)
+                inelasticity = (padding_value,)
 
             output.update(
                 {
@@ -387,4 +390,4 @@ class I3TruthExtractor(I3Extractor):
             sim_type = "dbang"
         if sim_type == "lol":
             self.logger.info("SIM TYPE NOT FOUND!")
-        return sim_type#a
+        return sim_type
