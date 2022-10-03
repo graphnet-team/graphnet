@@ -70,7 +70,6 @@ def test_log_cosh(dtype=torch.float32):
 def test_GaussianNLLLoss(dtype=torch.float32):
     # Prepare test data, zenith, azimuth and kappa
     prediction = torch.empty((7,3),dtype=dtype) # Shape [N, 3]
-    #torch.tensor().unsqueeze(1)  
     angles = torch.tensor([-pi, -pi/2, -pi/4, 0, pi/4, pi/2, pi])
     kappa = abs(angles) + eps_like(angles)
     prediction[:,0] = angles
