@@ -67,10 +67,10 @@ class GaussianNLLLoss(LossFunction):
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
 
-        loss = torch.nn.GaussianNLLLoss()
+        loss = torch.nn.GaussianNLLLoss(eps=1e-06, reduction="none")
 
         variance = 1.0 / prediction[:, 2]
-        elements = loss(prediction, target, variance, eps=1e-06, reduction="none")
+        elements = loss(prediction, target, variance)
         elements = torch.sum(elements, dim=-1)  # Sum along coordinate dimension
         return elements
 
