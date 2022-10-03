@@ -69,8 +69,10 @@ class GaussianNLLLoss(LossFunction):
 
         loss = torch.nn.GaussianNLLLoss(eps=1e-06, reduction="none")
 
+        # last entry is 1/var
         variance = 1.0 / prediction[:, 2]
-        elements = loss(prediction, target, variance)
+        # first two entries are zenith and azimuth for config[target]=["zenith","target"]
+        elements = loss(prediction[:, :2], target, variance)
         elements = torch.sum(elements, dim=-1)  # Sum along coordinate dimension
         return elements
 
