@@ -1,12 +1,17 @@
 """Unit tests for loss functions."""
 
 import numpy as np
+from numpy import pi
 import pytest
 import torch
 from torch import Tensor
 from torch.autograd import grad
 
-from graphnet.components.loss_functions import LogCoshLoss, VonMisesFisherLoss
+from graphnet.components.loss_functions import (
+    LogCoshLoss, 
+    VonMisesFisherLoss, 
+    GaussianNLLLoss
+    )
 from graphnet.utilities.maths import eps_like
 from torch_geometric.data import Data
 
@@ -56,6 +61,31 @@ def test_log_cosh(dtype=torch.float32):
     assert torch.all(torch.isfinite(losses))
 
     # (2) For the inputs where the reference loss _is_ valid, the two
+    #     calculations should agree exactly.
+    reference_is_valid = torch.isfinite(losses_reference)
+    assert torch.allclose(
+        losses_reference[reference_is_valid], losses[reference_is_valid]
+    )
+
+def test_GaussianNLLLoss(dtype=torch.float32):
+    # Prepare test data, zenith, azimuth and kappa
+    prediction = torch.empty((7,3),dtype=dtype) # Shape [N, 3]
+    #torch.tensor().unsqueeze(1)  
+    angles = torch.tensor([-pi, -pi/2, -pi/4, 0, pi/4, pi/2, pi])
+    kappa = abs(angles) + eps_like(angles)
+    prediction[:,0] = angles
+    prediction[:,1] = angles
+    prediction[:,2] = kappa
+
+    target = 0.0 * prediction.clone()  # Shape [N,3]
+    # Calculate losses using loss function, and manually
+    GaussianNLLLoss_loss = GaussianNLLLoss()
+    losses = GaussianNLLLoss_loss(prediction, target, return_elements=True)
+    losses_function = torch.nn.GaussianNLLLoss(eps=1e-06, reduction="none")
+    losses_reference = losses_function(prediction-target, target, 1/prediction[:,2])
+    losses_reference = torch.sum(losses_reference, dim=-1)
+
+    #     For the inputs where the reference loss _is_ valid, the two
     #     calculations should agree exactly.
     reference_is_valid = torch.isfinite(losses_reference)
     assert torch.allclose(
@@ -166,3 +196,10 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
     assert torch.allclose(
         grads_approx[exact_is_valid], grads_exact[exact_is_valid], rtol=1e-2
     )
+
+def main():
+    result = test_GaussianNLLLoss()
+    print(result)
+
+if __name__ == "__main__":
+    main()
