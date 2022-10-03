@@ -21,22 +21,20 @@ class AzimuthReconstructionWithKappa(Task):
         return torch.stack((angle, kappa), dim=1)
 
 
-class AzimuthReconstruction(AzimuthReconstructionWithKappa):
+class DirectionReconstructionWithKappa(Task):
     """Reconstructs azimuthal angle."""
 
-    # Requires two features: untransformed points in (x,y)-space.
-    nb_inputs = 2
+    # Requires 4 features: untransformed points in (x,y,z)-space + kappa estimation.
+    nb_inputs = 4
 
     def _forward(self, x):
         # Transform outputs to angle and prepare prediction
-        res = super()._forward(x)
-        angle = res[:, 0].unsqueeze(1)
-        kappa = res[:, 1]
-        sigma = torch.sqrt(1.0 / kappa)
-        beta = 1e-3
-        kl_loss = torch.mean(sigma**2 - torch.log(sigma) - 1)
-        self._regularisation_loss += beta * kl_loss
-        return angle
+        norm = torch.sqrt(x[:, 0] ** 2 + x[:, 1] ** 2 + x[:, 2] ** 2)
+        kappa = torch.abs(x[:, 3]) + eps_like(x)
+        vec_x = x[:, 0] / norm
+        vec_y = x[:, 1] / norm
+        vec_z = x[:, 2] / norm
+        return torch.stack((vec_x, vec_y, vec_z, kappa), dim=1)
 
 
 class PassOutput1(Task):

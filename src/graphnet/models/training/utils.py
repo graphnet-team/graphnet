@@ -39,7 +39,6 @@ def make_dataloader(
     # Check(s)
     if isinstance(pulsemaps, str):
         pulsemaps = [pulsemaps]
-
     dataset = SQLiteDataset(
         path=db,
         pulsemaps=pulsemaps,

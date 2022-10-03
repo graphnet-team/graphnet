@@ -324,3 +324,24 @@ class EuclideanDistanceLoss(LossFunction):
             + (prediction[:, 1] - target[:, 1]) ** 2
             + (prediction[:, 2] - target[:, 2]) ** 2
         )
+
+
+class VonMisesFisher3DLoss(VonMisesFisherLoss):
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        target = target.reshape(-1, 3)
+        # Check(s)
+        assert prediction.dim() == 2 and prediction.size()[1] == 4
+        assert target.dim() == 2
+        assert prediction.size()[0] == target.size()[0]
+
+        # Formatting target
+
+        # Formatting prediction
+
+        kappa = prediction[:, 3]
+        p = kappa.unsqueeze(1) * prediction[:, [0, 1, 2]]
+        return self._evaluate(p, target)
+        # k = prediction[:,3] # has been abs'ed by task
+        # cos_ø = prediction[:,0]*target[:,0] + prediction[:,1]*target[:,1] + prediction[:,2]*target[:,2] #unit vectors by task / dataset
+        # c_3 = k/(torch.sinh(k))
+        # return -torch.log(c_3) - k*cos_ø #torch.log is natural log

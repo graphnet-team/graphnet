@@ -87,7 +87,6 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         ):
             self.logger.warning("Error: no loss weight column specified")
             assert isinstance(self._loss_weight_column, str)
-
         self._dtype = dtype
 
         # Implementation-specific initialisation.
@@ -350,6 +349,15 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         for index, feature in enumerate(graph.features):
             graph[feature] = graph.x[:, index].detach()
 
+        graph = self._add_direction(graph, truth_dict)
+        return graph
+
+    def _add_direction(self, graph: Data, truth_dict: Dict[str, Any]):
+        x = np.sin(truth_dict["azimuth"]) * np.cos(truth_dict["zenith"])
+        y = np.sin(truth_dict["azimuth"]) * np.sin(truth_dict["zenith"])
+        z = np.cos(truth_dict["azimuth"])
+        graph["direction"] = torch.tensor([[x, y, z]], dtype=torch.float)
+        # print(graph.direction.shape)
         return graph
 
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
