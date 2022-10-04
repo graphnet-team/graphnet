@@ -93,6 +93,7 @@ def main():
     )
     gnn = DynEdge(
         nb_inputs=detector.nb_outputs,
+        global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = EnergyReconstruction(
         hidden_size=gnn.nb_outputs,
