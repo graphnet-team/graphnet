@@ -11,7 +11,7 @@ on:
 jobs:
   paper-2022-joss:
     runs-on: ubuntu-latest
-    name: Paper draft PDF
+    name: paper-draft-PDF
     steps:
       - name: Checkout
         uses: actions/checkout@v2
