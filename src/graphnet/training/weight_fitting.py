@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import sqlite3
 from typing import Optional, List
-from graphnet.data.utils import run_sql_code, save_to_sql
+from graphnet.data.utils import run_sql_code, save_to_sql, create_table
 
 
 class UniformWeightFitter:
@@ -64,7 +64,7 @@ class UniformWeightFitter:
         truth[weight_name] = sample_weights
         truth = truth.drop(columns=[variable])
         if add_to_database:
-            self._create_table(self._database_path, weight_name, truth)
+            create_table(self._database_path, weight_name, truth)
             save_to_sql(truth, weight_name, self._database_path)
         return truth.sort_values("event_no").reset_index(drop=True)
 
@@ -77,26 +77,3 @@ class UniformWeightFitter:
         with sqlite3.connect(self._database_path) as con:
             data = pd.read_sql(query, con)
         return data
-
-    def _create_table(self, database, table_name, df):
-        """Creates a table.
-        Args:
-            pipeline_database (str): path to the pipeline database
-            df (str): pandas.DataFrame of combined predictions
-        """
-        query_columns = list()
-        for column in df.columns:
-            if column == "event_no":
-                type_ = "INTEGER PRIMARY KEY NOT NULL"
-            else:
-                type_ = "FLOAT"
-            query_columns.append(f"{column} {type_}")
-        query_columns = ", ".join(query_columns)
-
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            f"CREATE TABLE {table_name} ({query_columns});\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(database, code)
-        return
