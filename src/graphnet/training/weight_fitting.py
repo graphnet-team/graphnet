@@ -1,10 +1,15 @@
 import numpy as np
 import pandas as pd
 import sqlite3
+
 from graphnet.data.utils import run_sql_code, save_to_sql
 
 
 class UniformWeightFitter:
+    """Produces per-event weights making fitted variable distribution uniform.
+    Weights are returned by the public method `fit_weights()`, and the weights can be saved as a table in the database.
+    """
+
     def __init__(
         self,
         database_path,
@@ -14,8 +19,6 @@ class UniformWeightFitter:
         self._database_path = database_path
         self._truth_table = truth_table
         self._index_column = index_column
-        """Produces pr. event weights such that the distribution in chosen truth variable is uniform. Weights are returned by the public method fit_weights(), and the weights can be saved as a table in the database.
-        """
 
     def fit_weights(
         self,
