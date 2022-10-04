@@ -1,4 +1,4 @@
-import os.path
+import os
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
@@ -33,11 +33,15 @@ torch.multiprocessing.set_sharing_strategy("file_system")
 features = FEATURES.DEEPCORE
 truth = TRUTH.DEEPCORE[:-1]
 
+# Make sure W&B output directory exists
+WANDB_DIR = "./wandb/"
+os.makedirs(WANDB_DIR, exist_ok=True)
+
 # Initialise Weights & Biases (W&B) run
 wandb_logger = WandbLogger(
     project="example-script",
     entity="graphnet-team",
-    save_dir="./wandb/",
+    save_dir=WANDB_DIR,
     log_model=True,
 )
 
