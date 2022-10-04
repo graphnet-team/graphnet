@@ -2,6 +2,7 @@ import sqlite3
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
 from graphnet.training.weight_fitting import UniformWeightFitter
 
 
@@ -18,6 +19,7 @@ def get_truth_zenith(db: str) -> pd.DataFrame:
         query = "select event_no, zenith from truth where abs(pid) != 1"
         data = pd.read_sql(query, con)
     return data
+
 
 database = "/my_databases/my_database/data/my_database.db"
 
