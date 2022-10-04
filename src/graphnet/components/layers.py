@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Sequence
+from typing import Callable, List, Optional, Sequence, Union
 
 from torch.functional import Tensor
 
@@ -13,7 +13,7 @@ class DynEdgeConv(EdgeConv):
         nn: Callable,
         aggr: str = "max",
         nb_neighbors: int = 8,
-        features_subset: Optional[Sequence] = None,
+        features_subset: Optional[Union[Sequence[int], List[int]]] = None,
         **kwargs,
     ):
         # Check(s)
