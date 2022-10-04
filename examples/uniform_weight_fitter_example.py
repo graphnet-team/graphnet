@@ -32,7 +32,7 @@ weights = fitter.fit_weights(
 )
 
 # plot results
-truth = get_truth(database)
+truth = get_truth_zenith(database)
 fig = plt.figure()
 plt.hist(truth["zenith"], bins=bins, weights=weights["zenith_uniform_weight"])
 fig.savefig("test_hist.png")
