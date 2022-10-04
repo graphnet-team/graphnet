@@ -71,7 +71,7 @@
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed"><code class="docutils literal notranslate"><span class="pre">SQLiteDatasetPerturbed</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#graphnet-data-sqlite-sqlite-selection-module">graphnet.data.sqlite.sqlite_selection module</a><ul>
+<li><a class="reference internal" href="#module-graphnet.data.sqlite.sqlite_selection">graphnet.data.sqlite.sqlite_selection module</a><ul>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_selection.get_desired_event_numbers"><code class="docutils literal notranslate"><span class="pre">get_desired_event_numbers()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_selection.get_equal_proportion_neutrino_indices"><code class="docutils literal notranslate"><span class="pre">get_equal_proportion_neutrino_indices()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_selection.get_even_dbang_selection"><code class="docutils literal notranslate"><span class="pre">get_even_dbang_selection()</span></code></a></li>
@@ -79,7 +79,8 @@
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_selection.get_even_track_cascade_indicies"><code class="docutils literal notranslate"><span class="pre">get_even_track_cascade_indicies()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#graphnet-data-sqlite-sqlite-utilities-module">graphnet.data.sqlite.sqlite_utilities module</a><ul>
+<li><a class="reference internal" href="#module-graphnet.data.sqlite.sqlite_utilities">graphnet.data.sqlite.sqlite_utilities module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.create_table"><code class="docutils literal notranslate"><span class="pre">create_table()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.run_sql_code"><code class="docutils literal notranslate"><span class="pre">run_sql_code()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.save_to_sql"><code class="docutils literal notranslate"><span class="pre">save_to_sql()</span></code></a></li>
 </ul>
@@ -286,10 +287,10 @@ accross processes.</p>
 </dd></dl>
 
 </section>
-<section id="graphnet-data-sqlite-sqlite-selection-module">
-<h2>graphnet.data.sqlite.sqlite_selection module<a class="headerlink" href="#graphnet-data-sqlite-sqlite-selection-module" title="Permalink to this heading"></a></h2>
+<section id="module-graphnet.data.sqlite.sqlite_selection">
+<span id="graphnet-data-sqlite-sqlite-selection-module"></span><h2>graphnet.data.sqlite.sqlite_selection module<a class="headerlink" href="#module-graphnet.data.sqlite.sqlite_selection" title="Permalink to this heading"></a></h2>
 <p>Selection-specific utility functions relevant to the graphnet.data package.</p>
-<span class="target" id="module-graphnet.data.sqlite.sqlite_selection"></span><dl class="py function">
+<dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_selection.get_desired_event_numbers">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_selection.</span></span><span class="sig-name descname"><span class="pre">get_desired_event_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_muon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_nu_e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_nu_mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_nu_tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_selection.html#get_desired_event_numbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_selection.get_desired_event_numbers" title="Permalink to this definition"></a></dt>
 <dd><p>Get event numbers for specified fractions of physics processes.</p>
@@ -390,10 +391,20 @@ accross processes.</p>
 </dd></dl>
 
 </section>
-<section id="graphnet-data-sqlite-sqlite-utilities-module">
-<h2>graphnet.data.sqlite.sqlite_utilities module<a class="headerlink" href="#graphnet-data-sqlite-sqlite-utilities-module" title="Permalink to this heading"></a></h2>
+<section id="module-graphnet.data.sqlite.sqlite_utilities">
+<span id="graphnet-data-sqlite-sqlite-utilities-module"></span><h2>graphnet.data.sqlite.sqlite_utilities module<a class="headerlink" href="#module-graphnet.data.sqlite.sqlite_utilities" title="Permalink to this heading"></a></h2>
 <p>SQLite-specific utility functions relevant to the graphnet.data package.</p>
-<span class="target" id="module-graphnet.data.sqlite.sqlite_utilities"></span><dl class="py function">
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.create_table">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.create_table" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a table.
+:param pipeline_database: path to the pipeline database
+:type pipeline_database: str
+:param df: pandas.DataFrame of combined predictions
+:type df: str</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.run_sql_code">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">run_sql_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#run_sql_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.run_sql_code" title="Permalink to this definition"></a></dt>
 <dd><p>Execute SQLite code.</p>

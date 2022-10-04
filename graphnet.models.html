@@ -43,7 +43,7 @@
 <li><a class="reference internal" href="#">graphnet.models package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#graphnet-models-coarsening-module">graphnet.models.coarsening module</a><ul>
+<li><a class="reference internal" href="#module-graphnet.models.coarsening">graphnet.models.coarsening module</a><ul>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening"><code class="docutils literal notranslate"><span class="pre">Coarsening</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening.__call__"><code class="docutils literal notranslate"><span class="pre">Coarsening.__call__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening._additional_features"><code class="docutils literal notranslate"><span class="pre">Coarsening._additional_features()</span></code></a></li>
@@ -203,7 +203,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.models.gnn.html">graphnet.models.gnn package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.gnn.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.gnn.html#graphnet-models-gnn-convnet-module">graphnet.models.gnn.convnet module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.gnn.html#module-graphnet.models.gnn.convnet">graphnet.models.gnn.convnet module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet"><code class="docutils literal notranslate"><span class="pre">ConvNet</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.__init__"><code class="docutils literal notranslate"><span class="pre">ConvNet.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.forward"><code class="docutils literal notranslate"><span class="pre">ConvNet.forward()</span></code></a></li>
@@ -212,7 +212,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.gnn.html#graphnet-models-gnn-dynedge-module">graphnet.models.gnn.dynedge module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.gnn.html#module-graphnet.models.gnn.dynedge">graphnet.models.gnn.dynedge module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge"><code class="docutils literal notranslate"><span class="pre">DynEdge</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.__init__"><code class="docutils literal notranslate"><span class="pre">DynEdge.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.forward"><code class="docutils literal notranslate"><span class="pre">DynEdge.forward()</span></code></a></li>
@@ -384,10 +384,10 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
-<section id="graphnet-models-coarsening-module">
-<h2>graphnet.models.coarsening module<a class="headerlink" href="#graphnet-models-coarsening-module" title="Permalink to this heading"></a></h2>
+<section id="module-graphnet.models.coarsening">
+<span id="graphnet-models-coarsening-module"></span><h2>graphnet.models.coarsening module<a class="headerlink" href="#module-graphnet.models.coarsening" title="Permalink to this heading"></a></h2>
 <p>Classes for coarsening operations (i.e., clustering, or local pooling.</p>
-<span class="target" id="module-graphnet.models.coarsening"></span><dl class="py class">
+<dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">Coarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'avg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#Coarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.Coarsening" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
