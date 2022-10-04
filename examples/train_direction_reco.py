@@ -24,6 +24,7 @@ from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
 from graphnet.models.training.utils import (
     get_predictions,
     make_train_validation_dataloader,
+    save_results,
 )
 from graphnet.utilities.logging import get_logger
 
@@ -49,13 +50,6 @@ wandb_logger = WandbLogger(
 )
 
 
-def save_results(db, tag, results, archive):
-    db_name = db.split("/")[-1].split(".")[0]
-    path = archive + "/" + db_name + "/" + tag
-    os.makedirs(path, exist_ok=True)
-    results.to_csv(path + "/results.csv")
-    print("Results saved at: \n %s" % path)
-    
 def train(config):
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
@@ -64,7 +58,6 @@ def train(config):
 
     selection, _ = get_equal_proportion_neutrino_indices(config["db"])
     selection = selection[0 : config["max_events"]]
-
 
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
@@ -75,7 +68,6 @@ def train(config):
     ) = make_train_validation_dataloader(
         config["db"],
         selection,
-        train_selection,
         config["pulsemap"],
         features,
         truth,
@@ -97,7 +89,7 @@ def train(config):
             nb_inputs=detector.nb_outputs, node_pooling=DOMCoarsening()
         )
     else:
-        gnn = DynEdge_V2(
+        gnn = DynEdge_V2(nb_inputs=detector.nb_outputs)
 
     if config["target"] == "zenith":
         task = ZenithReconstructionWithKappa(
