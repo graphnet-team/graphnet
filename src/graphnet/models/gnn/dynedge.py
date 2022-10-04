@@ -59,16 +59,16 @@ class DynEdge(GNN):
                     256,
                 ),
                 (
-                    256,
                     336,
+                    256,
                 ),
                 (
-                    256,
                     336,
+                    256,
                 ),
                 (
-                    256,
                     336,
+                    256,
                 ),
             ]
 
@@ -131,42 +131,59 @@ class DynEdge(GNN):
         )
 
         # Base class constructor
-        super().__init__(nb_inputs, self._layer_sizes[-1])
+        super().__init__(nb_inputs, self._readout_layer_sizes[-1])
 
-        # Common layer(s)
+        # Remaining member variables()
         self._activation = torch.nn.LeakyReLU()
-        nb_global_variables = 5 + nb_inputs
+        self._nb_inputs = nb_inputs
+        self._nb_global_variables = 5 + nb_inputs
+        self._nb_neighbours = nb_neighbours
+        self._features_subset = features_subset
+
+        self._construct_layers()
+
+    def _construct_layers(self):
+        """Construct layers (torch.nn.Modules)."""
 
         # Convolutional operations
-        nb_input_features = nb_inputs
+        nb_input_features = self._nb_inputs
         if not self._add_global_variables_after_pooling:
-            nb_input_features += nb_global_variables
+            nb_input_features += self._nb_global_variables
 
-        self._conv_layers = []
+        self._conv_layers = torch.nn.ModuleList()
+        nb_latent_features = nb_input_features
         for sizes in self._dynedge_layer_sizes:
             layers = []
-            for nb_in, nb_out in zip([nb_input_features] + sizes[:-1], sizes):
+            layer_sizes = [nb_latent_features] + list(sizes)
+            for ix, (nb_in, nb_out) in enumerate(
+                zip(layer_sizes[:-1], layer_sizes[1:])
+            ):
+                if ix == 0:
+                    nb_in *= 2
                 layers.append(torch.nn.Linear(nb_in, nb_out))
                 layers.append(self._activation)
 
             conv_layer = DynEdgeConv(
                 torch.nn.Sequential(*layers),
                 aggr="add",
-                nb_neighbors=nb_neighbours,
-                features_subset=features_subset,
+                nb_neighbors=self._nb_neighbours,
+                features_subset=self._features_subset,
             )
             self._conv_layers.append(conv_layer)
 
+            nb_latent_features = nb_out
+
         # Post-processing operations
         nb_latent_features = (
-            nb_out * len(self._dynedge_layer_sizes) + nb_input_features
+            sum(sizes[-1] for sizes in self._dynedge_layer_sizes)
+            + nb_input_features
         )
 
         post_processing_layers = []
-        for nb_in, nb_out in zip(
-            [nb_latent_features] + self._readout_layer_sizes[:-1],
-            self._readout_layer_sizes,
-        ):
+        layer_sizes = [nb_latent_features] + list(
+            self._post_processing_layer_sizes
+        )
+        for nb_in, nb_out in zip(layer_sizes[:-1], layer_sizes[1:]):
             post_processing_layers.append(torch.nn.Linear(nb_in, nb_out))
             post_processing_layers.append(self._activation)
 
@@ -174,17 +191,17 @@ class DynEdge(GNN):
 
         # Read-out operations
         nb_poolings = (
-            len(self._global_pooling_schemes) if global_pooling_schemes else 1
+            len(self._global_pooling_schemes)
+            if self._global_pooling_schemes
+            else 1
         )
         nb_latent_features = nb_out * nb_poolings
         if self._add_global_variables_after_pooling:
-            nb_latent_features += nb_global_variables
+            nb_latent_features += self._nb_global_variables
 
         readout_layers = []
-        for nb_in, nb_out in zip(
-            [nb_latent_features] + self._readout_layer_sizes[:-1],
-            self._readout_layer_sizes,
-        ):
+        layer_sizes = [nb_latent_features] + list(self._readout_layer_sizes)
+        for nb_in, nb_out in zip(layer_sizes[:-1], layer_sizes[1:]):
             readout_layers.append(torch.nn.Linear(nb_in, nb_out))
             readout_layers.append(self._activation)
 
@@ -196,7 +213,7 @@ class DynEdge(GNN):
         pooled = []
         for pooling_scheme in self._global_pooling_schemes:
             pooling_fn = GLOBAL_POOLINGS[pooling_scheme]
-            pooled_x = pooling_fn(x, batch=batch, dim=0)
+            pooled_x = pooling_fn(x, index=batch, dim=0)
             if isinstance(pooled_x, tuple) and len(pooled_x) == 2:
                 # `scatter_{min,max}`, which return also an argument, vs.
                 # `scatter_{mean,sum}`
