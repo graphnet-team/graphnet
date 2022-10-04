@@ -12,7 +12,6 @@ from torch_geometric.data import Data
 from torch_geometric.nn import EdgeConv
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
 from graphnet.components.layers import DynEdgeConv
-from graphnet.models.coarsening import Coarsening
 
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.utils import calculate_xyzt_homophily
@@ -23,7 +22,6 @@ class DynEdge(GNN):
         self,
         nb_inputs: int,
         layer_size_scale: Optional[int] = 4,
-        node_pooling: Coarsening = None,
     ):
         """DynEdge model.
 
@@ -32,10 +30,7 @@ class DynEdge(GNN):
             nb_outputs (int): Number of output features.
             layer_size_scale (int, optional): Integer that scales the size of
                 hidden layers. Defaults to 4.
-            node_pooling: A Coarsening module that pools the nodes before they are processed by the model. Defaults to None (no pooling).
         """
-        # Node Pooling via Coarsening Module
-        self._coarsening = node_pooling
         # Architecture configuration
         c = layer_size_scale
         l1, l2, l3, l4, l5, l6 = (
