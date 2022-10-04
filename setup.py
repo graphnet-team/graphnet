@@ -77,8 +77,8 @@ setup(
         "telescope experiments."
     ),
     license="Apache 2.0",
-    author="The IceCube Collaboration",
-    url="https://github.com/icecube/graphnet",
+    author="The GraphNeT development team",
+    url="https://github.com/graphnet-team/graphnet",
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(where="src"),
     package_dir={"": "src"},
