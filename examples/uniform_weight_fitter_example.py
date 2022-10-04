@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from graphnet.training.weight_fitting import UniformWeightFitter
 
 
-def get_truth(db):
+def get_truth_zenith(db: str) -> pd.DataFrame:
     """Gets the true zenith for neutrinos in db.
 
     Args:
