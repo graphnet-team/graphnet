@@ -19,19 +19,21 @@ def get_truth_zenith(db: str) -> pd.DataFrame:
         data = pd.read_sql(query, con)
     return data
 
-
 database = "/my_databases/my_database/data/my_database.db"
-# choose truth variable
+
+# Choose truth variable
 variable = "zenith"
-# choose binning
+
+# Choose binning
 bins = np.arange(0, np.deg2rad(180.5), np.deg2rad(0.5))
-# fit
+
+# Fit the uniform weights
 fitter = UniformWeightFitter(database)
 weights = fitter.fit_weights(
     bins=bins, variable=variable, add_to_database=True
 )
 
-# plot results
+# Plot the results
 truth = get_truth_zenith(database)
 fig = plt.figure()
 plt.hist(truth["zenith"], bins=bins, weights=weights["zenith_uniform_weight"])
