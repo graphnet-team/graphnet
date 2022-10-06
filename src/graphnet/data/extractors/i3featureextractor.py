@@ -17,7 +17,6 @@ class I3FeatureExtractor(I3Extractor):
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
     def __call__(self, frame) -> dict:
         """Extract features to be used as inputs to GNN models."""
-
         output = {
             "charge": [],
             "dom_time": [],
@@ -27,6 +26,10 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "width": [],
             "pmt_area": [],
             "rde": [],
+            "is_bright_dom": [],
+            "is_bad_dom": [],
+            "is_saturated_dom": [],
+            "is_errata_dom": [],
         }
 
         # Get OM data
@@ -36,6 +39,23 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             self._calibration,
         )
 
+        # Added these :
+        bright_doms = None
+        bad_doms = None
+        saturation_windows = None
+        calibration_errata = None
+        if "BrightDOMs" in frame:
+            bright_doms = frame.Get("BrightDOMs")
+
+        if "BadDomsList" in frame:
+            bad_doms = frame.Get("BadDomsList")
+
+        if "SaturationWindows" in frame:
+            saturation_windows = frame.Get("SaturationWindows")
+
+        if "CalibrationErrata" in frame:
+            calibration_errata = frame.Get("CalibrationErrata")
+
         for om_key in om_keys:
             # Common values for each OM
             x = self._gcd_dict[om_key].position.x
@@ -43,6 +63,27 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             z = self._gcd_dict[om_key].position.z
             area = self._gcd_dict[om_key].area
             rde = self._get_relative_dom_efficiency(frame, om_key)
+
+            # DOM flags
+            if bright_doms:
+                is_bright_dom = 1 if om_key in bright_doms else 0
+            else:
+                is_bright_dom = -1
+
+            if bad_doms:
+                is_bad_dom = 1 if om_key in bad_doms else 0
+            else:
+                is_bad_dom = -1
+
+            if saturation_windows:
+                is_saturated_dom = 1 if om_key in saturation_windows else 0
+            else:
+                is_saturated_dom = -1
+
+            if calibration_errata:
+                is_errata_dom = 1 if om_key in calibration_errata else 0
+            else:
+                is_errata_dom = -1
 
             # Loop over pulses for each OM
             pulses = data[om_key]
@@ -55,7 +96,11 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output["dom_x"].append(x)
                 output["dom_y"].append(y)
                 output["dom_z"].append(z)
-
+                # DOM flags
+                output["is_bright_dom"].append(is_bright_dom)
+                output["is_bad_dom"].append(is_bad_dom)
+                output["is_saturated_dom"].append(is_saturated_dom)
+                output["is_errata_dom"].append(is_errata_dom)
         return output
 
     def _get_relative_dom_efficiency(self, frame, om_key):
