@@ -13,11 +13,12 @@ from graphnet.data.extractors import (
 )
 from graphnet.data.constants import FEATURES
 from graphnet.models import Model
+from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
 
-try:
+if has_icecube_package():
     from icecube.icetray import (
         I3Module,
         I3Frame,
@@ -25,8 +26,6 @@ try:
     from icecube.dataclasses import (
         I3Double,
     )  # pyright: reportMissingImports=false
-except ImportError:
-    logger.warning("icecube package not available.")
 
 
 class GraphNeTModuleBase(I3Module):
