@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.data.extractors.i3genericextractor &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>graphnet.data.extractors.i3genericextractor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphnet.data.extractors.i3genericextractor</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities.types</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">cast_object_to_pure_python</span><span class="p">,</span>
+    <span class="n">cast_pulse_series_to_pure_python</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities.collections</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">transpose_list_of_dicts</span><span class="p">,</span>
+    <span class="n">serialise</span><span class="p">,</span>
+    <span class="n">flatten_nested_dictionary</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">dataclasses</span><span class="p">,</span>
+        <span class="n">icetray</span><span class="p">,</span>
+    <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+
+
+<span class="n">GENERIC_EXTRACTOR_NAME</span> <span class="o">=</span> <span class="s2">&quot;GENERIC&quot;</span>
+
+
+<div class="viewcode-block" id="I3GenericExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3GenericExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dynamically and generically extract information from frames.</span>
+
+<span class="sd">    This class parses all keys in the I3Frame objects it is called on, and</span>
+<span class="sd">    tries to automatically cast all of the available information to pure-python</span>
+<span class="sd">    classes. This is done recursively, for each object in the I3Frame, by</span>
+<span class="sd">    looking for member variables that can be parsed; by looking for objects</span>
+<span class="sd">    that have signatures similar to python lists or dicts; and by handling a</span>
+<span class="sd">    handful of special cases:</span>
+<span class="sd">    - Pulse series maps,</span>
+<span class="sd">    - Per-pulse maps,</span>
+<span class="sd">    - MC tree, and</span>
+<span class="sd">    - Triggers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="I3GenericExtractor.__init__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+        <span class="c1"># Check(s)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">exclude_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only one of `keys` and `exclude_keys` should be set.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Cast(s)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">keys</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_keys</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">exclude_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_keys</span><span class="p">]</span>
+
+        <span class="c1"># Reference to frame currently being processed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exclude_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">exclude_keys</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">GENERIC_EXTRACTOR_NAME</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="I3GenericExtractor._get_keys"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._get_keys">[docs]</a>    <span class="k">def</span> <span class="nf">_get_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the list of keys to be queried from `frame`.</span>
+
+<span class="sd">        If a list of keys was provided by the user, return this.  Otherwise,</span>
+<span class="sd">        return all keys, possibly except ones that the user have explicitly</span>
+<span class="sd">        excluded.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exclude_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exclude_keys</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+        <span class="k">return</span> <span class="n">keys</span></div>
+
+<div class="viewcode-block" id="I3GenericExtractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract all possible data from `frame`.</span>
+
+<span class="sd">        The following types of objects are handled as special cases:</span>
+<span class="sd">        - Pulse series maps,</span>
+<span class="sd">        - Per-pulse maps,</span>
+<span class="sd">        - MC tree, and</span>
+<span class="sd">        - Triggers.</span>
+
+<span class="sd">        All other fields are cast to pure-python classes by generically parsing</span>
+<span class="sd">        member variables, and checking if the object has a signature similar to</span>
+<span class="sd">        python lists or dicts.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary containing each parsed key in `frame`, and the</span>
+<span class="sd">                corresponding, extracted data in pure-python format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_keys</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+
+            <span class="c1"># Extract object from frame</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> in frame not supported. Skipping.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> not in frame. Skipping&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Special case(s)</span>
+            <span class="c1"># -- Pulse series map</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">obj</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3DOMLaunchSeriesMap</span><span class="p">,</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="p">,</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMapMask</span><span class="p">,</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMapUnion</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_pulse_series_map</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+            <span class="c1"># -- Per-pulse attribute</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">obj</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MapKeyUInt</span><span class="p">,</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MapKeyDouble</span><span class="p">,</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MapKeyVectorInt</span><span class="p">,</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MapKeyVectorDouble</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_per_pulse_attribute</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+            <span class="c1"># -- MC Tree</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MCTree</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_mc_tree</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+            <span class="c1"># -- Triggers</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3TriggerHierarchy</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_triggers</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+            <span class="c1"># -- Generic case</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">cast_object_to_pure_python</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+            <span class="c1"># Skip empty extractions</span>
+            <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Flatten and transpose MC Tree</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MCTree</span><span class="p">):</span>
+                <span class="p">(</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;__primaries&quot;</span><span class="p">],</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;__particles&quot;</span><span class="p">],</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_result_mctree</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+            <span class="c1"># Flatten all other objects</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># Serialise list of iterables to JSON</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">serialise</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="I3GenericExtractor._extract_pulse_series_map"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._extract_pulse_series_map">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_pulse_series_map</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract pulse-series map `key` from `frame`&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">cast_pulse_series_to_pure_python</span><span class="p">(</span>
+            <span class="n">frame</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pulse map </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> didn&#39;t return anything.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="I3GenericExtractor._extract_per_pulse_attribute"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._extract_per_pulse_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_per_pulse_attribute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract per-pulse attribute `key` from `frame`</span>
+
+<span class="sd">        A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a dictionary-</span>
+<span class="sd">        like mapping from an OM key to some attribute, e.g., an integer or a</span>
+<span class="sd">        vector properties.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_pulse_series_map</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If we get a per-pulse attribute map, which isn&#39;t a</span>
+            <span class="c1"># &quot;I3RecoPulseSeriesMap*&quot;, we don&#39;t care about area,</span>
+            <span class="c1"># direction, orientation, and position -- we only care</span>
+            <span class="c1"># about the OM index for future reference. We therefore</span>
+            <span class="c1"># only keep these indices and the associated mapping value.</span>
+            <span class="n">keep_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="n">key_</span> <span class="k">for</span> <span class="n">key_</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">key_</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;index.&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">key_</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="n">key_</span><span class="p">]</span> <span class="k">for</span> <span class="n">key_</span> <span class="ow">in</span> <span class="n">keep_keys</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="I3GenericExtractor._cast_mc_tree"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._cast_mc_tree">[docs]</a>    <span class="k">def</span> <span class="nf">_cast_mc_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="s2">&quot;dataclasses.I3MCTree&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Cast I3MCTree to dict.&quot;&quot;&quot;</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">cast_object_to_pure_python</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+        <span class="c1"># Assign parent and children links to all particles in tree</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;particles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span><span class="o">.</span><span class="n">minor_id</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">children</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">minor_id</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">particle</span><span class="p">)]</span>
+
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;particles&quot;</span><span class="p">][</span><span class="n">ix</span><span class="p">][</span><span class="s2">&quot;parent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;particles&quot;</span><span class="p">][</span><span class="n">ix</span><span class="p">][</span><span class="s2">&quot;children&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">children</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="I3GenericExtractor._cast_triggers"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._cast_triggers">[docs]</a>    <span class="k">def</span> <span class="nf">_cast_triggers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="s2">&quot;dataclasses.I3TriggerHierarchy&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Cast trigger hierarchy to dict&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">cast_object_to_pure_python</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">transpose_list_of_dicts</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="I3GenericExtractor._flatten_result_mctree"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._flatten_result_mctree">[docs]</a>    <span class="k">def</span> <span class="nf">_flatten_result_mctree</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Flatten results from casting I3MCTree to pure python.&quot;&quot;&quot;</span>
+        <span class="c1"># Flatten and transpose MC Tree</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="n">result_primaries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;primaries&quot;</span><span class="p">]</span>
+        <span class="n">result_particles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;particles&quot;</span><span class="p">]</span>
+
+        <span class="n">result_primaries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">flatten_nested_dictionary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">result_primaries</span>
+        <span class="p">]</span>
+        <span class="n">result_particles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">flatten_nested_dictionary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">result_particles</span>
+        <span class="p">]</span>
+
+        <span class="n">result_primaries</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">transpose_list_of_dicts</span><span class="p">(</span>
+            <span class="n">result_primaries</span>
+        <span class="p">)</span>
+        <span class="n">result_particles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">transpose_list_of_dicts</span><span class="p">(</span>
+            <span class="n">result_particles</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Remove `majorID`, which has unsupported unit64 dtype.</span>
+        <span class="c1"># Keep only one instances of `minorID`.</span>
+        <span class="k">del</span> <span class="n">result_primaries</span><span class="p">[</span><span class="s2">&quot;id__minorID&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">result_particles</span><span class="p">[</span><span class="s2">&quot;id__minorID&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">result_primaries</span><span class="p">[</span><span class="s2">&quot;id__majorID&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">result_particles</span><span class="p">[</span><span class="s2">&quot;id__majorID&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">result_primaries</span><span class="p">[</span><span class="s2">&quot;major_id&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">result_particles</span><span class="p">[</span><span class="s2">&quot;major_id&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">result_primaries</span><span class="p">,</span> <span class="n">result_particles</span></div>
+
+<div class="viewcode-block" id="I3GenericExtractor._flatten_result"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._flatten_result">[docs]</a>    <span class="k">def</span> <span class="nf">_flatten_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Flatten results from casting any other instance to pure python.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">flatten_nested_dictionary</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># If the object is a non-dict object, ensure that it has a non-</span>
+        <span class="c1"># empty key (required for saving).</span>
+        <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

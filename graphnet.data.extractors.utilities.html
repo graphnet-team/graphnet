@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.data.extractors.utilities package &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">graphnet.data.extractors.utilities package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.utilities.collections">graphnet.data.extractors.utilities.collections module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary"><code class="docutils literal notranslate"><span class="pre">flatten_nested_dictionary()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.collections.serialise"><code class="docutils literal notranslate"><span class="pre">serialise()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts"><code class="docutils literal notranslate"><span class="pre">transpose_list_of_dicts()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.utilities.frames">graphnet.data.extractors.utilities.frames module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.frames.frame_is_montecarlo"><code class="docutils literal notranslate"><span class="pre">frame_is_montecarlo()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.frames.frame_is_noise"><code class="docutils literal notranslate"><span class="pre">frame_is_noise()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries"><code class="docutils literal notranslate"><span class="pre">get_om_keys_and_pulseseries()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.utilities.types">graphnet.data.extractors.utilities.types module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.break_cyclic_recursion"><code class="docutils literal notranslate"><span class="pre">break_cyclic_recursion()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.cast_object_to_pure_python"><code class="docutils literal notranslate"><span class="pre">cast_object_to_pure_python()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python"><code class="docutils literal notranslate"><span class="pre">cast_pulse_series_to_pure_python()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.get_member_variables"><code class="docutils literal notranslate"><span class="pre">get_member_variables()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.is_boost_class"><code class="docutils literal notranslate"><span class="pre">is_boost_class()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.is_boost_enum"><code class="docutils literal notranslate"><span class="pre">is_boost_enum()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.is_icecube_class"><code class="docutils literal notranslate"><span class="pre">is_icecube_class()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.is_method"><code class="docutils literal notranslate"><span class="pre">is_method()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.extractors.utilities.types.is_type"><code class="docutils literal notranslate"><span class="pre">is_type()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.utilities">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>graphnet.data.extractors.utilities package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/graphnet.data.extractors.utilities.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="graphnet-data-extractors-utilities-package">
+<h1>graphnet.data.extractors.utilities package<a class="headerlink" href="#graphnet-data-extractors-utilities-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-graphnet.data.extractors.utilities.collections">
+<span id="graphnet-data-extractors-utilities-collections-module"></span><h2>graphnet.data.extractors.utilities.collections module<a class="headerlink" href="#module-graphnet.data.extractors.utilities.collections" title="Permalink to this heading"></a></h2>
+<p>Utility methods to manipulate python-type collections of data.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.flatten_nested_dictionary">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'__'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#flatten_nested_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.serialise">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">serialise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#serialise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.serialise" title="Permalink to this definition"></a></dt>
+<dd><p>Serialise the necessary keys in <cite>obj</cite> to JSON for saving to file.</p>
+<p>It is typically not possible to save nested collections (lists, dicts) to
+file. Therefore, if <cite>obj</cite> is, e.g., a list of lists, we need to serialise
+each element in the outer list to JSON (i.e., convert it to a JSON-
+formatted string) in order to be able to save <cite>obj</cite> to file. It will then
+be possible to de-serialise corresponding elements when reading them from
+file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.transpose_list_of_dicts">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">transpose_list_of_dicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#transpose_list_of_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.utilities.frames">
+<span id="graphnet-data-extractors-utilities-frames-module"></span><h2>graphnet.data.extractors.utilities.frames module<a class="headerlink" href="#module-graphnet.data.extractors.utilities.frames" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.frame_is_montecarlo">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.frame_is_montecarlo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.frame_is_noise">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#frame_is_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.frame_is_noise" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">get_om_keys_and_pulseseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulseseries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dataclasses.I3Calibration</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#get_om_keys_and_pulseseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the indicies for the gcd_dict and the pulse series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>i3 physics frame</em>) – i3 physics frame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the indicies for the gcd_dict
+data    (??)   : the pulse series</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>om_keys (index)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.utilities.types">
+<span id="graphnet-data-extractors-utilities-types-module"></span><h2>graphnet.data.extractors.utilities.types module<a class="headerlink" href="#module-graphnet.data.extractors.utilities.types" title="Permalink to this heading"></a></h2>
+<p>Utility methods for checking the types of objects.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.break_cyclic_recursion">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">break_cyclic_recursion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#break_cyclic_recursion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.break_cyclic_recursion" title="Permalink to this definition"></a></dt>
+<dd><p>Ensure that method isn’t called recursively on the same object.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.cast_object_to_pure_python">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">cast_object_to_pure_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#cast_object_to_pure_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.cast_object_to_pure_python" title="Permalink to this definition"></a></dt>
+<dd><p>Casts <cite>obj</cite>, and any members/elements, to pure-python classes.</p>
+<p>The function takes any object <cite>obj</cite> and tries to cast it to a pure python
+class. This is mainly relevant for IceCube-specific classes (I3*) that
+cannot be cast trivially.</p>
+<p>For IceCube-specific classes, we check whether the object has any member,
+variables and if does, we recursively try to cast these to pure python.
+Similarly, if an IceCube-specific class has a signature similar to a python
+list or dict (e.g, it has a length and supports indexation), we cast it to
+the corresponding pure python equivalent, and recursively try to cast its
+elements.</p>
+<p>For regular-python, non-Icecube-specific, classes, we cast to list-like
+objects to list and dict-like objects to list, and otherwise return the
+object itself if it deemed “pythonic” in this way.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">cast_pulse_series_to_pure_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#cast_pulse_series_to_pure_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python" title="Permalink to this definition"></a></dt>
+<dd><p>Cast pulse series <cite>key</cite> to a pure-python data representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> (<em>icetray.I3Frame</em>) – I3 physics frame.</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – Name of the pulse series to be cast.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Dictionary of lists of properties for each</dt><dd><p>pulse across optical modules (OMs), if any pulses are found.</p>
+</dd>
+</dl>
+<p>None, otherwise</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict[str, List[Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.get_member_variables">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">get_member_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_discarded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#get_member_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.get_member_variables" title="Permalink to this definition"></a></dt>
+<dd><p>Returns list of valid member variables.</p>
+<p>Ignoring mangled (__*) variables, types, methods, and Boost enums.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_boost_class">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_boost_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_boost_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_boost_class" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_boost_enum">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_boost_enum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_boost_enum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_boost_enum" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether <cite>obj</cite> inherits from Boost.Python.enum.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_icecube_class">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_icecube_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_icecube_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_icecube_class" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether <cite>obj</cite> is an IceCube-specific class.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_method">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_method" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether <cite>obj</cite> is a method.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_type">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_type" title="Permalink to this definition"></a></dt>
+<dd><p>Checks whether <cite>obj</cite> is a type, and not an instance.</p>
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.utilities">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.data.extractors.utilities" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

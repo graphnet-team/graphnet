@@ -97,7 +97,7 @@
         <span class="p">),</span> <span class="s2">&quot;Argument `string_selection` is currently not supported&quot;</span>
 
         <span class="c1"># Set custom member variable(s)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parquet_hook</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">from_parquet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parquet_hook</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">from_parquet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ak</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span>

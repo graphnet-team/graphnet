@@ -1,6 +1,14 @@
 graphnet.data.extractors package
 ================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   graphnet.data.extractors.utilities
+
 Submodules
 ----------
 
@@ -20,6 +28,14 @@ graphnet.data.extractors.i3featureextractor module
    :undoc-members:
    :show-inheritance:
 
+graphnet.data.extractors.i3genericextractor module
+--------------------------------------------------
+
+.. automodule:: graphnet.data.extractors.i3genericextractor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.data.extractors.i3retroextractor module
 ------------------------------------------------
 
@@ -32,14 +48,6 @@ graphnet.data.extractors.i3truthextractor module
 ------------------------------------------------
 
 .. automodule:: graphnet.data.extractors.i3truthextractor
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-graphnet.data.extractors.utilities module
------------------------------------------
-
-.. automodule:: graphnet.data.extractors.utilities
    :members:
    :undoc-members:
    :show-inheritance:

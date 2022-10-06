@@ -133,15 +133,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span> <span class="o">=</span> <span class="mi">20</span>
 
 <div class="viewcode-block" id="RepeatFilter.filter"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.logging.RepeatFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">]</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span>
         <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span><span class="p">:</span>
             <span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Will not print the below message again (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span><span class="si">}</span><span class="s2"> repeats reached).&quot;</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">ret</span></div></div>
+        <span class="k">return</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span></div></div>
 
 
 <div class="viewcode-block" id="get_logger"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.logging.get_logger">[docs]</a><span class="k">def</span> <span class="nf">get_logger</span><span class="p">(</span>

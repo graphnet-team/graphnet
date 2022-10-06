@@ -46,6 +46,7 @@
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._attach_index()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._create_table"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._create_table()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_everything"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._extract_everything()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_table_names"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._extract_table_names()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._merge_temporary_databases()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._submit_to_database"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._submit_to_database()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter.any_pulsemap_is_non_empty()</span></code></a></li>
@@ -165,6 +166,12 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_table_names">
+<span class="sig-name descname"><span class="pre">_extract_table_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter._extract_table_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_table_names" title="Permalink to this definition"></a></dt>
+<dd><p>Get the names of all tables in database <cite>db</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases">
 <span class="sig-name descname"><span class="pre">_merge_temporary_databases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter._merge_temporary_databases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases" title="Permalink to this definition"></a></dt>
 <dd><p>Merges the temporary databases.</p>
@@ -187,10 +194,13 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty">
 <span class="sig-name descname"><span class="pre">any_pulsemap_is_non_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OrderedDict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter.any_pulsemap_is_non_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty" title="Permalink to this definition"></a></dt>
-<dd><p>Check whether there are any non-empty pulsemaps extracted from P frame.
-Takes in the data extracted from the P frame, then retrieves the values, if
-there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least
-one of the pulsemaps is non-empty then return true.</p>
+<dd><p>Check whether there are non-empty pulsemaps extracted from P frame.</p>
+<p>Takes in the data extracted from the P frame, then retrieves the
+values, if there are any, from the pulsemap key(s)
+(e.g SplitInIcePulses). If at least one of the pulsemaps is non-empty
+then return true. If no pulsemaps exist, i.e., if no
+<cite>I3FeatureExtractor</cite> is called e.g. because <cite>I3GenericExtractor</cite> is
+used instead, always return True.</p>
 </dd></dl>
 
 <dl class="py attribute">

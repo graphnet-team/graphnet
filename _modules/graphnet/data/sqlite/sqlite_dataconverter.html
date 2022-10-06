@@ -63,14 +63,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.sqlite.sqlite_dataconverter</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="kn">import</span> <span class="n">DataConverter</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_utilities</span> <span class="kn">import</span> <span class="n">run_sql_code</span><span class="p">,</span> <span class="n">save_to_sql</span>
@@ -91,9 +92,7 @@
             <span class="p">)</span>
 
         <span class="c1"># Concatenate data</span>
-        <span class="n">dataframe</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
-            <span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">())</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">]</span>
-        <span class="p">)</span>
+        <span class="n">dataframe</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">data_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">df</span> <span class="o">=</span> <span class="n">construct_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -101,16 +100,19 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">any_pulsemap_is_non_empty</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="c1"># only include data_dict in temp. databases if at least one pulsemap is non-empty,</span>
                     <span class="c1"># and the current extractor (df) is also non-empty (also since truth is always non-empty)</span>
-                    <span class="n">dataframe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">df</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span>
-                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="p">:</span>
+                        <span class="n">dataframe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">df</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">dataframe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
 
         <span class="c1"># Save each dataframe to SQLite database</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">saved_any</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">save_to_sql</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+                <span class="n">save_to_sql</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
                 <span class="n">saved_any</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">saved_any</span><span class="p">:</span>
@@ -125,6 +127,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging files output by current instance.&quot;</span><span class="p">)</span>
             <span class="n">input_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span>
 
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">):</span>
+            <span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">])</span>
+
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Target path for merged database, </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">, already exists.&quot;</span>
@@ -134,7 +139,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Merging </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> database files&quot;</span><span class="p">)</span>
 
             <span class="c1"># Create one empty database table for each extraction</span>
-            <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
+            <span class="n">table_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_table_names</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">table_names</span><span class="p">:</span>
                 <span class="n">column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_column_names</span><span class="p">(</span>
                     <span class="n">input_files</span><span class="p">,</span> <span class="n">table_name</span>
                 <span class="p">)</span>
@@ -153,6 +159,28 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No temporary database files found!&quot;</span><span class="p">)</span></div>
 
     <span class="c1"># Internal methods</span>
+<div class="viewcode-block" id="SQLiteDataConverter._extract_table_names"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_table_names">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_table_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the names of all tables in database `db`.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_extract_table_names</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">db</span><span class="p">]</span>
+            <span class="c1"># @TODO: Check...</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">table_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">(</span>
+                        <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                            <span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39;;&quot;</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table_names</span></div>
+
     <span class="k">def</span> <span class="nf">_extract_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_paths</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">db_path</span> <span class="ow">in</span> <span class="n">db_paths</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
@@ -163,11 +191,18 @@
         <span class="k">return</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="SQLiteDataConverter.any_pulsemap_is_non_empty"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty">[docs]</a>    <span class="k">def</span> <span class="nf">any_pulsemap_is_non_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Check whether there are any non-empty pulsemaps extracted from P frame.</span>
-<span class="sd">        Takes in the data extracted from the P frame, then retrieves the values, if</span>
-<span class="sd">        there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least</span>
-<span class="sd">        one of the pulsemaps is non-empty then return true.</span>
+        <span class="sd">&quot;&quot;&quot;Check whether there are non-empty pulsemaps extracted from P frame.</span>
+
+<span class="sd">        Takes in the data extracted from the P frame, then retrieves the</span>
+<span class="sd">        values, if there are any, from the pulsemap key(s)</span>
+<span class="sd">        (e.g SplitInIcePulses). If at least one of the pulsemaps is non-empty</span>
+<span class="sd">        then return true. If no pulsemaps exist, i.e., if no</span>
+<span class="sd">        `I3FeatureExtractor` is called e.g. because `I3GenericExtractor` is</span>
+<span class="sd">        used instead, always return True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
         <span class="n">pulsemap_dicts</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;dom_x&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pulsemap_dicts</span><span class="p">)</span></div>
 
@@ -236,8 +271,9 @@
 <span class="sd">            results (dict): Contains the data for each extracted table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">table_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_table_names</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">table_names</span><span class="p">:</span>
                 <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;select * from </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
@@ -273,7 +309,12 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Extraction as pandas.DataFrame.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">all_scalars</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">,</span> <span class="n">extraction</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">all_scalars</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">extraction</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
+            <span class="n">all_scalars</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">break</span>
+
     <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">extraction</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">all_scalars</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span></div>
 

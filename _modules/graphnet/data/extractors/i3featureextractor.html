@@ -64,6 +64,9 @@
              
   <h1>Source code for graphnet.data.extractors.i3featureextractor</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities.frames</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_om_keys_and_pulseseries</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
 
 <span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
@@ -73,46 +76,7 @@
 <div class="viewcode-block" id="I3FeatureExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span> <span class="o">=</span> <span class="n">pulsemap</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pulsemap</span><span class="p">)</span>
-
-<div class="viewcode-block" id="I3FeatureExtractor._get_om_keys_and_pulseseries"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor._get_om_keys_and_pulseseries">[docs]</a>    <span class="k">def</span> <span class="nf">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Gets the indicies for the gcd_dict and the pulse series</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            frame (i3 physics frame): i3 physics frame</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            om_keys (index): the indicies for the gcd_dict</span>
-<span class="sd">            data    (??)   : the pulse series</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Pulsemap </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="si">}</span><span class="s2"> does not exist in `frame`&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-                    <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-                    <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-                    <span class="k">del</span> <span class="n">frame</span><span class="p">[</span>
-                        <span class="s2">&quot;I3Calibration&quot;</span>
-                    <span class="p">]</span>  <span class="c1"># Avoid adding unneccesary data to frame</span>
-            <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span>
-                    <span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span>
-                <span class="p">)</span>
-                <span class="n">om_keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span></div></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pulsemap</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCube86"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCube86</span><span class="p">(</span><span class="n">I3FeatureExtractor</span><span class="p">):</span>
@@ -131,7 +95,11 @@
         <span class="p">}</span>
 
         <span class="c1"># Get OM data</span>
-        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
+            <span class="n">frame</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
             <span class="c1"># Common values for each OM</span>
@@ -191,7 +159,11 @@
         <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_icecube86</span><span class="p">)</span>
 
         <span class="c1"># Get OM data</span>
-        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
+            <span class="n">frame</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
             <span class="c1"># Common values for each OM</span>
@@ -237,7 +209,11 @@
         <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_icecube86</span><span class="p">)</span>
 
         <span class="c1"># Get OM data</span>
-        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_om_keys_and_pulseseries</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
+            <span class="n">frame</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
             <span class="c1"># Common values for each OM</span>
