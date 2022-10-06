@@ -29,7 +29,7 @@ GLOBAL_POOLINGS = {
 class DynEdge(GNN):
     def __init__(
         self,
-        nb_inputs,
+        nb_inputs: int,
         *,
         nb_neighbours: Optional[int] = 8,
         features_subset: Optional[List[int]] = None,
@@ -39,13 +39,41 @@ class DynEdge(GNN):
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
         add_global_variables_after_pooling: bool = False,
     ):
-        """DynEdge model.
+        """DynEdge (dynamical edge convolutional) model.
 
         Args:
-            nb_inputs (int): Number of input features.
-            nb_outputs (int): Number of output features.
-            layer_size_scale (int, optional): Integer that scales the size of
-                hidden layers. Defaults to 4.
+            nb_inputs (int): Number of input features on each node
+            nb_neighbours (Optional[int], optional): Number of neighbours to
+                used in the k-nearest neighbour clustering which is performed
+                after each (dynamical) edge convolution. Defaults to 8.
+            features_subset (Optional[List[int]], optional): The subset of
+                latent features on each node that are used as metric dimensions
+                when performing the k-nearest neighbours clustering. Defaults
+                to slice(0,3).
+            dynedge_layer_sizes (Optional[List[Tuple[int]]], optional): The
+                layer sizes, or latent feature dimenions, used in the
+                `DynEdgeConv` layer. Each entry in `dynedge_layer_sizes`
+                corresponds to a single `DynEdgeConv` layer; the integers in
+                the corresponding tuple corresponds to the layer sizes in the
+                multi-layer perceptron (MLP) that is applied within each
+                `DynEdgeConv` layer. That is, a list of size-two tuples means
+                that all `DynEdgeConv` layers contain a two-layer MLP.
+                Defaults to [(128, 256), (336, 256), (336, 256), (336, 256)].
+            post_processing_layer_sizes (Optional[List[int]], optional): Hidden
+                layer sizes in the MLP following the skip-concatenation of the
+                outputs of each `DynEdgeConv` layer. Defaults to [336, 256].
+            readout_layer_sizes (Optional[List[int]], optional): Hidden layer
+                sizes in the MLP following the post-processing _and_ optional
+                global pooling. As this is the last layer(s) in the model, the
+                last layer in the read-out yields the output of the `DynEdge`
+                model. Defaults to [128,].
+            global_pooling_schemes (Optional[Union[str, List[str]]], optional):
+                The list global pooling schemes to use. Options are: "min",
+                "max", "mean", and "sum". Defaults to None.
+            add_global_variables_after_pooling (bool, optional): Whether to add
+                global variables after global pooling. The alternative is to
+                added (distribute) them to the individual nodes before any
+                convolutional operations. Defaults to False.
         """
         # Latent feature subset for computing nearest neighbours in DynEdge.
         if features_subset is None:
