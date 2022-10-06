@@ -5,7 +5,7 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.components.loss_functions import VonMisesFisher2DLoss
+from graphnet.training.loss_functions import VonMisesFisher2DLoss
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
@@ -18,8 +18,8 @@ from graphnet.models.task.reconstruction import (
     ZenithReconstructionWithKappa,
     AzimuthReconstructionWithKappa,
 )
-from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
-from graphnet.models.training.utils import (
+from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
+from graphnet.training.utils import (
     get_predictions,
     make_train_validation_dataloader,
     save_results,

@@ -9,7 +9,7 @@ import sqlite3
 import torch
 
 from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
-from graphnet.models.training.utils import get_predictions, make_dataloader
+from graphnet.training.utils import get_predictions, make_dataloader
 from pytorch_lightning import Trainer
 
 from graphnet.utilities.logging import get_logger

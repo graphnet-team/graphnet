@@ -4,12 +4,10 @@ from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
+from pytorch_lightning import Trainer
 from sklearn.model_selection import train_test_split
-import torch
 from torch.utils.data import DataLoader
 from torch_geometric.data.batch import Batch
-
-from tqdm import tqdm
 
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.models import Model
@@ -35,6 +33,7 @@ def make_dataloader(
     loss_weight_table: str = None,
     loss_weight_column: str = None,
 ) -> DataLoader:
+    """Construct `DataLoader` instance."""
 
     # Check(s)
     if isinstance(pulsemaps, str):
@@ -90,6 +89,7 @@ def make_train_validation_dataloader(
     loss_weight_column: str = None,
     loss_weight_table: str = None,
 ) -> Tuple[DataLoader]:
+    """Construct train and test `DataLoader` instances."""
 
     # Reproducibility
     rng = np.random.RandomState(seed=seed)
@@ -147,19 +147,22 @@ def make_train_validation_dataloader(
     return (
         training_dataloader,
         validation_dataloader,
-    )  # , {'valid_selection':validation_selection, 'training_selection':training_selection}
+    )
 
 
 def get_predictions(
-    trainer,
-    model,
-    dataloader,
-    prediction_columns,
+    trainer: Trainer,
+    model: Model,
+    dataloader: DataLoader,
+    prediction_columns: List[str],
     *,
-    node_level=False,
-    additional_attributes=None,
-):
-    # Gets predictions from model on the events in the dataloader. NOTE: dataloader must NOT have shuffle = True!
+    node_level: bool = False,
+    additional_attributes: Optional[List[str]] = None,
+) -> pd.DataFrame:
+    """Get `model` predictions on `dataloader`."""
+    # Gets predictions from model on the events in the dataloader.
+    # NOTE: dataloader must NOT have shuffle = True!
+
     # Check(s)
     if additional_attributes is None:
         additional_attributes = []
@@ -206,7 +209,10 @@ def get_predictions(
     return results
 
 
-def save_results(db, tag, results, archive, model):
+def save_results(
+    db: str, tag: str, results: pd.DataFrame, archive: str, model: Model
+):
+    """Save trained model and prediction `results` in `db`."""
     db_name = db.split("/")[-1].split(".")[0]
     path = archive + "/" + db_name + "/" + tag
     os.makedirs(path, exist_ok=True)
