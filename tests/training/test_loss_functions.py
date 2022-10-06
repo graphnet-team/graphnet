@@ -6,9 +6,8 @@ import torch
 from torch import Tensor
 from torch.autograd import grad
 
-from graphnet.components.loss_functions import LogCoshLoss, VonMisesFisherLoss
+from graphnet.training.loss_functions import LogCoshLoss, VonMisesFisherLoss
 from graphnet.utilities.maths import eps_like
-from torch_geometric.data import Data
 
 
 # Utility method(s)

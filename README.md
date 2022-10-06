@@ -82,6 +82,57 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 </blockquote>
 </details>
 
+
+## :ringed_planet:  Use cases
+
+Below is an incomplete list of potential use cases for GNNs in neutrino telescopes.
+These are categorised as either "Reconstruction challenges" that are considered common and that may benefit several experiments physics analyses; and those same "Experiments" and "Physics analyses".
+
+<details>
+<summary><b>Reconstruction challenges</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| Low-energy neutrino classification and reconstruction | Done | Rasmus Ørsøe | https://arxiv.org/abs/2209.03042 |
+| High-energy neutrino classification and reconstruction | Active | Rasmus Ørsøe | |
+| Pulse noise cleaning | Paused | Kaare Iversen (past) | |
+| (In-)elasticity reconstruction | Paused | Marc Jacquart (past) | |
+| Multi-class event classification |  | | |
+| Data/MC difference mitigation |  | | |
+| Systematic uncertainty mitigation |  | | |
+
+</details>
+
+<details>
+<summary><b>Experiments</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| IceCube | Active | (...) | |
+| IceCube-Upgrade | Active | (...) | |
+| IceCube-Gen2 | Active | (...) | |
+| P-ONE | | (...) | |
+| KM3NeT-ARCA | | (...) | |
+| KM3NeT-ORCA | | (...) | |
+
+</details>
+
+<details>
+<summary><b>Physics analyses</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| Neutrino oscillations | | | |
+| Point source searches | | | |
+| Low-energy cosmic alerts | | | |
+| High-energy cosmic alerts | | | |
+| Moon pointing | | | |
+| Muon decay asymmetry | | | |
+| Spectra measurements | | | |
+
+</details>
+
+
 ## :handshake:  Contributing
 
 To make sure that the process of contributing is as smooth and effective as possible, we provide a few guidelines in the [contributing guide](CONTRIBUTING.md) that we encourage contributors to follow.
@@ -117,4 +168,4 @@ GraphNeT has an Apache 2.0 license, as found in the [LICENSE](LICENSE) file.
 This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
 
 
-[^1]: Examples of this are shown in the [examples/convert_i3_to_sqlite.py](examples/convert_i3_to_sqlite.py) and [examples/convert_i3_to_parquet.py](examples/convert_i3_to_parquet.py) scripts
+[^1]: Examples of this are shown in the [examples/convert_i3_files.py](examples/convert_i3_files.py) script
