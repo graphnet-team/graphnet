@@ -1,10 +1,12 @@
 from abc import abstractmethod
-from pytorch_lightning.core.lightning import LightningModule
+
 from torch import Tensor
 from torch_geometric.data import Data
 
+from graphnet.models import Model
 
-class GNN(LightningModule):
+
+class GNN(Model):
     """Base class for all core GNN models in graphnet."""
 
     def __init__(self, nb_inputs, nb_outputs):
