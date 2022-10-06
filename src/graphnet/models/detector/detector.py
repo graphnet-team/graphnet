@@ -9,16 +9,15 @@ except ImportError:  # Python version < 3.8
         return f
 
 
-from pytorch_lightning import LightningModule
 import torch
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 
 from graphnet.models.graph_builders import GraphBuilder
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.models import Model
 
 
-class Detector(LoggerMixin, LightningModule):
+class Detector(Model):
     """Base class for all detector-specific read-ins in graphnet."""
 
     @property
