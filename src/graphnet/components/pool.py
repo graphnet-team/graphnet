@@ -107,22 +107,6 @@ def group_pulses_to_pmt(data: Data) -> Data:
     return data
 
 
-def time_window_clustering(data: Union[Data, Batch], cluster_method, time_window: float):
-    dom_index = group_by(
-        data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
-    )
-    if data.batch is not None:
-        features = data.features[0]
-
-        ix_time = features.index("dom_time")
-    hit_times = data.x[:, ix_time]
-    # scale up dom_index to make sure clusters are well separated
-    times_and_domids = torch.stack([hit_times, dom_index*time_window*10]).T
-    clusters = torch.tensor(cluster_method.fit_predict(times_and_domids.cpu()), device=hit_times.device)
-    # clusters.to(hit_times.device)
-    return clusters
-
-
 # Below mirroring `torch_geometric.nn.pool.{avg,max}_pool.py` exactly
 def _sum_pool_x(cluster, x, size: Optional[int] = None):
     return scatter(x, cluster, dim=0, dim_size=size, reduce="sum")
