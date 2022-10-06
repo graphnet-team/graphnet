@@ -21,7 +21,6 @@ from graphnet.components.pool import (
     min_pool_x,
     sum_pool_x,
     std_pool_x,
-    time_window_clustering,
 )
 from graphnet.utilities.logging import LoggerMixin
 
