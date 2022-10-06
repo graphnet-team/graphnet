@@ -18,8 +18,8 @@ from graphnet.models.task.reconstruction import (
     ZenithReconstructionWithKappa,
     AzimuthReconstructionWithKappa,
 )
-from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
-from graphnet.models.training.utils import (
+from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
+from graphnet.training.utils import (
     get_predictions,
     make_train_validation_dataloader,
     save_results,
