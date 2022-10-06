@@ -3,7 +3,7 @@ import matplotlib.path as mpath
 from typing import Tuple
 
 from graphnet.data.extractors.i3extractor import I3Extractor
-from graphnet.data.extractors.utilities import (
+from graphnet.data.extractors.utilities.frames import (
     frame_is_montecarlo,
     frame_is_noise,
 )

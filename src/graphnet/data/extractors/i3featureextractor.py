@@ -1,4 +1,7 @@
 from graphnet.data.extractors.i3extractor import I3Extractor
+from graphnet.data.extractors.utilities.frames import (
+    get_om_keys_and_pulseseries,
+)
 from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package():
@@ -9,45 +12,6 @@ class I3FeatureExtractor(I3Extractor):
     def __init__(self, pulsemap):
         self._pulsemap = pulsemap
         super().__init__(pulsemap)
-
-    def _get_om_keys_and_pulseseries(self, frame):
-        """Gets the indicies for the gcd_dict and the pulse series
-
-        Args:
-            frame (i3 physics frame): i3 physics frame
-
-        Returns:
-            om_keys (index): the indicies for the gcd_dict
-            data    (??)   : the pulse series
-        """
-        try:
-            data = frame[self._pulsemap]
-        except KeyError:
-            self.logger.error(
-                f"Pulsemap {self._pulsemap} does not exist in `frame`"
-            )
-            raise
-
-        try:
-            om_keys = data.keys()
-        except:  # noqa: E722
-            try:
-                if "I3Calibration" in frame.keys():
-                    data = frame[self._pulsemap].apply(frame)
-                    om_keys = data.keys()
-                else:
-                    frame["I3Calibration"] = self._calibration
-                    data = frame[self._pulsemap].apply(frame)
-                    om_keys = data.keys()
-                    del frame[
-                        "I3Calibration"
-                    ]  # Avoid adding unneccesary data to frame
-            except:  # noqa: E722
-                data = dataclasses.I3RecoPulseSeriesMap.from_frame(
-                    frame, self._pulsemap
-                )
-                om_keys = data.keys()
-        return om_keys, data
 
 
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
@@ -66,7 +30,11 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         }
 
         # Get OM data
-        om_keys, data = self._get_om_keys_and_pulseseries(frame)
+        om_keys, data = get_om_keys_and_pulseseries(
+            frame,
+            self._pulsemap,
+            self._calibration,
+        )
 
         for om_key in om_keys:
             # Common values for each OM
@@ -126,7 +94,11 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         output.update(output_icecube86)
 
         # Get OM data
-        om_keys, data = self._get_om_keys_and_pulseseries(frame)
+        om_keys, data = get_om_keys_and_pulseseries(
+            frame,
+            self._pulsemap,
+            self._calibration,
+        )
 
         for om_key in om_keys:
             # Common values for each OM
@@ -172,7 +144,11 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
         output.update(output_icecube86)
 
         # Get OM data
-        om_keys, data = self._get_om_keys_and_pulseseries(frame)
+        om_keys, data = get_om_keys_and_pulseseries(
+            frame,
+            self._pulsemap,
+            self._calibration,
+        )
 
         for om_key in om_keys:
             # Common values for each OM
