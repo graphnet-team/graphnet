@@ -9,7 +9,7 @@ from torch import Tensor
 from torch_geometric.data import Data
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
 
-from graphnet.components.layers import DynEdgeConv
+from graphnet.models.components.layers import DynEdgeConv
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.utils import calculate_xyzt_homophily
 
