@@ -75,7 +75,7 @@ The `GraphNeT` framework provides the end-to-end tools to train and deploy GNN r
 
 # Impact on physics
 
-`GraphNeT` provides a common framework for ML developers and physicists that wish to use the state-of-the-art GNN tools in their research. By uniting both user groups, `GraphNeT` aims to increase the longevity and useability of individual code contributions from ML developers by building a general, reusable software package based on software engineering best practices, and lowers the technical threshold for physicists that wish to use the most performant tools for their scientific problems.
+`GraphNeT` provides a common framework for ML developers and physicists that wish to use the state-of-the-art GNN tools in their research. By uniting both user groups, `GraphNeT` aims to increase the longevity and usability of individual code contributions from ML developers by building a general, reusable software package based on software engineering best practices, and lowers the technical threshold for physicists that wish to use the most performant tools for their scientific problems.
 
 The `GraphNeT` models can improve event classification and yield very accurate reconstruction, e.g., for low energy neutrinos observed in IceCube. Here, a GNN implemented in `GraphNeT` was applied to the problem of neutrino oscillations in IceCube, leading to significant improvements in both energy and angular reconstruction in the energy range relevant to oscillation studies [@gnn_icecube]. Furthermore, it was shown that the GNN could improve  muon vs. neutrino classification and thereby the efficiency and purity of a neutrino sample for such an analysis.
 
