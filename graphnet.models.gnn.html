@@ -53,20 +53,20 @@
 <li><a class="reference internal" href="#module-graphnet.models.gnn.dynedge">graphnet.models.gnn.dynedge module</a><ul>
 <li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge"><code class="docutils literal notranslate"><span class="pre">DynEdge</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge.__init__"><code class="docutils literal notranslate"><span class="pre">DynEdge.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge._calculate_global_variables"><code class="docutils literal notranslate"><span class="pre">DynEdge._calculate_global_variables()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge._construct_layers"><code class="docutils literal notranslate"><span class="pre">DynEdge._construct_layers()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge._global_pooling"><code class="docutils literal notranslate"><span class="pre">DynEdge._global_pooling()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge.forward"><code class="docutils literal notranslate"><span class="pre">DynEdge.forward()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge.training"><code class="docutils literal notranslate"><span class="pre">DynEdge.training</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge_V2"><code class="docutils literal notranslate"><span class="pre">DynEdge_V2</span></code></a><ul>
-<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge_V2.__init__"><code class="docutils literal notranslate"><span class="pre">DynEdge_V2.__init__()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge_V2.forward"><code class="docutils literal notranslate"><span class="pre">DynEdge_V2.forward()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge_V2.training"><code class="docutils literal notranslate"><span class="pre">DynEdge_V2.training</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge_V3"><code class="docutils literal notranslate"><span class="pre">DynEdge_V3</span></code></a><ul>
-<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge_V3.__init__"><code class="docutils literal notranslate"><span class="pre">DynEdge_V3.__init__()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge_V3.forward"><code class="docutils literal notranslate"><span class="pre">DynEdge_V3.forward()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.gnn.dynedge.DynEdge_V3.training"><code class="docutils literal notranslate"><span class="pre">DynEdge_V3.training</span></code></a></li>
+<li><a class="reference internal" href="#module-graphnet.models.gnn.dynedge_jinst">graphnet.models.gnn.dynedge_jinst module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.__init__"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.forward"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.training"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.training</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -171,28 +171,69 @@ output layer.</p></li>
 <section id="module-graphnet.models.gnn.dynedge">
 <span id="graphnet-models-gnn-dynedge-module"></span><h2>graphnet.models.gnn.dynedge module<a class="headerlink" href="#module-graphnet.models.gnn.dynedge" title="Permalink to this heading"></a></h2>
 <p>Implementation of the DynEdge GNN model architecture.</p>
-<p>[Description of what this architecture does.]</p>
-<p>Author: Rasmus Oersoe
-Email: ###&#64;###.###</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.dynedge.</span></span><span class="sig-name descname"><span class="pre">DynEdge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_pooling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.Coarsening" title="graphnet.models.coarsening.Coarsening"><span class="pre">Coarsening</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.dynedge.</span></span><span class="sig-name descname"><span class="pre">DynEdge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_neighbours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features_subset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynedge_layer_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_processing_layer_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readout_layer_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_pooling_schemes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_global_variables_after_pooling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">GNN</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_pooling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.Coarsening" title="graphnet.models.coarsening.Coarsening"><span class="pre">Coarsening</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>DynEdge model.</p>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_neighbours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features_subset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynedge_layer_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_processing_layer_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readout_layer_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_pooling_schemes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_global_variables_after_pooling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>DynEdge (dynamical edge convolutional) model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nb_inputs</strong> (<em>int</em>) – Number of input features.</p></li>
-<li><p><strong>nb_outputs</strong> (<em>int</em>) – Number of output features.</p></li>
-<li><p><strong>layer_size_scale</strong> (<em>int</em><em>, </em><em>optional</em>) – Integer that scales the size of
-hidden layers. Defaults to 4.</p></li>
-<li><p><strong>node_pooling</strong> – A Coarsening module that pools the nodes before they are processed by the model. Defaults to None (no pooling).</p></li>
+<li><p><strong>nb_inputs</strong> (<em>int</em>) – Number of input features on each node</p></li>
+<li><p><strong>nb_neighbours</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Number of neighbours to
+used in the k-nearest neighbour clustering which is performed
+after each (dynamical) edge convolution. Defaults to 8.</p></li>
+<li><p><strong>features_subset</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – The subset of
+latent features on each node that are used as metric dimensions
+when performing the k-nearest neighbours clustering. Defaults
+to slice(0,3).</p></li>
+<li><p><strong>dynedge_layer_sizes</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – The
+layer sizes, or latent feature dimenions, used in the
+<cite>DynEdgeConv</cite> layer. Each entry in <cite>dynedge_layer_sizes</cite>
+corresponds to a single <cite>DynEdgeConv</cite> layer; the integers in
+the corresponding tuple corresponds to the layer sizes in the
+multi-layer perceptron (MLP) that is applied within each
+<cite>DynEdgeConv</cite> layer. That is, a list of size-two tuples means
+that all <cite>DynEdgeConv</cite> layers contain a two-layer MLP.
+Defaults to [(128, 256), (336, 256), (336, 256), (336, 256)].</p></li>
+<li><p><strong>post_processing_layer_sizes</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Hidden
+layer sizes in the MLP following the skip-concatenation of the
+outputs of each <cite>DynEdgeConv</cite> layer. Defaults to [336, 256].</p></li>
+<li><p><strong>readout_layer_sizes</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Hidden layer
+sizes in the MLP following the post-processing _and_ optional
+global pooling. As this is the last layer(s) in the model, the
+last layer in the read-out yields the output of the <cite>DynEdge</cite>
+model. Defaults to [128,].</p></li>
+<li><p><strong>global_pooling_schemes</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – The list global pooling schemes to use. Options are: “min”,
+“max”, “mean”, and “sum”. Defaults to None.</p></li>
+<li><p><strong>add_global_variables_after_pooling</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to add
+global variables after global pooling. The alternative is to
+added (distribute) them to the individual nodes before any
+convolutional operations. Defaults to False.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge._calculate_global_variables">
+<span class="sig-name descname"><span class="pre">_calculate_global_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LongTensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LongTensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">additional_attributes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge._calculate_global_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge._calculate_global_variables" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate global variables</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge._construct_layers">
+<span class="sig-name descname"><span class="pre">_construct_layers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge._construct_layers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge._construct_layers" title="Permalink to this definition"></a></dt>
+<dd><p>Construct layers (torch.nn.Modules).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge._global_pooling">
+<span class="sig-name descname"><span class="pre">_global_pooling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LongTensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge._global_pooling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge._global_pooling" title="Permalink to this definition"></a></dt>
+<dd><p>Perform global pooling.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -219,57 +260,18 @@ hidden layers. Defaults to 4.</p></li>
 
 </dd></dl>
 
+</section>
+<section id="module-graphnet.models.gnn.dynedge_jinst">
+<span id="graphnet-models-gnn-dynedge-jinst-module"></span><h2>graphnet.models.gnn.dynedge_jinst module<a class="headerlink" href="#module-graphnet.models.gnn.dynedge_jinst" title="Permalink to this heading"></a></h2>
+<p>Implementation of the exact DynEdge architecture used in [2209.03042].</p>
+<p>Author: Rasmus Oersoe</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V2">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.dynedge.</span></span><span class="sig-name descname"><span class="pre">DynEdge_V2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V2" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge_jinst.DynEdgeJINST">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.dynedge_jinst.</span></span><span class="sig-name descname"><span class="pre">DynEdgeJINST</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge_jinst.html#DynEdgeJINST"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">GNN</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V2.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V2.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V2.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>DynEdge model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nb_inputs</strong> (<em>int</em>) – Number of input features.</p></li>
-<li><p><strong>nb_outputs</strong> (<em>int</em>) – Number of output features.</p></li>
-<li><p><strong>layer_size_scale</strong> (<em>int</em><em>, </em><em>optional</em>) – Integer that scales the size of
-hidden layers. Defaults to 4.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V2.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V2.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V2.forward" title="Permalink to this definition"></a></dt>
-<dd><p>Model forward pass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>Data</em>) – Graph of input features.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Model output.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V2.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V2.training" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V3">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.dynedge.</span></span><span class="sig-name descname"><span class="pre">DynEdge_V3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V3" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">GNN</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V3.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V3.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V3.__init__" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_size_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge_jinst.html#DynEdgeJINST.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>DynEdge model.
 :param nb_inputs: Number of input features.
 :type nb_inputs: int
@@ -284,8 +286,8 @@ hidden layers. Defaults to 4.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V3.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge.html#DynEdge_V3.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V3.forward" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/gnn/dynedge_jinst.html#DynEdgeJINST.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Model forward pass.
 :param data: Graph of input features.
 :type data: Data</p>
@@ -300,8 +302,8 @@ hidden layers. Defaults to 4.</p></li>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge.DynEdge_V3.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.gnn.dynedge.DynEdge_V3.training" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.training" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

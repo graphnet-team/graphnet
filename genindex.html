@@ -134,9 +134,7 @@
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.__init__">(graphnet.models.gnn.dynedge.DynEdge method)</a>
 </li>
-        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2.__init__">(graphnet.models.gnn.dynedge.DynEdge_V2 method)</a>
-</li>
-        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V3.__init__">(graphnet.models.gnn.dynedge.DynEdge_V3 method)</a>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.__init__">(graphnet.models.gnn.dynedge_jinst.DynEdgeJINST method)</a>
 </li>
       </ul></li>
       <li><a href="graphnet.models.html#graphnet.models.coarsening.Coarsening._additional_features">_additional_features() (graphnet.models.coarsening.Coarsening method)</a>
@@ -147,6 +145,8 @@
       </ul></li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index">_attach_index() (graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
+      <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._calculate_global_variables">_calculate_global_variables() (graphnet.models.gnn.dynedge.DynEdge method)</a>
+</li>
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._cast_mc_tree">_cast_mc_tree() (graphnet.data.extractors.i3genericextractor.I3GenericExtractor method)</a>
 </li>
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._cast_triggers">_cast_triggers() (graphnet.data.extractors.i3genericextractor.I3GenericExtractor method)</a>
@@ -154,6 +154,8 @@
       <li><a href="graphnet.data.html#graphnet.data.dataset.Dataset._check_missing_columns">_check_missing_columns() (graphnet.data.dataset.Dataset method)</a>
 </li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._close_connection">_close_connection() (graphnet.data.sqlite.sqlite_dataset.SQLiteDataset method)</a>
+</li>
+      <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._construct_layers">_construct_layers() (graphnet.models.gnn.dynedge.DynEdge method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.dataset.Dataset._create_graph">_create_graph() (graphnet.data.dataset.Dataset method)</a>
 </li>
@@ -222,6 +224,8 @@
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity">_get_primary_particle_interaction_type_and_elasticity() (graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
 </li>
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_track_energy_and_inelasticity">_get_primary_track_energy_and_inelasticity() (graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
+</li>
+      <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._global_pooling">_global_pooling() (graphnet.models.gnn.dynedge.DynEdge method)</a>
 </li>
       <li><a href="graphnet.models.components.html#graphnet.models.components.pool._group_identical">_group_identical() (in module graphnet.models.components.pool)</a>
 </li>
@@ -373,19 +377,17 @@
         <li><a href="graphnet.data.html#graphnet.data.constants.TRUTH.DEEPCORE">(graphnet.data.constants.TRUTH attribute)</a>
 </li>
       </ul></li>
-      <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector">Detector (class in graphnet.models.detector.detector)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector">Detector (class in graphnet.models.detector.detector)</a>
+</li>
       <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMCoarsening">DOMCoarsening (class in graphnet.models.coarsening)</a>
 </li>
       <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge">DynEdge (class in graphnet.models.gnn.dynedge)</a>
 </li>
-      <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2">DynEdge_V2 (class in graphnet.models.gnn.dynedge)</a>
-</li>
-      <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V3">DynEdge_V3 (class in graphnet.models.gnn.dynedge)</a>
-</li>
       <li><a href="graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv">DynEdgeConv (class in graphnet.models.components.layers)</a>
+</li>
+      <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST">DynEdgeJINST (class in graphnet.models.gnn.dynedge_jinst)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -456,9 +458,7 @@
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.forward">(graphnet.models.gnn.dynedge.DynEdge method)</a>
 </li>
-        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2.forward">(graphnet.models.gnn.dynedge.DynEdge_V2 method)</a>
-</li>
-        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V3.forward">(graphnet.models.gnn.dynedge.DynEdge_V3 method)</a>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.forward">(graphnet.models.gnn.dynedge_jinst.DynEdgeJINST method)</a>
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.forward">(graphnet.models.gnn.gnn.GNN method)</a>
 </li>
@@ -695,8 +695,6 @@
         <li><a href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset_perturbed">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.sqlite.sqlite_selection
 
@@ -704,6 +702,8 @@
         <li><a href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_selection">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.sqlite.sqlite_utilities
 
@@ -814,6 +814,13 @@
 
       <ul>
         <li><a href="graphnet.models.gnn.html#module-graphnet.models.gnn.dynedge">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.gnn.dynedge_jinst
+
+      <ul>
+        <li><a href="graphnet.models.gnn.html#module-graphnet.models.gnn.dynedge_jinst">module</a>
 </li>
       </ul></li>
       <li>
@@ -1190,6 +1197,8 @@
 </li>
         <li><a href="graphnet.models.gnn.html#module-graphnet.models.gnn.dynedge">graphnet.models.gnn.dynedge</a>
 </li>
+        <li><a href="graphnet.models.gnn.html#module-graphnet.models.gnn.dynedge_jinst">graphnet.models.gnn.dynedge_jinst</a>
+</li>
         <li><a href="graphnet.models.gnn.html#module-graphnet.models.gnn.gnn">graphnet.models.gnn.gnn</a>
 </li>
         <li><a href="graphnet.models.html#module-graphnet.models.graph_builders">graphnet.models.graph_builders</a>
@@ -1476,9 +1485,7 @@
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.training">(graphnet.models.gnn.dynedge.DynEdge attribute)</a>
 </li>
-        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V2.training">(graphnet.models.gnn.dynedge.DynEdge_V2 attribute)</a>
-</li>
-        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge_V3.training">(graphnet.models.gnn.dynedge.DynEdge_V3 attribute)</a>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.training">(graphnet.models.gnn.dynedge_jinst.DynEdgeJINST attribute)</a>
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.training">(graphnet.models.gnn.gnn.GNN attribute)</a>
 </li>

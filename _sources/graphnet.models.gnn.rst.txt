@@ -20,6 +20,14 @@ graphnet.models.gnn.dynedge module
    :undoc-members:
    :show-inheritance:
 
+graphnet.models.gnn.dynedge\_jinst module
+-----------------------------------------
+
+.. automodule:: graphnet.models.gnn.dynedge_jinst
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.models.gnn.gnn module
 ------------------------------
 
