@@ -31,3 +31,28 @@ def save_to_sql(df: pd.DataFrame, table_name: str, database: str):
     engine = sqlalchemy.create_engine("sqlite:///" + database)
     df.to_sql(table_name, con=engine, index=False, if_exists="append")
     engine.dispose()
+    return
+
+
+def create_table(database, table_name, df):
+    """Creates a table.
+    Args:
+        pipeline_database (str): path to the pipeline database
+        df (str): pandas.DataFrame of combined predictions
+    """
+    query_columns = list()
+    for column in df.columns:
+        if column == "event_no":
+            type_ = "INTEGER PRIMARY KEY NOT NULL"
+        else:
+            type_ = "FLOAT"
+        query_columns.append(f"{column} {type_}")
+    query_columns = ", ".join(query_columns)
+
+    code = (
+        "PRAGMA foreign_keys=off;\n"
+        f"CREATE TABLE {table_name} ({query_columns});\n"
+        "PRAGMA foreign_keys=on;"
+    )
+    run_sql_code(database, code)
+    return
