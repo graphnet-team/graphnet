@@ -6,7 +6,7 @@ class I3GalacticPlaneHybridRecoExtractor(I3Extractor):
         super().__init__(name)
 
     def __call__(self, frame) -> dict:
-        """Extracts TUM DNN Recos and associated variables"""
+        """Extracts TUMs DNN Recos and associated variables"""
         output = {}
         if "DNNCascadeAnalysis_version_001_p00" in frame:
             reco_object = frame["DNNCascadeAnalysis_version_001_p00"]
