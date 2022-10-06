@@ -8,7 +8,12 @@ from typing import List, Optional, Union
 from tqdm.auto import trange
 import numpy as np
 import sqlalchemy
-from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
+from graphnet.data.sqlite.sqlite_utilities import (
+    run_sql_code,
+    save_to_sql,
+    attach_index,
+    create_table,
+)
 
 from graphnet.utilities.logging import LoggerMixin
 
@@ -62,7 +67,7 @@ class ParquetToSQLiteConverter(LoggerMixin):
         return files
 
     def run(self, outdir: str, database_name: str):
-        self._setup_directory(outdir, database_name)
+        self._create_output_directories(outdir, database_name)
         database_path = os.path.join(
             outdir, database_name, "data", database_name + ".db"
         )
@@ -109,7 +114,13 @@ class ParquetToSQLiteConverter(LoggerMixin):
                 df,
             )
         else:
-            self._create_table(df, field_name, database_path, n_events_in_file)
+            if len(df) > n_events_in_file:
+                is_pulse_map = True
+            else:
+                is_pulse_map = False
+            create_table(df, field_name, database_path, is_pulse_map)
+            if is_pulse_map:
+                attach_index(database_path, table_name=field_name)
             self._created_tables.append(field_name)
             save_to_sql(
                 database_path,
@@ -144,84 +155,14 @@ class ParquetToSQLiteConverter(LoggerMixin):
                 c += 1
         else:
             event_nos = np.arange(0, n_events_in_file, 1) + self._event_counter
-        print(len(df), len(event_nos))
         df["event_no"] = event_nos
         return df
 
-    def _create_table(
-        self,
-        df: pd.DataFrame,
-        field_name: str = None,
-        outdir: str = None,
-        database_name: str = None,
-        n_events_in_file: int = None,
-    ):
-        """Creates a table.
-
-        Args:
-            database (str): path to the database
-            table_name (str): name of the table
-            columns (str): the names of the columns of the table
-            is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.
-        """
-        columns = df.columns
-        if len(df) > n_events_in_file:
-            is_pulse_map = True
-        else:
-            is_pulse_map = False
-        query_columns = list()
-        for column in columns:
-            if column == "event_no":
-                if not is_pulse_map:
-                    type_ = "INTEGER PRIMARY KEY NOT NULL"
-                else:
-                    type_ = "NOT NULL"
-            else:
-                type_ = "FLOAT"
-            query_columns.append(f"{column} {type_}")
-        query_columns = ", ".join(query_columns)
-
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            f"CREATE TABLE {field_name} ({query_columns});\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(
-            outdir + "/" + database_name + "/data/" + database_name + ".db",
-            code,
-        )
-        print(is_pulse_map, field_name)
-        if is_pulse_map:
-            self._attach_index(
-                outdir
-                + "/"
-                + database_name
-                + "/data/"
-                + database_name
-                + ".db",
-                table_name=field_name,
-            )
-        return
-
-    def _attach_index(self, database: str, table_name: str):
-        """Attaches the table index. Important for query times!"""
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            "BEGIN TRANSACTION;\n"
-            f"CREATE INDEX event_no_{table_name} ON {table_name} (event_no);\n"
-            "COMMIT TRANSACTION;\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(database, code)
-        return
-
-    def _setup_directory(self, outdir: str, database_name: str):
+    def _create_output_directories(self, outdir: str, database_name: str):
         os.makedirs(outdir + "/" + database_name + "/data", exist_ok=True)
         os.makedirs(outdir + "/" + database_name + "/config", exist_ok=True)
-        return
 
     def _save_config(self, outdir: str, database_name: str):
         """Save the list of converted Parquet files to a CSV file."""
         df = pd.DataFrame(data=self._parquet_files, columns=["files"])
         df.to_csv(outdir + "/" + database_name + "/config/files.csv")
-        return
