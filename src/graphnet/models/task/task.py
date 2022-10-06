@@ -11,16 +11,16 @@ except ImportError:  # Python version < 3.8
         return f
 
 
-from pytorch_lightning.core.lightning import LightningModule
 import torch
 from torch import Tensor
 from torch.nn import Linear
 from torch_geometric.data import Data
 
 from graphnet.training.loss_functions import LossFunction
+from graphnet.models import Model
 
 
-class Task(LightningModule):
+class Task(Model):
     """Base class for all reconstruction and classification tasks.
 
     Args:
