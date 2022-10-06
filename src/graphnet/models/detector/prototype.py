@@ -1,7 +1,7 @@
 import torch
 from torch_geometric.data import Data
 
-from graphnet.components.pool import (
+from graphnet.models.components.pool import (
     group_pulses_to_dom,
     group_pulses_to_pmt,
     sum_pool_and_distribute,

@@ -9,7 +9,7 @@ from torch import LongTensor, Tensor
 from torch_geometric.data import Data, Batch
 
 # from torch_geometric.utils import unbatch_edge_index
-from graphnet.components.pool import (
+from graphnet.models.components.pool import (
     group_by,
     avg_pool,
     max_pool,
