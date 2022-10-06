@@ -5,7 +5,7 @@ from graphnet.models.detector.icecube import IceCube86
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.gnn import DynEdge
 from graphnet.models.task.reconstruction import EnergyReconstruction
-from graphnet.components.loss_functions import LogCoshLoss
+from graphnet.training.loss_functions import LogCoshLoss
 
 
 def test_transform_prediction_and_target():
