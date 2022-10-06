@@ -7,9 +7,9 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   graphnet.components
    graphnet.data
    graphnet.models
+   graphnet.training
    graphnet.utilities
 
 Module contents
