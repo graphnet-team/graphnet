@@ -62,7 +62,7 @@ GNNs from `GraphNeT` are flexible enough to be applied to data from all neutrino
 
 Neutrino telescopes typically consist of thousands of optical modules (OMs) to detect the Cherenkov light produced from particle interactions in the detector medium. The number of photo-electrons recorded by the OMs in each event roughly scales with the energy of the incident particle, from a few photo-electrons and up to tens of thousands.
 
-Reconstructing the data from these experiments is a challenge due to irregular detector geometry, inhomogeneous detector medium, sparsity of the data, the large variations of the amount of signal between different events, and the sheer number of events that need to be reconstructed.
+Reconstructing the particle type and parameters from individual recordings (called events) in these experiments is a challenge due to irregular detector geometry, inhomogeneous detector medium, sparsity of the data, the large variations of the amount of signal between different events, and the sheer number of events that need to be reconstructed.
 
 Multiple approaches have been employed, including relatively simple methods [@Aguilar:2011zz; @IceCube:2022kff] that are robust but limited in precision and likelihood-based methods [@ANTARES:2017ivh; @Ahrens:2003fg; @Aartsen:2013vja; @Abbasi_2013; @Aartsen:2013bfa; @IceCube:2021oqo; @IceCube:2022kff; @Chirkin:2013avz] that can attain a high accuracy at the price of high computational cost and detector specific assumptions.
 
@@ -96,7 +96,7 @@ These models are trained using `graphnet.training` on data prepared using `graph
 
 Trained models are deployed to a domain-specific reconstruction chain, yielding predictions, using the components in `graphnet.deployment`. This can either be through model files or container images, making deployment as portable and dependency-free as possible.
 
-By splitting up the GNN development as in \autoref{fig:flowchart}, `GraphNeT` allows physics users to interface only with high-level building block or pre-trained models that can be used directly in their reconstruction chains, while allowing ML developers to continuously improve and expand the framework’s capabilities.
+By splitting up the GNN development as in \autoref{fig:flowchart}, `GraphNeT` allows physics users to interface only with high-level building blocks or pre-trained models that can be used directly in their reconstruction chains, while allowing ML developers to continuously improve and expand the framework’s capabilities.
 
 
 # Acknowledgements
