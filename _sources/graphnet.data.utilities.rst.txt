@@ -4,6 +4,14 @@ graphnet.data.utilities package
 Submodules
 ----------
 
+graphnet.data.utilities.parquet\_to\_sqlite module
+--------------------------------------------------
+
+.. automodule:: graphnet.data.utilities.parquet_to_sqlite
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.data.utilities.random module
 -------------------------------------
 

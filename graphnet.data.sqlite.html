@@ -81,6 +81,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite.sqlite_utilities">graphnet.data.sqlite.sqlite_utilities module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.attach_index"><code class="docutils literal notranslate"><span class="pre">attach_index()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.create_table"><code class="docutils literal notranslate"><span class="pre">create_table()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.run_sql_code"><code class="docutils literal notranslate"><span class="pre">run_sql_code()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.save_to_sql"><code class="docutils literal notranslate"><span class="pre">save_to_sql()</span></code></a></li>
@@ -405,13 +406,25 @@ accross processes.</p>
 <span id="graphnet-data-sqlite-sqlite-utilities-module"></span><h2>graphnet.data.sqlite.sqlite_utilities module<a class="headerlink" href="#module-graphnet.data.sqlite.sqlite_utilities" title="Permalink to this heading"></a></h2>
 <p>SQLite-specific utility functions relevant to the graphnet.data package.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.attach_index">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">attach_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#attach_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.attach_index" title="Permalink to this definition"></a></dt>
+<dd><p>Attaches the table index. Important for query times!</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.create_table">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.create_table" title="Permalink to this definition"></a></dt>
-<dd><p>Creates a table.
-:param pipeline_database: path to the pipeline database
-:type pipeline_database: str
-:param df: pandas.DataFrame of combined predictions
-:type df: str</p>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_pulse_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.create_table" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<em>str</em>) – path to the database</p></li>
+<li><p><strong>table_name</strong> (<em>str</em>) – name of the table</p></li>
+<li><p><strong>columns</strong> (<em>str</em>) – the names of the columns of the table</p></li>
+<li><p><strong>is_pulse_map</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether or not this is a pulse map table. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

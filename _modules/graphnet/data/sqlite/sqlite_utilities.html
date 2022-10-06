@@ -95,22 +95,43 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="s2">&quot;sqlite:///&quot;</span> <span class="o">+</span> <span class="n">database</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">)</span>
-    <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
+    <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="attach_index"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.attach_index">[docs]</a><span class="k">def</span> <span class="nf">attach_index</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Attaches the table index. Important for query times!&quot;&quot;&quot;</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;PRAGMA foreign_keys=off;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;BEGIN TRANSACTION;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;CREATE INDEX event_no_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> ON </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (event_no);</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;COMMIT TRANSACTION;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;PRAGMA foreign_keys=on;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">run_sql_code</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
     <span class="k">return</span></div>
 
 
-<div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">is_pulse_map</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a table.</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        pipeline_database (str): path to the pipeline database</span>
-<span class="sd">        df (str): pandas.DataFrame of combined predictions</span>
+<span class="sd">        database (str): path to the database</span>
+<span class="sd">        table_name (str): name of the table</span>
+<span class="sd">        columns (str): the names of the columns of the table</span>
+<span class="sd">        is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">query_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="s2">&quot;event_no&quot;</span><span class="p">:</span>
-            <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;INTEGER PRIMARY KEY NOT NULL&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;FLOAT&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_pulse_map</span><span class="p">:</span>
+                <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;INTEGER PRIMARY KEY NOT NULL&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;NOT NULL&quot;</span>
         <span class="n">query_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">query_columns</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">query_columns</span><span class="p">)</span>
 
@@ -119,7 +140,11 @@
         <span class="sa">f</span><span class="s2">&quot;CREATE TABLE </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">query_columns</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;PRAGMA foreign_keys=on;&quot;</span>
     <span class="p">)</span>
-    <span class="n">run_sql_code</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+    <span class="n">run_sql_code</span><span class="p">(</span>
+        <span class="n">database_path</span><span class="p">,</span>
+        <span class="n">code</span><span class="p">,</span>
+    <span class="p">)</span>
+
     <span class="k">return</span></div>
 </pre></div>
 
