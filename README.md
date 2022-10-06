@@ -78,98 +78,54 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 </details>
 
 
-## :ringed_planet:  Analysis ideas
+## :ringed_planet:  Use cases
+
+Below is an incomplete list of potential use cases for GNNs in neutrino telescopes.
+These are categorised as either "Reconstruction challenges" that are considered common and that may benefit several experiments physics analyses; and those same "Experiments" and "Physics analyses".
 
 <details>
-<summary><b>Tasks using Monte Carlo only</b></summary>
-<blockquote>
-  <b>High Energy neutrino classification and reconstruction</b>.<br>
-  Proof of concept and performance estimates of GNN on high energy (SnowStorm sample: 100 GeV - 10 PeV), with focus on directional estimates (and also energy), but omitting systematic variations.<br>
-  <b>GNN pulse cleaning</b>.<br>
-  GNNs make very good predictions about individual nodes in the graph, which should be used to discard pulses deemed noise. Given pulse labels in simulated data, this is a classification task.<br>
-  <b>Upgrade reconstruction</b>.<br>
-  Important for detector optimisation and eventual usage. Given no alternative algorithms (for now), and since the GNN approach is straight forward to extend to other DOM types, this is an obvious project.<br>
-  <b>Elasticity regression (for distinguishing nu vs. anti-nu)</b>.<br>
-  Ideally, one would like this ability in the energy range relevant for oscillations (1-30 GeV), but it has only been seen to work for 100+ GeV muon neutrinos.<br>
-</blockquote>
+<summary><b>Reconstruction challenges</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| Low-energy neutrino classification and reconstruction | Done | Rasmus Ørsøe | https://arxiv.org/abs/2209.03042 |
+| High-energy neutrino classification and reconstruction | Active | Rasmus Ørsøe | |
+| Pulse noise cleaning | Paused | Kaare Iversen (past) | |
+| (In-)elasticity reconstruction | Paused | Marc Jacquart (past) | |
+| Multi-class event classification |  | | |
+| Data/MC difference mitigation |  | | |
+| Systematic uncertainty mitigation |  | | |
+
 </details>
 
 <details>
-<summary><b>Large/full scale neutrino selection in data</b></summary>
-<blockquote>
-  <b>Neutrino classification and data-MC correspondence</b>.<br>
-  Event (multi?) classification on Level 2 data, first on 1% burn sample and MC to check that it performs as expected. This also requires high energy classification. Eventually on all data, reducing this through a loose selection to e.g. 20M neutrino + 20M stopped muon events, which can be reconstructed overnight on a single GPU. From such a sample "everyone" can continue.<br>
-  <b>Neutrino oscillations (large subject!)</b>.<br>
-  The above "Loose GNN neutrino sample" would be a natural starting point for a new analysis. The main issue is to make MC look like data, and here an Variable AutoEncoder might be used, as a low (10?) dimensional latent space could possibly allow the MC to be linearly transformed into having the same PDF as data. Many other ideas apply.<br>
-  <b>Spectra measurements</b>.<br>
-  The above "Loose GNN neutrino sample" would be a natural starting point for a spectral analysis, possibly also using an "atmospheric tagger" (see below) to discriminate between contributions.<br>
-  <b>Post-factual alerts guiding alert design</b>.<br>
-  The above "Loose GNN neutrino sample" would allow optimisation and a test of sensitivity for a low-medium (1-10000 GeV) energy neutrino alert.<br>
-  <b>Testing neutrino angular resolution using IceTop events</b>.<br>
-  For atmospheric neutrinos with an associated shower observed in IceTop, the latter can provide directional information within about 3 degrees, which can be compared to the reconstructed value.<br>
-</blockquote>
+<summary><b>Experiments</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| IceCube | Active | (...) | |
+| IceCube-Upgrade | Active | (...) | |
+| IceCube-Gen2 | Active | (...) | |
+| P-ONE | | (...) | |
+| KM3NeT-ARCA | | (...) | |
+| KM3NeT-ORCA | | (...) | |
+
 </details>
 
 <details>
-<summary><b>Larger scale muon selection in data</b></summary>
-<blockquote>
-  <b>Stopped Muons data-MC comparison (for Efficiencies / Systematics / Corrections)</b>.<br>
-  This is (IMHO) the obvious data-MC calibration sample, from which one can extract differential efficiency corrections and related systematics. Also, it would allow one to find the transformations needed to make MC look (more) like data. This follows Leon’s work.<br>
-  <b>Moon pointing analysis with muons</b>.<br>
-  The moon pointing analysis is the only way to convince ourselves and others, that the GNN angular resolution is very good and measure it. If it is indeed very good, this is an obvious paper.<br>
-  <b>Muon decay detection (for nu vs. anti-nu detection)</b>.<br>
-  Using stopped muons, one would search for a later pulse at the stopping point from the muon decay, which is different between mu+ and mu-. If observed, it could be applied to muon neutrino samples (very hard!).<br>
-</blockquote>
+<summary><b>Physics analyses</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| Neutrino oscillations | | | |
+| Point source searches | | | |
+| Low-energy cosmic alerts | | | |
+| High-energy cosmic alerts | | | |
+| Moon pointing | | | |
+| Muon decay asymmetry | | | |
+| Spectra measurements | | | |
+
 </details>
-
-<details>
-<summary><b>Atmospheric tagger (trained in data)</b></summary>
-<blockquote>
-  By considering neutrinos in DATA, and dividing them according to their direction (up- or down-going), and removing the pulses from the neutrinos, one obtains a sample to train an “atmospheric tagger” on, since only downgoing neutrinos will potentially have "atmospheric" signal. This can be used for:<br>
-  <b>Measuring hard atmospheric component</b>.<br>
-  Heavy quarks produced by cosmic rays provide a neutrino spectrum, that falls less sharply, thus becoming the dominant atmospheric neutrinos at higher (around 100 TeV for nu_e) energies. But here the cosmic neutrinos dominate! However, by requiring that neutrinos have an atmospheric “tag”, the cosmic component should disappear (idea from Mirco). <br>
-  <b>Improving (low energy) cosmic alerts</b>.<br>
-  Removing neutrino candidates with an atmospheric “tag” will yield less background, especially at low energy. However, this only works for down-going neutrinos.<br>
-</blockquote>
-</details>
-
-<details>
-<summary><b>Real-time analysis/alerts</b></summary>
-<blockquote>
-  <b>Producing low energy (< 10 TeV) neutrino alert(s)</b>.<br>
-  Currently, no such alerts currently exists, leaving four orders of magnitude in energy uncovered. Candidate events are Blazars, Tidal disruption events, AGNs, etc.<br>
-  <b>Improving high energy (> 10 TeV) neutrino alert(s)</b>.<br>
-  The current alerts are (as far as I can read) not as effective as they could be.<br>
-</blockquote>
-</details>
-
-<details>
-<summary><b>Algorithm development</b></summary>
-<blockquote>
-  <b>GNN autoencoder (for general search)</b>.<br>
-  If an AE learned to encode general IceCube events (say noise, muons, and neutrinos from simulation), it could be used to detect other objects.<br>
-  <b>Hierarchical Graph Pooling</b>.<br>
-  Would this work better? Or better only at high energies? This should be tested.<br>
-  <b>GNN optimisation (architecture, training sample and reweighting, ensemble combination)</b>.<br>
-  Much has been done, but we should push it to the limit, though simplicity is also a virtue.<br>
-  <b>Using "non-signal" DOMs as input</b>.<br>
-  Do these contain information to be incorporated, or not?<br>
-  <b>Adversarial training for better performance in data</b>.<br>
-  Do common data+MC training (Andreas’ idea).<br>
-</blockquote>
-</details>
-
-<details>
-<summary><b>Explaining / visualising GNN output</b></summary>
-<blockquote>
-  <b>Overall feature ranking for each task</b>.<br>
-  Determine which are the important features for energy regression and directional regression.<br>
-  <b>Explaining output for individual events</b>.<br>
-  This requires SHAP for GNNs, or possibly the approach of Mahdi Saleh (TUM computer scientist).<br>
-</blockquote>
-</details>
-
-
 
 
 ## :handshake:  Contributing
