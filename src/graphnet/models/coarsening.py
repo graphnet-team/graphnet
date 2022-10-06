@@ -193,9 +193,7 @@ class DOMCoarsening(Coarsening):
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
         # dom_index = group_pulses_to_dom(data)
-        dom_index = group_by(
-            data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
-        )
+        dom_index = group_by(data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"])
         return dom_index
 
 
@@ -246,9 +244,7 @@ class DOMAndTimeWindowCoarsening(Coarsening):
 
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Cluster nodes in `data` by assigning a cluster index to each."""
-        dom_index = group_by(
-            data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
-        )
+        dom_index = group_by(data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"])
         if data.batch is not None:
             features = data.features[0]
         else:
@@ -256,18 +252,22 @@ class DOMAndTimeWindowCoarsening(Coarsening):
 
         ix_time = features.index("dom_time")
         hit_times = data.x[:, ix_time]
-        
+
         # Scale up dom_index to make sure clusters are well separated
-        times_and_domids = torch.stack([
-            hit_times,
-            dom_index * time_window * 10,
-        ]).T
+        times_and_domids = torch.stack(
+            [
+                hit_times,
+                dom_index * time_window * 10,
+            ]
+        ).T
         clusters = torch.tensor(
             cluster_method.fit_predict(times_and_domids.cpu()),
             device=hit_times.device,
         )
 
         return clusters
+
+
 class LoopBasedCoarsening:
     def __call__(self, data: Data) -> Data:
         """Coarsening to DOM-level."""
