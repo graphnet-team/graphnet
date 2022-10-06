@@ -294,6 +294,9 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         }
         assert len(truth) == 1
 
+        # Define custom labels
+        labels_dict = self._get_labels(truth_dict)
+
         # Convert nested list to simple dict
         if node_truth is not None:
             node_truth_array = np.asarray(node_truth)
@@ -335,7 +338,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         # Write attributes, either target labels, truth info or original
         # features.
-        add_these_to_graph = [truth_dict]
+        add_these_to_graph = [labels_dict, truth_dict]
         if node_truth is not None:
             add_these_to_graph.append(node_truth_dict)
         for write_dict in add_these_to_graph:
@@ -361,3 +364,35 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             graph[key] = fn(graph)
 
         return graph
+
+    def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
+        """Return dictionary of  labels, to be added as graph attributes."""
+        abs_pid = abs(truth_dict["pid"])
+        sim_type = truth_dict["sim_type"]
+
+        labels_dict = {
+            "event_no": truth_dict["event_no"],
+            "muon": int(abs_pid == 13),
+            "muon_stopped": int(truth_dict.get("stopped_muon") == 1),
+            "noise": int((abs_pid == 1) & (sim_type != "data")),
+            "neutrino": int(
+                (abs_pid != 13) & (abs_pid != 1)
+            ),  # @TODO: `abs_pid in [12,14,16]`?
+            "v_e": int(abs_pid == 12),
+            "v_u": int(abs_pid == 14),
+            "v_t": int(abs_pid == 16),
+            "track": int(
+                (abs_pid == 14) & (truth_dict["interaction_type"] == 1)
+            ),
+            "dbang": self._get_dbang_label(truth_dict),
+            "corsika": int(abs_pid > 20),
+        }
+        return labels_dict
+
+    def _get_dbang_label(self, truth_dict: Dict[str, Any]) -> int:
+        """Get label for double-bang classification."""
+        try:
+            label = int(truth_dict["dbang_decay_length"] > -1)
+            return label
+        except KeyError:
+            return -1
