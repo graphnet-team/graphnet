@@ -1,7 +1,7 @@
 """Module defining the base `Dataset` class used in GraphNeT."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import numpy as np
 import torch
 from torch_geometric.data import Data
@@ -90,6 +90,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         self._dtype = dtype
 
+        self._label_fns: Dict[str, Callable[[Data], Any]] = {}
+
         # Implementation-specific initialisation.
         self._init()
 
@@ -148,6 +150,13 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         """
 
     # Public method(s)
+    def add_label(self, key: str, fn: Callable[[Data], Any]):
+        """Add custom graph label define using function `fn`."""
+        assert (
+            key not in self._label_fns
+        ), f"A custom label {key} has already been defined."
+        self._label_fns[key] = fn
+
     def __len__(self):
         return len(self._indices)
 
@@ -349,6 +358,10 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         # Additionally add original features as (static) attributes
         for index, feature in enumerate(graph.features):
             graph[feature] = graph.x[:, index].detach()
+
+        # Add custom labels to the graph
+        for key, fn in self._label_fns.items():
+            graph[key] = fn(graph)
 
         return graph
 

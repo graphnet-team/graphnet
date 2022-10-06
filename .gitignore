@@ -134,11 +134,18 @@ docs/**/*.rst
 
 # Badges
 assets/badges
+
+# Logs
 lightning_logs/
 logs/
 wandb/
+checkpoints/
+
+# Data and outputs
 test_data/
 **.png
 **.pth
-**.ipynb
 **.db
+
+# Notebooks
+**.ipynb

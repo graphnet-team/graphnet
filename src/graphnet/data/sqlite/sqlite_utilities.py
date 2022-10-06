@@ -32,7 +32,6 @@ def save_to_sql(df: pd.DataFrame, table_name: str, database: str):
     df.to_sql(table_name, con=engine, index=False, if_exists="append")
     engine.dispose()
 
-
 def attach_index(database: str, table_name: str):
     """Attaches the table index. Important for query times!"""
     code = (
@@ -59,7 +58,7 @@ def create_table(
         table_name (str): name of the table
         columns (str): the names of the columns of the table
         is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.
-    """
+
     query_columns = list()
     for column in df.columns:
         if column == "event_no":
@@ -67,8 +66,6 @@ def create_table(
                 type_ = "INTEGER PRIMARY KEY NOT NULL"
             else:
                 type_ = "NOT NULL"
-        else:
-            type_ = "FLOAT"
         query_columns.append(f"{column} {type_}")
     query_columns = ", ".join(query_columns)
 
@@ -81,3 +78,5 @@ def create_table(
         database_path,
         code,
     )
+
+    return

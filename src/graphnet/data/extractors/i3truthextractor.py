@@ -3,7 +3,7 @@ import matplotlib.path as mpath
 from typing import Tuple
 
 from graphnet.data.extractors.i3extractor import I3Extractor
-from graphnet.data.extractors.utilities import (
+from graphnet.data.extractors.utilities.frames import (
     frame_is_montecarlo,
     frame_is_noise,
 )
@@ -99,7 +99,10 @@ class I3TruthExtractor(I3Extractor):
         # Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.
         # At low levels i3files contain several other P frame splits (e.g NullSplit),
         # we remove those here.
-        if frame["I3EventHeader"].sub_event_stream != "InIceSplit":
+        if frame["I3EventHeader"].sub_event_stream not in [
+            "InIceSplit",
+            "Final",
+        ]:
             return output
 
         if "FilterMask" in frame:
@@ -146,10 +149,15 @@ class I3TruthExtractor(I3Extractor):
             ) = self._get_primary_particle_interaction_type_and_elasticity(
                 frame, sim_type
             )
-            (
-                energy_track,
-                inelasticity,
-            ) = self._get_primary_track_energy_and_inelasticity(frame)
+            try:
+                (
+                    energy_track,
+                    inelasticity,
+                ) = self._get_primary_track_energy_and_inelasticity(frame)
+            except RuntimeError:  # track energy fails on northeren tracks with ""Hadrons" has no mass implemented. Cannot get total energy."
+                energy_track = (padding_value,)
+                inelasticity = (padding_value,)
+
             output.update(
                 {
                     "energy": MCInIcePrimary.energy,
