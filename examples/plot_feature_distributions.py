@@ -8,7 +8,7 @@ from graphnet.data.sqlite.sqlite_selection import (
 )
 from graphnet.models.detector.icecube import IceCubeUpgrade, IceCubeUpgrade_V2
 from graphnet.models.graph_builders import KNNGraphBuilder
-from graphnet.models.training.utils import make_train_validation_dataloader
+from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.logging import get_logger
 
 
