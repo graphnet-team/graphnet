@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import List
 
 import torch
@@ -6,10 +6,10 @@ from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
 
 from graphnet.models.utils import calculate_distance_matrix
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.models import Model
 
 
-class GraphBuilder(LoggerMixin, ABC):  # pylint: disable=too-few-public-methods
+class GraphBuilder(Model):  # pylint: disable=too-few-public-methods
     @abstractmethod
     def __call__(self, data: Data) -> Data:
         pass
