@@ -1,11 +1,12 @@
-from collections import OrderedDict
+from collections import OrderedDict, Iterable
+import json
 import numpy as np
 import os
 import pandas as pd
 import sqlalchemy
 import sqlite3
 from tqdm import tqdm
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, MutableMapping, Optional, Tuple, Union
 
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
@@ -26,9 +27,7 @@ class SQLiteDataConverter(DataConverter):
             )
 
         # Concatenate data
-        dataframe = OrderedDict(
-            [(key, pd.DataFrame()) for key in self._table_names]
-        )
+        dataframe = OrderedDict()
         for data_dict in data:
             for key, data in data_dict.items():
                 df = construct_dataframe(data)
@@ -36,16 +35,19 @@ class SQLiteDataConverter(DataConverter):
                 if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
                     # only include data_dict in temp. databases if at least one pulsemap is non-empty,
                     # and the current extractor (df) is also non-empty (also since truth is always non-empty)
-                    dataframe[key] = dataframe[key].append(
-                        df, ignore_index=True, sort=True
-                    )
+                    if key in dataframe:
+                        dataframe[key] = dataframe[key].append(
+                            df, ignore_index=True, sort=True
+                        )
+                    else:
+                        dataframe[key] = df
 
         # Save each dataframe to SQLite database
         self.logger.debug(f"Saving to {output_file}")
         saved_any = False
-        for key, df in dataframe.items():
+        for table, df in dataframe.items():
             if len(df) > 0:
-                save_to_sql(df, key, output_file)
+                save_to_sql(df, table, output_file)
                 saved_any = True
 
         if saved_any:
@@ -60,6 +62,9 @@ class SQLiteDataConverter(DataConverter):
             self.logger.info("Merging files output by current instance.")
             input_files = self._output_files
 
+        if not output_file.endswith("." + self.file_suffix):
+            output_file = ".".join([output_file, self.file_suffix])
+
         if os.path.exists(output_file):
             self.logger.warning(
                 f"Target path for merged database, {output_file}, already exists."
@@ -69,7 +74,8 @@ class SQLiteDataConverter(DataConverter):
             self.logger.info(f"Merging {len(input_files)} database files")
 
             # Create one empty database table for each extraction
-            for table_name in self._table_names:
+            table_names = self._extract_table_names(input_files)
+            for table_name in table_names:
                 column_names = self._extract_column_names(
                     input_files, table_name
                 )
@@ -88,6 +94,28 @@ class SQLiteDataConverter(DataConverter):
             self.logger.warning("No temporary database files found!")
 
     # Internal methods
+    def _extract_table_names(self, db: Union[str, List[str]]) -> Tuple[str]:
+        """Get the names of all tables in database `db`."""
+        if isinstance(db, list):
+            results = [self._extract_table_names(path) for path in db]
+            # @TODO: Check...
+            assert all([results[0] == r for r in results])
+            return results[0]
+
+        with sqlite3.connect(db) as conn:
+            table_names = tuple(
+                [
+                    p[0]
+                    for p in (
+                        conn.execute(
+                            "SELECT name FROM sqlite_master WHERE type='table';"
+                        ).fetchall()
+                    )
+                ]
+            )
+
+        return table_names
+
     def _extract_column_names(self, db_paths, table_name):
         for db_path in db_paths:
             with sqlite3.connect(db_path) as con:
@@ -98,11 +126,18 @@ class SQLiteDataConverter(DataConverter):
         return []
 
     def any_pulsemap_is_non_empty(self, data_dict: OrderedDict) -> bool:
-        """Check whether there are any non-empty pulsemaps extracted from P frame.
-        Takes in the data extracted from the P frame, then retrieves the values, if
-        there are any, from the pulsemap key(s) (e.g SplitInIcePulses). If at least
-        one of the pulsemaps is non-empty then return true.
+        """Check whether there are non-empty pulsemaps extracted from P frame.
+
+        Takes in the data extracted from the P frame, then retrieves the
+        values, if there are any, from the pulsemap key(s)
+        (e.g SplitInIcePulses). If at least one of the pulsemaps is non-empty
+        then return true. If no pulsemaps exist, i.e., if no
+        `I3FeatureExtractor` is called e.g. because `I3GenericExtractor` is
+        used instead, always return True.
         """
+        if len(self._pulsemaps) == 0:
+            return True
+
         pulsemap_dicts = map(data_dict.get, self._pulsemaps)
         return any(d["dom_x"] for d in pulsemap_dicts)
 
@@ -171,8 +206,9 @@ class SQLiteDataConverter(DataConverter):
             results (dict): Contains the data for each extracted table
         """
         results = OrderedDict()
+        table_names = self._extract_table_names(db)
         with sqlite3.connect(db) as conn:
-            for table_name in self._table_names:
+            for table_name in table_names:
                 query = f"select * from {table_name}"
                 try:
                     data = pd.read_sql(query, conn)
@@ -208,7 +244,12 @@ def construct_dataframe(extraction: Dict[str, Any]) -> pd.DataFrame:
     Returns:
         Extraction as pandas.DataFrame.
     """
-    all_scalars = all(map(np.isscalar, extraction.values()))
+    all_scalars = True
+    for value in extraction.values():
+        if isinstance(value, (list, tuple, dict)):
+            all_scalars = False
+            break
+
     out = pd.DataFrame(extraction, index=[0] if all_scalars else None)
     return out
 
