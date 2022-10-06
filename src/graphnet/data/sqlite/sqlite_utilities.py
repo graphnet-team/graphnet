@@ -50,7 +50,7 @@ def create_table(
     df: pd.DataFrame,
     table_name: str,
     database_path: str,
-    is_pulse_map: bool,
+    is_pulse_map: bool = False,
 ):
     """Creates a table.
 
@@ -60,9 +60,8 @@ def create_table(
         columns (str): the names of the columns of the table
         is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.
     """
-    columns = df.columns
     query_columns = list()
-    for column in columns:
+    for column in df.columns:
         if column == "event_no":
             if not is_pulse_map:
                 type_ = "INTEGER PRIMARY KEY NOT NULL"
