@@ -88,10 +88,24 @@
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.i3hybridrecoextractor">graphnet.data.extractors.i3hybridrecoextractor module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor"><code class="docutils literal notranslate"><span class="pre">I3GalacticPlaneHybridRecoExtractor</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3GalacticPlaneHybridRecoExtractor.__call__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.data.extractors.i3retroextractor">graphnet.data.extractors.i3retroextractor module</a><ul>
 <li><a class="reference internal" href="#graphnet.data.extractors.i3retroextractor.I3RetroExtractor"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.data.extractors.i3retroextractor.I3RetroExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor.__call__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.extractors.i3retroextractor.I3RetroExtractor._try_get_key"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor._try_get_key()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.i3splinempeextractor">graphnet.data.extractors.i3splinempeextractor module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor"><code class="docutils literal notranslate"><span class="pre">I3SplineMPEICExtractor</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3SplineMPEICExtractor.__call__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -103,6 +117,13 @@
 <li><a class="reference internal" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_track_energy_and_inelasticity"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._get_primary_track_energy_and_inelasticity()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._muon_stopped"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._muon_stopped()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.data.extractors.i3tumextractor">graphnet.data.extractors.i3tumextractor module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.i3tumextractor.I3TUMExtractor"><code class="docutils literal notranslate"><span class="pre">I3TUMExtractor</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.extractors.i3tumextractor.I3TUMExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3TUMExtractor.__call__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -370,6 +391,21 @@ excluded.</p>
 </dd></dl>
 
 </section>
+<section id="module-graphnet.data.extractors.i3hybridrecoextractor">
+<span id="graphnet-data-extractors-i3hybridrecoextractor-module"></span><h2>graphnet.data.extractors.i3hybridrecoextractor module<a class="headerlink" href="#module-graphnet.data.extractors.i3hybridrecoextractor" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3hybridrecoextractor.</span></span><span class="sig-name descname"><span class="pre">I3GalacticPlaneHybridRecoExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dnn_hybrid'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3hybridrecoextractor.html#I3GalacticPlaneHybridRecoExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3hybridrecoextractor.html#I3GalacticPlaneHybridRecoExtractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts TUMs DNN Recos and associated variables</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-graphnet.data.extractors.i3retroextractor">
 <span id="graphnet-data-extractors-i3retroextractor-module"></span><h2>graphnet.data.extractors.i3retroextractor module<a class="headerlink" href="#module-graphnet.data.extractors.i3retroextractor" title="Permalink to this heading"></a></h2>
 <dl class="py class">
@@ -386,6 +422,21 @@ excluded.</p>
 <dt class="sig sig-object py" id="graphnet.data.extractors.i3retroextractor.I3RetroExtractor._try_get_key">
 <span class="sig-name descname"><span class="pre">_try_get_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3retroextractor.html#I3RetroExtractor._try_get_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3retroextractor.I3RetroExtractor._try_get_key" title="Permalink to this definition"></a></dt>
 <dd><p>Return <cite>key</cite> in <cite>frame</cite> if it exists; otherwise return <a href="#id1"><span class="problematic" id="id2">`</span></a>default_value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.i3splinempeextractor">
+<span id="graphnet-data-extractors-i3splinempeextractor-module"></span><h2>graphnet.data.extractors.i3splinempeextractor module<a class="headerlink" href="#module-graphnet.data.extractors.i3splinempeextractor" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3splinempeextractor.</span></span><span class="sig-name descname"><span class="pre">I3SplineMPEICExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spline_mpe_ic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3splinempeextractor.html#I3SplineMPEICExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3splinempeextractor.html#I3SplineMPEICExtractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts SplineMPE pointing predictions.</p>
 </dd></dl>
 
 </dd></dl>
@@ -497,6 +548,21 @@ IMPORTANT: The final position of the muon is saved in truth extractor/databases 
 <dd class="field-odd"><p>dictionary (dict)</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.extractors.i3tumextractor">
+<span id="graphnet-data-extractors-i3tumextractor-module"></span><h2>graphnet.data.extractors.i3tumextractor module<a class="headerlink" href="#module-graphnet.data.extractors.i3tumextractor" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3tumextractor.I3TUMExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3tumextractor.</span></span><span class="sig-name descname"><span class="pre">I3TUMExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tum_dnn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/i3tumextractor.html#I3TUMExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3tumextractor.I3TUMExtractor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.i3tumextractor.I3TUMExtractor.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/i3tumextractor.html#I3TUMExtractor.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3tumextractor.I3TUMExtractor.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts TUM DNN Recos and associated variables</p>
 </dd></dl>
 
 </dd></dl>

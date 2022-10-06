@@ -164,7 +164,10 @@
         <span class="c1"># Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.</span>
         <span class="c1"># At low levels i3files contain several other P frame splits (e.g NullSplit),</span>
         <span class="c1"># we remove those here.</span>
-        <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="o">!=</span> <span class="s2">&quot;InIceSplit&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;InIceSplit&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Final&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
             <span class="k">return</span> <span class="n">output</span>
 
         <span class="k">if</span> <span class="s2">&quot;FilterMask&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
@@ -211,10 +214,15 @@
             <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span>
                 <span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span>
             <span class="p">)</span>
-            <span class="p">(</span>
-                <span class="n">energy_track</span><span class="p">,</span>
-                <span class="n">inelasticity</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_track_energy_and_inelasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="p">(</span>
+                    <span class="n">energy_track</span><span class="p">,</span>
+                    <span class="n">inelasticity</span><span class="p">,</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_track_energy_and_inelasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>  <span class="c1"># track energy fails on northeren tracks with &quot;&quot;Hadrons&quot; has no mass implemented. Cannot get total energy.&quot;</span>
+                <span class="n">energy_track</span> <span class="o">=</span> <span class="p">(</span><span class="n">padding_value</span><span class="p">,)</span>
+                <span class="n">inelasticity</span> <span class="o">=</span> <span class="p">(</span><span class="n">padding_value</span><span class="p">,)</span>
+
             <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span>
