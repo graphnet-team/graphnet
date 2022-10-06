@@ -68,15 +68,14 @@ class RepeatFilter(object):
         self.nb_repeats_allowed = 20
 
     def filter(self, record):
+        self._messages[record.msg] += 1
         count = self._messages[record.msg]
-        ret = count <= self.nb_repeats_allowed
         if count == self.nb_repeats_allowed:
             get_logger().debug(
                 f"Will not print the below message again ({self.nb_repeats_allowed} repeats reached)."
             )
 
-        self._messages[record.msg] += 1
-        return ret
+        return count <= self.nb_repeats_allowed
 
 
 def get_logger(

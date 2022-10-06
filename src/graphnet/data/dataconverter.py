@@ -25,6 +25,7 @@ from graphnet.data.extractors import (
     I3ExtractorCollection,
     I3FeatureExtractor,
     I3TruthExtractor,
+    I3GenericExtractor,
 )
 from graphnet.utilities.filesys import find_i3_files
 from graphnet.utilities.imports import has_icecube_package
@@ -87,7 +88,7 @@ class DataConverter(ABC, LoggerMixin):
         self,
         extractors: List[I3Extractor],
         outdir: str,
-        gcd_rescue: str,
+        gcd_rescue: Optional[str] = None,
         *,
         nb_files_to_batch: Optional[int] = None,
         sequential_batch_pattern: Optional[str] = None,
@@ -139,11 +140,6 @@ class DataConverter(ABC, LoggerMixin):
             assert isinstance(
                 extractor, I3Extractor
             ), f"{type(extractor)} is not a subclass of I3Extractor"
-
-        assert isinstance(extractors[0], I3TruthExtractor), (
-            f"The first extractor in {self.__class__.__name__} should always be of type "
-            "I3TruthExtractor to allow for attaching unique indices."
-        )
 
         # Infer saving strategy
         save_strategy = self._infer_save_strategy(
@@ -394,7 +390,6 @@ class DataConverter(ABC, LoggerMixin):
 
         Args:
             fileset: Path to I3 file and corresponding GCD file.
-            index: Value for sequentially numbering events.
 
         Returns:
             Extracted data.
@@ -418,6 +413,12 @@ class DataConverter(ABC, LoggerMixin):
             # Extract data from I3Frame
             results = self._extractors(frame)
             data_dict = OrderedDict(zip(self._table_names, results))
+
+            # If an I3GenericExtractor is used, we want each automatically
+            # parsed key to be stored as a separate table.
+            for extractor in self._extractors:
+                if isinstance(extractor, I3GenericExtractor):
+                    data_dict.update(data_dict.pop(extractor._name))
 
             # Get new, unique index and increment value
             if multi_processing:

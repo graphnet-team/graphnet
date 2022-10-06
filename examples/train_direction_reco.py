@@ -1,27 +1,22 @@
 import os
-
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.components.loss_functions import (
-    LogCoshLoss,
-    VonMisesFisher2DLoss,
-)
-from graphnet.components.utils import fit_scaler
+from graphnet.components.loss_functions import VonMisesFisher2DLoss
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
 from graphnet.models import Model
-from graphnet.models.detector.icecube import IceCubeUpgrade
-from graphnet.models.gnn import DynEdge_V2
+from graphnet.models.detector.icecube import IceCubeDeepCore
+from graphnet.models.gnn.dynedge import DynEdge, DOMCoarsenedDynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import (
-    EnergyReconstruction,
     ZenithReconstructionWithKappa,
+    AzimuthReconstructionWithKappa,
 )
 from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
 from graphnet.models.training.utils import (
@@ -33,62 +28,36 @@ from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
 
-
 # Configurations
 torch.multiprocessing.set_sharing_strategy("file_system")
 
 # Constants
-features = FEATURES.UPGRADE
-truth = TRUTH.UPGRADE
+features = FEATURES.DEEPCORE
+truth = TRUTH.DEEPCORE[:-1]
+
+# Make sure W&B output directory exists
+WANDB_DIR = "./wandb/"
+os.makedirs(WANDB_DIR, exist_ok=True)
 
 # Initialise Weights & Biases (W&B) run
 wandb_logger = WandbLogger(
-    project="upgrade-zenith",
+    project="example-script",
     entity="graphnet-team",
-    save_dir="./wandb/",
+    save_dir=WANDB_DIR,
     log_model=True,
 )
 
-# Configuration
-config = {
-    "db": "/groups/icecube/asogaard/data/sqlite/dev_upgrade_step4_preselection_decemberv2/data/dev_upgrade_step4_preselection_decemberv2.db",
-    "pulsemaps": [
-        "IceCubePulsesTWSRT",
-        "I3RecoPulseSeriesMapRFCleaned_mDOM",
-        "I3RecoPulseSeriesMapRFCleaned_DEgg",
-    ],
-    "batch_size": 256,
-    "num_workers": 30,
-    "accelerator": "gpu",
-    "devices": [1],
-    "target": "zenith",
-    "n_epochs": 50,
-    "patience": 5,
-    "gnn/type": "DynEdge_V2",
-}
 
-
-# Main function definition
-def main():
-
-    try:
-        del truth[truth.index("interaction_time")]
-    except ValueError:
-        # not found in list
-        pass
-
-    logger.info(f"features: {features}")
-    logger.info(f"truth: {truth}")
-
-    # Run management
-    archive = "/groups/icecube/asogaard/gnn/results/upgrade_test_1/"
-    run_name = "test_upgrade_{}_regression_v2".format(config["target"])
-
+def train(config):
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
 
     # Common variables
     train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
+    train_selection = train_selection[0:50000]
+
+    logger.info(f"features: {features}")
+    logger.info(f"truth: {truth}")
 
     (
         training_dataloader,
@@ -96,7 +65,7 @@ def main():
     ) = make_train_validation_dataloader(
         config["db"],
         train_selection,
-        config["pulsemaps"],
+        config["pulsemap"],
         features,
         truth,
         batch_size=config["batch_size"],
@@ -104,17 +73,30 @@ def main():
     )
 
     # Building model
-    detector = IceCubeUpgrade(
+    detector = IceCubeDeepCore(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
-    gnn = DynEdge_V2(
-        nb_inputs=detector.nb_outputs,
-    )
-    task = ZenithReconstructionWithKappa(
-        hidden_size=gnn.nb_outputs,
-        target_labels=config["target"],
-        loss_function=VonMisesFisher2DLoss(),
-    )
+    if config["node_pooling"]:
+        gnn = DOMCoarsenedDynEdge(
+            nb_inputs=detector.nb_outputs,
+        )
+    else:
+        gnn = DynEdge(
+            nb_inputs=detector.nb_outputs,
+        )
+    if config["target"] == "zenith":
+        task = ZenithReconstructionWithKappa(
+            hidden_size=gnn.nb_outputs,
+            target_labels=config["target"],
+            loss_function=VonMisesFisher2DLoss(),
+        )
+    elif config["target"] == "azimuth":
+        task = AzimuthReconstructionWithKappa(
+            hidden_size=gnn.nb_outputs,
+            target_labels=config["target"],
+            loss_function=VonMisesFisher2DLoss(),
+        )
+
     model = Model(
         detector=detector,
         gnn=gnn,
@@ -145,7 +127,6 @@ def main():
     ]
 
     trainer = Trainer(
-        default_root_dir=archive,
         accelerator=config["accelerator"],
         devices=config["devices"],
         max_epochs=config["n_epochs"],
@@ -160,25 +141,43 @@ def main():
         logger.warning("[ctrl+c] Exiting gracefully.")
         pass
 
-    # Saving model
-    model.save(os.path.join(archive, f"{run_name}.pth"))
-    model.save_state_dict(os.path.join(archive, f"{run_name}_state_dict.pth"))
-
     # Saving predictions to file
     results = get_predictions(
         trainer,
         model,
         validation_dataloader,
-        [config["target"] + "_pred", config["target"] + "_kappa"],
-        additional_attributes=[
-            config["target"],
-            "event_no",
-            "energy",
-            "n_pulses",
-        ],
+        [config["target"] + "_pred"],
+        additional_attributes=[config["target"], "event_no"],
     )
 
-    save_results(config["db"], run_name, results, archive, model)
+    save_results(
+        config["db"], config["run_name"], results, config["archive"], model
+    )
+
+
+# Main function definition
+def main():
+    for target in ["zenith", "azimuth"]:
+        archive = "/remote/ceph/user/o/oersoe/high_energy_example/results"
+        run_name = "dynedge_{}_example".format(target)
+
+        # Configuration
+        config = {
+            "db": "/mnt/scratch/rasmus_orsoe/databases/HE/dev_lvl5_NuE_NuMu_NuTau_Mirco/data/dev_lvl5_NuE_NuMu_NuTau_Mirco.db",
+            "pulsemap": "TWSRTOfflinePulses",
+            "batch_size": 512,
+            "num_workers": 10,
+            "accelerator": "gpu",
+            "devices": [2],
+            "target": target,
+            "n_epochs": 5,
+            "patience": 5,
+            "archive": archive,
+            "run_name": run_name,
+            "max_events": 50000,
+            "node_pooling": True,
+        }
+        train(config)
 
 
 # Main function call
