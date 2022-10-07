@@ -102,7 +102,7 @@ class Coarsening(ABC, LoggerMixin):
                 attr_is_node_level_tensor = False
                 if isinstance(values, Tensor):
                     if batch is None:
-                        attr_is_node_level_tensor = (
+                        attr_is_node_level_tensor =  (
                             values.dim() > 1 or values.size(dim=0) > 1
                         )
                     else:
