@@ -86,16 +86,16 @@ def test_gaussian_nll_loss(dtype=torch.float32):
     GaussianNLLLoss_loss = GaussianNLLLoss()
     losses = GaussianNLLLoss_loss(prediction, target, return_elements=True)
     losses_function = torch.nn.GaussianNLLLoss(eps=1e-06, reduction="none")
-    losses_reference = losses_function(prediction-target, target, 1/prediction[:,2])
+    losses_reference = losses_function(prediction[:,:2]-target, target, 1/prediction[:,2])
     losses_reference = torch.sum(losses_reference, dim=-1)
 
     #  Losses should all be valid
     assert torch.all(torch.isfinite(losses))
     
     # Losses should have expected shape
-    assert losses.ndim == 2
+    assert losses.ndim == 1 # loss is a single value
     assert losses.size(dim=0) == prediction.size(dim=0)
-    assert losses.size(dim=1) == 1
+    assert losses.size(dim=-1) == 49
     
     # Losses should match expectation
     assert torch.allclose(losses_reference, losses)
@@ -206,7 +206,7 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
     )
 
 def main():
-    result = test_GaussianNLLLoss()
+    result = test_gaussian_nll_loss()
     print(result)
 
 if __name__ == "__main__":
