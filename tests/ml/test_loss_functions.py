@@ -67,7 +67,7 @@ def test_log_cosh(dtype=torch.float32):
         losses_reference[reference_is_valid], losses[reference_is_valid]
     )
 
-def test_GaussianNLLLoss(dtype=torch.float32):
+def test_gaussian_nll_loss(dtype=torch.float32):
     # Prepare test data, zenith, azimuth and kappa
     prediction = torch.empty((7,3),dtype=dtype) # Shape [N, 3]
     angles = torch.tensor([-pi, -pi/2, -pi/4, 0, pi/4, pi/2, pi])
