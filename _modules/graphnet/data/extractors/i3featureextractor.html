@@ -95,6 +95,7 @@
             <span class="s2">&quot;is_bad_dom&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;is_saturated_dom&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;is_errata_dom&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;event_time&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
 
         <span class="c1"># Get OM data</span>
@@ -120,6 +121,8 @@
 
         <span class="k">if</span> <span class="s2">&quot;CalibrationErrata&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
             <span class="n">calibration_errata</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s2">&quot;CalibrationErrata&quot;</span><span class="p">)</span>
+
+        <span class="n">event_time</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3EventHeader&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">start_time</span><span class="o">.</span><span class="n">mod_julian_day_double</span>
 
         <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
             <span class="c1"># Common values for each OM</span>
@@ -166,6 +169,8 @@
                 <span class="n">output</span><span class="p">[</span><span class="s2">&quot;is_bad_dom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_bad_dom</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">&quot;is_saturated_dom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_saturated_dom</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">&quot;is_errata_dom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_errata_dom</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;event_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_time</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">output</span></div>
 
     <span class="k">def</span> <span class="nf">_get_relative_dom_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">):</span>
