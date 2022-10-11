@@ -22,7 +22,7 @@ class Label(ABC, LoggerMixin):
         """Label-specific implementation"""
 
 
-class DirectionReconstructionWithKappa(Label):
+class Direction(Label):
     def __init__(
         self, azimuth_key: str = "azimuth", zenith_key: str = "zenith"
     ):
