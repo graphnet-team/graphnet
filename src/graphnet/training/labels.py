@@ -7,13 +7,18 @@ from graphnet.utilities.logging import LoggerMixin
 
 
 class Label(ABC, LoggerMixin):
-    """Base Dataset class for producing labels from single Data Object."""
+    """Base Label class for producing labels from single Data Object."""
 
     def __init__(self, key: str):
+        """Base Label class for producing labels from single Data Object.
+
+        Args:
+            key (str): The name of the field in Data where the label will be stored. Ie. graph[key] = label
+        """
         self._key = key
 
     @abstractmethod
-    def __call__(self, graph: Data) -> Data:
+    def __call__(self, graph: Data) -> torch.tensor:
         """Label-specific implementation"""
 
 
@@ -24,7 +29,7 @@ class DirectionReconstructionWithKappa(Label):
         self._azimuth_key = azimuth_key
         self._zenith_key = zenith_key
 
-    def __call__(self, graph: Data) -> Data:
+    def __call__(self, graph: Data) -> torch.tensor:
         x = torch.sin(graph[self._azimuth_key]) * torch.cos(
             graph[self._zenith_key]
         )
