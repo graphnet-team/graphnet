@@ -84,12 +84,16 @@ def test_gaussian_nll_loss(dtype=torch.float32):
     losses_reference = losses_function(prediction-target, target, 1/prediction[:,2])
     losses_reference = torch.sum(losses_reference, dim=-1)
 
-    #     For the inputs where the reference loss _is_ valid, the two
-    #     calculations should agree exactly.
-    reference_is_valid = torch.isfinite(losses_reference)
-    assert torch.allclose(
-        losses_reference[reference_is_valid], losses[reference_is_valid]
-    )
+    #  Losses should all be valid
+    assert torch.all(torch.isfinite(losses))
+    
+    # Losses should have expected shape
+    assert losses.ndim == 2
+    assert losses.size(dim=0) == prediction.size(dim=0)
+    assert losses.size(dim=1) == 1
+    
+    # Losses should match expectation
+    assert torch.allclose(losses_reference, losses)
 
 
 def test_von_mises_fisher_exact_m3(dtype=torch.float64):
