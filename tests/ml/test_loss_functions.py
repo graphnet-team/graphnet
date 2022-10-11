@@ -206,8 +206,8 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
     )
 
 def main():
-    result = test_gaussian_nll_loss()
-    print(result)
+    # test function
+    test_gaussian_nll_loss()
 
 if __name__ == "__main__":
     main()
