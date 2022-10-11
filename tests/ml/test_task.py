@@ -66,7 +66,7 @@ def test_PointingReconstructionWithKappa():
     ):
         PointingReconstructionWithKappa(
             hidden_size=gnn.nb_outputs,
-            target_labels="angles",
+            target_labels=["zenith", "azimuth"],
             loss_function=GaussianNLLLoss(),
         )
 
@@ -83,9 +83,9 @@ def test_PointingReconstructionWithKappa():
 
 def main():
     #print(getmembers(__file__, isfunction))
-    # select subject for testing
-    result = test_PointingReconstructionWithKappa()
-    print(result)
+    
+    # Test task
+    test_transform_prediction_and_target()
 
 if __name__ == "__main__":
     main()
