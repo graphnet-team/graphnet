@@ -57,14 +57,13 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         if "CalibrationErrata" in frame:
             calibration_errata = frame.Get("CalibrationErrata")
 
+        event_time = frame["I3EventHeader"].start_time.mod_julian_day_double
+
         for om_key in om_keys:
             # Common values for each OM
             x = self._gcd_dict[om_key].position.x
             y = self._gcd_dict[om_key].position.y
             z = self._gcd_dict[om_key].position.z
-            event_time = frame[
-                "I3EventHeader"
-            ].start_time.mod_julian_day_double
             area = self._gcd_dict[om_key].area
             rde = self._get_relative_dom_efficiency(frame, om_key)
 
