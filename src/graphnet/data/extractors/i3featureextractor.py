@@ -30,6 +30,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "is_bad_dom": [],
             "is_saturated_dom": [],
             "is_errata_dom": [],
+            "event_time": [],
         }
 
         # Get OM data
@@ -55,6 +56,8 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
 
         if "CalibrationErrata" in frame:
             calibration_errata = frame.Get("CalibrationErrata")
+
+        event_time = frame["I3EventHeader"].start_time.mod_julian_day_double
 
         for om_key in om_keys:
             # Common values for each OM
@@ -101,6 +104,8 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output["is_bad_dom"].append(is_bad_dom)
                 output["is_saturated_dom"].append(is_saturated_dom)
                 output["is_errata_dom"].append(is_errata_dom)
+                output["event_time"].append(event_time)
+
         return output
 
     def _get_relative_dom_efficiency(self, frame, om_key):
