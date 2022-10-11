@@ -68,15 +68,20 @@ def test_log_cosh(dtype=torch.float32):
     )
 
 def test_gaussian_nll_loss(dtype=torch.float32):
-    # Prepare test data, zenith, azimuth and kappa
-    prediction = torch.empty((7,3),dtype=dtype) # Shape [N, 3]
-    angles = torch.tensor([-pi, -pi/2, -pi/4, 0, pi/4, pi/2, pi])
-    kappa = abs(angles) + eps_like(angles)
-    prediction[:,0] = angles
-    prediction[:,1] = angles
-    prediction[:,2] = kappa
-
-    target = 0.0 * prediction.clone()  # Shape [N,3]
+    # Prepare test data for prediction (zenith, azimuth and kappa) and target
+    angles = torch.tensor([-pi, -pi/2, -pi/4, 0, pi/4, pi/2, pi])  # Shape: (7,)
+    angles_matrix = angles.unsqueeze(1).tile(angles.size())  # (7,7)
+    zenith_azimuth = torch.stack([
+        angles_matrix.ravel(),
+        angles_matrix.T.ravel(),
+    ]).T  # (49,2)
+    nb_examples = zenith_azimuth.size(0)
+    kappa = torch.logspace(-2, 2, nb_examples)  # (49,)
+    
+    prediction = torch.hstack([zenith_azimuth, kappa.unsqueeze(1)])  # (49, 3)
+    
+    target = torch.zeros(nb_examples, 2)  # (zenith, azimuth)
+    
     # Calculate losses using loss function, and manually
     GaussianNLLLoss_loss = GaussianNLLLoss()
     losses = GaussianNLLLoss_loss(prediction, target, return_elements=True)
