@@ -3,6 +3,8 @@ from typing import List, Union
 from typing import Callable, Optional
 import numpy as np
 
+from graphnet.models.config import save_config
+
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
@@ -55,6 +57,7 @@ class Task(Model):
     def nb_inputs(self) -> int:
         """Number of inputs assumed by task."""
 
+    @save_config
     def __init__(
         self,
         hidden_size: int,
