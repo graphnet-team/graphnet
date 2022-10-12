@@ -1,2 +1,2 @@
 from .model import Model
-from .simple_model import SimpleModel
+from .standard_model import StandardModel

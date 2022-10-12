@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from typing import List
 
+from graphnet.models.config import save_config
+
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
@@ -25,6 +27,7 @@ class Detector(Model):
     def features(self) -> List[str]:
         """List of features used/assumed by inheriting `Detector` objects."""
 
+    @save_config
     def __init__(
         self, graph_builder: GraphBuilder, scalers: List[dict] = None
     ):

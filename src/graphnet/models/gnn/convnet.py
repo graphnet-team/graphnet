@@ -13,10 +13,12 @@ import torch.nn.functional as F
 from torch_geometric.nn import TAGConv, global_add_pool, global_max_pool
 from torch_geometric.data import Data
 
+from graphnet.models.config import save_config
 from graphnet.models.gnn.gnn import GNN
 
 
 class ConvNet(GNN):
+    @save_config
     def __init__(
         self, nb_inputs, nb_outputs, nb_intermediate=128, dropout_ratio=0.3
     ):

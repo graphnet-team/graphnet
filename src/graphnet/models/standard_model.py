@@ -11,17 +11,19 @@ from graphnet.models.coarsening import Coarsening
 
 from graphnet.models.detector.detector import Detector
 from graphnet.models.gnn.gnn import GNN
+from graphnet.models.config import save_config
 from graphnet.models.model import Model
 from graphnet.models.task import Task
 
 
-class SimpleModel(Model):
-    """Main class for simple models in graphnet.
+class StandardModel(Model):
+    """Main class for standard models in graphnet.
 
     This class chains together the different elements of a complete GNN-based
     model (detector read-in, GNN architecture, and task-specific read-outs).
     """
 
+    @save_config
     def __init__(
         self,
         *,
@@ -144,7 +146,7 @@ class SimpleModel(Model):
         self.logger.info(f"Model saved to {path}")
 
     @classmethod
-    def load(cls, path: str) -> "SimpleModel":
+    def load(cls, path: str) -> "StandardModel":
         """Loads entire model from `path`."""
         return torch.load(path, pickle_module=dill)
 
@@ -159,7 +161,7 @@ class SimpleModel(Model):
 
     def load_state_dict(
         self, path: str
-    ) -> "SimpleModel":  # pylint: disable=arguments-differ
+    ) -> "StandardModel":  # pylint: disable=arguments-differ
         """Loads model `state_dict` from `path`, either file or loaded object."""
         if isinstance(path, str):
             state_dict = torch.load(path)
