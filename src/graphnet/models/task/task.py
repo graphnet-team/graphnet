@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import List, Union
+from typing import TYPE_CHECKING, List, Union
 from typing import Callable, Optional
 import numpy as np
 
@@ -18,7 +18,10 @@ from torch import Tensor
 from torch.nn import Linear
 from torch_geometric.data import Data
 
-from graphnet.training.loss_functions import LossFunction
+if TYPE_CHECKING:
+    # Avoid cyclic dependency
+    from graphnet.training.loss_functions import LossFunction
+
 from graphnet.models import Model
 
 
@@ -62,7 +65,7 @@ class Task(Model):
         self,
         hidden_size: int,
         target_labels: Union[str, List[str]],
-        loss_function: LossFunction,
+        loss_function: "LossFunction",
         transform_prediction_and_target: Optional[Callable] = None,
         transform_target: Optional[Callable] = None,
         transform_inference: Optional[Callable] = None,
