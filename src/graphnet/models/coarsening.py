@@ -119,7 +119,7 @@ class Coarsening(Model):
 
         return pooled_data
 
-    def __call__(self, data: Union[Data, Batch]) -> Union[Data, Batch]:
+    def forward(self, data: Union[Data, Batch]) -> Union[Data, Batch]:
         """Coarsening operation."""
 
         # Get tensor of cluster indices for each node.
