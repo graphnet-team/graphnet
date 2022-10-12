@@ -7,6 +7,7 @@ from copy import deepcopy
 import torch
 from torch import LongTensor, Tensor
 from torch_geometric.data import Data, Batch
+from sklearn.cluster import DBSCAN
 
 # from torch_geometric.utils import unbatch_edge_index
 from graphnet.models.components.pool import (
@@ -229,6 +230,46 @@ class CustomDOMCoarsening(DOMCoarsening):
         )
 
         return x
+
+
+class DOMAndTimeWindowCoarsening(Coarsening):
+    def __init__(
+        self,
+        time_window: float,
+        reduce: str = "avg",
+        transfer_attributes: bool = True,
+    ):
+        """Cluster pulses on the same DOM within `time_window`."""
+        super().__init__(reduce, transfer_attributes)
+        self._time_window = time_window
+        self._cluster_method = DBSCAN(self._time_window, min_samples=1)
+
+    def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
+        """Cluster nodes in `data` by assigning a cluster index to each."""
+        dom_index = group_by(
+            data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
+        )
+        if data.batch is not None:
+            features = data.features[0]
+        else:
+            features = data.features
+
+        ix_time = features.index("dom_time")
+        hit_times = data.x[:, ix_time]
+
+        # Scale up dom_index to make sure clusters are well separated
+        times_and_domids = torch.stack(
+            [
+                hit_times,
+                dom_index * self._time_window * 10,
+            ]
+        ).T
+        clusters = torch.tensor(
+            self._cluster_method.fit_predict(times_and_domids.cpu()),
+            device=hit_times.device,
+        )
+
+        return clusters
 
 
 class LoopBasedCoarsening:
