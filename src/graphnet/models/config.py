@@ -1,9 +1,9 @@
 """Config classes for the `graphnet.data` module."""
-from ast import arguments
 from functools import wraps
 import inspect
+import re
 import types
-from typing import Any, Callable, Dict, Union, Optional, OrderedDict
+from typing import Any, Callable, Dict, List, Union, Optional, OrderedDict
 
 from pydantic import BaseModel
 import ruamel.yaml as yaml
@@ -96,7 +96,9 @@ class ModelConfig(BaseModel, LoggerMixin):
         else:
             return yaml.dump(config_dict)
 
-    def construct_model(self, trust: bool = False) -> "Model":
+    def construct_model(
+        self, trust: bool = False, load_modules: Optional[List[str]] = None
+    ) -> "Model":
         """Construct model based on current config.
 
         Arguments:
@@ -109,6 +111,14 @@ class ModelConfig(BaseModel, LoggerMixin):
         """
         # Get a lookup for all classes in `graphnet`
         namespace_classes = get_namespace_classes(graphnet)
+
+        # Load any additional modules into the global namespace
+        if load_modules:
+            for module in load_modules:
+                assert re.match("^[a-zA-Z_]+$", module) is not None
+                if module in globals():
+                    continue
+                exec(f"import {module}", globals())
 
         # Parse potential ModelConfig arguments
         arguments = dict(**self.arguments)
@@ -123,6 +133,7 @@ class ModelConfig(BaseModel, LoggerMixin):
 
     @classmethod
     def _deserialise(cls, obj: Any, trust: bool = False) -> Any:
+
         if isinstance(obj, ModelConfig):
             return obj.construct_model(trust=trust)
 
@@ -140,7 +151,7 @@ class ModelConfig(BaseModel, LoggerMixin):
         elif isinstance(obj, str) and obj.startswith("!class"):
             if trust:
                 module, class_name = obj.split()[1:]
-                eval(f"from {module} import {class_name}")
+                exec(f"from {module} import {class_name}")
                 return eval(class_name)
             else:
                 raise ValueError(
@@ -190,12 +201,12 @@ class ModelConfig(BaseModel, LoggerMixin):
 def save_config(init_fn: Callable):
     """Save the arguments to `__init__` functions as member `ModelConfig`."""
 
-    def _serialise(obj: Any) -> Any:
-        """Serialise `obj` to a format that works for `ModelConfig`"""
+    def _replace_model_instance_with_config(
+        obj: Union[Model, Any]
+    ) -> Union[ModelConfig, Any]:
+        """Replace `Model` instances in `obj` with their `ModelConfig`."""
         if isinstance(obj, Model):
             return obj.config
-        elif isinstance(obj, type):
-            return str(obj)
         else:
             return obj
 
@@ -222,7 +233,7 @@ def save_config(init_fn: Callable):
         cfg.update(kwargs)
 
         # Handle nested `Model`s, etc.
-        cfg = traverse_and_apply(cfg, _serialise)
+        cfg = traverse_and_apply(cfg, _replace_model_instance_with_config)
 
         # Add `ModelConfig` as member variables
         self._config = ModelConfig(
