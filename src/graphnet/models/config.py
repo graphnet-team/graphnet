@@ -34,13 +34,38 @@ def traverse_and_apply(
 
 
 class ModelConfig(BaseModel, LoggerMixin):
-    """Config for data conversion and ingestion."""
+    """Configuration for all `Model`s."""
 
+    # Fields
     class_name: str
     arguments: Dict[str, Any]
 
     def __init__(self, **data: Any) -> None:
-        """Constructor."""
+        """ModelConfig.
+
+        Can be used for model configuration as code, thereby making model
+        construction more transparent and reproducible. Note that this does
+        *not* save any trainable weights, meaning this is only a configuration
+        for the model's hyperparameters. Any model instantiated from a
+        ModelConfig or file will be randomly initialised, and thus should be
+        trained.
+
+        Examples:
+            In one session, do:
+
+            >>> model = Model(...)
+            >>> model.config.dump()
+            arguments:
+                - (...): (...)
+            class_name: Model
+            >>> model.config.dump("model.yml")
+
+            In another session, you can then do:
+            >>> model = Model.from_config("model.yml")
+
+            Or identically:
+            >>> model = ModelConfig.load("model.yml").construct_model()
+        """
         # Parse any nested `ModelConfig` arguments
         def _is_model_config_entry(entry: Dict[str, Any]) -> bool:
             return (
@@ -199,7 +224,7 @@ class ModelConfig(BaseModel, LoggerMixin):
 
 
 def save_config(init_fn: Callable):
-    """Save the arguments to `__init__` functions as member `ModelConfig`."""
+    """Save the arguments to `__init__` functions as a member `ModelConfig`."""
 
     def _replace_model_instance_with_config(
         obj: Union[Model, Any]
