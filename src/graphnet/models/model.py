@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, List, Optional, Union
 
 try:
     from typing import final
@@ -51,6 +51,7 @@ class Model(LightningModule, LoggerMixin, ABC):
         cls,
         source: Union["ModelConfig", str],
         trust: bool = False,
+        load_modules: Optional[List[str]] = None,
     ) -> "Model":
         """Construct `Model` instance from `source` configuration.
 
@@ -68,4 +69,4 @@ class Model(LightningModule, LoggerMixin, ABC):
             source = ModelConfig.load(source)
 
         assert isinstance(source, ModelConfig)
-        return source.construct_model(trust=trust)
+        return source.construct_model(trust=trust, load_modules=load_modules)
