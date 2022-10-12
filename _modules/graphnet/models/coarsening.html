@@ -72,6 +72,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">Tensor</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">DBSCAN</span>
 
 <span class="c1"># from torch_geometric.utils import unbatch_edge_index</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.components.pool</span> <span class="kn">import</span> <span class="p">(</span>
@@ -294,6 +295,46 @@
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<div class="viewcode-block" id="DOMAndTimeWindowCoarsening"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening">[docs]</a><span class="k">class</span> <span class="nc">DOMAndTimeWindowCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
+<div class="viewcode-block" id="DOMAndTimeWindowCoarsening.__init__"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span>
+        <span class="n">transfer_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cluster pulses on the same DOM within `time_window`.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduce</span><span class="p">,</span> <span class="n">transfer_attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_window</span> <span class="o">=</span> <span class="n">time_window</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_method</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_window</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DOMAndTimeWindowCoarsening._perform_clustering"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening._perform_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Cluster nodes in `data` by assigning a cluster index to each.&quot;&quot;&quot;</span>
+        <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;dom_x&quot;</span><span class="p">,</span> <span class="s2">&quot;dom_y&quot;</span><span class="p">,</span> <span class="s2">&quot;dom_z&quot;</span><span class="p">,</span> <span class="s2">&quot;rde&quot;</span><span class="p">,</span> <span class="s2">&quot;pmt_area&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">features</span>
+
+        <span class="n">ix_time</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;dom_time&quot;</span><span class="p">)</span>
+        <span class="n">hit_times</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="n">ix_time</span><span class="p">]</span>
+
+        <span class="c1"># Scale up dom_index to make sure clusters are well separated</span>
+        <span class="n">times_and_domids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">hit_times</span><span class="p">,</span>
+                <span class="n">dom_index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_window</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_method</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">times_and_domids</span><span class="o">.</span><span class="n">cpu</span><span class="p">()),</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">hit_times</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">clusters</span></div></div>
 
 
 <div class="viewcode-block" id="LoopBasedCoarsening"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.LoopBasedCoarsening">[docs]</a><span class="k">class</span> <span class="nc">LoopBasedCoarsening</span><span class="p">:</span>
