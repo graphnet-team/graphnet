@@ -72,6 +72,9 @@ class Coarsening(Model):
         ) = self.reduce_options[reduce]
         self._do_transfer_attributes = transfer_attributes
 
+        # Base class constructor
+        super().__init__()
+
     @abstractmethod
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
