@@ -1,4 +1,5 @@
 """I3Extractor class(es) for extracting hybrid reconstructions."""
+
 from typing import TYPE_CHECKING, Any, Dict
 
 from graphnet.data.extractors.i3extractor import I3Extractor

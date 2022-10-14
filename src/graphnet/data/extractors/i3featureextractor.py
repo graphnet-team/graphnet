@@ -1,4 +1,5 @@
 """I3Extractor class(es) for extracting specific, reconstructed features."""
+
 from typing import TYPE_CHECKING, Any, Dict, List
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.frames import (
