@@ -39,6 +39,21 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
         return angle
 
 
+class DirectionReconstructionWithKappa(Task):
+    """Reconstructs Direction with kappa from The 3DVonMisesFisher Distribution."""
+
+    # Requires three features: untransformed points in (x,y,z)-space.
+    nb_inputs = 3
+
+    def _forward(self, x):
+        # Transform outputs to angle and prepare prediction
+        kappa = torch.linalg.vector_norm(x, dim=1) + eps_like(x)
+        vec_x = x[:, 0] / kappa
+        vec_y = x[:, 1] / kappa
+        vec_z = x[:, 2] / kappa
+        return torch.stack((vec_x, vec_y, vec_z, kappa), dim=1)
+
+
 class PassOutput1(Task):
     """Passes 1 output without interference."""
 
