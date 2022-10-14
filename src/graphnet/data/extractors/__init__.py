@@ -1,7 +1,15 @@
-from .i3extractor import *
-from .i3featureextractor import *
-from .i3truthextractor import *
-from .i3retroextractor import *
+"""Collection I3Extractors, for extracting pure-python data from I3Frames."""
+
+from .i3extractor import I3Extractor
+from .i3featureextractor import (
+    I3FeatureExtractor,
+    I3FeatureExtractorIceCube86,
+    I3FeatureExtractorIceCubeDeepCore,
+    I3FeatureExtractorIceCubeUpgrade,
+    I3PulseNoiseTruthFlagIceCubeUpgrade,
+)
+from .i3truthextractor import I3TruthExtractor
+from .i3retroextractor import I3RetroExtractor
 from .i3splinempeextractor import I3SplineMPEICExtractor
 from .i3tumextractor import I3TUMExtractor
 from .i3hybridrecoextractor import I3GalacticPlaneHybridRecoExtractor
