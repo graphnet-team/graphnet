@@ -1,11 +1,11 @@
 """Base I3Extractor class(es)."""
 from abc import ABC, abstractmethod
-from typing import List
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import LoggerMixin
 
-if has_icecube_package():
+if has_icecube_package() or TYPE_CHECKING:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 
 
@@ -26,13 +26,13 @@ class I3Extractor(ABC, LoggerMixin):
                 which this data is saved.
         """
         # Member variables
-        self._i3_file = None
-        self._gcd_file = None
-        self._gcd_dict = None
-        self._calibration = None
-        self._name = name
+        self._i3_file: Optional[str] = None
+        self._gcd_file: Optional[str] = None
+        self._gcd_dict: Optional[Dict[str, Any]] = None
+        self._calibration: Optional["icetray.I3Frame.Calibration"] = None
+        self._name: str = name
 
-    def set_files(self, i3_file, gcd_file):
+    def set_files(self, i3_file: str, gcd_file: str):
         """Store references to the I3- and GCD-files being processed."""
         # @TODO: Is it necessary to set the `i3_file`? It is only used in one
         #        place in `I3TruthExtractor`, and there only in a way that might
@@ -67,7 +67,7 @@ class I3Extractor(ABC, LoggerMixin):
             self._calibration = c_frame["I3Calibration"]
 
     @abstractmethod
-    def __call__(self, frame) -> dict:
+    def __call__(self, frame: "icetray.I3Frame") -> dict:
         """Extract information from frame."""
         pass
 
@@ -94,11 +94,11 @@ class I3ExtractorCollection(list):
         # Base class constructor
         super().__init__(extractors)
 
-    def set_files(self, i3_file, gcd_file):
+    def set_files(self, i3_file: str, gcd_file: str):
         """Store references to the I3- and GCD-files being processed."""
         for extractor in self:
             extractor.set_files(i3_file, gcd_file)
 
-    def __call__(self, frame) -> List[dict]:
+    def __call__(self, frame: "icetray.I3Frame") -> List[dict]:
         """Extract information from frame for each member `I3Extractor`."""
         return [extractor(frame) for extractor in self]
