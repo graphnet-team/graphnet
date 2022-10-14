@@ -105,12 +105,10 @@ class I3GenericExtractor(I3Extractor):
             try:
                 obj = frame[key]
             except RuntimeError:
-                self.logger.debug(
-                    f"Key {key} in frame not supported. Skipping."
-                )
+                self.debug(f"Key {key} in frame not supported. Skipping.")
             except KeyError:
                 if self._keys is not None:
-                    self.logger.warning(f"Key {key} not in frame. Skipping")
+                    self.warning(f"Key {key} not in frame. Skipping")
                 continue
 
             # Special case(s)
@@ -179,7 +177,7 @@ class I3GenericExtractor(I3Extractor):
         )
 
         if result is None:
-            self.logger.debug(f"Pulse map {key} didn't return anything.")
+            self.debug(f"Pulse map {key} didn't return anything.")
 
         return result
 

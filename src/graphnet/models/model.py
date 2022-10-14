@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+import dill
+import os.path
 from typing import TYPE_CHECKING, List, Optional, Union
 
 try:
@@ -10,6 +12,7 @@ except ImportError:  # Python version < 3.8
 
 
 from pytorch_lightning import LightningModule
+import torch
 from torch import Tensor
 from torch_geometric.data import Data
 
@@ -35,11 +38,47 @@ class Model(LightningModule, LoggerMixin, ABC):
         try:
             return self._config
         except AttributeError:
-            self.logger.error(
+            self.error(
                 "ModelConfig was not set. "
                 "Did you wrap the class constructor with `save_config`?"
             )
             raise
+
+    def save(self, path: str):
+        """Saves entire model to `path`."""
+        if not path.endswith(".pth"):
+            self.info(
+                "It is recommended to use the .pth suffix for model files."
+            )
+        dirname = os.path.dirname(path)
+        if dirname:
+            os.makedirs(dirname, exist_ok=True)
+        torch.save(self.cpu(), path, pickle_module=dill)
+        self.info(f"Model saved to {path}")
+
+    @classmethod
+    def load(cls, path: str) -> "Model":
+        """Loads entire model from `path`."""
+        return torch.load(path, pickle_module=dill)
+
+    def save_state_dict(self, path: str):
+        """Saves model `state_dict` to `path`."""
+        if not path.endswith(".pth"):
+            self.info(
+                "It is recommended to use the .pth suffix for state_dict files."
+            )
+        torch.save(self.cpu().state_dict(), path)
+        self.info(f"Model state_dict saved to {path}")
+
+    def load_state_dict(
+        self, path: str
+    ) -> "Model":  # pylint: disable=arguments-differ
+        """Loads model `state_dict` from `path`, either file or loaded object."""
+        if isinstance(path, str):
+            state_dict = torch.load(path)
+        else:
+            state_dict = path
+        return super().load_state_dict(state_dict)
 
     @final
     def save_config(self, path: str):

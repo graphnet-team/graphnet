@@ -17,18 +17,18 @@ class ParquetDataConverter(DataConverter):
         """Save data to parquet file."""
         # Check(s)
         if os.path.exists(output_file):
-            self.logger.warning(
+            self.warning(
                 f"Output file {output_file} already exists. Overwriting."
             )
 
-        self.logger.debug(f"Saving to {output_file}")
-        self.logger.debug(
+        self.debug(f"Saving to {output_file}")
+        self.debug(
             f"- Data has {len(data)} events and {len(data[0])} tables for each"
         )
 
         awkward.to_parquet(awkward.from_iter(data), output_file)
 
-        self.logger.debug("- Done saving")
+        self.debug("- Done saving")
         self._output_files.append(output_file)
 
     def merge_files(

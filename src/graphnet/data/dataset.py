@@ -59,7 +59,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self._node_truth_table = node_truth_table
 
         if string_selection is not None:
-            self.logger.warning(
+            self.warning(
                 (
                     "String selection detected.\n",
                     f"Accepted strings: {string_selection}\n",
@@ -80,12 +80,12 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         if (self._loss_weight_table is None) and (
             self._loss_weight_column is not None
         ):
-            self.logger.warning("Error: no loss weight table specified")
+            self.warning("Error: no loss weight table specified")
             assert isinstance(self._loss_weight_table, str)
         if (self._loss_weight_table is not None) and (
             self._loss_weight_column is None
         ):
-            self.logger.warning("Error: no loss weight column specified")
+            self.warning("Error: no loss weight column specified")
             assert isinstance(self._loss_weight_column, str)
 
         self._dtype = dtype
@@ -190,7 +190,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         # Remove missing features
         if missing_features:
-            self.logger.warning(
+            self.warning(
                 "Removing the following (missing) features: "
                 + ", ".join(missing_features)
             )
@@ -199,7 +199,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         # Remove missing truth variables
         if missing_truth_variables:
-            self.logger.warning(
+            self.warning(
                 (
                     "Removing the following (missing) truth variables: "
                     + ", ".join(missing_truth_variables)
@@ -348,7 +348,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type,
                     # e.g. `str`.
-                    self.logger.debug(
+                    self.debug(
                         (
                             f"Could not assign `{key}` with type "
                             f"'{type(value).__name__}' as attribute to graph."
