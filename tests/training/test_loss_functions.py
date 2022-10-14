@@ -92,10 +92,7 @@ def test_von_mises_fisher_exact_m3(dtype=torch.float64):
 
 @pytest.mark.parametrize("m", [2, 3])
 def test_von_mises_fisher_approximation(m, dtype=torch.float64):
-    """See [1812.04616] Sec.
-
-    8.2 for approximation
-    """
+    """See [1812.04616], Section 8.2 for approximation."""
     # Check(s)
     assert isinstance(m, int)
     assert m > 1
@@ -132,10 +129,7 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
 
 @pytest.mark.parametrize("m", [2, 3])
 def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
-    """See [1812.04616] Sec.
-
-    8.2 for approximation
-    """
+    """See [1812.04616], Section 8.2 for approximation."""
     # Check(s)
     assert isinstance(m, int)
     assert m > 1
