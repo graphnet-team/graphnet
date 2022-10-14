@@ -68,9 +68,9 @@ class I3GenericExtractor(I3Extractor):
     def _get_keys(self, frame: "icetray.I3Frame") -> List[str]:
         """Get the list of keys to be queried from `frame`.
 
-        If a list of keys was provided by the user, return this.
-        Otherwise, return all keys, possibly except ones that the user
-        have explicitly excluded.
+        If a list of keys was provided by the user, return this. Otherwise,
+        return all keys, possibly except ones that the user have explicitly
+        excluded.
         """
         if self._keys is None:
             keys = list(frame.keys())
