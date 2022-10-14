@@ -325,7 +325,7 @@ class DynEdge(GNN):
                 x = torch.cat(
                     [
                         x,
-                        global_variables.unsqueeze(1),
+                        global_variables,
                     ],
                     dim=1,
                 )
