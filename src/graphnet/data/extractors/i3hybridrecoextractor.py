@@ -1,12 +1,22 @@
+"""I3Extractor class(es) for extracting hybrid reconstructions."""
 from graphnet.data.extractors.i3extractor import I3Extractor
 
 
 class I3GalacticPlaneHybridRecoExtractor(I3Extractor):
-    def __init__(self, name="dnn_hybrid"):
+    """Class for extracting galatictic plane hybrid reconstruction."""
+
+    def __init__(self, name: str = "dnn_hybrid"):
+        """Construct instance.
+
+        Args:
+            name (str, optional): Name of the `I3Extractor` instance. Defaults
+                to "dnn_hybrid".
+        """
+        # Base class constructor
         super().__init__(name)
 
     def __call__(self, frame) -> dict:
-        """Extracts TUMs DNN Recos and associated variables."""
+        """Extract TUMs DNN reconcstructions and associated variables."""
         output = {}
         if "DNNCascadeAnalysis_version_001_p00" in frame:
             reco_object = frame["DNNCascadeAnalysis_version_001_p00"]
