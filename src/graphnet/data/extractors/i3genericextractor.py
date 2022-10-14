@@ -1,4 +1,5 @@
 """I3Extractor class(es) for generic data extraction."""
+
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from graphnet.data.extractors.i3extractor import I3Extractor
