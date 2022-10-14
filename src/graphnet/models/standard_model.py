@@ -127,47 +127,11 @@ class StandardModel(Model):
             for task, pred in zip(self._tasks, preds)
         ]
         if verbose:
-            self.logger.info(losses)
+            self.info(losses)
         assert all(
             loss.dim() == 0 for loss in losses
         ), "Please reduce loss for each task separately"
         return torch.sum(torch.stack(losses))
-
-    def save(self, path: str):
-        """Saves entire model to `path`."""
-        if not path.endswith(".pth"):
-            self.logger.info(
-                "It is recommended to use the .pth suffix for model files."
-            )
-        dirname = os.path.dirname(path)
-        if dirname:
-            os.makedirs(dirname, exist_ok=True)
-        torch.save(self.cpu(), path, pickle_module=dill)
-        self.logger.info(f"Model saved to {path}")
-
-    @classmethod
-    def load(cls, path: str) -> "StandardModel":
-        """Loads entire model from `path`."""
-        return torch.load(path, pickle_module=dill)
-
-    def save_state_dict(self, path: str):
-        """Saves model `state_dict` to `path`."""
-        if not path.endswith(".pth"):
-            self.logger.info(
-                "It is recommended to use the .pth suffix for state_dict files."
-            )
-        torch.save(self.cpu().state_dict(), path)
-        self.logger.info(f"Model state_dict saved to {path}")
-
-    def load_state_dict(
-        self, path: str
-    ) -> "StandardModel":  # pylint: disable=arguments-differ
-        """Loads model `state_dict` from `path`, either file or loaded object."""
-        if isinstance(path, str):
-            state_dict = torch.load(path)
-        else:
-            state_dict = path
-        return super().load_state_dict(state_dict)
 
     def _get_batch_size(self, data: Data) -> int:
         return torch.numel(torch.unique(data.batch))

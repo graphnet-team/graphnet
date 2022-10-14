@@ -39,7 +39,7 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
     def forward(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            self.logger.info(
+            self.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",
@@ -80,7 +80,7 @@ class RadialGraphBuilder(GraphBuilder):
     def forward(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            self.logger.info(
+            self.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",
@@ -121,7 +121,7 @@ class EuclideanGraphBuilder(GraphBuilder):
     def forward(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            self.logger.info(
+            self.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",

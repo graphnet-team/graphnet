@@ -38,7 +38,7 @@ class Detector(Model):
         self._graph_builder = graph_builder
         self._scalers = scalers
         if self._scalers:
-            self.logger.info(
+            self.info(
                 (
                     "Will use scalers rather than standard preprocessing "
                     f"in {self.__class__.__name__}.",

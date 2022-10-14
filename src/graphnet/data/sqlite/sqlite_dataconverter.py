@@ -22,7 +22,7 @@ class SQLiteDataConverter(DataConverter):
         """Save data to SQLite database."""
         # Check(s)
         if os.path.exists(output_file):
-            self.logger.warning(
+            self.warning(
                 f"Output file {output_file} already exists. Appending."
             )
 
@@ -43,7 +43,7 @@ class SQLiteDataConverter(DataConverter):
                         dataframe[key] = df
 
         # Save each dataframe to SQLite database
-        self.logger.debug(f"Saving to {output_file}")
+        self.debug(f"Saving to {output_file}")
         saved_any = False
         for table, df in dataframe.items():
             if len(df) > 0:
@@ -51,27 +51,27 @@ class SQLiteDataConverter(DataConverter):
                 saved_any = True
 
         if saved_any:
-            self.logger.debug("- Done saving")
+            self.debug("- Done saving")
         else:
-            self.logger.warning(f"No data saved to {output_file}")
+            self.warning(f"No data saved to {output_file}")
 
     def merge_files(
         self, output_file: str, input_files: Optional[List[str]] = None
     ):
         if input_files is None:
-            self.logger.info("Merging files output by current instance.")
+            self.info("Merging files output by current instance.")
             input_files = self._output_files
 
         if not output_file.endswith("." + self.file_suffix):
             output_file = ".".join([output_file, self.file_suffix])
 
         if os.path.exists(output_file):
-            self.logger.warning(
+            self.warning(
                 f"Target path for merged database, {output_file}, already exists."
             )
 
         if len(input_files) > 0:
-            self.logger.info(f"Merging {len(input_files)} database files")
+            self.info(f"Merging {len(input_files)} database files")
 
             # Create one empty database table for each extraction
             table_names = self._extract_table_names(input_files)
@@ -91,7 +91,7 @@ class SQLiteDataConverter(DataConverter):
             # Merge temporary databases into newly created one
             self._merge_temporary_databases(output_file, input_files)
         else:
-            self.logger.warning("No temporary database files found!")
+            self.warning("No temporary database files found!")
 
     # Internal methods
     def _extract_table_names(self, db: Union[str, List[str]]) -> Tuple[str]:
@@ -181,8 +181,8 @@ class SQLiteDataConverter(DataConverter):
         run_sql_code(database, code)
 
         if is_pulse_map:
-            self.logger.debug(table_name)
-            self.logger.debug("Attaching indices")
+            self.debug(table_name)
+            self.debug("Attaching indices")
             self._attach_index(database, table_name)
         return
 
@@ -190,7 +190,7 @@ class SQLiteDataConverter(DataConverter):
         """Submits data to the database with specified key."""
         if len(data) == 0:
             if self._verbose:
-                self.logger.info(f"No data provided for {key}.")
+                self.info(f"No data provided for {key}.")
             return
         engine = sqlalchemy.create_engine("sqlite:///" + database)
         data.to_sql(key, engine, index=False, if_exists="append")

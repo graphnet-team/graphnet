@@ -14,7 +14,7 @@ class ParquetDataset(Dataset):
     def _init(self):
         # Check(s)
         if isinstance(self._path, list):
-            self.logger.error("Multiple files not supported")
+            self.error("Multiple files not supported")
         assert isinstance(self._path, str)
 
         assert self._path.endswith(
