@@ -22,7 +22,7 @@ class I3GalacticPlaneHybridRecoExtractor(I3Extractor):
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract TUMs DNN reconcstructions and associated variables."""
-        output: Dict[str, Any] = {}
+        output = {}
         if "DNNCascadeAnalysis_version_001_p00" in frame:
             reco_object = frame["DNNCascadeAnalysis_version_001_p00"]
             keys = [
