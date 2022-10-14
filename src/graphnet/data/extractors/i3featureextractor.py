@@ -1,23 +1,48 @@
+"""I3Extractor class(es) for extracting specific, reconstructed features."""
+from typing import TYPE_CHECKING, Any, Dict, List
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
 from graphnet.utilities.imports import has_icecube_package
 
-if has_icecube_package():
-    from icecube import dataclasses  # pyright: reportMissingImports=false
+if has_icecube_package() or TYPE_CHECKING:
+    from icecube import (
+        icetray,
+        dataclasses,
+    )  # pyright: reportMissingImports=false
 
 
 class I3FeatureExtractor(I3Extractor):
-    def __init__(self, pulsemap):
-        self._pulsemap = pulsemap
+    """Base class for extracting specific, reconstructed features."""
+
+    def __init__(self, pulsemap: str):
+        """Construct instance.
+
+        Args:
+            pulsemap (str): Name of the pulse (series) map for which to extract reconstructed features.
+        """
+        # Member variable(s)
+        self._pulsemap: str = pulsemap
+
+        # Base class constructor
         super().__init__(pulsemap)
 
 
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
-    def __call__(self, frame) -> dict:
-        """Extract features to be used as inputs to GNN models."""
-        output = {
+    """Class for extracting reconstructed features for IceCube-86."""
+
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, List[Any]]:
+        """Extract reconstructed features from `frame`.
+
+        Args:
+            frame (icetray.I3Frame): Physics (P) I3-frame from which to extract
+                reconstructed features.
+
+        Returns:
+            Dict[str, List[Any]]: Reconstructed features for all pulses in `pulsemap`, in pure-python format.
+        """
+        output: Dict[str, List[Any]] = {
             "charge": [],
             "dom_time": [],
             "dom_x": [],
@@ -122,14 +147,23 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
 
 
 class I3FeatureExtractorIceCubeDeepCore(I3FeatureExtractorIceCube86):
-    """..."""
+    """Class for extracting reconstructed features for IceCube-DeepCore."""
 
 
 class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
-    def __call__(self, frame) -> dict:
-        """Extract features to be used as inputs to GNN models."""
+    """Class for extracting reconstructed features for IceCube-Upgrade."""
 
-        output = {
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, List[Any]]:
+        """Extract reconstructed features from `frame`.
+
+        Args:
+            frame (icetray.I3Frame): Physics (P) I3-frame from which to extract
+                reconstructed features.
+
+        Returns:
+            Dict[str, List[Any]]: Reconstructed features for all pulses in `pulsemap`, in pure-python format.
+        """
+        output: Dict[str, List[Any]] = {
             "string": [],
             "pmt_number": [],
             "dom_number": [],
@@ -175,10 +209,19 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
 
 
 class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
-    def __call__(self, frame) -> dict:
-        """Extract features to be used as inputs to GNN models."""
+    """Feature extractor class with pulse noise truth flag added."""
 
-        output = {
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, List[Any]]:
+        """Extract reconstructed features from `frame`.
+
+        Args:
+            frame (icetray.I3Frame): Physics (P) I3-frame from which to extract
+                reconstructed features.
+
+        Returns:
+            Dict[str, List[Any]]: Reconstructed features for all pulses in `pulsemap`, in pure-python format.
+        """
+        output: Dict[str, List[Any]] = {
             "string": [],
             "pmt_number": [],
             "dom_number": [],
