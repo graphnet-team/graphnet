@@ -20,7 +20,8 @@ class I3FeatureExtractor(I3Extractor):
         """Construct instance.
 
         Args:
-            pulsemap (str): Name of the pulse (series) map for which to extract reconstructed features.
+            pulsemap (str): Name of the pulse (series) map for which to extract
+                reconstructed features.
         """
         # Member variable(s)
         self._pulsemap: str = pulsemap
@@ -40,7 +41,8 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 reconstructed features.
 
         Returns:
-            Dict[str, List[Any]]: Reconstructed features for all pulses in `pulsemap`, in pure-python format.
+            Dict[str, List[Any]]: Reconstructed features for all pulses in
+                `pulsemap`, in pure-python format.
         """
         output: Dict[str, List[Any]] = {
             "charge": [],
@@ -161,7 +163,8 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
                 reconstructed features.
 
         Returns:
-            Dict[str, List[Any]]: Reconstructed features for all pulses in `pulsemap`, in pure-python format.
+            Dict[str, List[Any]]: Reconstructed features for all pulses in
+                `pulsemap`, in pure-python format.
         """
         output: Dict[str, List[Any]] = {
             "string": [],
@@ -219,7 +222,8 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
                 reconstructed features.
 
         Returns:
-            Dict[str, List[Any]]: Reconstructed features for all pulses in `pulsemap`, in pure-python format.
+            Dict[str, List[Any]]: Reconstructed features for all pulses in
+                `pulsemap`, in pure-python format.
         """
         output: Dict[str, List[Any]] = {
             "string": [],
