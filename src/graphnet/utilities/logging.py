@@ -83,8 +83,8 @@ def get_logger(
 ) -> logging.Logger:
     """Get `logger` instance, to be used in place of `print()`.
 
-    The logger will print the specified level of output to the terminal,
-    and will also save debug output to file.
+    The logger will print the specified level of output to the terminal, and
+    will also save debug output to file.
     """
     global LOGGER
     if LOGGER:

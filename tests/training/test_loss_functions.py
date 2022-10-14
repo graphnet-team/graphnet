@@ -14,9 +14,9 @@ from graphnet.utilities.maths import eps_like
 def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
     """Computes  gradient of each element in `outptus` wrt. `inputs`.
 
-    It is assumed that each element in `inputs` only affects the
-    corresponding element in `outputs`. This should be the result of any
-    vectorised calculation (as used in tests).
+    It is assumed that each element in `inputs` only affects the corresponding
+    element in `outputs`. This should be the result of any vectorised
+    calculation (as used in tests).
     """
     # Check(s)
     assert inputs.dim() == 1

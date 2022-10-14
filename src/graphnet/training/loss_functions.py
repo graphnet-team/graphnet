@@ -113,8 +113,8 @@ class BinaryCrossEntropyLoss(LossFunction):
     1), targets should be 0 and 1 for muon and neutrino respectively where
     prediction is prob.
 
-    the PID is neutrino (12,14,16) loss should be reported elementwise,
-    so set reduction to None
+    the PID is neutrino (12,14,16) loss should be reported elementwise, so set
+    reduction to None
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
@@ -194,8 +194,8 @@ class LogCMK(torch.autograd.Function):
 class VonMisesFisherLoss(LossFunction):
     """General class for calculating von Mises-Fisher loss.
 
-    Requires implementation for specific dimension `m` in which the
-    target and prediction vectors need to be prepared.
+    Requires implementation for specific dimension `m` in which the target and
+    prediction vectors need to be prepared.
     """
 
     @classmethod
@@ -212,8 +212,7 @@ class VonMisesFisherLoss(LossFunction):
     ) -> Tensor:  # pylint: disable=invalid-name
         """Approx. calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
 
-        [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additional
-        minus sign.
+        [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additional minus sign.
         """
         v = m / 2.0 - 0.5
         a = torch.sqrt((v + 1) ** 2 + kappa**2)
@@ -226,10 +225,10 @@ class VonMisesFisherLoss(LossFunction):
     ) -> Tensor:  # pylint: disable=invalid-name
         """Calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
 
-        Since `log_cmk_exact` is diverges for `kappa` >~ 700 (using
-        float64 precision), and since `log_cmk_approx` is unaccurate for
-        small `kappa`, this method automatically switches between the
-        two at `kappa_switch`, ensuring continuity at this point.
+        Since `log_cmk_exact` is diverges for `kappa` >~ 700 (using float64
+        precision), and since `log_cmk_approx` is unaccurate for small `kappa`,
+        this method automatically switches between the two at `kappa_switch`,
+        ensuring continuity at this point.
         """
         kappa_switch = torch.tensor([kappa_switch]).to(kappa.device)
         mask_exact = kappa < kappa_switch

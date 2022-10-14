@@ -130,10 +130,10 @@ class SQLiteDataConverter(DataConverter):
 
         Takes in the data extracted from the P frame, then retrieves the
         values, if there are any, from the pulsemap key(s) (e.g
-        SplitInIcePulses). If at least one of the pulsemaps is non-empty
-        then return true. If no pulsemaps exist, i.e., if no
-        `I3FeatureExtractor` is called e.g. because `I3GenericExtractor`
-        is used instead, always return True.
+        SplitInIcePulses). If at least one of the pulsemaps is non-empty then
+        return true. If no pulsemaps exist, i.e., if no `I3FeatureExtractor` is
+        called e.g. because `I3GenericExtractor` is used instead, always return
+        True.
         """
         if len(self._pulsemaps) == 0:
             return True

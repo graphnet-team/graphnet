@@ -22,9 +22,8 @@ logger = get_logger()
 class Model(LightningModule):
     """Main class for all models in graphnet.
 
-    This class chains together the different elements of a complete GNN-
-    based model (detector read-in, GNN architecture, and task-specific
-    read-outs).
+    This class chains together the different elements of a complete GNN-based
+    model (detector read-in, GNN architecture, and task-specific read-outs).
     """
 
     def __init__(
