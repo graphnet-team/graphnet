@@ -22,8 +22,9 @@ logger = get_logger()
 class Model(LightningModule):
     """Main class for all models in graphnet.
 
-    This class chains together the different elements of a complete GNN-based
-    model (detector read-in, GNN architecture, and task-specific read-outs).
+    This class chains together the different elements of a complete GNN-
+    based model (detector read-in, GNN architecture, and task-specific
+    read-outs).
     """
 
     def __init__(
@@ -164,7 +165,8 @@ class Model(LightningModule):
     def load_state_dict(
         self, path: str
     ) -> "Model":  # pylint: disable=arguments-differ
-        """Loads model `state_dict` from `path`, either file or loaded object."""
+        """Loads model `state_dict` from `path`, either file or loaded
+        object."""
         if isinstance(path, str):
             state_dict = torch.load(path)
         else:

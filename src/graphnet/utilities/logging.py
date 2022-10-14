@@ -29,7 +29,7 @@ def set_logging_level(level: int = logging.INFO):
 
 
 def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
-    """Get coloured and non-coloured logging formatters"""
+    """Get coloured and non-coloured logging formatters."""
 
     # Common configuration
     colorlog_format = (
@@ -83,8 +83,8 @@ def get_logger(
 ) -> logging.Logger:
     """Get `logger` instance, to be used in place of `print()`.
 
-    The logger will print the specified level of output to the terminal, and
-    will also save debug output to file.
+    The logger will print the specified level of output to the terminal,
+    and will also save debug output to file.
     """
     global LOGGER
     if LOGGER:

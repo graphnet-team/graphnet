@@ -291,7 +291,7 @@ class I3TruthExtractor(I3Extractor):
     def _get_primary_particle_interaction_type_and_elasticity(
         self, frame, sim_type, padding_value=-1
     ):
-        """ "Returns primary particle, interaction type, and elasticity.
+        """"Returns primary particle, interaction type, and elasticity.
 
         A case handler that does two things
             1) Catches issues related to determining the primary MC particle.
@@ -336,7 +336,8 @@ class I3TruthExtractor(I3Extractor):
         self,
         frame: "icetray.I3Frame",
     ) -> Tuple[float, float]:
-        """Get the total energy of tracks from primary, and corresponding inelasticity.
+        """Get the total energy of tracks from primary, and corresponding
+        inelasticity.
 
         Args:
             frame (icetray.I3Frame): Physics frame containing MC record.
@@ -364,7 +365,7 @@ class I3TruthExtractor(I3Extractor):
 
     # Utility methods
     def _find_data_type(self, mc, input_file):
-        """Determines the data type
+        """Determines the data type.
 
         Args:
             mc (boolean): is this montecarlo?

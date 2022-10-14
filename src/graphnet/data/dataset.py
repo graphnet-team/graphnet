@@ -227,7 +227,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
     def _query(
         self, index: int
     ) -> Tuple[List[Tuple], List[Tuple], List[Tuple]]:
-        """Query file for event features and truth information
+        """Query file for event features and truth information.
 
         Args:
             index (int): Sequentially numbered index (i.e. in [0,len(self))) of

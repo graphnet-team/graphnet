@@ -53,7 +53,8 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
 
 
 class RadialGraphBuilder(GraphBuilder):
-    """Builds graph adjacency according to a sphere of chosen radius centred at each DOM hit"""
+    """Builds graph adjacency according to a sphere of chosen radius centred at
+    each DOM hit."""
 
     def __init__(
         self,
@@ -92,7 +93,8 @@ class RadialGraphBuilder(GraphBuilder):
 class EuclideanGraphBuilder(
     GraphBuilder
 ):  # pylint: disable=too-few-public-methods
-    """Builds graph adjacency according to Euclidean distance as in https://arxiv.org/pdf/1809.06166.pdf"""
+    """Builds graph adjacency according to Euclidean distance as in
+    https://arxiv.org/pdf/1809.06166.pdf."""
 
     def __init__(
         self,

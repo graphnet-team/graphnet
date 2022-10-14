@@ -249,7 +249,7 @@ class DynEdge(GNN):
         batch: LongTensor,
         *additional_attributes: Tensor,
     ) -> Tensor:
-        """Calculate global variables"""
+        """Calculate global variables."""
 
         # Calculate homophily (scalar variables)
         h_x, h_y, h_z, h_t = calculate_xyzt_homophily(x, edge_index, batch)

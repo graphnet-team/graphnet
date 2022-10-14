@@ -19,8 +19,12 @@ from graphnet.utilities.logging import LoggerMixin
 
 
 class ParquetToSQLiteConverter(LoggerMixin):
-    """Converts Parquet files to a SQLite database. Each event in the parquet file(s) are assigned a unique event id.
-    By default, every field in the parquet file(s) are extracted. One can choose to exclude certain fields by using the argument exclude_fields.
+    """Converts Parquet files to a SQLite database.
+
+    Each event in the parquet file(s) are assigned a unique event id. By
+    default, every field in the parquet file(s) are extracted. One can
+    choose to exclude certain fields by using the argument
+    exclude_fields.
     """
 
     def __init__(

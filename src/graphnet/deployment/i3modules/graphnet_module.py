@@ -1,4 +1,5 @@
-"""Classes inheriting from I3Module, for use in deploying GNN models to icetray."""
+"""Classes inheriting from I3Module, for use in deploying GNN models to
+icetray."""
 
 import os.path
 
@@ -175,21 +176,24 @@ class GraphNeTModuleBase(I3Module):
 
 
 class GraphNeTModuleIceCube86(GraphNeTModuleBase):
-    """I3Module for running graphnet models on IceCube-86 data in I3Tray chains."""
+    """I3Module for running graphnet models on IceCube-86 data in I3Tray
+    chains."""
 
     FEATURES = FEATURES.ICECUBE86
     I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCube86
 
 
 class GraphNeTModuleIceCubeDeepCore(GraphNeTModuleBase):
-    """I3Module for running graphnet models on IceCube DeepCore data in I3Tray chains."""
+    """I3Module for running graphnet models on IceCube DeepCore data in I3Tray
+    chains."""
 
     FEATURES = FEATURES.DEEPCORE
     I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCubeDeepCore
 
 
 class GraphNeTModuleIceCubeUpgrade(GraphNeTModuleBase):
-    """I3Module for running graphnet models on IceCube Upgrade data in I3Tray chains."""
+    """I3Module for running graphnet models on IceCube Upgrade data in I3Tray
+    chains."""
 
     FEATURES = FEATURES.UPGRADE
     I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCubeUpgrade

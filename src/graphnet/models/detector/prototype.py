@@ -16,7 +16,8 @@ class Prototype(Detector):
     features = ["x", "y", "z", "t"]
 
     def _forward(self, data: Data) -> Data:
-        """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
+        """Ingests data, builds graph (connectivity/adjacency), and
+        preprocesses features.
 
         Args:
             data (Data): Input graph data.

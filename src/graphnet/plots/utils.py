@@ -58,7 +58,8 @@ def add_signature(db, df):
 
 
 def add_pid_and_interaction(db, df):
-    """Adds particle and interaction ID from database `db` to dataframe `df`."""
+    """Adds particle and interaction ID from database `db` to dataframe
+    `df`."""
     events = df["event_no"]
     with sqlite3.connect(db) as con:
         query = (
@@ -91,7 +92,10 @@ def calculate_width(bias_tmp):
 
 
 def gauss_pdf(mean, std, x):
-    """Evaluate a Gaussian p.d.f. with `mean` and `std` at `x`."""
+    """Evaluate a Gaussian p.d.f.
+
+    with `mean` and `std` at `x`.
+    """
     pdf = (
         1
         / (std * np.sqrt(2 * np.pi))
@@ -101,7 +105,10 @@ def gauss_pdf(mean, std, x):
 
 
 def empirical_pdf(x, diff):
-    """Fit a Gaussian p.d.f. to `diff`, and evaluate the resulting distribution at `x`."""
+    """Fit a Gaussian p.d.f.
+
+    to `diff`, and evaluate the resulting distribution at `x`.
+    """
     dist = getattr(stats, "norm")
     parameters = dist.fit(diff)
     pdf = gauss_pdf(parameters[0], parameters[1], diff)[x]
@@ -109,7 +116,8 @@ def empirical_pdf(x, diff):
 
 
 def calculate_width_error(diff):
-    """Calculate the uncertainty on the estimated width from the 68-interpercentile range."""
+    """Calculate the uncertainty on the estimated width from the
+    68-interpercentile range."""
     N = len(diff)
     x_16 = abs(
         diff - np.percentile(diff, 16, interpolation="nearest")
@@ -128,7 +136,8 @@ def calculate_width_error(diff):
 
 
 def check_for_retro(data: pd.DataFrame) -> bool:
-    """Check whether `data` contains a column with a name containing "retro"."""
+    """Check whether `data` contains a column with a name containing
+    "retro"."""
     columns = data.columns
     is_retro = False
     for column in columns:
@@ -139,7 +148,8 @@ def check_for_retro(data: pd.DataFrame) -> bool:
 
 
 def extract_statistics(data, keys, key_bins):  # noqa: C901 # @FIXME
-    """Calculate various statistics (mean, percentiles, width/resolution, etc.) for the quantities `keys` in `data`."""
+    """Calculate various statistics (mean, percentiles, width/resolution, etc.)
+    for the quantities `keys` in `data`."""
     data = data.sort_values("event_no").reset_index(drop="True")
     pids = pd.unique(abs(data["pid"]))
     is_retro = check_for_retro(data)
@@ -644,7 +654,10 @@ def plot_biases(key_limits, biases, is_retro=False):
 
 
 def PlotWidth(key_limits, biases):
-    """Plot reconstruction resoltion (width) for DynEdge vs. RetroReco."""
+    """Plot reconstruction resoltion (width) for DynEdge vs.
+
+    RetroReco.
+    """
     key_limits = key_limits["width"]
     if "retro" in biases.keys():
         contains_retro = True
@@ -744,7 +757,10 @@ def PlotWidth(key_limits, biases):
 
 
 def PlotRelativeImprovement(key_limits, biases):
-    """Plot relative improvement of DynEdge vs. RetroReco."""
+    """Plot relative improvement of DynEdge vs.
+
+    RetroReco.
+    """
     key_limits = key_limits["rel_imp"]
     for key in biases["dynedge"].keys():
         fig, ax = plt.subplots(2, 3, figsize=(11.69, 8.27))

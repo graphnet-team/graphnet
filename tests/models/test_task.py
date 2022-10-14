@@ -9,7 +9,6 @@ from graphnet.training.loss_functions import LogCoshLoss
 
 
 def test_transform_prediction_and_target():
-
     detector = IceCube86(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )

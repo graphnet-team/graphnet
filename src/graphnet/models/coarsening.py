@@ -34,6 +34,7 @@ from torch_geometric.utils import degree
 
 def unbatch_edge_index(edge_index: Tensor, batch: Tensor) -> List[Tensor]:
     r"""Splits the :obj:`edge_index` according to a :obj:`batch` vector.
+
     Args:
         edge_index (Tensor): The edge_index tensor. Must be ordered.
         batch (LongTensor): The batch vector
@@ -76,13 +77,15 @@ class Coarsening(ABC, LoggerMixin):
 
     @abstractmethod
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
-        """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
+        """Perform clustering of nodes in `data` by assigning unique cluster
+        indices to each."""
 
     def _additional_features(self, cluster: LongTensor, data: Batch) -> Tensor:
         """Additional poolings of feature tensor `x` on `data`.
 
-        By default the nominal `pooling_method` is used for features as well.
-        This method can be overwritten for bespoke coarsening operations.
+        By default the nominal `pooling_method` is used for features as
+        well. This method can be overwritten for bespoke coarsening
+        operations.
         """
 
     def _transfer_attributes(
@@ -191,7 +194,8 @@ class Coarsening(ABC, LoggerMixin):
 
 class DOMCoarsening(Coarsening):
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
-        """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
+        """Perform clustering of nodes in `data` by assigning unique cluster
+        indices to each."""
         # dom_index = group_pulses_to_dom(data)
         dom_index = group_by(
             data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]

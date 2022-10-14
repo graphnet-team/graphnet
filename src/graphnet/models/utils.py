@@ -26,8 +26,8 @@ def calculate_xyzt_homophily(x, edge_index, batch):
 
 
 def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
-    """
-    Calculate the matrix of pairwise distances between pulses in (x,y,z)-coordinates.
+    """Calculate the matrix of pairwise distances between pulses in
+    (x,y,z)-coordinates.
 
     Args:
         xyz_coords: (x,y,z)-coordinates of pulses, of shape [nb_doms, 3].
@@ -40,7 +40,8 @@ def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
 
 
 def knn_graph_batch(batch: Batch, k: List[int], columns: List[int]):
-    """Calculates the k-nearest-neighbours with an individual k for each event in batch.
+    """Calculates the k-nearest-neighbours with an individual k for each event
+    in batch.
 
     Args:
         batch (Batch): A torch_geometric.data.Batch of events

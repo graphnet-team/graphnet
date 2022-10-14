@@ -48,7 +48,6 @@ wandb_logger = WandbLogger(
 
 # Main function definition
 def main():
-
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
 

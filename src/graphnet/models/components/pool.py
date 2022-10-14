@@ -42,7 +42,8 @@ def sum_pool_and_distribute(
     cluster_index: LongTensor,
     batch: Optional[LongTensor] = None,
 ) -> Tensor:
-    """Sum-pool values across the cluster, and distribute the individual nodes."""
+    """Sum-pool values across the cluster, and distribute the individual
+    nodes."""
     if batch is None:
         batch = torch.zeros(tensor.size(dim=0)).long()
     tensor_pooled, _ = sum_pool_x(cluster_index, tensor, batch)
@@ -54,7 +55,7 @@ def sum_pool_and_distribute(
 def _group_identical(
     tensor: Tensor, batch: Optional[LongTensor] = None
 ) -> LongTensor:
-    """Group rows in `tensor` that are identical
+    """Group rows in `tensor` that are identical.
 
     Args:
         tensor (Tensor): Tensor of shape [N, F]

@@ -14,9 +14,9 @@ from graphnet.utilities.maths import eps_like
 def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
     """Computes  gradient of each element in `outptus` wrt. `inputs`.
 
-    It is assumed that each element in `inputs` only affects the corresponding
-    element in `outputs`. This should be the result of any vectorised
-    calculation (as used in tests).
+    It is assumed that each element in `inputs` only affects the
+    corresponding element in `outputs`. This should be the result of any
+    vectorised calculation (as used in tests).
     """
     # Check(s)
     assert inputs.dim() == 1
@@ -63,10 +63,8 @@ def test_log_cosh(dtype=torch.float32):
 
 
 def test_von_mises_fisher_exact_m3(dtype=torch.float64):
-    """
-    See https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution
-    for exact, simplified reference.
-    """
+    """See https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution
+    for exact, simplified reference."""
     # Define test parameters
     m = 3
     k = torch.tensor(
@@ -94,7 +92,10 @@ def test_von_mises_fisher_exact_m3(dtype=torch.float64):
 
 @pytest.mark.parametrize("m", [2, 3])
 def test_von_mises_fisher_approximation(m, dtype=torch.float64):
-    """See [1812.04616] Sec. 8.2 for approximation"""
+    """See [1812.04616] Sec.
+
+    8.2 for approximation
+    """
     # Check(s)
     assert isinstance(m, int)
     assert m > 1
@@ -131,7 +132,10 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
 
 @pytest.mark.parametrize("m", [2, 3])
 def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
-    """See [1812.04616] Sec. 8.2 for approximation"""
+    """See [1812.04616] Sec.
+
+    8.2 for approximation
+    """
     # Check(s)
     assert isinstance(m, int)
     assert m > 1

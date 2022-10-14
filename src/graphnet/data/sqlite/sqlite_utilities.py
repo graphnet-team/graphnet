@@ -19,7 +19,8 @@ def run_sql_code(database: str, code: str):
 
 
 def save_to_sql(df: pd.DataFrame, table_name: str, database: str):
-    """Save a dataframe `df` to a table `table_name` in SQLite database `database`.
+    """Save a dataframe `df` to a table `table_name` in SQLite database
+    `database`.
 
     Table must exist already.
 
@@ -34,7 +35,10 @@ def save_to_sql(df: pd.DataFrame, table_name: str, database: str):
 
 
 def attach_index(database: str, table_name: str):
-    """Attaches the table index. Important for query times!"""
+    """Attaches the table index.
+
+    Important for query times!
+    """
     code = (
         "PRAGMA foreign_keys=off;\n"
         "BEGIN TRANSACTION;\n"

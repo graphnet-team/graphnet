@@ -101,11 +101,11 @@ class SQLiteDataset(Dataset):
     def _close_connection(self):
         """Make sure that no sqlite3 connection is open.
 
-        This is necessary to calls this before passing to `torch.DataLoader`
-        such that the dataset replica on each worker is required to create its
-        own connection (thereby avoiding `sqlite3.DatabaseError: database disk
-        image is malformed` errors due to inability to use sqlite3 connection
-        accross processes.
+        This is necessary to calls this before passing to
+        `torch.DataLoader` such that the dataset replica on each worker
+        is required to create its own connection (thereby avoiding
+        `sqlite3.DatabaseError: database disk image is malformed` errors
+        due to inability to use sqlite3 connection accross processes.
         """
         if self._conn is not None:
             self._conn.close()

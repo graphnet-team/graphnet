@@ -21,7 +21,6 @@ truth = TRUTH.UPGRADE
 
 # Main function definition
 def main():
-
     try:
         del truth[truth.index("interaction_time")]
     except ValueError:
