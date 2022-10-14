@@ -104,6 +104,21 @@
         <span class="k">return</span> <span class="n">angle</span></div>
 
 
+<div class="viewcode-block" id="DirectionReconstructionWithKappa"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa">[docs]</a><span class="k">class</span> <span class="nc">DirectionReconstructionWithKappa</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reconstructs Direction with kappa from The 3DVonMisesFisher Distribution.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Requires three features: untransformed points in (x,y,z)-space.</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Transform outputs to angle and prepare prediction</span>
+        <span class="n">kappa</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">vector_norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">vec_x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">kappa</span>
+        <span class="n">vec_y</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">kappa</span>
+        <span class="n">vec_z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">kappa</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">vec_x</span><span class="p">,</span> <span class="n">vec_y</span><span class="p">,</span> <span class="n">vec_z</span><span class="p">,</span> <span class="n">kappa</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="PassOutput1"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1">[docs]</a><span class="k">class</span> <span class="nc">PassOutput1</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Passes 1 output without interference.&quot;&quot;&quot;</span>
 

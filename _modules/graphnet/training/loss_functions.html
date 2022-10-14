@@ -389,6 +389,31 @@
             <span class="o">+</span> <span class="p">(</span><span class="n">prediction</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="o">+</span> <span class="p">(</span><span class="n">prediction</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
         <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="VonMisesFisher3DLoss"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher3DLoss">[docs]</a><span class="k">class</span> <span class="nc">VonMisesFisher3DLoss</span><span class="p">(</span><span class="n">VonMisesFisherLoss</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;von Mises-Fisher loss function vectors in the 3D plane.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="VonMisesFisher3DLoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher3DLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the von Mises-Fisher loss for a direction in the 3D plane.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prediction (Tensor): Output of the model. Must have shape [N, 4]</span>
+<span class="sd">                where columns 0, 1, 2 are predictions of `direction` and last column is an</span>
+<span class="sd">                estimate of `kappa`.</span>
+<span class="sd">            target (Tensor): Target tensor, extracted from graph object.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="c1"># Check(s)</span>
+        <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">prediction</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">kappa</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">kappa</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">prediction</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

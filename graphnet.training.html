@@ -58,6 +58,15 @@
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-graphnet.training.labels">graphnet.training.labels module</a><ul>
+<li><a class="reference internal" href="#graphnet.training.labels.Direction"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.training.labels.Label"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.labels.Label.__call__"><code class="docutils literal notranslate"><span class="pre">Label.__call__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.training.labels.Label.__init__"><code class="docutils literal notranslate"><span class="pre">Label.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.training.loss_functions">graphnet.training.loss_functions module</a><ul>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.BinaryCrossEntropyLoss"><code class="docutils literal notranslate"><span class="pre">BinaryCrossEntropyLoss</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.BinaryCrossEntropyLoss.reduction"><code class="docutils literal notranslate"><span class="pre">BinaryCrossEntropyLoss.reduction</span></code></a></li>
@@ -104,6 +113,13 @@
 <li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisher2DLoss.reduction"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher2DLoss.reduction</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisher2DLoss.training"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher2DLoss.training</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisher2DLoss.weight"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher2DLoss.weight</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher3DLoss</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss._forward"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher3DLoss._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss.reduction"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher3DLoss.reduction</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss.training"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher3DLoss.training</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss.weight"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher3DLoss.weight</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisherLoss"><code class="docutils literal notranslate"><span class="pre">VonMisesFisherLoss</span></code></a><ul>
@@ -260,6 +276,39 @@ Implement this to override the items displayed in the progress bar.</p>
 <p>This allows the user to see the losses/metrics for previous epochs while
 the current is training. The default behaviour in pytorch-lightning is
 to overwrite the progress bar from previous epochs.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphnet.training.labels">
+<span id="graphnet-training-labels-module"></span><h2>graphnet.training.labels module<a class="headerlink" href="#module-graphnet.training.labels" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.labels.Direction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.labels.</span></span><span class="sig-name descname"><span class="pre">Direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">azimuth_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'azimuth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'zenith'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Direction" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.labels.Label" title="graphnet.training.labels.Label"><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.labels.Label">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.labels.</span></span><span class="sig-name descname"><span class="pre">Label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Label" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
+<p>Base Label class for producing labels from single Data Object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.labels.Label.__call__">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tensor</span></span></span><a class="reference internal" href="_modules/graphnet/training/labels.html#Label.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Label.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Label-specific implementation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.labels.Label.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Label.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Label.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Base Label class for producing labels from single Data Object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – The name of the field in Data where the label will be stored. Ie. graph[key] = label</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -550,6 +599,50 @@ estimate of <cite>kappa</cite>.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher2DLoss.weight">
 <span class="sig-name descname"><span class="pre">weight</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher2DLoss.weight" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher3DLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">VonMisesFisher3DLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisher3DLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisherLoss" title="graphnet.training.loss_functions.VonMisesFisherLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VonMisesFisherLoss</span></code></a></p>
+<p>von Mises-Fisher loss function vectors in the 3D plane.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher3DLoss._forward">
+<span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisher3DLoss._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss._forward" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the von Mises-Fisher loss for a direction in the 3D plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prediction</strong> (<em>Tensor</em>) – Output of the model. Must have shape [N, 4]
+where columns 0, 1, 2 are predictions of <cite>direction</cite> and last column is an
+estimate of <cite>kappa</cite>.</p></li>
+<li><p><strong>target</strong> (<em>Tensor</em>) – Target tensor, extracted from graph object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Elementwise von Mises-Fisher loss terms. Shape [N,]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>loss (Tensor)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher3DLoss.reduction">
+<span class="sig-name descname"><span class="pre">reduction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss.reduction" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher3DLoss.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher3DLoss.weight">
+<span class="sig-name descname"><span class="pre">weight</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss.weight" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

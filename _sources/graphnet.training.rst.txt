@@ -12,6 +12,14 @@ graphnet.training.callbacks module
    :undoc-members:
    :show-inheritance:
 
+graphnet.training.labels module
+-------------------------------
+
+.. automodule:: graphnet.training.labels
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.training.loss\_functions module
 ----------------------------------------
 
