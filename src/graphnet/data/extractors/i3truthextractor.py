@@ -291,7 +291,7 @@ class I3TruthExtractor(I3Extractor):
     def _get_primary_particle_interaction_type_and_elasticity(
         self, frame, sim_type, padding_value=-1
     ):
-        """"Returns primary particle, interaction type, and elasticity.
+        """Returns primary particle, interaction type, and elasticity.
 
         A case handler that does two things
             1) Catches issues related to determining the primary MC particle.
