@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Optional, Tuple, Union
+"""I3Extractor class(es) for generic data extraction."""
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.types import (
@@ -16,7 +17,7 @@ from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
 
-if has_icecube_package():
+if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
         dataclasses,
         icetray,
@@ -46,7 +47,17 @@ class I3GenericExtractor(I3Extractor):
         keys: Optional[Union[str, List[str]]] = None,
         exclude_keys: Optional[Union[str, List[str]]] = None,
     ):
-        """Constructor."""
+        """Construct instance.
+
+        Args:
+            keys (Optional[Union[str, List[str]]], optional): List of keys in
+                `I3Frame` to be parsed. Defaults to all keys.
+            exclude_keys (Optional[Union[str, List[str]]], optional): List of
+                keys in `I3Frame` to exclude while parsing. Defaults to None.
+
+        Raises:
+            ValueError: If both `keys` and `exclude_keys` are set.
+        """
         # Check(s)
         if (keys is not None) and (exclude_keys is not None):
             raise ValueError(
@@ -60,8 +71,8 @@ class I3GenericExtractor(I3Extractor):
             exclude_keys = [exclude_keys]
 
         # Reference to frame currently being processed
-        self._keys: List[str] = keys
-        self._exclude_keys: List[str] = exclude_keys
+        self._keys: Optional[List[str]] = keys
+        self._exclude_keys: Optional[List[str]] = exclude_keys
 
         super().__init__(GENERIC_EXTRACTOR_NAME)
 
@@ -97,7 +108,6 @@ class I3GenericExtractor(I3Extractor):
             Dictionary containing each parsed key in `frame`, and the
                 corresponding, extracted data in pure-python format.
         """
-
         results = {}
         for key in self._get_keys(frame):
 
@@ -173,7 +183,7 @@ class I3GenericExtractor(I3Extractor):
     def _extract_pulse_series_map(
         self, frame: "icetray.I3Frame", key: str
     ) -> Optional[Dict[str, Any]]:
-        """Extract pulse-series map `key` from `frame`"""
+        """Extract pulse-series map `key` from `frame`."""
         result = cast_pulse_series_to_pure_python(
             frame, key, self._calibration, self._gcd_dict
         )
@@ -186,13 +196,12 @@ class I3GenericExtractor(I3Extractor):
     def _extract_per_pulse_attribute(
         self, frame: "icetray.I3Frame", key: str
     ) -> Optional[Dict[str, Any]]:
-        """Extract per-pulse attribute `key` from `frame`
+        """Extract per-pulse attribute `key` from `frame`.
 
         A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a
         dictionary- like mapping from an OM key to some attribute, e.g.,
         an integer or a vector properties.
         """
-
         result = self._extract_pulse_series_map(frame, key)
 
         if result is not None:
@@ -210,7 +219,6 @@ class I3GenericExtractor(I3Extractor):
 
     def _cast_mc_tree(self, obj: "dataclasses.I3MCTree") -> Dict[str, Any]:
         """Cast I3MCTree to dict."""
-
         result = cast_object_to_pure_python(obj)
 
         # Assign parent and children links to all particles in tree
@@ -239,37 +247,37 @@ class I3GenericExtractor(I3Extractor):
 
     def _flatten_result_mctree(
         self, result: Dict[str, Any]
-    ) -> Tuple[Dict[str, Any]]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Flatten results from casting I3MCTree to pure python."""
         # Flatten and transpose MC Tree
         assert len(result.keys()) == 2
         result_primaries: List[Dict[str, Any]] = result["primaries"]
         result_particles: List[Dict[str, Any]] = result["particles"]
 
-        result_primaries: List[Dict[str, Any]] = [
+        result_primaries = [
             flatten_nested_dictionary(res) for res in result_primaries
         ]
-        result_particles: List[Dict[str, Any]] = [
+        result_particles = [
             flatten_nested_dictionary(res) for res in result_particles
         ]
 
-        result_primaries: Dict[str, List[Any]] = transpose_list_of_dicts(
-            result_primaries
-        )
-        result_particles: Dict[str, List[Any]] = transpose_list_of_dicts(
-            result_particles
-        )
+        result_primaries_transposed: Dict[
+            str, List[Any]
+        ] = transpose_list_of_dicts(result_primaries)
+        result_particles_transposed: Dict[
+            str, List[Any]
+        ] = transpose_list_of_dicts(result_particles)
 
         # Remove `majorID`, which has unsupported unit64 dtype.
         # Keep only one instances of `minorID`.
-        del result_primaries["id__minorID"]
-        del result_particles["id__minorID"]
-        del result_primaries["id__majorID"]
-        del result_particles["id__majorID"]
-        del result_primaries["major_id"]
-        del result_particles["major_id"]
+        del result_primaries_transposed["id__minorID"]
+        del result_particles_transposed["id__minorID"]
+        del result_primaries_transposed["id__majorID"]
+        del result_particles_transposed["id__majorID"]
+        del result_primaries_transposed["major_id"]
+        del result_particles_transposed["major_id"]
 
-        return result_primaries, result_particles
+        return result_primaries_transposed, result_particles_transposed
 
     def _flatten_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Flatten results from casting any other instance to pure python."""
