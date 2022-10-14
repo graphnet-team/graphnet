@@ -1,3 +1,4 @@
+"""Base I3Extractor class(es)."""
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -9,10 +10,21 @@ if has_icecube_package():
 
 
 class I3Extractor(ABC, LoggerMixin):
-    """Extracts relevant information from physics frames."""
+    """Base class for extracting information from physics I3-frames.
 
-    def __init__(self, name):
+    All classes inheriting from `I3Extractor` should implement the `__call__`
+    method, and can be applied directly on `icetray.I3Frame` objects to return
+    extracted, pure-python data.
+    """
 
+    def __init__(self, name: str):
+        """Construct instance.
+
+        Args:
+            name (str): Name of the `I3Extractor` instance. Used to keep track
+                of the provenance of different data, and to name tables to
+                which this data is saved.
+        """
         # Member variables
         self._i3_file = None
         self._gcd_file = None
@@ -21,6 +33,7 @@ class I3Extractor(ABC, LoggerMixin):
         self._name = name
 
     def set_files(self, i3_file, gcd_file):
+        """Store references to the I3- and GCD-files being processed."""
         # @TODO: Is it necessary to set the `i3_file`? It is only used in one
         #        place in `I3TruthExtractor`, and there only in a way that might
         #        be solved another way.
@@ -29,7 +42,7 @@ class I3Extractor(ABC, LoggerMixin):
         self._load_gcd_data()
 
     def _load_gcd_data(self):
-        """Loads the geospatial information contained in the gcd-file."""
+        """Load the geospatial information contained in the GCD-file."""
         # If no GCD file is provided, search the I3 file for frames containing
         # geometry (G) and calibration (C) information.
         gcd_file = dataio.I3File(self._gcd_file or self._i3_file)
@@ -55,18 +68,25 @@ class I3Extractor(ABC, LoggerMixin):
 
     @abstractmethod
     def __call__(self, frame) -> dict:
-        """Extracts relevant information from frame."""
+        """Extract information from frame."""
         pass
 
     @property
     def name(self) -> str:
+        """Get the name of the `I3Extractor` instance."""
         return self._name
 
 
 class I3ExtractorCollection(list):
     """Class to manage multiple I3Extractors."""
 
-    def __init__(self, *extractors):
+    def __init__(self, *extractors: I3Extractor):
+        """Construct instance.
+
+        Args:
+            *extractors (I3Extractor): List of `I3Extractor` to be treated as a
+                single collection.
+        """
         # Check(s)
         for extractor in extractors:
             assert isinstance(extractor, I3Extractor)
@@ -75,8 +95,10 @@ class I3ExtractorCollection(list):
         super().__init__(extractors)
 
     def set_files(self, i3_file, gcd_file):
+        """Store references to the I3- and GCD-files being processed."""
         for extractor in self:
             extractor.set_files(i3_file, gcd_file)
 
     def __call__(self, frame) -> List[dict]:
+        """Extract information from frame for each member `I3Extractor`."""
         return [extractor(frame) for extractor in self]
