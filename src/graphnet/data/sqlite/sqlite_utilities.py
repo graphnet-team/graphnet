@@ -67,6 +67,8 @@ def create_table(
                 type_ = "INTEGER PRIMARY KEY NOT NULL"
             else:
                 type_ = "NOT NULL"
+        else:
+            type_ = "NOT NULL"
         query_columns.append(f"{column} {type_}")
     query_columns = ", ".join(query_columns)
 
