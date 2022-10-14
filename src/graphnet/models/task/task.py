@@ -132,12 +132,12 @@ class Task(LightningModule):
 
     @final
     def inference(self):
-        """Set task to inference mode"""
+        """Set task to inference mode."""
         self._inference = True
 
     @final
     def train_eval(self):
-        """Deactivate inference mode"""
+        """Deactivate inference mode."""
         self._inference = False
 
     @final
@@ -148,7 +148,8 @@ class Task(LightningModule):
         transform_inference: Union[Callable, None],
         transform_support: Union[Callable, None],
     ):
-        """Assert that a valid combination of transformation arguments are passed and update the corresponding functions"""
+        """Assert that a valid combination of transformation arguments are
+        passed and update the corresponding functions."""
         # Checks
         assert not (
             (transform_prediction_and_target is not None)

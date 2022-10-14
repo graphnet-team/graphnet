@@ -6,7 +6,7 @@ class I3TUMExtractor(I3Extractor):
         super().__init__(name)
 
     def __call__(self, frame) -> dict:
-        """Extracts TUM DNN Recos and associated variables"""
+        """Extracts TUM DNN Recos and associated variables."""
         output = {}
         if "TUM_dnn_energy_hive" in frame:
             output.update(

@@ -170,7 +170,10 @@ class BinaryClassificationTaskLogits(Task):
 
 
 class InelasticityReconstruction(Task):
-    """Reconstructs interaction inelasticity (i.e., tracks vs. hadronic energy)."""
+    """Reconstructs interaction inelasticity (i.e., tracks vs.
+
+    hadronic energy).
+    """
 
     # Requires one features: inelasticity itself
     nb_inputs = 1

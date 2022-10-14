@@ -7,7 +7,9 @@ from graphnet.data.utils import run_sql_code, save_to_sql, create_table
 
 class UniformWeightFitter:
     """Produces per-event weights making fitted variable distribution uniform.
-    Weights are returned by the public method `fit_weights()`, and the weights can be saved as a table in the database.
+
+    Weights are returned by the public method `fit_weights()`, and the
+    weights can be saved as a table in the database.
     """
 
     def __init__(
@@ -69,7 +71,8 @@ class UniformWeightFitter:
         return truth.sort_values("event_no").reset_index(drop=True)
 
     def _get_truth(self, variable: str, selection: Optional[List[int]] = None):
-        """Return truth `variable`, optionally only for `selection` event nos."""
+        """Return truth `variable`, optionally only for `selection` event
+        nos."""
         if selection is None:
             query = f"select {self._index_column}, {variable} from {self._truth_table}"
         else:

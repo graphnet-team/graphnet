@@ -1,4 +1,5 @@
-"""Selection-specific utility functions relevant to the graphnet.data package."""
+"""Selection-specific utility functions relevant to the graphnet.data
+package."""
 
 import sqlite3
 from typing import List, Tuple
@@ -124,7 +125,8 @@ def get_desired_event_numbers(
 def get_equal_proportion_neutrino_indices(
     database: str, seed: int = 42
 ) -> Tuple[List[int]]:
-    """Utility method to get indices for neutrino events in equal flavour proportions.
+    """Utility method to get indices for neutrino events in equal flavour
+    proportions.
 
     Args:
         database (str): Path to database from which to get the event numbers.
@@ -209,7 +211,8 @@ def get_even_signal_background_indicies(database: str) -> List[int]:
 
 
 def get_even_track_cascade_indicies(database: str) -> List[int]:
-    """Get event numbers with equal (?) proportion CC and NC e/mu neutrino events.
+    """Get event numbers with equal (?) proportion CC and NC e/mu neutrino
+    events.
 
     Args:
         database (str): Path to database from which to get the event numbers.
@@ -262,7 +265,8 @@ def get_even_track_cascade_indicies(database: str) -> List[int]:
 def get_even_dbang_selection(
     database: str, min_max_decay_length=None, seed: int = 42
 ) -> Tuple[List[int]]:
-    """Get event numbers for neutrino events with equal dbang / non-dbang labels.
+    """Get event numbers for neutrino events with equal dbang / non-dbang
+    labels.
 
     Args:
         db (str): Path to database.

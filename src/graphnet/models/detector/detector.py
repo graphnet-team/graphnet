@@ -91,7 +91,8 @@ class Detector(LoggerMixin, LightningModule):
 
     @property
     def nb_outputs(self) -> int:
-        """This the default, but may be overridden by specific inheriting classes."""
+        """This the default, but may be overridden by specific inheriting
+        classes."""
         return self.nb_inputs
 
     def _validate_features(self, data: Data):

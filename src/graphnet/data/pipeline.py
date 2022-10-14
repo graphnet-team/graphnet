@@ -19,7 +19,11 @@ logger = get_logger()
 
 
 class InSQLitePipeline(ABC):
-    """Creates a SQLite database with truth and GNN predictions and, if available, RETRO reconstructions. Made for analysis."""
+    """Creates a SQLite database with truth and GNN predictions and, if
+    available, RETRO reconstructions.
+
+    Made for analysis.
+    """
 
     def __init__(
         self,
@@ -33,7 +37,7 @@ class InSQLitePipeline(ABC):
         n_workers=10,
         pipeline_name="pipeline",
     ):
-        """Initializes the pipeline
+        """Initializes the pipeline.
 
         Args:
             module_dict (dict): A dictionary with GNN modules from GraphNet. E.g. {'energy': gnn_module_for_energy_regression}
@@ -207,6 +211,7 @@ class InSQLitePipeline(ABC):
 
     def _create_table(self, pipeline_database, table_name, df):
         """Creates a table.
+
         Args:
             pipeline_database (str): path to the pipeline database
             df (str): pandas.DataFrame of combined predictions

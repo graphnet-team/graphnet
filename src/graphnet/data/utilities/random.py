@@ -1,4 +1,5 @@
-"""Random generator-related utility functions relevant to the graphnet.data package."""
+"""Random generator-related utility functions relevant to the graphnet.data
+package."""
 
 from typing import List, Tuple
 import pandas as pd

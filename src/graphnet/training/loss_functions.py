@@ -58,7 +58,8 @@ class LossFunction(_WeightedLoss):
 
     @abstractmethod
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Syntax similar to `.forward` for implentation in inheriting classes."""
+        """Syntax similar to `.forward` for implentation in inheriting
+        classes."""
 
 
 class MSELoss(LossFunction):
@@ -108,10 +109,12 @@ class LogCoshLoss(LossFunction):
 
 
 class BinaryCrossEntropyLoss(LossFunction):
-    """Computes binary cross entropy for a vector of predictions (between 0 and 1),
-    targets should be 0 and 1 for muon and neutrino respectively
-    where prediction is prob. the PID is neutrino (12,14,16)
-    loss should be reported elementwise, so set reduction to None
+    """Computes binary cross entropy for a vector of predictions (between 0 and
+    1), targets should be 0 and 1 for muon and neutrino respectively where
+    prediction is prob.
+
+    the PID is neutrino (12,14,16) loss should be reported elementwise,
+    so set reduction to None
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
@@ -121,7 +124,7 @@ class BinaryCrossEntropyLoss(LossFunction):
 
 
 class LogCMK(torch.autograd.Function):
-    """MIT License
+    """MIT License.
 
     Copyright (c) 2019 Max Ryabinin
 
@@ -191,15 +194,16 @@ class LogCMK(torch.autograd.Function):
 class VonMisesFisherLoss(LossFunction):
     """General class for calculating von Mises-Fisher loss.
 
-    Requires implementation for specific dimension `m` in which the target and
-    prediction vectors need to be prepared.
+    Requires implementation for specific dimension `m` in which the
+    target and prediction vectors need to be prepared.
     """
 
     @classmethod
     def log_cmk_exact(
         cls, m: int, kappa: Tensor
     ) -> Tensor:  # pylint: disable=invalid-name
-        """Exact calculation of $log C_{m}(k)$ term in von Mises-Fisher loss."""
+        """Exact calculation of $log C_{m}(k)$ term in von Mises-Fisher
+        loss."""
         return LogCMK.apply(m, kappa)
 
     @classmethod
@@ -207,7 +211,9 @@ class VonMisesFisherLoss(LossFunction):
         cls, m: int, kappa: Tensor
     ) -> Tensor:  # pylint: disable=invalid-name
         """Approx. calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
-        [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additional minus sign.
+
+        [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additional
+        minus sign.
         """
         v = m / 2.0 - 0.5
         a = torch.sqrt((v + 1) ** 2 + kappa**2)
@@ -220,10 +226,10 @@ class VonMisesFisherLoss(LossFunction):
     ) -> Tensor:  # pylint: disable=invalid-name
         """Calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
 
-        Since `log_cmk_exact` is diverges for `kappa` >~ 700 (using float64
-        precision), and since `log_cmk_approx` is unaccurate for small `kappa`,
-        this method automatically switches between the two at `kappa_switch`,
-        ensuring continuity at this point.
+        Since `log_cmk_exact` is diverges for `kappa` >~ 700 (using
+        float64 precision), and since `log_cmk_approx` is unaccurate for
+        small `kappa`, this method automatically switches between the
+        two at `kappa_switch`, ensuring continuity at this point.
         """
         kappa_switch = torch.tensor([kappa_switch]).to(kappa.device)
         mask_exact = kappa < kappa_switch
@@ -237,7 +243,8 @@ class VonMisesFisherLoss(LossFunction):
         return ret
 
     def _evaluate(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Calculates the von Mises-Fisher loss for a vector in D-dimensonal space.
+        """Calculates the von Mises-Fisher loss for a vector in D-dimensonal
+        space.
 
         This loss utilises the von Mises-Fisher distribution, which is a
         probability distribution on the (D - 1) sphere in D-dimensional space.

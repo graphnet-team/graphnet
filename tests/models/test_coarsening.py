@@ -110,7 +110,8 @@ class SimpleCoarsening(Coarsening):
     """Simple coarsening operation for the purposes of testing."""
 
     def _perform_clustering(self, data: Data) -> torch.LongTensor:
-        """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
+        """Perform clustering of nodes in `data` by assigning unique cluster
+        indices to each."""
         return group_by(data, ["x0", "x1", "x2"])
 
 
@@ -147,7 +148,7 @@ def test_attribute_transfer():
 
 
 def test_batch_reconstruction():
-    """Testing the batch reconstruction"""
+    """Testing the batch reconstruction."""
     # Check(s)
     data = _get_test_data()
     original_batch_idx = data.batch

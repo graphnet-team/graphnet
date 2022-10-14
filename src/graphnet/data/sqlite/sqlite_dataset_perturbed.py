@@ -8,7 +8,8 @@ from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 
 
 class SQLiteDatasetPerturbed(SQLiteDataset):
-    """Pytorch dataset for reading from SQLite including a perturbation step to test the stability of a trained model."""
+    """Pytorch dataset for reading from SQLite including a perturbation step to
+    test the stability of a trained model."""
 
     def __init__(
         self,

@@ -10,7 +10,10 @@ class I3RetroExtractor(I3Extractor):
         super().__init__(name)
 
     def __call__(self, frame) -> dict:
-        """Extracts RETRO reco. and associated quantities if available."""
+        """Extracts RETRO reco.
+
+        and associated quantities if available.
+        """
         output = {}
 
         if self._frame_contains_retro(frame):
@@ -96,7 +99,8 @@ class I3RetroExtractor(I3Extractor):
         return "L4_MuonClassifier_Data_ProbNu" in frame
 
     def _try_get_key(self, frame, key, default_value=-1):
-        """Return `key` in `frame` if it exists; otherwise return `default_value."""
+        """Return `key` in `frame` if it exists; otherwise return
+        `default_value."""
         try:
             return frame[key]
         except KeyError:

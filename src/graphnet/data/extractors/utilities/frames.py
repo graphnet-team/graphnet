@@ -33,7 +33,7 @@ def get_om_keys_and_pulseseries(
     pulseseries: str,
     calibration: Optional["dataclasses.I3Calibration"] = None,
 ) -> Tuple:
-    """Gets the indicies for the gcd_dict and the pulse series
+    """Gets the indicies for the gcd_dict and the pulse series.
 
     Args:
         frame (i3 physics frame): i3 physics frame

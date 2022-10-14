@@ -129,11 +129,11 @@ class SQLiteDataConverter(DataConverter):
         """Check whether there are non-empty pulsemaps extracted from P frame.
 
         Takes in the data extracted from the P frame, then retrieves the
-        values, if there are any, from the pulsemap key(s)
-        (e.g SplitInIcePulses). If at least one of the pulsemaps is non-empty
+        values, if there are any, from the pulsemap key(s) (e.g
+        SplitInIcePulses). If at least one of the pulsemaps is non-empty
         then return true. If no pulsemaps exist, i.e., if no
-        `I3FeatureExtractor` is called e.g. because `I3GenericExtractor` is
-        used instead, always return True.
+        `I3FeatureExtractor` is called e.g. because `I3GenericExtractor`
+        is used instead, always return True.
         """
         if len(self._pulsemaps) == 0:
             return True
@@ -142,7 +142,10 @@ class SQLiteDataConverter(DataConverter):
         return any(d["dom_x"] for d in pulsemap_dicts)
 
     def _attach_index(self, database: str, table_name: str):
-        """Attaches the table index. Important for query times!"""
+        """Attaches the table index.
+
+        Important for query times!
+        """
         code = (
             "PRAGMA foreign_keys=off;\n"
             "BEGIN TRANSACTION;\n"
@@ -255,7 +258,8 @@ def construct_dataframe(extraction: Dict[str, Any]) -> pd.DataFrame:
 
 
 def is_pulsemap_check(table_name: str) -> bool:
-    """Check whether `table_name` corresponds to a pulsemap, and not a truth or RETRO table."""
+    """Check whether `table_name` corresponds to a pulsemap, and not a truth or
+    RETRO table."""
     if "retro" in table_name.lower() or "truth" in table_name.lower():
         return False
     else:  # Could have to include the lower case word 'pulse'?

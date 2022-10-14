@@ -77,7 +77,8 @@ def cache_output_files(process_method):
 
 
 class DataConverter(ABC, LoggerMixin):
-    """Abstract base class for specialised (SQLite, parquet, etc.) converters."""
+    """Abstract base class for specialised (SQLite, parquet, etc.)
+    converters."""
 
     @property
     @abstractmethod
@@ -126,7 +127,6 @@ class DataConverter(ABC, LoggerMixin):
          - upgrade_genie_step4_141020_A_000010.i3.zst
         would end up in a separate group, named
         "upgrade_genie_step4_141020_A_00001x.<suffix>".
-
         """
         # Check(s)
         if not isinstance(extractors, (list, tuple)):
@@ -321,7 +321,8 @@ class DataConverter(ABC, LoggerMixin):
     def _iterate_over_batches_of_files(
         self, args: List[Tuple[List[FileSet], str]]
     ):
-        """Iterate over a batch of files and save results on worker processes (if applicable)"""
+        """Iterate over a batch of files and save results on worker processes
+        (if applicable)"""
         # Get appropriate mapping function
         map_fn, pool = self.get_map_function(len(args), unit="batch(es)")
 
@@ -336,10 +337,10 @@ class DataConverter(ABC, LoggerMixin):
     def _update_shared_variables(self, pool: Optional[Pool]):
         """Update `self._index` and `self._output_files`.
 
-        If `pool` is set, it means that multiprocessing was used. In this case,
-        the worker processes will not have been able to write directly to
-        `self._index` and `self._output_files`, and we need to get them synced
-        up.
+        If `pool` is set, it means that multiprocessing was used. In
+        this case, the worker processes will not have been able to write
+        directly to `self._index` and `self._output_files`, and we need
+        to get them synced up.
         """
         if pool:
             # Extract information from shared variables to member variables.
@@ -440,7 +441,8 @@ class DataConverter(ABC, LoggerMixin):
     def get_map_function(
         self, nb_files: int, unit: str = "I3 file(s)"
     ) -> Tuple[Callable, Optional[Pool]]:
-        """Identify the type of map function to use (pure python or multiprocess)."""
+        """Identify the type of map function to use (pure python or
+        multiprocess)."""
 
         # Choose relevant map-function given the requested number of workers.
         workers = min(self._workers, nb_files)

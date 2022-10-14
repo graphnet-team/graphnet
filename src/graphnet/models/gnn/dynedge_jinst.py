@@ -21,6 +21,7 @@ class DynEdgeJINST(GNN):
         layer_size_scale: Optional[int] = 4,
     ):
         """DynEdge model.
+
         Args:
             nb_inputs (int): Number of input features.
             nb_outputs (int): Number of output features.
@@ -101,6 +102,7 @@ class DynEdgeJINST(GNN):
 
     def forward(self, data: Data) -> Tensor:
         """Model forward pass.
+
         Args:
             data (Data): Graph of input features.
         Returns:

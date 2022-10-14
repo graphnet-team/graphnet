@@ -143,6 +143,7 @@ class WeightFitter:
 
     def _create_table(self, database, table_name, df):
         """Creates a table.
+
         Args:
             pipeline_database (str): path to the pipeline database
             df (str): pandas.DataFrame of combined predictions
@@ -416,7 +417,8 @@ class ContourFitter:
         return df
 
     def _parallel_fit_2d_contour(self, settings):
-        """fitting routine for 2D contours. Length of settings determines the amount of jobs this worker gets.
+        """fitting routine for 2D contours. Length of settings determines the
+        amount of jobs this worker gets.
 
             Results are saved to temporary .csv-files that are later merged.
 
@@ -493,7 +495,8 @@ class ContourFitter:
         return
 
     def _parallel_fit_1d_contour(self, settings):
-        """fitting routine for 1D contours. Length of settings determines the amount of jobs this worker gets.
+        """fitting routine for 1D contours. Length of settings determines the
+        amount of jobs this worker gets.
 
             Results are saved to temporary .csv-files that are later merged.
 
