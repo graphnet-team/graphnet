@@ -1,5 +1,10 @@
 """I3Extractor class(es) for extracting hybrid reconstructions."""
+from typing import TYPE_CHECKING, Any, Dict
+
 from graphnet.data.extractors.i3extractor import I3Extractor
+
+if TYPE_CHECKING:
+    from icecube import icetray  # pyright: reportMissingImports=false
 
 
 class I3GalacticPlaneHybridRecoExtractor(I3Extractor):
@@ -15,9 +20,9 @@ class I3GalacticPlaneHybridRecoExtractor(I3Extractor):
         # Base class constructor
         super().__init__(name)
 
-    def __call__(self, frame) -> dict:
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract TUMs DNN reconcstructions and associated variables."""
-        output = {}
+        output: Dict[str, Any] = {}
         if "DNNCascadeAnalysis_version_001_p00" in frame:
             reco_object = frame["DNNCascadeAnalysis_version_001_p00"]
             keys = [
