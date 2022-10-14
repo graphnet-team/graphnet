@@ -1,6 +1,6 @@
 """Collection I3Extractors, for extracting pure-python data from I3Frames."""
 
-from .i3extractor import I3Extractor
+from .i3extractor import I3Extractor, I3ExtractorCollection
 from .i3featureextractor import (
     I3FeatureExtractor,
     I3FeatureExtractorIceCube86,
