@@ -1,29 +1,32 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import List
 
 import torch
 from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
 
+from graphnet.models.config import save_config
 from graphnet.models.utils import calculate_distance_matrix
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.models import Model
 
 
-class GraphBuilder(LoggerMixin, ABC):  # pylint: disable=too-few-public-methods
-    @abstractmethod
-    def __call__(self, data: Data) -> Data:
-        pass
+class GraphBuilder(Model):  # pylint: disable=too-few-public-methods
+    pass
 
 
 class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
     """Builds graph adjacency according to the k-nearest neighbours."""
 
+    @save_config
     def __init__(
         self,
         nb_nearest_neighbours: int,
         columns: List[int] = None,
         device: str = None,
     ):
+        # Base class constructor
+        super().__init__()
+
         # Check(s)
         if columns is None:
             columns = [0, 1, 2]
@@ -33,10 +36,10 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
         self._columns = columns
         self._device = device
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            self.logger.info(
+            self.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",
@@ -55,12 +58,16 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
 class RadialGraphBuilder(GraphBuilder):
     """Builds graph adjacency according to a sphere of chosen radius centred at each DOM hit"""
 
+    @save_config
     def __init__(
         self,
         radius: float,
         columns: List[int] = None,
         device: str = None,
     ):
+        # Base class constructor
+        super().__init__()
+
         # Check(s)
         if columns is None:
             columns = [0, 1, 2]
@@ -70,10 +77,10 @@ class RadialGraphBuilder(GraphBuilder):
         self._columns = columns
         self._device = device
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            self.logger.info(
+            self.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",
@@ -89,17 +96,19 @@ class RadialGraphBuilder(GraphBuilder):
         return data
 
 
-class EuclideanGraphBuilder(
-    GraphBuilder
-):  # pylint: disable=too-few-public-methods
+class EuclideanGraphBuilder(GraphBuilder):
     """Builds graph adjacency according to Euclidean distance as in https://arxiv.org/pdf/1809.06166.pdf"""
 
+    @save_config
     def __init__(
         self,
         sigma: float,
         threshold: float = 0.0,
         columns: List[int] = None,
     ):
+        # Base class constructor
+        super().__init__()
+
         # Check(s)
         if columns is None:
             columns = [0, 1, 2]
@@ -109,10 +118,10 @@ class EuclideanGraphBuilder(
         self._threshold = threshold
         self._columns = columns
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
-            self.logger.info(
+            self.info(
                 (
                     "WARNING: GraphBuilder received graph with pre-existing structure. "
                     "Will overwrite.",

@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from typing import List
 
+from graphnet.models.config import save_config
+
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
@@ -9,16 +11,15 @@ except ImportError:  # Python version < 3.8
         return f
 
 
-from pytorch_lightning import LightningModule
 import torch
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 
 from graphnet.models.graph_builders import GraphBuilder
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.models import Model
 
 
-class Detector(LoggerMixin, LightningModule):
+class Detector(Model):
     """Base class for all detector-specific read-ins in graphnet."""
 
     @property
@@ -26,6 +27,7 @@ class Detector(LoggerMixin, LightningModule):
     def features(self) -> List[str]:
         """List of features used/assumed by inheriting `Detector` objects."""
 
+    @save_config
     def __init__(
         self, graph_builder: GraphBuilder, scalers: List[dict] = None
     ):
@@ -36,7 +38,7 @@ class Detector(LoggerMixin, LightningModule):
         self._graph_builder = graph_builder
         self._scalers = scalers
         if self._scalers:
-            self.logger.info(
+            self.info(
                 (
                     "Will use scalers rather than standard preprocessing "
                     f"in {self.__class__.__name__}.",

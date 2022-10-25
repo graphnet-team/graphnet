@@ -15,6 +15,8 @@ INSTALL_REQUIRES = [
     "numpy>=1.21",
     "pandas>=1.3",
     "pyarrow",
+    "pydantic",
+    "ruamel.yaml",
     "scikit_learn>=1.0",
     "scipy>=1.7",
     "sqlalchemy>=1.4",

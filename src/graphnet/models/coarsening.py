@@ -1,7 +1,6 @@
 """Classes for coarsening operations (i.e., clustering, or local pooling."""
 
-from abc import ABC, abstractmethod
-from multiprocessing import pool
+from abc import abstractmethod
 from typing import List, Optional, Union
 from copy import deepcopy
 import torch
@@ -22,7 +21,7 @@ from graphnet.models.components.pool import (
     sum_pool_x,
     std_pool_x,
 )
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.models import Model
 
 # Utility method(s)
 from torch_geometric.utils import degree
@@ -50,7 +49,7 @@ def unbatch_edge_index(edge_index: Tensor, batch: Tensor) -> List[Tensor]:
     return edge_index.split(sizes, dim=1)
 
 
-class Coarsening(ABC, LoggerMixin):
+class Coarsening(Model):
     """Base class for coarsening operations."""
 
     # Class variables
@@ -73,6 +72,9 @@ class Coarsening(ABC, LoggerMixin):
             self._attribute_reduce_method,
         ) = self.reduce_options[reduce]
         self._do_transfer_attributes = transfer_attributes
+
+        # Base class constructor
+        super().__init__()
 
     @abstractmethod
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
@@ -121,7 +123,7 @@ class Coarsening(ABC, LoggerMixin):
 
         return pooled_data
 
-    def __call__(self, data: Union[Data, Batch]) -> Union[Data, Batch]:
+    def forward(self, data: Union[Data, Batch]) -> Union[Data, Batch]:
         """Coarsening operation."""
 
         # Get tensor of cluster indices for each node.
