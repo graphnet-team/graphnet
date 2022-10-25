@@ -11,7 +11,7 @@ from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
-from graphnet.models import Model
+from graphnet.models import StandardModel
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
@@ -101,7 +101,7 @@ def main():
         loss_function=LogCoshLoss(),
         transform_prediction_and_target=torch.log10,
     )
-    model = Model(
+    model = StandardModel(
         detector=detector,
         gnn=gnn,
         tasks=[task],

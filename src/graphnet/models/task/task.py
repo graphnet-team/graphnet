@@ -1,7 +1,9 @@
 from abc import abstractmethod
-from typing import List, Union
+from typing import TYPE_CHECKING, List, Union
 from typing import Callable, Optional
 import numpy as np
+
+from graphnet.models.config import save_config
 
 try:
     from typing import final
@@ -11,16 +13,19 @@ except ImportError:  # Python version < 3.8
         return f
 
 
-from pytorch_lightning.core.lightning import LightningModule
 import torch
 from torch import Tensor
 from torch.nn import Linear
 from torch_geometric.data import Data
 
-from graphnet.training.loss_functions import LossFunction
+if TYPE_CHECKING:
+    # Avoid cyclic dependency
+    from graphnet.training.loss_functions import LossFunction
+
+from graphnet.models import Model
 
 
-class Task(LightningModule):
+class Task(Model):
     """Base class for all reconstruction and classification tasks.
 
     Args:
@@ -55,11 +60,12 @@ class Task(LightningModule):
     def nb_inputs(self) -> int:
         """Number of inputs assumed by task."""
 
+    @save_config
     def __init__(
         self,
         hidden_size: int,
         target_labels: Union[str, List[str]],
-        loss_function: LossFunction,
+        loss_function: "LossFunction",
         transform_prediction_and_target: Optional[Callable] = None,
         transform_target: Optional[Callable] = None,
         transform_inference: Optional[Callable] = None,

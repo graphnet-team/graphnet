@@ -10,7 +10,7 @@ from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
-from graphnet.models import Model
+from graphnet.models import StandardModel
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn.dynedge import DynEdge, DOMCoarsenedDynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
@@ -97,7 +97,7 @@ def train(config):
             loss_function=VonMisesFisher2DLoss(),
         )
 
-    model = Model(
+    model = StandardModel(
         detector=detector,
         gnn=gnn,
         tasks=[task],

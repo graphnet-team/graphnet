@@ -12,7 +12,7 @@ from graphnet.data.extractors import (
     I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.data.constants import FEATURES
-from graphnet.models import Model
+from graphnet.models import StandardModel
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import get_logger
 
@@ -95,7 +95,7 @@ class GraphNeTModuleBase(I3Module):
             i3extractor.set_files(None, gcd_file)
 
         if isinstance(model, str):
-            self.model = Model.load(model)
+            self.model = StandardModel.load(model)
         else:
             self.model = model
 

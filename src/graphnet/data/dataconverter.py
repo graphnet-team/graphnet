@@ -189,7 +189,7 @@ class DataConverter(ABC, LoggerMixin):
         # Find all I3 and GCD files in the specified directories.
         i3_files, gcd_files = find_i3_files(directories, self._gcd_rescue)
         if len(i3_files) == 0:
-            self.logger.error(f"No files found in {directories}.")
+            self.error(f"No files found in {directories}.")
             return
 
         # Save a record of the found I3 files in the output directory.
@@ -217,7 +217,7 @@ class DataConverter(ABC, LoggerMixin):
         """
 
         # Make sure output directory exists.
-        self.logger.info(f"Saving results to {self._outdir}")
+        self.info(f"Saving results to {self._outdir}")
         os.makedirs(self._outdir, exist_ok=True)
 
         # Iterate over batches of files.
@@ -232,7 +232,7 @@ class DataConverter(ABC, LoggerMixin):
                     (group, self._sequential_batch_pattern.format(ix_batch))
                     for ix_batch, group in enumerate(batches)
                 ]
-                self.logger.info(
+                self.info(
                     f"Will batch {len(filesets)} input files into {len(batches)} groups."
                 )
 
@@ -252,12 +252,12 @@ class DataConverter(ABC, LoggerMixin):
                         groups[group] = list()
                     groups[group].append(fileset)
 
-                self.logger.info(
+                self.info(
                     f"Will batch {len(filesets)} input files into {len(groups)} groups"
                 )
                 if len(groups) <= 20:
                     for group, group_filesets in groups.items():
-                        self.logger.info(
+                        self.info(
                             f"> {group}: {len(group_filesets):3d} file(s)"
                         )
 
@@ -278,7 +278,7 @@ class DataConverter(ABC, LoggerMixin):
             self._update_shared_variables(pool)
 
         except KeyboardInterrupt:
-            self.logger.warning("[ctrl+c] Exciting gracefully.")
+            self.warning("[ctrl+c] Exciting gracefully.")
 
     @abstractmethod
     def save_data(self, data: List[OrderedDict], output_file: str):
@@ -312,7 +312,7 @@ class DataConverter(ABC, LoggerMixin):
         for _ in map_fn(
             self._process_file, tqdm(args, unit="file(s)", colour="green")
         ):
-            self.logger.debug(
+            self.debug(
                 "Saving with 1:1 strategy on the individual worker processes"
             )
 
@@ -329,7 +329,7 @@ class DataConverter(ABC, LoggerMixin):
         for _ in map_fn(
             self._process_batch, tqdm(args, unit="batch(es)", colour="green")
         ):
-            self.logger.debug("Saving with batched strategy")
+            self.debug("Saving with batched strategy")
 
         return pool
 
@@ -445,7 +445,7 @@ class DataConverter(ABC, LoggerMixin):
         # Choose relevant map-function given the requested number of workers.
         workers = min(self._workers, nb_files)
         if workers > 1:
-            self.logger.info(
+            self.info(
                 f"Starting pool of {workers} workers to process {nb_files} {unit}"
             )
 
@@ -463,7 +463,7 @@ class DataConverter(ABC, LoggerMixin):
             map_fn = pool.imap
 
         else:
-            self.logger.info(
+            self.info(
                 f"Processing {nb_files} {unit} in main thread (not multiprocessing)"
             )
             map_fn = map
@@ -495,11 +495,9 @@ class DataConverter(ABC, LoggerMixin):
             self._sub_to = "x".join([f"\\{ix + 1}" for ix in range(nb_fields)])
 
             if sequential_batch_pattern is not None:
-                self.logger.warning(
-                    "Argument `sequential_batch_pattern` ignored."
-                )
+                self.warning("Argument `sequential_batch_pattern` ignored.")
             if nb_files_to_batch is not None:
-                self.logger.warning("Argument `nb_files_to_batch` ignored.")
+                self.warning("Argument `nb_files_to_batch` ignored.")
 
         elif (nb_files_to_batch is not None) or (
             sequential_batch_pattern is not None
@@ -517,7 +515,7 @@ class DataConverter(ABC, LoggerMixin):
 
     def _save_filenames(self, i3_files: List[str]):
         """Saves I3 file names in CSV format."""
-        self.logger.debug("Saving input file names to config CSV.")
+        self.debug("Saving input file names to config CSV.")
         config_dir = os.path.join(self._outdir, "config")
         os.makedirs(config_dir, exist_ok=True)
         i3_files = pd.DataFrame(data=i3_files, columns=["filename"])
