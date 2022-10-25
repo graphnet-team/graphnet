@@ -45,24 +45,37 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-graphnet.models.coarsening">graphnet.models.coarsening module</a><ul>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening"><code class="docutils literal notranslate"><span class="pre">Coarsening</span></code></a><ul>
-<li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening.__call__"><code class="docutils literal notranslate"><span class="pre">Coarsening.__call__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening._additional_features"><code class="docutils literal notranslate"><span class="pre">Coarsening._additional_features()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening._perform_clustering"><code class="docutils literal notranslate"><span class="pre">Coarsening._perform_clustering()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening._transfer_attributes"><code class="docutils literal notranslate"><span class="pre">Coarsening._transfer_attributes()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening.forward"><code class="docutils literal notranslate"><span class="pre">Coarsening.forward()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening.reduce_options"><code class="docutils literal notranslate"><span class="pre">Coarsening.reduce_options</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening.training"><code class="docutils literal notranslate"><span class="pre">Coarsening.training</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.CustomDOMCoarsening"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.models.coarsening.CustomDOMCoarsening._additional_features"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening._additional_features()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.CustomDOMCoarsening.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.CustomDOMCoarsening.precision"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.CustomDOMCoarsening.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.CustomDOMCoarsening.training"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening.training</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.__init__"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening._perform_clustering"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening._perform_clustering()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.precision"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.training"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening.training</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.DOMCoarsening"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.models.coarsening.DOMCoarsening._perform_clustering"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening._perform_clustering()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.DOMCoarsening.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.DOMCoarsening.precision"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.DOMCoarsening.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.DOMCoarsening.training"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening.training</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.LoopBasedCoarsening"><code class="docutils literal notranslate"><span class="pre">LoopBasedCoarsening</span></code></a><ul>
@@ -72,28 +85,82 @@
 <li><a class="reference internal" href="#graphnet.models.coarsening.unbatch_edge_index"><code class="docutils literal notranslate"><span class="pre">unbatch_edge_index()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-graphnet.models.config">graphnet.models.config module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig"><code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig.__init__"><code class="docutils literal notranslate"><span class="pre">ModelConfig.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig._as_dict"><code class="docutils literal notranslate"><span class="pre">ModelConfig._as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig._serialise"><code class="docutils literal notranslate"><span class="pre">ModelConfig._serialise()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig.arguments"><code class="docutils literal notranslate"><span class="pre">ModelConfig.arguments</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig.class_name"><code class="docutils literal notranslate"><span class="pre">ModelConfig.class_name</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig.construct_model"><code class="docutils literal notranslate"><span class="pre">ModelConfig.construct_model()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig.dump"><code class="docutils literal notranslate"><span class="pre">ModelConfig.dump()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.ModelConfig.load"><code class="docutils literal notranslate"><span class="pre">ModelConfig.load()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.config.get_namespace_classes"><code class="docutils literal notranslate"><span class="pre">get_namespace_classes()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.is_graphnet_class"><code class="docutils literal notranslate"><span class="pre">is_graphnet_class()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.is_graphnet_module"><code class="docutils literal notranslate"><span class="pre">is_graphnet_module()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.save_config"><code class="docutils literal notranslate"><span class="pre">save_config()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.config.traverse_and_apply"><code class="docutils literal notranslate"><span class="pre">traverse_and_apply()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.models.graph_builders">graphnet.models.graph_builders module</a><ul>
-<li><a class="reference internal" href="#graphnet.models.graph_builders.EuclideanGraphBuilder"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder"><code class="docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.graph_builders.KNNGraphBuilder"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.graph_builders.RadialGraphBuilder"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.EuclideanGraphBuilder"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.EuclideanGraphBuilder.forward"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder.forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.EuclideanGraphBuilder.training"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder"><code class="docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder.training"><code class="docutils literal notranslate"><span class="pre">GraphBuilder.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.KNNGraphBuilder"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.KNNGraphBuilder.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.KNNGraphBuilder.forward"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.KNNGraphBuilder.precision"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.KNNGraphBuilder.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.KNNGraphBuilder.training"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.training</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.RadialGraphBuilder"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.RadialGraphBuilder.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.RadialGraphBuilder.forward"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.RadialGraphBuilder.precision"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.RadialGraphBuilder.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.graph_builders.RadialGraphBuilder.training"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.training</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.models.model">graphnet.models.model module</a><ul>
 <li><a class="reference internal" href="#graphnet.models.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
-<li><a class="reference internal" href="#graphnet.models.model.Model.compute_loss"><code class="docutils literal notranslate"><span class="pre">Model.compute_loss()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.model.Model.configure_optimizers"><code class="docutils literal notranslate"><span class="pre">Model.configure_optimizers()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.model.Model.config"><code class="docutils literal notranslate"><span class="pre">Model.config</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.model.Model.forward"><code class="docutils literal notranslate"><span class="pre">Model.forward()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.model.Model.inference"><code class="docutils literal notranslate"><span class="pre">Model.inference()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.model.Model.from_config"><code class="docutils literal notranslate"><span class="pre">Model.from_config()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.model.Model.load"><code class="docutils literal notranslate"><span class="pre">Model.load()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.model.Model.load_state_dict"><code class="docutils literal notranslate"><span class="pre">Model.load_state_dict()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.model.Model.save"><code class="docutils literal notranslate"><span class="pre">Model.save()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.model.Model.save_config"><code class="docutils literal notranslate"><span class="pre">Model.save_config()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.model.Model.save_state_dict"><code class="docutils literal notranslate"><span class="pre">Model.save_state_dict()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.model.Model.shared_step"><code class="docutils literal notranslate"><span class="pre">Model.shared_step()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.model.Model.train"><code class="docutils literal notranslate"><span class="pre">Model.train()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.model.Model.training"><code class="docutils literal notranslate"><span class="pre">Model.training</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.model.Model.training_step"><code class="docutils literal notranslate"><span class="pre">Model.training_step()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.model.Model.validation_step"><code class="docutils literal notranslate"><span class="pre">Model.validation_step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-graphnet.models.standard_model">graphnet.models.standard_model module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">StandardModel.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.compute_loss"><code class="docutils literal notranslate"><span class="pre">StandardModel.compute_loss()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.configure_optimizers"><code class="docutils literal notranslate"><span class="pre">StandardModel.configure_optimizers()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.forward"><code class="docutils literal notranslate"><span class="pre">StandardModel.forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.inference"><code class="docutils literal notranslate"><span class="pre">StandardModel.inference()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.precision"><code class="docutils literal notranslate"><span class="pre">StandardModel.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">StandardModel.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.shared_step"><code class="docutils literal notranslate"><span class="pre">StandardModel.shared_step()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.train"><code class="docutils literal notranslate"><span class="pre">StandardModel.train()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.training"><code class="docutils literal notranslate"><span class="pre">StandardModel.training</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.training_step"><code class="docutils literal notranslate"><span class="pre">StandardModel.training_step()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.standard_model.StandardModel.validation_step"><code class="docutils literal notranslate"><span class="pre">StandardModel.validation_step()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -175,10 +242,13 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.html#module-graphnet.models.detector.detector">graphnet.models.detector.detector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector"><code class="docutils literal notranslate"><span class="pre">Detector</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector._forward"><code class="docutils literal notranslate"><span class="pre">Detector._forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">Detector.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.features"><code class="docutils literal notranslate"><span class="pre">Detector.features</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.forward"><code class="docutils literal notranslate"><span class="pre">Detector.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.nb_inputs"><code class="docutils literal notranslate"><span class="pre">Detector.nb_inputs</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.nb_outputs"><code class="docutils literal notranslate"><span class="pre">Detector.nb_outputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.precision"><code class="docutils literal notranslate"><span class="pre">Detector.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">Detector.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.training"><code class="docutils literal notranslate"><span class="pre">Detector.training</span></code></a></li>
 </ul>
 </li>
@@ -242,7 +312,10 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.gnn.html#module-graphnet.models.gnn.convnet">graphnet.models.gnn.convnet module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet"><code class="docutils literal notranslate"><span class="pre">ConvNet</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.__init__"><code class="docutils literal notranslate"><span class="pre">ConvNet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">ConvNet.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.forward"><code class="docutils literal notranslate"><span class="pre">ConvNet.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.precision"><code class="docutils literal notranslate"><span class="pre">ConvNet.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">ConvNet.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.training"><code class="docutils literal notranslate"><span class="pre">ConvNet.training</span></code></a></li>
 </ul>
 </li>
@@ -254,7 +327,10 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._calculate_global_variables"><code class="docutils literal notranslate"><span class="pre">DynEdge._calculate_global_variables()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._construct_layers"><code class="docutils literal notranslate"><span class="pre">DynEdge._construct_layers()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._global_pooling"><code class="docutils literal notranslate"><span class="pre">DynEdge._global_pooling()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">DynEdge.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.forward"><code class="docutils literal notranslate"><span class="pre">DynEdge.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.precision"><code class="docutils literal notranslate"><span class="pre">DynEdge.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">DynEdge.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.training"><code class="docutils literal notranslate"><span class="pre">DynEdge.training</span></code></a></li>
 </ul>
 </li>
@@ -263,7 +339,10 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.gnn.html#module-graphnet.models.gnn.dynedge_jinst">graphnet.models.gnn.dynedge_jinst module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.__init__"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.forward"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.precision"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.training"><code class="docutils literal notranslate"><span class="pre">DynEdgeJINST.training</span></code></a></li>
 </ul>
 </li>
@@ -271,9 +350,12 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.gnn.html#module-graphnet.models.gnn.gnn">graphnet.models.gnn.gnn module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN"><code class="docutils literal notranslate"><span class="pre">GNN</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">GNN.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.forward"><code class="docutils literal notranslate"><span class="pre">GNN.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.nb_inputs"><code class="docutils literal notranslate"><span class="pre">GNN.nb_inputs</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.nb_outputs"><code class="docutils literal notranslate"><span class="pre">GNN.nb_outputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.precision"><code class="docutils literal notranslate"><span class="pre">GNN.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">GNN.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.training"><code class="docutils literal notranslate"><span class="pre">GNN.training</span></code></a></li>
 </ul>
 </li>
@@ -286,32 +368,50 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.html#module-graphnet.models.task.reconstruction">graphnet.models.task.reconstruction module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.precision"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.training"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.nb_inputs"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.precision"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.training"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask.nb_inputs"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask.precision"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask.training"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.nb_inputs"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.precision"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.training"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa"><code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa.nb_inputs"><code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa.precision"><code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa.training"><code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.precision"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.training"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction.training</span></code></a></li>
 </ul>
 </li>
@@ -324,42 +424,66 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.precision"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.training"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1"><code class="docutils literal notranslate"><span class="pre">PassOutput1</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">PassOutput1.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.nb_inputs"><code class="docutils literal notranslate"><span class="pre">PassOutput1.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.precision"><code class="docutils literal notranslate"><span class="pre">PassOutput1.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">PassOutput1.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.training"><code class="docutils literal notranslate"><span class="pre">PassOutput1.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2"><code class="docutils literal notranslate"><span class="pre">PassOutput2</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">PassOutput2.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.nb_inputs"><code class="docutils literal notranslate"><span class="pre">PassOutput2.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.precision"><code class="docutils literal notranslate"><span class="pre">PassOutput2.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">PassOutput2.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.training"><code class="docutils literal notranslate"><span class="pre">PassOutput2.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3"><code class="docutils literal notranslate"><span class="pre">PassOutput3</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">PassOutput3.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.nb_inputs"><code class="docutils literal notranslate"><span class="pre">PassOutput3.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.precision"><code class="docutils literal notranslate"><span class="pre">PassOutput3.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">PassOutput3.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.training"><code class="docutils literal notranslate"><span class="pre">PassOutput3.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.precision"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.training"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.precision"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.training"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.precision"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.training"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction.training</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.nb_inputs"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.precision"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.training"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction.training</span></code></a></li>
 </ul>
 </li>
@@ -377,10 +501,13 @@
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task"><code class="docutils literal notranslate"><span class="pre">Task</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task._forward"><code class="docutils literal notranslate"><span class="pre">Task._forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task._validate_and_set_transforms"><code class="docutils literal notranslate"><span class="pre">Task._validate_and_set_transforms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">Task.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.compute_loss"><code class="docutils literal notranslate"><span class="pre">Task.compute_loss()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.forward"><code class="docutils literal notranslate"><span class="pre">Task.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.inference"><code class="docutils literal notranslate"><span class="pre">Task.inference()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.nb_inputs"><code class="docutils literal notranslate"><span class="pre">Task.nb_inputs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.precision"><code class="docutils literal notranslate"><span class="pre">Task.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">Task.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.train_eval"><code class="docutils literal notranslate"><span class="pre">Task.train_eval()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#graphnet.models.task.task.Task.training"><code class="docutils literal notranslate"><span class="pre">Task.training</span></code></a></li>
 </ul>
@@ -402,14 +529,8 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">Coarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'avg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#Coarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.Coarsening" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
 <p>Base class for coarsening operations.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Data</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Batch</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Data</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Batch</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#Coarsening.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.Coarsening.__call__" title="Permalink to this definition"></a></dt>
-<dd><p>Coarsening operation.</p>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening._additional_features">
 <span class="sig-name descname"><span class="pre">_additional_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LongTensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Batch</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#Coarsening._additional_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.Coarsening._additional_features" title="Permalink to this definition"></a></dt>
@@ -430,9 +551,20 @@ This method can be overwritten for bespoke coarsening operations.</p>
 <dd><p>Transfer attributes on <cite>original_data</cite> to <cite>pooled_data</cite>.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Data</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Batch</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Data</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Batch</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#Coarsening.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.Coarsening.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Coarsening operation.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening.reduce_options">
 <span class="sig-name descname"><span class="pre">reduce_options</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'avg':</span> <span class="pre">(&lt;function</span> <span class="pre">avg_pool&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">avg_pool_x&gt;),</span> <span class="pre">'max':</span> <span class="pre">(&lt;function</span> <span class="pre">max_pool&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">max_pool_x&gt;),</span> <span class="pre">'min':</span> <span class="pre">(&lt;function</span> <span class="pre">min_pool&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">min_pool_x&gt;),</span> <span class="pre">'sum':</span> <span class="pre">(&lt;function</span> <span class="pre">sum_pool&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">sum_pool_x&gt;)}</span></em><a class="headerlink" href="#graphnet.models.coarsening.Coarsening.reduce_options" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.Coarsening.training" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -446,6 +578,26 @@ This method can be overwritten for bespoke coarsening operations.</p>
 <span class="sig-name descname"><span class="pre">_additional_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LongTensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#CustomDOMCoarsening._additional_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.CustomDOMCoarsening._additional_features" title="Permalink to this definition"></a></dt>
 <dd><p>Additional poolings of feature tensor <cite>x</cite> on <cite>data</cite>.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.CustomDOMCoarsening.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.CustomDOMCoarsening.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.CustomDOMCoarsening.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.coarsening.CustomDOMCoarsening.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.CustomDOMCoarsening.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.CustomDOMCoarsening.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.CustomDOMCoarsening.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.CustomDOMCoarsening.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -465,6 +617,26 @@ This method can be overwritten for bespoke coarsening operations.</p>
 <dd><p>Cluster nodes in <cite>data</cite> by assigning a cluster index to each.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMAndTimeWindowCoarsening.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMAndTimeWindowCoarsening.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMAndTimeWindowCoarsening.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMAndTimeWindowCoarsening.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -476,6 +648,26 @@ This method can be overwritten for bespoke coarsening operations.</p>
 <span class="sig-name descname"><span class="pre">_perform_clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Data</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Batch</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LongTensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#DOMCoarsening._perform_clustering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.DOMCoarsening._perform_clustering" title="Permalink to this definition"></a></dt>
 <dd><p>Perform clustering of nodes in <cite>data</cite> by assigning unique cluster indices to each.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMCoarsening.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.DOMCoarsening.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMCoarsening.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.coarsening.DOMCoarsening.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMCoarsening.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.DOMCoarsening.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMCoarsening.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.DOMCoarsening.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -510,33 +702,221 @@ node to a specific example. Must be ordered.</p>
 </dd></dl>
 
 </section>
+<section id="module-graphnet.models.config">
+<span id="graphnet-models-config-module"></span><h2>graphnet.models.config module<a class="headerlink" href="#module-graphnet.models.config" title="Permalink to this heading"></a></h2>
+<p>Config classes for the <cite>graphnet.data</cite> module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.config.</span></span><span class="sig-name descname"><span class="pre">ModelConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/config.html#ModelConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.ModelConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
+<p>Configuration for all <a href="#id1"><span class="problematic" id="id2">`</span></a>Model`s.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#ModelConfig.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.ModelConfig.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>ModelConfig.</p>
+<p>Can be used for model configuration as code, thereby making model
+construction more transparent and reproducible. Note that this does
+<em>not</em> save any trainable weights, meaning this is only a configuration
+for the model’s hyperparameters. Any model instantiated from a
+ModelConfig or file will be randomly initialised, and thus should be
+trained.</p>
+<p class="rubric">Examples</p>
+<p>In one session, do:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">arguments:</span>
+<span class="go">    - (...): (...)</span>
+<span class="go">class_name: Model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="s2">&quot;model.yml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In another session, you can then do:
+&gt;&gt;&gt; model = Model.from_config(“model.yml”)</p>
+<p>Or identically:
+&gt;&gt;&gt; model = ModelConfig.load(“model.yml”).construct_model()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig._as_dict">
+<span class="sig-name descname"><span class="pre">_as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#ModelConfig._as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.ModelConfig._as_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Represent ModelConfig as a dict.</p>
+<p>This builds on <cite>BaseModel.dict()</cite> but wraps the output in a single-key
+dictionary to make it unambiguous to identify model arguments that are
+themselves models.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig._serialise">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_serialise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#ModelConfig._serialise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.ModelConfig._serialise" title="Permalink to this definition"></a></dt>
+<dd><p>Serialise <cite>obj</cite> to a format that can be saved to file.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig.arguments">
+<span class="sig-name descname"><span class="pre">arguments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.config.ModelConfig.arguments" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig.class_name">
+<span class="sig-name descname"><span class="pre">class_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.models.config.ModelConfig.class_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig.construct_model">
+<span class="sig-name descname"><span class="pre">construct_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trust</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><span class="pre">Model</span></a></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#ModelConfig.construct_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.ModelConfig.construct_model" title="Permalink to this definition"></a></dt>
+<dd><p>Construct model based on current config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trust</strong> (<em>bool</em>) – Whether to trust the ModelConfig file enough to
+<cite>eval(…)</cite> any lambda function expressions contained.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the ModelConfig contains lambda functions but
+    <cite>trust = False</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#ModelConfig.dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.ModelConfig.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Save ModelConfig to <cite>path</cite> as YAML file, or return as string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.config.ModelConfig.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.models.config.ModelConfig" title="graphnet.models.config.ModelConfig"><span class="pre">ModelConfig</span></a></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#ModelConfig.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.ModelConfig.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load ModelConfig from <cite>path</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.config.get_namespace_classes">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.config.</span></span><span class="sig-name descname"><span class="pre">get_namespace_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">module</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#get_namespace_classes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.get_namespace_classes" title="Permalink to this definition"></a></dt>
+<dd><p>Return a lookup of all graphnet class names in <cite>module</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.config.is_graphnet_class">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.config.</span></span><span class="sig-name descname"><span class="pre">is_graphnet_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#is_graphnet_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.is_graphnet_class" title="Permalink to this definition"></a></dt>
+<dd><p>Return whether <cite>obj</cite> is a class in graphnet.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.config.is_graphnet_module">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.config.</span></span><span class="sig-name descname"><span class="pre">is_graphnet_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/models/config.html#is_graphnet_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.is_graphnet_module" title="Permalink to this definition"></a></dt>
+<dd><p>Return whether <cite>obj</cite> is a module in graphnet.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.config.save_config">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.config.</span></span><span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/config.html#save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.save_config" title="Permalink to this definition"></a></dt>
+<dd><p>Save the arguments to <cite>__init__</cite> functions as a member <cite>ModelConfig</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.config.traverse_and_apply">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.config.</span></span><span class="sig-name descname"><span class="pre">traverse_and_apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/config.html#traverse_and_apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.config.traverse_and_apply" title="Permalink to this definition"></a></dt>
+<dd><p>Apply <cite>fn</cite> to all elements in <cite>obj</cite>, resulting in same structure.</p>
+</dd></dl>
+
+</section>
 <section id="module-graphnet.models.graph_builders">
 <span id="graphnet-models-graph-builders-module"></span><h2>graphnet.models.graph_builders module<a class="headerlink" href="#module-graphnet.models.graph_builders" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.graph_builders.EuclideanGraphBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">EuclideanGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#EuclideanGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.EuclideanGraphBuilder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">EuclideanGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#EuclideanGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.EuclideanGraphBuilder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a></p>
 <p>Builds graph adjacency according to Euclidean distance as in <a class="reference external" href="https://arxiv.org/pdf/1809.06166.pdf">https://arxiv.org/pdf/1809.06166.pdf</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.EuclideanGraphBuilder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Data</span></span></span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#EuclideanGraphBuilder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.EuclideanGraphBuilder.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Forward pass.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.EuclideanGraphBuilder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.graph_builders.EuclideanGraphBuilder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.graph_builders.GraphBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">GraphBuilder</span></span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#GraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.GraphBuilder" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">GraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#GraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.GraphBuilder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.GraphBuilder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.graph_builders.GraphBuilder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.graph_builders.KNNGraphBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">KNNGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_nearest_neighbours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#KNNGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">KNNGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_nearest_neighbours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#KNNGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a></p>
 <p>Builds graph adjacency according to the k-nearest neighbours.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.KNNGraphBuilder.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.KNNGraphBuilder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Data</span></span></span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#KNNGraphBuilder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Forward pass.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.KNNGraphBuilder.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.KNNGraphBuilder.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.KNNGraphBuilder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.graph_builders.RadialGraphBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">RadialGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#RadialGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">RadialGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#RadialGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a></p>
 <p>Builds graph adjacency according to a sphere of chosen radius centred at each DOM hit</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.RadialGraphBuilder.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.RadialGraphBuilder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Data</span></span></span><a class="reference internal" href="_modules/graphnet/models/graph_builders.html#RadialGraphBuilder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Forward pass.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.RadialGraphBuilder.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.RadialGraphBuilder.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.graph_builders.RadialGraphBuilder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>
@@ -544,20 +924,98 @@ node to a specific example. Must be ordered.</p>
 <span id="graphnet-models-model-module"></span><h2>graphnet.models.model module<a class="headerlink" href="#module-graphnet.models.model" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.model.Model">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">detector:</span> <span class="pre">~graphnet.models.detector.detector.Detector,</span> <span class="pre">gnn:</span> <span class="pre">~graphnet.models.gnn.gnn.GNN,</span> <span class="pre">tasks:</span> <span class="pre">~typing.Union[~graphnet.models.task.task.Task,</span> <span class="pre">~typing.List[~graphnet.models.task.task.Task]],</span> <span class="pre">coarsening:</span> <span class="pre">~typing.Optional[~graphnet.models.coarsening.Coarsening]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">optimizer_class=&lt;class</span> <span class="pre">'torch.optim.adam.Adam'&gt;,</span> <span class="pre">optimizer_kwargs=None,</span> <span class="pre">scheduler_class=None,</span> <span class="pre">scheduler_kwargs=None,</span> <span class="pre">scheduler_config=None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
-<p>Main class for all models in graphnet.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for all models in graphnet.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#graphnet.models.config.ModelConfig" title="graphnet.models.config.ModelConfig"><span class="pre">ModelConfig</span></a></em><a class="headerlink" href="#graphnet.models.model.Model.config" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration to re-create the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Data</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Data</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Forward pass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.from_config">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#graphnet.models.config.ModelConfig" title="graphnet.models.config.ModelConfig"><span class="pre">ModelConfig</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trust</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><span class="pre">Model</span></a></span></span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.from_config" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>Model</cite> instance from <cite>source</cite> configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trust</strong> (<em>bool</em>) – Whether to trust the ModelConfig file enough to
+<cite>eval(…)</cite> any lambda function expressions contained.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the ModelConfig contains lambda functions but
+    <cite>trust = False</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><span class="pre">Model</span></a></span></span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.load" title="Permalink to this definition"></a></dt>
+<dd><p>Loads entire model from <cite>path</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.load_state_dict">
+<span class="sig-name descname"><span class="pre">load_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><span class="pre">Model</span></a></span></span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.load_state_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.load_state_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Loads model <cite>state_dict</cite> from <cite>path</cite>, either file or loaded object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.save" title="Permalink to this definition"></a></dt>
+<dd><p>Saves entire model to <cite>path</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.save_config">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.save_config" title="Permalink to this definition"></a></dt>
+<dd><p>Save ModelConfig to <cite>path</cite> as YAML file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.save_state_dict">
+<span class="sig-name descname"><span class="pre">save_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.save_state_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.save_state_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Saves model <cite>state_dict</cite> to <cite>path</cite>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.model.Model.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-graphnet.models.standard_model">
+<span id="graphnet-models-standard-model-module"></span><h2>graphnet.models.standard_model module<a class="headerlink" href="#module-graphnet.models.standard_model" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.standard_model.</span></span><span class="sig-name descname"><span class="pre">StandardModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">detector:</span> <span class="pre">~graphnet.models.detector.detector.Detector,</span> <span class="pre">gnn:</span> <span class="pre">~graphnet.models.gnn.gnn.GNN,</span> <span class="pre">tasks:</span> <span class="pre">~typing.Union[~graphnet.models.task.task.Task,</span> <span class="pre">~typing.List[~graphnet.models.task.task.Task]],</span> <span class="pre">coarsening:</span> <span class="pre">~typing.Optional[~graphnet.models.coarsening.Coarsening]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">optimizer_class=&lt;class</span> <span class="pre">'torch.optim.adam.Adam'&gt;,</span> <span class="pre">optimizer_kwargs=None,</span> <span class="pre">scheduler_class=None,</span> <span class="pre">scheduler_kwargs=None,</span> <span class="pre">scheduler_config=None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>Main class for standard models in graphnet.</p>
 <p>This class chains together the different elements of a complete GNN-based
 model (detector read-in, GNN architecture, and task-specific read-outs).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.compute_loss">
-<span class="sig-name descname"><span class="pre">compute_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.compute_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.compute_loss" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.compute_loss">
+<span class="sig-name descname"><span class="pre">compute_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel.compute_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.compute_loss" title="Permalink to this definition"></a></dt>
 <dd><p>Computes and sums losses across tasks.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.configure_optimizers">
-<span class="sig-name descname"><span class="pre">configure_optimizers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.configure_optimizers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.configure_optimizers" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.configure_optimizers">
+<span class="sig-name descname"><span class="pre">configure_optimizers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel.configure_optimizers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.configure_optimizers" title="Permalink to this definition"></a></dt>
 <dd><p>Choose what optimizers and learning-rate schedulers to use in your optimization.
 Normally you’d need one. But in the case of GANs or similar you might have multiple.</p>
 <dl class="field-list simple">
@@ -721,7 +1179,7 @@ the scheduler will only be updated when its optimizer is being used.</p>
 <code class="docutils literal notranslate"><span class="pre">&quot;interval&quot;</span></code> (default “epoch”) in the scheduler configuration, Lightning will call
 the scheduler’s <code class="docutils literal notranslate"><span class="pre">.step()</span></code> method automatically in case of automatic optimization.</p></li>
 <li><p>If you use 16-bit precision (<code class="docutils literal notranslate"><span class="pre">precision=16</span></code>), Lightning will automatically handle the optimizers.</p></li>
-<li><p>If you use multiple optimizers, <a class="reference internal" href="#graphnet.models.model.Model.training_step" title="graphnet.models.model.Model.training_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">training_step()</span></code></a> will have an additional <code class="docutils literal notranslate"><span class="pre">optimizer_idx</span></code> parameter.</p></li>
+<li><p>If you use multiple optimizers, <a class="reference internal" href="#graphnet.models.standard_model.StandardModel.training_step" title="graphnet.models.standard_model.StandardModel.training_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">training_step()</span></code></a> will have an additional <code class="docutils literal notranslate"><span class="pre">optimizer_idx</span></code> parameter.</p></li>
 <li><p>If you use <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.LBFGS</span></code>, Lightning handles the closure function automatically for you.</p></li>
 <li><p>If you use multiple optimizers, gradients will be calculated only for the parameters of current optimizer
 at each training step.</p></li>
@@ -732,49 +1190,35 @@ override the <code class="xref py py-meth docutils literal notranslate"><span cl
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Data</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.forward" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Data</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Common forward pass, chaining model components.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.inference">
-<span class="sig-name descname"><span class="pre">inference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.inference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.inference" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.inference">
+<span class="sig-name descname"><span class="pre">inference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel.inference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.inference" title="Permalink to this definition"></a></dt>
 <dd><p>Sets model to inference mode.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.load">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><span class="pre">Model</span></a></span></span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.load" title="Permalink to this definition"></a></dt>
-<dd><p>Loads entire model from <cite>path</cite>.</p>
-</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.load_state_dict">
-<span class="sig-name descname"><span class="pre">load_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><span class="pre">Model</span></a></span></span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.load_state_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.load_state_dict" title="Permalink to this definition"></a></dt>
-<dd><p>Loads model <cite>state_dict</cite> from <cite>path</cite>, either file or loaded object.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.save" title="Permalink to this definition"></a></dt>
-<dd><p>Saves entire model to <cite>path</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.save_state_dict">
-<span class="sig-name descname"><span class="pre">save_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.save_state_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.save_state_dict" title="Permalink to this definition"></a></dt>
-<dd><p>Saves model <cite>state_dict</cite> to <cite>path</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.shared_step">
-<span class="sig-name descname"><span class="pre">shared_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.shared_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.shared_step" title="Permalink to this definition"></a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.prepare_data_per_node" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.train">
-<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.train" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.shared_step">
+<span class="sig-name descname"><span class="pre">shared_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel.shared_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.shared_step" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.train" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the module in training mode.</p>
 <p>This has any effect only on certain modules. See documentations of
 particular modules for details of their behaviors in training/evaluation
@@ -795,13 +1239,13 @@ mode (<code class="docutils literal notranslate"><span class="pre">False</span><
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.model.Model.training" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.training" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.training_step">
-<span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.training_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.training_step" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.training_step">
+<span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel.training_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.training_step" title="Permalink to this definition"></a></dt>
 <dd><p>Here you compute and return the training loss and some additional metrics for e.g.
 the progress bar or logger.</p>
 <dl class="field-list simple">
@@ -811,7 +1255,7 @@ the progress bar or logger.</p>
 <li><p><strong>batch_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – Integer displaying index of this batch</p></li>
 <li><p><strong>optimizer_idx</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – When using multiple optimizers, this argument will also be present.</p></li>
 <li><p><strong>hiddens</strong> (<code class="docutils literal notranslate"><span class="pre">Any</span></code>) – Passed in if
-<a href="#id1"><span class="problematic" id="id2">:paramref:`~pytorch_lightning.core.module.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
+<a href="#id3"><span class="problematic" id="id4">:paramref:`~pytorch_lightning.core.module.LightningModule.truncated_bptt_steps`</span></a> &gt; 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -868,8 +1312,8 @@ so it differs from the actual loss returned in train/validation step.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.model.Model.validation_step">
-<span class="sig-name descname"><span class="pre">validation_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/model.html#Model.validation_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.validation_step" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.validation_step">
+<span class="sig-name descname"><span class="pre">validation_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/standard_model.html#StandardModel.validation_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.validation_step" title="Permalink to this definition"></a></dt>
 <dd><p>Operates on a single batch of data from the validation set.
 In this step you’d might generate examples or calculate anything of interest like accuracy.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># the pseudocode for these calls</span>
@@ -940,7 +1384,7 @@ In this step you’d might generate examples or calculate anything of interest l
     <span class="bp">self</span><span class="o">.</span><span class="n">log_dict</span><span class="p">({</span><span class="s1">&#39;val_loss&#39;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s1">&#39;val_acc&#39;</span><span class="p">:</span> <span class="n">val_acc</span><span class="p">})</span>
 </pre></div>
 </div>
-<p>If you pass in multiple val dataloaders, <a class="reference internal" href="#graphnet.models.model.Model.validation_step" title="graphnet.models.model.Model.validation_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code></a> will have an additional argument. We recommend
+<p>If you pass in multiple val dataloaders, <a class="reference internal" href="#graphnet.models.standard_model.StandardModel.validation_step" title="graphnet.models.standard_model.StandardModel.validation_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code></a> will have an additional argument. We recommend
 setting the default value of 0 so that you can quickly switch between single and multiple dataloaders.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># CASE 2: multiple validation dataloaders</span>
 <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
@@ -954,7 +1398,7 @@ setting the default value of 0 so that you can quickly switch between single and
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>When the <a class="reference internal" href="#graphnet.models.model.Model.validation_step" title="graphnet.models.model.Model.validation_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code></a> is called, the model has been put in eval mode
+<p>When the <a class="reference internal" href="#graphnet.models.standard_model.StandardModel.validation_step" title="graphnet.models.standard_model.StandardModel.validation_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validation_step()</span></code></a> is called, the model has been put in eval mode
 and PyTorch gradients have been disabled. At the end of validation,
 the model goes back to training mode and gradients are enabled.</p>
 </div>

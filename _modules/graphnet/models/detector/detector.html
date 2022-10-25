@@ -66,6 +66,8 @@
 <span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
+<span class="kn">from</span> <span class="nn">graphnet.models.config</span> <span class="kn">import</span> <span class="n">save_config</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">final</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Python version &lt; 3.8</span>
@@ -74,16 +76,15 @@
         <span class="k">return</span> <span class="n">f</span>
 
 
-<span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">LightningModule</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data.batch</span> <span class="kn">import</span> <span class="n">Batch</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.graph_builders</span> <span class="kn">import</span> <span class="n">GraphBuilder</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
+<span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
 
 
-<div class="viewcode-block" id="Detector"><a class="viewcode-back" href="../../../../graphnet.models.detector.html#graphnet.models.detector.detector.Detector">[docs]</a><span class="k">class</span> <span class="nc">Detector</span><span class="p">(</span><span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">LightningModule</span><span class="p">):</span>
+<div class="viewcode-block" id="Detector"><a class="viewcode-back" href="../../../../graphnet.models.detector.html#graphnet.models.detector.detector.Detector">[docs]</a><span class="k">class</span> <span class="nc">Detector</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for all detector-specific read-ins in graphnet.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
@@ -91,6 +92,7 @@
     <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;List of features used/assumed by inheriting `Detector` objects.&quot;&quot;&quot;</span>
 
+    <span class="nd">@save_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">graph_builder</span><span class="p">:</span> <span class="n">GraphBuilder</span><span class="p">,</span> <span class="n">scalers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
@@ -101,7 +103,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_graph_builder</span> <span class="o">=</span> <span class="n">graph_builder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scalers</span> <span class="o">=</span> <span class="n">scalers</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scalers</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="s2">&quot;Will use scalers rather than standard preprocessing &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>

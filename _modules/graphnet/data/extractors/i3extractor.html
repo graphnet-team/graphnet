@@ -102,7 +102,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">g_frame</span> <span class="o">=</span> <span class="n">gcd_file</span><span class="o">.</span><span class="n">pop_frame</span><span class="p">(</span><span class="n">icetray</span><span class="o">.</span><span class="n">I3Frame</span><span class="o">.</span><span class="n">Geometry</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;No GCD file was provided and no G-frame was found. Exiting.&quot;</span>
             <span class="p">)</span>
             <span class="k">raise</span>
@@ -112,9 +112,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">c_frame</span> <span class="o">=</span> <span class="n">gcd_file</span><span class="o">.</span><span class="n">pop_frame</span><span class="p">(</span><span class="n">icetray</span><span class="o">.</span><span class="n">I3Frame</span><span class="o">.</span><span class="n">Calibration</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;No GCD file was provided and no C-frame was found.&quot;</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No GCD file was provided and no C-frame was found.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="o">=</span> <span class="n">c_frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span></div>
 

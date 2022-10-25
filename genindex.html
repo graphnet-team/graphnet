@@ -118,8 +118,6 @@
 </li>
         <li><a href="graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline.__call__">(graphnet.data.pipeline.InSQLitePipeline method)</a>
 </li>
-        <li><a href="graphnet.models.html#graphnet.models.coarsening.Coarsening.__call__">(graphnet.models.coarsening.Coarsening method)</a>
-</li>
         <li><a href="graphnet.models.html#graphnet.models.coarsening.LoopBasedCoarsening.__call__">(graphnet.models.coarsening.LoopBasedCoarsening method)</a>
 </li>
         <li><a href="graphnet.training.html#graphnet.training.labels.Label.__call__">(graphnet.training.labels.Label method)</a>
@@ -133,6 +131,8 @@
         <li><a href="graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline.__init__">(graphnet.data.pipeline.InSQLitePipeline method)</a>
 </li>
         <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.__init__">(graphnet.models.coarsening.DOMAndTimeWindowCoarsening method)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig.__init__">(graphnet.models.config.ModelConfig method)</a>
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.__init__">(graphnet.models.gnn.convnet.ConvNet method)</a>
 </li>
@@ -149,6 +149,8 @@
         <li><a href="graphnet.models.html#graphnet.models.coarsening.CustomDOMCoarsening._additional_features">(graphnet.models.coarsening.CustomDOMCoarsening method)</a>
 </li>
       </ul></li>
+      <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig._as_dict">_as_dict() (graphnet.models.config.ModelConfig method)</a>
+</li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index">_attach_index() (graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
       <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._calculate_global_variables">_calculate_global_variables() (graphnet.models.gnn.dynedge.DynEdge method)</a>
@@ -187,10 +189,10 @@
 </li>
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type">_find_data_type() (graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._flatten_result">_flatten_result() (graphnet.data.extractors.i3genericextractor.I3GenericExtractor method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._flatten_result_mctree">_flatten_result_mctree() (graphnet.data.extractors.i3genericextractor.I3GenericExtractor method)</a>
 </li>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector._forward">_forward() (graphnet.models.detector.detector.Detector method)</a>
@@ -228,6 +230,8 @@
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._get_keys">_get_keys() (graphnet.data.extractors.i3genericextractor.I3GenericExtractor method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.dataset.Dataset._get_labels">_get_labels() (graphnet.data.dataset.Dataset method)</a>
+</li>
+      <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin._get_logger">_get_logger() (graphnet.utilities.logging.LoggerMixin method)</a>
 </li>
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity">_get_primary_particle_interaction_type_and_elasticity() (graphnet.data.extractors.i3truthextractor.I3TruthExtractor method)</a>
 </li>
@@ -273,6 +277,8 @@
 </li>
       <li><a href="graphnet.data.html#graphnet.data.dataconverter.DataConverter._save_filenames">_save_filenames() (graphnet.data.dataconverter.DataConverter method)</a>
 </li>
+      <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig._serialise">_serialise() (graphnet.models.config.ModelConfig class method)</a>
+</li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._submit_to_database">_submit_to_database() (graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter method)</a>
 </li>
       <li><a href="graphnet.models.html#graphnet.models.coarsening.Coarsening._transfer_attributes">_transfer_attributes() (graphnet.models.coarsening.Coarsening method)</a>
@@ -291,9 +297,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.html#graphnet.data.dataset.Dataset.add_label">add_label() (graphnet.data.dataset.Dataset method)</a>
 </li>
-      <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.allow_zero_length_dataloader_with_multiple_devices">allow_zero_length_dataloader_with_multiple_devices (graphnet.models.detector.icecube.IceCube86 attribute)</a>
+      <li><a href="graphnet.models.html#graphnet.models.coarsening.CustomDOMCoarsening.allow_zero_length_dataloader_with_multiple_devices">allow_zero_length_dataloader_with_multiple_devices (graphnet.models.coarsening.CustomDOMCoarsening attribute)</a>
 
       <ul>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.coarsening.DOMAndTimeWindowCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMCoarsening.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.coarsening.DOMCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.detector.detector.Detector attribute)</a>
+</li>
+        <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.detector.icecube.IceCube86 attribute)</a>
+</li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.detector.icecube.IceCubeDeepCore attribute)</a>
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.detector.icecube.IceCubeUpgrade attribute)</a>
@@ -302,14 +316,78 @@
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.prototype.Prototype.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.detector.prototype.Prototype attribute)</a>
 </li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.gnn.convnet.ConvNet attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.gnn.dynedge.DynEdge attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.gnn.dynedge_jinst.DynEdgeJINST attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.gnn.gnn.GNN attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.graph_builders.KNNGraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.graph_builders.RadialGraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.standard_model.StandardModel attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.AzimuthReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.BinaryClassificationTask attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.BinaryClassificationTaskLogits attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.DirectionReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.EnergyReconstruction attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty attribute)</a>
 </li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.InelasticityReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.PassOutput1 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.PassOutput2 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.PassOutput3 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.PositionReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.TimeReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.VertexReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.ZenithReconstruction attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.reconstruction.ZenithReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task.allow_zero_length_dataloader_with_multiple_devices">(graphnet.models.task.task.Task attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.BinaryCrossEntropyLoss.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.BinaryCrossEntropyLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.EuclideanDistanceLoss.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.EuclideanDistanceLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LogCoshLoss.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.LogCoshLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.LossFunction attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.MSELoss.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.MSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.RMSELoss.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.RMSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher2DLoss.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.VonMisesFisher2DLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher3DLoss.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.VonMisesFisher3DLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.allow_zero_length_dataloader_with_multiple_devices">(graphnet.training.loss_functions.VonMisesFisherLoss attribute)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty">any_pulsemap_is_non_empty() (graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter method)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig.arguments">arguments (graphnet.models.config.ModelConfig attribute)</a>
 </li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.attach_index">attach_index() (in module graphnet.data.sqlite.sqlite_utilities)</a>
 </li>
@@ -353,25 +431,33 @@
 </li>
       <li><a href="graphnet.models.components.html#graphnet.models.components.utils.check_db_size">check_db_size() (in module graphnet.models.components.utils)</a>
 </li>
+      <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig.class_name">class_name (graphnet.models.config.ModelConfig attribute)</a>
+</li>
       <li><a href="graphnet.models.html#graphnet.models.coarsening.Coarsening">Coarsening (class in graphnet.models.coarsening)</a>
+</li>
+      <li><a href="graphnet.data.html#graphnet.data.dataset.ColumnMissingException">ColumnMissingException</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.data.html#graphnet.data.dataset.ColumnMissingException">ColumnMissingException</a>
-</li>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.compute_loss">compute_loss() (graphnet.models.model.Model method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.compute_loss">compute_loss() (graphnet.models.standard_model.StandardModel method)</a>
 
       <ul>
         <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task.compute_loss">(graphnet.models.task.task.Task method)</a>
 </li>
       </ul></li>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.configure_optimizers">configure_optimizers() (graphnet.models.model.Model method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.model.Model.config">config (graphnet.models.model.Model property)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.configure_optimizers">configure_optimizers() (graphnet.models.standard_model.StandardModel method)</a>
 </li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe">construct_dataframe() (in module graphnet.data.sqlite.sqlite_dataconverter)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig.construct_model">construct_model() (graphnet.models.config.ModelConfig method)</a>
 </li>
       <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet">ConvNet (class in graphnet.models.gnn.convnet)</a>
 </li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table">create_table() (in module graphnet.data.sqlite.sqlite_utilities)</a>
+</li>
+      <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin.critical">critical() (graphnet.utilities.logging.LoggerMixin method)</a>
 </li>
       <li><a href="graphnet.models.html#graphnet.models.coarsening.CustomDOMCoarsening">CustomDOMCoarsening (class in graphnet.models.coarsening)</a>
 </li>
@@ -384,6 +470,8 @@
       <li><a href="graphnet.data.html#graphnet.data.dataconverter.DataConverter">DataConverter (class in graphnet.data.dataconverter)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.dataset.Dataset">Dataset (class in graphnet.data.dataset)</a>
+</li>
+      <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin.debug">debug() (graphnet.utilities.logging.LoggerMixin method)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.constants.FEATURES.DEEPCORE">DEEPCORE (graphnet.data.constants.FEATURES attribute)</a>
 
@@ -402,6 +490,8 @@
       <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening">DOMAndTimeWindowCoarsening (class in graphnet.models.coarsening)</a>
 </li>
       <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMCoarsening">DOMCoarsening (class in graphnet.models.coarsening)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig.dump">dump() (graphnet.models.config.ModelConfig method)</a>
 </li>
       <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge">DynEdge (class in graphnet.models.gnn.dynedge)</a>
 </li>
@@ -423,6 +513,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin.error">error() (graphnet.utilities.logging.LoggerMixin method)</a>
+</li>
       <li><a href="graphnet.training.html#graphnet.training.loss_functions.EuclideanDistanceLoss">EuclideanDistanceLoss (class in graphnet.training.loss_functions)</a>
 </li>
       <li><a href="graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder">EuclideanGraphBuilder (class in graphnet.models.graph_builders)</a>
@@ -465,13 +557,13 @@
 </li>
       <li><a href="graphnet.models.components.html#graphnet.models.components.utils.fit_scaler">fit_scaler() (in module graphnet.models.components.utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary">flatten_nested_dictionary() (in module graphnet.data.extractors.utilities.collections)</a>
 </li>
-      <li><a href="graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv.forward">forward() (graphnet.models.components.layers.DynEdgeConv method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.coarsening.Coarsening.forward">forward() (graphnet.models.coarsening.Coarsening method)</a>
 
       <ul>
+        <li><a href="graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv.forward">(graphnet.models.components.layers.DynEdgeConv method)</a>
+</li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.forward">(graphnet.models.detector.detector.Detector method)</a>
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.forward">(graphnet.models.gnn.convnet.ConvNet method)</a>
@@ -482,7 +574,15 @@
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.forward">(graphnet.models.gnn.gnn.GNN method)</a>
 </li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder.forward">(graphnet.models.graph_builders.EuclideanGraphBuilder method)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.forward">(graphnet.models.graph_builders.KNNGraphBuilder method)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.forward">(graphnet.models.graph_builders.RadialGraphBuilder method)</a>
+</li>
         <li><a href="graphnet.models.html#graphnet.models.model.Model.forward">(graphnet.models.model.Model method)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.forward">(graphnet.models.standard_model.StandardModel method)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task.forward">(graphnet.models.task.task.Task method)</a>
 </li>
@@ -491,9 +591,13 @@
         <li><a href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.forward">(graphnet.training.loss_functions.LossFunction method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.frames.frame_is_montecarlo">frame_is_montecarlo() (in module graphnet.data.extractors.utilities.frames)</a>
 </li>
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.frames.frame_is_noise">frame_is_noise() (in module graphnet.data.extractors.utilities.frames)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.model.Model.from_config">from_config() (graphnet.models.model.Model class method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -524,6 +628,8 @@
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.get_member_variables">get_member_variables() (in module graphnet.data.extractors.utilities.types)</a>
 </li>
       <li><a href="graphnet.training.html#graphnet.training.callbacks.ProgressBar.get_metrics">get_metrics() (graphnet.training.callbacks.ProgressBar method)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.config.get_namespace_classes">get_namespace_classes() (in module graphnet.models.config)</a>
 </li>
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries">get_om_keys_and_pulseseries() (in module graphnet.data.extractors.utilities.frames)</a>
 </li>
@@ -729,8 +835,6 @@
         <li><a href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_utilities">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.utilities
 
@@ -738,6 +842,8 @@
         <li><a href="graphnet.data.utilities.html#module-graphnet.data.utilities">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.utilities.parquet_to_sqlite
 
@@ -792,6 +898,13 @@
 
       <ul>
         <li><a href="graphnet.models.components.html#module-graphnet.models.components.utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.config
+
+      <ul>
+        <li><a href="graphnet.models.html#module-graphnet.models.config">module</a>
 </li>
       </ul></li>
       <li>
@@ -869,6 +982,13 @@
 
       <ul>
         <li><a href="graphnet.models.html#module-graphnet.models.model">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.standard_model
+
+      <ul>
+        <li><a href="graphnet.models.html#module-graphnet.models.standard_model">module</a>
 </li>
       </ul></li>
       <li>
@@ -1033,20 +1153,22 @@
       </ul></li>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore">IceCubeDeepCore (class in graphnet.models.detector.icecube)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade">IceCubeUpgrade (class in graphnet.models.detector.icecube)</a>
 </li>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade_V2">IceCubeUpgrade_V2 (class in graphnet.models.detector.icecube)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction">InelasticityReconstruction (class in graphnet.models.task.reconstruction)</a>
 </li>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.inference">inference() (graphnet.models.model.Model method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.inference">inference() (graphnet.models.standard_model.StandardModel method)</a>
 
       <ul>
         <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task.inference">(graphnet.models.task.task.Task method)</a>
 </li>
       </ul></li>
+      <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin.info">info() (graphnet.utilities.logging.LoggerMixin method)</a>
+</li>
       <li><a href="graphnet.data.html#graphnet.data.dataconverter.init_global_index">init_global_index() (in module graphnet.data.dataconverter)</a>
 </li>
       <li><a href="graphnet.training.html#graphnet.training.callbacks.ProgressBar.init_predict_tqdm">init_predict_tqdm() (graphnet.training.callbacks.ProgressBar method)</a>
@@ -1064,6 +1186,10 @@
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.is_boost_enum">is_boost_enum() (in module graphnet.data.extractors.utilities.types)</a>
 </li>
       <li><a href="graphnet.utilities.html#graphnet.utilities.filesys.is_gcd_file">is_gcd_file() (in module graphnet.utilities.filesys)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.config.is_graphnet_class">is_graphnet_class() (in module graphnet.models.config)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.config.is_graphnet_module">is_graphnet_module() (in module graphnet.models.config)</a>
 </li>
       <li><a href="graphnet.utilities.html#graphnet.utilities.filesys.is_i3_file">is_i3_file() (in module graphnet.utilities.filesys)</a>
 </li>
@@ -1095,23 +1221,25 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.training.html#graphnet.training.labels.Label">Label (class in graphnet.training.labels)</a>
 </li>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.load">load() (graphnet.models.model.Model class method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig.load">load() (graphnet.models.config.ModelConfig class method)</a>
+
+      <ul>
+        <li><a href="graphnet.models.html#graphnet.models.model.Model.load">(graphnet.models.model.Model class method)</a>
 </li>
+      </ul></li>
       <li><a href="graphnet.models.html#graphnet.models.model.Model.load_state_dict">load_state_dict() (graphnet.models.model.Model method)</a>
 </li>
       <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk">log_cmk() (graphnet.training.loss_functions.VonMisesFisherLoss class method)</a>
 </li>
       <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk_approx">log_cmk_approx() (graphnet.training.loss_functions.VonMisesFisherLoss class method)</a>
 </li>
-      <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk_exact">log_cmk_exact() (graphnet.training.loss_functions.VonMisesFisherLoss class method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk_exact">log_cmk_exact() (graphnet.training.loss_functions.VonMisesFisherLoss class method)</a>
+</li>
       <li><a href="graphnet.training.html#graphnet.training.loss_functions.LogCMK">LogCMK (class in graphnet.training.loss_functions)</a>
 </li>
       <li><a href="graphnet.training.html#graphnet.training.loss_functions.LogCoshLoss">LogCoshLoss (class in graphnet.training.loss_functions)</a>
-</li>
-      <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin.logger">logger (graphnet.utilities.logging.LoggerMixin property)</a>
 </li>
       <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin">LoggerMixin (class in graphnet.utilities.logging)</a>
 </li>
@@ -1142,6 +1270,8 @@
       <li><a href="graphnet.models.components.html#graphnet.models.components.pool.min_pool_x">min_pool_x() (in module graphnet.models.components.pool)</a>
 </li>
       <li><a href="graphnet.models.html#graphnet.models.model.Model">Model (class in graphnet.models.model)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.config.ModelConfig">ModelConfig (class in graphnet.models.config)</a>
 </li>
       <li>
     module
@@ -1221,6 +1351,8 @@
 </li>
         <li><a href="graphnet.models.components.html#module-graphnet.models.components.utils">graphnet.models.components.utils</a>
 </li>
+        <li><a href="graphnet.models.html#module-graphnet.models.config">graphnet.models.config</a>
+</li>
         <li><a href="graphnet.models.detector.html#module-graphnet.models.detector">graphnet.models.detector</a>
 </li>
         <li><a href="graphnet.models.detector.html#module-graphnet.models.detector.detector">graphnet.models.detector.detector</a>
@@ -1242,6 +1374,8 @@
         <li><a href="graphnet.models.html#module-graphnet.models.graph_builders">graphnet.models.graph_builders</a>
 </li>
         <li><a href="graphnet.models.html#module-graphnet.models.model">graphnet.models.model</a>
+</li>
+        <li><a href="graphnet.models.html#module-graphnet.models.standard_model">graphnet.models.standard_model</a>
 </li>
         <li><a href="graphnet.models.task.html#module-graphnet.models.task">graphnet.models.task</a>
 </li>
@@ -1370,9 +1504,17 @@
 </li>
       <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction">PositionReconstruction (class in graphnet.models.task.reconstruction)</a>
 </li>
-      <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.precision">precision (graphnet.models.detector.icecube.IceCube86 attribute)</a>
+      <li><a href="graphnet.models.html#graphnet.models.coarsening.CustomDOMCoarsening.precision">precision (graphnet.models.coarsening.CustomDOMCoarsening attribute)</a>
 
       <ul>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.precision">(graphnet.models.coarsening.DOMAndTimeWindowCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMCoarsening.precision">(graphnet.models.coarsening.DOMCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.precision">(graphnet.models.detector.detector.Detector attribute)</a>
+</li>
+        <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.precision">(graphnet.models.detector.icecube.IceCube86 attribute)</a>
+</li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.precision">(graphnet.models.detector.icecube.IceCubeDeepCore attribute)</a>
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade.precision">(graphnet.models.detector.icecube.IceCubeUpgrade attribute)</a>
@@ -1381,16 +1523,86 @@
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.prototype.Prototype.precision">(graphnet.models.detector.prototype.Prototype attribute)</a>
 </li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.precision">(graphnet.models.gnn.convnet.ConvNet attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.precision">(graphnet.models.gnn.dynedge.DynEdge attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.precision">(graphnet.models.gnn.dynedge_jinst.DynEdgeJINST attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.precision">(graphnet.models.gnn.gnn.GNN attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.precision">(graphnet.models.graph_builders.KNNGraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.precision">(graphnet.models.graph_builders.RadialGraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.precision">(graphnet.models.standard_model.StandardModel attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.precision">(graphnet.models.task.reconstruction.AzimuthReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.precision">(graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask.precision">(graphnet.models.task.reconstruction.BinaryClassificationTask attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.precision">(graphnet.models.task.reconstruction.BinaryClassificationTaskLogits attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa.precision">(graphnet.models.task.reconstruction.DirectionReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.precision">(graphnet.models.task.reconstruction.EnergyReconstruction attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.precision">(graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty attribute)</a>
 </li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.precision">(graphnet.models.task.reconstruction.InelasticityReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.precision">(graphnet.models.task.reconstruction.PassOutput1 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.precision">(graphnet.models.task.reconstruction.PassOutput2 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.precision">(graphnet.models.task.reconstruction.PassOutput3 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.precision">(graphnet.models.task.reconstruction.PositionReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.precision">(graphnet.models.task.reconstruction.TimeReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.precision">(graphnet.models.task.reconstruction.VertexReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.precision">(graphnet.models.task.reconstruction.ZenithReconstruction attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.precision">(graphnet.models.task.reconstruction.ZenithReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task.precision">(graphnet.models.task.task.Task attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.BinaryCrossEntropyLoss.precision">(graphnet.training.loss_functions.BinaryCrossEntropyLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.EuclideanDistanceLoss.precision">(graphnet.training.loss_functions.EuclideanDistanceLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LogCoshLoss.precision">(graphnet.training.loss_functions.LogCoshLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.precision">(graphnet.training.loss_functions.LossFunction attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.MSELoss.precision">(graphnet.training.loss_functions.MSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.RMSELoss.precision">(graphnet.training.loss_functions.RMSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher2DLoss.precision">(graphnet.training.loss_functions.VonMisesFisher2DLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher3DLoss.precision">(graphnet.training.loss_functions.VonMisesFisher3DLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.precision">(graphnet.training.loss_functions.VonMisesFisherLoss attribute)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.prepare_data_per_node">prepare_data_per_node (graphnet.models.detector.icecube.IceCube86 attribute)</a>
+      <li><a href="graphnet.models.html#graphnet.models.coarsening.CustomDOMCoarsening.prepare_data_per_node">prepare_data_per_node (graphnet.models.coarsening.CustomDOMCoarsening attribute)</a>
 
       <ul>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.prepare_data_per_node">(graphnet.models.coarsening.DOMAndTimeWindowCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMCoarsening.prepare_data_per_node">(graphnet.models.coarsening.DOMCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.prepare_data_per_node">(graphnet.models.detector.detector.Detector attribute)</a>
+</li>
+        <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.prepare_data_per_node">(graphnet.models.detector.icecube.IceCube86 attribute)</a>
+</li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.prepare_data_per_node">(graphnet.models.detector.icecube.IceCubeDeepCore attribute)</a>
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade.prepare_data_per_node">(graphnet.models.detector.icecube.IceCubeUpgrade attribute)</a>
@@ -1399,9 +1611,71 @@
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.prototype.Prototype.prepare_data_per_node">(graphnet.models.detector.prototype.Prototype attribute)</a>
 </li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.prepare_data_per_node">(graphnet.models.gnn.convnet.ConvNet attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.prepare_data_per_node">(graphnet.models.gnn.dynedge.DynEdge attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.prepare_data_per_node">(graphnet.models.gnn.dynedge_jinst.DynEdgeJINST attribute)</a>
+</li>
+        <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.prepare_data_per_node">(graphnet.models.gnn.gnn.GNN attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.prepare_data_per_node">(graphnet.models.graph_builders.KNNGraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.prepare_data_per_node">(graphnet.models.graph_builders.RadialGraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.prepare_data_per_node">(graphnet.models.standard_model.StandardModel attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.prepare_data_per_node">(graphnet.models.task.reconstruction.AzimuthReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa.prepare_data_per_node">(graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTask.prepare_data_per_node">(graphnet.models.task.reconstruction.BinaryClassificationTask attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.BinaryClassificationTaskLogits.prepare_data_per_node">(graphnet.models.task.reconstruction.BinaryClassificationTaskLogits attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa.prepare_data_per_node">(graphnet.models.task.reconstruction.DirectionReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction.prepare_data_per_node">(graphnet.models.task.reconstruction.EnergyReconstruction attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty.prepare_data_per_node">(graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty attribute)</a>
 </li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction.prepare_data_per_node">(graphnet.models.task.reconstruction.InelasticityReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput1.prepare_data_per_node">(graphnet.models.task.reconstruction.PassOutput1 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput2.prepare_data_per_node">(graphnet.models.task.reconstruction.PassOutput2 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PassOutput3.prepare_data_per_node">(graphnet.models.task.reconstruction.PassOutput3 attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction.prepare_data_per_node">(graphnet.models.task.reconstruction.PositionReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction.prepare_data_per_node">(graphnet.models.task.reconstruction.TimeReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction.prepare_data_per_node">(graphnet.models.task.reconstruction.VertexReconstruction attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction.prepare_data_per_node">(graphnet.models.task.reconstruction.ZenithReconstruction attribute)</a>
+</li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa.prepare_data_per_node">(graphnet.models.task.reconstruction.ZenithReconstructionWithKappa attribute)</a>
+</li>
+        <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task.prepare_data_per_node">(graphnet.models.task.task.Task attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.BinaryCrossEntropyLoss.prepare_data_per_node">(graphnet.training.loss_functions.BinaryCrossEntropyLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.EuclideanDistanceLoss.prepare_data_per_node">(graphnet.training.loss_functions.EuclideanDistanceLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LogCoshLoss.prepare_data_per_node">(graphnet.training.loss_functions.LogCoshLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.prepare_data_per_node">(graphnet.training.loss_functions.LossFunction attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.MSELoss.prepare_data_per_node">(graphnet.training.loss_functions.MSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.RMSELoss.prepare_data_per_node">(graphnet.training.loss_functions.RMSELoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher2DLoss.prepare_data_per_node">(graphnet.training.loss_functions.VonMisesFisher2DLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher3DLoss.prepare_data_per_node">(graphnet.training.loss_functions.VonMisesFisher3DLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.prepare_data_per_node">(graphnet.training.loss_functions.VonMisesFisherLoss attribute)</a>
 </li>
       </ul></li>
       <li><a href="graphnet.training.html#graphnet.training.callbacks.ProgressBar">ProgressBar (class in graphnet.training.callbacks)</a>
@@ -1418,30 +1692,10 @@
 </li>
       <li><a href="graphnet.models.html#graphnet.models.coarsening.Coarsening.reduce_options">reduce_options (graphnet.models.coarsening.Coarsening attribute)</a>
 </li>
-      <li><a href="graphnet.training.html#graphnet.training.loss_functions.BinaryCrossEntropyLoss.reduction">reduction (graphnet.training.loss_functions.BinaryCrossEntropyLoss attribute)</a>
-
-      <ul>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.EuclideanDistanceLoss.reduction">(graphnet.training.loss_functions.EuclideanDistanceLoss attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LogCoshLoss.reduction">(graphnet.training.loss_functions.LogCoshLoss attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.reduction">(graphnet.training.loss_functions.LossFunction attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.MSELoss.reduction">(graphnet.training.loss_functions.MSELoss attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.RMSELoss.reduction">(graphnet.training.loss_functions.RMSELoss attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher2DLoss.reduction">(graphnet.training.loss_functions.VonMisesFisher2DLoss attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher3DLoss.reduction">(graphnet.training.loss_functions.VonMisesFisher3DLoss attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.reduction">(graphnet.training.loss_functions.VonMisesFisherLoss attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.utilities.html#graphnet.utilities.logging.RepeatFilter">RepeatFilter (class in graphnet.utilities.logging)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.utilities.html#graphnet.utilities.imports.requires_icecube">requires_icecube() (in module graphnet.utilities.imports)</a>
 </li>
       <li><a href="graphnet.training.html#graphnet.training.loss_functions.RMSELoss">RMSELoss (class in graphnet.training.loss_functions)</a>
@@ -1458,6 +1712,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.models.html#graphnet.models.model.Model.save">save() (graphnet.models.model.Model method)</a>
 </li>
+      <li><a href="graphnet.models.html#graphnet.models.model.Model.save_config">save_config() (graphnet.models.model.Model method)</a>
+
+      <ul>
+        <li><a href="graphnet.models.html#graphnet.models.config.save_config">(in module graphnet.models.config)</a>
+</li>
+      </ul></li>
       <li><a href="graphnet.data.html#graphnet.data.dataconverter.DataConverter.save_data">save_data() (graphnet.data.dataconverter.DataConverter method)</a>
 
       <ul>
@@ -1484,13 +1744,15 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.utilities.html#graphnet.utilities.logging.set_logging_level">set_logging_level() (in module graphnet.utilities.logging)</a>
 </li>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.shared_step">shared_step() (graphnet.models.model.Model method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.shared_step">shared_step() (graphnet.models.standard_model.StandardModel method)</a>
 </li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter">SQLiteDataConverter (class in graphnet.data.sqlite.sqlite_dataconverter)</a>
 </li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset">SQLiteDataset (class in graphnet.data.sqlite.sqlite_dataset)</a>
 </li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed">SQLiteDatasetPerturbed (class in graphnet.data.sqlite.sqlite_dataset_perturbed)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel">StandardModel (class in graphnet.models.standard_model)</a>
 </li>
       <li><a href="graphnet.models.components.html#graphnet.models.components.pool.std_pool">std_pool() (in module graphnet.models.components.pool)</a>
 </li>
@@ -1512,13 +1774,21 @@
 </li>
       <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction">TimeReconstruction (class in graphnet.models.task.reconstruction)</a>
 </li>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.train">train() (graphnet.models.model.Model method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.train">train() (graphnet.models.standard_model.StandardModel method)</a>
 </li>
       <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task.train_eval">train_eval() (graphnet.models.task.task.Task method)</a>
 </li>
-      <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.training">training (graphnet.models.detector.detector.Detector attribute)</a>
+      <li><a href="graphnet.models.html#graphnet.models.coarsening.Coarsening.training">training (graphnet.models.coarsening.Coarsening attribute)</a>
 
       <ul>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.CustomDOMCoarsening.training">(graphnet.models.coarsening.CustomDOMCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening.training">(graphnet.models.coarsening.DOMAndTimeWindowCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.coarsening.DOMCoarsening.training">(graphnet.models.coarsening.DOMCoarsening attribute)</a>
+</li>
+        <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector.training">(graphnet.models.detector.detector.Detector attribute)</a>
+</li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCube86.training">(graphnet.models.detector.icecube.IceCube86 attribute)</a>
 </li>
         <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.training">(graphnet.models.detector.icecube.IceCubeDeepCore attribute)</a>
@@ -1537,7 +1807,17 @@
 </li>
         <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.gnn.GNN.training">(graphnet.models.gnn.gnn.GNN attribute)</a>
 </li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder.training">(graphnet.models.graph_builders.EuclideanGraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.GraphBuilder.training">(graphnet.models.graph_builders.GraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.training">(graphnet.models.graph_builders.KNNGraphBuilder attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.training">(graphnet.models.graph_builders.RadialGraphBuilder attribute)</a>
+</li>
         <li><a href="graphnet.models.html#graphnet.models.model.Model.training">(graphnet.models.model.Model attribute)</a>
+</li>
+        <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.training">(graphnet.models.standard_model.StandardModel attribute)</a>
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction.training">(graphnet.models.task.reconstruction.AzimuthReconstruction attribute)</a>
 </li>
@@ -1573,6 +1853,14 @@
 </li>
         <li><a href="graphnet.models.task.html#graphnet.models.task.task.Task.training">(graphnet.models.task.task.Task attribute)</a>
 </li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.BinaryCrossEntropyLoss.training">(graphnet.training.loss_functions.BinaryCrossEntropyLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.EuclideanDistanceLoss.training">(graphnet.training.loss_functions.EuclideanDistanceLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LogCoshLoss.training">(graphnet.training.loss_functions.LogCoshLoss attribute)</a>
+</li>
+        <li><a href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.training">(graphnet.training.loss_functions.LossFunction attribute)</a>
+</li>
         <li><a href="graphnet.training.html#graphnet.training.loss_functions.MSELoss.training">(graphnet.training.loss_functions.MSELoss attribute)</a>
 </li>
         <li><a href="graphnet.training.html#graphnet.training.loss_functions.RMSELoss.training">(graphnet.training.loss_functions.RMSELoss attribute)</a>
@@ -1586,9 +1874,11 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.training_step">training_step() (graphnet.models.model.Model method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.training_step">training_step() (graphnet.models.standard_model.StandardModel method)</a>
 </li>
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts">transpose_list_of_dicts() (in module graphnet.data.extractors.utilities.collections)</a>
+</li>
+      <li><a href="graphnet.models.html#graphnet.models.config.traverse_and_apply">traverse_and_apply() (in module graphnet.models.config)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.constants.TRUTH">TRUTH (class in graphnet.data.constants)</a>
 </li>
@@ -1614,7 +1904,7 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="graphnet.models.html#graphnet.models.model.Model.validation_step">validation_step() (graphnet.models.model.Model method)</a>
+      <li><a href="graphnet.models.html#graphnet.models.standard_model.StandardModel.validation_step">validation_step() (graphnet.models.standard_model.StandardModel method)</a>
 </li>
       <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction">VertexReconstruction (class in graphnet.models.task.reconstruction)</a>
 </li>
@@ -1634,18 +1924,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.utilities.html#graphnet.utilities.logging.warn_once">warn_once() (in module graphnet.utilities.logging)</a>
 </li>
-      <li><a href="graphnet.training.html#graphnet.training.loss_functions.MSELoss.weight">weight (graphnet.training.loss_functions.MSELoss attribute)</a>
-
-      <ul>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.RMSELoss.weight">(graphnet.training.loss_functions.RMSELoss attribute)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin.warning">warning() (graphnet.utilities.logging.LoggerMixin method)</a>
 </li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher2DLoss.weight">(graphnet.training.loss_functions.VonMisesFisher2DLoss attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher3DLoss.weight">(graphnet.training.loss_functions.VonMisesFisher3DLoss attribute)</a>
-</li>
-        <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.weight">(graphnet.training.loss_functions.VonMisesFisherLoss attribute)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 

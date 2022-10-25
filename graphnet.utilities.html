@@ -56,7 +56,12 @@
 </li>
 <li><a class="reference internal" href="#module-graphnet.utilities.logging">graphnet.utilities.logging module</a><ul>
 <li><a class="reference internal" href="#graphnet.utilities.logging.LoggerMixin"><code class="docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a><ul>
-<li><a class="reference internal" href="#graphnet.utilities.logging.LoggerMixin.logger"><code class="docutils literal notranslate"><span class="pre">LoggerMixin.logger</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.utilities.logging.LoggerMixin._get_logger"><code class="docutils literal notranslate"><span class="pre">LoggerMixin._get_logger()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.utilities.logging.LoggerMixin.critical"><code class="docutils literal notranslate"><span class="pre">LoggerMixin.critical()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.utilities.logging.LoggerMixin.debug"><code class="docutils literal notranslate"><span class="pre">LoggerMixin.debug()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.utilities.logging.LoggerMixin.error"><code class="docutils literal notranslate"><span class="pre">LoggerMixin.error()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.utilities.logging.LoggerMixin.info"><code class="docutils literal notranslate"><span class="pre">LoggerMixin.info()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.utilities.logging.LoggerMixin.warning"><code class="docutils literal notranslate"><span class="pre">LoggerMixin.warning()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.utilities.logging.RepeatFilter"><code class="docutils literal notranslate"><span class="pre">RepeatFilter</span></code></a><ul>
@@ -183,10 +188,41 @@ gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
 <dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">LoggerMixin</span></span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#LoggerMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.logger">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.logger" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin._get_logger">
+<span class="sig-name descname"><span class="pre">_get_logger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#LoggerMixin._get_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin._get_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Construct Logger instance if not already done.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.critical">
+<span class="sig-name descname"><span class="pre">critical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#LoggerMixin.critical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.critical" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate a critical call to member logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.debug">
+<span class="sig-name descname"><span class="pre">debug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#LoggerMixin.debug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.debug" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate a debug call to member logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#LoggerMixin.error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.error" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate an error call to member logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#LoggerMixin.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.info" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate an info call to member logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.warning">
+<span class="sig-name descname"><span class="pre">warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#LoggerMixin.warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.warning" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate a warning call to member logger.</p>
+</dd></dl>
 
 </dd></dl>
 

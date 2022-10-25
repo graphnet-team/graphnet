@@ -78,11 +78,13 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="kn">import</span> <span class="n">TAGConv</span><span class="p">,</span> <span class="n">global_add_pool</span><span class="p">,</span> <span class="n">global_max_pool</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
 
+<span class="kn">from</span> <span class="nn">graphnet.models.config</span> <span class="kn">import</span> <span class="n">save_config</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="kn">import</span> <span class="n">GNN</span>
 
 
 <div class="viewcode-block" id="ConvNet"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet">[docs]</a><span class="k">class</span> <span class="nc">ConvNet</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
-<div class="viewcode-block" id="ConvNet.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="ConvNet.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.__init__">[docs]</a>    <span class="nd">@save_config</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">nb_outputs</span><span class="p">,</span> <span class="n">nb_intermediate</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">dropout_ratio</span><span class="o">=</span><span class="mf">0.3</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;ConvNet model.</span>
