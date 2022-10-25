@@ -93,7 +93,7 @@ def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR):
             ("dom_z", "position__z"),
             ("width", "width"),
             ("pmt_area", "area"),
-            # ("rde", "relative_dom_efficiency"),  <-- Missing
+            ("rde", "relative_dom_eff"),
         ]
 
         for reco_key, generic_key in key_pairs:
