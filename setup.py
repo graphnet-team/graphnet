@@ -38,6 +38,7 @@ EXTRAS_REQUIRE = {
         "pytest-order",
         "sphinx",
         "sphinx_rtd_theme",
+        "sphinx-autodoc-typehints",
         "versioneer",
     ],
     "torch": [
