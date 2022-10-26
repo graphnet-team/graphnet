@@ -29,8 +29,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         string_selection: Optional[List[int]] = None,
         selection: Optional[List[int]] = None,
         dtype: torch.dtype = torch.float32,
-        loss_weight_table: str = None,
-        loss_weight_column: str = None,
+        loss_weight_table: Optional[str] = None,
+        loss_weight_column: Optional[str] = None,
         loss_weight_default_value: Optional[float] = None,
     ):
         """Construct Dataset.
@@ -47,14 +47,12 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
                 be used added as attributes on the  graph objects.
             node_truth: List of node-level columns in the input files that
                 should be used added as attributes on the graph objects.
-                Defaults to None.
             index_column: Name of the column in the input files that contains
                 unique indicies to identify and map events across tables.
-                Defaults to "event_no".
             truth_table: Name of the table containing event-level truth
-                information. Defaults to "truth".
+                information.
             node_truth_table: Name of the table containing node-level truth
-                information. Defaults to None.
+                information.
             string_selection: Subset of strings for which data should be read
                 and used to construct graph objects. Defaults to None, meaning
                 all strings for which data exists are used.
@@ -62,14 +60,12 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
                 the input files that should be read. Defaults to None, meaning
                 that all events in the input files are read.
             dtype: Type of the feature tensor on the graph objects returned.
-                Defaults to torch.float32.
             loss_weight_table: Name of the table containing per-event loss
-                weights. Defaults to None.
+                weights.
             loss_weight_column: Name of the column in `loss_weight_table`
                 containing per-event loss weights. This is also the name of the
-                corresponding attribute assigned to the graph object. Defaults
-                to None.
-            loss_weight_default_value : Default per-event loss weight.
+                corresponding attribute assigned to the graph object.
+            loss_weight_default_value: Default per-event loss weight.
                 NOTE: This default value is only applied when
                 `loss_weight_table` and `loss_weight_column` are specified, and
                 in this case to events with no value in the corresponding
