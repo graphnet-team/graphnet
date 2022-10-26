@@ -22,9 +22,9 @@ class I3Extractor(ABC, LoggerMixin):
         """Construct I3Extractor.
 
         Args:
-            name (str): Name of the `I3Extractor` instance. Used to keep track
-                of the provenance of different data, and to name tables to
-                which this data is saved.
+            name: Name of the `I3Extractor` instance. Used to keep track of the
+                provenance of different data, and to name tables to which this
+                data is saved.
         """
         # Member variable(s)
         self._i3_file: str = ""
@@ -80,11 +80,11 @@ class I3ExtractorCollection(list):
     """Class to manage multiple I3Extractors."""
 
     def __init__(self, *extractors: I3Extractor):
-        """Construct instance.
+        """Construct I3ExtractorCollection.
 
         Args:
-            *extractors (I3Extractor): List of `I3Extractor` to be treated as a
-                single collection.
+            *extractors: List of `I3Extractor`s to be treated as a single
+            collection.
         """
         # Check(s)
         for extractor in extractors:

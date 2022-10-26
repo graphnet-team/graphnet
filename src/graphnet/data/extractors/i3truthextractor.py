@@ -2,7 +2,7 @@
 
 import numpy as np
 import matplotlib.path as mpath
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.frames import (
@@ -22,16 +22,17 @@ if has_icecube_package() or TYPE_CHECKING:
 class I3TruthExtractor(I3Extractor):
     """Class for extracting truth-level information."""
 
-    def __init__(self, name: str = "truth", borders: List[np.ndarray] = None):
+    def __init__(
+        self, name: str = "truth", borders: Optional[List[np.ndarray]] = None
+    ):
         """Construct I3TruthExtractor.
 
         Args:
-            name (str, optional): Name of the `I3Extractor` instance. Defaults
-                to "truth".
-            borders (List[np.ndarray], optional): Array of boundaries of the
-                detector volume as ((x,y),z)-coordinates, for identifying,
-                e.g., particles starting and stopping within the detector.
-                Defaults to None.
+            name: Name of the `I3Extractor` instance.
+            borders: Array of boundaries of the detector volume as ((x,y),z)-
+                coordinates, for identifying, e.g., particles starting and
+                stopping within the detector. Defaults to hard-coded boundary
+                coordinates.
         """
         # Base class constructor
         super().__init__(name)
@@ -269,19 +270,17 @@ class I3TruthExtractor(I3Extractor):
         to the neutrinos whose interaction vertex is saved under the same name.
 
         Args:
-            truth (Dict[str, Any]): Dictionary of already extracted truth-
-                level information.
-            borders (List[np.ndarray]): The first entry are the (x,y)
-                coordinates, the second entry is the z-axis min/max depths. See
-                I3TruthExtractor for hard-code example.
-            shrink_horizontally (float): Shrink (x,y)-plane further with
-                exclusion zone. Defaults to 100 meters.
-            shrink_vertically (float): Further shrink detector depth with
-                exclusion height. Defaults to 100 meters.
+            truth: Dictionary of already extracted truth-level information.
+            borders: The first entry are the (x,y) coordinates, the second
+                entry is the z-axis min/max depths. See I3TruthExtractor
+                constructor for hard-code example.
+            shrink_horizontally: Shrink (x,y)-plane further with exclusion
+                zone. Defaults to 100 meters. shrink_vertically: Further shrink
+                detector depth with exclusion height. Defaults to 100 meters.
 
         Returns:
-            Dict[str, Any]: Contains the (x,y,z) coordinates of final the
-                muon position as well as a boolean indicating whether the muon
+            Dictionary containing the (x,y,z)-coordinates of final the muon
+                position as well as a boolean indicating whether the muon
                 stopped within the chosen fiducial volume.
         """
         # @TODO: Remove hard-coded border coords and replace with GCD file
@@ -331,15 +330,14 @@ class I3TruthExtractor(I3Extractor):
                 doesn't exist
 
         Args:
-            frame (icetray.I3Frame): Physics frame containing MC record.
-            sim_type (str): Simulation type
-            padding_value (int | float): The value used for padding.
+            frame: Physics frame containing MC record.
+            sim_type: Simulation type.
+            padding_value: The value used for padding.
 
         Returns
-            Tuple[Any, int, float]: A tuple containing the MCInIcePrimary, if
-                it exists; the primary particle, encoded as 1 (charged current),
-                2 (neutral current), or 0 (neither); and the elasticity in the
-                range ]0,1[.
+            A tuple containing the MCInIcePrimary, if it exists; the primary
+                particle, encoded as 1 (charged current), 2 (neutral current),
+                or 0 (neither); and the elasticity in the range ]0,1[.
         """
         if sim_type != "noise":
             try:
@@ -373,10 +371,10 @@ class I3TruthExtractor(I3Extractor):
         """Get the total energy of tracks from primary, and inelasticity.
 
         Args:
-            frame (icetray.I3Frame): Physics frame containing MC record.
+            frame: Physics frame containing MC record.
 
         Returns:
-            Tuple[float, float]: Energy of tracks from primary, and
+            Tuple containing the energy of tracks from primary, and the
                 corresponding inelasticity.
         """
         mc_tree = frame["I3MCTree"]
@@ -401,11 +399,11 @@ class I3TruthExtractor(I3Extractor):
         """Determine the data type.
 
         Args:
-            mc (bool): Whether `input_file` is Monte Carlo simulation.
-            input_file (str): Path to I3-file
+            mc: Whether `input_file` is Monte Carlo simulation.
+            input_file: Path to I3-file.
 
         Returns:
-            str: The simulation/data type.
+            The simulation/data type.
         """
         # @TODO: Rewrite to automatically infer `mc` from `input_file`?
         if not mc:
