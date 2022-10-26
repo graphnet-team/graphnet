@@ -1,4 +1,4 @@
-"""Module defining the base `Dataset` class used in GraphNeT."""
+"""Base `Dataset` class(es) used in GraphNeT."""
 
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
