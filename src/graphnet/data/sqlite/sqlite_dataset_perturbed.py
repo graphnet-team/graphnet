@@ -108,13 +108,15 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
             self._features.index(key) for key in self._perturbation_dict.keys()
         ]
 
-    def __getitem__(self, index: int) -> Data:
+    def __getitem__(self, sequential_index: int) -> Data:
         """Return graph `Data` object at `index`."""
-        if not (0 <= index < len(self)):
+        if not (0 <= sequential_index < len(self)):
             raise IndexError(
-                f"Index {index} not in range [0, {len(self) - 1}]"
+                f"Index {sequential_index} not in range [0, {len(self) - 1}]"
             )
-        features, truth, node_truth, loss_weight = self._query(index)
+        features, truth, node_truth, loss_weight = self._query(
+            sequential_index
+        )
         perturbed_features = self._perturb_features(features)
         graph = self._create_graph(
             perturbed_features, truth, node_truth, loss_weight
