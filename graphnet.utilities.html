@@ -145,8 +145,14 @@ gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.filesys.</span></span><span class="sig-name descname"><span class="pre">has_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extensions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/filesys.html#has_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.filesys.has_extension" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether <cite>filename</cite> has one of the desired extensions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>extensions</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -156,8 +162,11 @@ gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.filesys.</span></span><span class="sig-name descname"><span class="pre">is_gcd_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/filesys.html#is_gcd_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.filesys.is_gcd_file" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether <cite>filename</cite> is a GCD file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -167,8 +176,11 @@ gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.filesys.</span></span><span class="sig-name descname"><span class="pre">is_i3_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/filesys.html#is_i3_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.filesys.is_i3_file" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether <cite>filename</cite> is an I3 file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -281,8 +293,14 @@ gcd_list (list[str]): Paths to GCD files for each I3 file.</p>
 <p>The logger will print the specified level of output to the terminal, and
 will also save debug output to file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+<li><p><strong>log_folder</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'logs'</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -291,12 +309,25 @@ will also save debug output to file.</p>
 <dt class="sig sig-object py" id="graphnet.utilities.logging.set_logging_level">
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">set_logging_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#set_logging_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.set_logging_level" title="Permalink to this definition"></a></dt>
 <dd><p>Set the logging level for all loggers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">20</span></code>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.utilities.logging.warn_once">
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">warn_once</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/logging.html#warn_once"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.warn_once" title="Permalink to this definition"></a></dt>
 <dd><p>Print <cite>message</cite> as warning exactly once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code>) – </p></li>
+<li><p><strong>message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -308,8 +339,11 @@ will also save debug output to file.</p>
 <span class="sig-prename descclassname"><span class="pre">graphnet.utilities.maths.</span></span><span class="sig-name descname"><span class="pre">eps_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/utilities/maths.html#eps_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.maths.eps_like" title="Permalink to this definition"></a></dt>
 <dd><p>Return <cite>eps</cite> matching <cite>tensor</cite>’s dtype.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>

@@ -95,16 +95,41 @@
 <dd><p>Bases: <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
 <p>Converts Parquet files to a SQLite database. Each event in the parquet file(s) are assigned a unique event id.
 By default, every field in the parquet file(s) are extracted. One can choose to exclude certain fields by using the argument exclude_fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parquet_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – </p></li>
+<li><p><strong>mc_truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'mc_truth'</span></code>) – </p></li>
+<li><p><strong>excluded_fields</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter._save_config">
 <span class="sig-name descname"><span class="pre">_save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/parquet_to_sqlite.html#ParquetToSQLiteConverter._save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter._save_config" title="Permalink to this definition"></a></dt>
 <dd><p>Save the list of converted Parquet files to a CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>database_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/parquet_to_sqlite.html#ParquetToSQLiteConverter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>database_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -122,6 +147,7 @@ By default, every field in the parquet file(s) are extracted. One can choose to 
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>files_list</strong> (<em>list</em>) – List of I3 file paths.</p></li>
 <li><p><strong>gcd_list</strong> (<em>list</em>) – List of corresponding gcd file paths.</p></li>
+<li><p><strong>i3_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
