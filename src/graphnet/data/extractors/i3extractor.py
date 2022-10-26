@@ -27,8 +27,8 @@ class I3Extractor(ABC, LoggerMixin):
                 which this data is saved.
         """
         # Member variable(s)
-        self._i3_file: Optional[str] = None
-        self._gcd_file: Optional[str] = None
+        self._i3_file: str = ""
+        self._gcd_file: str = ""
         self._gcd_dict: Dict[int, Any] = {}
         self._calibration: Optional["icetray.I3Frame.Calibration"] = None
         self._name: str = name
