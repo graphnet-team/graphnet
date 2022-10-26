@@ -1,4 +1,4 @@
-"""Module defining a `Dataset` class for reading from parquet files."""
+"""`Dataset` class(es) for reading from Parquet files."""
 
 from typing import Any, List, Optional, Tuple, Union
 import numpy as np
@@ -8,7 +8,7 @@ from graphnet.data.dataset import Dataset, ColumnMissingException
 
 
 class ParquetDataset(Dataset):
-    """Pytorch dataset for reading from parquet files."""
+    """Pytorch dataset for reading from Parquet files."""
 
     # Implementing abstract method(s)
     def _init(self):
