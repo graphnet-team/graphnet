@@ -27,7 +27,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         truth_table: str = "truth",
         node_truth_table: Optional[str] = None,
         string_selection: Optional[List[int]] = None,
-        selection: Optional[List[int]] = None,
+        selection: Optional[Union[List[int], List[List[int]]]] = None,
         dtype: torch.dtype = torch.float32,
         loss_weight_table: Optional[str] = None,
         loss_weight_column: Optional[str] = None,
@@ -135,6 +135,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self._init()
 
         # Set unique indices
+        self._indices: Union[List[int], List[List[int]]]
         if selection is None:
             self._indices = self._get_all_indices()
         else:
@@ -164,7 +165,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self,
         table: str,
         columns: Union[List[str], str],
-        index: int,
+        sequential_index: int,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
         """Query a table at a specific index, optionally with some selection.
@@ -172,9 +173,9 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         Args:
             table: Table to be queried.
             columns: Columns to read out.
-            index: Sequentially numbered index (i.e. in [0,len(self))) of the
-                event to query. This _may_ differ from the indexation used in
-                `self._indices`.
+            sequential_index: Sequentially numbered index
+                (i.e. in [0,len(self))) of the event to query. This _may_
+                differ from the indexation used in `self._indices`.
             selection: Selection to be imposed before reading out data.
                 Defaults to None.
 
@@ -200,13 +201,15 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         """Return number of graphs in `Dataset`."""
         return len(self._indices)
 
-    def __getitem__(self, index: int) -> Data:
+    def __getitem__(self, sequential_index: int) -> Data:
         """Return graph `Data` object at `index`."""
-        if not (0 <= index < len(self)):
+        if not (0 <= sequential_index < len(self)):
             raise IndexError(
-                f"Index {index} not in range [0, {len(self) - 1}]"
+                f"Index {sequential_index} not in range [0, {len(self) - 1}]"
             )
-        features, truth, node_truth, loss_weight = self._query(index)
+        features, truth, node_truth, loss_weight = self._query(
+            sequential_index
+        )
         graph = self._create_graph(features, truth, node_truth, loss_weight)
         return graph
 
@@ -266,7 +269,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         return self._missing_variables.get(table, [])
 
     def _query(
-        self, index: int
+        self, sequential_index: int
     ) -> Tuple[
         List[Tuple[float, ...]],
         Tuple[Any, ...],
@@ -280,9 +283,9 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         the number of features/attributes in each output
 
         Args:
-            index: Sequentially numbered index (i.e. in [0,len(self))) of the
-                event to query. This _may_ differ from the indexation used in
-                `self._indices`.
+            sequential_index: Sequentially numbered index
+                (i.e. in [0,len(self))) of the event to query. This _may_
+                differ from the indexation used in `self._indices`.
 
         Returns:
             Tuple containing pulse-level event features; event-level truth
@@ -292,19 +295,19 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         features = []
         for pulsemap in self._pulsemaps:
             features_pulsemap = self._query_table(
-                pulsemap, self._features, index, self._selection
+                pulsemap, self._features, sequential_index, self._selection
             )
             features.extend(features_pulsemap)
 
         truth: Tuple[Any, ...] = self._query_table(
-            self._truth_table, self._truth, index
+            self._truth_table, self._truth, sequential_index
         )[0]
         if self._node_truth:
             assert self._node_truth_table is not None
             node_truth = self._query_table(
                 self._node_truth_table,
                 self._node_truth,
-                index,
+                sequential_index,
                 self._selection,
             )
         else:
@@ -314,7 +317,9 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         if self._loss_weight_column is not None:
             assert self._loss_weight_table is not None
             loss_weight_list = self._query_table(
-                self._loss_weight_table, self._loss_weight_column, index
+                self._loss_weight_table,
+                self._loss_weight_column,
+                sequential_index,
             )
             if len(loss_weight_list):
                 loss_weight = loss_weight_list[0][0]

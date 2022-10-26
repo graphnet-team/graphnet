@@ -1,3 +1,5 @@
+"""`Dataset` class(es) for reading data from SQLite databases."""
+
 from typing import List, Optional, Union
 import pandas as pd
 import sqlite3
@@ -6,7 +8,7 @@ from graphnet.data.dataset import Dataset, ColumnMissingException
 
 
 class SQLiteDataset(Dataset):
-    """Pytorch dataset for reading from SQLite."""
+    """Pytorch dataset for reading data from SQLite databases."""
 
     # Implementing abstract method(s)
     def _init(self):
@@ -40,7 +42,7 @@ class SQLiteDataset(Dataset):
         self,
         table: str,
         columns: Union[List[str], str],
-        index: int,
+        sequential_index: int,
         selection: Optional[str] = None,
     ):
         """Query table at a specific index, optionally with some selection."""
@@ -51,10 +53,14 @@ class SQLiteDataset(Dataset):
         if not selection:  # I.e., `None` or `""`
             selection = "1=1"  # Identically true, to select all
 
+        index_ = self._indices[sequential_index]
+        index: int
         if self._database_list is None:
-            index = self._indices[index]
+            assert isinstance(index_, int)
+            index = index_
         else:
-            index = self._indices[index][0]
+            assert isinstance(index_, list)
+            index = index_[0]
 
         # Query table
         self._establish_connection(index)
