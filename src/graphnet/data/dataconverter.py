@@ -1,4 +1,4 @@
-# type: ignore[name-defined]
+# type: ignore[name-defined]  # Due to use of `init_global_index`.
 """Base `DataConverter` class(es) used in GraphNeT."""
 
 from abc import ABC, abstractmethod
