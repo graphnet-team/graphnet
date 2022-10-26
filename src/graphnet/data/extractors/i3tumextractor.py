@@ -12,12 +12,7 @@ class I3TUMExtractor(I3Extractor):
     """Class for extracting TUM DNN predictions."""
 
     def __init__(self, name: str = "tum_dnn"):
-        """Construct I3TUMExtractor.
-
-        Args:
-            name (str, optional): Name of the `I3Extractor` instance. Defaults
-                to "tum_dnn".
-        """
+        """Construct I3TUMExtractor."""
         # Base class constructor
         super().__init__(name)
 

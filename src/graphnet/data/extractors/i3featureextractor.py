@@ -21,7 +21,7 @@ class I3FeatureExtractor(I3Extractor):
         """Construct I3FeatureExtractor.
 
         Args:
-            pulsemap (str): Name of the pulse (series) map for which to extract
+            pulsemap: Name of the pulse (series) map for which to extract
                 reconstructed features.
         """
         # Member variable(s)
@@ -38,12 +38,12 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         """Extract reconstructed features from `frame`.
 
         Args:
-            frame (icetray.I3Frame): Physics (P) I3-frame from which to extract
-                reconstructed features.
+            frame: Physics (P) I3-frame from which to extract reconstructed
+                features.
 
         Returns:
-            Dict[str, List[Any]]: Reconstructed features for all pulses in
-                `pulsemap`, in pure-python format.
+            Dictionary of reconstructed features for all pulses in `pulsemap`,
+                in pure-python format.
         """
         output: Dict[str, List[Any]] = {
             "charge": [],
@@ -160,12 +160,12 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         """Extract reconstructed features from `frame`.
 
         Args:
-            frame (icetray.I3Frame): Physics (P) I3-frame from which to extract
-                reconstructed features.
+            frame: Physics (P) I3-frame from which to extract reconstructed
+                features.
 
         Returns:
-            Dict[str, List[Any]]: Reconstructed features for all pulses in
-                `pulsemap`, in pure-python format.
+            Dictionary of reconstructed features for all pulses in `pulsemap`,
+                in pure-python format.
         """
         output: Dict[str, List[Any]] = {
             "string": [],
@@ -219,12 +219,12 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
         """Extract reconstructed features from `frame`.
 
         Args:
-            frame (icetray.I3Frame): Physics (P) I3-frame from which to extract
-                reconstructed features.
+            frame: Physics (P) I3-frame from which to extract reconstructed
+                features.
 
         Returns:
-            Dict[str, List[Any]]: Reconstructed features for all pulses in
-                `pulsemap`, in pure-python format.
+            Dictionary of reconstructed features for all pulses in `pulsemap`,
+                in pure-python format.
         """
         output: Dict[str, List[Any]] = {
             "string": [],

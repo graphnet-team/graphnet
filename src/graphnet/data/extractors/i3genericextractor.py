@@ -51,10 +51,8 @@ class I3GenericExtractor(I3Extractor):
         """Construct I3GenericExtractor.
 
         Args:
-            keys (Optional[Union[str, List[str]]], optional): List of keys in
-                `I3Frame` to be parsed. Defaults to all keys.
-            exclude_keys (Optional[Union[str, List[str]]], optional): List of
-                keys in `I3Frame` to exclude while parsing. Defaults to None.
+            keys: List of keys in `I3Frame` to be parsed. Defaults to all keys.
+            exclude_keys: List of keys in `I3Frame` to exclude while parsing.
 
         Raises:
             ValueError: If both `keys` and `exclude_keys` are set.

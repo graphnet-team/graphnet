@@ -12,12 +12,7 @@ class I3SplineMPEICExtractor(I3Extractor):
     """Class for extracting SplineMPE pointing predictions."""
 
     def __init__(self, name: str = "spline_mpe_ic"):
-        """Construct I3SplineMPEICExtractor.
-
-        Args:
-            name (str, optional): Name of the `I3Extractor` instance. Defaults
-                to "spline_mpe_ic".
-        """
+        """Construct I3SplineMPEICExtractor."""
         # Base class constructor
         super().__init__(name)
 
