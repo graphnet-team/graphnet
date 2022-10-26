@@ -104,12 +104,17 @@
 <p>Utility methods to manipulate python-type collections of data.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.flatten_nested_dictionary">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'__'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#flatten_nested_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'__'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#flatten_nested_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.serialise">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">serialise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#serialise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.serialise" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">serialise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#serialise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.serialise" title="Permalink to this definition"></a></dt>
 <dd><p>Serialise the necessary keys in <cite>obj</cite> to JSON for saving to file.</p>
 <p>It is typically not possible to save nested collections (lists, dicts) to
 file. Therefore, if <cite>obj</cite> is, e.g., a list of lists, we need to serialise
@@ -117,29 +122,49 @@ each element in the outer list to JSON (i.e., convert it to a JSON-
 formatted string) in order to be able to save <cite>obj</cite> to file. It will then
 be possible to de-serialise corresponding elements when reading them from
 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.transpose_list_of_dicts">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">transpose_list_of_dicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#transpose_list_of_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">transpose_list_of_dicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#transpose_list_of_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-graphnet.data.extractors.utilities.frames">
 <span id="graphnet-data-extractors-utilities-frames-module"></span><h2>graphnet.data.extractors.utilities.frames module<a class="headerlink" href="#module-graphnet.data.extractors.utilities.frames" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.frame_is_montecarlo">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.frame_is_montecarlo" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.frame_is_montecarlo" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.frame_is_noise">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#frame_is_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.frame_is_noise" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#frame_is_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.frame_is_noise" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">get_om_keys_and_pulseseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulseseries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dataclasses.I3Calibration</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#get_om_keys_and_pulseseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">get_om_keys_and_pulseseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulseseries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#get_om_keys_and_pulseseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries" title="Permalink to this definition"></a></dt>
 <dd><p>Gets the indicies for the gcd_dict and the pulse series</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -161,13 +186,18 @@ data    (??)   : the pulse series</p>
 <p>Utility methods for checking the types of objects.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.break_cyclic_recursion">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">break_cyclic_recursion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#break_cyclic_recursion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.break_cyclic_recursion" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">break_cyclic_recursion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#break_cyclic_recursion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.break_cyclic_recursion" title="Permalink to this definition"></a></dt>
 <dd><p>Ensure that method isn’t called recursively on the same object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.cast_object_to_pure_python">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">cast_object_to_pure_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#cast_object_to_pure_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.cast_object_to_pure_python" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">cast_object_to_pure_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#cast_object_to_pure_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.cast_object_to_pure_python" title="Permalink to this definition"></a></dt>
 <dd><p>Casts <cite>obj</cite>, and any members/elements, to pure-python classes.</p>
 <p>The function takes any object <cite>obj</cite> and tries to cast it to a pure python
 class. This is mainly relevant for IceCube-specific classes (I3*) that
@@ -181,11 +211,16 @@ elements.</p>
 <p>For regular-python, non-Icecube-specific, classes, we cast to list-like
 objects to list and dict-like objects to list, and otherwise return the
 object itself if it deemed “pythonic” in this way.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">cast_pulse_series_to_pure_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">icetray.I3Frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#cast_pulse_series_to_pure_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">cast_pulse_series_to_pure_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#cast_pulse_series_to_pure_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python" title="Permalink to this definition"></a></dt>
 <dd><p>Cast pulse series <cite>key</cite> to a pure-python data representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -210,38 +245,68 @@ object itself if it deemed “pythonic” in this way.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.get_member_variables">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">get_member_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_discarded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#get_member_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.get_member_variables" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">get_member_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_discarded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#get_member_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.get_member_variables" title="Permalink to this definition"></a></dt>
 <dd><p>Returns list of valid member variables.</p>
 <p>Ignoring mangled (__*) variables, types, methods, and Boost enums.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_boost_class">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_boost_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_boost_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_boost_class" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_boost_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_boost_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_boost_class" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_boost_enum">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_boost_enum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_boost_enum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_boost_enum" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_boost_enum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_boost_enum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_boost_enum" title="Permalink to this definition"></a></dt>
 <dd><p>Check whether <cite>obj</cite> inherits from Boost.Python.enum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_icecube_class">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_icecube_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_icecube_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_icecube_class" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_icecube_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_icecube_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_icecube_class" title="Permalink to this definition"></a></dt>
 <dd><p>Check whether <cite>obj</cite> is an IceCube-specific class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_method">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_method" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_method" title="Permalink to this definition"></a></dt>
 <dd><p>Check whether <cite>obj</cite> is a method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_type">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_type" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_type" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether <cite>obj</cite> is a type, and not an instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
