@@ -1,21 +1,37 @@
+# type: ignore[name-defined]
+"""Base `DataConverter` class(es) used in GraphNeT."""
+
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from dataclasses import dataclass
 from functools import wraps
 import itertools
 from multiprocessing import Manager, Pool, Value
+import multiprocessing.pool
+from multiprocessing.sharedctypes import Synchronized
 import os
 import re
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+    cast,
+)
+
 import numpy as np
 import pandas as pd
-from typing import Callable, List, Optional, Tuple, Union
 from tqdm import tqdm
 
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
 
-    def final(f):  # Identity decorator
+    def final(f):  # Identity decorator  # noqa: D103
         return f
 
 
@@ -44,21 +60,23 @@ SAVE_STRATEGIES = [
 
 # Utility classes
 @dataclass
-class FileSet:
+class FileSet:  # noqa: D101
     i3_file: str
     gcd_file: str
 
 
 # Utility method(s)
-def init_global_index(index: Value, output_files: List[str]):
+def init_global_index(index: Synchronized, output_files: List[str]):
     """Make `global_index` available to pool workers."""
     global global_index, global_output_files
-    global_index = index
-    global_output_files = output_files
+    global_index, global_output_files = (index, output_files)  # type: ignore[name-defined]
 
 
-def cache_output_files(process_method):
-    """Decorator to cache output file names."""
+F = TypeVar("F", bound=Callable[..., Any])
+
+
+def cache_output_files(process_method: F) -> F:
+    """Decorate `process_method` to cache output file names."""
 
     @wraps(process_method)
     def wrapper(self, *args):
@@ -73,12 +91,11 @@ def cache_output_files(process_method):
         output_files.append(output_file)
         return output_file
 
-    return wrapper
+    return cast(F, wrapper)
 
 
 class DataConverter(ABC, LoggerMixin):
-    """Abstract base class for specialised (SQLite, parquet, etc.)
-    converters."""
+    """Base class for converting I3-files to intermediate file format."""
 
     @property
     @abstractmethod
@@ -98,7 +115,7 @@ class DataConverter(ABC, LoggerMixin):
         index_column: str = "event_no",
         icetray_verbose: int = 0,
     ):
-        """Converts I3 files to an intermediate format.
+        """Construct DataConverter.
 
         When using `input_file_batch_pattern`, regular expressions are used to
         group files according to their names. All files that match a certain
@@ -171,7 +188,7 @@ class DataConverter(ABC, LoggerMixin):
         # Placeholders for keeping track of sequential event indices and output files
         self._index_column = index_column
         self._index = 0
-        self._output_files = []
+        self._output_files: List[str] = []
 
         # Set verbosity
         if icetray_verbose == 0:
@@ -179,12 +196,11 @@ class DataConverter(ABC, LoggerMixin):
 
     @final
     def __call__(self, directories: Union[str, List[str]]):
-        """Main call to convert I3 files in `directories.
+        """Convert I3-files in `directories.
 
         Args:
-            directories (Union[str, List[str]]): One or more directories, the I3
-                files within which should be converted to an intermediate file
-                format.
+            directories: One or more directories, the I3 files within which
+                should be converted to an intermediate file format.
         """
         # Find all I3 and GCD files in the specified directories.
         i3_files, gcd_files = find_i3_files(directories, self._gcd_rescue)
@@ -213,9 +229,8 @@ class DataConverter(ABC, LoggerMixin):
         intermediate file format.
 
         Args:
-            filesets (List[FileSet]): List of paths to I3 and corresponding GCD files.
+            filesets: List of paths to I3 and corresponding GCD files.
         """
-
         # Make sure output directory exists.
         self.info(f"Saving results to {self._outdir}")
         os.makedirs(self._outdir, exist_ok=True)
@@ -224,12 +239,17 @@ class DataConverter(ABC, LoggerMixin):
         try:
             if self._save_strategy == "sequential_batched":
                 # Define batches
+                assert self._nb_files_to_batch is not None
+                assert self._sequential_batch_pattern is not None
                 batches = np.array_split(
-                    filesets,
+                    np.asarray(filesets),
                     int(np.ceil(len(filesets) / self._nb_files_to_batch)),
                 )
                 batches = [
-                    (group, self._sequential_batch_pattern.format(ix_batch))
+                    (
+                        group.tolist(),
+                        self._sequential_batch_pattern.format(ix_batch),
+                    )
                     for ix_batch, group in enumerate(batches)
                 ]
                 self.info(
@@ -241,7 +261,7 @@ class DataConverter(ABC, LoggerMixin):
 
             elif self._save_strategy == "pattern_batched":
                 # Define batches
-                groups = OrderedDict()
+                groups: Dict[str, List[FileSet]] = OrderedDict()
                 for fileset in sorted(filesets, key=lambda f: f.i3_file):
                     group = re.sub(
                         self._sub_from,
@@ -285,8 +305,8 @@ class DataConverter(ABC, LoggerMixin):
         """Implementation-specific method for saving data to file.
 
         Args:
-            data (List[OrderedDict]): List of extracted features.
-            output_file (str): Name of output file.
+            data: List of extracted features.
+            output_file: Name of output file.
         """
 
     @abstractmethod
@@ -296,11 +316,14 @@ class DataConverter(ABC, LoggerMixin):
         """Implementation-specific method for merging output files.
 
         Args:
-            output_file (str): Name of the output file containing the merged
-                results.
-            input_files (List[str]): Intermediate files to be merged, according
-                to the specific implementation. Default to None, meaning that
-                all files output by the current instance are merged.
+            output_file: Name of the output file containing the merged results.
+            input_files: Intermediate files to be merged, according to the
+                specific implementation. Default to None, meaning that all
+                files output by the current instance are merged.
+
+        Raises:
+            NotImplementedError: If the method has not been implemented for the
+                backend in question.
         """
 
     # Internal methods
@@ -321,8 +344,7 @@ class DataConverter(ABC, LoggerMixin):
     def _iterate_over_batches_of_files(
         self, args: List[Tuple[List[FileSet], str]]
     ):
-        """Iterate over a batch of files and save results on worker processes
-        (if applicable)"""
+        """Iterate over a batch of files and save results on worker process."""
         # Get appropriate mapping function
         map_fn, pool = self.get_map_function(len(args), unit="batch(es)")
 
@@ -334,7 +356,9 @@ class DataConverter(ABC, LoggerMixin):
 
         return pool
 
-    def _update_shared_variables(self, pool: Optional[Pool]):
+    def _update_shared_variables(
+        self, pool: Optional[multiprocessing.pool.Pool]
+    ):
         """Update `self._index` and `self._output_files`.
 
         If `pool` is set, it means that multiprocessing was used. In this case,
@@ -344,7 +368,7 @@ class DataConverter(ABC, LoggerMixin):
         """
         if pool:
             # Extract information from shared variables to member variables.
-            index, output_files = pool._initargs
+            index, output_files = pool._initargs  # type: ignore
             self._index += index.value
             self._output_files.extend(list(sorted(output_files[:])))
 
@@ -380,7 +404,7 @@ class DataConverter(ABC, LoggerMixin):
         return output_file
 
     def _extract_data(self, fileset: FileSet) -> List[OrderedDict]:
-        """Extracts data from single I3 file.
+        """Extract data from single I3 file.
 
         If the saving strategy is 1:1 (i.e., each I3 file is converted to a
         corresponding intermediate file) the data is saved to such a file, and
@@ -440,10 +464,8 @@ class DataConverter(ABC, LoggerMixin):
 
     def get_map_function(
         self, nb_files: int, unit: str = "I3 file(s)"
-    ) -> Tuple[Callable, Optional[Pool]]:
-        """Identify the type of map function to use (pure python or
-        multiprocess)."""
-
+    ) -> Tuple[Any, Optional[multiprocessing.pool.Pool]]:
+        """Identify map function to use (pure python or multiprocess)."""
         # Choose relevant map-function given the requested number of workers.
         workers = min(self._workers, nb_files)
         if workers > 1:
@@ -451,8 +473,6 @@ class DataConverter(ABC, LoggerMixin):
                 f"Starting pool of {workers} workers to process {nb_files} {unit}"
             )
 
-            # index = Value("i", 0)
-            # output_files = Queue()
             manager = Manager()
             index = Value("i", 0)
             output_files = manager.list()
@@ -468,7 +488,7 @@ class DataConverter(ABC, LoggerMixin):
             self.info(
                 f"Processing {nb_files} {unit} in main thread (not multiprocessing)"
             )
-            map_fn = map
+            map_fn = map  # type: ignore
             pool = None
 
         return map_fn, pool
@@ -516,12 +536,12 @@ class DataConverter(ABC, LoggerMixin):
         return save_strategy
 
     def _save_filenames(self, i3_files: List[str]):
-        """Saves I3 file names in CSV format."""
+        """Save I3 file names in CSV format."""
         self.debug("Saving input file names to config CSV.")
         config_dir = os.path.join(self._outdir, "config")
         os.makedirs(config_dir, exist_ok=True)
-        i3_files = pd.DataFrame(data=i3_files, columns=["filename"])
-        i3_files.to_csv(os.path.join(config_dir, "i3files.csv"))
+        df_i3_files = pd.DataFrame(data=i3_files, columns=["filename"])
+        df_i3_files.to_csv(os.path.join(config_dir, "i3files.csv"))
 
     def _get_output_file(self, input_file: str) -> str:
         assert isinstance(input_file, str)
