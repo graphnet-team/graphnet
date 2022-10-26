@@ -168,4 +168,4 @@ class BjoernLow(WeightFitter):
         return truth.sort_values(self._index_column).reset_index(drop=True)
 
     def _generate_weight_name(self):
-        return self._variable + "_bjørn_low_weight"
+        return self._variable + "_bjoern_low_weight"
