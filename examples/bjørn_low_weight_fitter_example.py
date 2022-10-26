@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from graphnet.training.weight_fitting import BjørnLow
+from graphnet.training.weight_fitting import BjoernLow
 
 database = "/my_databases/my_database/data/my_database.db"
 
