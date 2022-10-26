@@ -16,7 +16,7 @@ class I3RetroExtractor(I3Extractor):
     """Class for extracting RETRO reconstruction."""
 
     def __init__(self, name: str = "retro"):
-        """Construct instance.
+        """Construct I3RetroExtractor.
 
         Args:
             name (str, optional): Name of the `I3Extractor` instance. Defaults

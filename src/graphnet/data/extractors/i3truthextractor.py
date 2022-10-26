@@ -23,7 +23,7 @@ class I3TruthExtractor(I3Extractor):
     """Class for extracting truth-level information."""
 
     def __init__(self, name: str = "truth", borders: List[np.ndarray] = None):
-        """Construct instance.
+        """Construct I3TruthExtractor.
 
         Args:
             name (str, optional): Name of the `I3Extractor` instance. Defaults
