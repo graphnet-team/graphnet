@@ -10,6 +10,7 @@ SETUP_REQUIRES = [
 
 INSTALL_REQUIRES = [
     "awkward>=1.8",
+    "colorlog>=6.6",
     "dill>=0.3",
     "matplotlib>=3.5",
     "numpy>=1.21",
@@ -28,7 +29,6 @@ INSTALL_REQUIRES = [
 EXTRAS_REQUIRE = {
     "develop": [
         "black",
-        "colorlog",
         "coverage",
         "MarkupSafe<=2.1",
         "pre-commit",
