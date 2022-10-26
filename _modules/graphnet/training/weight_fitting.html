@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphnet.training.weight_fitting &mdash; graphnet  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> graphnet
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">graphnet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>graphnet.training.weight_fitting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphnet.training.weight_fitting</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_utilities</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">run_sql_code</span><span class="p">,</span>
+    <span class="n">save_to_sql</span><span class="p">,</span>
+    <span class="n">create_table</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
+
+
+<div class="viewcode-block" id="WeightFitter"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.weight_fitting.WeightFitter">[docs]</a><span class="k">class</span> <span class="nc">WeightFitter</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">database_path</span><span class="p">,</span>
+        <span class="n">truth_table</span><span class="o">=</span><span class="s2">&quot;truth&quot;</span><span class="p">,</span>
+        <span class="n">index_column</span><span class="o">=</span><span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span> <span class="o">=</span> <span class="n">database_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span> <span class="o">=</span> <span class="n">truth_table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span> <span class="o">=</span> <span class="n">index_column</span>
+
+<div class="viewcode-block" id="WeightFitter._get_truth"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.weight_fitting.WeightFitter._get_truth">[docs]</a>    <span class="k">def</span> <span class="nf">_get_truth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return truth `variable`, optionally only for `selection` event nos.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;select </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;select </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="si">}</span><span class="s2"> where </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">selection</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="WeightFitter.fit"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.weight_fitting.WeightFitter.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bins</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">variable</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">weight_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">add_to_database</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Fits weights. Calls private _fit_weights method. Output is returned as a pandas.DataFrame and optionally saved to sql.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bins (np.ndarray): Desired bins used for fitting.</span>
+<span class="sd">            variable (str): the name of the variable. Must match corresponding column name in the truth table.</span>
+<span class="sd">            weight_name (Optional[str], optional): Name of the weights. Defaults to None.</span>
+<span class="sd">            add_to_database (bool, optional): if True, the weights are saved to sql in a table named weight_name. Defaults to False.</span>
+<span class="sd">            selection (Optional[List[int]], optional): a list of event_no&#39;s. If given, only events in the selection is used for fitting. Defaults to None.</span>
+<span class="sd">            transform (Optional[Callable], optional): A callable method that transform the variable into a desired space. E.g. np.log10 for energy. If given, fitting will happen in this space.</span>
+<span class="sd">            **kwargs: additional arguments</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: a pandas.DataFrame that contains weights, event_nos</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># member_variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="o">=</span> <span class="n">variable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_database</span> <span class="o">=</span> <span class="n">add_to_database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="n">selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bins</span> <span class="o">=</span> <span class="n">bins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span> <span class="o">=</span> <span class="n">transform</span>
+
+        <span class="k">if</span> <span class="n">weight_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_weight_name</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span> <span class="o">=</span> <span class="n">weight_name</span>
+
+        <span class="n">truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_truth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">])</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_weights</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">add_to_database</span><span class="p">:</span>
+            <span class="n">create_table</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span><span class="p">)</span>
+            <span class="n">save_to_sql</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">weights</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_fit_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_generate_weight_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="Uniform"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.weight_fitting.Uniform">[docs]</a><span class="k">class</span> <span class="nc">Uniform</span><span class="p">(</span><span class="n">WeightFitter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Produces per-event weights making fitted variable distribution uniform.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Uniform._fit_weights"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.weight_fitting.Uniform._fit_weights">[docs]</a>    <span class="k">def</span> <span class="nf">_fit_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Produces per-event weights making fitted variable distribution uniform.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            truth (pd.DataFrame): a pandas.DataFrame containing the truth information.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: The fitted weights.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Histogram `truth_values`</span>
+        <span class="n">bin_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bins</span><span class="p">)</span>
+
+        <span class="c1"># Get reweighting for each bin to achieve uniformity. (NB: No normalisation applied.)</span>
+        <span class="n">bin_weights</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bin_counts</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">bin_counts</span><span class="p">)</span>
+
+        <span class="c1"># For each sample in `truth_values`, get the weight in the corresponding bin</span>
+        <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">sample_weights</span> <span class="o">=</span> <span class="n">bin_weights</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+        <span class="n">sample_weights</span> <span class="o">=</span> <span class="n">sample_weights</span> <span class="o">/</span> <span class="n">sample_weights</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+        <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_weights</span>
+        <span class="k">return</span> <span class="n">truth</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;event_no&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_generate_weight_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="o">+</span> <span class="s2">&quot;_uniform_weight&quot;</span></div>
+
+
+<div class="viewcode-block" id="BjoernLow"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.weight_fitting.BjoernLow">[docs]</a><span class="k">class</span> <span class="nc">BjoernLow</span><span class="p">(</span><span class="n">WeightFitter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BjoernLow._fit_weights"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.weight_fitting.BjoernLow._fit_weights">[docs]</a>    <span class="k">def</span> <span class="nf">_fit_weights</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">truth</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">x_low</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            truth (pd.DataFrame): A pandas.DataFrame containing the truth information.</span>
+<span class="sd">            x_low (float): The cut-off for the truth variable. Values at or below x_low will be weighted to be uniform. Values above will follow a 1/(1+a*(x_low -x)) curve</span>
+<span class="sd">            alpha (float, optional): A scalar factor that controls how fast the weights above x_low approaches zero. Larger means faster. Defaults to 0.05.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: A pandas.DataFrame containing the fitted weights.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Histogram `truth_values`</span>
+        <span class="n">bin_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bins</span><span class="p">)</span>
+
+        <span class="c1"># Get reweighting for each bin to achieve uniformity. (NB: No normalisation applied.)</span>
+        <span class="n">bin_weights</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bin_counts</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">bin_counts</span><span class="p">)</span>
+
+        <span class="c1"># For each sample in `truth_values`, get the weight in the corresponding bin</span>
+        <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">sample_weights</span> <span class="o">=</span> <span class="n">bin_weights</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+        <span class="n">sample_weights</span> <span class="o">=</span> <span class="n">sample_weights</span> <span class="o">/</span> <span class="n">sample_weights</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_weights</span>  <span class="c1"># *0.1</span>
+        <span class="n">bin_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+            <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">],</span>
+            <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bins</span><span class="p">,</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">bin_counts</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="nb">slice</span> <span class="o">=</span> <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">][</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x_low</span><span class="p">]</span>
+        <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">][</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x_low</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="nb">slice</span> <span class="o">-</span> <span class="n">x_low</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">bin_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+            <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">],</span>
+            <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bins</span><span class="p">,</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">bin_counts</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">][</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x_low</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">][</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x_low</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="n">d</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">truth</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_generate_weight_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="o">+</span> <span class="s2">&quot;_bjoern_low_weight&quot;</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

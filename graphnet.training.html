@@ -158,7 +158,22 @@
 <li><a class="reference internal" href="#graphnet.training.utils.save_results"><code class="docutils literal notranslate"><span class="pre">save_results()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#graphnet-training-weight-fitting-module">graphnet.training.weight_fitting module</a></li>
+<li><a class="reference internal" href="#module-graphnet.training.weight_fitting">graphnet.training.weight_fitting module</a><ul>
+<li><a class="reference internal" href="#graphnet.training.weight_fitting.BjoernLow"><code class="docutils literal notranslate"><span class="pre">BjoernLow</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.weight_fitting.BjoernLow._fit_weights"><code class="docutils literal notranslate"><span class="pre">BjoernLow._fit_weights()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.training.weight_fitting.Uniform"><code class="docutils literal notranslate"><span class="pre">Uniform</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.weight_fitting.Uniform._fit_weights"><code class="docutils literal notranslate"><span class="pre">Uniform._fit_weights()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter"><code class="docutils literal notranslate"><span class="pre">WeightFitter</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter._get_truth"><code class="docutils literal notranslate"><span class="pre">WeightFitter._get_truth()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter.fit"><code class="docutils literal notranslate"><span class="pre">WeightFitter.fit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.training">Module contents</a></li>
 </ul>
 </li>
@@ -1041,8 +1056,105 @@ ensuring continuity at this point.</p>
 </dd></dl>
 
 </section>
-<section id="graphnet-training-weight-fitting-module">
-<h2>graphnet.training.weight_fitting module<a class="headerlink" href="#graphnet-training-weight-fitting-module" title="Permalink to this heading"></a></h2>
+<section id="module-graphnet.training.weight_fitting">
+<span id="graphnet-training-weight-fitting-module"></span><h2>graphnet.training.weight_fitting module<a class="headerlink" href="#module-graphnet.training.weight_fitting" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.BjoernLow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.weight_fitting.</span></span><span class="sig-name descname"><span class="pre">BjoernLow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#BjoernLow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.BjoernLow" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter" title="graphnet.training.weight_fitting.WeightFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightFitter</span></code></a></p>
+<p>Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.BjoernLow._fit_weights">
+<span class="sig-name descname"><span class="pre">_fit_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#BjoernLow._fit_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.BjoernLow._fit_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – A pandas.DataFrame containing the truth information.</p></li>
+<li><p><strong>x_low</strong> (<em>float</em>) – The cut-off for the truth variable. Values at or below x_low will be weighted to be uniform. Values above will follow a 1/(1+a*(x_low -x)) curve</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – A scalar factor that controls how fast the weights above x_low approaches zero. Larger means faster. Defaults to 0.05.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A pandas.DataFrame containing the fitted weights.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.Uniform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.weight_fitting.</span></span><span class="sig-name descname"><span class="pre">Uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#Uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.Uniform" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter" title="graphnet.training.weight_fitting.WeightFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightFitter</span></code></a></p>
+<p>Produces per-event weights making fitted variable distribution uniform.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.Uniform._fit_weights">
+<span class="sig-name descname"><span class="pre">_fit_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#Uniform._fit_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.Uniform._fit_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Produces per-event weights making fitted variable distribution uniform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>truth</strong> (<em>pd.DataFrame</em>) – a pandas.DataFrame containing the truth information.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The fitted weights.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.WeightFitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.weight_fitting.</span></span><span class="sig-name descname"><span class="pre">WeightFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#WeightFitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.WeightFitter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.WeightFitter._get_truth">
+<span class="sig-name descname"><span class="pre">_get_truth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#WeightFitter._get_truth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.WeightFitter._get_truth" title="Permalink to this definition"></a></dt>
+<dd><p>Return truth <cite>variable</cite>, optionally only for <cite>selection</cite> event nos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.WeightFitter.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_to_database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#WeightFitter.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.WeightFitter.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits weights. Calls private _fit_weights method. Output is returned as a pandas.DataFrame and optionally saved to sql.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bins</strong> (<em>np.ndarray</em>) – Desired bins used for fitting.</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – the name of the variable. Must match corresponding column name in the truth table.</p></li>
+<li><p><strong>weight_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Name of the weights. Defaults to None.</p></li>
+<li><p><strong>add_to_database</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, the weights are saved to sql in a table named weight_name. Defaults to False.</p></li>
+<li><p><strong>selection</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – a list of event_no’s. If given, only events in the selection is used for fitting. Defaults to None.</p></li>
+<li><p><strong>transform</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>]</em><em>, </em><em>optional</em>) – A callable method that transform the variable into a desired space. E.g. np.log10 for energy. If given, fitting will happen in this space.</p></li>
+<li><p><strong>**kwargs</strong> – additional arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a pandas.DataFrame that contains weights, event_nos</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-graphnet.training">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.training" title="Permalink to this heading"></a></h2>
