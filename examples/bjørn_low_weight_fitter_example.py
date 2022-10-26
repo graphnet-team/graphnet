@@ -14,7 +14,7 @@ variable = "energy"
 bins = bins = np.arange(0, 5, 0.01)  # in log10
 
 # Fit the uniform weights
-fitter = BjørnLow(database)
+fitter = BjoernLow(database)
 weights = fitter.fit(
     bins=bins,
     variable="energy",
