@@ -4,6 +4,8 @@ All loss functions inherit from `LossFunction` which (...)
 """
 
 from abc import abstractmethod
+from typing import Optional
+
 
 try:
     from typing import final
@@ -13,17 +15,19 @@ except ImportError:  # Python version < 3.8
         return f
 
 
-from typing import Optional
 import numpy as np
 import scipy.special
 import torch
 from torch import Tensor
-from torch.nn.modules.loss import _WeightedLoss
+
+from graphnet.models.config import save_config
+from graphnet.models.model import Model
 
 
-class LossFunction(_WeightedLoss):
+class LossFunction(Model):
     """Base class for loss functions in graphnet."""
 
+    @save_config
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -330,3 +334,28 @@ class EuclideanDistanceLoss(LossFunction):
             + (prediction[:, 1] - target[:, 1]) ** 2
             + (prediction[:, 2] - target[:, 2]) ** 2
         )
+
+
+class VonMisesFisher3DLoss(VonMisesFisherLoss):
+    """von Mises-Fisher loss function vectors in the 3D plane."""
+
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Calculates the von Mises-Fisher loss for a direction in the 3D plane.
+
+        Args:
+            prediction (Tensor): Output of the model. Must have shape [N, 4]
+                where columns 0, 1, 2 are predictions of `direction` and last column is an
+                estimate of `kappa`.
+            target (Tensor): Target tensor, extracted from graph object.
+        Returns:
+            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]
+        """
+        target = target.reshape(-1, 3)
+        # Check(s)
+        assert prediction.dim() == 2 and prediction.size()[1] == 4
+        assert target.dim() == 2
+        assert prediction.size()[0] == target.size()[0]
+
+        kappa = prediction[:, 3]
+        p = kappa.unsqueeze(1) * prediction[:, [0, 1, 2]]
+        return self._evaluate(p, target)

@@ -143,10 +143,32 @@ def get_logger(
 
 
 class LoggerMixin(object):
-    @property
-    def logger(self):
-        logger = colorlog.getLogger(LOGGER_NAME)
-        logger = logging.LoggerAdapter(
-            logger, extra={"className": self.__class__.__name__ + "."}
-        )
-        return logger
+    def _get_logger(self):
+        """Construct Logger instance if not already done."""
+        if not hasattr(self, "_logger"):
+            logger = colorlog.getLogger(LOGGER_NAME)
+            logger = logging.LoggerAdapter(
+                logger, extra={"className": self.__class__.__name__ + "."}
+            )
+            self._logger = logger
+        return self._logger
+
+    def critical(self, msg, *args, **kwargs):
+        """Delegate a critical call to member logger."""
+        return self._get_logger().critical(msg, *args, **kwargs)
+
+    def error(self, msg, *args, **kwargs):
+        """Delegate an error call to member logger."""
+        return self._get_logger().error(msg, *args, **kwargs)
+
+    def warning(self, msg, *args, **kwargs):
+        """Delegate a warning call to member logger."""
+        return self._get_logger().warning(msg, *args, **kwargs)
+
+    def info(self, msg, *args, **kwargs):
+        """Delegate an info call to member logger."""
+        return self._get_logger().info(msg, *args, **kwargs)
+
+    def debug(self, msg, *args, **kwargs):
+        """Delegate a debug call to member logger."""
+        return self._get_logger().debug(msg, *args, **kwargs)

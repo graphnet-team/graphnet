@@ -390,5 +390,5 @@ class I3TruthExtractor(I3Extractor):
         if "L2" in input_file:  # not robust
             sim_type = "dbang"
         if sim_type == "lol":
-            self.logger.info("SIM TYPE NOT FOUND!")
+            self.info("SIM TYPE NOT FOUND!")
         return sim_type

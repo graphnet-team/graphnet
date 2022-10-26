@@ -10,11 +10,13 @@ from torch_geometric.data import Data
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
 
 from graphnet.models.components.layers import DynEdgeConv
+from graphnet.models.config import save_config
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.utils import calculate_xyzt_homophily
 
 
 class DynEdgeJINST(GNN):
+    @save_config
     def __init__(
         self,
         nb_inputs: int,
