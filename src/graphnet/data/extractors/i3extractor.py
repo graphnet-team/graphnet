@@ -19,7 +19,7 @@ class I3Extractor(ABC, LoggerMixin):
     """
 
     def __init__(self, name: str):
-        """Construct instance.
+        """Construct I3Extractor.
 
         Args:
             name (str): Name of the `I3Extractor` instance. Used to keep track

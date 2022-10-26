@@ -48,7 +48,7 @@ class I3GenericExtractor(I3Extractor):
         keys: Optional[Union[str, List[str]]] = None,
         exclude_keys: Optional[Union[str, List[str]]] = None,
     ):
-        """Construct instance.
+        """Construct I3GenericExtractor.
 
         Args:
             keys (Optional[Union[str, List[str]]], optional): List of keys in

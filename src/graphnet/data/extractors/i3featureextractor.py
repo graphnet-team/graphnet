@@ -18,7 +18,7 @@ class I3FeatureExtractor(I3Extractor):
     """Base class for extracting specific, reconstructed features."""
 
     def __init__(self, pulsemap: str):
-        """Construct instance.
+        """Construct I3FeatureExtractor.
 
         Args:
             pulsemap (str): Name of the pulse (series) map for which to extract

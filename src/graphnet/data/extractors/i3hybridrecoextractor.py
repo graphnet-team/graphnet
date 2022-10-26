@@ -12,7 +12,7 @@ class I3GalacticPlaneHybridRecoExtractor(I3Extractor):
     """Class for extracting galatictic plane hybrid reconstruction."""
 
     def __init__(self, name: str = "dnn_hybrid"):
-        """Construct instance.
+        """Construct I3GalacticPlaneHybridRecoExtractor.
 
         Args:
             name (str, optional): Name of the `I3Extractor` instance. Defaults
