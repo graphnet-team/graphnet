@@ -1,0 +1,18 @@
+graphnet.deployment package
+===========================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   graphnet.deployment.i3modules
+
+Module contents
+---------------
+
+.. automodule:: graphnet.deployment
+   :members:
+   :undoc-members:
+   :show-inheritance:

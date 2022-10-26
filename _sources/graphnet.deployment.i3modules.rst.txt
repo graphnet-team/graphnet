@@ -1,0 +1,21 @@
+graphnet.deployment.i3modules package
+=====================================
+
+Submodules
+----------
+
+graphnet.deployment.i3modules.graphnet\_module module
+-----------------------------------------------------
+
+.. automodule:: graphnet.deployment.i3modules.graphnet_module
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.deployment.i3modules
+   :members:
+   :undoc-members:
+   :show-inheritance:
