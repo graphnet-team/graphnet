@@ -92,6 +92,9 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
             string_selection=string_selection,
             selection=selection,
             dtype=dtype,
+            loss_weight_table=loss_weight_table,
+            loss_weight_column=loss_weight_column,
+            loss_weight_default_value=loss_weight_default_value,
         )
 
         # Custom member variables
