@@ -118,7 +118,7 @@ class Uniform(WeightFitter):
         return self._variable + "_uniform_weight"
 
 
-class BjørnLow(WeightFitter):
+class BjoernLow(WeightFitter):
     """Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve."""
 
     def _fit_weights(
