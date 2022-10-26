@@ -1,6 +1,6 @@
 """`Dataset` class(es) for reading from Parquet files."""
 
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union, cast
 import numpy as np
 import awkward as ak
 
@@ -43,7 +43,7 @@ class ParquetDataset(Dataset):
         self,
         table: str,
         columns: Union[List[str], str],
-        index: int,
+        sequential_index: int,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
         # Check(s)
@@ -51,10 +51,10 @@ class ParquetDataset(Dataset):
             selection is None
         ), "Argument `selection` is currently not supported"
 
-        sequential_index = self._indices.index(index)
+        index = cast(List[int], self._indices).index(sequential_index)
 
         try:
-            ak_array = self._parquet_hook[table][columns][sequential_index]
+            ak_array = self._parquet_hook[table][columns][index]
         except ValueError as e:
             if "does not exist (not in record)" in str(e):
                 raise ColumnMissingException(str(e))
