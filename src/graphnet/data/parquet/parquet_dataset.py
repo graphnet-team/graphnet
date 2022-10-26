@@ -45,7 +45,7 @@ class ParquetDataset(Dataset):
         columns: Union[List[str], str],
         index: int,
         selection: Optional[str] = None,
-    ) -> List[Tuple[Any]]:
+    ) -> List[Tuple[Any, ...]]:
         # Check(s)
         assert (
             selection is None
