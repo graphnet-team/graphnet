@@ -1,4 +1,4 @@
-"""Collection I3Extractors, for extracting pure-python data from I3Frames."""
+"""Collection of I3Extractors, extracting pure-python data from I3Frames."""
 
 from .i3extractor import I3Extractor, I3ExtractorCollection
 from .i3featureextractor import (
