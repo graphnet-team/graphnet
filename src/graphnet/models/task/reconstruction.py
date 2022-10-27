@@ -167,6 +167,13 @@ class TimeReconstruction(Task):
         # Leave as it is
         return x
 
+class MulticlassificationTask(Task):
+    # requires three features: probability of being noise, muon or neutrino.
+    nb_inputs = 3
+
+    def _forward(self, x):
+        # transform probability of being noise, muon or neutrino
+        return torch.sigmoid(x)
 
 class BinaryClassificationTask(Task):
     # requires one feature: probability of being neutrino?
@@ -175,7 +182,6 @@ class BinaryClassificationTask(Task):
     def _forward(self, x):
         # transform probability of being muon
         return torch.sigmoid(x)
-
 
 class BinaryClassificationTaskLogits(Task):
     nb_inputs = 1

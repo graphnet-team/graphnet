@@ -14,7 +14,7 @@ except ImportError:  # Python version < 3.8
     def final(f):  # Identity decorator
         return f
 
-
+from torch.nn.functional import one_hot, cross_entropy
 import numpy as np
 import scipy.special
 import torch
@@ -111,11 +111,25 @@ class LogCoshLoss(LossFunction):
         return elements
 
 
+
+class MultiClassificationCrossEntropyLoss(LossFunction):
+    """Computes cross entropy for a matrix [num_class,N] of predictions (between 0 and 1),
+    targets [1,N] should be a particle id for noise (1,-1) muon (13,-13) and neutrino (12,-12,14,-14,16,-16) respectively.
+    loss should be reported elementwise, so set reduction to none.
+    """
+
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        pid_transform = {1:0,12:2,13:1,14:2,16:2}
+        target_new = one_hot(torch.tensor([pid_transform[np.abs(int(value))] for value in target]), 3)
+        return cross_entropy(
+            prediction.float(), target_new.float(), reduction="none"
+        )
+
 class BinaryCrossEntropyLoss(LossFunction):
     """Computes binary cross entropy for a vector of predictions (between 0 and 1),
     targets should be 0 and 1 for muon and neutrino respectively
     where prediction is prob. the PID is neutrino (12,14,16)
-    loss should be reported elementwise, so set reduction to None
+    loss should be reported elementwise, so set reduction to none.
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
