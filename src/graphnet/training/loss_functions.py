@@ -112,7 +112,7 @@ class LogCoshLoss(LossFunction):
 
 
 
-class MultiClassificationCrossEntropyLoss(LossFunction):
+class CrossEntropyLoss(LossFunction):
     """Computes cross entropy for a matrix [num_class,N] of predictions (between 0 and 1),
     targets [1,N] should be a particle id for noise (1,-1) muon (13,-13) and neutrino (12,-12,14,-14,16,-16) respectively.
     loss should be reported elementwise, so set reduction to none.
