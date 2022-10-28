@@ -1,3 +1,5 @@
+"""Setup script for the GraphNeT package."""
+
 import subprocess
 import sys
 from setuptools import setup, find_packages
@@ -10,6 +12,7 @@ SETUP_REQUIRES = [
 
 INSTALL_REQUIRES = [
     "awkward>=1.8",
+    "colorlog>=6.6",
     "dill>=0.3",
     "matplotlib>=3.5",
     "numpy>=1.21",
@@ -28,7 +31,6 @@ INSTALL_REQUIRES = [
 EXTRAS_REQUIRE = {
     "develop": [
         "black",
-        "colorlog",
         "coverage",
         "docformatter",
         "MarkupSafe<=2.1",
@@ -40,6 +42,7 @@ EXTRAS_REQUIRE = {
         "pytest-order",
         "sphinx",
         "sphinx_rtd_theme",
+        "sphinx-autodoc-typehints",
         "versioneer",
     ],
     "torch": [
