@@ -149,27 +149,6 @@ class TimeReconstruction(Task):
         return x
 
 
-class BinaryClassificationTask(Task):
-    """Performs binary classification."""
-
-    # Requires one feature, logit for being signal class.
-    nb_inputs = 1
-
-    def _forward(self, x):
-        # transform probability of being muon
-        return torch.sigmoid(x)
-
-
-class BinaryClassificationTaskLogits(Task):
-    """Performs binary classification form logits."""
-
-    # Requires one feature, logit for being signal class.
-    nb_inputs = 1
-
-    def _forward(self, x):
-        return x
-
-
 class InelasticityReconstruction(Task):
     """Reconstructs interaction inelasticity.
 
