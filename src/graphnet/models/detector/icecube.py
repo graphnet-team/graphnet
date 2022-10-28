@@ -19,7 +19,7 @@ class IceCube86(Detector):
     features = FEATURES.ICECUBE86
 
     def _forward(self, data: Data) -> Data:
-        """Ingest data, build graph, and preprocesses features.
+        """Ingest data, build graph, and preprocess features.
 
         Args:
             data: Input graph data.
@@ -57,7 +57,7 @@ class IceCubeUpgrade(IceCubeDeepCore):
     features = FEATURES.UPGRADE
 
     def _forward(self, data: Data) -> Data:
-        """Ingest data, build graph, and preprocesses features.
+        """Ingest data, build graph, and preprocess features.
 
         Args:
             data: Input graph data.
@@ -102,7 +102,7 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
         return self.nb_inputs + 3
 
     def _forward(self, data: Data) -> Data:
-        """Ingest data, build graph, and preprocesses features.
+        """Ingest data, build graph, and preprocess features.
 
         Args:
             data: Input graph data.
