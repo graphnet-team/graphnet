@@ -39,7 +39,7 @@ jobs:
         id: setvar
         run: |
           all_files="${{ steps.changed-files.outputs.all_changed_files }}"
-          python_files="$(grep -ow '[^ ]*\.py[^ ]*' <<<'${{ steps.changed-files.outputs.all_changed_files }}')"
+          python_files="$(grep -ow '[^ ]*\.py[^ ]*' <<<'${{ steps.changed-files.outputs.all_changed_files }}' | tr '\n' ' ')"
 
           echo all="$all_files" >> $GITHUB_OUTPUT
           echo python="$python_files" >> $GITHUB_OUTPUT
