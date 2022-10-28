@@ -132,7 +132,6 @@ class BinaryCrossEntropyLoss(LossFunction):
     """Computes binary cross entropy for a vector of predictions (between 0 and 1),
     targets should be 0 and 1 for muon and neutrino respectively
     where prediction is prob. the PID is neutrino (12,14,16)
-    loss should be reported elementwise, so set reduction to none.
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
