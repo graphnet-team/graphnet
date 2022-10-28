@@ -113,9 +113,10 @@ class LogCoshLoss(LossFunction):
 
 
 class CrossEntropyLoss(LossFunction):
-    """Computes cross entropy for a matrix [num_class,N] of predictions (between 0 and 1),
-    targets [1,N] should be a particle id for noise (1,-1) muon (13,-13) and neutrino (12,-12,14,-14,16,-16) respectively.
-    loss should be reported elementwise, so set reduction to none.
+    """Compute cross entropy loss.
+    
+    Predictions are an [N, num_class]-matrix  of values between 0 and 1, and
+    targets are an [N,1]-matrix with integer values in (0, num_classes - 1).
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
