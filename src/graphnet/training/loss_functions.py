@@ -1,4 +1,5 @@
-# type: ignore[name-defined]  # Due to use of `init_global_index`.
+# type: ignore[name-defined]  # Due to override of `final` with different
+# signature.
 """Collection of loss functions.
 
 All loss functions inherit from `LossFunction` which ensures a common syntax,
