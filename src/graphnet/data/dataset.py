@@ -354,7 +354,6 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         truth_dict = {
             key: truth[index] for index, key in enumerate(self._truth)
         }
-        assert len(truth) == 1
 
         # Define custom labels
         labels_dict = self._get_labels(truth_dict)
