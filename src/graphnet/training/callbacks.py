@@ -1,3 +1,5 @@
+"""Callback class(es) for using during model training."""
+
 import logging
 import numpy as np
 import warnings
@@ -12,27 +14,29 @@ logger = get_logger()
 
 
 class PiecewiseLinearLR(_LRScheduler):
-    """Interpolates learning rate linearly between milestones.
-
-    For each milestone, denoting a specified number of steps, a factor
-    multiplying the base learning rate is specified. For steps between two
-    milestones, the learning rate is interpolated linearly between the two
-    closest milestones. For steps before the first milestone, the factor for the
-    first milestone is used; vice versa for steps after the last milestone.
-
-    Args:
-        optimizer (Optimizer): Wrapped optimizer.
-        milestones (list): List of step indices. Must be increasing.
-        factors (list): List of multiplicative factors. Must be same length as
-            `milestones`.
-        last_epoch (int): The index of the last epoch. Default: -1.
-        verbose (bool): If ``True``, prints a message to stdout for
-            each update. Default: ``False``.
-    """
+    """Interpolate learning rate linearly between milestones."""
 
     def __init__(
         self, optimizer, milestones, factors, last_epoch=-1, verbose=False
     ):
+        """Construct `PiecewiseLinearLR`.
+
+        For each milestone, denoting a specified number of steps, a factor
+        multiplying the base learning rate is specified. For steps between two
+        milestones, the learning rate is interpolated linearly between the two
+        closest milestones. For steps before the first milestone, the factor
+        for the first milestone is used; vice versa for steps after the last
+        milestone.
+
+        Args:
+            optimizer (Optimizer): Wrapped optimizer.
+            milestones (list): List of step indices. Must be increasing.
+            factors (list): List of multiplicative factors. Must be same length as
+                `milestones`.
+            last_epoch (int): The index of the last epoch. Default: -1.
+            verbose (bool): If ``True``, prints a message to stdout for
+                each update. Default: ``False``.
+        """
         # Check(s)
         if milestones != sorted(milestones):
             raise ValueError("Milestones must be increasing")
@@ -50,6 +54,7 @@ class PiecewiseLinearLR(_LRScheduler):
         return np.interp(self.last_epoch, self.milestones, self.factors)
 
     def get_lr(self):
+        """Get effective learning rate(s) for each optimizer."""
         if not self._get_lr_called_within_step:
             warnings.warn(
                 "To get the last learning rate computed by the scheduler, "
@@ -72,33 +77,37 @@ class ProgressBar(TQDMProgressBar):
         return bar
 
     def init_validation_tqdm(self):
+        """Override for customisation."""
         bar = super().init_validation_tqdm()
         bar = self._common_config(bar)
         return bar
 
     def init_predict_tqdm(self):
+        """Override for customisation."""
         bar = super().init_predict_tqdm()
         bar = self._common_config(bar)
         return bar
 
     def init_test_tqdm(self):
+        """Override for customisation."""
         bar = super().init_test_tqdm()
         bar = self._common_config(bar)
         return bar
 
     def init_train_tqdm(self):
+        """Override for customisation."""
         bar = super().init_train_tqdm()
         bar = self._common_config(bar)
         return bar
 
     def get_metrics(self, trainer, model):
-        # Don't show the version number
+        """Override to not show the version number in the logging."""
         items = super().get_metrics(trainer, model)
         items.pop("v_num", None)
         return items
 
     def on_train_epoch_start(self, trainer, model):
-        """Prints the results of the previous epoch on a separate line.
+        """Print the results of the previous epoch on a separate line.
 
         This allows the user to see the losses/metrics for previous epochs
         while the current is training. The default behaviour in pytorch-
@@ -115,10 +124,12 @@ class ProgressBar(TQDMProgressBar):
         )
 
     def on_train_epoch_end(self, trainer, model):
+        """Log the final progress bar for the epoch to file.
+
+        Don't duplciate to stdout.
+        """
         super().on_train_epoch_end(trainer, model)
 
-        # Log the final progress bar for the epoch to file (and don't duplciate
-        # to stdout).
         h = logger.logger.handlers[0]
         assert isinstance(h, logging.StreamHandler)
         level = h.level
