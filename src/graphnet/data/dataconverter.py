@@ -1,4 +1,5 @@
-# type: ignore[name-defined]  # Due to use of `init_global_index`.
+# type: ignore[name-defined]  # Due to use of `init_global_index` and override
+# of `final` with different signature.
 """Base `DataConverter` class(es) used in GraphNeT."""
 
 from abc import ABC, abstractmethod
