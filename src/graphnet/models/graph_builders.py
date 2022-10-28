@@ -42,13 +42,12 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
 
     def forward(self, data: Data) -> Data:
         """Forward pass."""
-        # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
+        # Constructs the adjacency matrix from the raw, DOM-level data and
+        # returns this matrix
         if data.edge_index is not None:
             self.info(
-                (
-                    "WARNING: GraphBuilder received graph with pre-existing structure. "
-                    "Will overwrite.",
-                )
+                "WARNING: GraphBuilder received graph with pre-existing "
+                "structure. Will overwrite."
             )
 
         data.edge_index = knn_graph(
@@ -85,7 +84,8 @@ class RadialGraphBuilder(GraphBuilder):
 
     def forward(self, data: Data) -> Data:
         """Forward pass."""
-        # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
+        # Constructs the adjacency matrix from the raw, DOM-level data and
+        # returns this matrix
         if data.edge_index is not None:
             self.info(
                 "WARNING: GraphBuilder received graph with pre-existing "
@@ -131,7 +131,8 @@ class EuclideanGraphBuilder(
 
     def forward(self, data: Data) -> Data:
         """Forward pass."""
-        # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
+        # Constructs the adjacency matrix from the raw, DOM-level data and
+        # returns this matrix
         if data.edge_index is not None:
             self.info(
                 "WARNING: GraphBuilder received graph with pre-existing "
@@ -140,7 +141,8 @@ class EuclideanGraphBuilder(
 
         xyz_coords = data.x[:, self._columns]
 
-        # Construct block-diagonal matrix indicating whether pulses belong to the same event in the batch
+        # Construct block-diagonal matrix indicating whether pulses belong to
+        # the same event in the batch
         batch_mask = data.batch.unsqueeze(dim=0) == data.batch.unsqueeze(dim=1)
 
         distance_matrix = calculate_distance_matrix(xyz_coords)
@@ -154,7 +156,8 @@ class EuclideanGraphBuilder(
             affinity_matrix
         ) / exp_row_sums.unsqueeze(dim=1)
 
-        # Only include edges with weights that exceed the chosen threshold (and are part of the same event)
+        # Only include edges with weights that exceed the chosen threshold (and
+        # are part of the same event)
         sources, targets = torch.where(
             (weighted_adj_matrix > self._threshold) & (batch_mask)
         )
