@@ -56,33 +56,6 @@ class DirectionReconstructionWithKappa(Task):
         return torch.stack((vec_x, vec_y, vec_z, kappa), dim=1)
 
 
-class PassOutput1(Task):
-    """Passes 1 output without interference."""
-
-    nb_inputs = 1
-
-    def _forward(self, x):
-        return x
-
-
-class PassOutput2(Task):
-    """Passes 2 output without interference."""
-
-    nb_inputs = 2
-
-    def _forward(self, x):
-        return x
-
-
-class PassOutput3(Task):
-    """Passes 3 output without interference."""
-
-    nb_inputs = 3
-
-    def _forward(self, x):
-        return x
-
-
 class ZenithReconstruction(Task):
     """Reconstructs zenith angle."""
 
