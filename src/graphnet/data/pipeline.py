@@ -1,16 +1,18 @@
+"""Class(es) used for analysis in PISA."""
+
 from abc import ABC
 import dill
 from functools import reduce
-import numpy as np
 import os
-import pandas as pd
-import sqlite3
 
+import numpy as np
+import pandas as pd
+from pytorch_lightning import Trainer
+import sqlite3
 import torch
 
 from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
 from graphnet.training.utils import get_predictions, make_dataloader
-from pytorch_lightning import Trainer
 
 from graphnet.utilities.logging import get_logger
 
@@ -19,10 +21,10 @@ logger = get_logger()
 
 
 class InSQLitePipeline(ABC):
-    """Creates a SQLite database with truth and GNN predictions and, if
-    available, RETRO reconstructions.
+    """Create a SQLite database for PISA analysis.
 
-    Made for analysis.
+    The database will contain truth and GNN predictions and, if available,
+    RETRO reconstructions.
     """
 
     def __init__(
@@ -37,7 +39,7 @@ class InSQLitePipeline(ABC):
         n_workers=10,
         pipeline_name="pipeline",
     ):
-        """Initializes the pipeline.
+        """Initialize the pipeline.
 
         Args:
             module_dict (dict): A dictionary with GNN modules from GraphNet. E.g. {'energy': gnn_module_for_energy_regression}
@@ -60,8 +62,8 @@ class InSQLitePipeline(ABC):
         self._module_dict = module_dict
         self._retro_table_name = retro_table_name
 
-    def __call__(self, database, pulsemap, chunk_size=1000000) -> dict:
-        """Runs inference of each field in self._module_dict[target]['']
+    def __call__(self, database, pulsemap, chunk_size=1000000):
+        """Run inference of each field in self._module_dict[target][''].
 
         Args:
             database (path): path to database with pulsemap and truth
@@ -95,7 +97,6 @@ class InSQLitePipeline(ABC):
                 "WARNING - Pipeline named %s already exists! \n Please rename pipeline!"
                 % self._pipeline_name
             )
-        return
 
     def _setup_dataloaders(
         self,
@@ -192,7 +193,6 @@ class InSQLitePipeline(ABC):
             return retro
         except:  # noqa: E722
             logger.info("%s table does not exist" % self._retro_table_name)
-            return
 
     def _append_to_pipeline(self, outdir, truth, retro, df, i):
         os.makedirs(outdir, exist_ok=True)
@@ -207,13 +207,13 @@ class InSQLitePipeline(ABC):
             if i == 0:
                 self._create_table(pipeline_database, "retro", retro)
             save_to_sql(retro, self._retro_table_name, pipeline_database)
-        return
 
     def _create_table(self, pipeline_database, table_name, df):
-        """Creates a table.
+        """Create a table.
 
         Args:
             pipeline_database (str): path to the pipeline database
+            table_name (str): name of the table in pipeline database.
             df (str): pandas.DataFrame of combined predictions
         """
         query_columns = list()
