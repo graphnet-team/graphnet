@@ -28,7 +28,7 @@ jobs:
         id: changed-files
         uses: jitterbit/get-changed-files@v1
         with:
-          format: ''
+          format: "space-delimited"
 
       - name: List all changed files
         run: |
