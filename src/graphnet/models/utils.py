@@ -14,12 +14,12 @@ def calculate_xyzt_homophily(
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     """Calculate xyzt-homophily from a batch of graphs.
 
-    Homophily is a graph scalar quantity that measures the likeness of variables
-    in nodes. Notice that this calculator assumes a special order of input
-    features in x.
+    Homophily is a graph scalar quantity that measures the likeness of
+    variables in nodes. Notice that this calculator assumes a special order of
+    input features in x.
 
     Returns:
-        tuple : tuple of torch.tensor each with shape [batch_size,1]
+        Tuple, each element with shape [batch_size,1].
     """
     hx = homophily(edge_index, x[:, 0], batch).reshape(-1, 1)
     hy = homophily(edge_index, x[:, 1], batch).reshape(-1, 1)
@@ -45,9 +45,10 @@ def knn_graph_batch(batch: Batch, k: List[int], columns: List[int]) -> Batch:
     """Calculate k-nearest-neighbours with individual k for each batch event.
 
     Args:
-        batch: A torch_geometric.data.Batch of events
-        k: A list of k's
-        columns: The columns of Data.x used for computing the distances. Eg. Data.x[:,[0,1,2]]
+        batch: Batch of events.
+        k: A list of k's.
+        columns: The columns of Data.x used for computing the distances. E.g.,
+            Data.x[:,[0,1,2]]
 
     Returns:
         Returns the same batch of events, but with updated edges.
