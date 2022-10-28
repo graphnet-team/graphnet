@@ -1,4 +1,5 @@
-from abc import abstractmethod
+"""Class(es) for building/connecting graphs."""
+
 from typing import List
 
 import torch
@@ -11,11 +12,13 @@ from graphnet.models import Model
 
 
 class GraphBuilder(Model):  # pylint: disable=too-few-public-methods
+    """Base class for graph building."""
+
     pass
 
 
 class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
-    """Builds graph adjacency according to the k-nearest neighbours."""
+    """Builds graph from the k-nearest neighbours."""
 
     @save_config
     def __init__(
@@ -24,6 +27,7 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
         columns: List[int] = None,
         device: str = None,
     ):
+        """Construct `KNNGraphBuilder`."""
         # Base class constructor
         super().__init__()
 
@@ -37,6 +41,7 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
         self._device = device
 
     def forward(self, data: Data) -> Data:
+        """Forward pass."""
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
             self.info(
@@ -56,8 +61,7 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
 
 
 class RadialGraphBuilder(GraphBuilder):
-    """Builds graph adjacency according to a sphere of chosen radius centred at
-    each DOM hit."""
+    """Builds graph from a sphere of chosen radius centred at each node."""
 
     @save_config
     def __init__(
@@ -66,6 +70,7 @@ class RadialGraphBuilder(GraphBuilder):
         columns: List[int] = None,
         device: str = None,
     ):
+        """Construct `RadialGraphBuilder`."""
         # Base class constructor
         super().__init__()
 
@@ -79,13 +84,12 @@ class RadialGraphBuilder(GraphBuilder):
         self._device = device
 
     def forward(self, data: Data) -> Data:
+        """Forward pass."""
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
             self.info(
-                (
-                    "WARNING: GraphBuilder received graph with pre-existing structure. "
-                    "Will overwrite.",
-                )
+                "WARNING: GraphBuilder received graph with pre-existing "
+                "structure. Will overwrite."
             )
 
         data.edge_index = radius_graph(
@@ -100,8 +104,10 @@ class RadialGraphBuilder(GraphBuilder):
 class EuclideanGraphBuilder(
     GraphBuilder
 ):  # pylint: disable=too-few-public-methods
-    """Builds graph adjacency according to Euclidean distance as in
-    https://arxiv.org/pdf/1809.06166.pdf."""
+    """Builds graph according to Euclidean distance between nodes.
+
+    See https://arxiv.org/pdf/1809.06166.pdf.
+    """
 
     @save_config
     def __init__(
@@ -110,6 +116,7 @@ class EuclideanGraphBuilder(
         threshold: float = 0.0,
         columns: List[int] = None,
     ):
+        """Construct `EuclideanGraphBuilder`."""
         # Base class constructor
         super().__init__()
 
@@ -123,13 +130,12 @@ class EuclideanGraphBuilder(
         self._columns = columns
 
     def forward(self, data: Data) -> Data:
+        """Forward pass."""
         # Constructs the adjacency matrix from the raw, DOM-level data and returns this matrix
         if data.edge_index is not None:
             self.info(
-                (
-                    "WARNING: GraphBuilder received graph with pre-existing structure. "
-                    "Will overwrite.",
-                )
+                "WARNING: GraphBuilder received graph with pre-existing "
+                "structure. Will overwrite."
             )
 
         xyz_coords = data.x[:, self._columns]
