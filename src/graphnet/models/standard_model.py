@@ -7,11 +7,11 @@ from torch import Tensor
 from torch.nn import ModuleList
 from torch.optim import Adam
 from torch_geometric.data import Data
-from graphnet.models.coarsening import Coarsening
 
+from graphnet.models.coarsening import Coarsening
+from graphnet.models.config import save_config
 from graphnet.models.detector.detector import Detector
 from graphnet.models.gnn.gnn import GNN
-from graphnet.models.config import save_config
 from graphnet.models.model import Model
 from graphnet.models.task import Task
 
