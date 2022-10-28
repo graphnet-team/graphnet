@@ -5,8 +5,6 @@ from typing import TYPE_CHECKING, List, Tuple, Union
 from typing import Callable, Optional
 import numpy as np
 
-from graphnet.models.config import save_config
-
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
@@ -26,6 +24,7 @@ if TYPE_CHECKING:
     from graphnet.training.loss_functions import LossFunction  # type: ignore[attr-defined]
 
 from graphnet.models import Model
+from graphnet.models.config import save_config
 
 
 class Task(Model):
