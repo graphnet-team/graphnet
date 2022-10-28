@@ -1,4 +1,4 @@
-"""Common functionns for icetray/data-based unit tests."""
+"""Common functions for icetray/data-based unit tests."""
 
 from functools import wraps
 
@@ -36,7 +36,7 @@ def has_torch_package() -> bool:
 
 
 def requires_icecube(test_function):
-    """Decorator for only exposing function if `icecube` module is present."""
+    """Decorate `test_function` for use only if `icecube` module is present."""
 
     @wraps(test_function)
     def wrapper(*args, **kwargs):
