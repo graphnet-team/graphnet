@@ -26,20 +26,20 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: jitterbit/get-changed-files@v1
+        uses: tj-actions/changed-files@v34
         with:
-          format: "space-delimited"
+          since_last_remote_commit: 'true'
 
       - name: List all changed files
         run: |
-          for file in ${{ steps.changed-files.outputs.added_modified }}; do
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "$file was changed"
           done
 
       - name:
         id: setvar
         run: |
-          echo "all=${{ steps.changed-files.outputs.added_modified }}" >> $GITHUB_OUTPUT
+          echo "all=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_OUTPUT
 
   black:
     needs: [ files ]
