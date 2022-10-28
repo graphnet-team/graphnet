@@ -1,7 +1,7 @@
-import os
+"""Standard model class(es)."""
+
 from typing import List, Optional, Union
 
-import dill
 import torch
 from torch import Tensor
 from torch.nn import ModuleList
@@ -37,7 +37,7 @@ class StandardModel(Model):
         scheduler_kwargs=None,
         scheduler_config=None,
     ):
-
+        """Construct `StandardModel`."""
         # Base class constructor
         super().__init__()
 
@@ -62,6 +62,7 @@ class StandardModel(Model):
         self._scheduler_config = scheduler_config or dict()
 
     def configure_optimizers(self):
+        """Configure the model's optimizer(s)."""
         optimizer = self._optimizer_class(
             self.parameters(), **self._optimizer_kwargs
         )
@@ -83,7 +84,7 @@ class StandardModel(Model):
         return config
 
     def forward(self, data: Data) -> List[Union[Tensor, Data]]:
-        """Common forward pass, chaining model components."""
+        """Forward pass, chaining model components."""
         if self._coarsening:
             data = self._coarsening(data)
         data = self._detector(data)
@@ -92,11 +93,17 @@ class StandardModel(Model):
         return preds
 
     def shared_step(self, batch, batch_idx):
+        """Perform shared step.
+
+        Applies the forward pass and the following loss calculation, shared
+        between the training and validation step.
+        """
         preds = self(batch)
         loss = self.compute_loss(preds, batch)
         return loss
 
     def training_step(self, train_batch, batch_idx):
+        """Perform training step."""
         loss = self.shared_step(train_batch, batch_idx)
         self.log(
             "train_loss",
@@ -109,6 +116,7 @@ class StandardModel(Model):
         return loss
 
     def validation_step(self, val_batch, batch_idx):
+        """Perform validation step."""
         loss = self.shared_step(val_batch, batch_idx)
         self.log(
             "val_loss",
@@ -121,7 +129,7 @@ class StandardModel(Model):
         return loss
 
     def compute_loss(self, preds: Tensor, data: Data, verbose=False) -> Tensor:
-        """Computes and sums losses across tasks."""
+        """Compute and sum losses across tasks."""
         losses = [
             task.compute_loss(pred, data)
             for task, pred in zip(self._tasks, preds)
@@ -137,13 +145,13 @@ class StandardModel(Model):
         return torch.numel(torch.unique(data.batch))
 
     def inference(self):
-        """Sets model to inference mode."""
+        """Activate inference mode."""
         for task in self._tasks:
             task.inference()
 
-    def train(self, mode=True):
+    def train(self, mode=True) -> "Model":
+        """Deactivate inference mode."""
         super().train(mode)
-        """Deactivates inference mode."""
         if mode:
             for task in self._tasks:
                 task.train_eval()
