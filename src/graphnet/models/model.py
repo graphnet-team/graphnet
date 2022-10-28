@@ -1,13 +1,16 @@
+"""Base class(es) for building models."""
+
 from abc import ABC, abstractmethod
 import dill
 import os.path
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
 
-    def final(f):  # Identity decorator
+    # Identity decorator
+    def final(f):  # type: ignore  # noqa: D103
         return f
 
 
@@ -34,7 +37,7 @@ class Model(LightningModule, LoggerMixin, ABC):
     @final
     @property
     def config(self) -> "ModelConfig":
-        """Configuration to re-create the model."""
+        """Return configuration to re-create the model."""
         try:
             return self._config
         except AttributeError:
@@ -45,7 +48,7 @@ class Model(LightningModule, LoggerMixin, ABC):
             raise
 
     def save(self, path: str):
-        """Saves entire model to `path`."""
+        """Save entire model to `path`."""
         if not path.endswith(".pth"):
             self.info(
                 "It is recommended to use the .pth suffix for model files."
@@ -58,11 +61,11 @@ class Model(LightningModule, LoggerMixin, ABC):
 
     @classmethod
     def load(cls, path: str) -> "Model":
-        """Loads entire model from `path`."""
+        """Load entire model from `path`."""
         return torch.load(path, pickle_module=dill)
 
     def save_state_dict(self, path: str):
-        """Saves model `state_dict` to `path`."""
+        """Save model `state_dict` to `path`."""
         if not path.endswith(".pth"):
             self.info(
                 "It is recommended to use the .pth suffix for state_dict files."
@@ -71,10 +74,9 @@ class Model(LightningModule, LoggerMixin, ABC):
         self.info(f"Model state_dict saved to {path}")
 
     def load_state_dict(
-        self, path: str
+        self, path: Union[str, Dict]
     ) -> "Model":  # pylint: disable=arguments-differ
-        """Loads model `state_dict` from `path`, either file or loaded
-        object."""
+        """Load model `state_dict` from `path`."""
         if isinstance(path, str):
             state_dict = torch.load(path)
         else:
@@ -96,8 +98,8 @@ class Model(LightningModule, LoggerMixin, ABC):
         """Construct `Model` instance from `source` configuration.
 
         Arguments:
-            trust (bool): Whether to trust the ModelConfig file enough to
-                `eval(...)` any lambda function expressions contained.
+            trust: Whether to trust the ModelConfig file enough to `eval(...)`
+                any lambda function expressions contained.
 
         Raises:
             ValueError: If the ModelConfig contains lambda functions but
