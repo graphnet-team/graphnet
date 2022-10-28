@@ -20,9 +20,9 @@ jobs:
     outputs:
       all: ${{ steps.setvar.outputs.all }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v2
+        #with:
+        #  fetch-depth: 0
 
       - name: Get changed files
         id: changed-files
@@ -32,14 +32,14 @@ jobs:
 
       - name: List all changed files
         run: |
-          for file in ${{ steps.changed-files.outputs.all }}; do
+          for file in ${{ steps.changed-files.outputs.added_modified }}; do
             echo "$file was changed"
           done
 
       - name:
         id: setvar
         run: |
-          echo "::set-output name=all::${{ steps.changed-files.outputs.all }};"
+          echo "all=${{ steps.changed-files.outputs.added_modified }}" >> $GITHUB_OUTPUT
 
   black:
     needs: [ files ]
