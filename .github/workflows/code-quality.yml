@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       all: ${{ steps.setvar.outputs.all }}
+      python: ${{ steps.setvar.outputs.python }}
     steps:
       - uses: actions/checkout@v2
         #with:
@@ -36,10 +37,13 @@ jobs:
             echo "$file was changed"
           done
 
-      - name:
+      - name: Save to output
         id: setvar
         run: |
-          echo "all=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_OUTPUT
+          all_files=${{ steps.changed-files.outputs.all_changed_files }}
+          python_files=$(grep -ow "[^ ]*\.py[^ ]*" <<<"$all_files")
+          echo "all=$all_files" >> $GITHUB_OUTPUT
+          echo "python=$python_files" >> $GITHUB_OUTPUT
 
   black:
     needs: [ files ]
@@ -50,7 +54,7 @@ jobs:
         uses: ./.github/actions/install-cpu
       - name: Run black
         run: |
-          echo ${{needs.files.outputs.all}}
-          black ${{needs.files.outputs.all}} --check --diff --config black.toml
+          echo ${{needs.files.outputs.python}}
+          black ${{needs.files.outputs.python}} --check --diff --config black.toml
 
 
