@@ -38,8 +38,10 @@ jobs:
       - name: Save to output
         id: setvar
         run: |
-          echo all="${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_OUTPUT
-          echo python="$(grep -ow '[^ ]*\.py[^ ]*' <<<'${{ steps.changed-files.outputs.all_changed_files }}')" >> $GITHUB_OUTPUT
+          all_files="${{ steps.changed-files.outputs.all_changed_files }}"
+          python_files="$(grep -ow '[^ ]*\.py[^ ]*' <<<'${{ steps.changed-files.outputs.all_changed_files }}')"
+          echo all="$all_files" >> $GITHUB_OUTPUT
+          echo python="$python_files" >> $GITHUB_OUTPUT
 
   black:
     needs: [ files ]
