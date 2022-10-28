@@ -1,8 +1,10 @@
+"""Classes for fitting per-event weights for training."""
+
 import numpy as np
 import pandas as pd
 import sqlite3
 from typing import Optional, List
-from graphnet.data.utils import run_sql_code, save_to_sql, create_table
+from graphnet.data.sqlite import save_to_sql, create_table
 
 
 class UniformWeightFitter:
@@ -18,6 +20,7 @@ class UniformWeightFitter:
         truth_table="truth",
         index_column="event_no",
     ):
+        """Construct `UniformWeightFitter`."""
         self._database_path = database_path
         self._truth_table = truth_table
         self._index_column = index_column
@@ -71,8 +74,7 @@ class UniformWeightFitter:
         return truth.sort_values("event_no").reset_index(drop=True)
 
     def _get_truth(self, variable: str, selection: Optional[List[int]] = None):
-        """Return truth `variable`, optionally only for `selection` event
-        nos."""
+        """Return truth `variable`, optionally only for `selection` events."""
         if selection is None:
             query = f"select {self._index_column}, {variable} from {self._truth_table}"
         else:
