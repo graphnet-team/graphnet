@@ -1,4 +1,4 @@
-"""Utility functions for use when training models."""
+"""Utility functions for `graphnet.training`."""
 
 from collections import OrderedDict
 import os
