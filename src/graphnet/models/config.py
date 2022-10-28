@@ -118,6 +118,7 @@ class ModelConfig(BaseModel, LoggerMixin):
                 path += CONFIG_FILES_SUFFIXES[0]
             with open(path, "w") as f:
                 yaml.dump(config_dict, f)
+            return None
         else:
             return yaml.dump(config_dict)
 
@@ -196,7 +197,7 @@ class ModelConfig(BaseModel, LoggerMixin):
             return obj._as_dict()
         elif isinstance(obj, type):
             return f"!class {obj.__module__} {obj.__name__}"
-        elif isinstance(obj, Callable):
+        elif isinstance(obj, Callable):  # type: ignore[arg-type]
             if hasattr(obj, "__name__") and obj.__name__ == "<lambda>":
                 return "!" + inspect.getsource(obj).split("=")[1].strip("\n ,")
             else:
