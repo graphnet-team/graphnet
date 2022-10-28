@@ -38,7 +38,7 @@ jobs:
       - name: Save to output
         id: setvar
         run: |
-          echo all=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_OUTPUT
+          echo all="${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_OUTPUT
           echo python="$(grep -ow '[^ ]*\.py[^ ]*' <<<'${{ steps.changed-files.outputs.all_changed_files }}')" >> $GITHUB_OUTPUT
 
   black:
