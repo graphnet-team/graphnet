@@ -1,3 +1,5 @@
+"""Reconstruction-specific `Model` class(es)."""
+
 import numpy as np
 import torch
 
@@ -40,7 +42,7 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
 
 
 class DirectionReconstructionWithKappa(Task):
-    """Reconstructs Direction with kappa from The 3DVonMisesFisher Distribution."""
+    """Reconstructs direction with kappa from the 3D-vMF distribution."""
 
     # Requires three features: untransformed points in (x,y,z)-space.
     nb_inputs = 3
@@ -131,7 +133,9 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
 
 
 class VertexReconstruction(Task):
-    # Requires four features, x, y, z and t
+    """Reconstructs vertex position and time."""
+
+    # Requires four features, x, y, z, and t.
     nb_inputs = 4
 
     def _forward(self, x):
@@ -145,7 +149,9 @@ class VertexReconstruction(Task):
 
 
 class PositionReconstruction(Task):
-    # Requires three features, x, y, z
+    """Reconstructs vertex position."""
+
+    # Requires three features, x, y, and z.
     nb_inputs = 3
 
     def _forward(self, x):
@@ -159,7 +165,9 @@ class PositionReconstruction(Task):
 
 
 class TimeReconstruction(Task):
-    # Requires on feature, time
+    """Reconstructs time."""
+
+    # Requires one feature, time.
     nb_inputs = 1
 
     def _forward(self, x):
@@ -169,7 +177,9 @@ class TimeReconstruction(Task):
 
 
 class BinaryClassificationTask(Task):
-    # requires one feature: probability of being neutrino?
+    """Performs binary classification."""
+
+    # Requires one feature, logit for being signal class.
     nb_inputs = 1
 
     def _forward(self, x):
@@ -178,6 +188,9 @@ class BinaryClassificationTask(Task):
 
 
 class BinaryClassificationTaskLogits(Task):
+    """Performs binary classification form logits."""
+
+    # Requires one feature, logit for being signal class.
     nb_inputs = 1
 
     def _forward(self, x):
@@ -185,9 +198,9 @@ class BinaryClassificationTaskLogits(Task):
 
 
 class InelasticityReconstruction(Task):
-    """Reconstructs interaction inelasticity (i.e., tracks vs.
+    """Reconstructs interaction inelasticity.
 
-    hadronic energy).
+    That is, tracks vs. hadronic energy.
     """
 
     # Requires one features: inelasticity itself
