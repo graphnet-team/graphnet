@@ -1,6 +1,6 @@
 """Standard model class(es)."""
 
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
@@ -61,7 +61,7 @@ class StandardModel(Model):
         self._scheduler_kwargs = scheduler_kwargs or dict()
         self._scheduler_config = scheduler_config or dict()
 
-    def configure_optimizers(self):
+    def configure_optimizers(self) -> Dict[str, Any]:
         """Configure the model's optimizer(s)."""
         optimizer = self._optimizer_class(
             self.parameters(), **self._optimizer_kwargs
@@ -92,7 +92,7 @@ class StandardModel(Model):
         preds = [task(x) for task in self._tasks]
         return preds
 
-    def shared_step(self, batch, batch_idx):
+    def shared_step(self, batch: Data, batch_idx: int) -> Tensor:
         """Perform shared step.
 
         Applies the forward pass and the following loss calculation, shared
@@ -102,7 +102,7 @@ class StandardModel(Model):
         loss = self.compute_loss(preds, batch)
         return loss
 
-    def training_step(self, train_batch, batch_idx):
+    def training_step(self, train_batch: Data, batch_idx: int) -> Tensor:
         """Perform training step."""
         loss = self.shared_step(train_batch, batch_idx)
         self.log(
@@ -115,7 +115,7 @@ class StandardModel(Model):
         )
         return loss
 
-    def validation_step(self, val_batch, batch_idx):
+    def validation_step(self, val_batch: Data, batch_idx: int) -> Tensor:
         """Perform validation step."""
         loss = self.shared_step(val_batch, batch_idx)
         self.log(
@@ -149,7 +149,7 @@ class StandardModel(Model):
         for task in self._tasks:
             task.inference()
 
-    def train(self, mode=True) -> "Model":
+    def train(self, mode: bool = True) -> "Model":
         """Deactivate inference mode."""
         super().train(mode)
         if mode:
