@@ -1,3 +1,5 @@
+"""Base detector-specific `Model` class(es)."""
+
 from abc import abstractmethod
 from typing import List
 
@@ -7,7 +9,8 @@ try:
     from typing import final
 except ImportError:  # Python version < 3.8
 
-    def final(f):  # Identity decorator
+    # Identity decorator
+    def final(f):  # type: ignore  # noqa: D103
         return f
 
 
@@ -31,6 +34,7 @@ class Detector(Model):
     def __init__(
         self, graph_builder: GraphBuilder, scalers: List[dict] = None
     ):
+        """Construct `Detector`."""
         # Base class constructor
         super().__init__()
 
@@ -48,7 +52,6 @@ class Detector(Model):
     @final
     def forward(self, data: Data) -> Data:
         """Pre-process graph `Data` features and build graph adjacency."""
-
         # Check(s)
         assert data.x.size()[1] == self.nb_inputs, (
             "Got graph data with incompatible size, ",
@@ -70,11 +73,11 @@ class Detector(Model):
             x_numpy = data.x.detach().cpu().numpy()
 
             data.x[:, :3] = torch.tensor(
-                self._scalers["xyz"].transform(x_numpy[:, :3])
+                self._scalers["xyz"].transform(x_numpy[:, :3])  # type: ignore[call-overload]
             ).type_as(data.x)
 
             data.x[:, 3:] = torch.tensor(
-                self._scalers["features"].transform(x_numpy[:, 3:])
+                self._scalers["features"].transform(x_numpy[:, 3:])  # type: ignore[call-overload]
             ).type_as(data.x)
 
         else:
@@ -85,16 +88,19 @@ class Detector(Model):
 
     @abstractmethod
     def _forward(self, data: Data) -> Data:
-        """Same syntax as `.forward` for implentation in inheriting classes."""
+        """Syntax like `.forward`, for implentation in inheriting classes."""
 
     @property
     def nb_inputs(self) -> int:
+        """Return number of input features."""
         return len(self.features)
 
     @property
     def nb_outputs(self) -> int:
-        """This the default, but may be overridden by specific inheriting
-        classes."""
+        """Return number of output features.
+
+        This the default, but may be overridden by specific inheriting classes.
+        """
         return self.nb_inputs
 
     def _validate_features(self, data: Data):
