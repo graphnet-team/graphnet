@@ -1,6 +1,8 @@
+"""Utility functions for use when training models."""
+
 from collections import OrderedDict
 import os
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -27,14 +29,13 @@ def make_dataloader(
     selection: List[int] = None,
     num_workers: int = 10,
     persistent_workers: bool = True,
-    node_truth: str = None,
+    node_truth: List[str] = None,
     node_truth_table: str = None,
     string_selection: List[int] = None,
     loss_weight_table: str = None,
     loss_weight_column: str = None,
 ) -> DataLoader:
     """Construct `DataLoader` instance."""
-
     # Check(s)
     if isinstance(pulsemaps, str):
         pulsemaps = [pulsemaps]
@@ -88,9 +89,8 @@ def make_train_validation_dataloader(
     string_selection: List[int] = None,
     loss_weight_column: str = None,
     loss_weight_table: str = None,
-) -> Tuple[DataLoader]:
+) -> Tuple[DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
-
     # Reproducibility
     rng = np.random.RandomState(seed=seed)
 
@@ -135,13 +135,13 @@ def make_train_validation_dataloader(
     training_dataloader = make_dataloader(
         shuffle=True,
         selection=training_selection,
-        **common_kwargs,
+        **common_kwargs,  # type: ignore[arg-type]
     )
 
     validation_dataloader = make_dataloader(
         shuffle=False,
         selection=validation_selection,
-        **common_kwargs,
+        **common_kwargs,  # type: ignore[arg-type]
     )
 
     return (
@@ -173,10 +173,10 @@ def get_predictions(
 
     # Get predictions
     predictions_torch = trainer.predict(model, dataloader)
-    predictions = [
+    predictions_list = [
         p[0].detach().cpu().numpy() for p in predictions_torch
     ]  # Assuming single task
-    predictions = np.concatenate(predictions, axis=0)
+    predictions = np.concatenate(predictions_list, axis=0)
     try:
         assert len(prediction_columns) == predictions.shape[1]
     except IndexError:
@@ -184,7 +184,9 @@ def get_predictions(
         assert len(prediction_columns) == predictions.shape[1]
 
     # Get additional attributes
-    attributes = OrderedDict([(attr, []) for attr in additional_attributes])
+    attributes: Dict[str, List[np.ndarray]] = OrderedDict(
+        [(attr, []) for attr in additional_attributes]
+    )
     for batch in dataloader:
         for attr in attributes:
             attribute = batch[attr].detach().cpu().numpy()
