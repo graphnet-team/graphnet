@@ -40,7 +40,7 @@ jobs:
           echo python="$python_files" >> $GITHUB_OUTPUT
 
   pre-commit:
-    name: ${{ matrix.hook }}
+    name: Pre-commit - ${{ matrix.hook }}
     needs: [ files ]
     runs-on: ubuntu-latest
     strategy:
