@@ -21,4 +21,4 @@ repos:
     rev: v0.982
     hooks:
     - id: mypy
-#      args: [--follow-imports=silent]
+      args: [--follow-imports=silent]
