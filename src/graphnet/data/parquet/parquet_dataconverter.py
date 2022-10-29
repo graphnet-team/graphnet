@@ -6,7 +6,7 @@ from typing import List, Optional
 
 import awkward
 
-from graphnet.data.dataconverter import DataConverter
+from graphnet.data.dataconverter import DataConverter  # type: ignore[attr-defined]
 
 
 class ParquetDataConverter(DataConverter):
@@ -40,11 +40,10 @@ class ParquetDataConverter(DataConverter):
         """Parquet-specific method for merging output files.
 
         Args:
-            output_file (str): Name of the output file containing the merged
-                results.
-            input_files (List[str]): Intermediate files to be merged, according
-                to the specific implementation. Default to None, meaning that
-                all files output by the current instance are merged.
+            output_file: Name of the output file containing the merged results.
+            input_files: Intermediate files to be merged, according to the
+                specific implementation. Default to None, meaning that all
+                files output by the current instance are merged.
 
         Raises:
             NotImplementedError: If the method has not been implemented for the
