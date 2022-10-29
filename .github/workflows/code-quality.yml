@@ -38,57 +38,16 @@ jobs:
           echo all="$all_files" >> $GITHUB_OUTPUT
           echo python="$python_files" >> $GITHUB_OUTPUT
 
-  black:
+  pre-commit:
     needs: [ files ]
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hook: ["black", "flake8", "docformatter", "pydocstyle", "mypy"]
     steps:
       - uses: actions/checkout@v3
       - name: Install package
         uses: ./.github/actions/install-cpu
-      - name: Run black
+      - name: Run ${{ matrix.hook }}
         run: |
-          pre-commit run black --files ${{ needs.files.outputs.python }}
-
-  flake8:
-    needs: [ files ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install package
-        uses: ./.github/actions/install-cpu
-      - name: Run flake8
-        run: |
-          pre-commit run flake8 --files ${{ needs.files.outputs.python }}
-
-  docformatter:
-    needs: [ files ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install package
-        uses: ./.github/actions/install-cpu
-      - name: Run docformatter
-        run: |
-          pre-commit run docformatter --files ${{ needs.files.outputs.python }}
-
-  pydocstyle:
-    needs: [ files ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install package
-        uses: ./.github/actions/install-cpu
-      - name: Run pydocstyle
-        run: |
-          pre-commit run pydocstyle --files ${{ needs.files.outputs.python }}
-
-  mypy:
-    needs: [ files ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install package
-        uses: ./.github/actions/install-cpu
-      - name: Run mypy
-        run: |
-          pre-commit run mypy --files ${{ needs.files.outputs.python }}
+          pre-commit run ${{ matrix.hook }} --files ${{ needs.files.outputs.python }}
