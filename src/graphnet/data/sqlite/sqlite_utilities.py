@@ -1,4 +1,4 @@
-"""SQLite-specific utility functions relevant to the graphnet.data package."""
+"""SQLite-specific utility functions for use in `graphnet.data`."""
 
 import pandas as pd
 import sqlalchemy
@@ -19,8 +19,7 @@ def run_sql_code(database: str, code: str):
 
 
 def save_to_sql(df: pd.DataFrame, table_name: str, database: str):
-    """Save a dataframe `df` to a table `table_name` in SQLite database
-    `database`.
+    """Save a dataframe `df` to a table `table_name` in SQLite `database`.
 
     Table must exist already.
 
@@ -56,13 +55,13 @@ def create_table(
     database_path: str,
     is_pulse_map: bool = False,
 ):
-    """Creates a table.
+    """Create a table.
 
     Args:
-        database (str): path to the database
-        table_name (str): name of the table
-        columns (str): the names of the columns of the table
-        is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.
+        df: Data to be saved to table
+        table_name: Name of the table.
+        database_path: Path to the database.
+        is_pulse_map: Whether or not this is a pulse map table.
     """
     query_columns = list()
     for column in df.columns:
@@ -74,16 +73,14 @@ def create_table(
         else:
             type_ = "NOT NULL"
         query_columns.append(f"{column} {type_}")
-    query_columns = ", ".join(query_columns)
+    query_columns_string = ", ".join(query_columns)
 
     code = (
         "PRAGMA foreign_keys=off;\n"
-        f"CREATE TABLE {table_name} ({query_columns});\n"
+        f"CREATE TABLE {table_name} ({query_columns_string});\n"
         "PRAGMA foreign_keys=on;"
     )
     run_sql_code(
         database_path,
         code,
     )
-
-    return
