@@ -15,6 +15,7 @@ on:
 jobs:
 
   check-cobalt-credentials:
+    name: Check Cobalt credentials
     runs-on: ubuntu-latest
     outputs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
@@ -34,6 +35,7 @@ jobs:
          fi
 
   check-codeclimate-credentials:
+    name: Check CodeClimate credentials
     runs-on: ubuntu-latest
     outputs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
@@ -51,6 +53,7 @@ jobs:
          fi
 
   build-icetray:
+    name: Unit tests - IceTray
     needs: [ check-cobalt-credentials, check-codeclimate-credentials ]
     if: needs.check-cobalt-credentials.outputs.has_credentials == 'true'
     runs-on: ubuntu-latest
@@ -110,6 +113,7 @@ jobs:
           coverageLocations: coverage.xml:coverage.py
 
   build-matrix:
+    name: Unit tests - Python versions
     runs-on: ubuntu-latest
     strategy:
       matrix:
