@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from graphnet.models.config import save_config
 
 from graphnet.models.task import Task
 from graphnet.utilities.maths import eps_like
