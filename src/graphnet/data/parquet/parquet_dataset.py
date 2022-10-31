@@ -35,9 +35,13 @@ class ParquetDataset(Dataset):
         self._parquet_hook = ak.from_parquet(self._path, lazy=False)
 
     def _get_all_indices(self):
-        return ak.to_numpy(
-            self._parquet_hook[self._truth_table][self._index_column]
-        ).tolist()
+        return np.arange(
+            len(
+                ak.to_numpy(
+                    self._parquet_hook[self._truth_table][self._index_column]
+                ).tolist()
+            )
+        )
 
     def _query_table(
         self,
@@ -51,7 +55,7 @@ class ParquetDataset(Dataset):
             selection is None
         ), "Argument `selection` is currently not supported"
 
-        sequential_index = self._indices.index(index)
+        sequential_index = self._indices[index]
 
         try:
             ak_array = self._parquet_hook[table][columns][sequential_index]
