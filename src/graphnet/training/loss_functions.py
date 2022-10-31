@@ -14,12 +14,13 @@ except ImportError:  # Python version < 3.8
     def final(f):  # Identity decorator
         return f
 
+
 from torch.nn.functional import (
-    one_hot, 
-    cross_entropy, 
+    one_hot,
+    cross_entropy,
     binary_cross_entropy,
     softplus,
-    )
+)
 import numpy as np
 import scipy.special
 import torch
@@ -116,10 +117,9 @@ class LogCoshLoss(LossFunction):
         return elements
 
 
-
 class CrossEntropyLoss(LossFunction):
     """Compute cross entropy loss.
-    
+
     Predictions are an [N, num_class]-matrix of values between 0 and 1, and
     targets are an [N,1]-matrix with integer values in (0, num_classes - 1).
     """
@@ -131,10 +131,11 @@ class CrossEntropyLoss(LossFunction):
             prediction.float(), target_new.float(), reduction="none"
         )
 
+
 class BinaryCrossEntropyLoss(LossFunction):
     """Compute binary cross entropy loss.
-    
-    Predictions are vector probabilities (i.e., values between 0 and 1), and 
+
+    Predictions are vector probabilities (i.e., values between 0 and 1), and
     targets should be 0 and 1.
     """
 

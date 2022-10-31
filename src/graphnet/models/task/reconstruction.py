@@ -168,6 +168,7 @@ class TimeReconstruction(Task):
         # Leave as it is
         return x
 
+
 class MulticlassClassificationTask(Task):
     # Requires the same number of features as the number of classes being predicted
     @property
@@ -184,6 +185,7 @@ class MulticlassClassificationTask(Task):
         # Transform latent features into probabilities.
         return self._softmax(x)
 
+
 class BinaryClassificationTask(Task):
     # requires one feature: probability of being neutrino?
     nb_inputs = 1
@@ -191,6 +193,7 @@ class BinaryClassificationTask(Task):
     def _forward(self, x):
         # transform probability of being muon
         return torch.sigmoid(x)
+
 
 class BinaryClassificationTaskLogits(Task):
     nb_inputs = 1
