@@ -10,7 +10,7 @@ from graphnet.models.task.reconstruction import (
     EnergyReconstruction,
     PointingReconstructionWithKappa,
 )
-from graphnet.components.loss_functions import LogCoshLoss, GaussianNLLLoss
+from graphnet.training.loss_functions import LogCoshLoss, GaussianNLLLoss
 
 
 def test_transform_prediction_and_target():

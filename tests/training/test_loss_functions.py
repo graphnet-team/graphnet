@@ -7,7 +7,7 @@ import torch
 from torch import Tensor
 from torch.autograd import grad
 
-from graphnet.components.loss_functions import (
+from graphnet.training.loss_functions import (
     LogCoshLoss,
     VonMisesFisherLoss,
     GaussianNLLLoss,
