@@ -1,7 +1,9 @@
+import sys
+import types
+from inspect import getmembers
+
 import pytest
 import torch
-
-# from inspect import getmembers, isfunction
 
 from graphnet.models.detector.icecube import IceCube86
 from graphnet.models.graph_builders import KNNGraphBuilder
@@ -63,14 +65,17 @@ def test_PointingReconstructionWithKappa():
         target_labels=["zenith", "azimuth"],
         loss_function=GaussianNLLLoss(),
     )
-    
+
+
+def is_function_local(object):
+    return isinstance(object, types.FunctionType) and object.__module__ == __name__
+
 
 def main():
-    # print(getmembers(__file__, isfunction))
-
-    # Test task
-    # test_transform_prediction_and_target()
-    test_PointingReconstructionWithKappa()
+    # Test tasks in script
+    function_names = [name for name, _ in getmembers(sys.modules[__name__], predicate=is_function_local)]
+    for function in function_names[2:]:
+        eval(function)
 
 
 if __name__ == "__main__":
