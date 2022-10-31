@@ -58,34 +58,19 @@ def test_PointingReconstructionWithKappa():
         nb_inputs=detector.nb_outputs,
     )
 
-    # Test not inverse functions
-    with pytest.raises(
-        AssertionError,
-        match="The provided transforms for targets during training and predictions during inference are not inverse. Please adjust transformation functions or support.",
-    ):
-        PointingReconstructionWithKappa(
-            hidden_size=gnn.nb_outputs,
-            target_labels=["zenith", "azimuth"],
-            loss_function=GaussianNLLLoss(),
-        )
-
-    # Test wrong combination of inputs
-    with pytest.raises(
-        AssertionError,
-        match="Please specify both `transform_inference` and `transform_target`",
-    ):
-        PointingReconstructionWithKappa(
-            hidden_size=gnn.nb_outputs,
-            target_labels="angles",
-            loss_function=GaussianNLLLoss(),
-        )
-
+    PointingReconstructionWithKappa(
+        hidden_size=gnn.nb_outputs,
+        target_labels=["zenith", "azimuth"],
+        loss_function=GaussianNLLLoss(),
+    )
+    
 
 def main():
     # print(getmembers(__file__, isfunction))
 
     # Test task
-    test_transform_prediction_and_target()
+    # test_transform_prediction_and_target()
+    test_PointingReconstructionWithKappa()
 
 
 if __name__ == "__main__":
