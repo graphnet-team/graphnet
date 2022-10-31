@@ -1,18 +1,16 @@
 import pytest
 import torch
-#from inspect import getmembers, isfunction
+
+# from inspect import getmembers, isfunction
 
 from graphnet.models.detector.icecube import IceCube86
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.gnn import DynEdge
 from graphnet.models.task.reconstruction import (
-    EnergyReconstruction, 
-    PointingReconstructionWithKappa
+    EnergyReconstruction,
+    PointingReconstructionWithKappa,
 )
-from graphnet.components.loss_functions import (
-    LogCoshLoss,
-    GaussianNLLLoss
-)
+from graphnet.components.loss_functions import LogCoshLoss, GaussianNLLLoss
 
 
 def test_transform_prediction_and_target():
@@ -50,6 +48,7 @@ def test_transform_prediction_and_target():
             transform_inference=torch.log10,
         )
 
+
 def test_PointingReconstructionWithKappa():
 
     detector = IceCube86(
@@ -81,11 +80,13 @@ def test_PointingReconstructionWithKappa():
             loss_function=GaussianNLLLoss(),
         )
 
+
 def main():
-    #print(getmembers(__file__, isfunction))
-    
+    # print(getmembers(__file__, isfunction))
+
     # Test task
     test_transform_prediction_and_target()
+
 
 if __name__ == "__main__":
     main()

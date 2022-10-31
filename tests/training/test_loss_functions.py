@@ -8,10 +8,10 @@ from torch import Tensor
 from torch.autograd import grad
 
 from graphnet.components.loss_functions import (
-    LogCoshLoss, 
-    VonMisesFisherLoss, 
-    GaussianNLLLoss
-    )
+    LogCoshLoss,
+    VonMisesFisherLoss,
+    GaussianNLLLoss,
+)
 from graphnet.utilities.maths import eps_like
 
 
@@ -66,36 +66,43 @@ def test_log_cosh(dtype=torch.float32):
         losses_reference[reference_is_valid], losses[reference_is_valid]
     )
 
+
 def test_gaussian_nll_loss(dtype=torch.float32):
     # Prepare test data for prediction (zenith, azimuth and kappa) and target
-    angles = torch.tensor([-pi, -pi/2, -pi/4, 0, pi/4, pi/2, pi])  # Shape: (7,)
+    angles = torch.tensor(
+        [-pi, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, pi]
+    )  # Shape: (7,)
     angles_matrix = angles.unsqueeze(1).tile(angles.size())  # (7,7)
-    zenith_azimuth = torch.stack([
-        angles_matrix.ravel(),
-        angles_matrix.T.ravel(),
-    ]).T  # (49,2)
+    zenith_azimuth = torch.stack(
+        [
+            angles_matrix.ravel(),
+            angles_matrix.T.ravel(),
+        ]
+    ).T  # (49,2)
     nb_examples = zenith_azimuth.size(0)
     kappa = torch.logspace(-2, 2, nb_examples)  # (49,)
-    
+
     prediction = torch.hstack([zenith_azimuth, kappa.unsqueeze(1)])  # (49, 3)
-    
+
     target = torch.zeros(nb_examples, 2)  # (zenith, azimuth)
-    
+
     # Calculate losses using loss function, and manually
     GaussianNLLLoss_loss = GaussianNLLLoss()
     losses = GaussianNLLLoss_loss(prediction, target, return_elements=True)
     losses_function = torch.nn.GaussianNLLLoss(eps=1e-06, reduction="none")
-    losses_reference = losses_function(prediction[:,:2]-target, target, 1/prediction[:,2])
+    losses_reference = losses_function(
+        prediction[:, :2] - target, target, 1 / prediction[:, 2]
+    )
     losses_reference = torch.sum(losses_reference, dim=-1)
 
     #  Losses should all be valid
     assert torch.all(torch.isfinite(losses))
-    
+
     # Losses should have expected shape
-    assert losses.ndim == 1 # loss is a single value
+    assert losses.ndim == 1  # loss is a single value
     assert losses.size(dim=0) == prediction.size(dim=0)
     assert losses.size(dim=-1) == 49
-    
+
     # Losses should match expectation
     assert torch.allclose(losses_reference, losses)
 
@@ -204,9 +211,11 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
         grads_approx[exact_is_valid], grads_exact[exact_is_valid], rtol=1e-2
     )
 
+
 def main():
     # test function
     test_gaussian_nll_loss()
+
 
 if __name__ == "__main__":
     main()
