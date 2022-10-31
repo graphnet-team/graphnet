@@ -5,12 +5,12 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.components.loss_functions import VonMisesFisher2DLoss
+from graphnet.training.loss_functions import VonMisesFisher2DLoss
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
-from graphnet.models import Model
+from graphnet.models import StandardModel
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn.dynedge import DynEdge, DOMCoarsenedDynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
@@ -18,8 +18,8 @@ from graphnet.models.task.reconstruction import (
     ZenithReconstructionWithKappa,
     AzimuthReconstructionWithKappa,
 )
-from graphnet.models.training.callbacks import ProgressBar, PiecewiseLinearLR
-from graphnet.models.training.utils import (
+from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
+from graphnet.training.utils import (
     get_predictions,
     make_train_validation_dataloader,
     save_results,
@@ -97,7 +97,7 @@ def train(config):
             loss_function=VonMisesFisher2DLoss(),
         )
 
-    model = Model(
+    model = StandardModel(
         detector=detector,
         gnn=gnn,
         tasks=[task],

@@ -10,11 +10,14 @@ SETUP_REQUIRES = [
 
 INSTALL_REQUIRES = [
     "awkward>=1.8",
+    "colorlog>=6.6",
     "dill>=0.3",
     "matplotlib>=3.5",
     "numpy>=1.21",
     "pandas>=1.3",
     "pyarrow",
+    "pydantic",
+    "ruamel.yaml",
     "scikit_learn>=1.0",
     "scipy>=1.7",
     "sqlalchemy>=1.4",
@@ -26,7 +29,6 @@ INSTALL_REQUIRES = [
 EXTRAS_REQUIRE = {
     "develop": [
         "black",
-        "colorlog",
         "coverage",
         "MarkupSafe<=2.1",
         "pre-commit",
@@ -36,6 +38,7 @@ EXTRAS_REQUIRE = {
         "pytest-order",
         "sphinx",
         "sphinx_rtd_theme",
+        "sphinx-autodoc-typehints",
         "versioneer",
     ],
     "torch": [

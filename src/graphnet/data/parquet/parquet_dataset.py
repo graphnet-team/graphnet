@@ -14,7 +14,7 @@ class ParquetDataset(Dataset):
     def _init(self):
         # Check(s)
         if isinstance(self._path, list):
-            self.logger.error("Multiple files not supported")
+            self.error("Multiple files not supported")
         assert isinstance(self._path, str)
 
         assert self._path.endswith(
@@ -32,7 +32,7 @@ class ParquetDataset(Dataset):
         ), "Argument `string_selection` is currently not supported"
 
         # Set custom member variable(s)
-        self._parquet_hook = ak.from_parquet(self._path)
+        self._parquet_hook = ak.from_parquet(self._path, lazy=False)
 
     def _get_all_indices(self):
         return ak.to_numpy(

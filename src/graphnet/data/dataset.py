@@ -1,7 +1,7 @@
 """Module defining the base `Dataset` class used in GraphNeT."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import numpy as np
 import torch
 from torch_geometric.data import Data
@@ -59,7 +59,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self._node_truth_table = node_truth_table
 
         if string_selection is not None:
-            self.logger.warning(
+            self.warning(
                 (
                     "String selection detected.\n",
                     f"Accepted strings: {string_selection}\n",
@@ -80,15 +80,17 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         if (self._loss_weight_table is None) and (
             self._loss_weight_column is not None
         ):
-            self.logger.warning("Error: no loss weight table specified")
+            self.warning("Error: no loss weight table specified")
             assert isinstance(self._loss_weight_table, str)
         if (self._loss_weight_table is not None) and (
             self._loss_weight_column is None
         ):
-            self.logger.warning("Error: no loss weight column specified")
+            self.warning("Error: no loss weight column specified")
             assert isinstance(self._loss_weight_column, str)
 
         self._dtype = dtype
+
+        self._label_fns: Dict[str, Callable[[Data], Any]] = {}
 
         # Implementation-specific initialisation.
         self._init()
@@ -148,6 +150,13 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         """
 
     # Public method(s)
+    def add_label(self, key: str, fn: Callable[[Data], Any]):
+        """Add custom graph label define using function `fn`."""
+        assert (
+            key not in self._label_fns
+        ), f"A custom label {key} has already been defined."
+        self._label_fns[key] = fn
+
     def __len__(self):
         return len(self._indices)
 
@@ -181,7 +190,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         # Remove missing features
         if missing_features:
-            self.logger.warning(
+            self.warning(
                 "Removing the following (missing) features: "
                 + ", ".join(missing_features)
             )
@@ -190,7 +199,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
         # Remove missing truth variables
         if missing_truth_variables:
-            self.logger.warning(
+            self.warning(
                 (
                     "Removing the following (missing) truth variables: "
                     + ", ".join(missing_truth_variables)
@@ -339,7 +348,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type,
                     # e.g. `str`.
-                    self.logger.debug(
+                    self.debug(
                         (
                             f"Could not assign `{key}` with type "
                             f"'{type(value).__name__}' as attribute to graph."
@@ -349,6 +358,10 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         # Additionally add original features as (static) attributes
         for index, feature in enumerate(graph.features):
             graph[feature] = graph.x[:, index].detach()
+
+        # Add custom labels to the graph
+        for key, fn in self._label_fns.items():
+            graph[key] = fn(graph)
 
         return graph
 

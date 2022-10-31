@@ -37,7 +37,7 @@ class I3Extractor(ABC, LoggerMixin):
         try:
             g_frame = gcd_file.pop_frame(icetray.I3Frame.Geometry)
         except RuntimeError:
-            self.logger.error(
+            self.error(
                 "No GCD file was provided and no G-frame was found. Exiting."
             )
             raise
@@ -47,9 +47,7 @@ class I3Extractor(ABC, LoggerMixin):
         try:
             c_frame = gcd_file.pop_frame(icetray.I3Frame.Calibration)
         except RuntimeError:
-            self.logger.warning(
-                "No GCD file was provided and no C-frame was found."
-            )
+            self.warning("No GCD file was provided and no C-frame was found.")
         else:
             self._calibration = c_frame["I3Calibration"]
 
