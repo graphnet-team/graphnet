@@ -213,8 +213,13 @@ def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
 
 
 def main():
-    # test function
+    # Test loss function
+    # _compute_elementwise_gradient()
+    # test_log_cosh()
     test_gaussian_nll_loss()
+    # test_von_mises_fisher_exact_m3()
+    # test_von_mises_fisher_approximation()
+    # test_von_mises_fisher_approximation_large_kappa()
 
 
 if __name__ == "__main__":
