@@ -14,7 +14,12 @@ except ImportError:  # Python version < 3.8
     def final(f):  # Identity decorator
         return f
 
-from torch.nn.functional import one_hot, cross_entropy
+from torch.nn.functional import (
+    one_hot, 
+    cross_entropy, 
+    binary_cross_entropy,
+    softplus,
+    )
 import numpy as np
 import scipy.special
 import torch
@@ -102,7 +107,7 @@ class LogCoshLoss(LossFunction):
         Used to avoid `inf` for even moderately large differences.
         See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]
         """
-        return x + torch.nn.functional.softplus(-2.0 * x) - np.log(2.0)
+        return x + softplus(-2.0 * x) - np.log(2.0)
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Implementation of loss calculation."""
@@ -115,15 +120,13 @@ class LogCoshLoss(LossFunction):
 class CrossEntropyLoss(LossFunction):
     """Compute cross entropy loss.
     
-    Predictions are an [N, num_class]-matrix  of values between 0 and 1, and
+    Predictions are an [N, num_class]-matrix of values between 0 and 1, and
     targets are an [N,1]-matrix with integer values in (0, num_classes - 1).
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        # transformer for multiple pid types to total of three classes
         device = prediction.device
-        pid_transform = {1:0, 12:2, 13:1, 14:2, 16:2}
-        target_new = one_hot(torch.tensor([pid_transform[np.abs(int(value))] for value in target]), 3).to(device)
+        target_new = one_hot(target).to(device)
         return cross_entropy(
             prediction.float(), target_new.float(), reduction="none"
         )
@@ -136,7 +139,7 @@ class BinaryCrossEntropyLoss(LossFunction):
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        return torch.nn.functional.binary_cross_entropy(
+        return binary_cross_entropy(
             prediction.float(), target.float(), reduction="none"
         )
 
