@@ -63,6 +63,7 @@ class Task(Model):
     @save_config
     def __init__(
         self,
+        *,
         hidden_size: int,
         target_labels: Union[str, List[str]],
         loss_function: "LossFunction",

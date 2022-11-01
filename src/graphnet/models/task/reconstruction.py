@@ -1,7 +1,7 @@
 from ctypes import cdll
 import numpy as np
 import torch
-from torch.nn import (Softmax)
+from torch.nn import Softmax
 from graphnet.models.config import save_config
 
 from graphnet.models.task import Task
@@ -174,16 +174,15 @@ class TimeReconstruction(Task):
 class MulticlassClassificationTask(Task):
     # Requires the same number of features as the number of classes being predicted
     @save_config
-    def __init__(self, nb_inputs, *args, **kwargs):
-        self._nb_inputs = nb_inputs
+    def __init__(self, nb_classes, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._nb_classes = nb_classes
         self._softmax = Softmax()
-        super(Task, self).__init__(self,*args, **kwargs)
-        #super(Task).__init__(self, *args, **kwargs)
-    
+
     @property
     def nb_inputs(self):
         """Number of outputs from Multiclass Classification."""
-        return self._nb_inputs
+        return self._nb_classes
 
     def _forward(self, x):
         """Transform latent features into probabilities."""
