@@ -16,7 +16,7 @@ class ParquetDataConverter(DataConverter):
     file_suffix: str = "parquet"
 
     # Abstract method implementation(s)
-    def save_data(self, data: List[OrderedDict], output_file: str):
+    def save_data(self, data: List[OrderedDict], output_file: str) -> None:
         """Save data to parquet file."""
         # Check(s)
         if os.path.exists(output_file):
@@ -36,7 +36,7 @@ class ParquetDataConverter(DataConverter):
 
     def merge_files(
         self, output_file: str, input_files: Optional[List[str]] = None
-    ):
+    ) -> None:
         """Parquet-specific method for merging output files.
 
         Args:
