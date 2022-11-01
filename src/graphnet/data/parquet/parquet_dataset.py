@@ -1,6 +1,7 @@
 """`Dataset` class(es) for reading from Parquet files."""
 
 from typing import Any, List, Optional, Tuple, Union, cast
+
 import numpy as np
 import awkward as ak
 
@@ -11,7 +12,7 @@ class ParquetDataset(Dataset):
     """Pytorch dataset for reading from Parquet files."""
 
     # Implementing abstract method(s)
-    def _init(self):
+    def _init(self) -> None:
         # Check(s)
         if isinstance(self._path, list):
             self.error("Multiple files not supported")
@@ -34,7 +35,7 @@ class ParquetDataset(Dataset):
         # Set custom member variable(s)
         self._parquet_hook = ak.from_parquet(self._path, lazy=False)
 
-    def _get_all_indices(self):
+    def _get_all_indices(self) -> np.ndarray:
         return np.arange(
             len(
                 ak.to_numpy(
