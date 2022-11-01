@@ -124,9 +124,32 @@ class CrossEntropyLoss(LossFunction):
     targets are an [N,1]-matrix with integer values in (0, num_classes - 1).
     """
 
+    @save_config
+    def __init__(self, options, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._options = options
+
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         device = prediction.device
-        target_new = one_hot(target).to(device)
+        # target_new = one_hot(target).to(device)
+
+        if isinstance(self._options, int):
+            nb_classes = self._options
+            assert torch.all(target >= 0)
+            assert torch.all(target < nb_classes)
+            assert target.dtype in (torch.int32, torch.int64)
+            target_integer = target
+        elif isinstance(self._options, list):  # (0,12,13,14,16) -> (0,1,2,3,4)
+            nb_classes = len(self._options)
+            target_integer = target
+        elif isinstance(self._options, dict):  #
+            nb_classes = len(self._options)
+            target_integer = torch.tensor(...)
+        else:
+            self.error("Type (type(self._options)) not supported")
+
+        # pid_transform = {1:0,12:2,13:1,14:2,16:2}
+        target_new = one_hot(target_integer, nb_classes)
         return cross_entropy(
             prediction.float(), target_new.float(), reduction="none"
         )
