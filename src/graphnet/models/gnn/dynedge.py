@@ -1,5 +1,5 @@
 """Implementation of the DynEdge GNN model architecture."""
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Sequence, Tuple, Union
 
 import torch
 from torch import Tensor, LongTensor
@@ -20,54 +20,53 @@ GLOBAL_POOLINGS = {
 
 
 class DynEdge(GNN):
+    """DynEdge (dynamical edge convolutional) model."""
+
     @save_config
     def __init__(
         self,
         nb_inputs: int,
         *,
-        nb_neighbours: Optional[int] = 8,
-        features_subset: Optional[List[int]] = None,
-        dynedge_layer_sizes: Optional[List[Tuple[int]]] = None,
+        nb_neighbours: int = 8,
+        features_subset: Optional[Union[List[int], slice]] = None,
+        dynedge_layer_sizes: Optional[List[Tuple[int, ...]]] = None,
         post_processing_layer_sizes: Optional[List[int]] = None,
         readout_layer_sizes: Optional[List[int]] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
         add_global_variables_after_pooling: bool = False,
     ):
-        """DynEdge (dynamical edge convolutional) model.
+        """Construct `DynEdge`.
 
         Args:
-            nb_inputs (int): Number of input features on each node
-            nb_neighbours (Optional[int], optional): Number of neighbours to
-                used in the k-nearest neighbour clustering which is performed
-                after each (dynamical) edge convolution. Defaults to 8.
-            features_subset (Optional[List[int]], optional): The subset of
-                latent features on each node that are used as metric dimensions
-                when performing the k-nearest neighbours clustering. Defaults
-                to slice(0,3).
-            dynedge_layer_sizes (Optional[List[Tuple[int]]], optional): The
-                layer sizes, or latent feature dimenions, used in the
-                `DynEdgeConv` layer. Each entry in `dynedge_layer_sizes`
-                corresponds to a single `DynEdgeConv` layer; the integers in
-                the corresponding tuple corresponds to the layer sizes in the
-                multi-layer perceptron (MLP) that is applied within each
-                `DynEdgeConv` layer. That is, a list of size-two tuples means
-                that all `DynEdgeConv` layers contain a two-layer MLP.
+            nb_inputs: Number of input features on each node.
+            nb_neighbours: Number of neighbours to used in the k-nearest
+                neighbour clustering which is performed after each (dynamical)
+                edge convolution.
+            features_subset: The subset of latent features on each node that
+                are used as metric dimensions when performing the k-nearest
+                neighbours clustering. Defaults to [0,1,2].
+            dynedge_layer_sizes: The layer sizes, or latent feature dimenions,
+                used in the `DynEdgeConv` layer. Each entry in
+                `dynedge_layer_sizes` corresponds to a single `DynEdgeConv`
+                layer; the integers in the corresponding tuple corresponds to
+                the layer sizes in the multi-layer perceptron (MLP) that is
+                applied within each `DynEdgeConv` layer. That is, a list of
+                size-two tuples means that all `DynEdgeConv` layers contain a
+                two-layer MLP.
                 Defaults to [(128, 256), (336, 256), (336, 256), (336, 256)].
-            post_processing_layer_sizes (Optional[List[int]], optional): Hidden
-                layer sizes in the MLP following the skip-concatenation of the
-                outputs of each `DynEdgeConv` layer. Defaults to [336, 256].
-            readout_layer_sizes (Optional[List[int]], optional): Hidden layer
-                sizes in the MLP following the post-processing _and_ optional
-                global pooling. As this is the last layer(s) in the model, the
-                last layer in the read-out yields the output of the `DynEdge`
-                model. Defaults to [128,].
-            global_pooling_schemes (Optional[Union[str, List[str]]], optional):
-                The list global pooling schemes to use. Options are: "min",
-                "max", "mean", and "sum". Defaults to None.
-            add_global_variables_after_pooling (bool, optional): Whether to add
-                global variables after global pooling. The alternative is to
-                added (distribute) them to the individual nodes before any
-                convolutional operations. Defaults to False.
+            post_processing_layer_sizes: Hidden layer sizes in the MLP
+                following the skip-concatenation of the outputs of each
+                `DynEdgeConv` layer. Defaults to [336, 256].
+            readout_layer_sizes: Hidden layer sizes in the MLP following the
+                post-processing _and_ optional global pooling. As this is the
+                last layer(s) in the model, the last layer in the read-out
+                yields the output of the `DynEdge` model. Defaults to [128,].
+            global_pooling_schemes: The list global pooling schemes to use.
+                Options are: "min", "max", "mean", and "sum".
+            add_global_variables_after_pooling: Whether to add global variables
+                after global pooling. The alternative is to  added (distribute)
+                them to the individual nodes before any convolutional
+                operations.
         """
         # Latent feature subset for computing nearest neighbours in DynEdge.
         if features_subset is None:
@@ -164,9 +163,8 @@ class DynEdge(GNN):
 
         self._construct_layers()
 
-    def _construct_layers(self):
+    def _construct_layers(self) -> None:
         """Construct layers (torch.nn.Modules)."""
-
         # Convolutional operations
         nb_input_features = self._nb_inputs
         if not self._add_global_variables_after_pooling:
@@ -252,7 +250,6 @@ class DynEdge(GNN):
         *additional_attributes: Tensor,
     ) -> Tensor:
         """Calculate global variables."""
-
         # Calculate homophily (scalar variables)
         h_x, h_y, h_z, h_t = calculate_xyzt_homophily(x, edge_index, batch)
 
@@ -275,15 +272,7 @@ class DynEdge(GNN):
         return global_variables
 
     def forward(self, data: Data) -> Tensor:
-        """Model forward pass.
-
-        Args:
-            data (Data): Graph of input features.
-
-        Returns:
-            Tensor: Model output.
-        """
-
+        """Apply learnable forward pass."""
         # Convenience variables
         x, edge_index, batch = data.x, data.edge_index, data.batch
 
