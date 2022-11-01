@@ -1,6 +1,6 @@
 """Class(es) implementing layers to be used in `graphnet` models."""
 
-from typing import Callable, List, Optional, Sequence, Union
+from typing import Any, Callable, Optional, Sequence, Union
 
 from torch.functional import Tensor
 
@@ -18,7 +18,7 @@ class DynEdgeConv(EdgeConv):
         aggr: str = "max",
         nb_neighbors: int = 8,
         features_subset: Optional[Union[Sequence[int], slice]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Construct `DynEdgeConv`.
 
