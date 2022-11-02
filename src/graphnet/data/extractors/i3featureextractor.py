@@ -15,15 +15,12 @@ class I3FeatureExtractor(I3Extractor):
 
 
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
-    def __call__(self, frame) -> dict:
+    def __call__(self, frame, padding_value=-1, include_pulses=True) -> dict:
         """Extract features to be used as inputs to GNN models."""
         output = {
-            "charge": [],
-            "dom_time": [],
             "dom_x": [],
             "dom_y": [],
             "dom_z": [],
-            "width": [],
             "pmt_area": [],
             "rde": [],
             "is_bright_dom": [],
@@ -32,6 +29,8 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "is_errata_dom": [],
             "event_time": [],
         }
+        if include_pulses:
+            output.update({"charge": [], "dom_time": [], "width": []})
 
         # Get OM data
         om_keys, data = get_om_keys_and_pulseseries(
@@ -65,35 +64,38 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             y = self._gcd_dict[om_key].position.y
             z = self._gcd_dict[om_key].position.z
             area = self._gcd_dict[om_key].area
-            rde = self._get_relative_dom_efficiency(frame, om_key)
+            rde = self._get_relative_dom_efficiency(
+                frame, om_key, padding_value
+            )
 
             # DOM flags
             if bright_doms:
                 is_bright_dom = 1 if om_key in bright_doms else 0
             else:
-                is_bright_dom = -1
+                is_bright_dom = padding_value
 
             if bad_doms:
                 is_bad_dom = 1 if om_key in bad_doms else 0
             else:
-                is_bad_dom = -1
+                is_bad_dom = padding_value
 
             if saturation_windows:
                 is_saturated_dom = 1 if om_key in saturation_windows else 0
             else:
-                is_saturated_dom = -1
+                is_saturated_dom = padding_value
 
             if calibration_errata:
                 is_errata_dom = 1 if om_key in calibration_errata else 0
             else:
-                is_errata_dom = -1
+                is_errata_dom = padding_value
 
             # Loop over pulses for each OM
             pulses = data[om_key]
             for pulse in pulses:
-                output["charge"].append(pulse.charge)
-                output["dom_time"].append(pulse.time)
-                output["width"].append(pulse.width)
+                if include_pulses:
+                    output["charge"].append(pulse.charge)
+                    output["dom_time"].append(pulse.time)
+                    output["width"].append(pulse.width)
                 output["pmt_area"].append(area)
                 output["rde"].append(rde)
                 output["dom_x"].append(x)
@@ -108,7 +110,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
 
         return output
 
-    def _get_relative_dom_efficiency(self, frame, om_key):
+    def _get_relative_dom_efficiency(self, frame, om_key, padding_value):
         if (
             "I3Calibration" in frame
         ):  # Not available for e.g. mDOMs in IceCube Upgrade
@@ -117,7 +119,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             try:
                 rde = self._calibration.dom_cal[om_key].relative_dom_eff
             except:  # noqa: E722
-                rde = -1
+                rde = padding_value
         return rde
 
 
@@ -190,7 +192,7 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
         }
 
         # Add features from IceCube86
-        output_icecube86 = super().__call__(frame)
+        output_icecube86 = super().__call__(frame, include_pulses=False)
         output.update(output_icecube86)
 
         # Get OM data
