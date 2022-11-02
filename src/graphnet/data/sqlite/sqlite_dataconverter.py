@@ -99,7 +99,7 @@ class SQLiteDataConverter(DataConverter):
         if isinstance(db, list):
             results = [self._extract_table_names(path) for path in db]
             # @TODO: Check...
-            assert all([results[0] == r for r in results])
+            assert all([sorted(results[0]) == sorted(r) for r in results])
             return results[0]
 
         with sqlite3.connect(db) as conn:
