@@ -130,21 +130,18 @@ class CrossEntropyLoss(LossFunction):
         self._options = options
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        device = prediction.device
-        # target_new = one_hot(target).to(device)
-
         if isinstance(self._options, int):
             nb_classes = self._options
             assert torch.all(target >= 0)
             assert torch.all(target < nb_classes)
-            assert target.dtype in (torch.int32, torch.int64)
+            assert target.dtype in [torch.int32, torch.int64]
             target_integer = target
-        elif isinstance(self._options, list):  # (0,12,13,14,16) -> (0,1,2,3,4)
+        elif isinstance(self._options, list):  # (1,12,13,..,N) -> (0,1,2,..,N)
             nb_classes = len(self._options)
-            target_integer = target
-        elif isinstance(self._options, dict):  #
+            target_integer = torch.tensor(target)
+        elif isinstance(self._options, dict):  # (1,-1,12,-12,..,N,-N) -> (0,1,..,N)
             nb_classes = len(self._options)
-            target_integer = torch.tensor(...)
+            target_integer = torch.tensor([self._options[int(value)] for value in target])
         else:
             self.error("Type (type(self._options)) not supported")
 

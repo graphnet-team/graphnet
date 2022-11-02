@@ -171,18 +171,30 @@ class TimeReconstruction(Task):
         return x
 
 
+class ClassificationTask(Task):
+    # Requires the same number of features as the number of classes being predicted
+    @save_config
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._softmax = Softmax()
+
+    def _forward(self, x):
+        """Transform latent features into probabilities."""
+        return self._softmax(x)
+
+
 class MulticlassClassificationTask(Task):
     # Requires the same number of features as the number of classes being predicted
     @save_config
-    def __init__(self, nb_classes, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._nb_classes = nb_classes
+    def __init__(self, nb_inputs, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self._nb_inputs = nb_inputs
         self._softmax = Softmax()
 
     @property
     def nb_inputs(self):
         """Number of outputs from Multiclass Classification."""
-        return self._nb_classes
+        return self._nb_inputs
 
     def _forward(self, x):
         """Transform latent features into probabilities."""
