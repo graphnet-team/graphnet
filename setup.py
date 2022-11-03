@@ -24,7 +24,6 @@ INSTALL_REQUIRES = [
     "sqlalchemy>=1.4",
     "timer>=0.2",
     "tqdm>=4.64",
-    "uncertainties",
     "wandb>=0.12",
 ]
 
