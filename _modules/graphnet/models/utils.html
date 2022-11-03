@@ -63,25 +63,28 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.models.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for `graphnet.models`.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="kn">import</span> <span class="n">knn_graph</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Batch</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">LongTensor</span>
 
 <span class="kn">from</span> <span class="nn">torch_geometric.utils.homophily</span> <span class="kn">import</span> <span class="n">homophily</span>
 
 
-<div class="viewcode-block" id="calculate_xyzt_homophily"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.utils.calculate_xyzt_homophily">[docs]</a><span class="k">def</span> <span class="nf">calculate_xyzt_homophily</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculates xyzt homophily from a batch of graphs.</span>
+<div class="viewcode-block" id="calculate_xyzt_homophily"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.utils.calculate_xyzt_homophily">[docs]</a><span class="k">def</span> <span class="nf">calculate_xyzt_homophily</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Batch</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate xyzt-homophily from a batch of graphs.</span>
 
-<span class="sd">    Homophily is a graph scalar quantity that measures the likeness of variables</span>
-<span class="sd">    in nodes. Notice that this calculator assumes a special order of input</span>
-<span class="sd">    features in x.</span>
+<span class="sd">    Homophily is a graph scalar quantity that measures the likeness of</span>
+<span class="sd">    variables in nodes. Notice that this calculator assumes a special order of</span>
+<span class="sd">    input features in x.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple : tuple of torch.tensor each with shape [batch_size,1]</span>
+<span class="sd">        Tuple, each element with shape [batch_size,1].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">hx</span> <span class="o">=</span> <span class="n">homophily</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">batch</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">hy</span> <span class="o">=</span> <span class="n">homophily</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">batch</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -91,8 +94,7 @@
 
 
 <div class="viewcode-block" id="calculate_distance_matrix"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.utils.calculate_distance_matrix">[docs]</a><span class="k">def</span> <span class="nf">calculate_distance_matrix</span><span class="p">(</span><span class="n">xyz_coords</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the matrix of pairwise distances between pulses in (x,y,z)-coordinates.</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the matrix of pairwise distances between pulses.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        xyz_coords: (x,y,z)-coordinates of pulses, of shape [nb_doms, 3].</span>
@@ -104,16 +106,17 @@
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="knn_graph_batch"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.utils.knn_graph_batch">[docs]</a><span class="k">def</span> <span class="nf">knn_graph_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Batch</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Calculates the k-nearest-neighbours with an individual k for each event in batch.</span>
+<div class="viewcode-block" id="knn_graph_batch"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.utils.knn_graph_batch">[docs]</a><span class="k">def</span> <span class="nf">knn_graph_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Batch</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Batch</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate k-nearest-neighbours with individual k for each batch event.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        batch (Batch): A torch_geometric.data.Batch of events</span>
-<span class="sd">        k (List[int]): A list of k&#39;s</span>
-<span class="sd">        columns (List[int]): The columns of Data.x used for computing the distances. Eg. Data.x[:,[0,1,2]]</span>
+<span class="sd">        batch: Batch of events.</span>
+<span class="sd">        k: A list of k&#39;s.</span>
+<span class="sd">        columns: The columns of Data.x used for computing the distances. E.g.,</span>
+<span class="sd">            Data.x[:,[0,1,2]]</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Batch: returns the same batch of events, but with updated edges.</span>
+<span class="sd">        Returns the same batch of events, but with updated edges.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data_list</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">to_data_list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_list</span><span class="p">)):</span>

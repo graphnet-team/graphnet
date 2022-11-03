@@ -4,6 +4,14 @@ graphnet.models.task package
 Submodules
 ----------
 
+graphnet.models.task.classification module
+------------------------------------------
+
+.. automodule:: graphnet.models.task.classification
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.models.task.reconstruction module
 ------------------------------------------
 

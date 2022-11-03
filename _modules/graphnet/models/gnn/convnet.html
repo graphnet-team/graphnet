@@ -65,10 +65,7 @@
   <h1>Source code for graphnet.models.gnn.convnet</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Implementation of the ConvNet GNN model architecture.</span>
 
-<span class="sd">[Description of what this architecture does.]</span>
-
 <span class="sd">Author: Martin Ha Minh</span>
-<span class="sd">Email: ###@###.###</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -83,19 +80,25 @@
 
 
 <div class="viewcode-block" id="ConvNet"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet">[docs]</a><span class="k">class</span> <span class="nc">ConvNet</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ConvNet (convolutional network) model.&quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ConvNet.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.__init__">[docs]</a>    <span class="nd">@save_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">nb_inputs</span><span class="p">,</span> <span class="n">nb_outputs</span><span class="p">,</span> <span class="n">nb_intermediate</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">dropout_ratio</span><span class="o">=</span><span class="mf">0.3</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nb_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">nb_outputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">nb_intermediate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="n">dropout_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;ConvNet model.</span>
+        <span class="sd">&quot;&quot;&quot;Construct `ConvNet`.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            nb_inputs (int): Number of input features, i.e. dimension of input</span>
+<span class="sd">            nb_inputs: Number of input features, i.e. dimension of input</span>
 <span class="sd">                layer.</span>
-<span class="sd">            nb_outputs (int): Number of prediction labels, i.e. dimension of</span>
+<span class="sd">            nb_outputs: Number of prediction labels, i.e. dimension of</span>
 <span class="sd">                output layer.</span>
-<span class="sd">            nb_intermediate (int): Number of nodes in intermediate layer(s)</span>
-<span class="sd">            dropout_ratio (float): Fraction of nodes to drop</span>
+<span class="sd">            nb_intermediate: Number of nodes in intermediate layer(s).</span>
+<span class="sd">            dropout_ratio: Fraction of nodes to drop.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nb_inputs</span><span class="p">,</span> <span class="n">nb_outputs</span><span class="p">)</span>
@@ -126,15 +129,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_intermediate2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_outputs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConvNet.forward"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.convnet.ConvNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Model forward pass.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            data (Data): Graph of input features.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Tensor: Model output.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Apply learnable forward pass.&quot;&quot;&quot;</span>
         <span class="c1"># Convenience variables</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span>
 

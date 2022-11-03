@@ -65,10 +65,9 @@
   <h1>Source code for graphnet.data.extractors.utilities.types</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility methods for checking the types of objects.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities.collections</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">transpose_list_of_dicts</span><span class="p">,</span>
@@ -97,6 +96,7 @@
 
 
 <div class="viewcode-block" id="is_boost_class"><a class="viewcode-back" href="../../../../../graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.is_boost_class">[docs]</a><span class="k">def</span> <span class="nf">is_boost_class</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check whether `obj` is instance of Boost.Python.enum.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot;Boost.Python.class&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span></div>
 
 
@@ -107,7 +107,7 @@
 
 
 <div class="viewcode-block" id="is_type"><a class="viewcode-back" href="../../../../../graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.is_type">[docs]</a><span class="k">def</span> <span class="nf">is_type</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Checks whether `obj` is a type, and not an instance.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Check whether `obj` is a type, and not an instance.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;type&quot;</span></div>
 
 
@@ -145,13 +145,13 @@
 
 <div class="viewcode-block" id="get_member_variables"><a class="viewcode-back" href="../../../../../graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.get_member_variables">[docs]</a><span class="k">def</span> <span class="nf">get_member_variables</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">return_discarded</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Returns list of valid member variables.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]:</span>
+    <span class="sd">&quot;&quot;&quot;Return list of valid member variables.</span>
 
 <span class="sd">    Ignoring mangled (__*) variables, types, methods, and Boost enums.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">valid_member_variables</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">discarded_member_variables</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">discarded_member_variables</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;mangled&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="s2">&quot;is_type&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="s2">&quot;invalid_attr&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -189,7 +189,7 @@
 
 <div class="viewcode-block" id="cast_object_to_pure_python"><a class="viewcode-back" href="../../../../../graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.cast_object_to_pure_python">[docs]</a><span class="nd">@break_cyclic_recursion</span>
 <span class="k">def</span> <span class="nf">cast_object_to_pure_python</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Casts `obj`, and any members/elements, to pure-python classes.</span>
+    <span class="sd">&quot;&quot;&quot;Cast `obj`, and any members/elements, to pure-python classes.</span>
 
 <span class="sd">    The function takes any object `obj` and tries to cast it to a pure python</span>
 <span class="sd">    class. This is mainly relevant for IceCube-specific classes (I3*) that</span>
@@ -206,7 +206,6 @@
 <span class="sd">    objects to list and dict-like objects to list, and otherwise return the</span>
 <span class="sd">    object itself if it deemed &quot;pythonic&quot; in this way.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value: </span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -277,8 +276,8 @@
 <div class="viewcode-block" id="cast_pulse_series_to_pure_python"><a class="viewcode-back" href="../../../../../graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python">[docs]</a><span class="k">def</span> <span class="nf">cast_pulse_series_to_pure_python</span><span class="p">(</span>
     <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">calibration</span><span class="p">,</span>
-    <span class="n">gcd_dict</span><span class="p">,</span>
+    <span class="n">calibration</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">gcd_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]:</span>
     <span class="sd">&quot;&quot;&quot;Cast pulse series `key` to a pure-python data representation.</span>
 
@@ -325,7 +324,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pulses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="n">pulse_data</span> <span class="o">=</span> <span class="n">cast_object_to_pure_python</span><span class="p">(</span><span class="n">pulses</span><span class="p">)</span>
+        <span class="n">pulse_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cast_object_to_pure_python</span><span class="p">(</span><span class="n">pulses</span><span class="p">)</span>
 
         <span class="c1"># Ensure that `pulse_data` has the form of a list of dictionary of</span>
         <span class="c1"># per-pulse properties</span>
@@ -339,16 +338,16 @@
             <span class="n">pulse_data</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">om_data</span><span class="p">)</span>
 
         <span class="c1"># &quot;Transpose&quot; list of dicts to dict of lists</span>
-        <span class="n">pulse_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">transpose_list_of_dicts</span><span class="p">(</span><span class="n">pulse_data</span><span class="p">)</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse_data</span><span class="p">)</span>
+        <span class="n">pulse_data_dict</span> <span class="o">=</span> <span class="n">transpose_list_of_dicts</span><span class="p">(</span><span class="n">pulse_data</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse_data_dict</span><span class="p">)</span>
 
     <span class="c1"># Concatenate list of pulses from different OMs</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">result_combined</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">key</span><span class="p">:</span> <span class="p">[</span><span class="n">pulse</span> <span class="k">for</span> <span class="n">pulses</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">for</span> <span class="n">pulse</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result_combined</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 </pre></div>

@@ -63,9 +63,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.parquet.parquet_dataset</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module defining a `Dataset` class for reading from parquet files.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;`Dataset` class(es) for reading from Parquet files.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">awkward</span> <span class="k">as</span> <span class="nn">ak</span>
 
@@ -73,10 +74,10 @@
 
 
 <div class="viewcode-block" id="ParquetDataset"><a class="viewcode-back" href="../../../../graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataset.ParquetDataset">[docs]</a><span class="k">class</span> <span class="nc">ParquetDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pytorch dataset for reading from parquet files.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Pytorch dataset for reading from Parquet files.&quot;&quot;&quot;</span>
 
     <span class="c1"># Implementing abstract method(s)</span>
-    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Multiple files not supported&quot;</span><span class="p">)</span>
@@ -99,7 +100,7 @@
         <span class="c1"># Set custom member variable(s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parquet_hook</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">from_parquet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span>
                 <span class="n">ak</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span>
@@ -112,18 +113,18 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
-        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
         <span class="c1"># Check(s)</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">selection</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="p">),</span> <span class="s2">&quot;Argument `selection` is currently not supported&quot;</span>
 
-        <span class="n">sequential_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">)[</span><span class="n">sequential_index</span><span class="p">]</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">ak_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parquet_hook</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">columns</span><span class="p">][</span><span class="n">sequential_index</span><span class="p">]</span>
+            <span class="n">ak_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parquet_hook</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">columns</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;does not exist (not in record)&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">ColumnMissingException</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>

@@ -63,7 +63,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.dataset</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module defining the base `Dataset` class used in GraphNeT.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Base `Dataset` class(es) used in GraphNeT.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
@@ -80,7 +80,7 @@
 <div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base Dataset class for reading from any intermediate file format.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Dataset.__init__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
@@ -92,12 +92,51 @@
         <span class="n">truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;truth&quot;</span><span class="p">,</span>
         <span class="n">node_truth_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">string_selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
-        <span class="n">loss_weight_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">loss_weight_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loss_weight_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loss_weight_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight_default_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct Dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: Path to the file(s) from which this `Dataset` should read.</span>
+<span class="sd">            pulsemaps: Name(s) of the pulse map series that should be used to</span>
+<span class="sd">                construct the nodes on the individual graph objects, and their</span>
+<span class="sd">                features. Multiple pulse series maps can be used, e.g., when</span>
+<span class="sd">                different DOM types are stored in different maps.</span>
+<span class="sd">            features: List of columns in the input files that should be used as</span>
+<span class="sd">                node features on the graph objects.</span>
+<span class="sd">            truth: List of event-level columns in the input files that should</span>
+<span class="sd">                be used added as attributes on the  graph objects.</span>
+<span class="sd">            node_truth: List of node-level columns in the input files that</span>
+<span class="sd">                should be used added as attributes on the graph objects.</span>
+<span class="sd">            index_column: Name of the column in the input files that contains</span>
+<span class="sd">                unique indicies to identify and map events across tables.</span>
+<span class="sd">            truth_table: Name of the table containing event-level truth</span>
+<span class="sd">                information.</span>
+<span class="sd">            node_truth_table: Name of the table containing node-level truth</span>
+<span class="sd">                information.</span>
+<span class="sd">            string_selection: Subset of strings for which data should be read</span>
+<span class="sd">                and used to construct graph objects. Defaults to None, meaning</span>
+<span class="sd">                all strings for which data exists are used.</span>
+<span class="sd">            selection: List of indicies (in `index_column`) of the events in</span>
+<span class="sd">                the input files that should be read. Defaults to None, meaning</span>
+<span class="sd">                that all events in the input files are read.</span>
+<span class="sd">            dtype: Type of the feature tensor on the graph objects returned.</span>
+<span class="sd">            loss_weight_table: Name of the table containing per-event loss</span>
+<span class="sd">                weights.</span>
+<span class="sd">            loss_weight_column: Name of the column in `loss_weight_table`</span>
+<span class="sd">                containing per-event loss weights. This is also the name of the</span>
+<span class="sd">                corresponding attribute assigned to the graph object.</span>
+<span class="sd">            loss_weight_default_value: Default per-event loss weight.</span>
+<span class="sd">                NOTE: This default value is only applied when</span>
+<span class="sd">                `loss_weight_table` and `loss_weight_column` are specified, and</span>
+<span class="sd">                in this case to events with no value in the corresponding</span>
+<span class="sd">                table/column. That is, if no per-event loss weight table/column</span>
+<span class="sd">                is provided, this value is ignored. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pulsemaps</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">pulsemaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">pulsemaps</span><span class="p">]</span>
@@ -126,9 +165,9 @@
         <span class="k">if</span> <span class="n">string_selection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="p">(</span>
-                    <span class="s2">&quot;String selection detected.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">&quot;Accepted strings: </span><span class="si">{</span><span class="n">string_selection</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;All other strings are ignored!&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;String selection detected.</span><span class="se">\n</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Accepted strings: </span><span class="si">{</span><span class="n">string_selection</span><span class="si">}</span><span class="se">\n</span><span class="s2"> &quot;</span>
+                    <span class="s2">&quot;All other strings are ignored!&quot;</span>
                 <span class="p">)</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_selection</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -161,24 +200,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
 
         <span class="c1"># Set unique indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span>
         <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_all_indices</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span> <span class="o">=</span> <span class="n">selection</span>
 
         <span class="c1"># Purely internal member variables</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_remove_missing_columns</span><span class="p">()</span>
 
         <span class="c1"># Implementation-specific post-init code.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span></div>
 
     <span class="c1"># Abstract method(s)</span>
 <div class="viewcode-block" id="Dataset._init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._init">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Set internal representation needed to read data from input file.&quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Dataset._post_init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._post_init">[docs]</a>    <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dataset._post_init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._post_init">[docs]</a>    <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Implemenation-specific code to be run after the main constructor.&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="Dataset._get_all_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_all_indices">[docs]</a>    <span class="nd">@abstractmethod</span>
@@ -190,24 +230,24 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
-        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Query a table at a specific index, optionally with some selection.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            table (str): Table to be queried.</span>
-<span class="sd">            columns (List[str]): Columns to read out.</span>
-<span class="sd">            index (int): Sequentially numbered index (i.e. in [0,len(self))) of</span>
-<span class="sd">                the event to query. This _may_ differ from the indexation used</span>
-<span class="sd">                in `self._indices`.</span>
-<span class="sd">            selection (Optional[str], optional): Selection to be imposed before</span>
-<span class="sd">                reading out data. Defaults to None.</span>
+<span class="sd">            table: Table to be queried.</span>
+<span class="sd">            columns: Columns to read out.</span>
+<span class="sd">            sequential_index: Sequentially numbered index</span>
+<span class="sd">                (i.e. in [0,len(self))) of the event to query. This _may_</span>
+<span class="sd">                differ from the indexation used in `self._indices`.</span>
+<span class="sd">            selection: Selection to be imposed before reading out data.</span>
+<span class="sd">                Defaults to None.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            List[Tuple[Any]]: Returns a list of tuples containing the values in</span>
-<span class="sd">                `columns`. If the `table` contains only scalar data for</span>
-<span class="sd">                `columns`, a list of length 1 is returned</span>
+<span class="sd">            List of tuples containing the values in `columns`. If the `table`</span>
+<span class="sd">                contains only scalar data for `columns`, a list of length 1 is</span>
+<span class="sd">                returned</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ColumnMissingException: If one or more element in `columns` is not</span>
@@ -215,38 +255,42 @@
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
     <span class="c1"># Public method(s)</span>
-<div class="viewcode-block" id="Dataset.add_label"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.add_label">[docs]</a>    <span class="k">def</span> <span class="nf">add_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Data</span><span class="p">],</span> <span class="n">Any</span><span class="p">]):</span>
+<div class="viewcode-block" id="Dataset.add_label"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.add_label">[docs]</a>    <span class="k">def</span> <span class="nf">add_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Data</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Add custom graph label define using function `fn`.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span>
         <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;A custom label </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has already been defined.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span></div>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">)</span>
+<div class="viewcode-block" id="Dataset.__len__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return number of graphs in `Dataset`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+<div class="viewcode-block" id="Dataset.__getitem__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return graph `Data` object at `index`.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">sequential_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> not in range [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">sequential_index</span><span class="si">}</span><span class="s2"> not in range [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">]&quot;</span>
             <span class="p">)</span>
-        <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span>
+            <span class="n">sequential_index</span>
+        <span class="p">)</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">graph</span>
+        <span class="k">return</span> <span class="n">graph</span></div>
 
     <span class="c1"># Internal method(s)</span>
-<div class="viewcode-block" id="Dataset._remove_missing_columns"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._remove_missing_columns">[docs]</a>    <span class="k">def</span> <span class="nf">_remove_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dataset._remove_missing_columns"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._remove_missing_columns">[docs]</a>    <span class="k">def</span> <span class="nf">_remove_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Remove columns that are not present in the input file.</span>
 
 <span class="sd">        Columns are removed from `self._features` and `self._truth`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Find missing features</span>
-        <span class="n">missing_features</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">)</span>
+        <span class="n">missing_features_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">pulsemap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">:</span>
             <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">)</span>
-            <span class="n">missing_features</span> <span class="o">=</span> <span class="n">missing_features</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+            <span class="n">missing_features_set</span> <span class="o">=</span> <span class="n">missing_features_set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
 
-        <span class="n">missing_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">missing_features</span><span class="p">)</span>
+        <span class="n">missing_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">missing_features_set</span><span class="p">)</span>
 
         <span class="c1"># Find missing truth variables</span>
         <span class="n">missing_truth_variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_missing_columns</span><span class="p">(</span>
@@ -290,74 +334,91 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[])</span></div>
 
 <div class="viewcode-block" id="Dataset._query"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._query">[docs]</a>    <span class="k">def</span> <span class="nf">_query</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Query file for event features and truth information</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
+        <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Query file for event features and truth information.</span>
+
+<span class="sd">        The returned lists have lengths correspondings to the number of pulses</span>
+<span class="sd">        in the event. Their constituent tuples have lengths corresponding to</span>
+<span class="sd">        the number of features/attributes in each output</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            index (int): Sequentially numbered index (i.e. in [0,len(self))) of</span>
-<span class="sd">                the event to query. This _may_ differ from the indexation used</span>
-<span class="sd">                in `self._indices`.</span>
+<span class="sd">            sequential_index: Sequentially numbered index</span>
+<span class="sd">                (i.e. in [0,len(self))) of the event to query. This _may_</span>
+<span class="sd">                differ from the indexation used in `self._indices`.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            List[Tuple]: Pulse-level event features.</span>
-<span class="sd">            List[Tuple]: Event-level truth information. List has length 1.</span>
-<span class="sd">            List[Tuple]: Pulse-level truth information.</span>
+<span class="sd">            Tuple containing pulse-level event features; event-level truth</span>
+<span class="sd">                information; pulse-level truth information; and event-level</span>
+<span class="sd">                loss weights, respectively.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pulsemap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">:</span>
             <span class="n">features_pulsemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
-                <span class="n">pulsemap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span>
+                <span class="n">pulsemap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span>
             <span class="p">)</span>
             <span class="n">features</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">features_pulsemap</span><span class="p">)</span>
 
-        <span class="n">truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="n">truth</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">,</span> <span class="n">sequential_index</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="n">node_truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_table</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">,</span>
-                <span class="n">index</span><span class="p">,</span>
+                <span class="n">sequential_index</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">node_truth</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">loss_weight</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Default</span>
+        <span class="n">loss_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Default</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">loss_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="p">,</span> <span class="n">index</span>
-                <span class="p">)</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">loss_weight_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="p">,</span>
+                <span class="n">sequential_index</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loss_weight_list</span><span class="p">):</span>
+                <span class="n">loss_weight</span> <span class="o">=</span> <span class="n">loss_weight_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">loss_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+
         <span class="k">return</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span></div>
 
 <div class="viewcode-block" id="Dataset._create_graph"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._create_graph">[docs]</a>    <span class="k">def</span> <span class="nf">_create_graph</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
-        <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
-        <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
+        <span class="n">truth</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create Pytorch Data (i.e.graph) object.</span>
+        <span class="sd">&quot;&quot;&quot;Create Pytorch Data (i.e. graph) object.</span>
 
 <span class="sd">        No preprocessing is performed at this stage, just as no node adjancency</span>
 <span class="sd">        is imposed. This means that the `edge_attr` and `edge_weight`</span>
 <span class="sd">        attributes are not set.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            features (list): List of tuples, containing event features.</span>
-<span class="sd">            truth (list): List of tuples, containing truth information.</span>
-<span class="sd">            node_truth (list): List of tuples, containing node-level truth.</span>
-<span class="sd">            loss_weight (float): A weight associated with the event for weighing the loss.</span>
+<span class="sd">            features: List of tuples, containing event features.</span>
+<span class="sd">            truth: List of tuples, containing truth information.</span>
+<span class="sd">            node_truth: List of tuples, containing node-level truth.</span>
+<span class="sd">            loss_weight: A weight associated with the event for weighing the loss.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            torch.Data: Graph object.</span>
+<span class="sd">            Graph object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Convert nested list to simple dict</span>
         <span class="n">truth_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">truth</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">truth</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">)</span>
         <span class="p">}</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
 
         <span class="c1"># Define custom labels</span>
         <span class="n">labels_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_labels</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">)</span>
@@ -365,6 +426,7 @@
         <span class="c1"># Convert nested list to simple dict</span>
         <span class="k">if</span> <span class="n">node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">node_truth_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">node_truth</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="n">node_truth_dict</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">key</span><span class="p">:</span> <span class="n">node_truth_array</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">)</span>
@@ -386,7 +448,7 @@
         <span class="c1"># Add loss weight to graph.</span>
         <span class="k">if</span> <span class="n">loss_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># No loss weight was retrieved, i.e., it is missing for the current event</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loss_weight</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">loss_weight</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_default_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="s2">&quot;At least one event is missing an entry in &quot;</span>

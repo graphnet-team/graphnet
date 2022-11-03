@@ -63,15 +63,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.sqlite.sqlite_selection</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Selection-specific utility functions relevant to the graphnet.data package.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Selection-specific utility functions for use in `graphnet.data.sqlite`.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">sqlite3</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
-
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
 
@@ -89,17 +89,17 @@
     <span class="sd">&quot;&quot;&quot;Get event numbers for specified fractions of physics processes.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        database (str): Path to database from which to get event numbers.</span>
-<span class="sd">        desired_size (int): Number of event numbers to get.</span>
-<span class="sd">        fraction_noise (float, optional): Fraction of noise events. Defaults to 0.</span>
-<span class="sd">        fraction_muon (float, optional): Fraction of noise events. Defaults to 0.</span>
-<span class="sd">        fraction_nu_e (float, optional): Fraction of nu_e events. Defaults to 0.</span>
-<span class="sd">        fraction_nu_mu (float, optional): Fraction of nu_mu events. Defaults to 0.</span>
-<span class="sd">        fraction_nu_tau (float, optional): Fraction of nu_tau events. Defaults to 0.</span>
-<span class="sd">        seed (int, optional): Random number generator reed. Defaults to 0.</span>
+<span class="sd">        database: Path to database from which to get event numbers.</span>
+<span class="sd">        desired_size: Number of event numbers to get.</span>
+<span class="sd">        fraction_noise: Fraction of noise events.</span>
+<span class="sd">        fraction_muon: Fraction of noise events.</span>
+<span class="sd">        fraction_nu_e: Fraction of nu_e events.</span>
+<span class="sd">        fraction_nu_mu: Fraction of nu_mu events.</span>
+<span class="sd">        fraction_nu_tau: Fraction of nu_tau events.</span>
+<span class="sd">        seed: Random number generator reed.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        List[int]: Event numbers.</span>
+<span class="sd">        List of event numbers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="p">(</span>
         <span class="n">fraction_noise</span>
@@ -135,7 +135,7 @@
                 <span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="n">list_of_dataframes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">list_of_dataframes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">restart_trigger</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">while</span> <span class="n">restart_trigger</span><span class="p">:</span>
             <span class="n">restart_trigger</span> <span class="o">=</span> <span class="kc">False</span>
@@ -159,7 +159,7 @@
                                 <span class="n">particle_type</span>
                             <span class="p">)</span>
                         <span class="p">)</span>
-                        <span class="k">return</span> <span class="kc">None</span>
+                        <span class="k">raise</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                         <span class="s2">&quot;There have been </span><span class="si">{}</span><span class="s2"> requested of particle </span><span class="si">{}</span><span class="s2">, we can only supply </span><span class="si">{}</span><span class="s2">. </span><span class="se">\n</span><span class="s2">Renormalising...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                             <span class="n">number</span><span class="p">,</span> <span class="n">particle_type</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp_dataframe</span><span class="p">)</span>
@@ -188,15 +188,15 @@
 
 <div class="viewcode-block" id="get_equal_proportion_neutrino_indices"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_equal_proportion_neutrino_indices">[docs]</a><span class="k">def</span> <span class="nf">get_equal_proportion_neutrino_indices</span><span class="p">(</span>
     <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Utility method to get indices for neutrino events in equal flavour proportions.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Get indices for neutrino events in equal flavour proportions.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        database (str): Path to database from which to get the event numbers.</span>
-<span class="sd">        seed (int, optional): Random number generator seed. Defaults to 42.</span>
+<span class="sd">        database: Path to database from which to get the event numbers.</span>
+<span class="sd">        seed: Random number generator seed.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple: Training and test event numbers, resp.</span>
+<span class="sd">        Tuple containing lists of training and test event numbers, resp.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Common variables</span>
     <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;12&quot;</span><span class="p">,</span> <span class="s2">&quot;14&quot;</span><span class="p">,</span> <span class="s2">&quot;16&quot;</span><span class="p">]</span>
@@ -250,16 +250,16 @@
     <span class="sd">&quot;&quot;&quot;Get event numbers with equal proportion neutrino and muon events.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        database (str): Path to database from which to get the event numbers.</span>
+<span class="sd">        database: Path to database from which to get the event numbers.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        List[int]: Event numbers.</span>
+<span class="sd">        List of event numbers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
         <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;select event_no from truth where abs(pid) = 13&quot;</span>
         <span class="n">muons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
-    <span class="n">neutrinos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_equal_proportion_neutrino_indices</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
-    <span class="n">neutrinos</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">neutrinos</span><span class="p">)</span>
+    <span class="n">neutrinos_list</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_equal_proportion_neutrino_indices</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+    <span class="n">neutrinos</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">neutrinos_list</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutrinos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">muons</span><span class="p">):</span>
         <span class="n">neutrinos</span> <span class="o">=</span> <span class="n">neutrinos</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">muons</span><span class="p">))</span>
@@ -273,14 +273,16 @@
     <span class="k">return</span> <span class="n">df_for_shuffle</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="get_even_track_cascade_indicies"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_even_track_cascade_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_track_cascade_indicies</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Get event numbers with equal (?) proportion CC and NC e/mu neutrino events.</span>
+<div class="viewcode-block" id="get_even_track_cascade_indicies"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_even_track_cascade_indicies">[docs]</a><span class="k">def</span> <span class="nf">get_even_track_cascade_indicies</span><span class="p">(</span>
+    <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Get event numbers with equal proportion CC and NC e/mu neutrino events.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        database (str): Path to database from which to get the event numbers.</span>
+<span class="sd">        database: Path to database from which to get the event numbers.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        List[int]: Event numbers.</span>
+<span class="sd">        Tuple containing lists of training and test event numbers, resp.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
         <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;select event_no from truth where abs(pid) = 12 and interaction_type = 1&quot;</span>
@@ -325,21 +327,22 @@
 
 
 <div class="viewcode-block" id="get_even_dbang_selection"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_selection.get_even_dbang_selection">[docs]</a><span class="k">def</span> <span class="nf">get_even_dbang_selection</span><span class="p">(</span>
-    <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">min_max_decay_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Get event numbers for neutrino events with equal dbang / non-dbang labels.</span>
+    <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">min_max_decay_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Get event numbers for equal numbers of dbang / non-dbang events.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        db (str): Path to database.</span>
-<span class="sd">        seed (int, optional): Random number generator seed. Defaults to 42.</span>
+<span class="sd">        db : Path to database.</span>
+<span class="sd">        seed: Random number generator seed. Defaults to 42.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple: Training and test event numbers, resp.</span>
+<span class="sd">        Tuple containing lists of training and test event numbers, resp.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Common variables</span>
     <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;12&quot;</span><span class="p">,</span> <span class="s2">&quot;14&quot;</span><span class="p">,</span> <span class="s2">&quot;16&quot;</span><span class="p">]</span>
     <span class="n">non_dbangs_indicies</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">dbangs_indicies</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 

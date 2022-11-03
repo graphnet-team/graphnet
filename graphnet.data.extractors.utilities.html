@@ -101,16 +101,21 @@
 </section>
 <section id="module-graphnet.data.extractors.utilities.collections">
 <span id="graphnet-data-extractors-utilities-collections-module"></span><h2>graphnet.data.extractors.utilities.collections module<a class="headerlink" href="#module-graphnet.data.extractors.utilities.collections" title="Permalink to this heading"></a></h2>
-<p>Utility methods to manipulate python-type collections of data.</p>
+<p>Utility methods for manipulating python-type collections of data.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.flatten_nested_dictionary">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'__'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#flatten_nested_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Flatten a nested dictionary to a dictionary with non-dict values.</p>
+<p class="rubric">Example</p>
+<p>d = {“a”: {“b”: 1}, “c”: 2}
+flatten_nested_dictionary(d)
+&gt;&gt;&gt; {“a__b”: 1, “c”: 2}</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – </p></li>
-<li><p><strong>parent_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">''</span></code>) – </p></li>
-<li><p><strong>separator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'__'</span></code>) – </p></li>
+<li><p><strong>obj</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – The object that should be flattened, if applicable.</p></li>
+<li><p><strong>parent_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">''</span></code>) – The combined name of the parent key(s) containing <cite>obj</cite>.</p></li>
+<li><p><strong>separator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'__'</span></code>) – The string used to concatenate nester parent keys.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -142,7 +147,8 @@ file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.transpose_list_of_dicts">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">transpose_list_of_dicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/collections.html#transpose_list_of_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Transpose a list of dicts to a dict of lists.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>array</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]) – </p>
 </dd>
@@ -155,10 +161,12 @@ file.</p>
 </section>
 <section id="module-graphnet.data.extractors.utilities.frames">
 <span id="graphnet-data-extractors-utilities-frames-module"></span><h2>graphnet.data.extractors.utilities.frames module<a class="headerlink" href="#module-graphnet.data.extractors.utilities.frames" title="Permalink to this heading"></a></h2>
+<p>Utility methods for working with I3Frames.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.frame_is_montecarlo">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.frame_is_montecarlo" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Check whether <cite>frame</cite> is from Monte Carlo simulation.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>icetray.I3Frame</em>) – </p>
 </dd>
@@ -171,7 +179,8 @@ file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.frame_is_noise">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#frame_is_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.frame_is_noise" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Check whether <cite>frame</cite> is from noise.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>icetray.I3Frame</em>) – </p>
 </dd>
@@ -184,21 +193,22 @@ file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">get_om_keys_and_pulseseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulseseries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/frames.html#get_om_keys_and_pulseseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.frames.get_om_keys_and_pulseseries" title="Permalink to this definition"></a></dt>
-<dd><p>Gets the indicies for the gcd_dict and the pulse series</p>
+<dd><p>Get the indicies for the gcd_dict and the pulse series.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>frame</strong> (<em>i3 physics frame</em>) – i3 physics frame</p></li>
+<li><p><strong>frame</strong> (<em>icetray.I3Frame</em>) – Physics (P) I3-frame from which to extract OM keys and pulse
+series</p></li>
 <li><p><strong>pulseseries</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
 <li><p><strong>calibration</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[dataclasses.I3Calibration], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the indicies for the gcd_dict
-data    (??)   : the pulse series</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>om_keys (index)</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Tuple containing the OM keys/indicesfor the GCD dictionary, and the
+pulse series data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -224,7 +234,7 @@ data    (??)   : the pulse series</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.cast_object_to_pure_python">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">cast_object_to_pure_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#cast_object_to_pure_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.cast_object_to_pure_python" title="Permalink to this definition"></a></dt>
-<dd><p>Casts <cite>obj</cite>, and any members/elements, to pure-python classes.</p>
+<dd><p>Cast <cite>obj</cite>, and any members/elements, to pure-python classes.</p>
 <p>The function takes any object <cite>obj</cite> and tries to cast it to a pure python
 class. This is mainly relevant for IceCube-specific classes (I3*) that
 cannot be cast trivially.</p>
@@ -256,6 +266,8 @@ object itself if it deemed “pythonic” in this way.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>frame</strong> (<em>icetray.I3Frame</em>) – I3 physics frame.</p></li>
 <li><p><strong>key</strong> (<em>str</em>) – Name of the pulse series to be cast.</p></li>
+<li><p><strong>calibration</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+<li><p><strong>gcd_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -275,7 +287,7 @@ object itself if it deemed “pythonic” in this way.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.get_member_variables">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">get_member_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_discarded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#get_member_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.get_member_variables" title="Permalink to this definition"></a></dt>
-<dd><p>Returns list of valid member variables.</p>
+<dd><p>Return list of valid member variables.</p>
 <p>Ignoring mangled (__*) variables, types, methods, and Boost enums.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -285,7 +297,7 @@ object itself if it deemed “pythonic” in this way.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -293,7 +305,8 @@ object itself if it deemed “pythonic” in this way.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_boost_class">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_boost_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_boost_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_boost_class" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Check whether <cite>obj</cite> is instance of Boost.Python.enum.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>obj</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
 </dd>
@@ -348,7 +361,7 @@ object itself if it deemed “pythonic” in this way.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.types.is_type">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.types.</span></span><span class="sig-name descname"><span class="pre">is_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/extractors/utilities/types.html#is_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.types.is_type" title="Permalink to this definition"></a></dt>
-<dd><p>Checks whether <cite>obj</cite> is a type, and not an instance.</p>
+<dd><p>Check whether <cite>obj</cite> is a type, and not an instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>obj</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
@@ -362,6 +375,7 @@ object itself if it deemed “pythonic” in this way.</p>
 </section>
 <section id="module-graphnet.data.extractors.utilities">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.data.extractors.utilities" title="Permalink to this heading"></a></h2>
+<p>Utility methods for use in <cite>graphnet.data.extractors</cite>.</p>
 </section>
 </section>
 

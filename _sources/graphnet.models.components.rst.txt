@@ -20,14 +20,6 @@ graphnet.models.components.pool module
    :undoc-members:
    :show-inheritance:
 
-graphnet.models.components.utils module
----------------------------------------
-
-.. automodule:: graphnet.models.components.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

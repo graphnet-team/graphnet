@@ -63,16 +63,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.training.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for `graphnet.training`.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data.batch</span> <span class="kn">import</span> <span class="n">Batch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Batch</span><span class="p">,</span> <span class="n">Data</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_dataset</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
 <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
@@ -92,14 +94,13 @@
     <span class="n">selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">persistent_workers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">node_truth</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">node_truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">node_truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">string_selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">loss_weight_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">loss_weight_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataLoader</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Construct `DataLoader` instance.&quot;&quot;&quot;</span>
-
     <span class="c1"># Check(s)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pulsemaps</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">pulsemaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">pulsemaps</span><span class="p">]</span>
@@ -117,8 +118,11 @@
         <span class="n">loss_weight_column</span><span class="o">=</span><span class="n">loss_weight_column</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">graphs</span><span class="p">):</span>
-        <span class="c1"># Remove graphs with less than two DOM hits. Should not occur in &quot;production.&quot;</span>
+    <span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">graphs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Batch</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove graphs with less than two DOM hits.</span>
+
+<span class="sd">        Should not occur in &quot;production.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">graphs</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">graphs</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">n_pulses</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">Batch</span><span class="o">.</span><span class="n">from_data_list</span><span class="p">(</span><span class="n">graphs</span><span class="p">)</span>
 
@@ -153,9 +157,8 @@
     <span class="n">string_selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">loss_weight_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">loss_weight_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Construct train and test `DataLoader` instances.&quot;&quot;&quot;</span>
-
     <span class="c1"># Reproducibility</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
@@ -200,13 +203,13 @@
     <span class="n">training_dataloader</span> <span class="o">=</span> <span class="n">make_dataloader</span><span class="p">(</span>
         <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">selection</span><span class="o">=</span><span class="n">training_selection</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">common_kwargs</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">common_kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
     <span class="p">)</span>
 
     <span class="n">validation_dataloader</span> <span class="o">=</span> <span class="n">make_dataloader</span><span class="p">(</span>
         <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">selection</span><span class="o">=</span><span class="n">validation_selection</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">common_kwargs</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">common_kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span>
@@ -238,10 +241,10 @@
 
     <span class="c1"># Get predictions</span>
     <span class="n">predictions_torch</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">)</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">predictions_list</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">predictions_torch</span>
     <span class="p">]</span>  <span class="c1"># Assuming single task</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">predictions_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">prediction_columns</span><span class="p">)</span> <span class="o">==</span> <span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
@@ -249,7 +252,9 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">prediction_columns</span><span class="p">)</span> <span class="o">==</span> <span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># Get additional attributes</span>
-    <span class="n">attributes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">attr</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">additional_attributes</span><span class="p">])</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="p">[(</span><span class="n">attr</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">additional_attributes</span><span class="p">]</span>
+    <span class="p">)</span>
     <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
             <span class="n">attribute</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
@@ -276,7 +281,7 @@
 
 <div class="viewcode-block" id="save_results"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.utils.save_results">[docs]</a><span class="k">def</span> <span class="nf">save_results</span><span class="p">(</span>
     <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Save trained model and prediction `results` in `db`.&quot;&quot;&quot;</span>
     <span class="n">db_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">archive</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">db_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">tag</span>

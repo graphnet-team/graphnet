@@ -63,19 +63,23 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.pipeline</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span></span><span class="sd">&quot;&quot;&quot;Class(es) used for analysis in PISA.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
 <span class="kn">import</span> <span class="nn">dill</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_utilities</span> <span class="kn">import</span> <span class="n">run_sql_code</span><span class="p">,</span> <span class="n">save_to_sql</span>
 <span class="kn">from</span> <span class="nn">graphnet.training.utils</span> <span class="kn">import</span> <span class="n">get_predictions</span><span class="p">,</span> <span class="n">make_dataloader</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
 
@@ -84,32 +88,39 @@
 
 
 <div class="viewcode-block" id="InSQLitePipeline"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline">[docs]</a><span class="k">class</span> <span class="nc">InSQLitePipeline</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Creates a SQLite database with truth and GNN predictions and, if available, RETRO reconstructions. Made for analysis.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Create a SQLite database for PISA analysis.</span>
+
+<span class="sd">    The database will contain truth and GNN predictions and, if available,</span>
+<span class="sd">    RETRO reconstructions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="InSQLitePipeline.__init__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">module_dict</span><span class="p">,</span>
-        <span class="n">features</span><span class="p">,</span>
-        <span class="n">truth</span><span class="p">,</span>
-        <span class="n">device</span><span class="p">,</span>
-        <span class="n">retro_table_name</span><span class="o">=</span><span class="s2">&quot;retro&quot;</span><span class="p">,</span>
-        <span class="n">outdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-        <span class="n">n_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-        <span class="n">pipeline_name</span><span class="o">=</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span>
+        <span class="n">module_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+        <span class="n">retro_table_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;retro&quot;</span><span class="p">,</span>
+        <span class="n">outdir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initializes the pipeline</span>
+        <span class="sd">&quot;&quot;&quot;Initialise the pipeline.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            module_dict (dict): A dictionary with GNN modules from GraphNet. E.g. {&#39;energy&#39;: gnn_module_for_energy_regression}</span>
-<span class="sd">            features (list): list of input features for the GNN modules</span>
-<span class="sd">            truth (list): list of truth for the GNN ModuleList</span>
-<span class="sd">            device (torch._device): the device used for computation</span>
-<span class="sd">            retro_table_name (str, optional): Name of the retro table for. Defaults to &#39;retro&#39;.</span>
-<span class="sd">            outdir (path, optional): the directory in which the pipeline database will be stored. Defaults to None.</span>
-<span class="sd">            batch_size (int, optional): batch size for inference. Defaults to 100.</span>
-<span class="sd">            n_workers (int, optional): number of workers used in dataloading. Defaults to 10.</span>
-<span class="sd">            pipeline_name (str, optional): name of the pipeline. If such a pipeline already exists, an error will be prompted to avoid overwriting. Defaults to &#39;pipeline&#39;.</span>
+<span class="sd">            module_dict: A dictionary with GNN modules from GraphNet. E.g.</span>
+<span class="sd">                {&#39;energy&#39;: gnn_module_for_energy_regression}</span>
+<span class="sd">            features: List of input features for the GNN modules.</span>
+<span class="sd">            truth: List of truth for the GNN ModuleList.</span>
+<span class="sd">            device: The device used for computation.</span>
+<span class="sd">            retro_table_name: Name of the retro table for.</span>
+<span class="sd">            outdir: the directory in which the pipeline database will be</span>
+<span class="sd">                stored.</span>
+<span class="sd">            batch_size: Batch size for inference.</span>
+<span class="sd">            n_workers: Number of workers used in dataloading.</span>
+<span class="sd">            pipeline_name: Name of the pipeline. If such a pipeline already</span>
+<span class="sd">                exists, an error will be prompted to avoid overwriting.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_name</span> <span class="o">=</span> <span class="n">pipeline_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
@@ -121,13 +132,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span> <span class="o">=</span> <span class="n">module_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_retro_table_name</span> <span class="o">=</span> <span class="n">retro_table_name</span></div>
 
-<div class="viewcode-block" id="InSQLitePipeline.__call__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1000000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Runs inference of each field in self._module_dict[target][&#39;&#39;]</span>
+<div class="viewcode-block" id="InSQLitePipeline.__call__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000000</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Run inference of each field in self._module_dict[target][&#39;&#39;].</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            database (path): path to database with pulsemap and truth</span>
-<span class="sd">            pulsemap (str): name of pulsemaps</span>
-<span class="sd">            chunk_size (int): database will be sliced in chunks of size chunk_size. Use this parameter to control memory usage. Defaults to 1000000</span>
+<span class="sd">            database: Path to database with pulsemap and truth.</span>
+<span class="sd">            pulsemap: Name of pulsemaps.</span>
+<span class="sd">            chunk_size: database will be sliced in chunks of size `chunk_size`.</span>
+<span class="sd">                Use this parameter to control memory usage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">outdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_outdir</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -155,17 +169,16 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;WARNING - Pipeline named </span><span class="si">%s</span><span class="s2"> already exists! </span><span class="se">\n</span><span class="s2"> Please rename pipeline!&quot;</span>
                 <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_name</span>
-            <span class="p">)</span>
-        <span class="k">return</span></div>
+            <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_setup_dataloaders</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">chunk_size</span><span class="p">,</span>
-        <span class="n">db</span><span class="p">,</span>
-        <span class="n">pulsemap</span><span class="p">,</span>
-        <span class="n">selection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">persistent_workers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
+        <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pulsemap</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">persistent_workers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
         <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">selection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_all_event_nos</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
         <span class="n">n_chunks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span> <span class="o">/</span> <span class="n">chunk_size</span><span class="p">)</span>
@@ -182,21 +195,23 @@
                     <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">selection</span><span class="o">=</span><span class="n">batch</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
                     <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_workers</span><span class="p">,</span>
-                    <span class="n">persistent_workers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">persistent_workers</span><span class="o">=</span><span class="n">persistent_workers</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">dataloaders</span><span class="p">,</span> <span class="n">event_batches</span>
 
-    <span class="k">def</span> <span class="nf">_get_all_event_nos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_all_event_nos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
             <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;SELECT event_no FROM truth&quot;</span>
             <span class="n">selection</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">selection</span>
 
-    <span class="k">def</span> <span class="nf">_combine_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframes</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_combine_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;event_no&quot;</span><span class="p">),</span> <span class="n">dataframes</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_inference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_inference</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">:</span> <span class="n">DataLoader</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="n">dataframes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="c1"># dataloader = iter(dataloader)</span>
@@ -221,7 +236,7 @@
             <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_outputs</span><span class="p">(</span><span class="n">dataframes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-    <span class="k">def</span> <span class="nf">_get_outdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_outdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">database_name</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
             <span class="n">outdir</span> <span class="o">=</span> <span class="p">(</span>
@@ -234,7 +249,7 @@
             <span class="n">outdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span>
         <span class="k">return</span> <span class="n">outdir</span>
 
-    <span class="k">def</span> <span class="nf">_get_truth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">selection</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_truth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
             <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM truth WHERE event_no in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span>
                 <span class="nb">tuple</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
@@ -242,7 +257,7 @@
             <span class="n">truth</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">truth</span>
 
-    <span class="k">def</span> <span class="nf">_get_retro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">selection</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_retro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
                 <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">%s</span><span class="s2"> WHERE event_no in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
@@ -253,9 +268,15 @@
             <span class="k">return</span> <span class="n">retro</span>
         <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> table does not exist&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retro_table_name</span><span class="p">)</span>
-            <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">_append_to_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">retro</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_append_to_pipeline</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">truth</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">retro</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">pipeline_database</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/</span><span class="si">%s</span><span class="s2">.db&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_name</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -268,30 +289,33 @@
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">pipeline_database</span><span class="p">,</span> <span class="s2">&quot;retro&quot;</span><span class="p">,</span> <span class="n">retro</span><span class="p">)</span>
             <span class="n">save_to_sql</span><span class="p">(</span><span class="n">retro</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retro_table_name</span><span class="p">,</span> <span class="n">pipeline_database</span><span class="p">)</span>
-        <span class="k">return</span>
 
-<div class="viewcode-block" id="InSQLitePipeline._create_table"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline._create_table">[docs]</a>    <span class="k">def</span> <span class="nf">_create_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline_database</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates a table.</span>
+    <span class="c1"># @FIXME: Duplicate.</span>
+<div class="viewcode-block" id="InSQLitePipeline._create_table"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline._create_table">[docs]</a>    <span class="k">def</span> <span class="nf">_create_table</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">pipeline_database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a table.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            pipeline_database (str): path to the pipeline database</span>
-<span class="sd">            df (str): pandas.DataFrame of combined predictions</span>
+<span class="sd">            pipeline_database: Path to the pipeline database.</span>
+<span class="sd">            table_name: Name of the table in pipeline database.</span>
+<span class="sd">            df: DataFrame of combined predictions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">query_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">query_columns_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="s2">&quot;event_no&quot;</span><span class="p">:</span>
                 <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;INTEGER PRIMARY KEY NOT NULL&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;FLOAT&quot;</span>
-            <span class="n">query_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">query_columns</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">query_columns</span><span class="p">)</span>
+            <span class="n">query_columns_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">query_columns</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">query_columns_list</span><span class="p">)</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;PRAGMA foreign_keys=off;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;CREATE TABLE </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">query_columns</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;PRAGMA foreign_keys=on;&quot;</span>
         <span class="p">)</span>
-        <span class="n">run_sql_code</span><span class="p">(</span><span class="n">pipeline_database</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
-        <span class="k">return</span></div></div>
+        <span class="n">run_sql_code</span><span class="p">(</span><span class="n">pipeline_database</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

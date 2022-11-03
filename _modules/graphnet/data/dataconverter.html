@@ -63,24 +63,41 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.dataconverter</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span></span><span class="sd">&quot;&quot;&quot;Base `DataConverter` class(es) used in GraphNeT.&quot;&quot;&quot;</span>
+<span class="c1"># type: ignore[name-defined]  # Due to use of `init_global_index`.</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Manager</span><span class="p">,</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">Value</span>
+<span class="kn">import</span> <span class="nn">multiprocessing.pool</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.sharedctypes</span> <span class="kn">import</span> <span class="n">Synchronized</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">cast</span><span class="p">,</span>
+<span class="p">)</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">final</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Python version &lt; 3.8</span>
 
-    <span class="k">def</span> <span class="nf">final</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># Identity decorator</span>
+    <span class="c1"># Identity decorator</span>
+    <span class="k">def</span> <span class="nf">final</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># type: ignore  # noqa: D103</span>
         <span class="k">return</span> <span class="n">f</span>
 
 
@@ -109,27 +126,29 @@
 
 <span class="c1"># Utility classes</span>
 <div class="viewcode-block" id="FileSet"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.FileSet">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">FileSet</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">FileSet</span><span class="p">:</span>  <span class="c1"># noqa: D101</span>
     <span class="n">i3_file</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">gcd_file</span><span class="p">:</span> <span class="nb">str</span></div>
 
 
 <span class="c1"># Utility method(s)</span>
-<div class="viewcode-block" id="init_global_index"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.init_global_index">[docs]</a><span class="k">def</span> <span class="nf">init_global_index</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">output_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<div class="viewcode-block" id="init_global_index"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.init_global_index">[docs]</a><span class="k">def</span> <span class="nf">init_global_index</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="n">Synchronized</span><span class="p">,</span> <span class="n">output_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Make `global_index` available to pool workers.&quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">global_index</span><span class="p">,</span> <span class="n">global_output_files</span>
-    <span class="n">global_index</span> <span class="o">=</span> <span class="n">index</span>
-    <span class="n">global_output_files</span> <span class="o">=</span> <span class="n">output_files</span></div>
+    <span class="k">global</span> <span class="n">global_index</span><span class="p">,</span> <span class="n">global_output_files</span>  <span class="c1"># type: ignore[name-defined]</span>
+    <span class="n">global_index</span><span class="p">,</span> <span class="n">global_output_files</span> <span class="o">=</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">output_files</span><span class="p">)</span>  <span class="c1"># type: ignore[name-defined]</span></div>
 
 
-<div class="viewcode-block" id="cache_output_files"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.cache_output_files">[docs]</a><span class="k">def</span> <span class="nf">cache_output_files</span><span class="p">(</span><span class="n">process_method</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Decorator to cache output file names.&quot;&quot;&quot;</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="cache_output_files"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.cache_output_files">[docs]</a><span class="k">def</span> <span class="nf">cache_output_files</span><span class="p">(</span><span class="n">process_method</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Decorate `process_method` to cache output file names.&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">process_method</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Using multiprocessing</span>
-            <span class="n">output_files</span> <span class="o">=</span> <span class="n">global_output_files</span>
+            <span class="n">output_files</span> <span class="o">=</span> <span class="n">global_output_files</span>  <span class="c1"># type: ignore[name-defined]</span>
         <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>  <span class="c1"># `global_output_files` not set</span>
             <span class="c1"># Running on main process</span>
             <span class="n">output_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span>
@@ -138,11 +157,11 @@
         <span class="n">output_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output_file</span>
 
-    <span class="k">return</span> <span class="n">wrapper</span></div>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DataConverter"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter">[docs]</a><span class="k">class</span> <span class="nc">DataConverter</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Abstract base class for specialised (SQLite, parquet, etc.) converters.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for converting I3-files to intermediate file format.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
@@ -162,7 +181,7 @@
         <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
         <span class="n">icetray_verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Converts I3 files to an intermediate format.</span>
+        <span class="sd">&quot;&quot;&quot;Construct DataConverter.</span>
 
 <span class="sd">        When using `input_file_batch_pattern`, regular expressions are used to</span>
 <span class="sd">        group files according to their names. All files that match a certain</span>
@@ -191,7 +210,6 @@
 <span class="sd">         - upgrade_genie_step4_141020_A_000010.i3.zst</span>
 <span class="sd">        would end up in a separate group, named</span>
 <span class="sd">        &quot;upgrade_genie_step4_141020_A_00001x.&lt;suffix&gt;&quot;.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extractors</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
@@ -236,20 +254,19 @@
         <span class="c1"># Placeholders for keeping track of sequential event indices and output files</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span> <span class="o">=</span> <span class="n">index_column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Set verbosity</span>
         <span class="k">if</span> <span class="n">icetray_verbose</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">icetray</span><span class="o">.</span><span class="n">I3Logger</span><span class="o">.</span><span class="n">global_logger</span> <span class="o">=</span> <span class="n">icetray</span><span class="o">.</span><span class="n">I3NullLogger</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DataConverter.__call__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.__call__">[docs]</a>    <span class="nd">@final</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]):</span>
-        <span class="sd">&quot;&quot;&quot;Main call to convert I3 files in `directories.</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Convert I3-files in `directories.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            directories (Union[str, List[str]]): One or more directories, the I3</span>
-<span class="sd">                files within which should be converted to an intermediate file</span>
-<span class="sd">                format.</span>
+<span class="sd">            directories: One or more directories, the I3 files within which</span>
+<span class="sd">                should be converted to an intermediate file format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Find all I3 and GCD files in the specified directories.</span>
         <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span> <span class="o">=</span> <span class="n">find_i3_files</span><span class="p">(</span><span class="n">directories</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_rescue</span><span class="p">)</span>
@@ -271,16 +288,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">filesets</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataConverter.execute"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.execute">[docs]</a>    <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filesets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FileSet</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filesets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FileSet</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;General method for processing a set of I3 files.</span>
 
 <span class="sd">        The files are converted individually according to the inheriting class/</span>
 <span class="sd">        intermediate file format.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            filesets (List[FileSet]): List of paths to I3 and corresponding GCD files.</span>
+<span class="sd">            filesets: List of paths to I3 and corresponding GCD files.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Make sure output directory exists.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving results to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -289,12 +305,17 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_strategy</span> <span class="o">==</span> <span class="s2">&quot;sequential_batched&quot;</span><span class="p">:</span>
                 <span class="c1"># Define batches</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb_files_to_batch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sequential_batch_pattern</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">batches</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span>
-                    <span class="n">filesets</span><span class="p">,</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">filesets</span><span class="p">),</span>
                     <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">filesets</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb_files_to_batch</span><span class="p">)),</span>
                 <span class="p">)</span>
                 <span class="n">batches</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sequential_batch_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ix_batch</span><span class="p">))</span>
+                    <span class="p">(</span>
+                        <span class="n">group</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_sequential_batch_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ix_batch</span><span class="p">),</span>
+                    <span class="p">)</span>
                     <span class="k">for</span> <span class="n">ix_batch</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batches</span><span class="p">)</span>
                 <span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -306,7 +327,7 @@
 
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_strategy</span> <span class="o">==</span> <span class="s2">&quot;pattern_batched&quot;</span><span class="p">:</span>
                 <span class="c1"># Define batches</span>
-                <span class="n">groups</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+                <span class="n">groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">FileSet</span><span class="p">]]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
                 <span class="k">for</span> <span class="n">fileset</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filesets</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">i3_file</span><span class="p">):</span>
                     <span class="n">group</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_sub_from</span><span class="p">,</span>
@@ -346,30 +367,35 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;[ctrl+c] Exciting gracefully.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataConverter.save_data"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.save_data">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">],</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">],</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Implementation-specific method for saving data to file.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (List[OrderedDict]): List of extracted features.</span>
-<span class="sd">            output_file (str): Name of output file.</span>
+<span class="sd">            data: List of extracted features.</span>
+<span class="sd">            output_file: Name of output file.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="DataConverter.merge_files"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.merge_files">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">input_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Implementation-specific method for merging output files.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            output_file (str): Name of the output file containing the merged</span>
-<span class="sd">                results.</span>
-<span class="sd">            input_files (List[str]): Intermediate files to be merged, according</span>
-<span class="sd">                to the specific implementation. Default to None, meaning that</span>
-<span class="sd">                all files output by the current instance are merged.</span>
+<span class="sd">            output_file: Name of the output file containing the merged results.</span>
+<span class="sd">            input_files: Intermediate files to be merged, according to the</span>
+<span class="sd">                specific implementation. Default to None, meaning that all</span>
+<span class="sd">                files output by the current instance are merged.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: If the method has not been implemented for the</span>
+<span class="sd">                backend in question.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
     <span class="c1"># Internal methods</span>
-    <span class="k">def</span> <span class="nf">_iterate_over_individual_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FileSet</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">_iterate_over_individual_files</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FileSet</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">Pool</span><span class="p">]:</span>
         <span class="c1"># Get appropriate mapping function</span>
         <span class="n">map_fn</span><span class="p">,</span> <span class="n">pool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_map_function</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 
@@ -385,8 +411,8 @@
 
 <div class="viewcode-block" id="DataConverter._iterate_over_batches_of_files"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._iterate_over_batches_of_files">[docs]</a>    <span class="k">def</span> <span class="nf">_iterate_over_batches_of_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">FileSet</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Iterate over a batch of files and save results on worker processes (if applicable)&quot;&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">Pool</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over a batch of files and save results on worker process.&quot;&quot;&quot;</span>
         <span class="c1"># Get appropriate mapping function</span>
         <span class="n">map_fn</span><span class="p">,</span> <span class="n">pool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_map_function</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;batch(es)&quot;</span><span class="p">)</span>
 
@@ -398,7 +424,9 @@
 
         <span class="k">return</span> <span class="n">pool</span></div>
 
-<div class="viewcode-block" id="DataConverter._update_shared_variables"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._update_shared_variables">[docs]</a>    <span class="k">def</span> <span class="nf">_update_shared_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]):</span>
+<div class="viewcode-block" id="DataConverter._update_shared_variables"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._update_shared_variables">[docs]</a>    <span class="k">def</span> <span class="nf">_update_shared_variables</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">Pool</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Update `self._index` and `self._output_files`.</span>
 
 <span class="sd">        If `pool` is set, it means that multiprocessing was used. In this case,</span>
@@ -408,7 +436,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pool</span><span class="p">:</span>
             <span class="c1"># Extract information from shared variables to member variables.</span>
-            <span class="n">index</span><span class="p">,</span> <span class="n">output_files</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">_initargs</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">output_files</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">_initargs</span>  <span class="c1"># type: ignore</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">+=</span> <span class="n">index</span><span class="o">.</span><span class="n">value</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">output_files</span><span class="p">[:])))</span></div>
 
@@ -444,7 +472,7 @@
         <span class="k">return</span> <span class="n">output_file</span>
 
 <div class="viewcode-block" id="DataConverter._extract_data"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._extract_data">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileset</span><span class="p">:</span> <span class="n">FileSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Extracts data from single I3 file.</span>
+        <span class="sd">&quot;&quot;&quot;Extract data from single I3 file.</span>
 
 <span class="sd">        If the saving strategy is 1:1 (i.e., each I3 file is converted to a</span>
 <span class="sd">        corresponding intermediate file) the data is saved to such a file, and</span>
@@ -461,7 +489,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Infer whether method is being run using multiprocessing</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">global_index</span>
+            <span class="n">global_index</span>  <span class="c1"># type: ignore[name-defined]</span>
             <span class="n">multi_processing</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
             <span class="n">multi_processing</span> <span class="o">=</span> <span class="kc">False</span>
@@ -487,9 +515,9 @@
 
             <span class="c1"># Get new, unique index and increment value</span>
             <span class="k">if</span> <span class="n">multi_processing</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">global_index</span><span class="o">.</span><span class="n">get_lock</span><span class="p">():</span>
-                    <span class="n">index</span> <span class="o">=</span> <span class="n">global_index</span><span class="o">.</span><span class="n">value</span>
-                    <span class="n">global_index</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">with</span> <span class="n">global_index</span><span class="o">.</span><span class="n">get_lock</span><span class="p">():</span>  <span class="c1"># type: ignore[name-defined]</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="n">global_index</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># type: ignore[name-defined]</span>
+                    <span class="n">global_index</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># type: ignore[name-defined]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -504,9 +532,8 @@
 
 <div class="viewcode-block" id="DataConverter.get_map_function"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.get_map_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_map_function</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">nb_files</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;I3 file(s)&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Identify the type of map function to use (pure python or multiprocess).&quot;&quot;&quot;</span>
-
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">Pool</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Identify map function to use (pure python or multiprocess).&quot;&quot;&quot;</span>
         <span class="c1"># Choose relevant map-function given the requested number of workers.</span>
         <span class="n">workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">,</span> <span class="n">nb_files</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">workers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -514,8 +541,6 @@
                 <span class="sa">f</span><span class="s2">&quot;Starting pool of </span><span class="si">{</span><span class="n">workers</span><span class="si">}</span><span class="s2"> workers to process </span><span class="si">{</span><span class="n">nb_files</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-            <span class="c1"># index = Value(&quot;i&quot;, 0)</span>
-            <span class="c1"># output_files = Queue()</span>
             <span class="n">manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">()</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">output_files</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
@@ -531,7 +556,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">nb_files</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2"> in main thread (not multiprocessing)&quot;</span>
             <span class="p">)</span>
-            <span class="n">map_fn</span> <span class="o">=</span> <span class="nb">map</span>
+            <span class="n">map_fn</span> <span class="o">=</span> <span class="nb">map</span>  <span class="c1"># type: ignore</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="n">map_fn</span><span class="p">,</span> <span class="n">pool</span></div>
@@ -578,13 +603,13 @@
 
         <span class="k">return</span> <span class="n">save_strategy</span>
 
-<div class="viewcode-block" id="DataConverter._save_filenames"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._save_filenames">[docs]</a>    <span class="k">def</span> <span class="nf">_save_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Saves I3 file names in CSV format.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DataConverter._save_filenames"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._save_filenames">[docs]</a>    <span class="k">def</span> <span class="nf">_save_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save I3 file names in CSV format.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving input file names to config CSV.&quot;</span><span class="p">)</span>
         <span class="n">config_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">config_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">i3_files</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">i3_files</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">])</span>
-        <span class="n">i3_files</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_dir</span><span class="p">,</span> <span class="s2">&quot;i3files.csv&quot;</span><span class="p">))</span></div>
+        <span class="n">df_i3_files</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">i3_files</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">])</span>
+        <span class="n">df_i3_files</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_dir</span><span class="p">,</span> <span class="s2">&quot;i3files.csv&quot;</span><span class="p">))</span></div>
 
     <span class="k">def</span> <span class="nf">_get_output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>

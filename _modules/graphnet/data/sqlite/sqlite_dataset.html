@@ -63,7 +63,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.sqlite.sqlite_dataset</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="sd">&quot;&quot;&quot;`Dataset` class(es) for reading data from SQLite databases.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 
@@ -71,15 +73,16 @@
 
 
 <div class="viewcode-block" id="SQLiteDataset"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset">[docs]</a><span class="k">class</span> <span class="nc">SQLiteDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pytorch dataset for reading from SQLite.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Pytorch dataset for reading data from SQLite databases.&quot;&quot;&quot;</span>
 
     <span class="c1"># Implementing abstract method(s)</span>
-    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Check(s)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_database_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_database_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections_established</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">Connection</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_database_list</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -88,7 +91,7 @@
             <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Format of input file `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="si">}</span><span class="s2">` is not supported.&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_current_database</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_database</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Set custom member variable(s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_features_string</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">)</span>
@@ -96,18 +99,18 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_string</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Handle for sqlite3.connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">Connection</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_connection</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SQLiteDataset._query_table"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._query_table">[docs]</a>    <span class="k">def</span> <span class="nf">_query_table</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
-        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Query table at a specific index, optionally with some selection.&quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -116,14 +119,19 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">selection</span><span class="p">:</span>  <span class="c1"># I.e., `None` or `&quot;&quot;`</span>
             <span class="n">selection</span> <span class="o">=</span> <span class="s2">&quot;1=1&quot;</span>  <span class="c1"># Identically true, to select all</span>
 
+        <span class="n">index_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">sequential_index</span><span class="p">]</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">index_</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">index_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Query table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_establish_connection</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;SELECT </span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s2"> FROM </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2"> WHERE &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">selection</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -135,7 +143,7 @@
                 <span class="k">raise</span> <span class="n">e</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_establish_connection</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;SELECT </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="si">}</span><span class="s2"> FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span>
@@ -143,13 +151,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_connection</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">indices</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-    <span class="c1"># Customer, internal method(s)</span>
-<div class="viewcode-block" id="SQLiteDataset._establish_connection"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._establish_connection">[docs]</a>    <span class="k">def</span> <span class="nf">_establish_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="c1"># Custom, internal method(s)</span>
+    <span class="c1"># @TODO: Is it necessary to return anything here?</span>
+<div class="viewcode-block" id="SQLiteDataset._establish_connection"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._establish_connection">[docs]</a>    <span class="k">def</span> <span class="nf">_establish_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SQLiteDataset&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make sure that a sqlite3 connection is open.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections_established</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections</span> <span class="o">=</span> <span class="p">[]</span>
@@ -157,20 +169,21 @@
                         <span class="n">con</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections_established</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_database</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_current_database</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_database</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_connections</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_database</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="SQLiteDataset._close_connection"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._close_connection">[docs]</a>    <span class="k">def</span> <span class="nf">_close_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># @TODO: Is it necessary to return anything here?</span>
+<div class="viewcode-block" id="SQLiteDataset._close_connection"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._close_connection">[docs]</a>    <span class="k">def</span> <span class="nf">_close_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SQLiteDataset&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make sure that no sqlite3 connection is open.</span>
 
-<span class="sd">        This is necessary to calls this before passing to `torch.DataLoader`</span>
-<span class="sd">        such that the dataset replica on each worker is required to create its</span>
-<span class="sd">        own connection (thereby avoiding `sqlite3.DatabaseError: database disk</span>
-<span class="sd">        image is malformed` errors due to inability to use sqlite3 connection</span>
-<span class="sd">        accross processes.</span>
+<span class="sd">        This is necessary to calls this before passing to</span>
+<span class="sd">        `torch.DataLoader` such that the dataset replica on each worker</span>
+<span class="sd">        is required to create its own connection (thereby avoiding</span>
+<span class="sd">        `sqlite3.DatabaseError: database disk image is malformed` errors</span>
+<span class="sd">        due to inability to use sqlite3 connection accross processes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>

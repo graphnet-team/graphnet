@@ -43,6 +43,7 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-graphnet.training.callbacks">graphnet.training.callbacks module</a><ul>
 <li><a class="reference internal" href="#graphnet.training.callbacks.PiecewiseLinearLR"><code class="docutils literal notranslate"><span class="pre">PiecewiseLinearLR</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.callbacks.PiecewiseLinearLR.__init__"><code class="docutils literal notranslate"><span class="pre">PiecewiseLinearLR.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.callbacks.PiecewiseLinearLR.get_lr"><code class="docutils literal notranslate"><span class="pre">PiecewiseLinearLR.get_lr()</span></code></a></li>
 </ul>
 </li>
@@ -59,7 +60,11 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.training.labels">graphnet.training.labels module</a><ul>
-<li><a class="reference internal" href="#graphnet.training.labels.Direction"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.training.labels.Direction"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.labels.Direction.__call__"><code class="docutils literal notranslate"><span class="pre">Direction.__call__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.training.labels.Direction.__init__"><code class="docutils literal notranslate"><span class="pre">Direction.__init__()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#graphnet.training.labels.Label"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.training.labels.Label.__call__"><code class="docutils literal notranslate"><span class="pre">Label.__call__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.labels.Label.__init__"><code class="docutils literal notranslate"><span class="pre">Label.__init__()</span></code></a></li>
@@ -98,6 +103,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.LossFunction"><code class="docutils literal notranslate"><span class="pre">LossFunction</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.loss_functions.LossFunction.__init__"><code class="docutils literal notranslate"><span class="pre">LossFunction.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.LossFunction._forward"><code class="docutils literal notranslate"><span class="pre">LossFunction._forward()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.LossFunction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">LossFunction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.loss_functions.LossFunction.forward"><code class="docutils literal notranslate"><span class="pre">LossFunction.forward()</span></code></a></li>
@@ -168,6 +174,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter"><code class="docutils literal notranslate"><span class="pre">WeightFitter</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter.__init__"><code class="docutils literal notranslate"><span class="pre">WeightFitter.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter._get_truth"><code class="docutils literal notranslate"><span class="pre">WeightFitter._get_truth()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter.fit"><code class="docutils literal notranslate"><span class="pre">WeightFitter.fit()</span></code></a></li>
 </ul>
@@ -210,33 +217,57 @@
 </section>
 <section id="module-graphnet.training.callbacks">
 <span id="graphnet-training-callbacks-module"></span><h2>graphnet.training.callbacks module<a class="headerlink" href="#module-graphnet.training.callbacks" title="Permalink to this heading"></a></h2>
+<p>Callback class(es) for using during model training.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.PiecewiseLinearLR">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">PiecewiseLinearLR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">milestones</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#PiecewiseLinearLR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.PiecewiseLinearLR" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_LRScheduler</span></code></p>
-<p>Interpolates learning rate linearly between milestones.</p>
-<p>For each milestone, denoting a specified number of steps, a factor
-multiplying the base learning rate is specified. For steps between two
-milestones, the learning rate is interpolated linearly between the two
-closest milestones. For steps before the first milestone, the factor for the
-first milestone is used; vice versa for steps after the last milestone.</p>
+<p>Interpolate learning rate linearly between milestones.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>optimizer</strong> (<em>Optimizer</em>) – Wrapped optimizer.</p></li>
-<li><p><strong>milestones</strong> (<em>list</em>) – List of step indices. Must be increasing.</p></li>
-<li><p><strong>factors</strong> (<em>list</em>) – List of multiplicative factors. Must be same length as
-<cite>milestones</cite>.</p></li>
-<li><p><strong>last_epoch</strong> (<em>int</em>) – The index of the last epoch. Default: -1.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, prints a message to stdout for
-each update. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code>) – </p></li>
+<li><p><strong>milestones</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – </p></li>
+<li><p><strong>factors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – </p></li>
+<li><p><strong>last_epoch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">-1</span></code>) – </p></li>
+<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – </p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.callbacks.PiecewiseLinearLR.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">milestones</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#PiecewiseLinearLR.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.PiecewiseLinearLR.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>PiecewiseLinearLR</cite>.</p>
+<p>For each milestone, denoting a specified number of steps, a factor
+multiplying the base learning rate is specified. For steps between two
+milestones, the learning rate is interpolated linearly between the two
+closest milestones. For steps before the first milestone, the factor
+for the first milestone is used; vice versa for steps after the last
+milestone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code>) – Wrapped optimizer.</p></li>
+<li><p><strong>milestones</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – List of step indices. Must be increasing.</p></li>
+<li><p><strong>factors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – List of multiplicative factors. Must be same length as
+<cite>milestones</cite>.</p></li>
+<li><p><strong>last_epoch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">-1</span></code>) – The index of the last epoch.</p></li>
+<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, prints a message to stdout for each update.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.PiecewiseLinearLR.get_lr">
 <span class="sig-name descname"><span class="pre">get_lr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#PiecewiseLinearLR.get_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.PiecewiseLinearLR.get_lr" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get effective learning rate(s) for each optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -257,19 +288,16 @@ each update. Default: <code class="docutils literal notranslate"><span class="pr
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar.get_metrics">
 <span class="sig-name descname"><span class="pre">get_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#ProgressBar.get_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar.get_metrics" title="Permalink to this definition"></a></dt>
-<dd><p>Combines progress bar metrics collected from the trainer with standard metrics from get_standard_metrics.
-Implement this to override the items displayed in the progress bar.</p>
-<p>Here is an example of how to override the defaults:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-    <span class="c1"># don&#39;t show the version number</span>
-    <span class="n">items</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-    <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;v_num&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">items</span>
-</pre></div>
-</div>
+<dd><p>Override to not show the version number in the logging.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Dictionary with the items to be displayed in the progress bar.</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code>) – </p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -277,45 +305,83 @@ Implement this to override the items displayed in the progress bar.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar.init_predict_tqdm">
 <span class="sig-name descname"><span class="pre">init_predict_tqdm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#ProgressBar.init_predict_tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar.init_predict_tqdm" title="Permalink to this definition"></a></dt>
-<dd><p>Override this to customize the tqdm bar for predicting.</p>
+<dd><p>Override for customisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Bar</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar.init_test_tqdm">
 <span class="sig-name descname"><span class="pre">init_test_tqdm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#ProgressBar.init_test_tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar.init_test_tqdm" title="Permalink to this definition"></a></dt>
-<dd><p>Override this to customize the tqdm bar for testing.</p>
+<dd><p>Override for customisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Bar</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar.init_train_tqdm">
 <span class="sig-name descname"><span class="pre">init_train_tqdm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#ProgressBar.init_train_tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar.init_train_tqdm" title="Permalink to this definition"></a></dt>
-<dd><p>Override this to customize the tqdm bar for training.</p>
+<dd><p>Override for customisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Bar</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar.init_validation_tqdm">
 <span class="sig-name descname"><span class="pre">init_validation_tqdm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#ProgressBar.init_validation_tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar.init_validation_tqdm" title="Permalink to this definition"></a></dt>
-<dd><p>Override this to customize the tqdm bar for validation.</p>
+<dd><p>Override for customisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Bar</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar.on_train_epoch_end">
 <span class="sig-name descname"><span class="pre">on_train_epoch_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#ProgressBar.on_train_epoch_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar.on_train_epoch_end" title="Permalink to this definition"></a></dt>
-<dd><p>Called when the train epoch ends.</p>
-<p>To access all batch outputs at the end of the epoch, either:</p>
-<ol class="arabic simple">
-<li><p>Implement <cite>training_epoch_end</cite> in the <cite>LightningModule</cite> and access outputs via the module OR</p></li>
-<li><p>Cache data across train batch hooks inside the callback implementation to post-process in this hook.</p></li>
-</ol>
+<dd><p>Log the final progress bar for the epoch to file.</p>
+<p>Don’t duplciate to stdout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code>) – </p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar.on_train_epoch_start">
 <span class="sig-name descname"><span class="pre">on_train_epoch_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/callbacks.html#ProgressBar.on_train_epoch_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar.on_train_epoch_start" title="Permalink to this definition"></a></dt>
-<dd><p>Prints the results of the previous epoch on a separate line.</p>
-<p>This allows the user to see the losses/metrics for previous epochs while
-the current is training. The default behaviour in pytorch-lightning is
-to overwrite the progress bar from previous epochs.</p>
+<dd><p>Print the results of the previous epoch on a separate line.</p>
+<p>This allows the user to see the losses/metrics for previous epochs
+while the current is training. The default behaviour in pytorch-
+lightning is to overwrite the progress bar from previous epochs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code>) – </p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -323,10 +389,38 @@ to overwrite the progress bar from previous epochs.</p>
 </section>
 <section id="module-graphnet.training.labels">
 <span id="graphnet-training-labels-module"></span><h2>graphnet.training.labels module<a class="headerlink" href="#module-graphnet.training.labels" title="Permalink to this heading"></a></h2>
+<p>Class(es) for constructing training labels at runtime.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.labels.Direction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.labels.</span></span><span class="sig-name descname"><span class="pre">Direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">azimuth_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'azimuth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zenith'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Direction" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.labels.Label" title="graphnet.training.labels.Label"><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></a></p>
+<p>Class for producing particle direction/pointing label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>azimuth_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'azimuth'</span></code>) – </p></li>
+<li><p><strong>zenith_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'zenith'</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.labels.Direction.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Direction.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Direction.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Compute label for <cite>graph</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>graph</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tensor</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.labels.Direction.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">azimuth_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'azimuth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zenith'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Direction.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Direction.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>Direction</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -337,11 +431,13 @@ to overwrite the progress bar from previous epochs.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.labels.Label">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.labels.</span></span><span class="sig-name descname"><span class="pre">Label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Label" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
-<p>Base Label class for producing labels from single Data Object.</p>
+<p>Base <cite>Label</cite> class for producing labels from single <cite>Data</cite> instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
@@ -350,7 +446,7 @@ to overwrite the progress bar from previous epochs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.labels.Label.__call__">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Label.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Label.__call__" title="Permalink to this definition"></a></dt>
-<dd><p>Label-specific implementation</p>
+<dd><p>Label-specific implementation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>graph</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – </p>
@@ -364,10 +460,11 @@ to overwrite the progress bar from previous epochs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.labels.Label.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/labels.html#Label.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Label.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Base Label class for producing labels from single Data Object.</p>
+<dd><p>Construct <cite>Label</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – The name of the field in Data where the label will be stored. Ie. graph[key] = label</p>
+<dd class="field-odd"><p><strong>key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name of the field in <cite>Data</cite> where the label will be
+stored. That is, <cite>graph[key] = label</cite>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -378,15 +475,20 @@ to overwrite the progress bar from previous epochs.</p>
 <section id="module-graphnet.training.loss_functions">
 <span id="graphnet-training-loss-functions-module"></span><h2>graphnet.training.loss_functions module<a class="headerlink" href="#module-graphnet.training.loss_functions" title="Permalink to this heading"></a></h2>
 <p>Collection of loss functions.</p>
-<p>All loss functions inherit from <cite>LossFunction</cite> which (…)</p>
+<p>All loss functions inherit from <cite>LossFunction</cite> which ensures a common syntax,
+handles per-event weights, etc.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.BinaryCrossEntropyLoss">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">BinaryCrossEntropyLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#BinaryCrossEntropyLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.BinaryCrossEntropyLoss" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>
-<p>Computes binary cross entropy for a vector of predictions (between 0 and 1),
-targets should be 0 and 1 for muon and neutrino respectively
-where prediction is prob. the PID is neutrino (12,14,16)
-loss should be reported elementwise, so set reduction to None</p>
+<p>Compute binary cross entropy loss.</p>
+<p>Predictions are vector probabilities (i.e., values between 0 and 1), and
+targets should be 0 and 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.BinaryCrossEntropyLoss.allow_zero_length_dataloader_with_multiple_devices">
 <span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.training.loss_functions.BinaryCrossEntropyLoss.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
@@ -413,22 +515,28 @@ loss should be reported elementwise, so set reduction to None</p>
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.EuclideanDistanceLoss">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">EuclideanDistanceLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#EuclideanDistanceLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.EuclideanDistanceLoss" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>
+<p>Mean squared error in three dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.EuclideanDistanceLoss._forward">
 <span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#EuclideanDistanceLoss._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.EuclideanDistanceLoss._forward" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the 3D Euclidean distance between predicted and target.</p>
+<dd><p>Calculate 3D Euclidean distance between predicted and target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>prediction</strong> (<em>Tensor</em>) – Output of the model. Must have shape [N, 3]</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Target tensor, extracted from graph object.</p></li>
+<li><p><strong>prediction</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Output of the model. Must have shape [N, 3]</p></li>
+<li><p><strong>target</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Target tensor, extracted from graph object.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Loss. Shape [n,1]</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tensor</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Elementwise von Mises-Fisher loss terms. Shape [N,]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -459,7 +567,7 @@ loss should be reported elementwise, so set reduction to None</p>
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LogCMK">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">LogCMK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#LogCMK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LogCMK" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Function</span></code></p>
-<p>MIT License</p>
+<p>MIT License.</p>
 <p>Copyright (c) 2019 Max Ryabinin</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the “Software”), to deal
@@ -485,39 +593,36 @@ exact calculations for <cite>m=2</cite> and <cite>m=3</cite> and found to yield 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LogCMK.backward">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#LogCMK.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LogCMK.backward" title="Permalink to this definition"></a></dt>
-<dd><p>Defines a formula for differentiating the operation with backward mode
-automatic differentiation (alias to the vjp function).</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
-as many outputs as the <a class="reference internal" href="#graphnet.training.loss_functions.LogCMK.forward" title="graphnet.training.loss_functions.LogCMK.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in
-for non tensor outputs of the forward function),
-and it should return as many tensors, as there were inputs to
-<a class="reference internal" href="#graphnet.training.loss_functions.LogCMK.forward" title="graphnet.training.loss_functions.LogCMK.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the gradient w.r.t the given output,
-and each returned value should be the gradient w.r.t. the
-corresponding input. If an input is not a Tensor or is a Tensor not
-requiring grads, you can just pass None as a gradient for that input.</p>
-<p>The context can be used to retrieve tensors saved during the forward
-pass. It also has an attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx.needs_input_grad</span></code> as a tuple
-of booleans representing whether each input needs gradient. E.g.,
-<a class="reference internal" href="#graphnet.training.loss_functions.LogCMK.backward" title="graphnet.training.loss_functions.LogCMK.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> will have <code class="docutils literal notranslate"><span class="pre">ctx.needs_input_grad[0]</span> <span class="pre">=</span> <span class="pre">True</span></code> if the
-first input to <a class="reference internal" href="#graphnet.training.loss_functions.LogCMK.forward" title="graphnet.training.loss_functions.LogCMK.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> needs gradient computated w.r.t. the
-output.</p>
+<dd><p>Backward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctx</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+<li><p><strong>grad_output</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LogCMK.forward">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#LogCMK.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LogCMK.forward" title="Permalink to this definition"></a></dt>
-<dd><p>Performs the operation.</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context ctx as the first argument, followed by any
-number of arguments (tensors or other types).</p>
-<p>The context can be used to store arbitrary data that can be then
-retrieved during the backward pass. Tensors should not be stored
-directly on <cite>ctx</cite> (though this is not currently enforced for
-backward compatibility). Instead, tensors should be saved either with
-<code class="xref py py-func docutils literal notranslate"><span class="pre">ctx.save_for_backward()</span></code> if they are intended to be used in
-<code class="docutils literal notranslate"><span class="pre">backward</span></code> (equivalently, <code class="docutils literal notranslate"><span class="pre">vjp</span></code>) or <code class="xref py py-func docutils literal notranslate"><span class="pre">ctx.save_for_forward()</span></code>
-if they are intended to be used for in <code class="docutils literal notranslate"><span class="pre">jvp</span></code>.</p>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctx</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+<li><p><strong>m</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>kappa</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -528,10 +633,15 @@ if they are intended to be used for in <code class="docutils literal notranslate
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>
 <p>Log-cosh loss function.</p>
 <p>Acts like x^2 for small x; and like <a href="#id1"><span class="problematic" id="id2">|x|</span></a> for large x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LogCoshLoss._forward">
 <span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#LogCoshLoss._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LogCoshLoss._forward" title="Permalink to this definition"></a></dt>
-<dd><p>Implementation of loss calculation.</p>
+<dd><p>Implement loss calculation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -587,11 +697,27 @@ See [<a class="reference external" href="https://github.com/keras-team/keras/blo
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LossFunction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">LossFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#LossFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LossFunction" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
-<p>Base class for loss functions in graphnet.</p>
+<p>Base class for loss functions in <cite>graphnet</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.LossFunction.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#LossFunction.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LossFunction.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>LossFunction</cite>, saving model config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LossFunction._forward">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#LossFunction._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LossFunction._forward" title="Permalink to this definition"></a></dt>
-<dd><p>Syntax similar to <cite>.forward</cite> for implentation in inheriting classes.</p>
+<dd><p>Syntax like <cite>.forward</cite>, for implentation in inheriting classes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -613,32 +739,23 @@ See [<a class="reference external" href="https://github.com/keras-team/keras/blo
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LossFunction.forward">
 <em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#LossFunction.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LossFunction.forward" title="Permalink to this definition"></a></dt>
-<dd><p>Forward pass for all loss functions.
-:type prediction: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>
-:param prediction: Tensor containing predictions. Shape [N,P]
-:type prediction: Tensor
-:type target: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>
-:param target: Tensor containing targets. Shape [N,T]
-:type target: Tensor
-:type return_elements: <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>
-:param return_elements: Whether elementwise loss terms</p>
-<blockquote>
-<div><p>should be returned. The alternative is to return the averaged
-loss across examples. Defaults to False.</p>
-</div></blockquote>
+<dd><p>Forward pass for all loss functions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>Loss, either averaged to a scalar (if <cite>return_elements = False</cite>)</dt><dd><p>or elementwise terms with shape [N,] (if <cite>return_elements = True</cite>).</p>
-</dd>
-</dl>
-</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prediction</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Tensor containing predictions. Shape [N,P]</p></li>
+<li><p><strong>target</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Tensor containing targets. Shape [N,T]</p></li>
+<li><p><strong>return_elements</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether elementwise loss terms should be returned.
+The alternative is to return the averaged loss across examples.</p></li>
+<li><p><strong>weights</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tensor</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>weights</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Loss, either averaged to a scalar (if <cite>return_elements = False</cite>) or
+elementwise terms with shape [N,] (if <cite>return_elements = True</cite>).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -665,10 +782,15 @@ loss across examples. Defaults to False.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">MSELoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#MSELoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.MSELoss" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>
 <p>Mean squared error loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.MSELoss._forward">
 <span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#MSELoss._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.MSELoss._forward" title="Permalink to this definition"></a></dt>
-<dd><p>Implementation of loss calculation.</p>
+<dd><p>Implement loss calculation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -709,10 +831,15 @@ loss across examples. Defaults to False.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">RMSELoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#RMSELoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.RMSELoss" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.MSELoss" title="graphnet.training.loss_functions.MSELoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">MSELoss</span></code></a></p>
 <p>Root mean squared error loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.RMSELoss._forward">
 <span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#RMSELoss._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.RMSELoss._forward" title="Permalink to this definition"></a></dt>
-<dd><p>Implementation of loss calculation.</p>
+<dd><p>Implement loss calculation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -753,24 +880,29 @@ loss across examples. Defaults to False.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">VonMisesFisher2DLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisher2DLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher2DLoss" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisherLoss" title="graphnet.training.loss_functions.VonMisesFisherLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VonMisesFisherLoss</span></code></a></p>
 <p>von Mises-Fisher loss function vectors in the 2D plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher2DLoss._forward">
 <span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisher2DLoss._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher2DLoss._forward" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the von Mises-Fisher loss for an angle in the 2D plane.</p>
+<dd><p>Calculate von Mises-Fisher loss for an angle in the 2D plane.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>prediction</strong> (<em>Tensor</em>) – Output of the model. Must have shape [N, 2]
-where 0th column is a prediction of <cite>angle</cite> and 1st column is an
-estimate of <cite>kappa</cite>.</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Target tensor, extracted from graph object.</p></li>
+<li><p><strong>prediction</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Output of the model. Must have shape [N, 2] where 0th
+column is a prediction of <cite>angle</cite> and 1st column is an estimate
+of <cite>kappa</cite>.</p></li>
+<li><p><strong>target</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Target tensor, extracted from graph object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Elementwise von Mises-Fisher loss terms. Shape [N,]</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>loss (Tensor)</p>
+<dd class="field-odd"><p>loss</p>
 </dd>
 </dl>
 </dd></dl>
@@ -802,24 +934,29 @@ estimate of <cite>kappa</cite>.</p></li>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">VonMisesFisher3DLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisher3DLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisherLoss" title="graphnet.training.loss_functions.VonMisesFisherLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VonMisesFisherLoss</span></code></a></p>
 <p>von Mises-Fisher loss function vectors in the 3D plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher3DLoss._forward">
 <span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisher3DLoss._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss._forward" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the von Mises-Fisher loss for a direction in the 3D plane.</p>
+<dd><p>Calculate von Mises-Fisher loss for a direction in the 3D.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>prediction</strong> (<em>Tensor</em>) – Output of the model. Must have shape [N, 4]
-where columns 0, 1, 2 are predictions of <cite>direction</cite> and last column is an
-estimate of <cite>kappa</cite>.</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Target tensor, extracted from graph object.</p></li>
+<li><p><strong>prediction</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Output of the model. Must have shape [N, 4] where
+columns 0, 1, 2 are predictions of <cite>direction</cite> and last column
+is an estimate of <cite>kappa</cite>.</p></li>
+<li><p><strong>target</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Target tensor, extracted from graph object.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Elementwise von Mises-Fisher loss terms. Shape [N,]</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>loss (Tensor)</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Elementwise von Mises-Fisher loss terms. Shape [N,]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -853,24 +990,29 @@ estimate of <cite>kappa</cite>.</p></li>
 <p>General class for calculating von Mises-Fisher loss.</p>
 <p>Requires implementation for specific dimension <cite>m</cite> in which the target and
 prediction vectors need to be prepared.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisherLoss._evaluate">
 <span class="sig-name descname"><span class="pre">_evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisherLoss._evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisherLoss._evaluate" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the von Mises-Fisher loss for a vector in D-dimensonal space.</p>
+<dd><p>Calculate von Mises-Fisher loss for a vector in D dimensons.</p>
 <p>This loss utilises the von Mises-Fisher distribution, which is a
 probability distribution on the (D - 1) sphere in D-dimensional space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>prediction</strong> (<em>Tensor</em>) – Predicted vector, of shape [batch_size, D].</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Target unit vector, of shape [batch_size, D].</p></li>
+<li><p><strong>prediction</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Predicted vector, of shape [batch_size, D].</p></li>
+<li><p><strong>target</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Target unit vector, of shape [batch_size, D].</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Elementwise von Mises-Fisher loss terms.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>loss (Tensor)</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Elementwise von Mises-Fisher loss terms.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -883,7 +1025,7 @@ probability distribution on the (D - 1) sphere in D-dimensional space.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_cmk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa_switch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisherLoss.log_cmk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk" title="Permalink to this definition"></a></dt>
-<dd><p>Calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.</p>
+<dd><p>Calculate $log C_{m}(k)$ term in von Mises-Fisher loss.</p>
 <p>Since <cite>log_cmk_exact</cite> is diverges for <cite>kappa</cite> &gt;~ 700 (using float64
 precision), and since <cite>log_cmk_approx</cite> is unaccurate for small <cite>kappa</cite>,
 this method automatically switches between the two at <cite>kappa_switch</cite>,
@@ -905,8 +1047,8 @@ ensuring continuity at this point.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk_approx">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_cmk_approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisherLoss.log_cmk_approx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk_approx" title="Permalink to this definition"></a></dt>
-<dd><p>Approx. calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
-[<a class="reference external" href="https://arxiv.org/abs/1812.04616">https://arxiv.org/abs/1812.04616</a>] Sec. 8.2 with additional minus sign.</p>
+<dd><p>Calculate $log C_{m}(k)$ term in von Mises-Fisher loss approx.</p>
+<p>[<a class="reference external" href="https://arxiv.org/abs/1812.04616">https://arxiv.org/abs/1812.04616</a>] Sec. 8.2 with additional minus sign.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -923,7 +1065,7 @@ ensuring continuity at this point.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk_exact">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_cmk_exact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/loss_functions.html#VonMisesFisherLoss.log_cmk_exact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk_exact" title="Permalink to this definition"></a></dt>
-<dd><p>Exact calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.</p>
+<dd><p>Calculate $log C_{m}(k)$ term in von Mises-Fisher loss exactly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -957,6 +1099,7 @@ ensuring continuity at this point.</p>
 </section>
 <section id="module-graphnet.training.utils">
 <span id="graphnet-training-utils-module"></span><h2>graphnet.training.utils module<a class="headerlink" href="#module-graphnet.training.utils" title="Permalink to this heading"></a></h2>
+<p>Utility functions for <cite>graphnet.training</cite>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.training.utils.get_predictions">
 <span class="sig-prename descclassname"><span class="pre">graphnet.training.utils.</span></span><span class="sig-name descname"><span class="pre">get_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/utils.html#get_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.utils.get_predictions" title="Permalink to this definition"></a></dt>
@@ -994,7 +1137,7 @@ ensuring continuity at this point.</p>
 <li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 <li><p><strong>num_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – </p></li>
 <li><p><strong>persistent_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
-<li><p><strong>node_truth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+<li><p><strong>node_truth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 <li><p><strong>node_truth_table</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 <li><p><strong>string_selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 <li><p><strong>loss_weight_table</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
@@ -1033,7 +1176,7 @@ ensuring continuity at this point.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code>]</p>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1052,34 +1195,52 @@ ensuring continuity at this point.</p>
 <li><p><strong>model</strong> (<a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>) – </p></li>
 </ul>
 </dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
 </dl>
 </dd></dl>
 
 </section>
 <section id="module-graphnet.training.weight_fitting">
 <span id="graphnet-training-weight-fitting-module"></span><h2>graphnet.training.weight_fitting module<a class="headerlink" href="#module-graphnet.training.weight_fitting" title="Permalink to this heading"></a></h2>
+<p>Classes for fitting per-event weights for training.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.weight_fitting.BjoernLow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.weight_fitting.</span></span><span class="sig-name descname"><span class="pre">BjoernLow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#BjoernLow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.BjoernLow" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter" title="graphnet.training.weight_fitting.WeightFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightFitter</span></code></a></p>
-<p>Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.training.weight_fitting.BjoernLow._fit_weights">
-<span class="sig-name descname"><span class="pre">_fit_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#BjoernLow._fit_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.BjoernLow._fit_weights" title="Permalink to this definition"></a></dt>
-<dd><p>Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve.</p>
+<p>Produces per-event weights.</p>
+<p>Events below x_low are weighted to be uniform, whereas events above x_low
+are weighted to follow a 1/(1+a*(x_low -x)) curve.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – A pandas.DataFrame containing the truth information.</p></li>
-<li><p><strong>x_low</strong> (<em>float</em>) – The cut-off for the truth variable. Values at or below x_low will be weighted to be uniform. Values above will follow a 1/(1+a*(x_low -x)) curve</p></li>
-<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – A scalar factor that controls how fast the weights above x_low approaches zero. Larger means faster. Defaults to 0.05.</p></li>
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A pandas.DataFrame containing the fitted weights.</p>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.BjoernLow._fit_weights">
+<span class="sig-name descname"><span class="pre">_fit_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#BjoernLow._fit_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.BjoernLow._fit_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Fit per-event weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – DataFrame containing the truth information.</p></li>
+<li><p><strong>x_low</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The cut-off for the truth variable. Values at or below x_low
+will be weighted to be uniform. Values above will follow a
+1/(1+a*(x_low -x)) curve.</p></li>
+<li><p><strong>alpha</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, default: <code class="docutils literal notranslate"><span class="pre">0.05</span></code>) – A scalar factor that controls how fast the weights above
+x_low approaches zero. Larger means faster.</p></li>
+</ul>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The fitted weights.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1090,20 +1251,29 @@ ensuring continuity at this point.</p>
 <dt class="sig sig-object py" id="graphnet.training.weight_fitting.Uniform">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.weight_fitting.</span></span><span class="sig-name descname"><span class="pre">Uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#Uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.Uniform" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.weight_fitting.WeightFitter" title="graphnet.training.weight_fitting.WeightFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightFitter</span></code></a></p>
-<p>Produces per-event weights making fitted variable distribution uniform.</p>
+<p>Produces per-event weights making variable distribution uniform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.weight_fitting.Uniform._fit_weights">
 <span class="sig-name descname"><span class="pre">_fit_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#Uniform._fit_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.Uniform._fit_weights" title="Permalink to this definition"></a></dt>
-<dd><p>Produces per-event weights making fitted variable distribution uniform.</p>
+<dd><p>Fit per-event weights.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>truth</strong> (<em>pd.DataFrame</em>) – a pandas.DataFrame containing the truth information.</p>
+<dd class="field-odd"><p><strong>truth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – DataFrame containing the truth information.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The fitted weights.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The fitted weights.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1114,10 +1284,37 @@ ensuring continuity at this point.</p>
 <dt class="sig sig-object py" id="graphnet.training.weight_fitting.WeightFitter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.weight_fitting.</span></span><span class="sig-name descname"><span class="pre">WeightFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#WeightFitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.WeightFitter" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
+<p>Produces per-event weights.</p>
+<p>Weights are returned by the public method <cite>fit_weights()</cite>, and the weights
+can be saved as a table in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.weight_fitting.WeightFitter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#WeightFitter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.WeightFitter.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>UniformWeightFitter</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.weight_fitting.WeightFitter._get_truth">
 <span class="sig-name descname"><span class="pre">_get_truth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#WeightFitter._get_truth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.WeightFitter._get_truth" title="Permalink to this definition"></a></dt>
-<dd><p>Return truth <cite>variable</cite>, optionally only for <cite>selection</cite> event nos.</p>
+<dd><p>Return truth <cite>variable</cite>, optionally only for <cite>selection</cite> events.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1125,30 +1322,40 @@ ensuring continuity at this point.</p>
 <li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 </ul>
 </dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.weight_fitting.WeightFitter.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_to_database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/weight_fitting.html#WeightFitter.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.weight_fitting.WeightFitter.fit" title="Permalink to this definition"></a></dt>
-<dd><p>Fits weights. Calls private _fit_weights method. Output is returned as a pandas.DataFrame and optionally saved to sql.</p>
+<dd><p>Fit weights.</p>
+<p>Calls private <cite>_fit_weights</cite> method. Output is returned as a
+pandas.DataFrame and optionally saved to sql.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bins</strong> (<em>np.ndarray</em>) – Desired bins used for fitting.</p></li>
-<li><p><strong>variable</strong> (<em>str</em>) – the name of the variable. Must match corresponding column name in the truth table.</p></li>
-<li><p><strong>weight_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Name of the weights. Defaults to None.</p></li>
-<li><p><strong>add_to_database</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, the weights are saved to sql in a table named weight_name. Defaults to False.</p></li>
-<li><p><strong>selection</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – a list of event_no’s. If given, only events in the selection is used for fitting. Defaults to None.</p></li>
-<li><p><strong>transform</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>]</em><em>, </em><em>optional</em>) – A callable method that transform the variable into a desired space. E.g. np.log10 for energy. If given, fitting will happen in this space.</p></li>
-<li><p><strong>**kwargs</strong> – additional arguments</p></li>
+<li><p><strong>bins</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Desired bins used for fitting.</p></li>
+<li><p><strong>variable</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – the name of the variable. Must match corresponding column
+name in the truth table.</p></li>
+<li><p><strong>weight_name</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the weights.</p></li>
+<li><p><strong>add_to_database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, the weights are saved to sql in a table
+named weight_name.</p></li>
+<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – a list of event_no’s. If given, only events in the
+selection is used for fitting.</p></li>
+<li><p><strong>transform</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A callable method that transform the variable into a
+desired space. E.g. np.log10 for energy. If given, fitting will
+happen in this space.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – Additional arguments passed to <cite>_fit_weights</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a pandas.DataFrame that contains weights, event_nos</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>DataFrame that contains weights, event_nos.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1158,6 +1365,8 @@ ensuring continuity at this point.</p>
 </section>
 <section id="module-graphnet.training">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.training" title="Permalink to this heading"></a></h2>
+<p>Modules for training models.</p>
+<p><cite>graphnet.training</cite> manages model training and experiment logging.</p>
 </section>
 </section>
 

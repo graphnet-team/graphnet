@@ -63,37 +63,40 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.utilities.parquet_to_sqlite</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sqlite3</span>
-<span class="kn">import</span> <span class="nn">awkward</span> <span class="k">as</span> <span class="nn">ak</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utilities for converting files from Parquet to SQLite.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">trange</span>
+
+<span class="kn">import</span> <span class="nn">awkward</span> <span class="k">as</span> <span class="nn">ak</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">sqlalchemy</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">trange</span>
+
 <span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_utilities</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">run_sql_code</span><span class="p">,</span>
     <span class="n">save_to_sql</span><span class="p">,</span>
     <span class="n">attach_index</span><span class="p">,</span>
     <span class="n">create_table</span><span class="p">,</span>
 <span class="p">)</span>
-
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
 
 
 <div class="viewcode-block" id="ParquetToSQLiteConverter"><a class="viewcode-back" href="../../../../graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter">[docs]</a><span class="k">class</span> <span class="nc">ParquetToSQLiteConverter</span><span class="p">(</span><span class="n">LoggerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts Parquet files to a SQLite database. Each event in the parquet file(s) are assigned a unique event id.</span>
-<span class="sd">    By default, every field in the parquet file(s) are extracted. One can choose to exclude certain fields by using the argument exclude_fields.</span>
+    <span class="sd">&quot;&quot;&quot;Convert Parquet files to a SQLite database.</span>
+
+<span class="sd">    Each event in the parquet file(s) are assigned a unique event id. By</span>
+<span class="sd">    default, every field in the parquet file(s) are extracted. One can choose</span>
+<span class="sd">    to exclude certain fields by using the argument exclude_fields.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="ParquetToSQLiteConverter.__init__"><a class="viewcode-back" href="../../../../graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parquet_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">mc_truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mc_truth&quot;</span><span class="p">,</span>
         <span class="n">excluded_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct `ParquetToSQLiteConverter`.&quot;&quot;&quot;</span>
         <span class="c1"># checks</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parquet_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">pass</span>
@@ -116,7 +119,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_excluded_fields</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mc_truth_table</span> <span class="o">=</span> <span class="n">mc_truth_table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_counter</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_created_tables</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_created_tables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
 
     <span class="k">def</span> <span class="nf">_find_parquet_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -131,7 +134,13 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;No files found in </span><span class="si">{</span><span class="n">paths</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">files</span>
 
-<div class="viewcode-block" id="ParquetToSQLiteConverter.run"><a class="viewcode-back" href="../../../../graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="ParquetToSQLiteConverter.run"><a class="viewcode-back" href="../../../../graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Run Parquet to SQLite conversion.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outdir: Output directory for SQLite database.</span>
+<span class="sd">            database_name: Name of output SQLite database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_output_directories</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">database_name</span><span class="p">)</span>
         <span class="n">database_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="n">outdir</span><span class="p">,</span> <span class="n">database_name</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">database_name</span> <span class="o">+</span> <span class="s2">&quot;.db&quot;</span>
@@ -167,11 +176,11 @@
     <span class="k">def</span> <span class="nf">_save_to_sql</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">ak_array</span><span class="p">:</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">n_events_in_file</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_df</span><span class="p">(</span><span class="n">ak_array</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n_events_in_file</span><span class="p">)</span>
+        <span class="n">ak_array</span><span class="p">:</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">n_events_in_file</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to_dataframe</span><span class="p">(</span><span class="n">ak_array</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n_events_in_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_created_tables</span><span class="p">:</span>
             <span class="n">save_to_sql</span><span class="p">(</span>
                 <span class="n">database_path</span><span class="p">,</span>
@@ -223,11 +232,13 @@
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;event_no&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_nos</span>
         <span class="k">return</span> <span class="n">df</span>
 
-    <span class="k">def</span> <span class="nf">_create_output_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_create_output_directories</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">database_name</span> <span class="o">+</span> <span class="s2">&quot;/data&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">database_name</span> <span class="o">+</span> <span class="s2">&quot;/config&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ParquetToSQLiteConverter._save_config"><a class="viewcode-back" href="../../../../graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter._save_config">[docs]</a>    <span class="k">def</span> <span class="nf">_save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="ParquetToSQLiteConverter._save_config"><a class="viewcode-back" href="../../../../graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter._save_config">[docs]</a>    <span class="k">def</span> <span class="nf">_save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Save the list of converted Parquet files to a CSV file.&quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parquet_files</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">])</span>
         <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">database_name</span> <span class="o">+</span> <span class="s2">&quot;/config/files.csv&quot;</span><span class="p">)</span></div></div>

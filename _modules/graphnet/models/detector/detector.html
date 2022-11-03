@@ -63,7 +63,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.models.detector.detector</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span></span><span class="sd">&quot;&quot;&quot;Base detector-specific `Model` class(es).&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.config</span> <span class="kn">import</span> <span class="n">save_config</span>
@@ -72,7 +74,8 @@
     <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">final</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Python version &lt; 3.8</span>
 
-    <span class="k">def</span> <span class="nf">final</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># Identity decorator</span>
+    <span class="c1"># Identity decorator</span>
+    <span class="k">def</span> <span class="nf">final</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># type: ignore  # noqa: D103</span>
         <span class="k">return</span> <span class="n">f</span>
 
 
@@ -92,10 +95,11 @@
     <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;List of features used/assumed by inheriting `Detector` objects.&quot;&quot;&quot;</span>
 
-    <span class="nd">@save_config</span>
+<div class="viewcode-block" id="Detector.__init__"><a class="viewcode-back" href="../../../../graphnet.models.detector.html#graphnet.models.detector.detector.Detector.__init__">[docs]</a>    <span class="nd">@save_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">graph_builder</span><span class="p">:</span> <span class="n">GraphBuilder</span><span class="p">,</span> <span class="n">scalers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct `Detector`.&quot;&quot;&quot;</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -106,14 +110,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="s2">&quot;Will use scalers rather than standard preprocessing &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Detector.forward"><a class="viewcode-back" href="../../../../graphnet.models.detector.html#graphnet.models.detector.detector.Detector.forward">[docs]</a>    <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Pre-process graph `Data` features and build graph adjacency.&quot;&quot;&quot;</span>
-
         <span class="c1"># Check(s)</span>
         <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">,</span> <span class="p">(</span>
             <span class="s2">&quot;Got graph data with incompatible size, &quot;</span><span class="p">,</span>
@@ -135,11 +138,11 @@
             <span class="n">x_numpy</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
             <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scalers</span><span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_numpy</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scalers</span><span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_numpy</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># type: ignore[call-overload]</span>
             <span class="p">)</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 
             <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scalers</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_numpy</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scalers</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_numpy</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:])</span>  <span class="c1"># type: ignore[call-overload]</span>
             <span class="p">)</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -150,18 +153,22 @@
 
 <div class="viewcode-block" id="Detector._forward"><a class="viewcode-back" href="../../../../graphnet.models.detector.html#graphnet.models.detector.detector.Detector._forward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Same syntax as `.forward` for implentation in inheriting classes.&quot;&quot;&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;Syntax like `.forward`, for implentation in inheriting classes.&quot;&quot;&quot;</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return number of input features.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">nb_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;This the default, but may be overridden by specific inheriting classes.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return number of output features.</span>
+
+<span class="sd">        This the default, but may be overridden by specific inheriting classes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span>
 
-    <span class="k">def</span> <span class="nf">_validate_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_validate_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">):</span>
             <span class="c1"># `data.features` is &quot;transposed&quot; and each list element contains only duplicate entries.</span>
 

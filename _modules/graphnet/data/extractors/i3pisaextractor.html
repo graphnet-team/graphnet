@@ -63,15 +63,28 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.extractors.i3pisaextractor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
+<span></span><span class="sd">&quot;&quot;&quot;I3Extractor class(es) for extracting quantities required by PISA.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="n">icetray</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 
 
 <div class="viewcode-block" id="I3PISAExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3pisaextractor.I3PISAExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3PISAExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pisa_dependencies&quot;</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Class for extracting quantities required by PISA.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="I3PISAExtractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3pisaextractor.I3PISAExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Extracts quantities required by PISA&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="I3PISAExtractor.__init__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3pisaextractor.I3PISAExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pisa_dependencies&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct `I3PISAExtractor`.&quot;&quot;&quot;</span>
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="I3PISAExtractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3pisaextractor.I3PISAExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract quantities required by PISA.&quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">required_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;OneWeight&quot;</span><span class="p">,</span> <span class="s2">&quot;gen_ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;NEvents&quot;</span><span class="p">,</span> <span class="s2">&quot;GENIEWeight&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s2">&quot;I3MCWeightDict&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>

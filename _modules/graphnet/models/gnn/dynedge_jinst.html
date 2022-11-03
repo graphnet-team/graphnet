@@ -81,18 +81,20 @@
 
 
 <div class="viewcode-block" id="DynEdgeJINST"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST">[docs]</a><span class="k">class</span> <span class="nc">DynEdgeJINST</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;DynEdge (dynamical edge convolutional) model used in [2209.03042].&quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="DynEdgeJINST.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.__init__">[docs]</a>    <span class="nd">@save_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nb_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">layer_size_scale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">layer_size_scale</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;DynEdge model.</span>
+        <span class="sd">&quot;&quot;&quot;Construct `DynEdgeJINST`.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            nb_inputs (int): Number of input features.</span>
-<span class="sd">            nb_outputs (int): Number of output features.</span>
-<span class="sd">            layer_size_scale (int, optional): Integer that scales the size of</span>
-<span class="sd">                hidden layers. Defaults to 4.</span>
+<span class="sd">            nb_inputs: Number of input features.</span>
+<span class="sd">            nb_outputs: Number of output features.</span>
+<span class="sd">            layer_size_scale: Integer that scales the size of hidden layers.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Architecture configuration</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">layer_size_scale</span>
@@ -167,12 +169,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lrelu</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DynEdgeJINST.forward"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Model forward pass.</span>
-<span class="sd">        Args:</span>
-<span class="sd">            data (Data): Graph of input features.</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            Tensor: Model output.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Apply learnable forward pass.&quot;&quot;&quot;</span>
         <span class="c1"># Convenience variables</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span>
 

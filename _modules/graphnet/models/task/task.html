@@ -63,18 +63,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.models.task.task</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="sd">&quot;&quot;&quot;Base physics task-specific `Model` class(es).&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="kn">from</span> <span class="nn">graphnet.models.config</span> <span class="kn">import</span> <span class="n">save_config</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">final</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Python version &lt; 3.8</span>
 
-    <span class="k">def</span> <span class="nf">final</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># Identity decorator</span>
+    <span class="c1"># Identity decorator</span>
+    <span class="k">def</span> <span class="nf">final</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># type: ignore  # noqa: D103</span>
         <span class="k">return</span> <span class="n">f</span>
 
 
@@ -85,47 +86,21 @@
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="c1"># Avoid cyclic dependency</span>
-    <span class="kn">from</span> <span class="nn">graphnet.training.loss_functions</span> <span class="kn">import</span> <span class="n">LossFunction</span>
+    <span class="kn">from</span> <span class="nn">graphnet.training.loss_functions</span> <span class="kn">import</span> <span class="n">LossFunction</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.config</span> <span class="kn">import</span> <span class="n">save_config</span>
 
 
 <div class="viewcode-block" id="Task"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task">[docs]</a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for all reconstruction and classification tasks.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        hidden_size: The number of nodes in the layer feeding into this tasks,</span>
-<span class="sd">          used to construct the affine transformation to the predicted quantity.</span>
-<span class="sd">        target_label: Name of the quantity being predicted, used to extract the</span>
-<span class="sd">          target tensor from the `Data` object in `.compute_loss(...)`.</span>
-<span class="sd">        loss_function: Loss function appropriate to the task.</span>
-<span class="sd">        transform_prediction_and_target: Optional function to transform both the</span>
-<span class="sd">          predicted and target tensor before passing them to the loss function.</span>
-<span class="sd">          Useful e.g. for having the model predict quantities on a physical</span>
-<span class="sd">          scale, but transforming this scale to O(1) for a numerically stable</span>
-<span class="sd">          loss computation.</span>
-<span class="sd">        transform_target: Optional function to transform only the target tensor</span>
-<span class="sd">          before passing it, and the predicted tensor, to the loss function.</span>
-<span class="sd">          Useful e.g. for having the model predict a transformed version of the</span>
-<span class="sd">          target quantity, e.g. the log10-scaled energy, rather than the</span>
-<span class="sd">          physical quantity itself. Used in conjunction with `transform_inference`</span>
-<span class="sd">          to perform the inverse transform on the predicted quantity to recover</span>
-<span class="sd">          the physical scale.</span>
-<span class="sd">        transform_inference: Optional function to inverse-transform the model</span>
-<span class="sd">          prediction to recover a physical scale. Used in conjunction with</span>
-<span class="sd">          `transform_target`.</span>
-<span class="sd">        transform_support: Optional tuple to specify minimum and maximum of the</span>
-<span class="sd">          range of validity for the inverse transforms `transform_target` and</span>
-<span class="sd">          `transform_inference` in case this is restricted. By default the</span>
-<span class="sd">          invertibility of `transform_target` is tested on the range [-1e6, 1e6].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all reconstruction and classification tasks.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Number of inputs assumed by task.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return number of inputs assumed by task.&quot;&quot;&quot;</span>
 
-    <span class="nd">@save_config</span>
+<div class="viewcode-block" id="Task.__init__"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task.__init__">[docs]</a>    <span class="nd">@save_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -134,10 +109,43 @@
         <span class="n">transform_prediction_and_target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">transform_target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">transform_inference</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">transform_support</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">transform_support</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct `Task`.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            hidden_size: The number of nodes in the layer feeding into this</span>
+<span class="sd">                tasks, used to construct the affine transformation to the</span>
+<span class="sd">                predicted quantity.</span>
+<span class="sd">            target_labels: Name(s) of the quantity/-ies being predicted, used</span>
+<span class="sd">                to extract the  target tensor(s) from the `Data` object in</span>
+<span class="sd">                `.compute_loss(...)`.</span>
+<span class="sd">            loss_function: Loss function appropriate to the task.</span>
+<span class="sd">            transform_prediction_and_target: Optional function to transform</span>
+<span class="sd">                both the predicted and target tensor before passing them to the</span>
+<span class="sd">                loss function. Useful e.g. for having the model predict</span>
+<span class="sd">                quantities on a physical scale, but transforming this scale to</span>
+<span class="sd">                O(1) for a numerically stable loss computation.</span>
+<span class="sd">            transform_target: Optional function to transform only the target</span>
+<span class="sd">                tensor before passing it, and the predicted tensor, to the loss</span>
+<span class="sd">                function. Useful e.g. for having the model predict a</span>
+<span class="sd">                transformed version of the target quantity, e.g. the log10-</span>
+<span class="sd">                scaled energy, rather than the physical quantity itself. Used</span>
+<span class="sd">                in conjunction with `transform_inference` to perform the</span>
+<span class="sd">                inverse transform on the predicted quantity to recover the</span>
+<span class="sd">                physical scale.</span>
+<span class="sd">            transform_inference: Optional function to inverse-transform the</span>
+<span class="sd">                model prediction to recover a physical scale. Used in</span>
+<span class="sd">                conjunction with `transform_target`.</span>
+<span class="sd">            transform_support: Optional tuple to specify minimum and maximum</span>
+<span class="sd">                of the range of validity for the inverse transforms</span>
+<span class="sd">                `transform_target` and `transform_inference` in case this is</span>
+<span class="sd">                restricted. By default the invertibility of `transform_target`</span>
+<span class="sd">                is tested on the range [-1e6, 1e6].</span>
+<span class="sd">            loss_weight: Name of the attribute in `data` containing per-event</span>
+<span class="sd">                loss weights.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -146,15 +154,19 @@
             <span class="n">target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_labels</span><span class="p">]</span>
 
         <span class="c1"># Member variables</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span> <span class="o">=</span> <span class="n">target_labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span> <span class="o">=</span> <span class="n">loss_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inference</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span> <span class="o">=</span> <span class="n">loss_weight</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_training</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_inference</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_training</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tensor</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_inference</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tensor</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_and_set_transforms</span><span class="p">(</span>
             <span class="n">transform_prediction_and_target</span><span class="p">,</span>
             <span class="n">transform_target</span><span class="p">,</span>
@@ -163,10 +175,11 @@
         <span class="p">)</span>
 
         <span class="c1"># Mapping from last hidden layer to required size of input</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Task.forward"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task.forward">[docs]</a>    <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Forward pass.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -183,10 +196,14 @@
 
 <div class="viewcode-block" id="Task._forward"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task._forward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Same syntax as `.forward` for implentation in inheriting classes.&quot;&quot;&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;Syntax like `.forward`, for implentation in inheriting classes.&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="Task.compute_loss"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task.compute_loss">[docs]</a>    <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Compute loss of `pred` wrt.</span>
+
+<span class="sd">        target labels in `data`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
             <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
         <span class="p">)</span>
@@ -202,13 +219,13 @@
         <span class="k">return</span> <span class="n">loss</span></div>
 
 <div class="viewcode-block" id="Task.inference"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task.inference">[docs]</a>    <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">inference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set task to inference mode&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">inference</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Activate inference mode.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inference</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="Task.train_eval"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task.train_eval">[docs]</a>    <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">train_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Deactivate inference mode&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">train_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Deactivate inference mode.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inference</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="Task._validate_and_set_transforms"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task._validate_and_set_transforms">[docs]</a>    <span class="nd">@final</span>
@@ -217,9 +234,13 @@
         <span class="n">transform_prediction_and_target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">transform_target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">transform_inference</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="n">transform_support</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Assert that a valid combination of transformation arguments are passed and update the corresponding functions&quot;&quot;&quot;</span>
+        <span class="n">transform_support</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Validate and set transforms.</span>
+
+<span class="sd">        Assert that a valid combination of transformation arguments are passed</span>
+<span class="sd">        and update the corresponding functions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Checks</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span>
             <span class="p">(</span><span class="n">transform_prediction_and_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
@@ -230,7 +251,12 @@
         <span class="p">),</span> <span class="s2">&quot;Please specify both `transform_inference` and `transform_target`&quot;</span>
 
         <span class="k">if</span> <span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">assert</span> <span class="n">transform_inference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
             <span class="k">if</span> <span class="n">transform_support</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">transform_support</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
                 <span class="k">assert</span> <span class="p">(</span>
                     <span class="nb">len</span><span class="p">(</span><span class="n">transform_support</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
                 <span class="p">),</span> <span class="s2">&quot;Please specify min and max for transformation support.&quot;</span>
@@ -260,6 +286,7 @@
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span> <span class="o">=</span> <span class="n">transform_prediction_and_target</span>
         <span class="k">elif</span> <span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">transform_inference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_inference</span> <span class="o">=</span> <span class="n">transform_inference</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span> <span class="o">=</span> <span class="n">transform_target</span></div></div>
 </pre></div>

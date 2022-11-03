@@ -63,9 +63,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.extractors.i3truthextractor</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;I3Extractor class(es) for extracting truth-level information.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities.frames</span> <span class="kn">import</span> <span class="p">(</span>
@@ -74,7 +76,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
 
-<span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
+<span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">()</span> <span class="ow">or</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="p">(</span>
         <span class="n">dataclasses</span><span class="p">,</span>
         <span class="n">icetray</span><span class="p">,</span>
@@ -83,8 +85,23 @@
 
 
 <div class="viewcode-block" id="I3TruthExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3TruthExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;truth&quot;</span><span class="p">,</span> <span class="n">borders</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for extracting truth-level information.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="I3TruthExtractor.__init__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;truth&quot;</span><span class="p">,</span> <span class="n">borders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct I3TruthExtractor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: Name of the `I3Extractor` instance.</span>
+<span class="sd">            borders: Array of boundaries of the detector volume as ((x,y),z)-</span>
+<span class="sd">                coordinates, for identifying, e.g., particles starting and</span>
+<span class="sd">                stopping within the detector. Defaults to hard-coded boundary</span>
+<span class="sd">                coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">borders</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">border_xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                 <span class="p">[</span>
@@ -121,10 +138,12 @@
             <span class="n">border_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">512.82</span><span class="p">,</span> <span class="mf">524.56</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="p">[</span><span class="n">border_xy</span><span class="p">,</span> <span class="n">border_z</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="n">borders</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="n">borders</span></div>
 
-<div class="viewcode-block" id="I3TruthExtractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Extracts truth features.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="I3TruthExtractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract truth-level information.&quot;&quot;&quot;</span>
         <span class="n">is_mc</span> <span class="o">=</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
         <span class="n">is_noise</span> <span class="o">=</span> <span class="n">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
         <span class="n">sim_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_data_type</span><span class="p">(</span><span class="n">is_mc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span><span class="p">)</span>
@@ -220,8 +239,7 @@
                     <span class="n">inelasticity</span><span class="p">,</span>
                 <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_track_energy_and_inelasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>  <span class="c1"># track energy fails on northeren tracks with &quot;&quot;Hadrons&quot; has no mass implemented. Cannot get total energy.&quot;</span>
-                <span class="n">energy_track</span> <span class="o">=</span> <span class="p">(</span><span class="n">padding_value</span><span class="p">,)</span>
-                <span class="n">inelasticity</span> <span class="o">=</span> <span class="p">(</span><span class="n">padding_value</span><span class="p">,)</span>
+                <span class="n">energy_track</span><span class="p">,</span> <span class="n">inelasticity</span> <span class="o">=</span> <span class="p">(</span><span class="n">padding_value</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
 
             <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="p">{</span>
@@ -261,7 +279,9 @@
 
         <span class="k">return</span> <span class="n">output</span></div>
 
-    <span class="k">def</span> <span class="nf">_extract_dbang_decay_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_extract_dbang_decay_length</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">mctree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCTree&quot;</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">p_true</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">primaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -302,23 +322,34 @@
             <span class="k">return</span> <span class="n">padding_value</span>
 
 <div class="viewcode-block" id="I3TruthExtractor._muon_stopped"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._muon_stopped">[docs]</a>    <span class="k">def</span> <span class="nf">_muon_stopped</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">borders</span><span class="p">,</span> <span class="n">horizontal_pad</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">vertical_pad</span><span class="o">=</span><span class="mf">100.0</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates where a simulated muon stops and if this is inside the detectors fiducial volume.</span>
-<span class="sd">        IMPORTANT: The final position of the muon is saved in truth extractor/databases as position_x,position_y and position_z.</span>
-<span class="sd">                This is analogoues to the neutrinos whose interaction vertex is saved under the same name.</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">truth</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">borders</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">shrink_horizontally</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
+        <span class="n">shrink_vertically</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate whether a simulated muon within the detector volume.</span>
+
+<span class="sd">        IMPORTANT: The final position of the muon is saved in truth extractor/</span>
+<span class="sd">        databases as position_x, position_y and position_z. This is analogouos</span>
+<span class="sd">        to the neutrinos whose interaction vertex is saved under the same name.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            truth (dict) : dictionary of already extracted values</span>
-<span class="sd">            borders (tuple) : first entry xy outline, second z min/max depth. See I3TruthExtractor for hard-code example.</span>
-<span class="sd">            horizontal_pad (float) : shrink xy plane further with exclusion zone</span>
-<span class="sd">            vertical_pad (float) : further shrink detector depth with exclusion height</span>
+<span class="sd">            truth: Dictionary of already extracted truth-level information.</span>
+<span class="sd">            borders: The first entry are the (x,y) coordinates, the second</span>
+<span class="sd">                entry is the z-axis min/max depths. See I3TruthExtractor</span>
+<span class="sd">                constructor for hard-code example.</span>
+<span class="sd">            shrink_horizontally: Shrink (x,y)-plane further with exclusion</span>
+<span class="sd">                zone. Defaults to 100 meters. shrink_vertically: Further shrink</span>
+<span class="sd">                detector depth with exclusion height. Defaults to 100 meters.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dictionary (dict) : containing the x,y,z co-ordinates of final muon position and contained boolean (0 or 1)</span>
+<span class="sd">            Dictionary containing the (x,y,z)-coordinates of final the muon</span>
+<span class="sd">                position as well as a boolean indicating whether the muon</span>
+<span class="sd">                stopped within the chosen fiducial volume.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># to do:remove hard-coded border coords and replace with GCD file contents using string no&#39;s</span>
+        <span class="c1"># @TODO: Remove hard-coded border coords and replace with GCD file</span>
+        <span class="c1"># contents using string no&#39;s</span>
         <span class="n">border</span> <span class="o">=</span> <span class="n">mpath</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">borders</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="n">start_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -340,10 +371,10 @@
         <span class="n">end_pos</span> <span class="o">=</span> <span class="n">start_pos</span> <span class="o">+</span> <span class="n">travel_vec</span>
 
         <span class="n">stopped_xy</span> <span class="o">=</span> <span class="n">border</span><span class="o">.</span><span class="n">contains_point</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">radius</span><span class="o">=-</span><span class="n">horizontal_pad</span>
+            <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">radius</span><span class="o">=-</span><span class="n">shrink_horizontally</span>
         <span class="p">)</span>
-        <span class="n">stopped_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vertical_pad</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
-            <span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertical_pad</span>
+        <span class="n">stopped_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">shrink_vertically</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">end_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">borders</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">shrink_vertically</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{</span>
@@ -354,23 +385,27 @@
         <span class="p">}</span></div>
 
 <div class="viewcode-block" id="I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity">[docs]</a>    <span class="k">def</span> <span class="nf">_get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; &quot;Returns primary particle, interaction type, and elasticity.</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span>
+        <span class="n">sim_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">padding_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return primary particle, interaction type, and elasticity.</span>
 
-<span class="sd">        A case handler that does two things</span>
+<span class="sd">        A case handler that does two things:</span>
 <span class="sd">            1) Catches issues related to determining the primary MC particle.</span>
-<span class="sd">            2) Error handles cases where interaction type and elasticity doesnt exist</span>
+<span class="sd">            2) Error handles cases where interaction type and elasticity</span>
+<span class="sd">                doesn&#39;t exist</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            frame (i3 physics frame): ...</span>
-<span class="sd">            sim_type (string): Simulation type</span>
-<span class="sd">            padding_value (int | float): The value used for padding.</span>
+<span class="sd">            frame: Physics frame containing MC record.</span>
+<span class="sd">            sim_type: Simulation type.</span>
+<span class="sd">            padding_value: The value used for padding.</span>
 
 <span class="sd">        Returns</span>
-<span class="sd">            McInIcePrimary (?): The primary particle</span>
-<span class="sd">            interaction_type (int): Either 1 (charged current), 2 (neutral current), 0 (neither)</span>
-<span class="sd">            elasticity (float): In ]0,1[</span>
+<span class="sd">            A tuple containing the MCInIcePrimary, if it exists; the primary</span>
+<span class="sd">                particle, encoded as 1 (charged current), 2 (neutral current),</span>
+<span class="sd">                or 0 (neither); and the elasticity in the range ]0,1[.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">sim_type</span> <span class="o">!=</span> <span class="s2">&quot;noise&quot;</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -401,14 +436,14 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get the total energy of tracks from primary, and corresponding inelasticity.</span>
+        <span class="sd">&quot;&quot;&quot;Get the total energy of tracks from primary, and inelasticity.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            frame (icetray.I3Frame): Physics frame containing MC record.</span>
+<span class="sd">            frame: Physics frame containing MC record.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Tuple[float, float]: Energy of tracks from primary, and corresponding</span>
-<span class="sd">                inelasticity.</span>
+<span class="sd">            Tuple containing the energy of tracks from primary, and the</span>
+<span class="sd">                corresponding inelasticity.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mc_tree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCTree&quot;</span><span class="p">]</span>
         <span class="n">primary</span> <span class="o">=</span> <span class="n">mc_tree</span><span class="o">.</span><span class="n">primaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -428,17 +463,17 @@
         <span class="k">return</span> <span class="n">energy_track</span><span class="p">,</span> <span class="n">inelasticity</span></div>
 
     <span class="c1"># Utility methods</span>
-<div class="viewcode-block" id="I3TruthExtractor._find_data_type"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">_find_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">input_file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Determines the data type</span>
+<div class="viewcode-block" id="I3TruthExtractor._find_data_type"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">_find_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">input_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Determine the data type.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            mc (boolean): is this montecarlo?</span>
-<span class="sd">            input_file (str): path to i3 file</span>
+<span class="sd">            mc: Whether `input_file` is Monte Carlo simulation.</span>
+<span class="sd">            input_file: Path to I3-file.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            str: the simulation/data type</span>
+<span class="sd">            The simulation/data type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># @TODO: Rewrite to make automaticallu infer `mc` from `input_file`?</span>
+        <span class="c1"># @TODO: Rewrite to automatically infer `mc` from `input_file`?</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mc</span><span class="p">:</span>
             <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span>
         <span class="k">else</span><span class="p">:</span>

@@ -63,7 +63,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.sqlite.sqlite_dataset_perturbed</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="sd">&quot;&quot;&quot;`Dataset` class(es) for reading perturbed data from SQLite databases.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -73,16 +75,22 @@
 
 
 <div class="viewcode-block" id="SQLiteDatasetPerturbed"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed">[docs]</a><span class="k">class</span> <span class="nc">SQLiteDatasetPerturbed</span><span class="p">(</span><span class="n">SQLiteDataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pytorch dataset for reading from SQLite including a perturbation step to test the stability of a trained model.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Pytorch dataset for reading perturbed data from SQLite databases.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="sd">    This including a pre-processing step, where the input data is randomly</span>
+<span class="sd">    perturbed according to given per-feature &quot;noise&quot; levels. This is intended</span>
+<span class="sd">    to test the stability of a trained model under small changes to the input</span>
+<span class="sd">    parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SQLiteDatasetPerturbed.__init__"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">perturbation_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">perturbation_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
         <span class="n">truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;truth&quot;</span><span class="p">,</span>
@@ -90,7 +98,52 @@
         <span class="n">string_selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="n">loss_weight_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loss_weight_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loss_weight_default_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct SQLiteDatasetPerturbed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: Path to the file(s) from which this `Dataset` should read.</span>
+<span class="sd">            pulsemaps: Name(s) of the pulse map series that should be used to</span>
+<span class="sd">                construct the nodes on the individual graph objects, and their</span>
+<span class="sd">                features. Multiple pulse series maps can be used, e.g., when</span>
+<span class="sd">                different DOM types are stored in different maps.</span>
+<span class="sd">            features: List of columns in the input files that should be used as</span>
+<span class="sd">                node features on the graph objects.</span>
+<span class="sd">            truth: List of event-level columns in the input files that should</span>
+<span class="sd">                be used added as attributes on the  graph objects.</span>
+<span class="sd">            perturbation_dict (Dict[str, float]): Dictionary mapping a feature</span>
+<span class="sd">                name to a standard deviation according to which the values for</span>
+<span class="sd">                this feature should be randomly perturbed.</span>
+<span class="sd">            node_truth: List of node-level columns in the input files that</span>
+<span class="sd">                should be used added as attributes on the graph objects.</span>
+<span class="sd">            index_column: Name of the column in the input files that contains</span>
+<span class="sd">                unique indicies to identify and map events across tables.</span>
+<span class="sd">            truth_table: Name of the table containing event-level truth</span>
+<span class="sd">                information.</span>
+<span class="sd">            node_truth_table: Name of the table containing node-level truth</span>
+<span class="sd">                information.</span>
+<span class="sd">            string_selection: Subset of strings for which data should be read</span>
+<span class="sd">                and used to construct graph objects. Defaults to None, meaning</span>
+<span class="sd">                all strings for which data exists are used.</span>
+<span class="sd">            selection: List of indicies (in `index_column`) of the events in</span>
+<span class="sd">                the input files that should be read. Defaults to None, meaning</span>
+<span class="sd">                that all events in the input files are read.</span>
+<span class="sd">            dtype: Type of the feature tensor on the graph objects returned.</span>
+<span class="sd">            loss_weight_table: Name of the table containing per-event loss</span>
+<span class="sd">                weights.</span>
+<span class="sd">            loss_weight_column: Name of the column in `loss_weight_table`</span>
+<span class="sd">                containing per-event loss weights. This is also the name of the</span>
+<span class="sd">                corresponding attribute assigned to the graph object.</span>
+<span class="sd">            loss_weight_default_value: Default per-event loss weight.</span>
+<span class="sd">                NOTE: This default value is only applied when</span>
+<span class="sd">                `loss_weight_table` and `loss_weight_column` are specified, and</span>
+<span class="sd">                in this case to events with no value in the corresponding</span>
+<span class="sd">                table/column. That is, if no per-event loss weight table/column</span>
+<span class="sd">                is provided, this value is ignored. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
@@ -104,6 +157,9 @@
             <span class="n">string_selection</span><span class="o">=</span><span class="n">string_selection</span><span class="p">,</span>
             <span class="n">selection</span><span class="o">=</span><span class="n">selection</span><span class="p">,</span>
             <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="n">loss_weight_table</span><span class="o">=</span><span class="n">loss_weight_table</span><span class="p">,</span>
+            <span class="n">loss_weight_column</span><span class="o">=</span><span class="n">loss_weight_column</span><span class="p">,</span>
+            <span class="n">loss_weight_default_value</span><span class="o">=</span><span class="n">loss_weight_default_value</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Custom member variables</span>
@@ -115,30 +171,35 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="p">]</span>
+        <span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+<div class="viewcode-block" id="SQLiteDatasetPerturbed.__getitem__"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return graph `Data` object at `index`.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">sequential_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> not in range [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">sequential_index</span><span class="si">}</span><span class="s2"> not in range [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">]&quot;</span>
             <span class="p">)</span>
-        <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span>
+            <span class="n">sequential_index</span>
+        <span class="p">)</span>
         <span class="n">perturbed_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturb_features</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span><span class="p">(</span><span class="n">perturbed_features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">graph</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span><span class="p">(</span>
+            <span class="n">perturbed_features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">graph</span></div>
 
     <span class="k">def</span> <span class="nf">_perturb_features</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
-        <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+        <span class="n">features_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
         <span class="n">perturbed_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-            <span class="n">loc</span><span class="o">=</span><span class="n">features</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">],</span>
+            <span class="n">loc</span><span class="o">=</span><span class="n">features_array</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">],</span>
             <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                 <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span>
             <span class="p">),</span>
         <span class="p">)</span>
-        <span class="n">features</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">perturbed_features</span>
-        <span class="k">return</span> <span class="n">features</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+        <span class="n">features_array</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">perturbed_features</span>
+        <span class="k">return</span> <span class="n">features_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

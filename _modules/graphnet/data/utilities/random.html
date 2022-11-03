@@ -63,7 +63,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.utilities.random</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Random generator-related utility functions relevant to the graphnet.data package.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;RNG-related utility functions relevant to the graphnet.data package.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -71,18 +71,18 @@
 
 <div class="viewcode-block" id="pairwise_shuffle"><a class="viewcode-back" href="../../../../graphnet.data.utilities.html#graphnet.data.utilities.random.pairwise_shuffle">[docs]</a><span class="k">def</span> <span class="nf">pairwise_shuffle</span><span class="p">(</span>
     <span class="n">i3_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">gcd_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Shuffles the I3 file list and the correponding gcd file list.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Shuffle the I3 file list and the correponding gcd file list.</span>
 
 <span class="sd">    This is handy because it ensures a more even extraction load for each worker.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        files_list (list): List of I3 file paths.</span>
-<span class="sd">        gcd_list (list): List of corresponding gcd file paths.</span>
+<span class="sd">        files_list: List of I3 file paths.</span>
+<span class="sd">        gcd_list: List of corresponding gcd file paths.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        i3_shuffled (list): List of shuffled I3 file paths.</span>
-<span class="sd">        gcd_shuffled (list): List of corresponding gcd file paths.</span>
+<span class="sd">        i3_shuffled: List of shuffled I3 file paths.</span>
+<span class="sd">        gcd_shuffled: List of corresponding gcd file paths.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;i3&quot;</span><span class="p">:</span> <span class="n">i3_list</span><span class="p">,</span> <span class="s2">&quot;gcd&quot;</span><span class="p">:</span> <span class="n">gcd_list</span><span class="p">})</span>
     <span class="n">df_shuffled</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>

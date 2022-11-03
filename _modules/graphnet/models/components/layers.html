@@ -63,7 +63,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.models.components.layers</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="sd">&quot;&quot;&quot;Class(es) implementing layers to be used in `graphnet` models.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">torch.functional</span> <span class="kn">import</span> <span class="n">Tensor</span>
 
@@ -73,14 +75,28 @@
 
 
 <div class="viewcode-block" id="DynEdgeConv"><a class="viewcode-back" href="../../../../graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv">[docs]</a><span class="k">class</span> <span class="nc">DynEdgeConv</span><span class="p">(</span><span class="n">EdgeConv</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;Dynamical edge convolution layer.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DynEdgeConv.__init__"><a class="viewcode-back" href="../../../../graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">aggr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span>
         <span class="n">nb_neighbors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
-        <span class="n">features_subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="n">features_subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">slice</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct `DynEdgeConv`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nn: The MLP/torch.Module to be used within the `EdgeConv`.</span>
+<span class="sd">            aggr: Aggregation method to be used with `EdgeConv`.</span>
+<span class="sd">            nb_neighbors: Number of neighbours to be clustered after the</span>
+<span class="sd">                `EdgeConv` operation.</span>
+<span class="sd">            features_subset: Subset of features in `Data.x` that should be used</span>
+<span class="sd">                when dynamically performing the new graph clustering after the</span>
+<span class="sd">                `EdgeConv` operation. Defaults to all features.</span>
+<span class="sd">            **kwargs: Additional features to be passed to `EdgeConv`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">features_subset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">features_subset</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># Use all features</span>
@@ -91,11 +107,12 @@
 
         <span class="c1"># Additional member variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_neighbors</span> <span class="o">=</span> <span class="n">nb_neighbors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">features_subset</span> <span class="o">=</span> <span class="n">features_subset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_subset</span> <span class="o">=</span> <span class="n">features_subset</span></div>
 
 <div class="viewcode-block" id="DynEdgeConv.forward"><a class="viewcode-back" href="../../../../graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">:</span> <span class="n">Adj</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Forward pass.&quot;&quot;&quot;</span>
         <span class="c1"># Standard EdgeConv forward pass</span>
         <span class="n">x</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">)</span>
 

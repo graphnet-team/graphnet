@@ -65,18 +65,20 @@
   <h1>Source code for graphnet.training.loss_functions</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Collection of loss functions.</span>
 
-<span class="sd">All loss functions inherit from `LossFunction` which (...)</span>
+<span class="sd">All loss functions inherit from `LossFunction` which ensures a common syntax,</span>
+<span class="sd">handles per-event weights, etc.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">final</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Python version &lt; 3.8</span>
 
-    <span class="k">def</span> <span class="nf">final</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># Identity decorator</span>
+    <span class="c1"># Identity decorator</span>
+    <span class="k">def</span> <span class="nf">final</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># type: ignore  # noqa: D103</span>
         <span class="k">return</span> <span class="n">f</span>
 
 
@@ -90,14 +92,15 @@
 
 
 <div class="viewcode-block" id="LossFunction"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LossFunction">[docs]</a><span class="k">class</span> <span class="nc">LossFunction</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for loss functions in graphnet.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for loss functions in `graphnet`.&quot;&quot;&quot;</span>
 
-    <span class="nd">@save_config</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="viewcode-block" id="LossFunction.__init__"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LossFunction.__init__">[docs]</a>    <span class="nd">@save_config</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Construct `LossFunction`, saving model config.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LossFunction.forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LossFunction.forward">[docs]</a>    <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
@@ -105,16 +108,16 @@
         <span class="n">return_elements</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Forward pass for all loss functions.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            prediction (Tensor): Tensor containing predictions. Shape [N,P]</span>
-<span class="sd">            target (Tensor): Tensor containing targets. Shape [N,T]</span>
-<span class="sd">            return_elements (bool, optional): Whether elementwise loss terms</span>
-<span class="sd">                should be returned. The alternative is to return the averaged</span>
-<span class="sd">                loss across examples. Defaults to False.</span>
+<span class="sd">            prediction: Tensor containing predictions. Shape [N,P]</span>
+<span class="sd">            target: Tensor containing targets. Shape [N,T]</span>
+<span class="sd">            return_elements: Whether elementwise loss terms should be returned.</span>
+<span class="sd">                The alternative is to return the averaged loss across examples.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Tensor: Loss, either averaged to a scalar (if `return_elements = False`)</span>
-<span class="sd">                or elementwise terms with shape [N,] (if `return_elements = True`).</span>
+<span class="sd">            Loss, either averaged to a scalar (if `return_elements = False`) or</span>
+<span class="sd">            elementwise terms with shape [N,] (if `return_elements = True`).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -127,14 +130,14 @@
 
 <div class="viewcode-block" id="LossFunction._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LossFunction._forward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Syntax similar to `.forward` for implentation in inheriting classes.&quot;&quot;&quot;</span></div></div>
+        <span class="sd">&quot;&quot;&quot;Syntax like `.forward`, for implentation in inheriting classes.&quot;&quot;&quot;</span></div></div>
 
 
 <div class="viewcode-block" id="MSELoss"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.MSELoss">[docs]</a><span class="k">class</span> <span class="nc">MSELoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mean squared error loss.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MSELoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.MSELoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Implementation of loss calculation.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement loss calculation.&quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
@@ -147,7 +150,7 @@
     <span class="sd">&quot;&quot;&quot;Root mean squared error loss.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RMSELoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.RMSELoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Implementation of loss calculation.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement loss calculation.&quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
@@ -170,17 +173,17 @@
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LogCoshLoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LogCoshLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Implementation of loss calculation.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement loss calculation.&quot;&quot;&quot;</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">prediction</span> <span class="o">-</span> <span class="n">target</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_cosh</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">elements</span></div></div>
 
 
 <div class="viewcode-block" id="BinaryCrossEntropyLoss"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.BinaryCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">BinaryCrossEntropyLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Computes binary cross entropy for a vector of predictions (between 0 and 1),</span>
-<span class="sd">    targets should be 0 and 1 for muon and neutrino respectively</span>
-<span class="sd">    where prediction is prob. the PID is neutrino (12,14,16)</span>
-<span class="sd">    loss should be reported elementwise, so set reduction to None</span>
+    <span class="sd">&quot;&quot;&quot;Compute binary cross entropy loss.</span>
+
+<span class="sd">    Predictions are vector probabilities (i.e., values between 0 and 1), and</span>
+<span class="sd">    targets should be 0 and 1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
@@ -190,7 +193,7 @@
 
 
 <div class="viewcode-block" id="LogCMK"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LogCMK">[docs]</a><span class="k">class</span> <span class="nc">LogCMK</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;MIT License</span>
+    <span class="sd">&quot;&quot;&quot;MIT License.</span>
 
 <span class="sd">    Copyright (c) 2019 Max Ryabinin</span>
 
@@ -222,8 +225,9 @@
 
 <div class="viewcode-block" id="LogCMK.forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LogCMK.forward">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
-        <span class="n">ctx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">kappa</span>
-    <span class="p">):</span>  <span class="c1"># pylint: disable=invalid-name,arguments-differ</span>
+        <span class="n">ctx</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">kappa</span><span class="p">:</span> <span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name,arguments-differ</span>
+        <span class="sd">&quot;&quot;&quot;Forward pass.&quot;&quot;&quot;</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">kappa</span><span class="o">.</span><span class="n">dtype</span>
         <span class="n">ctx</span><span class="o">.</span><span class="n">save_for_backward</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span>
         <span class="n">ctx</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
@@ -240,8 +244,9 @@
 
 <div class="viewcode-block" id="LogCMK.backward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LogCMK.backward">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span>
-        <span class="n">ctx</span><span class="p">,</span> <span class="n">grad_output</span>
-    <span class="p">):</span>  <span class="c1"># pylint: disable=invalid-name,arguments-differ</span>
+        <span class="n">ctx</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">:</span> <span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name,arguments-differ</span>
+        <span class="sd">&quot;&quot;&quot;Backward pass.&quot;&quot;&quot;</span>
         <span class="n">kappa</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">saved_tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">m</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">dtype</span>
@@ -268,14 +273,15 @@
     <span class="k">def</span> <span class="nf">log_cmk_exact</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">kappa</span><span class="p">:</span> <span class="n">Tensor</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name</span>
-        <span class="sd">&quot;&quot;&quot;Exact calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Calculate $log C_{m}(k)$ term in von Mises-Fisher loss exactly.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">LogCMK</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">kappa</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="VonMisesFisherLoss.log_cmk_approx"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk_approx">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">log_cmk_approx</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">kappa</span><span class="p">:</span> <span class="n">Tensor</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name</span>
-        <span class="sd">&quot;&quot;&quot;Approx. calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.</span>
+        <span class="sd">&quot;&quot;&quot;Calculate $log C_{m}(k)$ term in von Mises-Fisher loss approx.</span>
+
 <span class="sd">        [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additional minus sign.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">m</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="mf">0.5</span>
@@ -287,7 +293,7 @@
     <span class="k">def</span> <span class="nf">log_cmk</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">kappa</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">kappa_switch</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name</span>
-        <span class="sd">&quot;&quot;&quot;Calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.</span>
+        <span class="sd">&quot;&quot;&quot;Calculate $log C_{m}(k)$ term in von Mises-Fisher loss.</span>
 
 <span class="sd">        Since `log_cmk_exact` is diverges for `kappa` &gt;~ 700 (using float64</span>
 <span class="sd">        precision), and since `log_cmk_approx` is unaccurate for small `kappa`,</span>
@@ -306,17 +312,17 @@
         <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="VonMisesFisherLoss._evaluate"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss._evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculates the von Mises-Fisher loss for a vector in D-dimensonal space.</span>
+        <span class="sd">&quot;&quot;&quot;Calculate von Mises-Fisher loss for a vector in D dimensons.</span>
 
 <span class="sd">        This loss utilises the von Mises-Fisher distribution, which is a</span>
 <span class="sd">        probability distribution on the (D - 1) sphere in D-dimensional space.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            prediction (Tensor): Predicted vector, of shape [batch_size, D].</span>
-<span class="sd">            target (Tensor): Target unit vector, of shape [batch_size, D].</span>
+<span class="sd">            prediction: Predicted vector, of shape [batch_size, D].</span>
+<span class="sd">            target: Target unit vector, of shape [batch_size, D].</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            loss (Tensor): Elementwise von Mises-Fisher loss terms.</span>
+<span class="sd">            Elementwise von Mises-Fisher loss terms.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
@@ -339,15 +345,16 @@
     <span class="sd">&quot;&quot;&quot;von Mises-Fisher loss function vectors in the 2D plane.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VonMisesFisher2DLoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher2DLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculates the von Mises-Fisher loss for an angle in the 2D plane.</span>
+        <span class="sd">&quot;&quot;&quot;Calculate von Mises-Fisher loss for an angle in the 2D plane.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            prediction (Tensor): Output of the model. Must have shape [N, 2]</span>
-<span class="sd">                where 0th column is a prediction of `angle` and 1st column is an</span>
-<span class="sd">                estimate of `kappa`.</span>
-<span class="sd">            target (Tensor): Target tensor, extracted from graph object.</span>
+<span class="sd">            prediction: Output of the model. Must have shape [N, 2] where 0th</span>
+<span class="sd">                column is a prediction of `angle` and 1st column is an estimate</span>
+<span class="sd">                of `kappa`.</span>
+<span class="sd">            target: Target tensor, extracted from graph object.</span>
+
 <span class="sd">        Returns:</span>
-<span class="sd">            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]</span>
+<span class="sd">            loss: Elementwise von Mises-Fisher loss terms. Shape [N,]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">prediction</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
@@ -379,14 +386,17 @@
 
 
 <div class="viewcode-block" id="EuclideanDistanceLoss"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.EuclideanDistanceLoss">[docs]</a><span class="k">class</span> <span class="nc">EuclideanDistanceLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mean squared error in three dimensions.&quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="EuclideanDistanceLoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.EuclideanDistanceLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculates the 3D Euclidean distance between predicted and target.</span>
+        <span class="sd">&quot;&quot;&quot;Calculate 3D Euclidean distance between predicted and target.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            prediction (Tensor): Output of the model. Must have shape [N, 3]</span>
-<span class="sd">            target (Tensor): Target tensor, extracted from graph object.</span>
+<span class="sd">            prediction: Output of the model. Must have shape [N, 3]</span>
+<span class="sd">            target: Target tensor, extracted from graph object.</span>
+
 <span class="sd">        Returns:</span>
-<span class="sd">            Tensor: Loss. Shape [n,1]</span>
+<span class="sd">            Elementwise von Mises-Fisher loss terms. Shape [N,]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
             <span class="p">(</span><span class="n">prediction</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
@@ -399,15 +409,16 @@
     <span class="sd">&quot;&quot;&quot;von Mises-Fisher loss function vectors in the 3D plane.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VonMisesFisher3DLoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.VonMisesFisher3DLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculates the von Mises-Fisher loss for a direction in the 3D plane.</span>
+        <span class="sd">&quot;&quot;&quot;Calculate von Mises-Fisher loss for a direction in the 3D.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            prediction (Tensor): Output of the model. Must have shape [N, 4]</span>
-<span class="sd">                where columns 0, 1, 2 are predictions of `direction` and last column is an</span>
-<span class="sd">                estimate of `kappa`.</span>
-<span class="sd">            target (Tensor): Target tensor, extracted from graph object.</span>
+<span class="sd">            prediction: Output of the model. Must have shape [N, 4] where</span>
+<span class="sd">                columns 0, 1, 2 are predictions of `direction` and last column</span>
+<span class="sd">                is an estimate of `kappa`.</span>
+<span class="sd">            target: Target tensor, extracted from graph object.</span>
+
 <span class="sd">        Returns:</span>
-<span class="sd">            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]</span>
+<span class="sd">            Elementwise von Mises-Fisher loss terms. Shape [N,]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
         <span class="c1"># Check(s)</span>

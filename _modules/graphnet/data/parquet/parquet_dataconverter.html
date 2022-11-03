@@ -63,22 +63,25 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.parquet.parquet_dataconverter</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="sd">&quot;&quot;&quot;DataConverter for the Parquet backend.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">awkward</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="kn">import</span> <span class="n">DataConverter</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="kn">import</span> <span class="n">DataConverter</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
 
 <div class="viewcode-block" id="ParquetDataConverter"><a class="viewcode-back" href="../../../../graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter">[docs]</a><span class="k">class</span> <span class="nc">ParquetDataConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for converting I3-files to Parquet format.&quot;&quot;&quot;</span>
 
     <span class="c1"># Class variables</span>
-    <span class="n">file_suffix</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span>
+    <span class="n">file_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span>
 
     <span class="c1"># Abstract method implementation(s)</span>
-<div class="viewcode-block" id="ParquetDataConverter.save_data"><a class="viewcode-back" href="../../../../graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter.save_data">[docs]</a>    <span class="k">def</span> <span class="nf">save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">],</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="ParquetDataConverter.save_data"><a class="viewcode-back" href="../../../../graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter.save_data">[docs]</a>    <span class="k">def</span> <span class="nf">save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">],</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Save data to parquet file.&quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
@@ -98,7 +101,19 @@
 
 <div class="viewcode-block" id="ParquetDataConverter.merge_files"><a class="viewcode-back" href="../../../../graphnet.data.parquet.html#graphnet.data.parquet.parquet_dataconverter.ParquetDataConverter.merge_files">[docs]</a>    <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">input_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Parquet-specific method for merging output files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_file: Name of the output file containing the merged results.</span>
+<span class="sd">            input_files: Intermediate files to be merged, according to the</span>
+<span class="sd">                specific implementation. Default to None, meaning that all</span>
+<span class="sd">                files output by the current instance are merged.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: If the method has not been implemented for the</span>
+<span class="sd">                Parquet backend.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
 </pre></div>
 

@@ -44,6 +44,7 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-graphnet.models.components.layers">graphnet.models.components.layers module</a><ul>
 <li><a class="reference internal" href="#graphnet.models.components.layers.DynEdgeConv"><code class="docutils literal notranslate"><span class="pre">DynEdgeConv</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.components.layers.DynEdgeConv.__init__"><code class="docutils literal notranslate"><span class="pre">DynEdgeConv.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.components.layers.DynEdgeConv.forward"><code class="docutils literal notranslate"><span class="pre">DynEdgeConv.forward()</span></code></a></li>
 </ul>
 </li>
@@ -61,11 +62,6 @@
 <li><a class="reference internal" href="#graphnet.models.components.pool.sum_pool"><code class="docutils literal notranslate"><span class="pre">sum_pool()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.components.pool.sum_pool_and_distribute"><code class="docutils literal notranslate"><span class="pre">sum_pool_and_distribute()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.components.pool.sum_pool_x"><code class="docutils literal notranslate"><span class="pre">sum_pool_x()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-graphnet.models.components.utils">graphnet.models.components.utils module</a><ul>
-<li><a class="reference internal" href="#graphnet.models.components.utils.check_db_size"><code class="docutils literal notranslate"><span class="pre">check_db_size()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.components.utils.fit_scaler"><code class="docutils literal notranslate"><span class="pre">fit_scaler()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.models.components">Module contents</a></li>
@@ -104,24 +100,48 @@
 </section>
 <section id="module-graphnet.models.components.layers">
 <span id="graphnet-models-components-layers-module"></span><h2>graphnet.models.components.layers module<a class="headerlink" href="#module-graphnet.models.components.layers" title="Permalink to this heading"></a></h2>
+<p>Class(es) implementing layers to be used in <cite>graphnet</cite> models.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.components.layers.DynEdgeConv">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.layers.</span></span><span class="sig-name descname"><span class="pre">DynEdgeConv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features_subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/layers.html#DynEdgeConv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.DynEdgeConv" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">EdgeConv</span></code></p>
+<p>Dynamical edge convolution layer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>) – </p></li>
 <li><p><strong>aggr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'max'</span></code>) – </p></li>
 <li><p><strong>nb_neighbors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">8</span></code>) – </p></li>
-<li><p><strong>features_subset</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+<li><p><strong>features_subset</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+<li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.layers.DynEdgeConv.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features_subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/layers.html#DynEdgeConv.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.DynEdgeConv.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>DynEdgeConv</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>) – The MLP/torch.Module to be used within the <cite>EdgeConv</cite>.</p></li>
+<li><p><strong>aggr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'max'</span></code>) – Aggregation method to be used with <cite>EdgeConv</cite>.</p></li>
+<li><p><strong>nb_neighbors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">8</span></code>) – Number of neighbours to be clustered after the
+<cite>EdgeConv</cite> operation.</p></li>
+<li><p><strong>features_subset</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Subset of features in <cite>Data.x</cite> that should be used
+when dynamically performing the new graph clustering after the
+<cite>EdgeConv</cite> operation. Defaults to all features.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – Additional features to be passed to <cite>EdgeConv</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.components.layers.DynEdgeConv.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/layers.html#DynEdgeConv.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.DynEdgeConv.forward" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – </p></li>
@@ -140,27 +160,27 @@
 </section>
 <section id="module-graphnet.models.components.pool">
 <span id="graphnet-models-components-pool-module"></span><h2>graphnet.models.components.pool module<a class="headerlink" href="#module-graphnet.models.components.pool" title="Permalink to this heading"></a></h2>
+<p>Functions for performing pooling/clustering/coarsening.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool._group_identical">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">_group_identical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#_group_identical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool._group_identical" title="Permalink to this definition"></a></dt>
-<dd><p>Group rows in <cite>tensor</cite> that are identical</p>
+<dd><p>Group rows in <cite>tensor</cite> that are identical.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tensor</strong> (<em>Tensor</em>) – Tensor of shape [N, F]</p></li>
-<li><p><strong>batch</strong> (<em>Optional</em><em>[</em><em>LongTensor</em><em>]</em><em>, </em><em>optional</em>) – Batch indices, to only group
-identical rows within batches. Defaults to None.</p></li>
+<li><p><strong>tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Tensor of shape [N, F].</p></li>
+<li><p><strong>batch</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Batch indices, to only group identical rows within batches.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>List of group indices, from 0 to num. groups - 1, assigning all</dt><dd><p>identical rows to the same group.</p>
 </dd>
 </dl>
 </p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -200,7 +220,7 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.group_pulses_to_dom">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">group_pulses_to_dom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#group_pulses_to_dom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.group_pulses_to_dom" title="Permalink to this definition"></a></dt>
-<dd><p>Groups pulses on the same DOM, using DOM and string number.</p>
+<dd><p>Group pulses on the same DOM, using DOM and string number.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – </p>
@@ -214,7 +234,7 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.group_pulses_to_pmt">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">group_pulses_to_pmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#group_pulses_to_pmt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.group_pulses_to_pmt" title="Permalink to this definition"></a></dt>
-<dd><p>Groups pulses on the same PMT, using PMT, DOM, and string number.</p>
+<dd><p>Group pulses on the same PMT, using PMT, DOM, and string number.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – </p>
@@ -228,14 +248,18 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.min_pool">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">min_pool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#min_pool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.min_pool" title="Permalink to this definition"></a></dt>
-<dd><p>Like <cite>max_pool, just negating `data.x</cite>.</p>
+<dd><p>Perform min-pooling of <cite>Data</cite>.</p>
+<p>Like <cite>max_pool, just negating `data.x</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
-<li><p><strong>data</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – </p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – </p></li>
 <li><p><strong>transform</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -243,15 +267,19 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.min_pool_x">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">min_pool_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#min_pool_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.min_pool_x" title="Permalink to this definition"></a></dt>
-<dd><p>Like <cite>max_pool_x, just negating `x</cite>.</p>
+<dd><p>Perform min-pooling of <cite>Tensor</cite>.</p>
+<p>Like <cite>max_pool_x, just negating `x</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
-<li><p><strong>x</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
-<li><p><strong>batch</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – </p></li>
+<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – </p></li>
+<li><p><strong>batch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – </p></li>
 <li><p><strong>size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -259,10 +287,8 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.std_pool">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">std_pool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#std_pool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.std_pool" title="Permalink to this definition"></a></dt>
-<dd><p>Pools and coarsens a graph given by the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> object according to the clustering
-defined in <code class="xref py py-attr docutils literal notranslate"><span class="pre">cluster</span></code>.
-All nodes within the same cluster will be represented as one node.
+<dd><p>Pool and coarsen graph according to the clustering defined in <cite>cluster</cite>.</p>
+<p>All nodes within the same cluster will be represented as one node.
 Final node features are defined by the <em>std</em> of features of all nodes
 within the same cluster, node positions are averaged and edge indices are
 defined to be the union of the edge indices of all nodes within the same
@@ -270,16 +296,16 @@ cluster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<em>LongTensor</em>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
+<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
 \ldots, N - 1 \}^N\)</span>, which assigns each node to a specific cluster.</p></li>
-<li><p><strong>data</strong> (<em>Data</em>) – Graph data object.</p></li>
-<li><p><strong>transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that takes in the
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – Graph data object.</p></li>
+<li><p><strong>transform</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A function/transform that takes in the
 coarsened and pooled <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> object and
-returns a transformed version. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+returns a transformed version.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -287,27 +313,25 @@ returns a transformed version. (default: <code class="xref py py-obj docutils li
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.std_pool_x">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">std_pool_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#std_pool_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.std_pool_x" title="Permalink to this definition"></a></dt>
-<dd><p>Std-Pools node features according to the clustering defined in
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">cluster</span></code>.</p>
+<dd><p>Std-pool node features according to the clustering defined in <cite>cluster</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<em>LongTensor</em>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
+<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
 \ldots, N - 1 \}^N\)</span>, which assigns each node to a specific cluster.</p></li>
-<li><p><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</p></li>
-<li><p><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
+<li><p><strong>batch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
 B-1\}}^N\)</span>, which assigns each node to a specific example.</p></li>
-<li><p><strong>size</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of clusters in a single
+<li><p><strong>size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The maximum number of clusters in a single
 example. This property is useful to obtain a batch-wise dense
 representation, <em>e.g.</em> for applying FC layers, but should only be
 used if the size of the maximum number of clusters per example is
-known in advance. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+known in advance.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) if <code class="xref py py-attr docutils literal notranslate"><span class="pre">size</span></code> is
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, else <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -315,10 +339,8 @@ known in advance. (default: <code class="xref py py-obj docutils literal notrans
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.sum_pool">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">sum_pool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#sum_pool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.sum_pool" title="Permalink to this definition"></a></dt>
-<dd><p>Pools and coarsens a graph given by the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> object according to the clustering
-defined in <code class="xref py py-attr docutils literal notranslate"><span class="pre">cluster</span></code>.
-All nodes within the same cluster will be represented as one node.
+<dd><p>Pool and coarsen graph according to the clustering defined in <cite>cluster</cite>.</p>
+<p>All nodes within the same cluster will be represented as one node.
 Final node features are defined by the <em>sum</em> of features of all nodes
 within the same cluster, node positions are averaged and edge indices are
 defined to be the union of the edge indices of all nodes within the same
@@ -326,16 +348,16 @@ cluster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<em>LongTensor</em>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
+<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
 \ldots, N - 1 \}^N\)</span>, which assigns each node to a specific cluster.</p></li>
-<li><p><strong>data</strong> (<em>Data</em>) – Graph data object.</p></li>
-<li><p><strong>transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that takes in the
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – Graph data object.</p></li>
+<li><p><strong>transform</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A function/transform that takes in the
 coarsened and pooled <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> object and
-returns a transformed version. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+returns a transformed version.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -343,7 +365,7 @@ returns a transformed version. (default: <code class="xref py py-obj docutils li
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.sum_pool_and_distribute">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">sum_pool_and_distribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#sum_pool_and_distribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.sum_pool_and_distribute" title="Permalink to this definition"></a></dt>
-<dd><p>Sum-pool values across the cluster, and distribute the individual nodes.</p>
+<dd><p>Sum-pool values and distribute result to the individual nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -361,47 +383,33 @@ returns a transformed version. (default: <code class="xref py py-obj docutils li
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.sum_pool_x">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">sum_pool_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/pool.html#sum_pool_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.sum_pool_x" title="Permalink to this definition"></a></dt>
-<dd><p>Sum-Pools node features according to the clustering defined in
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">cluster</span></code>.</p>
+<dd><p>Sum-pool node features according to the clustering defined in <cite>cluster</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<em>LongTensor</em>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
+<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
 \ldots, N - 1 \}^N\)</span>, which assigns each node to a specific cluster.</p></li>
-<li><p><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</p></li>
-<li><p><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
+<li><p><strong>batch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
 B-1\}}^N\)</span>, which assigns each node to a specific example.</p></li>
-<li><p><strong>size</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of clusters in a single
+<li><p><strong>size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The maximum number of clusters in a single
 example. This property is useful to obtain a batch-wise dense
 representation, <em>e.g.</em> for applying FC layers, but should only be
 used if the size of the maximum number of clusters per example is
-known in advance. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+known in advance.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) if <code class="xref py py-attr docutils literal notranslate"><span class="pre">size</span></code> is
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, else <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 </section>
-<section id="module-graphnet.models.components.utils">
-<span id="graphnet-models-components-utils-module"></span><h2>graphnet.models.components.utils module<a class="headerlink" href="#module-graphnet.models.components.utils" title="Permalink to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.models.components.utils.check_db_size">
-<span class="sig-prename descclassname"><span class="pre">graphnet.models.components.utils.</span></span><span class="sig-name descname"><span class="pre">check_db_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/utils.html#check_db_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.utils.check_db_size" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.models.components.utils.fit_scaler">
-<span class="sig-prename descclassname"><span class="pre">graphnet.models.components.utils.</span></span><span class="sig-name descname"><span class="pre">fit_scaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/components/utils.html#fit_scaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.utils.fit_scaler" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</section>
 <section id="module-graphnet.models.components">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.models.components" title="Permalink to this heading"></a></h2>
+<p>Components for constructing models.</p>
 </section>
 </section>
 

@@ -65,15 +65,13 @@
   <h1>Source code for graphnet.utilities.filesys</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;File system-related utility functions relevant to the graphnet package.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 
 
 <div class="viewcode-block" id="is_gcd_file"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.filesys.is_gcd_file">[docs]</a><span class="k">def</span> <span class="nf">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Checks whether `filename` is a GCD file.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Check whether `filename` is a GCD file.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;(gcd|geo)&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
         <span class="ow">or</span> <span class="s2">&quot;GeoCalibDetector&quot;</span> <span class="ow">in</span> <span class="n">filename</span>
@@ -83,7 +81,7 @@
 
 
 <div class="viewcode-block" id="is_i3_file"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.filesys.is_i3_file">[docs]</a><span class="k">def</span> <span class="nf">is_i3_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Checks whether `filename` is an I3 file.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Check whether `filename` is an I3 file.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">is_gcd_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">elif</span> <span class="n">has_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;bz2&quot;</span><span class="p">,</span> <span class="s2">&quot;zst&quot;</span><span class="p">,</span> <span class="s2">&quot;gz&quot;</span><span class="p">]):</span>
@@ -92,28 +90,28 @@
 
 
 <div class="viewcode-block" id="has_extension"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.filesys.has_extension">[docs]</a><span class="k">def</span> <span class="nf">has_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extensions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Checks whether `filename` has one of the desired extensions.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Check whether `filename` has one of the desired extensions.&quot;&quot;&quot;</span>
     <span class="c1"># @TODO: Remove method, as it is not used?</span>
     <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extensions</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)$&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="find_i3_files"><a class="viewcode-back" href="../../../graphnet.utilities.html#graphnet.utilities.filesys.find_i3_files">[docs]</a><span class="k">def</span> <span class="nf">find_i3_files</span><span class="p">(</span>
     <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">gcd_rescue</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Finds I3 files and corresponding GCD files in `directories`.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Find I3 files and corresponding GCD files in `directories`.</span>
 
-<span class="sd">    Finds I3 files in dir and matches each file with a corresponding GCD file if</span>
-<span class="sd">    present in the directory, matches with gcd_rescue if gcd is not present in</span>
-<span class="sd">    the directory.</span>
+<span class="sd">    Finds I3 files in dir and matches each file with a corresponding GCD file</span>
+<span class="sd">    if present in the directory, matches with gcd_rescue if gcd is not present</span>
+<span class="sd">    in the directory.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        directories (list[str]): Directories to search recursively for I3 files.</span>
-<span class="sd">        gcd_rescue (str): Path to the GCD that will be default if no GCD is</span>
-<span class="sd">            present in the directory.</span>
+<span class="sd">        directories: Directories to search recursively for I3 files.</span>
+<span class="sd">        gcd_rescue: Path to the GCD that will be default if no GCD is present</span>
+<span class="sd">            in the directory.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        i3_list (list[str]): Paths to I3 files in `directories`</span>
-<span class="sd">        gcd_list (list[str]): Paths to GCD files for each I3 file.</span>
+<span class="sd">        i3_list: Paths to I3 files in `directories`</span>
+<span class="sd">        gcd_list: Paths to GCD files for each I3 file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directories</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">directories</span><span class="p">]</span>
@@ -144,6 +142,7 @@
             <span class="c1"># Make sure that no more than one GCD file is found; and use rescue file of none is found.</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">gcd_rescue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd_rescue</span><span class="p">]</span>
 
             <span class="c1"># Store list of I3 files and corresponding GCD files.</span>

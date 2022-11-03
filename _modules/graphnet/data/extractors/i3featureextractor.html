@@ -63,26 +63,55 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.extractors.i3featureextractor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
+<span></span><span class="sd">&quot;&quot;&quot;I3Extractor class(es) for extracting specific, reconstructed features.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.utilities.frames</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_om_keys_and_pulseseries</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
 
-<span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="n">dataclasses</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+<span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">()</span> <span class="ow">or</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">icetray</span><span class="p">,</span>
+        <span class="n">dataclasses</span><span class="p">,</span>
+    <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 
 
 <div class="viewcode-block" id="I3FeatureExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for extracting specific, reconstructed features.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="I3FeatureExtractor.__init__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct I3FeatureExtractor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pulsemap: Name of the pulse (series) map for which to extract</span>
+<span class="sd">                reconstructed features.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Member variable(s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span> <span class="o">=</span> <span class="n">pulsemap</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pulsemap</span><span class="p">)</span></div>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pulsemap</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCube86"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCube86</span><span class="p">(</span><span class="n">I3FeatureExtractor</span><span class="p">):</span>
-<div class="viewcode-block" id="I3FeatureExtractorIceCube86.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-86.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="I3FeatureExtractorIceCube86.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: Physics (P) I3-frame from which to extract reconstructed</span>
+<span class="sd">                features.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary of reconstructed features for all pulses in `pulsemap`,</span>
+<span class="sd">                in pure-python format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">padding_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;charge&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;dom_time&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -138,22 +167,22 @@
             <span class="k">if</span> <span class="n">bright_doms</span><span class="p">:</span>
                 <span class="n">is_bright_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">bright_doms</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">is_bright_dom</span> <span class="o">=</span> <span class="n">padding_value</span>
+                <span class="n">is_bright_dom</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">bad_doms</span><span class="p">:</span>
                 <span class="n">is_bad_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">bad_doms</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">is_bad_dom</span> <span class="o">=</span> <span class="n">padding_value</span>
+                <span class="n">is_bad_dom</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">saturation_windows</span><span class="p">:</span>
                 <span class="n">is_saturated_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">saturation_windows</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">is_saturated_dom</span> <span class="o">=</span> <span class="n">padding_value</span>
+                <span class="n">is_saturated_dom</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">calibration_errata</span><span class="p">:</span>
                 <span class="n">is_errata_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">calibration_errata</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">is_errata_dom</span> <span class="o">=</span> <span class="n">padding_value</span>
+                <span class="n">is_errata_dom</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>
 
             <span class="c1"># Loop over pulses for each OM</span>
             <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
@@ -179,13 +208,16 @@
 
         <span class="k">return</span> <span class="n">output</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_relative_dom_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_relative_dom_efficiency</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span> <span class="n">om_key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span>
         <span class="p">):</span>  <span class="c1"># Not available for e.g. mDOMs in IceCube Upgrade</span>
             <span class="n">rde</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
             <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
                 <span class="n">rde</span> <span class="o">=</span> <span class="n">padding_value</span>
@@ -193,14 +225,24 @@
 
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCubeDeepCore"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeDeepCore">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCubeDeepCore</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;...&quot;&quot;&quot;</span></div>
+    <span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-DeepCore.&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
-<div class="viewcode-block" id="I3FeatureExtractorIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-Upgrade.&quot;&quot;&quot;</span>
 
-        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+<div class="viewcode-block" id="I3FeatureExtractorIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: Physics (P) I3-frame from which to extract reconstructed</span>
+<span class="sd">                features.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary of reconstructed features for all pulses in `pulsemap`,</span>
+<span class="sd">                in pure-python format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;pmt_number&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;dom_number&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -245,11 +287,21 @@
         <span class="k">return</span> <span class="n">output</span></div></div>
 
 
-<div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3PulseNoiseTruthFlagIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCubeUpgrade</span><span class="p">):</span>
-<div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3PulseNoiseTruthFlagIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Feature extractor class with pulse noise truth flag added.&quot;&quot;&quot;</span>
 
-        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+<div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: Physics (P) I3-frame from which to extract reconstructed</span>
+<span class="sd">                features.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary of reconstructed features for all pulses in `pulsemap`,</span>
+<span class="sd">                in pure-python format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;truth_flag&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
 

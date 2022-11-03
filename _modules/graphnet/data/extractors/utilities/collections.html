@@ -63,7 +63,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.extractors.utilities.collections</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utility methods to manipulate python-type collections of data.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utility methods for manipulating python-type collections of data.&quot;&quot;&quot;</span>
 
 <span class="c1"># Utility function(s)</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -77,7 +77,18 @@
     <span class="n">parent_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Flatten a nested dictionary to a dictionary with non-dict values.</span>
 
+<span class="sd">    Example:</span>
+<span class="sd">        d = {&quot;a&quot;: {&quot;b&quot;: 1}, &quot;c&quot;: 2}</span>
+<span class="sd">        flatten_nested_dictionary(d)</span>
+<span class="sd">        &gt;&gt;&gt; {&quot;a__b&quot;: 1, &quot;c&quot;: 2}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: The object that should be flattened, if applicable.</span>
+<span class="sd">        parent_key: The combined name of the parent key(s) containing `obj`.</span>
+<span class="sd">        separator: The string used to concatenate nester parent keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Dict-like</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -122,7 +133,7 @@
 <div class="viewcode-block" id="transpose_list_of_dicts"><a class="viewcode-back" href="../../../../../graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts">[docs]</a><span class="k">def</span> <span class="nf">transpose_list_of_dicts</span><span class="p">(</span>
     <span class="n">array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
-
+    <span class="sd">&quot;&quot;&quot;Transpose a list of dicts to a dict of lists.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
 

@@ -84,6 +84,9 @@
 <li><a class="reference internal" href="#module-graphnet.data.dataset">graphnet.data.dataset module</a><ul>
 <li><a class="reference internal" href="#graphnet.data.dataset.ColumnMissingException"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset.__getitem__"><code class="docutils literal notranslate"><span class="pre">Dataset.__getitem__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset.__init__"><code class="docutils literal notranslate"><span class="pre">Dataset.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset.__len__"><code class="docutils literal notranslate"><span class="pre">Dataset.__len__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._check_missing_columns"><code class="docutils literal notranslate"><span class="pre">Dataset._check_missing_columns()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._create_graph"><code class="docutils literal notranslate"><span class="pre">Dataset._create_graph()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._get_all_indices"><code class="docutils literal notranslate"><span class="pre">Dataset._get_all_indices()</span></code></a></li>
@@ -159,19 +162,25 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3extractor">graphnet.data.extractors.i3extractor module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor"><code class="docutils literal notranslate"><span class="pre">I3Extractor</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3Extractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.__init__"><code class="docutils literal notranslate"><span class="pre">I3Extractor.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor._load_gcd_data"><code class="docutils literal notranslate"><span class="pre">I3Extractor._load_gcd_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.name"><code class="docutils literal notranslate"><span class="pre">I3Extractor.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.set_files"><code class="docutils literal notranslate"><span class="pre">I3Extractor.set_files()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection"><code class="docutils literal notranslate"><span class="pre">I3ExtractorCollection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.__call__"><code class="docutils literal notranslate"><span class="pre">I3ExtractorCollection.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.__init__"><code class="docutils literal notranslate"><span class="pre">I3ExtractorCollection.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.set_files"><code class="docutils literal notranslate"><span class="pre">I3ExtractorCollection.set_files()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3featureextractor">graphnet.data.extractors.i3featureextractor module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor.__init__"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractor.__init__()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCube86</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__"><code class="docutils literal notranslate"><span class="pre">I3FeatureExtractorIceCube86.__call__()</span></code></a></li>
 </ul>
@@ -205,6 +214,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3hybridrecoextractor">graphnet.data.extractors.i3hybridrecoextractor module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor"><code class="docutils literal notranslate"><span class="pre">I3GalacticPlaneHybridRecoExtractor</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3GalacticPlaneHybridRecoExtractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3hybridrecoextractor.I3GalacticPlaneHybridRecoExtractor.__init__"><code class="docutils literal notranslate"><span class="pre">I3GalacticPlaneHybridRecoExtractor.__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -212,6 +222,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3pisaextractor">graphnet.data.extractors.i3pisaextractor module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3pisaextractor.I3PISAExtractor"><code class="docutils literal notranslate"><span class="pre">I3PISAExtractor</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3pisaextractor.I3PISAExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3PISAExtractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3pisaextractor.I3PISAExtractor.__init__"><code class="docutils literal notranslate"><span class="pre">I3PISAExtractor.__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -219,6 +230,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3retroextractor">graphnet.data.extractors.i3retroextractor module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor.__init__"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3retroextractor.I3RetroExtractor._try_get_key"><code class="docutils literal notranslate"><span class="pre">I3RetroExtractor._try_get_key()</span></code></a></li>
 </ul>
 </li>
@@ -227,6 +239,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3splinempeextractor">graphnet.data.extractors.i3splinempeextractor module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor"><code class="docutils literal notranslate"><span class="pre">I3SplineMPEICExtractor</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3SplineMPEICExtractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3splinempeextractor.I3SplineMPEICExtractor.__init__"><code class="docutils literal notranslate"><span class="pre">I3SplineMPEICExtractor.__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -234,6 +247,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3truthextractor">graphnet.data.extractors.i3truthextractor module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor.__init__"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._find_data_type"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._find_data_type()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._get_primary_particle_interaction_type_and_elasticity()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3truthextractor.I3TruthExtractor._get_primary_track_energy_and_inelasticity"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor._get_primary_track_energy_and_inelasticity()</span></code></a></li>
@@ -245,6 +259,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.html#module-graphnet.data.extractors.i3tumextractor">graphnet.data.extractors.i3tumextractor module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3tumextractor.I3TUMExtractor"><code class="docutils literal notranslate"><span class="pre">I3TUMExtractor</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3tumextractor.I3TUMExtractor.__call__"><code class="docutils literal notranslate"><span class="pre">I3TUMExtractor.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.extractors.html#graphnet.data.extractors.i3tumextractor.I3TUMExtractor.__init__"><code class="docutils literal notranslate"><span class="pre">I3TUMExtractor.__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -300,7 +315,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset_perturbed">graphnet.data.sqlite.sqlite_dataset_perturbed module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed"><code class="docutils literal notranslate"><span class="pre">SQLiteDatasetPerturbed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed"><code class="docutils literal notranslate"><span class="pre">SQLiteDatasetPerturbed</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed.__getitem__"><code class="docutils literal notranslate"><span class="pre">SQLiteDatasetPerturbed.__getitem__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset_perturbed.SQLiteDatasetPerturbed.__init__"><code class="docutils literal notranslate"><span class="pre">SQLiteDatasetPerturbed.__init__()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_selection">graphnet.data.sqlite.sqlite_selection module</a><ul>
@@ -325,6 +344,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities.parquet_to_sqlite">graphnet.data.utilities.parquet_to_sqlite module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.__init__"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter._save_config"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter._save_config()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.utilities.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter.run()</span></code></a></li>
 </ul>
@@ -346,11 +366,12 @@
 </section>
 <section id="module-graphnet.data.constants">
 <span id="graphnet-data-constants-module"></span><h2>graphnet.data.constants module<a class="headerlink" href="#module-graphnet.data.constants" title="Permalink to this heading"></a></h2>
-<p>Global constants that are used across modules.</p>
+<p>Global constants that are used with <cite>graphnet.data</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.constants.FEATURES">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.constants.</span></span><span class="sig-name descname"><span class="pre">FEATURES</span></span><a class="reference internal" href="_modules/graphnet/data/constants.html#FEATURES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.constants.FEATURES" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Namespace for standard names working with <cite>I3FeatureExtractor</cite>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.data.constants.FEATURES.DEEPCORE">
 <span class="sig-name descname"><span class="pre">DEEPCORE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dom_x',</span> <span class="pre">'dom_y',</span> <span class="pre">'dom_z',</span> <span class="pre">'dom_time',</span> <span class="pre">'charge',</span> <span class="pre">'rde',</span> <span class="pre">'pmt_area']</span></em><a class="headerlink" href="#graphnet.data.constants.FEATURES.DEEPCORE" title="Permalink to this definition"></a></dt>
@@ -372,6 +393,7 @@
 <dt class="sig sig-object py" id="graphnet.data.constants.TRUTH">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.constants.</span></span><span class="sig-name descname"><span class="pre">TRUTH</span></span><a class="reference internal" href="_modules/graphnet/data/constants.html#TRUTH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.constants.TRUTH" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Namespace for standard names working with <cite>I3TruthExtractor</cite>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.data.constants.TRUTH.DEEPCORE">
 <span class="sig-name descname"><span class="pre">DEEPCORE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['energy',</span> <span class="pre">'energy_track',</span> <span class="pre">'position_x',</span> <span class="pre">'position_y',</span> <span class="pre">'position_z',</span> <span class="pre">'azimuth',</span> <span class="pre">'zenith',</span> <span class="pre">'pid',</span> <span class="pre">'elasticity',</span> <span class="pre">'sim_type',</span> <span class="pre">'interaction_type',</span> <span class="pre">'interaction_time',</span> <span class="pre">'inelasticity',</span> <span class="pre">'stopped_muon']</span></em><a class="headerlink" href="#graphnet.data.constants.TRUTH.DEEPCORE" title="Permalink to this definition"></a></dt>
@@ -392,11 +414,12 @@
 </section>
 <section id="module-graphnet.data.dataconverter">
 <span id="graphnet-data-dataconverter-module"></span><h2>graphnet.data.dataconverter module<a class="headerlink" href="#module-graphnet.data.dataconverter" title="Permalink to this heading"></a></h2>
+<p>Base <cite>DataConverter</cite> class(es) used in GraphNeT.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
-<p>Abstract base class for specialised (SQLite, parquet, etc.) converters.</p>
+<p>Base class for converting I3-files to intermediate file format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -415,12 +438,14 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.__call__">
 <em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.__call__" title="Permalink to this definition"></a></dt>
-<dd><p>Main call to convert I3 files in <a href="#id1"><span class="problematic" id="id2">`</span></a>directories.</p>
+<dd><p>Convert I3-files in <a href="#id1"><span class="problematic" id="id2">`</span></a>directories.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>directories</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – One or more directories, the I3
-files within which should be converted to an intermediate file
-format.</p>
+<dd class="field-odd"><p><strong>directories</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – One or more directories, the I3 files within which
+should be converted to an intermediate file format.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -428,7 +453,7 @@ format.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Converts I3 files to an intermediate format.</p>
+<dd><p>Construct DataConverter.</p>
 <p>When using <cite>input_file_batch_pattern</cite>, regular expressions are used to
 group files according to their names. All files that match a certain
 pattern up to wildcards are grouped into the same output file. This
@@ -486,7 +511,7 @@ files whose names contain:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter._extract_data">
 <span class="sig-name descname"><span class="pre">_extract_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter._extract_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter._extract_data" title="Permalink to this definition"></a></dt>
-<dd><p>Extracts data from single I3 file.</p>
+<dd><p>Extract data from single I3 file.</p>
 <p>If the saving strategy is 1:1 (i.e., each I3 file is converted to a
 corresponding intermediate file) the data is saved to such a file, and
 no data is return from the method.</p>
@@ -508,10 +533,13 @@ than sending it back to the main process.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter._iterate_over_batches_of_files">
 <span class="sig-name descname"><span class="pre">_iterate_over_batches_of_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter._iterate_over_batches_of_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter._iterate_over_batches_of_files" title="Permalink to this definition"></a></dt>
-<dd><p>Iterate over a batch of files and save results on worker processes (if applicable)</p>
+<dd><p>Iterate over a batch of files and save results on worker process.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>args</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#graphnet.data.dataconverter.FileSet" title="graphnet.data.dataconverter.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Pool</span></code>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -519,10 +547,13 @@ than sending it back to the main process.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter._save_filenames">
 <span class="sig-name descname"><span class="pre">_save_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter._save_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter._save_filenames" title="Permalink to this definition"></a></dt>
-<dd><p>Saves I3 file names in CSV format.</p>
+<dd><p>Save I3 file names in CSV format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>i3_files</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -539,6 +570,9 @@ up.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>pool</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Pool</span></code>]) – </p>
 </dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -550,7 +584,10 @@ up.</p>
 intermediate file format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filesets</strong> (<em>List</em><em>[</em><a class="reference internal" href="#graphnet.data.dataconverter.FileSet" title="graphnet.data.dataconverter.FileSet"><em>FileSet</em></a><em>]</em>) – List of paths to I3 and corresponding GCD files.</p>
+<dd class="field-odd"><p><strong>filesets</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#graphnet.data.dataconverter.FileSet" title="graphnet.data.dataconverter.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a>]) – List of paths to I3 and corresponding GCD files.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -569,7 +606,7 @@ intermediate file format.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.get_map_function">
 <span class="sig-name descname"><span class="pre">get_map_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'I3</span> <span class="pre">file(s)'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#DataConverter.get_map_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.get_map_function" title="Permalink to this definition"></a></dt>
-<dd><p>Identify the type of map function to use (pure python or multiprocess).</p>
+<dd><p>Identify map function to use (pure python or multiprocess).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -578,7 +615,7 @@ intermediate file format.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Pool</span></code>]]</p>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Pool</span></code>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -590,12 +627,18 @@ intermediate file format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>output_file</strong> (<em>str</em>) – Name of the output file containing the merged
-results.</p></li>
-<li><p><strong>input_files</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Intermediate files to be merged, according
-to the specific implementation. Default to None, meaning that
-all files output by the current instance are merged.</p></li>
+<li><p><strong>output_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the output file containing the merged results.</p></li>
+<li><p><strong>input_files</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Intermediate files to be merged, according to the
+specific implementation. Default to None, meaning that all
+files output by the current instance are merged.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If the method has not been implemented for the
+    backend in question.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -607,9 +650,12 @@ all files output by the current instance are merged.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>List</em><em>[</em><em>OrderedDict</em><em>]</em>) – List of extracted features.</p></li>
-<li><p><strong>output_file</strong> (<em>str</em>) – Name of output file.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code>]) – List of extracted features.</p></li>
+<li><p><strong>output_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of output file.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -643,7 +689,15 @@ all files output by the current instance are merged.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.cache_output_files">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">cache_output_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataconverter.html#cache_output_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.cache_output_files" title="Permalink to this definition"></a></dt>
-<dd><p>Decorator to cache output file names.</p>
+<dd><p>Decorate <cite>process_method</cite> to cache output file names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>process_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">F</span></code>, bound= <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>])) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">F</span></code>, bound= <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>])</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -653,9 +707,12 @@ all files output by the current instance are merged.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Value</span></code>) – </p></li>
+<li><p><strong>index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Synchronized</span></code>) – </p></li>
 <li><p><strong>output_files</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -663,7 +720,7 @@ all files output by the current instance are merged.</p></li>
 </section>
 <section id="module-graphnet.data.dataset">
 <span id="graphnet-data-dataset-module"></span><h2>graphnet.data.dataset module<a class="headerlink" href="#module-graphnet.data.dataset" title="Permalink to this heading"></a></h2>
-<p>Module defining the base <cite>Dataset</cite> class used in GraphNeT.</p>
+<p>Base <cite>Dataset</cite> class(es) used in GraphNeT.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="graphnet.data.dataset.ColumnMissingException">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.</span></span><span class="sig-name descname"><span class="pre">ColumnMissingException</span></span><a class="reference internal" href="_modules/graphnet/data/dataset.html#ColumnMissingException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.ColumnMissingException" title="Permalink to this definition"></a></dt>
@@ -688,7 +745,7 @@ all files output by the current instance are merged.</p></li>
 <li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – </p></li>
 <li><p><strong>node_truth_table</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 <li><p><strong>string_selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
-<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 <li><p><strong>dtype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – </p></li>
 <li><p><strong>loss_weight_table</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
 <li><p><strong>loss_weight_column</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
@@ -696,6 +753,78 @@ all files output by the current instance are merged.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequential_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.__getitem__" title="Permalink to this definition"></a></dt>
+<dd><p>Return graph <cite>Data</cite> object at <cite>index</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sequential_index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string_selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_default_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Construct Dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Path to the file(s) from which this <cite>Dataset</cite> should read.</p></li>
+<li><p><strong>pulsemaps</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Name(s) of the pulse map series that should be used to
+construct the nodes on the individual graph objects, and their
+features. Multiple pulse series maps can be used, e.g., when
+different DOM types are stored in different maps.</p></li>
+<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of columns in the input files that should be used as
+node features on the graph objects.</p></li>
+<li><p><strong>truth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of event-level columns in the input files that should
+be used added as attributes on the  graph objects.</p></li>
+<li><p><strong>node_truth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – List of node-level columns in the input files that
+should be used added as attributes on the graph objects.</p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – Name of the column in the input files that contains
+unique indicies to identify and map events across tables.</p></li>
+<li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – Name of the table containing event-level truth
+information.</p></li>
+<li><p><strong>node_truth_table</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the table containing node-level truth
+information.</p></li>
+<li><p><strong>string_selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Subset of strings for which data should be read
+and used to construct graph objects. Defaults to None, meaning
+all strings for which data exists are used.</p></li>
+<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – List of indicies (in <cite>index_column</cite>) of the events in
+the input files that should be read. Defaults to None, meaning
+that all events in the input files are read.</p></li>
+<li><p><strong>dtype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – Type of the feature tensor on the graph objects returned.</p></li>
+<li><p><strong>loss_weight_table</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the table containing per-event loss
+weights.</p></li>
+<li><p><strong>loss_weight_column</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the column in <cite>loss_weight_table</cite>
+containing per-event loss weights. This is also the name of the
+corresponding attribute assigned to the graph object.</p></li>
+<li><p><strong>loss_weight_default_value</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Default per-event loss weight.
+NOTE: This default value is only applied when
+<cite>loss_weight_table</cite> and <cite>loss_weight_column</cite> are specified, and
+in this case to events with no value in the corresponding
+table/column. That is, if no per-event loss weight table/column
+is provided, this value is ignored. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.__len__">
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.__len__" title="Permalink to this definition"></a></dt>
+<dd><p>Return number of graphs in <cite>Dataset</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._check_missing_columns">
 <span class="sig-name descname"><span class="pre">_check_missing_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._check_missing_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._check_missing_columns" title="Permalink to this definition"></a></dt>
@@ -716,24 +845,24 @@ all files output by the current instance are merged.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._create_graph">
 <span class="sig-name descname"><span class="pre">_create_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._create_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._create_graph" title="Permalink to this definition"></a></dt>
-<dd><p>Create Pytorch Data (i.e.graph) object.</p>
+<dd><p>Create Pytorch Data (i.e. graph) object.</p>
 <p>No preprocessing is performed at this stage, just as no node adjancency
 is imposed. This means that the <cite>edge_attr</cite> and <cite>edge_weight</cite>
 attributes are not set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>features</strong> (<em>list</em>) – List of tuples, containing event features.</p></li>
-<li><p><strong>truth</strong> (<em>list</em>) – List of tuples, containing truth information.</p></li>
-<li><p><strong>node_truth</strong> (<em>list</em>) – List of tuples, containing node-level truth.</p></li>
-<li><p><strong>loss_weight</strong> (<em>float</em>) – A weight associated with the event for weighing the loss.</p></li>
+<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]) – List of tuples, containing event features.</p></li>
+<li><p><strong>truth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]) – List of tuples, containing truth information.</p></li>
+<li><p><strong>node_truth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – List of tuples, containing node-level truth.</p></li>
+<li><p><strong>loss_weight</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A weight associated with the event for weighing the loss.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Graph object.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Data</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Graph object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -781,61 +910,77 @@ attributes are not set.</p>
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._init">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._init" title="Permalink to this definition"></a></dt>
 <dd><p>Set internal representation needed to read data from input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._post_init">
 <span class="sig-name descname"><span class="pre">_post_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._post_init" title="Permalink to this definition"></a></dt>
 <dd><p>Implemenation-specific code to be run after the main constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._query">
-<span class="sig-name descname"><span class="pre">_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._query" title="Permalink to this definition"></a></dt>
-<dd><p>Query file for event features and truth information</p>
+<span class="sig-name descname"><span class="pre">_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequential_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._query" title="Permalink to this definition"></a></dt>
+<dd><p>Query file for event features and truth information.</p>
+<p>The returned lists have lengths correspondings to the number of pulses
+in the event. Their constituent tuples have lengths corresponding to
+the number of features/attributes in each output</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – Sequentially numbered index (i.e. in [0,len(self))) of
-the event to query. This _may_ differ from the indexation used
-in <cite>self._indices</cite>.</p>
+<dd class="field-odd"><p><strong>sequential_index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Sequentially numbered index
+(i.e. in [0,len(self))) of the event to query. This _may_
+differ from the indexation used in <cite>self._indices</cite>.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Pulse-level event features.
-List[Tuple]: Event-level truth information. List has length 1.
-List[Tuple]: Pulse-level truth information.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]], <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]], <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[Tuple]</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Tuple containing pulse-level event features; event-level truth</dt><dd><p>information; pulse-level truth information; and event-level
+loss weights, respectively.</p>
+</dd>
+</dl>
+</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._query_table">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_query_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._query_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._query_table" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_query_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._query_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._query_table" title="Permalink to this definition"></a></dt>
 <dd><p>Query a table at a specific index, optionally with some selection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> (<em>str</em>) – Table to be queried.</p></li>
-<li><p><strong>columns</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Columns to read out.</p></li>
-<li><p><strong>index</strong> (<em>int</em>) – Sequentially numbered index (i.e. in [0,len(self))) of
-the event to query. This _may_ differ from the indexation used
-in <cite>self._indices</cite>.</p></li>
-<li><p><strong>selection</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Selection to be imposed before
-reading out data. Defaults to None.</p></li>
+<li><p><strong>table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Table to be queried.</p></li>
+<li><p><strong>columns</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Columns to read out.</p></li>
+<li><p><strong>sequential_index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Sequentially numbered index
+(i.e. in [0,len(self))) of the event to query. This _may_
+differ from the indexation used in <cite>self._indices</cite>.</p></li>
+<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Selection to be imposed before reading out data.
+Defaults to None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Returns a list of tuples containing the values in</dt><dd><p><cite>columns</cite>. If the <cite>table</cite> contains only scalar data for
-<cite>columns</cite>, a list of length 1 is returned</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>List of tuples containing the values in <cite>columns</cite>. If the <cite>table</cite></dt><dd><p>contains only scalar data for <cite>columns</cite>, a list of length 1 is
+returned</p>
 </dd>
 </dl>
 </p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[Tuple[Any]]</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="#graphnet.data.dataset.ColumnMissingException" title="graphnet.data.dataset.ColumnMissingException"><strong>ColumnMissingException</strong></a> – If one or more element in <cite>columns</cite> is not
@@ -849,6 +994,11 @@ reading out data. Defaults to None.</p></li>
 <span class="sig-name descname"><span class="pre">_remove_missing_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._remove_missing_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._remove_missing_columns" title="Permalink to this definition"></a></dt>
 <dd><p>Remove columns that are not present in the input file.</p>
 <p>Columns are removed from <cite>self._features</cite> and <cite>self._truth</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -862,6 +1012,9 @@ reading out data. Defaults to None.</p></li>
 <li><p><strong>fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – </p></li>
 </ul>
 </dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -870,25 +1023,44 @@ reading out data. Defaults to None.</p></li>
 </section>
 <section id="module-graphnet.data.pipeline">
 <span id="graphnet-data-pipeline-module"></span><h2>graphnet.data.pipeline module<a class="headerlink" href="#module-graphnet.data.pipeline" title="Permalink to this heading"></a></h2>
+<p>Class(es) used for analysis in PISA.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.pipeline.</span></span><span class="sig-name descname"><span class="pre">InSQLitePipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retro_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'retro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pipeline'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Creates a SQLite database with truth and GNN predictions and, if available, RETRO reconstructions. Made for analysis.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline.__call__" title="Permalink to this definition"></a></dt>
-<dd><p>Runs inference of each field in self._module_dict[target][‘’]</p>
+<p>Create a SQLite database for PISA analysis.</p>
+<p>The database will contain truth and GNN predictions and, if available,
+RETRO reconstructions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<em>path</em>) – path to database with pulsemap and truth</p></li>
-<li><p><strong>pulsemap</strong> (<em>str</em>) – name of pulsemaps</p></li>
-<li><p><strong>chunk_size</strong> (<em>int</em>) – database will be sliced in chunks of size chunk_size. Use this parameter to control memory usage. Defaults to 1000000</p></li>
+<li><p><strong>module_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>) – </p></li>
+<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
+<li><p><strong>truth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
+<li><p><strong>device</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">device</span></code>) – </p></li>
+<li><p><strong>retro_table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'retro'</span></code>) – </p></li>
+<li><p><strong>outdir</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+<li><p><strong>batch_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">100</span></code>) – </p></li>
+<li><p><strong>n_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – </p></li>
+<li><p><strong>pipeline_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'pipeline'</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Run inference of each field in self._module_dict[target][‘’].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to database with pulsemap and truth.</p></li>
+<li><p><strong>pulsemap</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of pulsemaps.</p></li>
+<li><p><strong>chunk_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">1000000</span></code>) – database will be sliced in chunks of size <cite>chunk_size</cite>.
+Use this parameter to control memory usage.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -896,19 +1068,22 @@ reading out data. Defaults to None.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retro_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'retro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pipeline'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes the pipeline</p>
+<dd><p>Initialise the pipeline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>module_dict</strong> (<em>dict</em>) – A dictionary with GNN modules from GraphNet. E.g. {‘energy’: gnn_module_for_energy_regression}</p></li>
-<li><p><strong>features</strong> (<em>list</em>) – list of input features for the GNN modules</p></li>
-<li><p><strong>truth</strong> (<em>list</em>) – list of truth for the GNN ModuleList</p></li>
-<li><p><strong>device</strong> (<em>torch._device</em>) – the device used for computation</p></li>
-<li><p><strong>retro_table_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the retro table for. Defaults to ‘retro’.</p></li>
-<li><p><strong>outdir</strong> (<em>path</em><em>, </em><em>optional</em>) – the directory in which the pipeline database will be stored. Defaults to None.</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – batch size for inference. Defaults to 100.</p></li>
-<li><p><strong>n_workers</strong> (<em>int</em><em>, </em><em>optional</em>) – number of workers used in dataloading. Defaults to 10.</p></li>
-<li><p><strong>pipeline_name</strong> (<em>str</em><em>, </em><em>optional</em>) – name of the pipeline. If such a pipeline already exists, an error will be prompted to avoid overwriting. Defaults to ‘pipeline’.</p></li>
+<li><p><strong>module_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>) – A dictionary with GNN modules from GraphNet. E.g.
+{‘energy’: gnn_module_for_energy_regression}</p></li>
+<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of input features for the GNN modules.</p></li>
+<li><p><strong>truth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of truth for the GNN ModuleList.</p></li>
+<li><p><strong>device</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">device</span></code>) – The device used for computation.</p></li>
+<li><p><strong>retro_table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'retro'</span></code>) – Name of the retro table for.</p></li>
+<li><p><strong>outdir</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – the directory in which the pipeline database will be
+stored.</p></li>
+<li><p><strong>batch_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">100</span></code>) – Batch size for inference.</p></li>
+<li><p><strong>n_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – Number of workers used in dataloading.</p></li>
+<li><p><strong>pipeline_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'pipeline'</span></code>) – Name of the pipeline. If such a pipeline already
+exists, an error will be prompted to avoid overwriting.</p></li>
 </ul>
 </dd>
 </dl>
@@ -917,11 +1092,19 @@ reading out data. Defaults to None.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline._create_table">
 <span class="sig-name descname"><span class="pre">_create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline._create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline._create_table" title="Permalink to this definition"></a></dt>
-<dd><p>Creates a table.
-:param pipeline_database: path to the pipeline database
-:type pipeline_database: str
-:param df: pandas.DataFrame of combined predictions
-:type df: str</p>
+<dd><p>Create a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pipeline_database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to the pipeline database.</p></li>
+<li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the table in pipeline database.</p></li>
+<li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – DataFrame of combined predictions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -929,6 +1112,9 @@ reading out data. Defaults to None.</p></li>
 </section>
 <section id="module-graphnet.data">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet.data" title="Permalink to this heading"></a></h2>
+<p>Modules for converting and ingesting data.</p>
+<p><cite>graphnet.data</cite> enables converting domain-specific data to industry-standard,
+intermediate file formats  and reading this data.</p>
 </section>
 </section>
 

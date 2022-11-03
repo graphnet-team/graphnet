@@ -64,7 +64,7 @@
              
   <h1>Source code for graphnet.models.gnn.dynedge</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Implementation of the DynEdge GNN model architecture.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">LongTensor</span>
@@ -85,54 +85,53 @@
 
 
 <div class="viewcode-block" id="DynEdge"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge">[docs]</a><span class="k">class</span> <span class="nc">DynEdge</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;DynEdge (dynamical edge convolutional) model.&quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="DynEdge.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.__init__">[docs]</a>    <span class="nd">@save_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nb_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">nb_neighbours</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
-        <span class="n">features_subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">dynedge_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nb_neighbours</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">features_subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">slice</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dynedge_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">post_processing_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">readout_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">global_pooling_schemes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">add_global_variables_after_pooling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;DynEdge (dynamical edge convolutional) model.</span>
+        <span class="sd">&quot;&quot;&quot;Construct `DynEdge`.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            nb_inputs (int): Number of input features on each node</span>
-<span class="sd">            nb_neighbours (Optional[int], optional): Number of neighbours to</span>
-<span class="sd">                used in the k-nearest neighbour clustering which is performed</span>
-<span class="sd">                after each (dynamical) edge convolution. Defaults to 8.</span>
-<span class="sd">            features_subset (Optional[List[int]], optional): The subset of</span>
-<span class="sd">                latent features on each node that are used as metric dimensions</span>
-<span class="sd">                when performing the k-nearest neighbours clustering. Defaults</span>
-<span class="sd">                to slice(0,3).</span>
-<span class="sd">            dynedge_layer_sizes (Optional[List[Tuple[int]]], optional): The</span>
-<span class="sd">                layer sizes, or latent feature dimenions, used in the</span>
-<span class="sd">                `DynEdgeConv` layer. Each entry in `dynedge_layer_sizes`</span>
-<span class="sd">                corresponds to a single `DynEdgeConv` layer; the integers in</span>
-<span class="sd">                the corresponding tuple corresponds to the layer sizes in the</span>
-<span class="sd">                multi-layer perceptron (MLP) that is applied within each</span>
-<span class="sd">                `DynEdgeConv` layer. That is, a list of size-two tuples means</span>
-<span class="sd">                that all `DynEdgeConv` layers contain a two-layer MLP.</span>
+<span class="sd">            nb_inputs: Number of input features on each node.</span>
+<span class="sd">            nb_neighbours: Number of neighbours to used in the k-nearest</span>
+<span class="sd">                neighbour clustering which is performed after each (dynamical)</span>
+<span class="sd">                edge convolution.</span>
+<span class="sd">            features_subset: The subset of latent features on each node that</span>
+<span class="sd">                are used as metric dimensions when performing the k-nearest</span>
+<span class="sd">                neighbours clustering. Defaults to [0,1,2].</span>
+<span class="sd">            dynedge_layer_sizes: The layer sizes, or latent feature dimenions,</span>
+<span class="sd">                used in the `DynEdgeConv` layer. Each entry in</span>
+<span class="sd">                `dynedge_layer_sizes` corresponds to a single `DynEdgeConv`</span>
+<span class="sd">                layer; the integers in the corresponding tuple corresponds to</span>
+<span class="sd">                the layer sizes in the multi-layer perceptron (MLP) that is</span>
+<span class="sd">                applied within each `DynEdgeConv` layer. That is, a list of</span>
+<span class="sd">                size-two tuples means that all `DynEdgeConv` layers contain a</span>
+<span class="sd">                two-layer MLP.</span>
 <span class="sd">                Defaults to [(128, 256), (336, 256), (336, 256), (336, 256)].</span>
-<span class="sd">            post_processing_layer_sizes (Optional[List[int]], optional): Hidden</span>
-<span class="sd">                layer sizes in the MLP following the skip-concatenation of the</span>
-<span class="sd">                outputs of each `DynEdgeConv` layer. Defaults to [336, 256].</span>
-<span class="sd">            readout_layer_sizes (Optional[List[int]], optional): Hidden layer</span>
-<span class="sd">                sizes in the MLP following the post-processing _and_ optional</span>
-<span class="sd">                global pooling. As this is the last layer(s) in the model, the</span>
-<span class="sd">                last layer in the read-out yields the output of the `DynEdge`</span>
-<span class="sd">                model. Defaults to [128,].</span>
-<span class="sd">            global_pooling_schemes (Optional[Union[str, List[str]]], optional):</span>
-<span class="sd">                The list global pooling schemes to use. Options are: &quot;min&quot;,</span>
-<span class="sd">                &quot;max&quot;, &quot;mean&quot;, and &quot;sum&quot;. Defaults to None.</span>
-<span class="sd">            add_global_variables_after_pooling (bool, optional): Whether to add</span>
-<span class="sd">                global variables after global pooling. The alternative is to</span>
-<span class="sd">                added (distribute) them to the individual nodes before any</span>
-<span class="sd">                convolutional operations. Defaults to False.</span>
+<span class="sd">            post_processing_layer_sizes: Hidden layer sizes in the MLP</span>
+<span class="sd">                following the skip-concatenation of the outputs of each</span>
+<span class="sd">                `DynEdgeConv` layer. Defaults to [336, 256].</span>
+<span class="sd">            readout_layer_sizes: Hidden layer sizes in the MLP following the</span>
+<span class="sd">                post-processing _and_ optional global pooling. As this is the</span>
+<span class="sd">                last layer(s) in the model, the last layer in the read-out</span>
+<span class="sd">                yields the output of the `DynEdge` model. Defaults to [128,].</span>
+<span class="sd">            global_pooling_schemes: The list global pooling schemes to use.</span>
+<span class="sd">                Options are: &quot;min&quot;, &quot;max&quot;, &quot;mean&quot;, and &quot;sum&quot;.</span>
+<span class="sd">            add_global_variables_after_pooling: Whether to add global variables</span>
+<span class="sd">                after global pooling. The alternative is to  added (distribute)</span>
+<span class="sd">                them to the individual nodes before any convolutional</span>
+<span class="sd">                operations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Latent feature subset for computing nearest neighbours in DynEdge.</span>
         <span class="k">if</span> <span class="n">features_subset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -229,9 +228,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_construct_layers</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DynEdge._construct_layers"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._construct_layers">[docs]</a>    <span class="k">def</span> <span class="nf">_construct_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DynEdge._construct_layers"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._construct_layers">[docs]</a>    <span class="k">def</span> <span class="nf">_construct_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Construct layers (torch.nn.Modules).&quot;&quot;&quot;</span>
-
         <span class="c1"># Convolutional operations</span>
         <span class="n">nb_input_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_global_variables_after_pooling</span><span class="p">:</span>
@@ -316,8 +314,7 @@
         <span class="n">batch</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span>
         <span class="o">*</span><span class="n">additional_attributes</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculate global variables&quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Calculate global variables.&quot;&quot;&quot;</span>
         <span class="c1"># Calculate homophily (scalar variables)</span>
         <span class="n">h_x</span><span class="p">,</span> <span class="n">h_y</span><span class="p">,</span> <span class="n">h_z</span><span class="p">,</span> <span class="n">h_t</span> <span class="o">=</span> <span class="n">calculate_xyzt_homophily</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
 
@@ -340,15 +337,7 @@
         <span class="k">return</span> <span class="n">global_variables</span></div>
 
 <div class="viewcode-block" id="DynEdge.forward"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Model forward pass.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            data (Data): Graph of input features.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Tensor: Model output.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Apply learnable forward pass.&quot;&quot;&quot;</span>
         <span class="c1"># Convenience variables</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span>
 

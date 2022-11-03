@@ -162,6 +162,9 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.html#module-graphnet.data.dataset">graphnet.data.dataset module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.ColumnMissingException"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.__getitem__"><code class="docutils literal notranslate"><span class="pre">Dataset.__getitem__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.__init__"><code class="docutils literal notranslate"><span class="pre">Dataset.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.__len__"><code class="docutils literal notranslate"><span class="pre">Dataset.__len__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._check_missing_columns"><code class="docutils literal notranslate"><span class="pre">Dataset._check_missing_columns()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._create_graph"><code class="docutils literal notranslate"><span class="pre">Dataset._create_graph()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_all_indices"><code class="docutils literal notranslate"><span class="pre">Dataset._get_all_indices()</span></code></a></li>
@@ -208,7 +211,6 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.components.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.components.html#module-graphnet.models.components.layers">graphnet.models.components.layers module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.components.html#module-graphnet.models.components.pool">graphnet.models.components.pool module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.models.components.html#module-graphnet.models.components.utils">graphnet.models.components.utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.components.html#module-graphnet.models.components">Module contents</a></li>
 </ul>
 </li>
@@ -231,6 +233,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.task.html">graphnet.models.task package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#module-graphnet.models.task.classification">graphnet.models.task.classification module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#module-graphnet.models.task.reconstruction">graphnet.models.task.reconstruction module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#module-graphnet.models.task.task">graphnet.models.task.task module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.task.html#module-graphnet.models.task">Module contents</a></li>
@@ -241,6 +244,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.html#module-graphnet.models.coarsening">graphnet.models.coarsening module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.Coarsening"><code class="docutils literal notranslate"><span class="pre">Coarsening</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.Coarsening.__init__"><code class="docutils literal notranslate"><span class="pre">Coarsening.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.Coarsening._additional_features"><code class="docutils literal notranslate"><span class="pre">Coarsening._additional_features()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.Coarsening._perform_clustering"><code class="docutils literal notranslate"><span class="pre">Coarsening._perform_clustering()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.Coarsening._transfer_attributes"><code class="docutils literal notranslate"><span class="pre">Coarsening._transfer_attributes()</span></code></a></li>
@@ -274,10 +278,6 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.DOMCoarsening.training"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening.training</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.LoopBasedCoarsening"><code class="docutils literal notranslate"><span class="pre">LoopBasedCoarsening</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.LoopBasedCoarsening.__call__"><code class="docutils literal notranslate"><span class="pre">LoopBasedCoarsening.__call__()</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.html#graphnet.models.coarsening.unbatch_edge_index"><code class="docutils literal notranslate"><span class="pre">unbatch_edge_index()</span></code></a></li>
 </ul>
 </li>
@@ -302,6 +302,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.html#module-graphnet.models.graph_builders">graphnet.models.graph_builders module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder.__init__"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder.forward"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.EuclideanGraphBuilder.training"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder.training</span></code></a></li>
 </ul>
@@ -311,6 +312,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.__init__"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.forward"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.KNNGraphBuilder.precision"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder.precision</span></code></a></li>
@@ -319,6 +321,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.__init__"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.forward"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.graph_builders.RadialGraphBuilder.precision"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder.precision</span></code></a></li>
@@ -345,6 +348,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.html#module-graphnet.models.standard_model">graphnet.models.standard_model module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.__init__"><code class="docutils literal notranslate"><span class="pre">StandardModel.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">StandardModel.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.compute_loss"><code class="docutils literal notranslate"><span class="pre">StandardModel.compute_loss()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.configure_optimizers"><code class="docutils literal notranslate"><span class="pre">StandardModel.configure_optimizers()</span></code></a></li>
@@ -370,10 +374,23 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.html#module-graphnet.models">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.pisa.html">graphnet.pisa package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.pisa.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.pisa.html#graphnet-pisa-fitting-module">graphnet.pisa.fitting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.pisa.html#module-graphnet.pisa.plotting">graphnet.pisa.plotting module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.pisa.html#graphnet.pisa.plotting.plot_1D_contour"><code class="docutils literal notranslate"><span class="pre">plot_1D_contour()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.pisa.html#graphnet.pisa.plotting.plot_2D_contour"><code class="docutils literal notranslate"><span class="pre">plot_2D_contour()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.pisa.html#graphnet.pisa.plotting.read_entry"><code class="docutils literal notranslate"><span class="pre">read_entry()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.pisa.html#module-graphnet.pisa">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.training.html">graphnet.training package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.training.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.training.html#module-graphnet.training.callbacks">graphnet.training.callbacks module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.training.html#graphnet.training.callbacks.PiecewiseLinearLR"><code class="docutils literal notranslate"><span class="pre">PiecewiseLinearLR</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.callbacks.PiecewiseLinearLR.__init__"><code class="docutils literal notranslate"><span class="pre">PiecewiseLinearLR.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.callbacks.PiecewiseLinearLR.get_lr"><code class="docutils literal notranslate"><span class="pre">PiecewiseLinearLR.get_lr()</span></code></a></li>
 </ul>
 </li>
@@ -390,7 +407,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.training.html#module-graphnet.training.labels">graphnet.training.labels module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="graphnet.training.html#graphnet.training.labels.Direction"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.training.html#graphnet.training.labels.Direction"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.labels.Direction.__call__"><code class="docutils literal notranslate"><span class="pre">Direction.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.labels.Direction.__init__"><code class="docutils literal notranslate"><span class="pre">Direction.__init__()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.training.html#graphnet.training.labels.Label"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.labels.Label.__call__"><code class="docutils literal notranslate"><span class="pre">Label.__call__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.labels.Label.__init__"><code class="docutils literal notranslate"><span class="pre">Label.__init__()</span></code></a></li>
@@ -429,6 +450,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.training.html#graphnet.training.loss_functions.LossFunction"><code class="docutils literal notranslate"><span class="pre">LossFunction</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.__init__"><code class="docutils literal notranslate"><span class="pre">LossFunction.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.loss_functions.LossFunction._forward"><code class="docutils literal notranslate"><span class="pre">LossFunction._forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">LossFunction.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.loss_functions.LossFunction.forward"><code class="docutils literal notranslate"><span class="pre">LossFunction.forward()</span></code></a></li>
@@ -499,6 +521,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.training.html#graphnet.training.weight_fitting.WeightFitter"><code class="docutils literal notranslate"><span class="pre">WeightFitter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.weight_fitting.WeightFitter.__init__"><code class="docutils literal notranslate"><span class="pre">WeightFitter.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.weight_fitting.WeightFitter._get_truth"><code class="docutils literal notranslate"><span class="pre">WeightFitter._get_truth()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.training.html#graphnet.training.weight_fitting.WeightFitter.fit"><code class="docutils literal notranslate"><span class="pre">WeightFitter.fit()</span></code></a></li>
 </ul>
@@ -534,6 +557,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.RepeatFilter"><code class="docutils literal notranslate"><span class="pre">RepeatFilter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.RepeatFilter.__init__"><code class="docutils literal notranslate"><span class="pre">RepeatFilter.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.RepeatFilter.filter"><code class="docutils literal notranslate"><span class="pre">RepeatFilter.filter()</span></code></a></li>
 </ul>
 </li>
@@ -555,7 +579,7 @@
 </section>
 <section id="module-graphnet">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-graphnet" title="Permalink to this heading"></a></h2>
-<p>graphnet - Graph neural networks for neutrino telescope event reconstruction.</p>
+<p>graphnet: Graph neural networks for neutrino telescope event reconstruction.</p>
 <p><strong>graphnet</strong> is a python package that provides convenient, common, and
 collaboratively developed tools for building graph neural networks (GNNs) to
 solve physics tasks at neutrino telescope experiments. It aims to provide

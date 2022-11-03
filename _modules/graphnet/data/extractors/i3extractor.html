@@ -63,29 +63,43 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.extractors.i3extractor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span></span><span class="sd">&quot;&quot;&quot;Base I3Extractor class(es).&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
 
-<span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
+<span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">()</span> <span class="ow">or</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="n">icetray</span><span class="p">,</span> <span class="n">dataio</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 
 
 <div class="viewcode-block" id="I3Extractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor">[docs]</a><span class="k">class</span> <span class="nc">I3Extractor</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extracts relevant information from physics frames.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for extracting information from physics I3-frames.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="sd">    All classes inheriting from `I3Extractor` should implement the `__call__`</span>
+<span class="sd">    method, and can be applied directly on `icetray.I3Frame` objects to return</span>
+<span class="sd">    extracted, pure-python data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-        <span class="c1"># Member variables</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_file</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+<div class="viewcode-block" id="I3Extractor.__init__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct I3Extractor.</span>
 
-<div class="viewcode-block" id="I3Extractor.set_files"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.set_files">[docs]</a>    <span class="k">def</span> <span class="nf">set_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">):</span>
+<span class="sd">        Args:</span>
+<span class="sd">            name: Name of the `I3Extractor` instance. Used to keep track of the</span>
+<span class="sd">                provenance of different data, and to name tables to which this</span>
+<span class="sd">                data is saved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Member variable(s)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;icetray.I3Frame.Calibration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span></div>
+
+<div class="viewcode-block" id="I3Extractor.set_files"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.set_files">[docs]</a>    <span class="k">def</span> <span class="nf">set_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Store references to the I3- and GCD-files being processed.&quot;&quot;&quot;</span>
         <span class="c1"># @TODO: Is it necessary to set the `i3_file`? It is only used in one</span>
         <span class="c1">#        place in `I3TruthExtractor`, and there only in a way that might</span>
         <span class="c1">#        be solved another way.</span>
@@ -93,8 +107,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_file</span> <span class="o">=</span> <span class="n">gcd_file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_gcd_data</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="I3Extractor._load_gcd_data"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor._load_gcd_data">[docs]</a>    <span class="k">def</span> <span class="nf">_load_gcd_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Loads the geospatial information contained in the gcd-file.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="I3Extractor._load_gcd_data"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor._load_gcd_data">[docs]</a>    <span class="k">def</span> <span class="nf">_load_gcd_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load the geospatial information contained in the GCD-file.&quot;&quot;&quot;</span>
         <span class="c1"># If no GCD file is provided, search the I3 file for frames containing</span>
         <span class="c1"># geometry (G) and calibration (C) information.</span>
         <span class="n">gcd_file</span> <span class="o">=</span> <span class="n">dataio</span><span class="o">.</span><span class="n">I3File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gcd_file</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span><span class="p">)</span>
@@ -117,32 +131,41 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="o">=</span> <span class="n">c_frame</span><span class="p">[</span><span class="s2">&quot;I3Calibration&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="I3Extractor.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3Extractor.__call__">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Extracts relevant information from frame.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extract information from frame.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the name of the `I3Extractor` instance.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span></div>
 
 
 <div class="viewcode-block" id="I3ExtractorCollection"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection">[docs]</a><span class="k">class</span> <span class="nc">I3ExtractorCollection</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to manage multiple I3Extractors.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">extractors</span><span class="p">):</span>
+<div class="viewcode-block" id="I3ExtractorCollection.__init__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">extractors</span><span class="p">:</span> <span class="n">I3Extractor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct I3ExtractorCollection.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *extractors: List of `I3Extractor`s to be treated as a single</span>
+<span class="sd">            collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check(s)</span>
         <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="n">extractors</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">I3Extractor</span><span class="p">)</span>
 
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractors</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractors</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="I3ExtractorCollection.set_files"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.set_files">[docs]</a>    <span class="k">def</span> <span class="nf">set_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">):</span>
+<div class="viewcode-block" id="I3ExtractorCollection.set_files"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.set_files">[docs]</a>    <span class="k">def</span> <span class="nf">set_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Store references to the I3- and GCD-files being processed.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="n">extractor</span><span class="o">.</span><span class="n">set_files</span><span class="p">(</span><span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">extractor</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
+<div class="viewcode-block" id="I3ExtractorCollection.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract information from frame for each member `I3Extractor`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">extractor</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div></div>
 </pre></div>
 
            </div>

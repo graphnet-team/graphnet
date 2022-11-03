@@ -63,12 +63,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for graphnet.data.extractors.utilities.frames</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utility methods for working with I3Frames.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
-
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
 
 <span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
     <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="p">(</span>
@@ -78,10 +77,12 @@
 
 
 <div class="viewcode-block" id="frame_is_montecarlo"><a class="viewcode-back" href="../../../../../graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.frames.frame_is_montecarlo">[docs]</a><span class="k">def</span> <span class="nf">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check whether `frame` is from Monte Carlo simulation.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;MCInIcePrimary&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;I3MCTree&quot;</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="frame_is_noise"><a class="viewcode-back" href="../../../../../graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.frames.frame_is_noise">[docs]</a><span class="k">def</span> <span class="nf">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check whether `frame` is from noise.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;I3MCTree&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -97,15 +98,16 @@
     <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">,</span>
     <span class="n">pulseseries</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">calibration</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;dataclasses.I3Calibration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Gets the indicies for the gcd_dict and the pulse series</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Get the indicies for the gcd_dict and the pulse series.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        frame (i3 physics frame): i3 physics frame</span>
+<span class="sd">        frame: Physics (P) I3-frame from which to extract OM keys and pulse</span>
+<span class="sd">            series</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        om_keys (index): the indicies for the gcd_dict</span>
-<span class="sd">        data    (??)   : the pulse series</span>
+<span class="sd">        Tuple containing the OM keys/indicesfor the GCD dictionary, and the</span>
+<span class="sd">        pulse series data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">pulseseries</span><span class="p">]</span>
