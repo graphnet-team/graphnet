@@ -33,7 +33,7 @@ class I3Extractor(ABC, LoggerMixin):
         self._calibration: Optional["icetray.I3Frame.Calibration"] = None
         self._name: str = name
 
-    def set_files(self, i3_file: str, gcd_file: str):
+    def set_files(self, i3_file: str, gcd_file: str) -> None:
         """Store references to the I3- and GCD-files being processed."""
         # @TODO: Is it necessary to set the `i3_file`? It is only used in one
         #        place in `I3TruthExtractor`, and there only in a way that might
@@ -42,7 +42,7 @@ class I3Extractor(ABC, LoggerMixin):
         self._gcd_file = gcd_file
         self._load_gcd_data()
 
-    def _load_gcd_data(self):
+    def _load_gcd_data(self) -> None:
         """Load the geospatial information contained in the GCD-file."""
         # If no GCD file is provided, search the I3 file for frames containing
         # geometry (G) and calibration (C) information.
@@ -93,7 +93,7 @@ class I3ExtractorCollection(list):
         # Base class constructor
         super().__init__(extractors)
 
-    def set_files(self, i3_file: str, gcd_file: str):
+    def set_files(self, i3_file: str, gcd_file: str) -> None:
         """Store references to the I3- and GCD-files being processed."""
         for extractor in self:
             extractor.set_files(i3_file, gcd_file)
