@@ -161,7 +161,6 @@ def train(config: Dict[str, Any]) -> None:
     )
 
 
-# Main function definition
 def main() -> None:
     """Run example."""
     for target in ["zenith", "azimuth"]:
@@ -187,6 +186,5 @@ def main() -> None:
         train(config)
 
 
-# Main function call
 if __name__ == "__main__":
     main()
