@@ -95,9 +95,13 @@ class Task(Model):
         self._inference = False
         self._loss_weight = loss_weight
 
-        self._transform_prediction_training = lambda x: x
-        self._transform_prediction_inference = lambda x: x
-        self._transform_target = lambda x: x
+        self._transform_prediction_training: Callable[
+            [Tensor], Tensor
+        ] = lambda x: x
+        self._transform_prediction_inference: Callable[
+            [Tensor], Tensor
+        ] = lambda x: x
+        self._transform_target: Callable[[Tensor], Tensor] = lambda x: x
         self._validate_and_set_transforms(
             transform_prediction_and_target,
             transform_target,
@@ -150,12 +154,12 @@ class Task(Model):
         return loss
 
     @final
-    def inference(self):
+    def inference(self) -> None:
         """Activate inference mode."""
         self._inference = True
 
     @final
-    def train_eval(self):
+    def train_eval(self) -> None:
         """Deactivate inference mode."""
         self._inference = False
 
@@ -166,7 +170,7 @@ class Task(Model):
         transform_target: Union[Callable, None],
         transform_inference: Union[Callable, None],
         transform_support: Union[Tuple, None],
-    ):
+    ) -> None:
         """Validate and set transforms.
 
         Assert that a valid combination of transformation arguments are passed
