@@ -1,3 +1,4 @@
+exclude: '^(versioneer.py|src/graphnet/_version.py|docs/)'
 repos:
   - repo: https://github.com/psf/black
     rev: 22.3.0
