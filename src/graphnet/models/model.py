@@ -47,7 +47,7 @@ class Model(LightningModule, LoggerMixin, ABC):
             )
             raise
 
-    def save(self, path: str):
+    def save(self, path: str) -> None:
         """Save entire model to `path`."""
         if not path.endswith(".pth"):
             self.info(
@@ -64,7 +64,7 @@ class Model(LightningModule, LoggerMixin, ABC):
         """Load entire model from `path`."""
         return torch.load(path, pickle_module=dill)
 
-    def save_state_dict(self, path: str):
+    def save_state_dict(self, path: str) -> None:
         """Save model `state_dict` to `path`."""
         if not path.endswith(".pth"):
             self.info(
@@ -84,7 +84,7 @@ class Model(LightningModule, LoggerMixin, ABC):
         return super().load_state_dict(state_dict)
 
     @final
-    def save_config(self, path: str):
+    def save_config(self, path: str) -> None:
         """Save ModelConfig to `path` as YAML file."""
         self.config.dump(path)
 
