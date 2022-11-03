@@ -45,7 +45,7 @@ class Detector(Model):
             self.info(
                 (
                     "Will use scalers rather than standard preprocessing "
-                    f"in {self.__class__.__name__}.",
+                    f"in {self.__class__.__name__}."
                 )
             )
 
@@ -103,7 +103,7 @@ class Detector(Model):
         """
         return self.nb_inputs
 
-    def _validate_features(self, data: Data):
+    def _validate_features(self, data: Data) -> None:
         if isinstance(data, Batch):
             # `data.features` is "transposed" and each list element contains only duplicate entries.
 
