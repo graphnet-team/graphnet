@@ -20,7 +20,7 @@ class SQLiteDataConverter(DataConverter):
     file_suffix = "db"
 
     # Abstract method implementation(s)
-    def save_data(self, data: List[Dict[str, Any]], output_file: str):
+    def save_data(self, data: List[Dict[str, Any]], output_file: str) -> None:
         """Save data to SQLite database."""
         # Check(s)
         if os.path.exists(output_file):
@@ -29,7 +29,8 @@ class SQLiteDataConverter(DataConverter):
             )
 
         # Concatenate data
-        dataframe: Dict[str, pd.DataFrame] = OrderedDict()
+        assert len(data)
+        dataframe = OrderedDict([(key, pd.DataFrame) for key in data[0]])
         for data_dict in data:
             for key, data_values in data_dict.items():
                 df = construct_dataframe(data_values)
@@ -37,7 +38,8 @@ class SQLiteDataConverter(DataConverter):
                 if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
                     # only include data_dict in temp. databases if at least one pulsemap is non-empty,
                     # and the current extractor (df) is also non-empty (also since truth is always non-empty)
-                    if key in dataframe:
+                    if len(dataframe[key]):
+                        assert isinstance(dataframe[key], pd.DataFrame)
                         dataframe[key] = dataframe[key].append(
                             df, ignore_index=True, sort=True
                         )
@@ -59,7 +61,7 @@ class SQLiteDataConverter(DataConverter):
 
     def merge_files(
         self, output_file: str, input_files: Optional[List[str]] = None
-    ):
+    ) -> None:
         """SQLite-specific method for merging output files/databases.
 
         Args:
@@ -128,7 +130,9 @@ class SQLiteDataConverter(DataConverter):
 
         return table_names
 
-    def _extract_column_names(self, db_paths, table_name):
+    def _extract_column_names(
+        self, db_paths: List[str], table_name: str
+    ) -> List[str]:
         for db_path in db_paths:
             with sqlite3.connect(db_path) as con:
                 query = f"select * from {table_name} limit 1"
@@ -153,7 +157,7 @@ class SQLiteDataConverter(DataConverter):
         pulsemap_dicts = [data_dict[pulsemap] for pulsemap in self._pulsemaps]
         return any(d["dom_x"] for d in pulsemap_dicts)
 
-    def _attach_index(self, database: str, table_name: str):
+    def _attach_index(self, database: str, table_name: str) -> None:
         """Attach the table index.
 
         Important for query times!
@@ -173,7 +177,7 @@ class SQLiteDataConverter(DataConverter):
         table_name: str,
         columns: List[str],
         is_pulse_map: bool = False,
-    ):
+    ) -> None:
         """Create a table.
 
         Args:
@@ -207,7 +211,9 @@ class SQLiteDataConverter(DataConverter):
             self._attach_index(database, table_name)
         return
 
-    def _submit_to_database(self, database: str, key: str, data: pd.DataFrame):
+    def _submit_to_database(
+        self, database: str, key: str, data: pd.DataFrame
+    ) -> None:
         """Submit data to the database with specified key."""
         if len(data) == 0:
             if self._verbose:
@@ -242,7 +248,7 @@ class SQLiteDataConverter(DataConverter):
         self,
         output_file: str,
         input_files: List[str],
-    ):
+    ) -> None:
         """Merge the temporary databases.
 
         Args:
