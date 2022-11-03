@@ -28,10 +28,10 @@ jobs:
                "${{ secrets.PUB_WISC_PASSWORD }}" != "" ]]; \
          then
            echo "Credentials to access Cobalt found"
-           echo "::set-output name=has_credentials::true"
+           echo has_credentials="true" >> $GITHUB_OUTPUT
          else
            echo "Credentials to access Cobalt not found"
-           echo "::set-output name=has_credentials::false"
+           echo has_credentials="false" >> $GITHUB_OUTPUT
          fi
 
   check-codeclimate-credentials:
@@ -46,10 +46,10 @@ jobs:
          if [[ "${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}" != "" ]]; \
          then
            echo "Credentials to access CodeClimate found"
-           echo "::set-output name=has_credentials::true"
+           echo has_credentials="true" >> $GITHUB_OUTPUT
          else
            echo "Credentials to access CodeClimate not found"
-           echo "::set-output name=has_credentials::false"
+           echo has_credentials="false" >> $GITHUB_OUTPUT
          fi
 
   build-icetray:
