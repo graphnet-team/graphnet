@@ -20,7 +20,7 @@ def main() -> None:
     }
 
     # By calling `fitter.fit_weights`` we get the weights returned per event.
-    # If `add_to_database = True? , a table will be added to the database.
+    # If `add_to_database = True`, a table will be added to the database.
     weights = fitter.fit_weights(
         outdir,
         add_to_database=True,
