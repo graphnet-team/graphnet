@@ -45,13 +45,14 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             Dictionary of reconstructed features for all pulses in `pulsemap`,
                 in pure-python format.
         """
+        padding_value: float = -1.0
         output: Dict[str, List[Any]] = {
             "charge": [],
             "dom_time": [],
+            "width": [],
             "dom_x": [],
             "dom_y": [],
             "dom_z": [],
-            "width": [],
             "pmt_area": [],
             "rde": [],
             "is_bright_dom": [],
@@ -93,35 +94,41 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             y = self._gcd_dict[om_key].position.y
             z = self._gcd_dict[om_key].position.z
             area = self._gcd_dict[om_key].area
-            rde = self._get_relative_dom_efficiency(frame, om_key)
+            rde = self._get_relative_dom_efficiency(
+                frame, om_key, padding_value
+            )
 
             # DOM flags
             if bright_doms:
                 is_bright_dom = 1 if om_key in bright_doms else 0
             else:
-                is_bright_dom = -1
+                is_bright_dom = int(padding_value)
 
             if bad_doms:
                 is_bad_dom = 1 if om_key in bad_doms else 0
             else:
-                is_bad_dom = -1
+                is_bad_dom = int(padding_value)
 
             if saturation_windows:
                 is_saturated_dom = 1 if om_key in saturation_windows else 0
             else:
-                is_saturated_dom = -1
+                is_saturated_dom = int(padding_value)
 
             if calibration_errata:
                 is_errata_dom = 1 if om_key in calibration_errata else 0
             else:
-                is_errata_dom = -1
+                is_errata_dom = int(padding_value)
 
             # Loop over pulses for each OM
             pulses = data[om_key]
             for pulse in pulses:
-                output["charge"].append(pulse.charge)
-                output["dom_time"].append(pulse.time)
-                output["width"].append(pulse.width)
+                output["charge"].append(
+                    getattr(pulse, "charge", padding_value)
+                )
+                output["dom_time"].append(
+                    getattr(pulse, "time", padding_value)
+                )
+                output["width"].append(getattr(pulse, "width", padding_value))
                 output["pmt_area"].append(area)
                 output["rde"].append(rde)
                 output["dom_x"].append(x)
@@ -137,7 +144,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         return output
 
     def _get_relative_dom_efficiency(
-        self, frame: "icetray.I3Frame", om_key: int
+        self, frame: "icetray.I3Frame", om_key: int, padding_value: float
     ) -> float:
         if (
             "I3Calibration" in frame
@@ -148,7 +155,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 assert self._calibration is not None
                 rde = self._calibration.dom_cal[om_key].relative_dom_eff
             except:  # noqa: E722
-                rde = -1
+                rde = padding_value
         return rde
 
 
@@ -230,19 +237,12 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
                 in pure-python format.
         """
         output: Dict[str, List[Any]] = {
-            "string": [],
-            "pmt_number": [],
-            "dom_number": [],
-            "pmt_dir_x": [],
-            "pmt_dir_y": [],
-            "pmt_dir_z": [],
-            "dom_type": [],
             "truth_flag": [],
         }
 
-        # Add features from IceCube86
-        output_icecube86 = super().__call__(frame)
-        output.update(output_icecube86)
+        # Add features from IceCubeUpgrade
+        output_icecube_upgrade = super().__call__(frame)
+        output.update(output_icecube_upgrade)
 
         # Get OM data
         om_keys, data = get_om_keys_and_pulseseries(
@@ -252,25 +252,9 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
         )
 
         for om_key in om_keys:
-            # Common values for each OM
-            pmt_dir_x = self._gcd_dict[om_key].orientation.x
-            pmt_dir_y = self._gcd_dict[om_key].orientation.y
-            pmt_dir_z = self._gcd_dict[om_key].orientation.z
-            string = om_key[0]
-            dom_number = om_key[1]
-            pmt_number = om_key[2]
-            dom_type = self._gcd_dict[om_key].omtype
-
             # Loop over pulses for each OM
             pulses = data[om_key]
             for truth_flag in pulses:
-                output["string"].append(string)
-                output["pmt_number"].append(pmt_number)
-                output["dom_number"].append(dom_number)
-                output["pmt_dir_x"].append(pmt_dir_x)
-                output["pmt_dir_y"].append(pmt_dir_y)
-                output["pmt_dir_z"].append(pmt_dir_z)
-                output["dom_type"].append(dom_type)
                 output["truth_flag"].append(truth_flag)
 
         return output
