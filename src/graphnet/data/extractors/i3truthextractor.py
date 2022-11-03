@@ -320,7 +320,10 @@ class I3TruthExtractor(I3Extractor):
         }
 
     def _get_primary_particle_interaction_type_and_elasticity(
-        self, frame: "icetray.I3Frame", sim_type: str, padding_value=-1
+        self,
+        frame: "icetray.I3Frame",
+        sim_type: str,
+        padding_value: float = -1.0,
     ) -> Tuple[Any, int, float]:
         """Return primary particle, interaction type, and elasticity.
 
