@@ -11,7 +11,7 @@ from graphnet.data.extractors import (
     I3TruthExtractor,
     I3GenericExtractor,
 )
-from graphnet.data.dataconverter import DataConverter
+from graphnet.data import DataConverter
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.sqlite import SQLiteDataConverter
 
