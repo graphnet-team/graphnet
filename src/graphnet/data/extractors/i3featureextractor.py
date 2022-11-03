@@ -185,7 +185,6 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCubeUpgrade):
         """Extract features to be used as inputs to GNN models."""
 
         output = {
-            "dom_type": [],
             "truth_flag": [],
         }
 
