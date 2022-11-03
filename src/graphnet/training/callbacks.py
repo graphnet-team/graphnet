@@ -2,9 +2,13 @@
 
 import logging
 import numpy as np
+from typing import Dict, List
 import warnings
 
 from torch.optim.lr_scheduler import _LRScheduler
+from torch.optim import Optimizer
+from tqdm.std import Bar
+from pytorch_lightning import LightningModule, Trainer
 from pytorch_lightning.callbacks import TQDMProgressBar
 
 from graphnet.utilities.logging import get_logger
@@ -17,7 +21,12 @@ class PiecewiseLinearLR(_LRScheduler):
     """Interpolate learning rate linearly between milestones."""
 
     def __init__(
-        self, optimizer, milestones, factors, last_epoch=-1, verbose=False
+        self,
+        optimizer: Optimizer,
+        milestones: List[int],
+        factors: List[float],
+        last_epoch: int = -1,
+        verbose: bool = False,
     ):
         """Construct `PiecewiseLinearLR`.
 
@@ -29,13 +38,12 @@ class PiecewiseLinearLR(_LRScheduler):
         milestone.
 
         Args:
-            optimizer (Optimizer): Wrapped optimizer.
-            milestones (list): List of step indices. Must be increasing.
-            factors (list): List of multiplicative factors. Must be same length as
+            optimizer: Wrapped optimizer.
+            milestones: List of step indices. Must be increasing.
+            factors: List of multiplicative factors. Must be same length as
                 `milestones`.
-            last_epoch (int): The index of the last epoch. Default: -1.
-            verbose (bool): If ``True``, prints a message to stdout for
-                each update. Default: ``False``.
+            last_epoch: The index of the last epoch.
+            verbose: If ``True``, prints a message to stdout for each update.
         """
         # Check(s)
         if milestones != sorted(milestones):
@@ -49,11 +57,11 @@ class PiecewiseLinearLR(_LRScheduler):
         self.factors = factors
         super().__init__(optimizer, last_epoch, verbose)
 
-    def _get_factor(self):
+    def _get_factor(self) -> np.ndarray:
         # Linearly interpolate multiplicative factor between milestones.
         return np.interp(self.last_epoch, self.milestones, self.factors)
 
-    def get_lr(self):
+    def get_lr(self) -> List[float]:
         """Get effective learning rate(s) for each optimizer."""
         if not self._get_lr_called_within_step:
             warnings.warn(
@@ -71,42 +79,44 @@ class ProgressBar(TQDMProgressBar):
     Customises the default progress in pytorch-lightning.
     """
 
-    def _common_config(self, bar):
+    def _common_config(self, bar: Bar) -> Bar:
         bar.unit = " batch(es)"
         bar.colour = "green"
         return bar
 
-    def init_validation_tqdm(self):
+    def init_validation_tqdm(self) -> Bar:
         """Override for customisation."""
         bar = super().init_validation_tqdm()
         bar = self._common_config(bar)
         return bar
 
-    def init_predict_tqdm(self):
+    def init_predict_tqdm(self) -> Bar:
         """Override for customisation."""
         bar = super().init_predict_tqdm()
         bar = self._common_config(bar)
         return bar
 
-    def init_test_tqdm(self):
+    def init_test_tqdm(self) -> Bar:
         """Override for customisation."""
         bar = super().init_test_tqdm()
         bar = self._common_config(bar)
         return bar
 
-    def init_train_tqdm(self):
+    def init_train_tqdm(self) -> Bar:
         """Override for customisation."""
         bar = super().init_train_tqdm()
         bar = self._common_config(bar)
         return bar
 
-    def get_metrics(self, trainer, model):
+    def get_metrics(self, trainer: Trainer, model: LightningModule) -> Dict:
         """Override to not show the version number in the logging."""
         items = super().get_metrics(trainer, model)
         items.pop("v_num", None)
         return items
 
-    def on_train_epoch_start(self, trainer, model):
+    def on_train_epoch_start(
+        self, trainer: Trainer, model: LightningModule
+    ) -> None:
         """Print the results of the previous epoch on a separate line.
 
         This allows the user to see the losses/metrics for previous epochs
@@ -123,14 +133,16 @@ class ProgressBar(TQDMProgressBar):
             f"Epoch {trainer.current_epoch:2d}"
         )
 
-    def on_train_epoch_end(self, trainer, model):
+    def on_train_epoch_end(
+        self, trainer: Trainer, model: LightningModule
+    ) -> None:
         """Log the final progress bar for the epoch to file.
 
         Don't duplciate to stdout.
         """
         super().on_train_epoch_end(trainer, model)
 
-        h = logger.logger.handlers[0]
+        h = logger.handlers[0]
         assert isinstance(h, logging.StreamHandler)
         level = h.level
         h.setLevel(logging.ERROR)
