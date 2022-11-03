@@ -2,6 +2,7 @@
 
 import numpy as np
 import torch
+from torch import Tensor
 
 from graphnet.models.task import Task
 from graphnet.utilities.maths import eps_like
@@ -13,7 +14,7 @@ class AzimuthReconstructionWithKappa(Task):
     # Requires two features: untransformed points in (x,y)-space.
     nb_inputs = 2
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         kappa = torch.linalg.vector_norm(x, dim=1) + eps_like(x)
         angle = torch.atan2(x[:, 1], x[:, 0])
@@ -29,7 +30,7 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
     # Requires two features: untransformed points in (x,y)-space.
     nb_inputs = 2
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         res = super()._forward(x)
         angle = res[:, 0].unsqueeze(1)
@@ -47,7 +48,7 @@ class DirectionReconstructionWithKappa(Task):
     # Requires three features: untransformed points in (x,y,z)-space.
     nb_inputs = 3
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         kappa = torch.linalg.vector_norm(x, dim=1) + eps_like(x)
         vec_x = x[:, 0] / kappa
@@ -62,7 +63,7 @@ class ZenithReconstruction(Task):
     # Requires two features: zenith angle itself.
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         return torch.sigmoid(x[:, :1]) * np.pi
 
@@ -73,7 +74,7 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
     # Requires one feature in addition to `ZenithReconstruction`: kappa (unceratinty; 1/variance).
     nb_inputs = 2
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         angle = super()._forward(x[:, :1]).squeeze(1)
         kappa = torch.abs(x[:, 1]) + eps_like(x)
@@ -86,7 +87,7 @@ class EnergyReconstruction(Task):
     # Requires one feature: untransformed energy
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform energy
         return torch.pow(10, x[:, 0] + 1.0).unsqueeze(1)
 
@@ -97,7 +98,7 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
     # Requires one feature in addition to `EnergyReconstruction`: log-variance (uncertainty).
     nb_inputs = 2
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform energy
         energy = super()._forward(x[:, :1]).squeeze(1)
         log_var = x[:, 1]
@@ -111,7 +112,7 @@ class VertexReconstruction(Task):
     # Requires four features, x, y, z, and t.
     nb_inputs = 4
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
 
         # Scale xyz to roughly the right order of magnitude, leave time
         x[:, 0] = x[:, 0] * 1e2
@@ -127,7 +128,7 @@ class PositionReconstruction(Task):
     # Requires three features, x, y, and z.
     nb_inputs = 3
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
 
         # Scale to roughly the right order of magnitude
         x[:, 0] = x[:, 0] * 1e2
@@ -143,7 +144,7 @@ class TimeReconstruction(Task):
     # Requires one feature, time.
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
 
         # Leave as it is
         return x
@@ -158,6 +159,6 @@ class InelasticityReconstruction(Task):
     # Requires one features: inelasticity itself
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform output to unit range
         return torch.sigmoid(x)
