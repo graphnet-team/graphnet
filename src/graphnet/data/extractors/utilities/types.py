@@ -211,8 +211,8 @@ def cast_object_to_pure_python(obj: Any) -> Any:
 def cast_pulse_series_to_pure_python(
     frame: "icetray.I3Frame",
     key: str,
-    calibration,
-    gcd_dict,
+    calibration: Any,
+    gcd_dict: Dict,
 ) -> Optional[Dict[str, List[Any]]]:
     """Cast pulse series `key` to a pure-python data representation.
 
