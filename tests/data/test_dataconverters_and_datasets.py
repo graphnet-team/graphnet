@@ -1,4 +1,5 @@
-"""Unit tests for SQLiteDataConverter."""
+"""Unit tests for DataConverter and Dataset classes."""
+
 import os
 
 import numpy as np
@@ -49,7 +50,8 @@ def get_file_path(backend: str, test_data_dir: str) -> str:
 
 
 # Unit test(s)
-def test_is_pulsemap_check():
+def test_is_pulsemap_check() -> None:
+    """Test behaviour of `is_pulsemap_check`."""
     assert is_pulsemap_check("SplitInIcePulses") is True
     assert is_pulsemap_check("SRTInIcePulses") is True
     assert is_pulsemap_check("InIceDSTPulses") is True
@@ -60,7 +62,9 @@ def test_is_pulsemap_check():
 
 @pytest.mark.order(1)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
+def test_dataconverter(
+    backend: str, test_data_dir: str = TEST_DATA_DIR
+) -> None:
     """Test the implementation of `DataConverter` for `backend`."""
     # Constructor DataConverter instance
     opt = dict(
@@ -92,9 +96,8 @@ def test_dataconverter(backend: str, test_data_dir: str = TEST_DATA_DIR):
     assert os.path.exists(path), path
 
 
-def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR):
+def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR) -> None:
     """Test the implementation of `I3GenericExtractor`."""
-
     # Constants(s)
     mc_tree = "I3MCTree"
     pulse_series = "SRTInIcePulses"
@@ -166,7 +169,7 @@ def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR):
 
 @pytest.mark.order(3)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR):
+def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR) -> None:
     """Test the implementation of `Dataset` for `backend`."""
     path = get_file_path(backend, test_data_dir)
     assert os.path.exists(path)
