@@ -73,20 +73,22 @@ def main() -> None:
     wandb_logger.experiment.config.update(config)
 
     # Common variables
-    train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
+    train_selection, _ = get_equal_proportion_neutrino_indices(
+        cast(str, config["db"])
+    )
     train_selection = train_selection[0:50000]
 
     (
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
-        config["db"],
+        cast(str, config["db"]),
         train_selection,
-        config["pulsemap"],
+        cast(str, config["pulsemap"]),
         features,
         truth,
-        batch_size=config["batch_size"],
-        num_workers=config["num_workers"],
+        batch_size=cast(int, config["batch_size"]),
+        num_workers=cast(int, config["num_workers"]),
     )
 
     # Building model
@@ -153,7 +155,7 @@ def main() -> None:
         model,
         validation_dataloader,
         [cast(str, config["target"]) + "_pred"],
-        additional_attributes=[config["target"], "event_no"],
+        additional_attributes=[cast(str, config["target"]), "event_no"],
     )
 
     save_results(config["db"], run_name, results, archive, model)
