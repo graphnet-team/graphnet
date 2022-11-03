@@ -1,8 +1,10 @@
-import sqlite3
-import time
+"""Example of reading events from Dataset class."""
+
+from timer import timer
 
 import awkward
-from timer import timer
+import sqlite3
+import time
 import torch.multiprocessing
 import torch.utils.data
 from torch_geometric.data.batch import Batch
@@ -37,7 +39,7 @@ features = [  # From I3GenericExtractor
 truth = TRUTH.UPGRADE
 
 
-def main(backend: str):
+def main(backend: str) -> None:
     """Read intermediate file using `Dataset` class."""
     # Check(s)
     assert backend in DATASET_CLASS
@@ -105,5 +107,5 @@ def main(backend: str):
 
 if __name__ == "__main__":
     backend = "parquet"
-    # backend = "sqlite"
+    backend = "sqlite"
     main(backend)
