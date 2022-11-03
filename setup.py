@@ -1,7 +1,5 @@
 """Setup script for the GraphNeT package."""
 
-import subprocess
-import sys
 from setuptools import setup, find_packages
 import versioneer
 
