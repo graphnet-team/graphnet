@@ -1,4 +1,4 @@
-"""I3Extractor class(es) for extracting PISA weights."""
+"""I3Extractor class(es) for extracting quantities required by PISA."""
 
 from typing import TYPE_CHECKING, Any, Dict
 
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class I3PISAExtractor(I3Extractor):
-    """Class for extracting PISA weights."""
+    """Class for extracting quantities required by PISA."""
 
     def __init__(self, name: str = "pisa_dependencies"):
         """Construct `I3PISAExtractor`."""
