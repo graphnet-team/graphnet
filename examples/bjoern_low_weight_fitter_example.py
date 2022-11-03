@@ -1,7 +1,6 @@
 """Example of how to use WeightFitter class, specifically BjoernLow."""
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 from graphnet.training.weight_fitting import BjoernLow
