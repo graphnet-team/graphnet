@@ -5,7 +5,7 @@ import sqlalchemy
 import sqlite3
 
 
-def run_sql_code(database: str, code: str):
+def run_sql_code(database: str, code: str) -> None:
     """Execute SQLite code.
 
     Args:
@@ -18,7 +18,7 @@ def run_sql_code(database: str, code: str):
     c.close()
 
 
-def save_to_sql(df: pd.DataFrame, table_name: str, database: str):
+def save_to_sql(df: pd.DataFrame, table_name: str, database: str) -> None:
     """Save a dataframe `df` to a table `table_name` in SQLite `database`.
 
     Table must exist already.
@@ -33,7 +33,7 @@ def save_to_sql(df: pd.DataFrame, table_name: str, database: str):
     engine.dispose()
 
 
-def attach_index(database: str, table_name: str):
+def attach_index(database: str, table_name: str) -> None:
     """Attaches the table index.
 
     Important for query times!
@@ -46,7 +46,6 @@ def attach_index(database: str, table_name: str):
         "PRAGMA foreign_keys=on;"
     )
     run_sql_code(database, code)
-    return
 
 
 def create_table(
@@ -54,7 +53,7 @@ def create_table(
     table_name: str,
     database_path: str,
     is_pulse_map: bool = False,
-):
+) -> None:
     """Create a table.
 
     Args:
