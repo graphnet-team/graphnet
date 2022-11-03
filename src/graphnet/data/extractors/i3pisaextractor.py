@@ -1,12 +1,25 @@
+"""I3Extractor class(es) for extracting PISA weights."""
+
+from typing import TYPE_CHECKING, Any, Dict
+
 from graphnet.data.extractors.i3extractor import I3Extractor
+
+if TYPE_CHECKING:
+    from icecube import icetray  # pyright: reportMissingImports=false
 
 
 class I3PISAExtractor(I3Extractor):
-    def __init__(self, name="pisa_dependencies"):
+    """Class for extracting PISA weights."""
+
+    def __init__(self, name: str = "pisa_dependencies"):
+        """Construct `I3PISAExtractor`."""
+        # Base class constructor
         super().__init__(name)
 
-    def __call__(self, frame, padding_value=-1) -> dict:
-        """Extracts quantities required by PISA"""
+    def __call__(
+        self, frame: "icetray.I3Frame", padding_value: float = -1.0
+    ) -> Dict[str, Any]:
+        """Extract quantities required by PISA."""
         output = {}
         required_keys = ["OneWeight", "gen_ratio", "NEvents", "GENIEWeight"]
         if "I3MCWeightDict" in frame:
