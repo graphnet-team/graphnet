@@ -97,7 +97,7 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
     features = FEATURES.UPGRADE
 
     @property
-    def nb_outputs(self):
+    def nb_outputs(self) -> int:
         """Return number of output features."""
         return self.nb_inputs + 3
 
