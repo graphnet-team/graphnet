@@ -1,3 +1,4 @@
+# type: ignore[no-untyped-call]
 """Setup script for the GraphNeT package."""
 
 from setuptools import setup, find_packages
@@ -77,7 +78,7 @@ CLASSIFIERS = [
 
 setup(
     name="graphnet",
-    version=versioneer.get_version(),  # type: ignore[no-untyped-call]
+    version=versioneer.get_version(),
     description=(
         "A common library for using graph neural networks (GNNs) in netrino "
         "telescope experiments."
@@ -85,7 +86,7 @@ setup(
     license="Apache 2.0",
     author="The GraphNeT development team",
     url="https://github.com/graphnet-team/graphnet",
-    cmdclass=versioneer.get_cmdclass(),  # type: ignore[no-untyped-call]
+    cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     setup_requires=SETUP_REQUIRES,
