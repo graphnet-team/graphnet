@@ -16,7 +16,7 @@ class I3RetroExtractor(I3Extractor):
     """Class for extracting RETRO reconstruction."""
 
     def __init__(self, name: str = "retro"):
-        """Construct I3RetroExtractor."""
+        """Construct `I3RetroExtractor`."""
         # Base class constructor
         super().__init__(name)
 
