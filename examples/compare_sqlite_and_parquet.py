@@ -42,8 +42,8 @@ def convert_data() -> None:
     )
 
     # Run data converters.
-    SQLiteDataConverter(**opt)(paths)
-    ParquetDataConverter(**opt)(paths)
+    SQLiteDataConverter(**opt)(paths)  # type: ignore[arg-type]
+    ParquetDataConverter(**opt)(paths)  # type: ignore[arg-type]
 
 
 def load_data() -> None:
