@@ -80,15 +80,15 @@
 
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCube86"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCube86</span><span class="p">(</span><span class="n">I3FeatureExtractor</span><span class="p">):</span>
-<div class="viewcode-block" id="I3FeatureExtractorIceCube86.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="I3FeatureExtractorIceCube86.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;charge&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;dom_time&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;dom_x&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;dom_y&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;dom_z&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;pmt_area&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;rde&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;is_bright_dom&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -130,35 +130,41 @@
             <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span>
             <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span>
             <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">area</span>
-            <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_relative_dom_efficiency</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">)</span>
+            <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_relative_dom_efficiency</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">,</span> <span class="n">padding_value</span>
+            <span class="p">)</span>
 
             <span class="c1"># DOM flags</span>
             <span class="k">if</span> <span class="n">bright_doms</span><span class="p">:</span>
                 <span class="n">is_bright_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">bright_doms</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">is_bright_dom</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">is_bright_dom</span> <span class="o">=</span> <span class="n">padding_value</span>
 
             <span class="k">if</span> <span class="n">bad_doms</span><span class="p">:</span>
                 <span class="n">is_bad_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">bad_doms</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">is_bad_dom</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">is_bad_dom</span> <span class="o">=</span> <span class="n">padding_value</span>
 
             <span class="k">if</span> <span class="n">saturation_windows</span><span class="p">:</span>
                 <span class="n">is_saturated_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">saturation_windows</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">is_saturated_dom</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">is_saturated_dom</span> <span class="o">=</span> <span class="n">padding_value</span>
 
             <span class="k">if</span> <span class="n">calibration_errata</span><span class="p">:</span>
                 <span class="n">is_errata_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">calibration_errata</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">is_errata_dom</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">is_errata_dom</span> <span class="o">=</span> <span class="n">padding_value</span>
 
             <span class="c1"># Loop over pulses for each OM</span>
             <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">pulse</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">:</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulse</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">pulse</span><span class="p">,</span> <span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">pulse</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">pulse</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">))</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_area&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">&quot;rde&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rde</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -173,7 +179,7 @@
 
         <span class="k">return</span> <span class="n">output</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_relative_dom_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_relative_dom_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="s2">&quot;I3Calibration&quot;</span> <span class="ow">in</span> <span class="n">frame</span>
         <span class="p">):</span>  <span class="c1"># Not available for e.g. mDOMs in IceCube Upgrade</span>
@@ -182,7 +188,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
             <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
-                <span class="n">rde</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">rde</span> <span class="o">=</span> <span class="n">padding_value</span>
         <span class="k">return</span> <span class="n">rde</span></div>
 
 
@@ -239,24 +245,17 @@
         <span class="k">return</span> <span class="n">output</span></div></div>
 
 
-<div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3PulseNoiseTruthFlagIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
+<div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3PulseNoiseTruthFlagIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCubeUpgrade</span><span class="p">):</span>
 <div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Extract features to be used as inputs to GNN models.&quot;&quot;&quot;</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;pmt_number&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;dom_number&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;pmt_dir_y&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;pmt_dir_z&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;dom_type&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;truth_flag&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
 
-        <span class="c1"># Add features from IceCube86</span>
-        <span class="n">output_icecube86</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_icecube86</span><span class="p">)</span>
+        <span class="c1"># Add features from IceCubeUpgrade</span>
+        <span class="n">output_icecube_upgrade</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_icecube_upgrade</span><span class="p">)</span>
 
         <span class="c1"># Get OM data</span>
         <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
@@ -266,25 +265,9 @@
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
-            <span class="c1"># Common values for each OM</span>
-            <span class="n">pmt_dir_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">x</span>
-            <span class="n">pmt_dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">y</span>
-            <span class="n">pmt_dir_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">z</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">dom_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">pmt_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">dom_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">omtype</span>
-
             <span class="c1"># Loop over pulses for each OM</span>
             <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">truth_flag</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">:</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_number&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_number</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_number&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_number</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_x</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_y</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;pmt_dir_z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_z</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;dom_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_type</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">&quot;truth_flag&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">truth_flag</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">output</span></div></div>
