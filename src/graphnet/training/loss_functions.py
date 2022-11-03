@@ -1,5 +1,3 @@
-# type: ignore[name-defined]  # Due to override of `final` with different
-# signature.
 """Collection of loss functions.
 
 All loss functions inherit from `LossFunction` which ensures a common syntax,
@@ -7,14 +5,15 @@ handles per-event weights, etc.
 """
 
 from abc import abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
 
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
 
-    def final(f):  # Identity decorator  # noqa: D103
+    # Identity decorator
+    def final(f):  # type: ignore  # noqa: D103
         return f
 
 
@@ -31,12 +30,12 @@ class LossFunction(Model):
     """Base class for loss functions in `graphnet`."""
 
     @save_config
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """Construct `LossFunction`, saving model config."""
         super().__init__(**kwargs)
 
     @final
-    def forward(
+    def forward(  # type: ignore[override]
         self,
         prediction: Tensor,
         target: Tensor,
@@ -46,15 +45,14 @@ class LossFunction(Model):
         """Forward pass for all loss functions.
 
         Args:
-            prediction (Tensor): Tensor containing predictions. Shape [N,P]
-            target (Tensor): Tensor containing targets. Shape [N,T]
-            return_elements (bool, optional): Whether elementwise loss terms
-                should be returned. The alternative is to return the averaged
-                loss across examples. Defaults to False.
+            prediction: Tensor containing predictions. Shape [N,P]
+            target: Tensor containing targets. Shape [N,T]
+            return_elements: Whether elementwise loss terms should be returned.
+                The alternative is to return the averaged loss across examples.
 
         Returns:
-            Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
-                or elementwise terms with shape [N,] (if `return_elements = True`).
+            Loss, either averaged to a scalar (if `return_elements = False`) or
+            elementwise terms with shape [N,] (if `return_elements = True`).
         """
         elements = self._forward(prediction, target)
         if weights is not None:
@@ -162,8 +160,8 @@ class LogCMK(torch.autograd.Function):
 
     @staticmethod
     def forward(
-        ctx, m, kappa
-    ):  # pylint: disable=invalid-name,arguments-differ
+        ctx: Any, m: int, kappa: Tensor
+    ) -> Tensor:  # pylint: disable=invalid-name,arguments-differ
         """Forward pass."""
         dtype = kappa.dtype
         ctx.save_for_backward(kappa)
@@ -181,8 +179,8 @@ class LogCMK(torch.autograd.Function):
 
     @staticmethod
     def backward(
-        ctx, grad_output
-    ):  # pylint: disable=invalid-name,arguments-differ
+        ctx: Any, grad_output: Tensor
+    ) -> Tensor:  # pylint: disable=invalid-name,arguments-differ
         """Backward pass."""
         kappa = ctx.saved_tensors[0]
         m = ctx.m
