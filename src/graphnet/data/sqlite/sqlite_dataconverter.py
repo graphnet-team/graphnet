@@ -30,7 +30,7 @@ class SQLiteDataConverter(DataConverter):
 
         # Concatenate data
         assert len(data)
-        dataframe = OrderedDict([(key, pd.DataFrame) for key in data[0]])
+        dataframe = OrderedDict([(key, pd.DataFrame()) for key in data[0]])
         for data_dict in data:
             for key, data_values in data_dict.items():
                 df = construct_dataframe(data_values)
