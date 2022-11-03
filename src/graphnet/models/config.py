@@ -18,7 +18,7 @@ CONFIG_FILES_SUFFIXES = (".yml", ".yaml")
 
 def traverse_and_apply(
     obj: Any, fn: Callable, fn_kwargs: Optional[Dict[str, Any]] = None
-):
+) -> Any:
     """Apply `fn` to all elements in `obj`, resulting in same structure."""
     if isinstance(obj, (list, tuple)):
         return [traverse_and_apply(elem, fn, fn_kwargs) for elem in obj]
@@ -224,7 +224,7 @@ class ModelConfig(BaseModel, LoggerMixin):
         return {self.__class__.__name__: config_dict}
 
 
-def save_config(init_fn: Callable):
+def save_config(init_fn: Callable) -> Callable:
     """Save the arguments to `__init__` functions as a member `ModelConfig`."""
 
     def _replace_model_instance_with_config(
@@ -237,7 +237,7 @@ def save_config(init_fn: Callable):
             return obj
 
     @wraps(init_fn)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
         """Set `ModelConfig` after calling `init_fn`."""
         # Call wrapped method
         ret = init_fn(self, *args, **kwargs)
