@@ -15,9 +15,7 @@ def main() -> None:
 
     # Fit the uniform weights
     fitter = Uniform(database)
-    weights = fitter.fit_weights(
-        bins=bins, variable=variable, add_to_database=True
-    )
+    weights = fitter.fit(bins=bins, variable=variable, add_to_database=True)
 
     # Plot the results
     fig = plt.figure()
