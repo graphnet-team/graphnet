@@ -1,9 +1,8 @@
 """Utility methods for checking the types of objects."""
 
-from copy import deepcopy
 from functools import wraps
 import inspect
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from graphnet.data.extractors.utilities.collections import (
     transpose_list_of_dicts,
@@ -32,6 +31,7 @@ def is_boost_enum(obj: Any) -> bool:
 
 
 def is_boost_class(obj: Any) -> bool:
+    """Check whether `obj` is instance of Boost.Python.enum."""
     return "Boost.Python.class" in str(type(obj))
 
 
@@ -42,7 +42,7 @@ def is_icecube_class(obj: Any) -> bool:
 
 
 def is_type(obj: Any) -> bool:
-    """Checks whether `obj` is a type, and not an instance."""
+    """Check whether `obj` is a type, and not an instance."""
     return type(obj).__name__ == "type"
 
 
@@ -80,13 +80,13 @@ def break_cyclic_recursion(fn: Callable) -> Callable:
 
 def get_member_variables(
     obj: Any, return_discarded: bool = False
-) -> List[str]:
-    """Returns list of valid member variables.
+) -> Union[List[str], Tuple[List[str], Dict[str, List[str]]]]:
+    """Return list of valid member variables.
 
     Ignoring mangled (__*) variables, types, methods, and Boost enums.
     """
     valid_member_variables = []
-    discarded_member_variables = {
+    discarded_member_variables: Dict[str, List[str]] = {
         "mangled": [],
         "is_type": [],
         "invalid_attr": [],
@@ -124,7 +124,7 @@ def get_member_variables(
 
 @break_cyclic_recursion
 def cast_object_to_pure_python(obj: Any) -> Any:
-    """Casts `obj`, and any members/elements, to pure-python classes.
+    """Cast `obj`, and any members/elements, to pure-python classes.
 
     The function takes any object `obj` and tries to cast it to a pure python
     class. This is mainly relevant for IceCube-specific classes (I3*) that
@@ -141,7 +141,6 @@ def cast_object_to_pure_python(obj: Any) -> Any:
     objects to list and dict-like objects to list, and otherwise return the
     object itself if it deemed "pythonic" in this way.
     """
-
     logger.debug(f"Value: {obj}")
     logger.debug(f"Type: {str(type(obj))}")
 
@@ -212,8 +211,8 @@ def cast_object_to_pure_python(obj: Any) -> Any:
 def cast_pulse_series_to_pure_python(
     frame: "icetray.I3Frame",
     key: str,
-    calibration,
-    gcd_dict,
+    calibration: Any,
+    gcd_dict: Dict,
 ) -> Optional[Dict[str, List[Any]]]:
     """Cast pulse series `key` to a pure-python data representation.
 
@@ -260,7 +259,7 @@ def cast_pulse_series_to_pure_python(
         if len(pulses) == 0:
             continue
 
-        pulse_data = cast_object_to_pure_python(pulses)
+        pulse_data: List[Dict[str, Any]] = cast_object_to_pure_python(pulses)
 
         # Ensure that `pulse_data` has the form of a list of dictionary of
         # per-pulse properties
@@ -274,15 +273,15 @@ def cast_pulse_series_to_pure_python(
             pulse_data[ix].update(om_data)
 
         # "Transpose" list of dicts to dict of lists
-        pulse_data: dict = transpose_list_of_dicts(pulse_data)
-        result.append(pulse_data)
+        pulse_data_dict = transpose_list_of_dicts(pulse_data)
+        result.append(pulse_data_dict)
 
     # Concatenate list of pulses from different OMs
     if len(result):
-        result = {
+        result_combined = {
             key: [pulse for pulses in result for pulse in pulses[key]]
             for key in result[0]
         }
-        return result
+        return result_combined
     else:
         return None

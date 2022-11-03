@@ -1,4 +1,4 @@
-name: docker
+name: Docker
 
 # Controls when the workflow will run
 on:
@@ -12,6 +12,7 @@ env:
 
 jobs:
   docker:
+    name: Build and publish
     if: github.repository == 'graphnet-team/graphnet'
     runs-on: ubuntu-latest
     permissions:

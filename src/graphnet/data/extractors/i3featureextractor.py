@@ -1,23 +1,52 @@
+"""I3Extractor class(es) for extracting specific, reconstructed features."""
+
+from typing import TYPE_CHECKING, Any, Dict, List
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
 from graphnet.utilities.imports import has_icecube_package
 
-if has_icecube_package():
-    from icecube import dataclasses  # pyright: reportMissingImports=false
+if has_icecube_package() or TYPE_CHECKING:
+    from icecube import (
+        icetray,
+        dataclasses,
+    )  # pyright: reportMissingImports=false
 
 
 class I3FeatureExtractor(I3Extractor):
-    def __init__(self, pulsemap):
+    """Base class for extracting specific, reconstructed features."""
+
+    def __init__(self, pulsemap: str):
+        """Construct I3FeatureExtractor.
+
+        Args:
+            pulsemap: Name of the pulse (series) map for which to extract
+                reconstructed features.
+        """
+        # Member variable(s)
         self._pulsemap = pulsemap
+
+        # Base class constructor
         super().__init__(pulsemap)
 
 
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
-    def __call__(self, frame, padding_value=-1) -> dict:
-        """Extract features to be used as inputs to GNN models."""
-        output = {
+    """Class for extracting reconstructed features for IceCube-86."""
+
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, List[Any]]:
+        """Extract reconstructed features from `frame`.
+
+        Args:
+            frame: Physics (P) I3-frame from which to extract reconstructed
+                features.
+
+        Returns:
+            Dictionary of reconstructed features for all pulses in `pulsemap`,
+                in pure-python format.
+        """
+        padding_value: float = -1.0
+        output: Dict[str, List[Any]] = {
             "charge": [],
             "dom_time": [],
             "width": [],
@@ -73,22 +102,22 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             if bright_doms:
                 is_bright_dom = 1 if om_key in bright_doms else 0
             else:
-                is_bright_dom = padding_value
+                is_bright_dom = int(padding_value)
 
             if bad_doms:
                 is_bad_dom = 1 if om_key in bad_doms else 0
             else:
-                is_bad_dom = padding_value
+                is_bad_dom = int(padding_value)
 
             if saturation_windows:
                 is_saturated_dom = 1 if om_key in saturation_windows else 0
             else:
-                is_saturated_dom = padding_value
+                is_saturated_dom = int(padding_value)
 
             if calibration_errata:
                 is_errata_dom = 1 if om_key in calibration_errata else 0
             else:
-                is_errata_dom = padding_value
+                is_errata_dom = int(padding_value)
 
             # Loop over pulses for each OM
             pulses = data[om_key]
@@ -114,13 +143,16 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
 
         return output
 
-    def _get_relative_dom_efficiency(self, frame, om_key, padding_value):
+    def _get_relative_dom_efficiency(
+        self, frame: "icetray.I3Frame", om_key: int, padding_value: float
+    ) -> float:
         if (
             "I3Calibration" in frame
         ):  # Not available for e.g. mDOMs in IceCube Upgrade
             rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
         else:
             try:
+                assert self._calibration is not None
                 rde = self._calibration.dom_cal[om_key].relative_dom_eff
             except:  # noqa: E722
                 rde = padding_value
@@ -128,14 +160,24 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
 
 
 class I3FeatureExtractorIceCubeDeepCore(I3FeatureExtractorIceCube86):
-    """..."""
+    """Class for extracting reconstructed features for IceCube-DeepCore."""
 
 
 class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
-    def __call__(self, frame) -> dict:
-        """Extract features to be used as inputs to GNN models."""
+    """Class for extracting reconstructed features for IceCube-Upgrade."""
 
-        output = {
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, List[Any]]:
+        """Extract reconstructed features from `frame`.
+
+        Args:
+            frame: Physics (P) I3-frame from which to extract reconstructed
+                features.
+
+        Returns:
+            Dictionary of reconstructed features for all pulses in `pulsemap`,
+                in pure-python format.
+        """
+        output: Dict[str, List[Any]] = {
             "string": [],
             "pmt_number": [],
             "dom_number": [],
@@ -180,11 +222,21 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         return output
 
 
-class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCubeUpgrade):
-    def __call__(self, frame) -> dict:
-        """Extract features to be used as inputs to GNN models."""
+class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
+    """Feature extractor class with pulse noise truth flag added."""
 
-        output = {
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, List[Any]]:
+        """Extract reconstructed features from `frame`.
+
+        Args:
+            frame: Physics (P) I3-frame from which to extract reconstructed
+                features.
+
+        Returns:
+            Dictionary of reconstructed features for all pulses in `pulsemap`,
+                in pure-python format.
+        """
+        output: Dict[str, List[Any]] = {
             "truth_flag": [],
         }
 

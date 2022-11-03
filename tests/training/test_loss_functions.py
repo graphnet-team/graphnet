@@ -1,4 +1,4 @@
-"""Unit tests for loss functions."""
+"""Unit tests for LossFunction classes."""
 
 import numpy as np
 import pytest
@@ -12,7 +12,7 @@ from graphnet.utilities.maths import eps_like
 
 # Utility method(s)
 def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
-    """Computes  gradient of each element in `outptus` wrt. `inputs`.
+    """Compute gradient of each element in `outptus` wrt. `inputs`.
 
     It is assumed that each element in `inputs` only affects the corresponding
     element in `outputs`. This should be the result of any vectorised
@@ -37,7 +37,8 @@ def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
 
 
 # Unit test(s)
-def test_log_cosh(dtype=torch.float32):
+def test_log_cosh(dtype: torch.dtype = torch.float32) -> None:
+    """Test agreement of the two ways to calculate this loss."""
     # Prepare test data
     x = torch.tensor([-100, -10, -1, 0, 1, 10, 100], dtype=dtype).unsqueeze(
         1
@@ -62,8 +63,9 @@ def test_log_cosh(dtype=torch.float32):
     )
 
 
-def test_von_mises_fisher_exact_m3(dtype=torch.float64):
-    """
+def test_von_mises_fisher_exact_m3(dtype: torch.dtype = torch.float64) -> None:
+    """Test implementaion of exact von-Mises Fisher loss with m=3.
+
     See https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution
     for exact, simplified reference.
     """
@@ -93,8 +95,13 @@ def test_von_mises_fisher_exact_m3(dtype=torch.float64):
 
 
 @pytest.mark.parametrize("m", [2, 3])
-def test_von_mises_fisher_approximation(m, dtype=torch.float64):
-    """See [1812.04616] Sec. 8.2 for approximation"""
+def test_von_mises_fisher_approximation(
+    m: int, dtype: torch.dtype = torch.float64
+) -> None:
+    """Test approximate calculation of $log C_{m}(k)$.
+
+    See [1812.04616], Section 8.2 for approximation.
+    """
     # Check(s)
     assert isinstance(m, int)
     assert m > 1
@@ -130,8 +137,13 @@ def test_von_mises_fisher_approximation(m, dtype=torch.float64):
 
 
 @pytest.mark.parametrize("m", [2, 3])
-def test_von_mises_fisher_approximation_large_kappa(m, dtype=torch.float64):
-    """See [1812.04616] Sec. 8.2 for approximation"""
+def test_von_mises_fisher_approximation_large_kappa(
+    m: int, dtype: torch.dtype = torch.float64
+) -> None:
+    """Test approximate calculation of $log C_{m}(k)$ for large kappa values.
+
+    See [1812.04616], Section 8.2 for approximation.
+    """
     # Check(s)
     assert isinstance(m, int)
     assert m > 1

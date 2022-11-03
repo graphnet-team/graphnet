@@ -1,26 +1,28 @@
-import pandas as pd
-import os
-import sqlite3
-import awkward as ak
+"""Utilities for converting files from Parquet to SQLite."""
 
 import glob
+import os
 from typing import List, Optional, Union
-from tqdm.auto import trange
+
+import awkward as ak
 import numpy as np
-import sqlalchemy
+import pandas as pd
+from tqdm.auto import trange
+
 from graphnet.data.sqlite.sqlite_utilities import (
-    run_sql_code,
     save_to_sql,
     attach_index,
     create_table,
 )
-
 from graphnet.utilities.logging import LoggerMixin
 
 
 class ParquetToSQLiteConverter(LoggerMixin):
-    """Converts Parquet files to a SQLite database. Each event in the parquet file(s) are assigned a unique event id.
-    By default, every field in the parquet file(s) are extracted. One can choose to exclude certain fields by using the argument exclude_fields.
+    """Convert Parquet files to a SQLite database.
+
+    Each event in the parquet file(s) are assigned a unique event id. By
+    default, every field in the parquet file(s) are extracted. One can choose
+    to exclude certain fields by using the argument exclude_fields.
     """
 
     def __init__(
@@ -29,6 +31,7 @@ class ParquetToSQLiteConverter(LoggerMixin):
         mc_truth_table: str = "mc_truth",
         excluded_fields: Optional[Union[str, List[str]]] = None,
     ):
+        """Construct `ParquetToSQLiteConverter`."""
         # checks
         if isinstance(parquet_path, str):
             pass
@@ -51,7 +54,7 @@ class ParquetToSQLiteConverter(LoggerMixin):
             self._excluded_fields = []
         self._mc_truth_table = mc_truth_table
         self._event_counter = 0
-        self._created_tables = []
+        self._created_tables: List[str] = []
 
     def _find_parquet_files(self, paths: Union[str, List[str]]) -> List[str]:
         if isinstance(paths, str):
@@ -66,7 +69,13 @@ class ParquetToSQLiteConverter(LoggerMixin):
         assert len(files) > 0, f"No files found in {paths}"
         return files
 
-    def run(self, outdir: str, database_name: str):
+    def run(self, outdir: str, database_name: str) -> None:
+        """Run Parquet to SQLite conversion.
+
+        Args:
+            outdir: Output directory for SQLite database.
+            database_name: Name of output SQLite database.
+        """
         self._create_output_directories(outdir, database_name)
         database_path = os.path.join(
             outdir, database_name, "data", database_name + ".db"
@@ -102,11 +111,11 @@ class ParquetToSQLiteConverter(LoggerMixin):
     def _save_to_sql(
         self,
         database_path: str,
-        ak_array: ak.Array = None,
-        field_name: str = None,
-        n_events_in_file: int = None,
-    ):
-        df = self._make_df(ak_array, field_name, n_events_in_file)
+        ak_array: ak.Array,
+        field_name: str,
+        n_events_in_file: int,
+    ) -> None:
+        df = self._convert_to_dataframe(ak_array, field_name, n_events_in_file)
         if field_name in self._created_tables:
             save_to_sql(
                 database_path,
@@ -158,11 +167,13 @@ class ParquetToSQLiteConverter(LoggerMixin):
         df["event_no"] = event_nos
         return df
 
-    def _create_output_directories(self, outdir: str, database_name: str):
+    def _create_output_directories(
+        self, outdir: str, database_name: str
+    ) -> None:
         os.makedirs(outdir + "/" + database_name + "/data", exist_ok=True)
         os.makedirs(outdir + "/" + database_name + "/config", exist_ok=True)
 
-    def _save_config(self, outdir: str, database_name: str):
+    def _save_config(self, outdir: str, database_name: str) -> None:
         """Save the list of converted Parquet files to a CSV file."""
         df = pd.DataFrame(data=self._parquet_files, columns=["files"])
         df.to_csv(outdir + "/" + database_name + "/config/files.csv")

@@ -1,13 +1,15 @@
+"""Utility functions for `graphnet.training`."""
+
 from collections import OrderedDict
 import os
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from pytorch_lightning import Trainer
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
-from torch_geometric.data.batch import Batch
+from torch_geometric.data import Batch, Data
 
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.models import Model
@@ -27,14 +29,13 @@ def make_dataloader(
     selection: List[int] = None,
     num_workers: int = 10,
     persistent_workers: bool = True,
-    node_truth: str = None,
+    node_truth: List[str] = None,
     node_truth_table: str = None,
     string_selection: List[int] = None,
     loss_weight_table: str = None,
     loss_weight_column: str = None,
 ) -> DataLoader:
     """Construct `DataLoader` instance."""
-
     # Check(s)
     if isinstance(pulsemaps, str):
         pulsemaps = [pulsemaps]
@@ -52,8 +53,11 @@ def make_dataloader(
         loss_weight_column=loss_weight_column,
     )
 
-    def collate_fn(graphs):
-        # Remove graphs with less than two DOM hits. Should not occur in "production."
+    def collate_fn(graphs: List[Data]) -> Batch:
+        """Remove graphs with less than two DOM hits.
+
+        Should not occur in "production.
+        """
         graphs = [g for g in graphs if g.n_pulses > 1]
         return Batch.from_data_list(graphs)
 
@@ -88,9 +92,8 @@ def make_train_validation_dataloader(
     string_selection: List[int] = None,
     loss_weight_column: str = None,
     loss_weight_table: str = None,
-) -> Tuple[DataLoader]:
+) -> Tuple[DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
-
     # Reproducibility
     rng = np.random.RandomState(seed=seed)
 
@@ -135,13 +138,13 @@ def make_train_validation_dataloader(
     training_dataloader = make_dataloader(
         shuffle=True,
         selection=training_selection,
-        **common_kwargs,
+        **common_kwargs,  # type: ignore[arg-type]
     )
 
     validation_dataloader = make_dataloader(
         shuffle=False,
         selection=validation_selection,
-        **common_kwargs,
+        **common_kwargs,  # type: ignore[arg-type]
     )
 
     return (
@@ -173,10 +176,10 @@ def get_predictions(
 
     # Get predictions
     predictions_torch = trainer.predict(model, dataloader)
-    predictions = [
+    predictions_list = [
         p[0].detach().cpu().numpy() for p in predictions_torch
     ]  # Assuming single task
-    predictions = np.concatenate(predictions, axis=0)
+    predictions = np.concatenate(predictions_list, axis=0)
     try:
         assert len(prediction_columns) == predictions.shape[1]
     except IndexError:
@@ -184,7 +187,9 @@ def get_predictions(
         assert len(prediction_columns) == predictions.shape[1]
 
     # Get additional attributes
-    attributes = OrderedDict([(attr, []) for attr in additional_attributes])
+    attributes: Dict[str, List[np.ndarray]] = OrderedDict(
+        [(attr, []) for attr in additional_attributes]
+    )
     for batch in dataloader:
         for attr in attributes:
             attribute = batch[attr].detach().cpu().numpy()
@@ -211,7 +216,7 @@ def get_predictions(
 
 def save_results(
     db: str, tag: str, results: pd.DataFrame, archive: str, model: Model
-):
+) -> None:
     """Save trained model and prediction `results` in `db`."""
     db_name = db.split("/")[-1].split(".")[0]
     path = archive + "/" + db_name + "/" + tag

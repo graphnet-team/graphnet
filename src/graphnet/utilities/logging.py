@@ -1,9 +1,10 @@
-"""Consistent and configurable logging across the project."""
+"""Consistent and configurable logging across `graphnet`."""
 
 from collections import Counter
 from functools import lru_cache
 import re
-from typing import Optional
+from typing import Any, Optional
+import typing
 import colorlog
 import datetime
 import logging
@@ -19,7 +20,7 @@ LOG_FOLDER = "logs"
 
 
 # Utility method(s)
-def set_logging_level(level: int = logging.INFO):
+def set_logging_level(level: int = logging.INFO) -> None:
     """Set the logging level for all loggers."""
     global LOGGER
     if LOGGER is None:
@@ -29,8 +30,7 @@ def set_logging_level(level: int = logging.INFO):
 
 
 def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
-    """Get coloured and non-coloured logging formatters"""
-
+    """Get coloured and non-coloured logging formatters."""
     # Common configuration
     colorlog_format = (
         "\033[1;34m%(name)s\033[0m: "
@@ -55,7 +55,7 @@ def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
 
 
 @lru_cache(1)
-def warn_once(logger: logging.Logger, message: str):
+def warn_once(logger: logging.Logger, message: str) -> None:
     """Print `message` as warning exactly once."""
     logger.warn(message)
 
@@ -63,16 +63,19 @@ def warn_once(logger: logging.Logger, message: str):
 class RepeatFilter(object):
     """Filter out repeat messages."""
 
-    def __init__(self):
-        self._messages = Counter()
+    def __init__(self) -> None:
+        """Construct `RepeatFilter`."""
+        self._messages: typing.Counter[str] = Counter()
         self.nb_repeats_allowed = 20
 
-    def filter(self, record):
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Filter messages printed more than `nb_repeats_allowed` times."""
         self._messages[record.msg] += 1
         count = self._messages[record.msg]
         if count == self.nb_repeats_allowed:
             get_logger().debug(
-                f"Will not print the below message again ({self.nb_repeats_allowed} repeats reached)."
+                "Will not print the below message again "
+                f"({self.nb_repeats_allowed} repeats reached)."
             )
 
         return count <= self.nb_repeats_allowed
@@ -143,7 +146,9 @@ def get_logger(
 
 
 class LoggerMixin(object):
-    def _get_logger(self):
+    """Class for enabling logging directly from inheriting classes."""
+
+    def _get_logger(self) -> logging.Logger:
         """Construct Logger instance if not already done."""
         if not hasattr(self, "_logger"):
             logger = colorlog.getLogger(LOGGER_NAME)
@@ -153,22 +158,22 @@ class LoggerMixin(object):
             self._logger = logger
         return self._logger
 
-    def critical(self, msg, *args, **kwargs):
+    def critical(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate a critical call to member logger."""
         return self._get_logger().critical(msg, *args, **kwargs)
 
-    def error(self, msg, *args, **kwargs):
+    def error(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate an error call to member logger."""
         return self._get_logger().error(msg, *args, **kwargs)
 
-    def warning(self, msg, *args, **kwargs):
+    def warning(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate a warning call to member logger."""
         return self._get_logger().warning(msg, *args, **kwargs)
 
-    def info(self, msg, *args, **kwargs):
+    def info(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate an info call to member logger."""
         return self._get_logger().info(msg, *args, **kwargs)
 
-    def debug(self, msg, *args, **kwargs):
+    def debug(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate a debug call to member logger."""
         return self._get_logger().debug(msg, *args, **kwargs)

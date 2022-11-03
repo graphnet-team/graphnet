@@ -1,15 +1,16 @@
+"""Base physics task-specific `Model` class(es)."""
+
 from abc import abstractmethod
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List, Tuple, Union
 from typing import Callable, Optional
 import numpy as np
-
-from graphnet.models.config import save_config
 
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
 
-    def final(f):  # Identity decorator
+    # Identity decorator
+    def final(f):  # type: ignore  # noqa: D103
         return f
 
 
@@ -20,45 +21,19 @@ from torch_geometric.data import Data
 
 if TYPE_CHECKING:
     # Avoid cyclic dependency
-    from graphnet.training.loss_functions import LossFunction
+    from graphnet.training.loss_functions import LossFunction  # type: ignore[attr-defined]
 
 from graphnet.models import Model
+from graphnet.models.config import save_config
 
 
 class Task(Model):
-    """Base class for all reconstruction and classification tasks.
-
-    Args:
-        hidden_size: The number of nodes in the layer feeding into this tasks,
-          used to construct the affine transformation to the predicted quantity.
-        target_label: Name of the quantity being predicted, used to extract the
-          target tensor from the `Data` object in `.compute_loss(...)`.
-        loss_function: Loss function appropriate to the task.
-        transform_prediction_and_target: Optional function to transform both the
-          predicted and target tensor before passing them to the loss function.
-          Useful e.g. for having the model predict quantities on a physical
-          scale, but transforming this scale to O(1) for a numerically stable
-          loss computation.
-        transform_target: Optional function to transform only the target tensor
-          before passing it, and the predicted tensor, to the loss function.
-          Useful e.g. for having the model predict a transformed version of the
-          target quantity, e.g. the log10-scaled energy, rather than the
-          physical quantity itself. Used in conjunction with `transform_inference`
-          to perform the inverse transform on the predicted quantity to recover
-          the physical scale.
-        transform_inference: Optional function to inverse-transform the model
-          prediction to recover a physical scale. Used in conjunction with
-          `transform_target`.
-        transform_support: Optional tuple to specify minimum and maximum of the
-          range of validity for the inverse transforms `transform_target` and
-          `transform_inference` in case this is restricted. By default the
-          invertibility of `transform_target` is tested on the range [-1e6, 1e6].
-    """
+    """Base class for all reconstruction and classification tasks."""
 
     @property
     @abstractmethod
     def nb_inputs(self) -> int:
-        """Number of inputs assumed by task."""
+        """Return number of inputs assumed by task."""
 
     @save_config
     def __init__(
@@ -69,10 +44,43 @@ class Task(Model):
         transform_prediction_and_target: Optional[Callable] = None,
         transform_target: Optional[Callable] = None,
         transform_inference: Optional[Callable] = None,
-        transform_support: Optional[tuple] = None,
+        transform_support: Optional[Tuple] = None,
         loss_weight: Optional[str] = None,
     ):
+        """Construct `Task`.
 
+        Args:
+            hidden_size: The number of nodes in the layer feeding into this
+                tasks, used to construct the affine transformation to the
+                predicted quantity.
+            target_labels: Name(s) of the quantity/-ies being predicted, used
+                to extract the  target tensor(s) from the `Data` object in
+                `.compute_loss(...)`.
+            loss_function: Loss function appropriate to the task.
+            transform_prediction_and_target: Optional function to transform
+                both the predicted and target tensor before passing them to the
+                loss function. Useful e.g. for having the model predict
+                quantities on a physical scale, but transforming this scale to
+                O(1) for a numerically stable loss computation.
+            transform_target: Optional function to transform only the target
+                tensor before passing it, and the predicted tensor, to the loss
+                function. Useful e.g. for having the model predict a
+                transformed version of the target quantity, e.g. the log10-
+                scaled energy, rather than the physical quantity itself. Used
+                in conjunction with `transform_inference` to perform the
+                inverse transform on the predicted quantity to recover the
+                physical scale.
+            transform_inference: Optional function to inverse-transform the
+                model prediction to recover a physical scale. Used in
+                conjunction with `transform_target`.
+            transform_support: Optional tuple to specify minimum and maximum
+                of the range of validity for the inverse transforms
+                `transform_target` and `transform_inference` in case this is
+                restricted. By default the invertibility of `transform_target`
+                is tested on the range [-1e6, 1e6].
+            loss_weight: Name of the attribute in `data` containing per-event
+                loss weights.
+        """
         # Base class constructor
         super().__init__()
 
@@ -81,15 +89,19 @@ class Task(Model):
             target_labels = [target_labels]
 
         # Member variables
-        self._regularisation_loss = None
+        self._regularisation_loss: Optional[float] = None
         self._target_labels = target_labels
         self._loss_function = loss_function
         self._inference = False
         self._loss_weight = loss_weight
 
-        self._transform_prediction_training = lambda x: x
-        self._transform_prediction_inference = lambda x: x
-        self._transform_target = lambda x: x
+        self._transform_prediction_training: Callable[
+            [Tensor], Tensor
+        ] = lambda x: x
+        self._transform_prediction_inference: Callable[
+            [Tensor], Tensor
+        ] = lambda x: x
+        self._transform_target: Callable[[Tensor], Tensor] = lambda x: x
         self._validate_and_set_transforms(
             transform_prediction_and_target,
             transform_target,
@@ -102,6 +114,7 @@ class Task(Model):
 
     @final
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
+        """Forward pass."""
         self._regularisation_loss = 0  # Reset
         x = self._affine(x)
         x = self._forward(x)
@@ -118,10 +131,14 @@ class Task(Model):
 
     @abstractmethod
     def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
-        """Same syntax as `.forward` for implentation in inheriting classes."""
+        """Syntax like `.forward`, for implentation in inheriting classes."""
 
     @final
     def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
+        """Compute loss of `pred` wrt.
+
+        target labels in `data`.
+        """
         target = torch.stack(
             [data[label] for label in self._target_labels], dim=1
         )
@@ -137,13 +154,13 @@ class Task(Model):
         return loss
 
     @final
-    def inference(self):
-        """Set task to inference mode"""
+    def inference(self) -> None:
+        """Activate inference mode."""
         self._inference = True
 
     @final
-    def train_eval(self):
-        """Deactivate inference mode"""
+    def train_eval(self) -> None:
+        """Deactivate inference mode."""
         self._inference = False
 
     @final
@@ -152,9 +169,13 @@ class Task(Model):
         transform_prediction_and_target: Union[Callable, None],
         transform_target: Union[Callable, None],
         transform_inference: Union[Callable, None],
-        transform_support: Union[Callable, None],
-    ):
-        """Assert that a valid combination of transformation arguments are passed and update the corresponding functions"""
+        transform_support: Union[Tuple, None],
+    ) -> None:
+        """Validate and set transforms.
+
+        Assert that a valid combination of transformation arguments are passed
+        and update the corresponding functions.
+        """
         # Checks
         assert not (
             (transform_prediction_and_target is not None)
@@ -165,7 +186,12 @@ class Task(Model):
         ), "Please specify both `transform_inference` and `transform_target`"
 
         if transform_target is not None:
+            assert transform_target is not None
+            assert transform_inference is not None
+
             if transform_support is not None:
+                assert transform_support is not None
+
                 assert (
                     len(transform_support) == 2
                 ), "Please specify min and max for transformation support."
@@ -195,5 +221,6 @@ class Task(Model):
             )
             self._transform_target = transform_prediction_and_target
         elif transform_target is not None:
+            assert transform_inference is not None
             self._transform_prediction_inference = transform_inference
             self._transform_target = transform_target

@@ -1,4 +1,6 @@
-from typing import Any, List, Optional, Union
+"""Functions for performing pooling/clustering/coarsening."""
+
+from typing import Any, Callable, List, Optional, Union
 
 import torch
 from torch import LongTensor, Tensor
@@ -15,8 +17,13 @@ from torch_geometric.nn.pool import (
 )
 
 
-def min_pool(cluster: Any, data: Any, transform: Optional[Any] = None):
-    """Like `max_pool, just negating `data.x`."""
+def min_pool(
+    cluster: LongTensor, data: Data, transform: Optional[Any] = None
+) -> Data:
+    """Perform min-pooling of `Data`.
+
+    Like `max_pool, just negating `data.x`.
+    """
     data.x = -data.x
     data_pooled = max_pool(
         cluster,
@@ -28,8 +35,16 @@ def min_pool(cluster: Any, data: Any, transform: Optional[Any] = None):
     return data_pooled
 
 
-def min_pool_x(cluster: Any, x: Any, batch: Any, size: Optional[int] = None):
-    """Like `max_pool_x, just negating `x`."""
+def min_pool_x(
+    cluster: LongTensor,
+    x: Tensor,
+    batch: LongTensor,
+    size: Optional[int] = None,
+) -> Tensor:
+    """Perform min-pooling of `Tensor`.
+
+    Like `max_pool_x, just negating `x`.
+    """
     ret = max_pool_x(cluster, -x, batch, size)
     if size is None:
         return (-ret[0], ret[1])
@@ -42,7 +57,7 @@ def sum_pool_and_distribute(
     cluster_index: LongTensor,
     batch: Optional[LongTensor] = None,
 ) -> Tensor:
-    """Sum-pool values across the cluster, and distribute the individual nodes."""
+    """Sum-pool values and distribute result to the individual nodes."""
     if batch is None:
         batch = torch.zeros(tensor.size(dim=0)).long()
     tensor_pooled, _ = sum_pool_x(cluster_index, tensor, batch)
@@ -54,15 +69,14 @@ def sum_pool_and_distribute(
 def _group_identical(
     tensor: Tensor, batch: Optional[LongTensor] = None
 ) -> LongTensor:
-    """Group rows in `tensor` that are identical
+    """Group rows in `tensor` that are identical.
 
     Args:
-        tensor (Tensor): Tensor of shape [N, F]
-        batch (Optional[LongTensor], optional): Batch indices, to only group
-            identical rows within batches. Defaults to None.
+        tensor: Tensor of shape [N, F].
+        batch: Batch indices, to only group identical rows within batches.
 
     Returns:
-        Tensor: List of group indices, from 0 to num. groups - 1, assigning all
+        List of group indices, from 0 to num. groups - 1, assigning all
             identical rows to the same group.
     """
     if batch is not None:
@@ -96,45 +110,50 @@ def group_by(data: Union[Data, Batch], keys: List[str]) -> LongTensor:
 
 
 def group_pulses_to_dom(data: Data) -> Data:
-    """Groups pulses on the same DOM, using DOM and string number."""
+    """Group pulses on the same DOM, using DOM and string number."""
     data.dom_index = group_by(data, ["dom_number", "string"])
     return data
 
 
 def group_pulses_to_pmt(data: Data) -> Data:
-    """Groups pulses on the same PMT, using PMT, DOM, and string number."""
+    """Group pulses on the same PMT, using PMT, DOM, and string number."""
     data.pmt_index = group_by(data, ["pmt_number", "dom_number", "string"])
     return data
 
 
-# Below mirroring `torch_geometric.nn.pool.{avg,max}_pool.py` exactly
-def _sum_pool_x(cluster, x, size: Optional[int] = None):
+# Below mirroring `torch_geometric.nn.pool.{avg,max}_pool.py`.
+def _sum_pool_x(
+    cluster: LongTensor, x: Tensor, size: Optional[int] = None
+) -> Tensor:
     return scatter(x, cluster, dim=0, dim_size=size, reduce="sum")
 
 
-def _std_pool_x(cluster, x, size: Optional[int] = None):
+def _std_pool_x(
+    cluster: LongTensor, x: Tensor, size: Optional[int] = None
+) -> Tensor:
     return scatter_std(x, cluster, dim=0, dim_size=size, unbiased=False)
 
 
-def sum_pool_x(cluster, x, batch, size: Optional[int] = None):
-    r"""Sum-Pools node features according to the clustering defined in
-    :attr:`cluster`.
+def sum_pool_x(
+    cluster: LongTensor,
+    x: Tensor,
+    batch: LongTensor,
+    size: Optional[int] = None,
+) -> Tensor:
+    r"""Sum-pool node features according to the clustering defined in `cluster`.
 
     Args:
-        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
+        cluster: Cluster vector :math:`\mathbf{c} \in \{ 0,
             \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
-        x (Tensor): Node feature matrix
+        x: Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
-        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
+        batch: Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
             B-1\}}^N`, which assigns each node to a specific example.
-        size (int, optional): The maximum number of clusters in a single
+        size: The maximum number of clusters in a single
             example. This property is useful to obtain a batch-wise dense
             representation, *e.g.* for applying FC layers, but should only be
             used if the size of the maximum number of clusters per example is
-            known in advance. (default: :obj:`None`)
-
-    :rtype: (:class:`Tensor`, :class:`LongTensor`) if :attr:`size` is
-        :obj:`None`, else :class:`Tensor`
+            known in advance.
     """
     if size is not None:
         batch_size = int(batch.max().item()) + 1
@@ -147,25 +166,26 @@ def sum_pool_x(cluster, x, batch, size: Optional[int] = None):
     return x, batch
 
 
-def std_pool_x(cluster, x, batch, size: Optional[int] = None):
-    r"""Std-Pools node features according to the clustering defined in
-    :attr:`cluster`.
+def std_pool_x(
+    cluster: LongTensor,
+    x: Tensor,
+    batch: LongTensor,
+    size: Optional[int] = None,
+) -> Tensor:
+    r"""Std-pool node features according to the clustering defined in `cluster`.
 
     Args:
-        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
+        cluster: Cluster vector :math:`\mathbf{c} \in \{ 0,
             \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
-        x (Tensor): Node feature matrix
+        x: Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
-        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
+        batch: Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
             B-1\}}^N`, which assigns each node to a specific example.
-        size (int, optional): The maximum number of clusters in a single
+        size: The maximum number of clusters in a single
             example. This property is useful to obtain a batch-wise dense
             representation, *e.g.* for applying FC layers, but should only be
             used if the size of the maximum number of clusters per example is
-            known in advance. (default: :obj:`None`)
-
-    :rtype: (:class:`Tensor`, :class:`LongTensor`) if :attr:`size` is
-        :obj:`None`, else :class:`Tensor`
+            known in advance.
     """
     if size is not None:
         batch_size = int(batch.max().item()) + 1
@@ -178,10 +198,11 @@ def std_pool_x(cluster, x, batch, size: Optional[int] = None):
     return x, batch
 
 
-def sum_pool(cluster, data, transform=None):
-    r"""Pools and coarsens a graph given by the
-    :class:`torch_geometric.data.Data` object according to the clustering
-    defined in :attr:`cluster`.
+def sum_pool(
+    cluster: LongTensor, data: Data, transform: Optional[Callable] = None
+) -> Data:
+    r"""Pool and coarsen graph according to the clustering defined in `cluster`.
+
     All nodes within the same cluster will be represented as one node.
     Final node features are defined by the *sum* of features of all nodes
     within the same cluster, node positions are averaged and edge indices are
@@ -189,14 +210,12 @@ def sum_pool(cluster, data, transform=None):
     cluster.
 
     Args:
-        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
+        cluster: Cluster vector :math:`\mathbf{c} \in \{ 0,
             \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
-        data (Data): Graph data object.
-        transform (callable, optional): A function/transform that takes in the
+        data: Graph data object.
+        transform: A function/transform that takes in the
             coarsened and pooled :obj:`torch_geometric.data.Data` object and
-            returns a transformed version. (default: :obj:`None`)
-
-    :rtype: :class:`torch_geometric.data.Data`
+            returns a transformed version.
     """
     cluster, perm = consecutive_cluster(cluster)
 
@@ -213,10 +232,11 @@ def sum_pool(cluster, data, transform=None):
     return data
 
 
-def std_pool(cluster, data, transform=None):
-    r"""Pools and coarsens a graph given by the
-    :class:`torch_geometric.data.Data` object according to the clustering
-    defined in :attr:`cluster`.
+def std_pool(
+    cluster: LongTensor, data: Data, transform: Optional[Callable] = None
+) -> Data:
+    r"""Pool and coarsen graph according to the clustering defined in `cluster`.
+
     All nodes within the same cluster will be represented as one node.
     Final node features are defined by the *std* of features of all nodes
     within the same cluster, node positions are averaged and edge indices are
@@ -224,14 +244,12 @@ def std_pool(cluster, data, transform=None):
     cluster.
 
     Args:
-        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
+        cluster: Cluster vector :math:`\mathbf{c} \in \{ 0,
             \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
-        data (Data): Graph data object.
-        transform (callable, optional): A function/transform that takes in the
+        data: Graph data object.
+        transform: A function/transform that takes in the
             coarsened and pooled :obj:`torch_geometric.data.Data` object and
-            returns a transformed version. (default: :obj:`None`)
-
-    :rtype: :class:`torch_geometric.data.Data`
+            returns a transformed version.
     """
     cluster, perm = consecutive_cluster(cluster)
 

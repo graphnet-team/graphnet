@@ -1,5 +1,5 @@
 # This is a simple workflow to automatically generate API docs
-name: docs
+name: Docs
 
 # Controls when the workflow will run
 on:
@@ -13,6 +13,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   docs:
+    name: Build and publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

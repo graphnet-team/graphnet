@@ -1,17 +1,19 @@
 """Collection of loss functions.
 
-All loss functions inherit from `LossFunction` which (...)
+All loss functions inherit from `LossFunction` which ensures a common syntax,
+handles per-event weights, etc.
 """
 
 from abc import abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
 
 try:
     from typing import final
 except ImportError:  # Python version < 3.8
 
-    def final(f):  # Identity decorator
+    # Identity decorator
+    def final(f):  # type: ignore  # noqa: D103
         return f
 
 
@@ -25,14 +27,15 @@ from graphnet.models.model import Model
 
 
 class LossFunction(Model):
-    """Base class for loss functions in graphnet."""
+    """Base class for loss functions in `graphnet`."""
 
     @save_config
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
+        """Construct `LossFunction`, saving model config."""
         super().__init__(**kwargs)
 
     @final
-    def forward(
+    def forward(  # type: ignore[override]
         self,
         prediction: Tensor,
         target: Tensor,
@@ -40,16 +43,16 @@ class LossFunction(Model):
         return_elements: bool = False,
     ) -> Tensor:
         """Forward pass for all loss functions.
+
         Args:
-            prediction (Tensor): Tensor containing predictions. Shape [N,P]
-            target (Tensor): Tensor containing targets. Shape [N,T]
-            return_elements (bool, optional): Whether elementwise loss terms
-                should be returned. The alternative is to return the averaged
-                loss across examples. Defaults to False.
+            prediction: Tensor containing predictions. Shape [N,P]
+            target: Tensor containing targets. Shape [N,T]
+            return_elements: Whether elementwise loss terms should be returned.
+                The alternative is to return the averaged loss across examples.
 
         Returns:
-            Tensor: Loss, either averaged to a scalar (if `return_elements = False`)
-                or elementwise terms with shape [N,] (if `return_elements = True`).
+            Loss, either averaged to a scalar (if `return_elements = False`) or
+            elementwise terms with shape [N,] (if `return_elements = True`).
         """
         elements = self._forward(prediction, target)
         if weights is not None:
@@ -62,14 +65,14 @@ class LossFunction(Model):
 
     @abstractmethod
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Syntax similar to `.forward` for implentation in inheriting classes."""
+        """Syntax like `.forward`, for implentation in inheriting classes."""
 
 
 class MSELoss(LossFunction):
     """Mean squared error loss."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Implementation of loss calculation."""
+        """Implement loss calculation."""
         # Check(s)
         assert prediction.dim() == 2
         assert prediction.size() == target.size()
@@ -82,7 +85,7 @@ class RMSELoss(MSELoss):
     """Root mean squared error loss."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Implementation of loss calculation."""
+        """Implement loss calculation."""
         # Check(s)
         elements = super()._forward(prediction, target)
         elements = torch.sqrt(elements)
@@ -105,17 +108,17 @@ class LogCoshLoss(LossFunction):
         return x + torch.nn.functional.softplus(-2.0 * x) - np.log(2.0)
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Implementation of loss calculation."""
+        """Implement loss calculation."""
         diff = prediction - target
         elements = self._log_cosh(diff)
         return elements
 
 
 class BinaryCrossEntropyLoss(LossFunction):
-    """Computes binary cross entropy for a vector of predictions (between 0 and 1),
-    targets should be 0 and 1 for muon and neutrino respectively
-    where prediction is prob. the PID is neutrino (12,14,16)
-    loss should be reported elementwise, so set reduction to None
+    """Compute binary cross entropy loss.
+
+    Predictions are vector probabilities (i.e., values between 0 and 1), and
+    targets should be 0 and 1.
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
@@ -125,7 +128,7 @@ class BinaryCrossEntropyLoss(LossFunction):
 
 
 class LogCMK(torch.autograd.Function):
-    """MIT License
+    """MIT License.
 
     Copyright (c) 2019 Max Ryabinin
 
@@ -157,8 +160,9 @@ class LogCMK(torch.autograd.Function):
 
     @staticmethod
     def forward(
-        ctx, m, kappa
-    ):  # pylint: disable=invalid-name,arguments-differ
+        ctx: Any, m: int, kappa: Tensor
+    ) -> Tensor:  # pylint: disable=invalid-name,arguments-differ
+        """Forward pass."""
         dtype = kappa.dtype
         ctx.save_for_backward(kappa)
         ctx.m = m
@@ -175,8 +179,9 @@ class LogCMK(torch.autograd.Function):
 
     @staticmethod
     def backward(
-        ctx, grad_output
-    ):  # pylint: disable=invalid-name,arguments-differ
+        ctx: Any, grad_output: Tensor
+    ) -> Tensor:  # pylint: disable=invalid-name,arguments-differ
+        """Backward pass."""
         kappa = ctx.saved_tensors[0]
         m = ctx.m
         dtype = ctx.dtype
@@ -203,14 +208,15 @@ class VonMisesFisherLoss(LossFunction):
     def log_cmk_exact(
         cls, m: int, kappa: Tensor
     ) -> Tensor:  # pylint: disable=invalid-name
-        """Exact calculation of $log C_{m}(k)$ term in von Mises-Fisher loss."""
+        """Calculate $log C_{m}(k)$ term in von Mises-Fisher loss exactly."""
         return LogCMK.apply(m, kappa)
 
     @classmethod
     def log_cmk_approx(
         cls, m: int, kappa: Tensor
     ) -> Tensor:  # pylint: disable=invalid-name
-        """Approx. calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
+        """Calculate $log C_{m}(k)$ term in von Mises-Fisher loss approx.
+
         [https://arxiv.org/abs/1812.04616] Sec. 8.2 with additional minus sign.
         """
         v = m / 2.0 - 0.5
@@ -222,7 +228,7 @@ class VonMisesFisherLoss(LossFunction):
     def log_cmk(
         cls, m: int, kappa: Tensor, kappa_switch: float = 100.0
     ) -> Tensor:  # pylint: disable=invalid-name
-        """Calculation of $log C_{m}(k)$ term in von Mises-Fisher loss.
+        """Calculate $log C_{m}(k)$ term in von Mises-Fisher loss.
 
         Since `log_cmk_exact` is diverges for `kappa` >~ 700 (using float64
         precision), and since `log_cmk_approx` is unaccurate for small `kappa`,
@@ -241,17 +247,17 @@ class VonMisesFisherLoss(LossFunction):
         return ret
 
     def _evaluate(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Calculates the von Mises-Fisher loss for a vector in D-dimensonal space.
+        """Calculate von Mises-Fisher loss for a vector in D dimensons.
 
         This loss utilises the von Mises-Fisher distribution, which is a
         probability distribution on the (D - 1) sphere in D-dimensional space.
 
         Args:
-            prediction (Tensor): Predicted vector, of shape [batch_size, D].
-            target (Tensor): Target unit vector, of shape [batch_size, D].
+            prediction: Predicted vector, of shape [batch_size, D].
+            target: Target unit vector, of shape [batch_size, D].
 
         Returns:
-            loss (Tensor): Elementwise von Mises-Fisher loss terms.
+            Elementwise von Mises-Fisher loss terms.
         """
         # Check(s)
         assert prediction.dim() == 2
@@ -274,15 +280,16 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
     """von Mises-Fisher loss function vectors in the 2D plane."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Calculates the von Mises-Fisher loss for an angle in the 2D plane.
+        """Calculate von Mises-Fisher loss for an angle in the 2D plane.
 
         Args:
-            prediction (Tensor): Output of the model. Must have shape [N, 2]
-                where 0th column is a prediction of `angle` and 1st column is an
-                estimate of `kappa`.
-            target (Tensor): Target tensor, extracted from graph object.
+            prediction: Output of the model. Must have shape [N, 2] where 0th
+                column is a prediction of `angle` and 1st column is an estimate
+                of `kappa`.
+            target: Target tensor, extracted from graph object.
+
         Returns:
-            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]
+            loss: Elementwise von Mises-Fisher loss terms. Shape [N,]
         """
         # Check(s)
         assert prediction.dim() == 2 and prediction.size()[1] == 2
@@ -314,14 +321,17 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
 
 
 class EuclideanDistanceLoss(LossFunction):
+    """Mean squared error in three dimensions."""
+
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Calculates the 3D Euclidean distance between predicted and target.
+        """Calculate 3D Euclidean distance between predicted and target.
 
         Args:
-            prediction (Tensor): Output of the model. Must have shape [N, 3]
-            target (Tensor): Target tensor, extracted from graph object.
+            prediction: Output of the model. Must have shape [N, 3]
+            target: Target tensor, extracted from graph object.
+
         Returns:
-            Tensor: Loss. Shape [n,1]
+            Elementwise von Mises-Fisher loss terms. Shape [N,]
         """
         return torch.sqrt(
             (prediction[:, 0] - target[:, 0]) ** 2
@@ -334,15 +344,16 @@ class VonMisesFisher3DLoss(VonMisesFisherLoss):
     """von Mises-Fisher loss function vectors in the 3D plane."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        """Calculates the von Mises-Fisher loss for a direction in the 3D plane.
+        """Calculate von Mises-Fisher loss for a direction in the 3D.
 
         Args:
-            prediction (Tensor): Output of the model. Must have shape [N, 4]
-                where columns 0, 1, 2 are predictions of `direction` and last column is an
-                estimate of `kappa`.
-            target (Tensor): Target tensor, extracted from graph object.
+            prediction: Output of the model. Must have shape [N, 4] where
+                columns 0, 1, 2 are predictions of `direction` and last column
+                is an estimate of `kappa`.
+            target: Target tensor, extracted from graph object.
+
         Returns:
-            loss (Tensor): Elementwise von Mises-Fisher loss terms. Shape [N,]
+            Elementwise von Mises-Fisher loss terms. Shape [N,]
         """
         target = target.reshape(-1, 3)
         # Check(s)
