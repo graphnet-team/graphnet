@@ -1,5 +1,5 @@
-# type: ignore[name-defined]  # Due to use of `init_global_index`.
 """Base `DataConverter` class(es) used in GraphNeT."""
+# type: ignore[name-defined]  # Due to use of `init_global_index`.
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
@@ -67,9 +67,9 @@ class FileSet:  # noqa: D101
 
 
 # Utility method(s)
-def init_global_index(index: Synchronized, output_files: List[str]):
+def init_global_index(index: Synchronized, output_files: List[str]) -> None:
     """Make `global_index` available to pool workers."""
-    global global_index, global_output_files
+    global global_index, global_output_files  # type: ignore[name-defined]
     global_index, global_output_files = (index, output_files)  # type: ignore[name-defined]
 
 
@@ -80,10 +80,10 @@ def cache_output_files(process_method: F) -> F:
     """Decorate `process_method` to cache output file names."""
 
     @wraps(process_method)
-    def wrapper(self, *args):
+    def wrapper(self: Any, *args: Any) -> Any:
         try:
             # Using multiprocessing
-            output_files = global_output_files
+            output_files = global_output_files  # type: ignore[name-defined]
         except NameError:  # `global_output_files` not set
             # Running on main process
             output_files = self._output_files
@@ -196,7 +196,7 @@ class DataConverter(ABC, LoggerMixin):
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
 
     @final
-    def __call__(self, directories: Union[str, List[str]]):
+    def __call__(self, directories: Union[str, List[str]]) -> None:
         """Convert I3-files in `directories.
 
         Args:
@@ -223,7 +223,7 @@ class DataConverter(ABC, LoggerMixin):
         self.execute(filesets)
 
     @final
-    def execute(self, filesets: List[FileSet]):
+    def execute(self, filesets: List[FileSet]) -> None:
         """General method for processing a set of I3 files.
 
         The files are converted individually according to the inheriting class/
@@ -302,7 +302,7 @@ class DataConverter(ABC, LoggerMixin):
             self.warning("[ctrl+c] Exciting gracefully.")
 
     @abstractmethod
-    def save_data(self, data: List[OrderedDict], output_file: str):
+    def save_data(self, data: List[OrderedDict], output_file: str) -> None:
         """Implementation-specific method for saving data to file.
 
         Args:
@@ -313,7 +313,7 @@ class DataConverter(ABC, LoggerMixin):
     @abstractmethod
     def merge_files(
         self, output_file: str, input_files: Optional[List[str]] = None
-    ):
+    ) -> None:
         """Implementation-specific method for merging output files.
 
         Args:
@@ -328,7 +328,9 @@ class DataConverter(ABC, LoggerMixin):
         """
 
     # Internal methods
-    def _iterate_over_individual_files(self, args: List[FileSet]):
+    def _iterate_over_individual_files(
+        self, args: List[FileSet]
+    ) -> Optional[multiprocessing.pool.Pool]:
         # Get appropriate mapping function
         map_fn, pool = self.get_map_function(len(args))
 
@@ -344,7 +346,7 @@ class DataConverter(ABC, LoggerMixin):
 
     def _iterate_over_batches_of_files(
         self, args: List[Tuple[List[FileSet], str]]
-    ):
+    ) -> Optional[multiprocessing.pool.Pool]:
         """Iterate over a batch of files and save results on worker process."""
         # Get appropriate mapping function
         map_fn, pool = self.get_map_function(len(args), unit="batch(es)")
@@ -359,7 +361,7 @@ class DataConverter(ABC, LoggerMixin):
 
     def _update_shared_variables(
         self, pool: Optional[multiprocessing.pool.Pool]
-    ):
+    ) -> None:
         """Update `self._index` and `self._output_files`.
 
         If `pool` is set, it means that multiprocessing was used. In this case,
@@ -422,7 +424,7 @@ class DataConverter(ABC, LoggerMixin):
         """
         # Infer whether method is being run using multiprocessing
         try:
-            global_index
+            global_index  # type: ignore[name-defined]
             multi_processing = True
         except NameError:
             multi_processing = False
@@ -448,9 +450,9 @@ class DataConverter(ABC, LoggerMixin):
 
             # Get new, unique index and increment value
             if multi_processing:
-                with global_index.get_lock():
-                    index = global_index.value
-                    global_index.value += 1
+                with global_index.get_lock():  # type: ignore[name-defined]
+                    index = global_index.value  # type: ignore[name-defined]
+                    global_index.value += 1  # type: ignore[name-defined]
             else:
                 index = self._index
                 self._index += 1
@@ -536,7 +538,7 @@ class DataConverter(ABC, LoggerMixin):
 
         return save_strategy
 
-    def _save_filenames(self, i3_files: List[str]):
+    def _save_filenames(self, i3_files: List[str]) -> None:
         """Save I3 file names in CSV format."""
         self.debug("Saving input file names to config CSV.")
         config_dir = os.path.join(self._outdir, "config")
