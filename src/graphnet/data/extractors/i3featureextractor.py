@@ -15,9 +15,12 @@ class I3FeatureExtractor(I3Extractor):
 
 
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
-    def __call__(self, frame, padding_value=-1, include_pulses=True) -> dict:
+    def __call__(self, frame, padding_value=-1) -> dict:
         """Extract features to be used as inputs to GNN models."""
         output = {
+            "charge": [],
+            "dom_time": [],
+            "width": [],
             "dom_x": [],
             "dom_y": [],
             "dom_z": [],
@@ -29,8 +32,6 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "is_errata_dom": [],
             "event_time": [],
         }
-        if include_pulses:
-            output.update({"charge": [], "dom_time": [], "width": []})
 
         # Get OM data
         om_keys, data = get_om_keys_and_pulseseries(
@@ -92,10 +93,13 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             # Loop over pulses for each OM
             pulses = data[om_key]
             for pulse in pulses:
-                if include_pulses:
-                    output["charge"].append(pulse.charge)
-                    output["dom_time"].append(pulse.time)
-                    output["width"].append(pulse.width)
+                output["charge"].append(
+                    getattr(pulse, "charge", padding_value)
+                )
+                output["dom_time"].append(
+                    getattr(pulse, "time", padding_value)
+                )
+                output["width"].append(getattr(pulse, "width", padding_value))
                 output["pmt_area"].append(area)
                 output["rde"].append(rde)
                 output["dom_x"].append(x)
@@ -176,24 +180,18 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         return output
 
 
-class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
+class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCubeUpgrade):
     def __call__(self, frame) -> dict:
         """Extract features to be used as inputs to GNN models."""
 
         output = {
-            "string": [],
-            "pmt_number": [],
-            "dom_number": [],
-            "pmt_dir_x": [],
-            "pmt_dir_y": [],
-            "pmt_dir_z": [],
             "dom_type": [],
             "truth_flag": [],
         }
 
-        # Add features from IceCube86
-        output_icecube86 = super().__call__(frame, include_pulses=False)
-        output.update(output_icecube86)
+        # Add features from IceCubeUpgrade
+        output_icecube_upgrade = super().__call__(frame)
+        output.update(output_icecube_upgrade)
 
         # Get OM data
         om_keys, data = get_om_keys_and_pulseseries(
@@ -203,25 +201,9 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
         )
 
         for om_key in om_keys:
-            # Common values for each OM
-            pmt_dir_x = self._gcd_dict[om_key].orientation.x
-            pmt_dir_y = self._gcd_dict[om_key].orientation.y
-            pmt_dir_z = self._gcd_dict[om_key].orientation.z
-            string = om_key[0]
-            dom_number = om_key[1]
-            pmt_number = om_key[2]
-            dom_type = self._gcd_dict[om_key].omtype
-
             # Loop over pulses for each OM
             pulses = data[om_key]
             for truth_flag in pulses:
-                output["string"].append(string)
-                output["pmt_number"].append(pmt_number)
-                output["dom_number"].append(dom_number)
-                output["pmt_dir_x"].append(pmt_dir_x)
-                output["pmt_dir_y"].append(pmt_dir_y)
-                output["pmt_dir_z"].append(pmt_dir_z)
-                output["dom_type"].append(dom_type)
                 output["truth_flag"].append(truth_flag)
 
         return output
