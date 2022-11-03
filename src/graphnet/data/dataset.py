@@ -100,9 +100,9 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         if string_selection is not None:
             self.warning(
                 (
-                    "String selection detected.\n",
-                    f"Accepted strings: {string_selection}\n",
-                    "All other strings are ignored!",
+                    "String selection detected.\n "
+                    f"Accepted strings: {string_selection}\n "
+                    "All other strings are ignored!"
                 )
             )
             if isinstance(string_selection, int):
@@ -150,10 +150,10 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
     # Abstract method(s)
     @abstractmethod
-    def _init(self):
+    def _init(self) -> None:
         """Set internal representation needed to read data from input file."""
 
-    def _post_init(self):
+    def _post_init(self) -> None:
         """Implemenation-specific code to be run after the main constructor."""
 
     @abstractmethod
@@ -190,14 +190,14 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         """
 
     # Public method(s)
-    def add_label(self, key: str, fn: Callable[[Data], Any]):
+    def add_label(self, key: str, fn: Callable[[Data], Any]) -> None:
         """Add custom graph label define using function `fn`."""
         assert (
             key not in self._label_fns
         ), f"A custom label {key} has already been defined."
         self._label_fns[key] = fn
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return number of graphs in `Dataset`."""
         return len(self._indices)
 
@@ -214,18 +214,18 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         return graph
 
     # Internal method(s)
-    def _remove_missing_columns(self):
+    def _remove_missing_columns(self) -> None:
         """Remove columns that are not present in the input file.
 
         Columns are removed from `self._features` and `self._truth`.
         """
         # Find missing features
-        missing_features = set(self._features)
+        missing_features_set = set(self._features)
         for pulsemap in self._pulsemaps:
             missing = self._check_missing_columns(self._features, pulsemap)
-            missing_features = missing_features.intersection(missing)
+            missing_features_set = missing_features_set.intersection(missing)
 
-        missing_features = list(missing_features)
+        missing_features = list(missing_features_set)
 
         # Find missing truth variables
         missing_truth_variables = self._check_missing_columns(
