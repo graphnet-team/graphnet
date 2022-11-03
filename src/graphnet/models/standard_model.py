@@ -31,12 +31,12 @@ class StandardModel(Model):
         gnn: GNN,
         tasks: Union[Task, List[Task]],
         coarsening: Optional[Coarsening] = None,
-        optimizer_class=Adam,
-        optimizer_kwargs=None,
-        scheduler_class=None,
-        scheduler_kwargs=None,
-        scheduler_config=None,
-    ):
+        optimizer_class: type = Adam,
+        optimizer_kwargs: Optional[Dict] = None,
+        scheduler_class: Optional[type] = None,
+        scheduler_kwargs: Optional[Dict] = None,
+        scheduler_config: Optional[Dict] = None,
+    ) -> None:
         """Construct `StandardModel`."""
         # Base class constructor
         super().__init__()
@@ -128,14 +128,16 @@ class StandardModel(Model):
         )
         return loss
 
-    def compute_loss(self, preds: Tensor, data: Data, verbose=False) -> Tensor:
+    def compute_loss(
+        self, preds: Tensor, data: Data, verbose: bool = False
+    ) -> Tensor:
         """Compute and sum losses across tasks."""
         losses = [
             task.compute_loss(pred, data)
             for task, pred in zip(self._tasks, preds)
         ]
         if verbose:
-            self.info(losses)
+            self.info(f"{losses}")
         assert all(
             loss.dim() == 0 for loss in losses
         ), "Please reduce loss for each task separately"
@@ -144,7 +146,7 @@ class StandardModel(Model):
     def _get_batch_size(self, data: Data) -> int:
         return torch.numel(torch.unique(data.batch))
 
-    def inference(self):
+    def inference(self) -> None:
         """Activate inference mode."""
         for task in self._tasks:
             task.inference()
