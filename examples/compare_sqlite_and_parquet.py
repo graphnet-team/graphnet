@@ -1,5 +1,4 @@
-"""Example to compare the result of converting I3 files to SQLite and parquet,
-respectively, and reading this data back."""
+"""Example of comparing the result of converting to SQLite and Parquet."""
 
 import logging
 import os
@@ -23,7 +22,8 @@ TEST_DATA_DIR = os.path.abspath("./test_data/")
 PULSEMAP = "SRTInIcePulses"
 
 
-def convert_data():
+def convert_data() -> None:
+    """Convert I3 files to SQLite and Parquet."""
     # Configuration
     paths = TEST_DATA_DIR
     gcd_rescue = os.path.join(
@@ -46,7 +46,8 @@ def convert_data():
     ParquetDataConverter(**opt)(paths)
 
 
-def load_data():
+def load_data() -> None:
+    """Load converted data and compare.."""
     filename = "oscNext_genie_level7_v03.01_pass2.160000.000001"
 
     opt = dict(
