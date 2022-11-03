@@ -58,11 +58,11 @@ def load_data() -> None:
 
     data_sqlite = SQLiteDataset(
         os.path.join(TEST_DATA_DIR, filename + ".db"),
-        **opt,
+        **opt,  # type: ignore[arg-type]
     )
     data_parquet = ParquetDataset(
         os.path.join(TEST_DATA_DIR, filename + ".parquet"),
-        **opt,
+        **opt,  # type: ignore[arg-type]
     )
 
     logger.info(len(data_sqlite))
