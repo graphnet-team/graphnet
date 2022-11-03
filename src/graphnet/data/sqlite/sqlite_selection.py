@@ -1,7 +1,7 @@
 """Selection-specific utility functions for use in `graphnet.data.sqlite`."""
 
 import sqlite3
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import numpy as np
 import pandas as pd
@@ -262,7 +262,9 @@ def get_even_track_cascade_indicies(
 
 
 def get_even_dbang_selection(
-    database: str, min_max_decay_length=None, seed: int = 42
+    database: str,
+    min_max_decay_length: Optional[Tuple[float, float]] = None,
+    seed: int = 42,
 ) -> Tuple[List[int], List[int]]:
     """Get event numbers for equal numbers of dbang / non-dbang events.
 
