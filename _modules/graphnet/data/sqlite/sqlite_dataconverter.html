@@ -92,7 +92,8 @@
             <span class="p">)</span>
 
         <span class="c1"># Concatenate data</span>
-        <span class="n">dataframe</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">dataframe</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
         <span class="k">for</span> <span class="n">data_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">df</span> <span class="o">=</span> <span class="n">construct_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -100,7 +101,7 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">any_pulsemap_is_non_empty</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="c1"># only include data_dict in temp. databases if at least one pulsemap is non-empty,</span>
                     <span class="c1"># and the current extractor (df) is also non-empty (also since truth is always non-empty)</span>
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">dataframe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                             <span class="n">df</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span>
                         <span class="p">)</span>
