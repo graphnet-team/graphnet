@@ -11,6 +11,7 @@ from graphnet.data.extractors import (
     I3TruthExtractor,
     I3GenericExtractor,
 )
+from graphnet.data.dataconverter import DataConverter
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.sqlite import SQLiteDataConverter
 
@@ -30,7 +31,7 @@ def main_icecube86(backend: str) -> None:
     inputs = ["./test_data/"]
     outdir = "./temp/test_ic86"
 
-    converter = CONVERTER_CLASS[backend](
+    converter: DataConverter = CONVERTER_CLASS[backend](
         [
             I3GenericExtractor(
                 keys=[
@@ -56,7 +57,7 @@ def main_icecube_upgrade(backend: str) -> None:
     outdir = "./temp/test_upgrade"
     workers = 1
 
-    converter = CONVERTER_CLASS[backend](
+    converter: DataConverter = CONVERTER_CLASS[backend](
         [
             I3TruthExtractor(),
             I3RetroExtractor(),
