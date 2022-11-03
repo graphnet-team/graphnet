@@ -1,4 +1,4 @@
-"""Minimum working example (MWE) to use ParquetDataConverter."""
+"""Example of converting I3-files to SQLite and Parquet."""
 
 import logging
 import os
@@ -22,7 +22,7 @@ CONVERTER_CLASS = {
 }
 
 
-def main_icecube86(backend: str):
+def main_icecube86(backend: str) -> None:
     """Convert IceCube-86 I3 files to intermediate `backend` format."""
     # Check(s)
     assert backend in CONVERTER_CLASS
@@ -47,7 +47,7 @@ def main_icecube86(backend: str):
         converter.merge_files(os.path.join(outdir, "merged"))
 
 
-def main_icecube_upgrade(backend: str):
+def main_icecube_upgrade(backend: str) -> None:
     """Convert IceCube-Upgrade I3 files to intermediate `backend` format."""
     # Check(s)
     assert backend in CONVERTER_CLASS
