@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import sqlite3
-from typing import Optional, List, Callable
+from typing import Any, Optional, List, Callable
 from graphnet.data.sqlite.sqlite_utilities import (
     save_to_sql,
     create_table,
@@ -21,16 +21,18 @@ class WeightFitter(ABC, LoggerMixin):
 
     def __init__(
         self,
-        database_path,
-        truth_table="truth",
-        index_column="event_no",
+        database_path: str,
+        truth_table: str = "truth",
+        index_column: str = "event_no",
     ):
         """Construct `UniformWeightFitter`."""
         self._database_path = database_path
         self._truth_table = truth_table
         self._index_column = index_column
 
-    def _get_truth(self, variable: str, selection: Optional[List[int]] = None):
+    def _get_truth(
+        self, variable: str, selection: Optional[List[int]] = None
+    ) -> pd.DataFrame:
         """Return truth `variable`, optionally only for `selection` events."""
         if selection is None:
             query = f"select {self._index_column}, {variable} from {self._truth_table}"
@@ -48,7 +50,7 @@ class WeightFitter(ABC, LoggerMixin):
         add_to_database: bool = False,
         selection: Optional[List[int]] = None,
         transform: Optional[Callable] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> pd.DataFrame:
         """Fit weights.
 
@@ -99,7 +101,7 @@ class WeightFitter(ABC, LoggerMixin):
         pass
 
     @abstractmethod
-    def _generate_weight_name(self):
+    def _generate_weight_name(self) -> str:
         pass
 
 
@@ -129,7 +131,7 @@ class Uniform(WeightFitter):
         truth[self._weight_name] = sample_weights
         return truth.sort_values("event_no").reset_index(drop=True)
 
-    def _generate_weight_name(self):
+    def _generate_weight_name(self) -> str:
         return self._variable + "_uniform_weight"
 
 
@@ -189,5 +191,5 @@ class BjoernLow(WeightFitter):
         )
         return truth.sort_values(self._index_column).reset_index(drop=True)
 
-    def _generate_weight_name(self):
+    def _generate_weight_name(self) -> str:
         return self._variable + "_bjoern_low_weight"
