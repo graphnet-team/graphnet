@@ -20,7 +20,7 @@ class SQLiteDataConverter(DataConverter):
     file_suffix = "db"
 
     # Abstract method implementation(s)
-    def save_data(self, data: List[Dict[str, Any]], output_file: str) -> None:
+    def save_data(self, data: List[OrderedDict], output_file: str) -> None:
         """Save data to SQLite database."""
         # Check(s)
         if os.path.exists(output_file):
@@ -216,8 +216,7 @@ class SQLiteDataConverter(DataConverter):
     ) -> None:
         """Submit data to the database with specified key."""
         if len(data) == 0:
-            if self._verbose:
-                self.info(f"No data provided for {key}.")
+            self.info(f"No data provided for {key}.")
             return
         engine = sqlalchemy.create_engine("sqlite:///" + database)
         data.to_sql(key, engine, index=False, if_exists="append")
