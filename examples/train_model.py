@@ -1,4 +1,7 @@
+"""Example of training Model."""
+
 import os
+from typing import cast
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
@@ -46,8 +49,8 @@ wandb_logger = WandbLogger(
 )
 
 
-# Main function definition
-def main():
+def main() -> None:
+    """Run example."""
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
 
@@ -111,7 +114,7 @@ def main():
             "milestones": [
                 0,
                 len(training_dataloader) / 2,
-                len(training_dataloader) * config["n_epochs"],
+                len(training_dataloader) * cast(int, config["n_epochs"]),
             ],
             "factors": [1e-2, 1, 1e-02],
         },
@@ -149,13 +152,12 @@ def main():
         trainer,
         model,
         validation_dataloader,
-        [config["target"] + "_pred"],
+        [cast(str, config["target"]) + "_pred"],
         additional_attributes=[config["target"], "event_no"],
     )
 
     save_results(config["db"], run_name, results, archive, model)
 
 
-# Main function call
 if __name__ == "__main__":
     main()
