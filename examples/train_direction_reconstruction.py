@@ -16,8 +16,9 @@ from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
 from graphnet.models import StandardModel
+from graphnet.models.coarsening import DOMCoarsening
 from graphnet.models.detector.icecube import IceCubeDeepCore
-from graphnet.models.gnn.dynedge import DynEdge, DOMCoarsenedDynEdge
+from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import (
     ZenithReconstructionWithKappa,
@@ -83,13 +84,13 @@ def train(config: Dict[str, Any]) -> None:
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
     if config["node_pooling"]:
-        gnn = DOMCoarsenedDynEdge(
-            nb_inputs=detector.nb_outputs,
-        )
+        coarsening = DOMCoarsening()
     else:
-        gnn = DynEdge(
-            nb_inputs=detector.nb_outputs,
-        )
+        coarsening = None
+    gnn = DynEdge(
+        nb_inputs=detector.nb_outputs,
+        global_pooling_schemes=["min", "max", "mean", "sum"],
+    )
     if config["target"] == "zenith":
         task = ZenithReconstructionWithKappa(
             hidden_size=gnn.nb_outputs,
@@ -105,6 +106,7 @@ def train(config: Dict[str, Any]) -> None:
 
     model = StandardModel(
         detector=detector,
+        coarsening=coarsening,
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,
