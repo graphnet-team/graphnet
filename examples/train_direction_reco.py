@@ -1,4 +1,4 @@
-"""Example of training model for direction reconstruction."""
+"""Example of training Model for direction reconstruction."""
 
 
 import os
