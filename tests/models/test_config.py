@@ -1,4 +1,4 @@
-"""Unit tests for model configs."""
+"""Unit tests for ModelConfig class."""
 
 import os.path
 
@@ -14,8 +14,8 @@ from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.loss_functions import LogCoshLoss
 
 
-def test_simple_config(path: str = "/tmp/simple.yml"):
-    """Saving, loading, and reconstructing simple model from ModelConfig."""
+def test_simple_config(path: str = "/tmp/simple.yml") -> None:
+    """Test saving, loading, and reconstructing simple model."""
     # Construct single Model
     model = DynEdge(
         nb_inputs=9,
@@ -40,8 +40,8 @@ def test_simple_config(path: str = "/tmp/simple.yml"):
     assert repr(constructed_model_1) == repr(constructed_model_2)
 
 
-def test_nested_config(path: str = "/tmp/tested.yml"):
-    """Saving, loading, and reconstructing nested model from ModelConfig."""
+def test_nested_config(path: str = "/tmp/tested.yml") -> None:
+    """Test saving, loading, and reconstructing nested model."""
     # Construct nested Model
     model = IceCubeDeepCore(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
@@ -62,8 +62,8 @@ def test_nested_config(path: str = "/tmp/tested.yml"):
     assert repr(constructed_model) == repr(model)
 
 
-def test_complete_config(path: str = "/tmp/complete.yml"):
-    """Saving, loading, and reconstructing nested model from ModelConfig."""
+def test_complete_config(path: str = "/tmp/complete.yml") -> None:
+    """Test saving, loading, and reconstructing nested model."""
     # Construct StandardModel
     detector = IceCubeDeepCore(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
