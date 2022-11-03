@@ -25,7 +25,7 @@ class I3FeatureExtractor(I3Extractor):
                 reconstructed features.
         """
         # Member variable(s)
-        self._pulsemap: str = pulsemap
+        self._pulsemap = pulsemap
 
         # Base class constructor
         super().__init__(pulsemap)
@@ -136,13 +136,16 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
 
         return output
 
-    def _get_relative_dom_efficiency(self, frame, om_key):
+    def _get_relative_dom_efficiency(
+        self, frame: "icetray.I3Frame", om_key: int
+    ) -> float:
         if (
             "I3Calibration" in frame
         ):  # Not available for e.g. mDOMs in IceCube Upgrade
             rde = frame["I3Calibration"].dom_cal[om_key].relative_dom_eff
         else:
             try:
+                assert self._calibration is not None
                 rde = self._calibration.dom_cal[om_key].relative_dom_eff
             except:  # noqa: E722
                 rde = -1
