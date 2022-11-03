@@ -27,5 +27,4 @@ jobs:
         uses: ./.github/actions/install-cpu
       - name: Run ${{ matrix.hook }}
         run: |
-          echo $(git ls-files . '*.py')
-          pre-commit run ${{ matrix.hook }} --files $(git ls-files . '*.py')
+          pre-commit run ${{ matrix.hook }} --all-files
