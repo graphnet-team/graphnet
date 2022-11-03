@@ -27,7 +27,8 @@ class SQLiteDataConverter(DataConverter):
             )
 
         # Concatenate data
-        dataframe = OrderedDict()
+        assert len(data)
+        dataframe = OrderedDict([(key, None) for key in data[0]])
         for data_dict in data:
             for key, data in data_dict.items():
                 df = construct_dataframe(data)
@@ -35,7 +36,7 @@ class SQLiteDataConverter(DataConverter):
                 if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
                     # only include data_dict in temp. databases if at least one pulsemap is non-empty,
                     # and the current extractor (df) is also non-empty (also since truth is always non-empty)
-                    if key in dataframe:
+                    if dataframe[key] is not None:
                         dataframe[key] = dataframe[key].append(
                             df, ignore_index=True, sort=True
                         )
