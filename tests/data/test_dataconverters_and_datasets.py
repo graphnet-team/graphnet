@@ -112,9 +112,9 @@ def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR) -> None:
     )
 
     if backend == "sqlite":
-        dataset = SQLiteDataset(**opt)
+        dataset = SQLiteDataset(**opt)  # type: ignore[arg-type]
     elif backend == "parquet":
-        dataset = ParquetDataset(**opt)
+        dataset = ParquetDataset(**opt)  # type: ignore[arg-type]
     else:
         assert False, "Shouldn't reach here"
 
