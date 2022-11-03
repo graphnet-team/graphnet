@@ -9,7 +9,7 @@ import pandas as pd
 from pytorch_lightning import Trainer
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
-from torch_geometric.data.batch import Batch
+from torch_geometric.data import Batch, Data
 
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.models import Model
@@ -53,8 +53,11 @@ def make_dataloader(
         loss_weight_column=loss_weight_column,
     )
 
-    def collate_fn(graphs):
-        # Remove graphs with less than two DOM hits. Should not occur in "production."
+    def collate_fn(graphs: List[Data]) -> Batch:
+        """Remove graphs with less than two DOM hits.
+
+        Should not occur in "production.
+        """
         graphs = [g for g in graphs if g.n_pulses > 1]
         return Batch.from_data_list(graphs)
 
@@ -213,7 +216,7 @@ def get_predictions(
 
 def save_results(
     db: str, tag: str, results: pd.DataFrame, archive: str, model: Model
-):
+) -> None:
     """Save trained model and prediction `results` in `db`."""
     db_name = db.split("/")[-1].split(".")[0]
     path = archive + "/" + db_name + "/" + tag
