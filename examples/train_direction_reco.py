@@ -1,4 +1,9 @@
+"""Example of training model for direction reconstruction."""
+
+
 import os
+from typing import Any, Dict
+
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
@@ -48,7 +53,8 @@ wandb_logger = WandbLogger(
 )
 
 
-def train(config):
+def train(config: Dict[str, Any]) -> None:
+    """Train model with configuration given by `config`."""
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
 
@@ -156,7 +162,8 @@ def train(config):
 
 
 # Main function definition
-def main():
+def main() -> None:
+    """Run example."""
     for target in ["zenith", "azimuth"]:
         archive = "/remote/ceph/user/o/oersoe/high_energy_example/results"
         run_name = "dynedge_{}_example".format(target)
