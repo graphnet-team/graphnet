@@ -164,12 +164,12 @@ class Coarsening(Model):
             pooled_data = self._reconstruct_batch(data, pooled_data)
         return pooled_data
 
-    def _reconstruct_batch(self, original, pooled):
+    def _reconstruct_batch(self, original: Data, pooled: Data) -> Data:
         pooled = self._add_slice_dict(original, pooled)
         pooled = self._add_inc_dict(original, pooled)
         return pooled
 
-    def _add_slice_dict(self, original, pooled):
+    def _add_slice_dict(self, original: Data, pooled: Data) -> Data:
         # Copy original slice_dict and count nodes in each graph in pooled batch
         slice_dict = deepcopy(original._slice_dict)
         _, counts = torch.unique_consecutive(pooled.batch, return_counts=True)
@@ -187,7 +187,7 @@ class Coarsening(Model):
         pooled._slice_dict = slice_dict
         return pooled
 
-    def _add_inc_dict(self, original, pooled):
+    def _add_inc_dict(self, original: Data, pooled: Data) -> Data:
         # not changed by coarsening
         pooled._inc_dict = deepcopy(original._inc_dict)
         return pooled
