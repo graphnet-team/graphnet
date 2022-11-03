@@ -1,4 +1,4 @@
-"""Unit tests for loss functions."""
+"""Unit tests for Coarsening class."""
 
 import torch
 from torch_geometric.data import Data, Batch
@@ -10,7 +10,6 @@ from graphnet.models.coarsening import Coarsening
 # Utility method(s)
 def _get_test_data() -> Batch:
     """Produce toy data for unit tests."""
-
     data1 = Data(
         x=torch.tensor(
             [
@@ -110,12 +109,12 @@ class SimpleCoarsening(Coarsening):
     """Simple coarsening operation for the purposes of testing."""
 
     def _perform_clustering(self, data: Data) -> torch.LongTensor:
-        """Perform clustering of nodes in `data` by assigning unique cluster indices to each."""
+        """Cluster nodes in `data` by assigning a cluster index to each."""
         return group_by(data, ["x0", "x1", "x2"])
 
 
 # Unit test(s)
-def test_attribute_transfer():
+def test_attribute_transfer() -> None:
     """Testing the transfering of auxillary attributes during coarsening."""
     # Check(s)
     data = _get_test_data()
@@ -146,8 +145,8 @@ def test_attribute_transfer():
     assert pooled_data.x.size(dim=0) == pooled_data["attr1"].size(dim=0)
 
 
-def test_batch_reconstruction():
-    """Testing the batch reconstruction"""
+def test_batch_reconstruction() -> None:
+    """Testing the batch reconstruction."""
     # Check(s)
     data = _get_test_data()
     original_batch_idx = data.batch

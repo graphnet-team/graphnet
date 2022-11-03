@@ -3,7 +3,7 @@
 from graphnet.utilities.filesys import is_i3_file, has_extension
 
 
-def test_is_i3_file():
+def test_is_i3_file() -> None:
     """Test `is_i3_file_` function."""
     assert is_i3_file("path/to/file.i3.bz2") is True
     assert is_i3_file("path/to/file.bz2") is True
@@ -14,7 +14,8 @@ def test_is_i3_file():
     assert is_i3_file("path/to/geo_file.i3.gz") is False
 
 
-def test_has_extension():
+def test_has_extension() -> None:
+    """Test `has_extension` function."""
     extensions = ["i3.bz2", "zst", "gz"]
     assert has_extension("path/to/file.i3.bz2", extensions) is True
     assert has_extension("path/to/file.bz2", extensions) is False

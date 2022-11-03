@@ -1,35 +1,40 @@
+"""Class(es) for constructing training labels at runtime."""
+
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-import numpy as np
 import torch
 from torch_geometric.data import Data
 from graphnet.utilities.logging import LoggerMixin
 
 
 class Label(ABC, LoggerMixin):
-    """Base Label class for producing labels from single Data Object."""
+    """Base `Label` class for producing labels from single `Data` instance."""
 
     def __init__(self, key: str):
-        """Base Label class for producing labels from single Data Object.
+        """Construct `Label`.
 
         Args:
-            key (str): The name of the field in Data where the label will be stored. Ie. graph[key] = label
+            key: The name of the field in `Data` where the label will be
+                stored. That is, `graph[key] = label`.
         """
         self._key = key
 
     @abstractmethod
     def __call__(self, graph: Data) -> torch.tensor:
-        """Label-specific implementation"""
+        """Label-specific implementation."""
 
 
 class Direction(Label):
+    """Class for producing particle direction/pointing label."""
+
     def __init__(
         self, azimuth_key: str = "azimuth", zenith_key: str = "zenith"
     ):
+        """Construct `Direction`."""
         self._azimuth_key = azimuth_key
         self._zenith_key = zenith_key
 
     def __call__(self, graph: Data) -> torch.tensor:
+        """Compute label for `graph`."""
         x = torch.sin(graph[self._azimuth_key]) * torch.cos(
             graph[self._zenith_key]
         )

@@ -1,6 +1,7 @@
-"""Module defining a `Dataset` class for reading from parquet files."""
+"""`Dataset` class(es) for reading from Parquet files."""
 
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union, cast
+
 import numpy as np
 import awkward as ak
 
@@ -8,10 +9,10 @@ from graphnet.data.dataset import Dataset, ColumnMissingException
 
 
 class ParquetDataset(Dataset):
-    """Pytorch dataset for reading from parquet files."""
+    """Pytorch dataset for reading from Parquet files."""
 
     # Implementing abstract method(s)
-    def _init(self):
+    def _init(self) -> None:
         # Check(s)
         if isinstance(self._path, list):
             self.error("Multiple files not supported")
@@ -34,7 +35,7 @@ class ParquetDataset(Dataset):
         # Set custom member variable(s)
         self._parquet_hook = ak.from_parquet(self._path, lazy=False)
 
-    def _get_all_indices(self):
+    def _get_all_indices(self) -> np.ndarray:
         return np.arange(
             len(
                 ak.to_numpy(
@@ -47,18 +48,18 @@ class ParquetDataset(Dataset):
         self,
         table: str,
         columns: Union[List[str], str],
-        index: int,
+        sequential_index: int,
         selection: Optional[str] = None,
-    ) -> List[Tuple[Any]]:
+    ) -> List[Tuple[Any, ...]]:
         # Check(s)
         assert (
             selection is None
         ), "Argument `selection` is currently not supported"
 
-        sequential_index = self._indices[index]
+        index = cast(List[int], self._indices)[sequential_index]
 
         try:
-            ak_array = self._parquet_hook[table][columns][sequential_index]
+            ak_array = self._parquet_hook[table][columns][index]
         except ValueError as e:
             if "does not exist (not in record)" in str(e):
                 raise ColumnMissingException(str(e))

@@ -1,5 +1,8 @@
+"""Reconstruction-specific `Model` class(es)."""
+
 import numpy as np
 import torch
+from torch import Tensor
 
 from graphnet.models.task import Task
 from graphnet.utilities.maths import eps_like
@@ -11,7 +14,7 @@ class AzimuthReconstructionWithKappa(Task):
     # Requires two features: untransformed points in (x,y)-space.
     nb_inputs = 2
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         kappa = torch.linalg.vector_norm(x, dim=1) + eps_like(x)
         angle = torch.atan2(x[:, 1], x[:, 0])
@@ -27,7 +30,7 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
     # Requires two features: untransformed points in (x,y)-space.
     nb_inputs = 2
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         res = super()._forward(x)
         angle = res[:, 0].unsqueeze(1)
@@ -40,12 +43,12 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
 
 
 class DirectionReconstructionWithKappa(Task):
-    """Reconstructs Direction with kappa from The 3DVonMisesFisher Distribution."""
+    """Reconstructs direction with kappa from the 3D-vMF distribution."""
 
     # Requires three features: untransformed points in (x,y,z)-space.
     nb_inputs = 3
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         kappa = torch.linalg.vector_norm(x, dim=1) + eps_like(x)
         vec_x = x[:, 0] / kappa
@@ -54,40 +57,13 @@ class DirectionReconstructionWithKappa(Task):
         return torch.stack((vec_x, vec_y, vec_z, kappa), dim=1)
 
 
-class PassOutput1(Task):
-    """Passes 1 output without interference."""
-
-    nb_inputs = 1
-
-    def _forward(self, x):
-        return x
-
-
-class PassOutput2(Task):
-    """Passes 2 output without interference."""
-
-    nb_inputs = 2
-
-    def _forward(self, x):
-        return x
-
-
-class PassOutput3(Task):
-    """Passes 3 output without interference."""
-
-    nb_inputs = 3
-
-    def _forward(self, x):
-        return x
-
-
 class ZenithReconstruction(Task):
     """Reconstructs zenith angle."""
 
     # Requires two features: zenith angle itself.
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         return torch.sigmoid(x[:, :1]) * np.pi
 
@@ -98,7 +74,7 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
     # Requires one feature in addition to `ZenithReconstruction`: kappa (unceratinty; 1/variance).
     nb_inputs = 2
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform outputs to angle and prepare prediction
         angle = super()._forward(x[:, :1]).squeeze(1)
         kappa = torch.abs(x[:, 1]) + eps_like(x)
@@ -111,7 +87,7 @@ class EnergyReconstruction(Task):
     # Requires one feature: untransformed energy
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform energy
         return torch.pow(10, x[:, 0] + 1.0).unsqueeze(1)
 
@@ -122,7 +98,7 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
     # Requires one feature in addition to `EnergyReconstruction`: log-variance (uncertainty).
     nb_inputs = 2
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform energy
         energy = super()._forward(x[:, :1]).squeeze(1)
         log_var = x[:, 1]
@@ -131,10 +107,12 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
 
 
 class VertexReconstruction(Task):
-    # Requires four features, x, y, z and t
+    """Reconstructs vertex position and time."""
+
+    # Requires four features, x, y, z, and t.
     nb_inputs = 4
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
 
         # Scale xyz to roughly the right order of magnitude, leave time
         x[:, 0] = x[:, 0] * 1e2
@@ -145,10 +123,12 @@ class VertexReconstruction(Task):
 
 
 class PositionReconstruction(Task):
-    # Requires three features, x, y, z
+    """Reconstructs vertex position."""
+
+    # Requires three features, x, y, and z.
     nb_inputs = 3
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
 
         # Scale to roughly the right order of magnitude
         x[:, 0] = x[:, 0] * 1e2
@@ -159,37 +139,26 @@ class PositionReconstruction(Task):
 
 
 class TimeReconstruction(Task):
-    # Requires on feature, time
+    """Reconstructs time."""
+
+    # Requires one feature, time.
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
 
         # Leave as it is
         return x
 
 
-class BinaryClassificationTask(Task):
-    # requires one feature: probability of being neutrino?
-    nb_inputs = 1
-
-    def _forward(self, x):
-        # transform probability of being muon
-        return torch.sigmoid(x)
-
-
-class BinaryClassificationTaskLogits(Task):
-    nb_inputs = 1
-
-    def _forward(self, x):
-        return x
-
-
 class InelasticityReconstruction(Task):
-    """Reconstructs interaction inelasticity (i.e., tracks vs. hadronic energy)."""
+    """Reconstructs interaction inelasticity.
+
+    That is, tracks vs. hadronic energy.
+    """
 
     # Requires one features: inelasticity itself
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform output to unit range
         return torch.sigmoid(x)

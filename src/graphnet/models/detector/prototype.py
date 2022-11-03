@@ -1,30 +1,24 @@
-import torch
+"""Prometheus-specific `Detector` class(es)."""
+
 from torch_geometric.data import Data
 
-from graphnet.models.components.pool import (
-    group_pulses_to_dom,
-    group_pulses_to_pmt,
-    sum_pool_and_distribute,
-)
-from graphnet.data.constants import FEATURES
 from graphnet.models.detector.detector import Detector
 
 
 class Prototype(Detector):
-    """`Detector` class for IceCube-86."""
+    """`Detector` class for Prometheus prototype."""
 
     features = ["x", "y", "z", "t"]
 
     def _forward(self, data: Data) -> Data:
-        """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
+        """Ingest data, build graph, and preprocess features.
 
         Args:
-            data (Data): Input graph data.
+            data: Input graph data.
 
         Returns:
-            Data: Connected and preprocessed graph data.
+            Connected and preprocessed graph data.
         """
-
         # Check(s)
         self._validate_features(data)
 

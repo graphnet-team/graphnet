@@ -1,4 +1,4 @@
-"""Module defining the base `Dataset` class used in GraphNeT."""
+"""Base `Dataset` class(es) used in GraphNeT."""
 
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -27,12 +27,51 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         truth_table: str = "truth",
         node_truth_table: Optional[str] = None,
         string_selection: Optional[List[int]] = None,
-        selection: Optional[List[int]] = None,
+        selection: Optional[Union[List[int], List[List[int]]]] = None,
         dtype: torch.dtype = torch.float32,
-        loss_weight_table: str = None,
-        loss_weight_column: str = None,
+        loss_weight_table: Optional[str] = None,
+        loss_weight_column: Optional[str] = None,
         loss_weight_default_value: Optional[float] = None,
     ):
+        """Construct Dataset.
+
+        Args:
+            path: Path to the file(s) from which this `Dataset` should read.
+            pulsemaps: Name(s) of the pulse map series that should be used to
+                construct the nodes on the individual graph objects, and their
+                features. Multiple pulse series maps can be used, e.g., when
+                different DOM types are stored in different maps.
+            features: List of columns in the input files that should be used as
+                node features on the graph objects.
+            truth: List of event-level columns in the input files that should
+                be used added as attributes on the  graph objects.
+            node_truth: List of node-level columns in the input files that
+                should be used added as attributes on the graph objects.
+            index_column: Name of the column in the input files that contains
+                unique indicies to identify and map events across tables.
+            truth_table: Name of the table containing event-level truth
+                information.
+            node_truth_table: Name of the table containing node-level truth
+                information.
+            string_selection: Subset of strings for which data should be read
+                and used to construct graph objects. Defaults to None, meaning
+                all strings for which data exists are used.
+            selection: List of indicies (in `index_column`) of the events in
+                the input files that should be read. Defaults to None, meaning
+                that all events in the input files are read.
+            dtype: Type of the feature tensor on the graph objects returned.
+            loss_weight_table: Name of the table containing per-event loss
+                weights.
+            loss_weight_column: Name of the column in `loss_weight_table`
+                containing per-event loss weights. This is also the name of the
+                corresponding attribute assigned to the graph object.
+            loss_weight_default_value: Default per-event loss weight.
+                NOTE: This default value is only applied when
+                `loss_weight_table` and `loss_weight_column` are specified, and
+                in this case to events with no value in the corresponding
+                table/column. That is, if no per-event loss weight table/column
+                is provided, this value is ignored. Defaults to None.
+        """
         # Check(s)
         if isinstance(pulsemaps, str):
             pulsemaps = [pulsemaps]
@@ -61,9 +100,9 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         if string_selection is not None:
             self.warning(
                 (
-                    "String selection detected.\n",
-                    f"Accepted strings: {string_selection}\n",
-                    "All other strings are ignored!",
+                    "String selection detected.\n "
+                    f"Accepted strings: {string_selection}\n "
+                    "All other strings are ignored!"
                 )
             )
             if isinstance(string_selection, int):
@@ -96,13 +135,14 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self._init()
 
         # Set unique indices
+        self._indices: Union[List[int], List[List[int]]]
         if selection is None:
             self._indices = self._get_all_indices()
         else:
             self._indices = selection
 
         # Purely internal member variables
-        self._missing_variables = {}
+        self._missing_variables: Dict[str, List[str]] = {}
         self._remove_missing_columns()
 
         # Implementation-specific post-init code.
@@ -110,10 +150,10 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
 
     # Abstract method(s)
     @abstractmethod
-    def _init(self):
+    def _init(self) -> None:
         """Set internal representation needed to read data from input file."""
 
-    def _post_init(self):
+    def _post_init(self) -> None:
         """Implemenation-specific code to be run after the main constructor."""
 
     @abstractmethod
@@ -125,24 +165,24 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self,
         table: str,
         columns: Union[List[str], str],
-        index: int,
+        sequential_index: int,
         selection: Optional[str] = None,
-    ) -> List[Tuple[Any]]:
+    ) -> List[Tuple[Any, ...]]:
         """Query a table at a specific index, optionally with some selection.
 
         Args:
-            table (str): Table to be queried.
-            columns (List[str]): Columns to read out.
-            index (int): Sequentially numbered index (i.e. in [0,len(self))) of
-                the event to query. This _may_ differ from the indexation used
-                in `self._indices`.
-            selection (Optional[str], optional): Selection to be imposed before
-                reading out data. Defaults to None.
+            table: Table to be queried.
+            columns: Columns to read out.
+            sequential_index: Sequentially numbered index
+                (i.e. in [0,len(self))) of the event to query. This _may_
+                differ from the indexation used in `self._indices`.
+            selection: Selection to be imposed before reading out data.
+                Defaults to None.
 
         Returns:
-            List[Tuple[Any]]: Returns a list of tuples containing the values in
-                `columns`. If the `table` contains only scalar data for
-                `columns`, a list of length 1 is returned
+            List of tuples containing the values in `columns`. If the `table`
+                contains only scalar data for `columns`, a list of length 1 is
+                returned
 
         Raises:
             ColumnMissingException: If one or more element in `columns` is not
@@ -150,38 +190,42 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         """
 
     # Public method(s)
-    def add_label(self, key: str, fn: Callable[[Data], Any]):
+    def add_label(self, key: str, fn: Callable[[Data], Any]) -> None:
         """Add custom graph label define using function `fn`."""
         assert (
             key not in self._label_fns
         ), f"A custom label {key} has already been defined."
         self._label_fns[key] = fn
 
-    def __len__(self):
+    def __len__(self) -> int:
+        """Return number of graphs in `Dataset`."""
         return len(self._indices)
 
-    def __getitem__(self, index: int) -> Data:
-        if not (0 <= index < len(self)):
+    def __getitem__(self, sequential_index: int) -> Data:
+        """Return graph `Data` object at `index`."""
+        if not (0 <= sequential_index < len(self)):
             raise IndexError(
-                f"Index {index} not in range [0, {len(self) - 1}]"
+                f"Index {sequential_index} not in range [0, {len(self) - 1}]"
             )
-        features, truth, node_truth, loss_weight = self._query(index)
+        features, truth, node_truth, loss_weight = self._query(
+            sequential_index
+        )
         graph = self._create_graph(features, truth, node_truth, loss_weight)
         return graph
 
     # Internal method(s)
-    def _remove_missing_columns(self):
+    def _remove_missing_columns(self) -> None:
         """Remove columns that are not present in the input file.
 
         Columns are removed from `self._features` and `self._truth`.
         """
         # Find missing features
-        missing_features = set(self._features)
+        missing_features_set = set(self._features)
         for pulsemap in self._pulsemaps:
             missing = self._check_missing_columns(self._features, pulsemap)
-            missing_features = missing_features.intersection(missing)
+            missing_features_set = missing_features_set.intersection(missing)
 
-        missing_features = list(missing_features)
+        missing_features = list(missing_features_set)
 
         # Find missing truth variables
         missing_truth_variables = self._check_missing_columns(
@@ -225,74 +269,91 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         return self._missing_variables.get(table, [])
 
     def _query(
-        self, index: int
-    ) -> Tuple[List[Tuple], List[Tuple], List[Tuple]]:
-        """Query file for event features and truth information
+        self, sequential_index: int
+    ) -> Tuple[
+        List[Tuple[float, ...]],
+        Tuple[Any, ...],
+        Optional[List[Tuple[Any, ...]]],
+        Optional[float],
+    ]:
+        """Query file for event features and truth information.
+
+        The returned lists have lengths correspondings to the number of pulses
+        in the event. Their constituent tuples have lengths corresponding to
+        the number of features/attributes in each output
 
         Args:
-            index (int): Sequentially numbered index (i.e. in [0,len(self))) of
-                the event to query. This _may_ differ from the indexation used
-                in `self._indices`.
+            sequential_index: Sequentially numbered index
+                (i.e. in [0,len(self))) of the event to query. This _may_
+                differ from the indexation used in `self._indices`.
 
         Returns:
-            List[Tuple]: Pulse-level event features.
-            List[Tuple]: Event-level truth information. List has length 1.
-            List[Tuple]: Pulse-level truth information.
+            Tuple containing pulse-level event features; event-level truth
+                information; pulse-level truth information; and event-level
+                loss weights, respectively.
         """
-
         features = []
         for pulsemap in self._pulsemaps:
             features_pulsemap = self._query_table(
-                pulsemap, self._features, index, self._selection
+                pulsemap, self._features, sequential_index, self._selection
             )
             features.extend(features_pulsemap)
 
-        truth = self._query_table(self._truth_table, self._truth, index)
+        truth: Tuple[Any, ...] = self._query_table(
+            self._truth_table, self._truth, sequential_index
+        )[0]
         if self._node_truth:
+            assert self._node_truth_table is not None
             node_truth = self._query_table(
                 self._node_truth_table,
                 self._node_truth,
-                index,
+                sequential_index,
                 self._selection,
             )
         else:
             node_truth = None
 
-        loss_weight = None  # Default
+        loss_weight: Optional[float] = None  # Default
         if self._loss_weight_column is not None:
-            if self._loss_weight_table is not None:
-                loss_weight = self._query_table(
-                    self._loss_weight_table, self._loss_weight_column, index
-                )
+            assert self._loss_weight_table is not None
+            loss_weight_list = self._query_table(
+                self._loss_weight_table,
+                self._loss_weight_column,
+                sequential_index,
+            )
+            if len(loss_weight_list):
+                loss_weight = loss_weight_list[0][0]
+            else:
+                loss_weight = -1.0
+
         return features, truth, node_truth, loss_weight
 
     def _create_graph(
         self,
-        features: List[Tuple[Any]],
-        truth: List[Tuple[Any]],
-        node_truth: Optional[List[Tuple[Any]]] = None,
+        features: List[Tuple[float, ...]],
+        truth: Tuple[Any, ...],
+        node_truth: Optional[List[Tuple[Any, ...]]] = None,
         loss_weight: Optional[float] = None,
     ) -> Data:
-        """Create Pytorch Data (i.e.graph) object.
+        """Create Pytorch Data (i.e. graph) object.
 
         No preprocessing is performed at this stage, just as no node adjancency
         is imposed. This means that the `edge_attr` and `edge_weight`
         attributes are not set.
 
         Args:
-            features (list): List of tuples, containing event features.
-            truth (list): List of tuples, containing truth information.
-            node_truth (list): List of tuples, containing node-level truth.
-            loss_weight (float): A weight associated with the event for weighing the loss.
+            features: List of tuples, containing event features.
+            truth: List of tuples, containing truth information.
+            node_truth: List of tuples, containing node-level truth.
+            loss_weight: A weight associated with the event for weighing the loss.
 
         Returns:
-            torch.Data: Graph object.
+            Graph object.
         """
         # Convert nested list to simple dict
         truth_dict = {
-            key: truth[0][index] for index, key in enumerate(self._truth)
+            key: truth[index] for index, key in enumerate(self._truth)
         }
-        assert len(truth) == 1
 
         # Define custom labels
         labels_dict = self._get_labels(truth_dict)
@@ -300,6 +361,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         # Convert nested list to simple dict
         if node_truth is not None:
             node_truth_array = np.asarray(node_truth)
+            assert self._node_truth is not None
             node_truth_dict = {
                 key: node_truth_array[:, index]
                 for index, key in enumerate(self._node_truth)
@@ -321,7 +383,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         # Add loss weight to graph.
         if loss_weight is not None and self._loss_weight_column is not None:
             # No loss weight was retrieved, i.e., it is missing for the current event
-            if len(loss_weight) == 0:
+            if loss_weight < 0:
                 if self._loss_weight_default_value is None:
                     raise ValueError(
                         "At least one event is missing an entry in "

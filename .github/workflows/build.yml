@@ -1,5 +1,5 @@
-# This is a simple workflow to run data/icetray specific unit tests
-name: build-icetray
+# This is a simple workflow to run unit tests and code coverage
+name: Build
 
 # Controls when the workflow will run
 on:
@@ -15,6 +15,7 @@ on:
 jobs:
 
   check-cobalt-credentials:
+    name: Check Cobalt credentials
     runs-on: ubuntu-latest
     outputs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
@@ -27,13 +28,14 @@ jobs:
                "${{ secrets.PUB_WISC_PASSWORD }}" != "" ]]; \
          then
            echo "Credentials to access Cobalt found"
-           echo "::set-output name=has_credentials::true"
+           echo has_credentials="true" >> $GITHUB_OUTPUT
          else
            echo "Credentials to access Cobalt not found"
-           echo "::set-output name=has_credentials::false"
+           echo has_credentials="false" >> $GITHUB_OUTPUT
          fi
 
   check-codeclimate-credentials:
+    name: Check CodeClimate credentials
     runs-on: ubuntu-latest
     outputs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
@@ -44,13 +46,14 @@ jobs:
          if [[ "${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}" != "" ]]; \
          then
            echo "Credentials to access CodeClimate found"
-           echo "::set-output name=has_credentials::true"
+           echo has_credentials="true" >> $GITHUB_OUTPUT
          else
            echo "Credentials to access CodeClimate not found"
-           echo "::set-output name=has_credentials::false"
+           echo has_credentials="false" >> $GITHUB_OUTPUT
          fi
 
   build-icetray:
+    name: Unit tests - IceTray
     needs: [ check-cobalt-credentials, check-codeclimate-credentials ]
     if: needs.check-cobalt-credentials.outputs.has_credentials == 'true'
     runs-on: ubuntu-latest
@@ -108,3 +111,23 @@ jobs:
         with:
           coverageCommand: coverage report
           coverageLocations: coverage.xml:coverage.py
+
+  build-matrix:
+    name: Unit tests - Python versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, '3.10']
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package
+        uses: ./.github/actions/install-cpu
+      - name: Run unit tests and generate coverage report
+        run: |
+          set -o pipefail  # To propagate exit code from pytest
+          coverage run --source=graphnet -m pytest tests/ --ignore=tests/data/
+          coverage report -m
