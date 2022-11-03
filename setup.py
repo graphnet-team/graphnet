@@ -13,6 +13,7 @@ SETUP_REQUIRES = [
 INSTALL_REQUIRES = [
     "awkward>=1.8",
     "colorlog>=6.6",
+    "configupdater",
     "dill>=0.3",
     "matplotlib>=3.5",
     "numpy>=1.21",
@@ -25,6 +26,7 @@ INSTALL_REQUIRES = [
     "sqlalchemy>=1.4",
     "timer>=0.2",
     "tqdm>=4.64",
+    "uncertainties",
     "wandb>=0.12",
 ]
 
@@ -78,7 +80,7 @@ CLASSIFIERS = [
 
 setup(
     name="graphnet",
-    version=versioneer.get_version(),
+    version=versioneer.get_version(),  # type: ignore[no-untyped-call]
     description=(
         "A common library for using graph neural networks (GNNs) in netrino "
         "telescope experiments."
@@ -86,7 +88,7 @@ setup(
     license="Apache 2.0",
     author="The GraphNeT development team",
     url="https://github.com/graphnet-team/graphnet",
-    cmdclass=versioneer.get_cmdclass(),
+    cmdclass=versioneer.get_cmdclass(),  # type: ignore[no-untyped-call]
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     setup_requires=SETUP_REQUIRES,
