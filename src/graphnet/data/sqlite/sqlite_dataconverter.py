@@ -283,7 +283,7 @@ def construct_dataframe(extraction: Dict[str, Any]) -> pd.DataFrame:
 
 def is_pulsemap_check(table_name: str) -> bool:
     """Check whether `table_name` corresponds to a pulsemap."""
-    if "retro" in table_name.lower() or "truth" in table_name.lower():
-        return False
-    else:  # Could have to include the lower case word 'pulse'?
+    if "pulse" in table_name.lower():
         return True
+    else:
+        return False
