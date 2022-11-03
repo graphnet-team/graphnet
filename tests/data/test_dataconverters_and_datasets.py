@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from graphnet.data.constants import FEATURES, TRUTH
+from graphnet.data.dataconverter import DataConverter
 from graphnet.data.extractors import (
     I3FeatureExtractorIceCube86,
     I3TruthExtractor,
@@ -81,10 +82,11 @@ def test_dataconverter(
         workers=1,
     )
 
+    converter: DataConverter
     if backend == "sqlite":
-        converter = SQLiteDataConverter(**opt)
+        converter = SQLiteDataConverter(**opt)  # type: ignore[arg-type]
     elif backend == "parquet":
-        converter = ParquetDataConverter(**opt)
+        converter = ParquetDataConverter(**opt)  # type: ignore[arg-type]
     else:
         assert False, "Shouldn't reach here"
 
