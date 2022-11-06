@@ -5,7 +5,7 @@ handles per-event weights, etc.
 """
 
 from abc import abstractmethod
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 
 try:
@@ -128,7 +128,7 @@ class CrossEntropyLoss(LossFunction):
     """
 
     @save_config
-    def __init__(self, options, *args, **kwargs):
+    def __init__(self, options: Union[int,list,dict], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._options = options
 
@@ -139,12 +139,16 @@ class CrossEntropyLoss(LossFunction):
             assert torch.all(target < nb_classes)
             assert target.dtype in [torch.int32, torch.int64]
             target_integer = target
-        elif isinstance(self._options, list):  # (1,12,13,..,N) -> (0,1,2,..,N)
+        elif isinstance(self._options, list):
             nb_classes = len(self._options)
+            # list of classes; (1,12,13,..,N) -> (0,1,2,..,N)
             target_integer = torch.tensor(target)
-        elif isinstance(self._options, dict):  # (1,-1,12,-12,..,N,-N) -> (0,1,..,N)
+        elif isinstance(self._options, dict):
             nb_classes = len(self._options)
-            target_integer = torch.tensor([self._options[int(value)] for value in target])
+            # encodes the target according dict rules; # (1,-1,12,-12,..,N,-N) -> (0,1,..,N)
+            target_integer = torch.tensor(
+                [self._options[int(value)] for value in target]
+            )
         else:
             self.error("Type (type(self._options)) not supported")
 
