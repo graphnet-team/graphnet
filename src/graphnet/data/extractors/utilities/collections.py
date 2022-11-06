@@ -1,4 +1,4 @@
-"""Utility methods to manipulate python-type collections of data."""
+"""Utility methods for manipulating python-type collections of data."""
 
 # Utility function(s)
 import json
@@ -12,7 +12,18 @@ def flatten_nested_dictionary(
     parent_key: str = "",
     separator: str = "__",
 ) -> Union[Dict, Any]:
+    """Flatten a nested dictionary to a dictionary with non-dict values.
 
+    Example:
+        d = {"a": {"b": 1}, "c": 2}
+        flatten_nested_dictionary(d)
+        >>> {"a__b": 1, "c": 2}
+
+    Args:
+        obj: The object that should be flattened, if applicable.
+        parent_key: The combined name of the parent key(s) containing `obj`.
+        separator: The string used to concatenate nester parent keys.
+    """
     # Dict-like
     if isinstance(obj, dict):
         items: List[Tuple[str, Any]] = []
@@ -57,7 +68,7 @@ def serialise(obj: Union[Dict, Any]) -> Union[Dict, Any]:
 def transpose_list_of_dicts(
     array: List[Dict[str, Any]]
 ) -> Dict[str, List[Any]]:
-
+    """Transpose a list of dicts to a dict of lists."""
     if len(array) == 0:
         return {}
 

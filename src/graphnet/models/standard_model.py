@@ -1,17 +1,17 @@
-import os
-from typing import List, Optional, Union
+"""Standard model class(es)."""
 
-import dill
+from typing import Any, Dict, List, Optional, Union
+
 import torch
 from torch import Tensor
 from torch.nn import ModuleList
 from torch.optim import Adam
 from torch_geometric.data import Data
-from graphnet.models.coarsening import Coarsening
 
+from graphnet.models.coarsening import Coarsening
+from graphnet.models.config import save_config
 from graphnet.models.detector.detector import Detector
 from graphnet.models.gnn.gnn import GNN
-from graphnet.models.config import save_config
 from graphnet.models.model import Model
 from graphnet.models.task import Task
 
@@ -31,13 +31,13 @@ class StandardModel(Model):
         gnn: GNN,
         tasks: Union[Task, List[Task]],
         coarsening: Optional[Coarsening] = None,
-        optimizer_class=Adam,
-        optimizer_kwargs=None,
-        scheduler_class=None,
-        scheduler_kwargs=None,
-        scheduler_config=None,
-    ):
-
+        optimizer_class: type = Adam,
+        optimizer_kwargs: Optional[Dict] = None,
+        scheduler_class: Optional[type] = None,
+        scheduler_kwargs: Optional[Dict] = None,
+        scheduler_config: Optional[Dict] = None,
+    ) -> None:
+        """Construct `StandardModel`."""
         # Base class constructor
         super().__init__()
 
@@ -61,7 +61,8 @@ class StandardModel(Model):
         self._scheduler_kwargs = scheduler_kwargs or dict()
         self._scheduler_config = scheduler_config or dict()
 
-    def configure_optimizers(self):
+    def configure_optimizers(self) -> Dict[str, Any]:
+        """Configure the model's optimizer(s)."""
         optimizer = self._optimizer_class(
             self.parameters(), **self._optimizer_kwargs
         )
@@ -83,7 +84,7 @@ class StandardModel(Model):
         return config
 
     def forward(self, data: Data) -> List[Union[Tensor, Data]]:
-        """Common forward pass, chaining model components."""
+        """Forward pass, chaining model components."""
         if self._coarsening:
             data = self._coarsening(data)
         data = self._detector(data)
@@ -91,12 +92,18 @@ class StandardModel(Model):
         preds = [task(x) for task in self._tasks]
         return preds
 
-    def shared_step(self, batch, batch_idx):
+    def shared_step(self, batch: Data, batch_idx: int) -> Tensor:
+        """Perform shared step.
+
+        Applies the forward pass and the following loss calculation, shared
+        between the training and validation step.
+        """
         preds = self(batch)
         loss = self.compute_loss(preds, batch)
         return loss
 
-    def training_step(self, train_batch, batch_idx):
+    def training_step(self, train_batch: Data, batch_idx: int) -> Tensor:
+        """Perform training step."""
         loss = self.shared_step(train_batch, batch_idx)
         self.log(
             "train_loss",
@@ -108,7 +115,8 @@ class StandardModel(Model):
         )
         return loss
 
-    def validation_step(self, val_batch, batch_idx):
+    def validation_step(self, val_batch: Data, batch_idx: int) -> Tensor:
+        """Perform validation step."""
         loss = self.shared_step(val_batch, batch_idx)
         self.log(
             "val_loss",
@@ -120,14 +128,16 @@ class StandardModel(Model):
         )
         return loss
 
-    def compute_loss(self, preds: Tensor, data: Data, verbose=False) -> Tensor:
-        """Computes and sums losses across tasks."""
+    def compute_loss(
+        self, preds: Tensor, data: Data, verbose: bool = False
+    ) -> Tensor:
+        """Compute and sum losses across tasks."""
         losses = [
             task.compute_loss(pred, data)
             for task, pred in zip(self._tasks, preds)
         ]
         if verbose:
-            self.info(losses)
+            self.info(f"{losses}")
         assert all(
             loss.dim() == 0 for loss in losses
         ), "Please reduce loss for each task separately"
@@ -136,14 +146,14 @@ class StandardModel(Model):
     def _get_batch_size(self, data: Data) -> int:
         return torch.numel(torch.unique(data.batch))
 
-    def inference(self):
-        """Sets model to inference mode."""
+    def inference(self) -> None:
+        """Activate inference mode."""
         for task in self._tasks:
             task.inference()
 
-    def train(self, mode=True):
+    def train(self, mode: bool = True) -> "Model":
+        """Deactivate inference mode."""
         super().train(mode)
-        """Deactivates inference mode."""
         if mode:
             for task in self._tasks:
                 task.train_eval()

@@ -1,24 +1,26 @@
-from collections import OrderedDict, Iterable
-import json
-import numpy as np
+"""DataConverter for the SQLite backend."""
+
+from collections import OrderedDict
 import os
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 import pandas as pd
 import sqlalchemy
 import sqlite3
 from tqdm import tqdm
-from typing import Any, Dict, List, MutableMapping, Optional, Tuple, Union
 
-from graphnet.data.dataconverter import DataConverter
+from graphnet.data.dataconverter import DataConverter  # type: ignore[attr-defined]
 from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
 
 
 class SQLiteDataConverter(DataConverter):
+    """Class for converting I3-files to SQLite format."""
 
     # Class variables
     file_suffix = "db"
 
     # Abstract method implementation(s)
-    def save_data(self, data: List[OrderedDict], output_file: str):
+    def save_data(self, data: List[OrderedDict], output_file: str) -> None:
         """Save data to SQLite database."""
         # Check(s)
         if os.path.exists(output_file):
@@ -27,15 +29,17 @@ class SQLiteDataConverter(DataConverter):
             )
 
         # Concatenate data
-        dataframe = OrderedDict()
+        assert len(data)
+        dataframe = OrderedDict([(key, pd.DataFrame()) for key in data[0]])
         for data_dict in data:
-            for key, data in data_dict.items():
-                df = construct_dataframe(data)
+            for key, data_values in data_dict.items():
+                df = construct_dataframe(data_values)
 
                 if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
                     # only include data_dict in temp. databases if at least one pulsemap is non-empty,
                     # and the current extractor (df) is also non-empty (also since truth is always non-empty)
-                    if key in dataframe:
+                    if len(dataframe[key]):
+                        assert isinstance(dataframe[key], pd.DataFrame)
                         dataframe[key] = dataframe[key].append(
                             df, ignore_index=True, sort=True
                         )
@@ -57,7 +61,15 @@ class SQLiteDataConverter(DataConverter):
 
     def merge_files(
         self, output_file: str, input_files: Optional[List[str]] = None
-    ):
+    ) -> None:
+        """SQLite-specific method for merging output files/databases.
+
+        Args:
+            output_file: Name of the output file containing the merged results.
+            input_files: Intermediate files/databases to be merged, according
+                to the specific implementation. Default to None, meaning that
+                all files/databases output by the current instance are merged.
+        """
         if input_files is None:
             self.info("Merging files output by current instance.")
             input_files = self._output_files
@@ -94,7 +106,9 @@ class SQLiteDataConverter(DataConverter):
             self.warning("No temporary database files found!")
 
     # Internal methods
-    def _extract_table_names(self, db: Union[str, List[str]]) -> Tuple[str]:
+    def _extract_table_names(
+        self, db: Union[str, List[str]]
+    ) -> Tuple[str, ...]:
         """Get the names of all tables in database `db`."""
         if isinstance(db, list):
             results = [self._extract_table_names(path) for path in db]
@@ -116,7 +130,9 @@ class SQLiteDataConverter(DataConverter):
 
         return table_names
 
-    def _extract_column_names(self, db_paths, table_name):
+    def _extract_column_names(
+        self, db_paths: List[str], table_name: str
+    ) -> List[str]:
         for db_path in db_paths:
             with sqlite3.connect(db_path) as con:
                 query = f"select * from {table_name} limit 1"
@@ -125,24 +141,27 @@ class SQLiteDataConverter(DataConverter):
                 return columns
         return []
 
-    def any_pulsemap_is_non_empty(self, data_dict: OrderedDict) -> bool:
+    def any_pulsemap_is_non_empty(self, data_dict: Dict[str, Dict]) -> bool:
         """Check whether there are non-empty pulsemaps extracted from P frame.
 
         Takes in the data extracted from the P frame, then retrieves the
-        values, if there are any, from the pulsemap key(s)
-        (e.g SplitInIcePulses). If at least one of the pulsemaps is non-empty
-        then return true. If no pulsemaps exist, i.e., if no
-        `I3FeatureExtractor` is called e.g. because `I3GenericExtractor` is
-        used instead, always return True.
+        values, if there are any, from the pulsemap key(s) (e.g
+        SplitInIcePulses). If at least one of the pulsemaps is non-empty then
+        return true. If no pulsemaps exist, i.e., if no `I3FeatureExtractor` is
+        called e.g. because `I3GenericExtractor` is used instead, always return
+        True.
         """
         if len(self._pulsemaps) == 0:
             return True
 
-        pulsemap_dicts = map(data_dict.get, self._pulsemaps)
+        pulsemap_dicts = [data_dict[pulsemap] for pulsemap in self._pulsemaps]
         return any(d["dom_x"] for d in pulsemap_dicts)
 
-    def _attach_index(self, database: str, table_name: str):
-        """Attaches the table index. Important for query times!"""
+    def _attach_index(self, database: str, table_name: str) -> None:
+        """Attach the table index.
+
+        Important for query times!
+        """
         code = (
             "PRAGMA foreign_keys=off;\n"
             "BEGIN TRANSACTION;\n"
@@ -152,14 +171,20 @@ class SQLiteDataConverter(DataConverter):
         )
         run_sql_code(database, code)
 
-    def _create_table(self, database, table_name, columns, is_pulse_map=False):
-        """Creates a table.
+    def _create_table(
+        self,
+        database: str,
+        table_name: str,
+        columns: List[str],
+        is_pulse_map: bool = False,
+    ) -> None:
+        """Create a table.
 
         Args:
-            database (str): path to the database
-            table_name (str): name of the table
-            columns (str): the names of the columns of the table
-            is_pulse_map (bool, optional): whether or not this is a pulse map table. Defaults to False.
+            database: Path to the database.
+            table_name: Name of the table.
+            columns: The names of the columns of the table.
+            is_pulse_map: Whether or not this is a pulse map table.
         """
         query_columns = list()
         for column in columns:
@@ -171,11 +196,11 @@ class SQLiteDataConverter(DataConverter):
             else:
                 type_ = "FLOAT"
             query_columns.append(f"{column} {type_}")
-        query_columns = ", ".join(query_columns)
+        query_columns_string = ", ".join(query_columns)
 
         code = (
             "PRAGMA foreign_keys=off;\n"
-            f"CREATE TABLE {table_name} ({query_columns});\n"
+            f"CREATE TABLE {table_name} ({query_columns_string});\n"
             "PRAGMA foreign_keys=on;"
         )
         run_sql_code(database, code)
@@ -186,24 +211,25 @@ class SQLiteDataConverter(DataConverter):
             self._attach_index(database, table_name)
         return
 
-    def _submit_to_database(self, database: str, key: str, data: pd.DataFrame):
-        """Submits data to the database with specified key."""
+    def _submit_to_database(
+        self, database: str, key: str, data: pd.DataFrame
+    ) -> None:
+        """Submit data to the database with specified key."""
         if len(data) == 0:
-            if self._verbose:
-                self.info(f"No data provided for {key}.")
+            self.info(f"No data provided for {key}.")
             return
         engine = sqlalchemy.create_engine("sqlite:///" + database)
         data.to_sql(key, engine, index=False, if_exists="append")
         engine.dispose()
 
     def _extract_everything(self, db: str) -> "OrderedDict[str, pd.DataFrame]":
-        """Extracts everything from the temporary database `db`.
+        """Extract everything from the temporary database `db`.
 
         Args:
-            db (str): Path to temporary database
+            db: Path to temporary database.
 
         Returns:
-            results (dict): Contains the data for each extracted table
+            Dictionary containing the data for each extracted table.
         """
         results = OrderedDict()
         table_names = self._extract_table_names(db)
@@ -221,12 +247,12 @@ class SQLiteDataConverter(DataConverter):
         self,
         output_file: str,
         input_files: List[str],
-    ):
-        """Merges the temporary databases.
+    ) -> None:
+        """Merge the temporary databases.
 
         Args:
-            output_file (str): path to the final database
-            input_files (list): list of names of temporary databases
+            output_file: path to the final database
+            input_files: list of names of temporary databases
         """
         for input_file in tqdm(input_files, colour="green"):
             results = self._extract_everything(input_file)
@@ -236,7 +262,7 @@ class SQLiteDataConverter(DataConverter):
 
 # Implementation-specific utility function(s)
 def construct_dataframe(extraction: Dict[str, Any]) -> pd.DataFrame:
-    """Converts extraction to pandas.DataFrame.
+    """Convert extraction to pandas.DataFrame.
 
     Args:
         extraction: Dictionary with the extracted data.
@@ -255,8 +281,8 @@ def construct_dataframe(extraction: Dict[str, Any]) -> pd.DataFrame:
 
 
 def is_pulsemap_check(table_name: str) -> bool:
-    """Check whether `table_name` corresponds to a pulsemap, and not a truth or RETRO table."""
-    if "retro" in table_name.lower() or "truth" in table_name.lower():
-        return False
-    else:  # Could have to include the lower case word 'pulse'?
+    """Check whether `table_name` corresponds to a pulsemap."""
+    if "pulse" in table_name.lower():
         return True
+    else:
+        return False

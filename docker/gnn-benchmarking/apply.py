@@ -1,7 +1,10 @@
+"""Script for applying GraphNeTModule in IceTray chain."""
+
 import argparse
 from glob import glob
 from os import makedirs
 from os.path import join, dirname
+from typing import List
 
 from I3Tray import I3Tray  # pyright: reportMissingImports=false
 
@@ -13,8 +16,10 @@ MODEL_PATH = "model.pth"
 
 
 # Main function definition
-def main(input_files, output_file, key, events_max):
-
+def main(
+    input_files: List[str], output_file: str, key: str, events_max: int
+) -> None:
+    """Apply GraphNeTModule in I3Tray."""
     # Make sure output directory exists
     makedirs(dirname(output_file), exist_ok=True)
 
@@ -47,8 +52,8 @@ def main(input_files, output_file, key, events_max):
 
 # Main function call
 if __name__ == "__main__":
-    """
-    The main function must get an input folder and output folder!
+    """The main function must get an input folder and output folder!
+
     Args:
         input_folder (str): The input folder where i3 files of a given dataset are located.
         output_folder (str): The output folder where processed i3 files will be saved.

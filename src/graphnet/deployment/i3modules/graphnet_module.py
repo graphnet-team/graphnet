@@ -1,6 +1,7 @@
-"""Classes inheriting from I3Module, for use in deploying GNN models to icetray."""
+"""Class(es) for deploying GraphNeT models in icetray as I3Modules."""
 
 import os.path
+from typing import TYPE_CHECKING, Any, List, Union
 
 import numpy as np
 import torch
@@ -13,12 +14,10 @@ from graphnet.data.extractors import (
 )
 from graphnet.data.constants import FEATURES
 from graphnet.models import StandardModel
+from graphnet.models.model import Model
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import get_logger
 
-logger = get_logger()
-
-if has_icecube_package():
+if has_icecube_package() or TYPE_CHECKING:
     from icecube.icetray import (
         I3Module,
         I3Frame,
@@ -32,16 +31,16 @@ class GraphNeTModuleBase(I3Module):
     """Base I3Module for running graphnet models in I3Tray chains."""
 
     # Class variables
-    FEATURES = None
-    I3FEATUREEXTRACTOR_CLASS = None
+    FEATURES: List[str]
+    I3FEATUREEXTRACTOR_CLASS: type
     DTYPES = {
         "float16": torch.float16,
         "float32": torch.float32,
         "float64": torch.float64,
     }
 
-    def __init__(self, context):
-
+    def __init__(self, context: Any) -> None:
+        """Construct `GraphNeTModuleBase`."""
         # Check
         if self.FEATURES is None:
             raise Exception("Please use an experiment-specific I3Module.")
@@ -57,19 +56,18 @@ class GraphNeTModuleBase(I3Module):
         self.AddParameter("dtype", "doc_string__dtype", "float32")
 
         # Standard member variables
-        self.keys = None
-        self.model = None
-        self.dtype = None
+        self.keys: Union[str, List[str]]
+        self.model: Model
+        self.dtype: torch.dtype
 
-    def Configure(self):  # pylint: disable=invalid-name
+    def Configure(self) -> None:  # pylint: disable=invalid-name
         """Configure I3Module based on keyword parameters."""
-
         # Extract parameters
-        keys = self.GetParameter("keys")
-        gcd_file = self.GetParameter("gcd_file")
-        model = self.GetParameter("model")
-        pulsemaps = self.GetParameter("pulsemaps")
-        dtype = self.GetParameter("dtype")
+        keys: Union[str, List[str]] = self.GetParameter("keys")
+        gcd_file: str = self.GetParameter("gcd_file")
+        model: Union[str, Model] = self.GetParameter("model")
+        pulsemaps: Union[str, List[str]] = self.GetParameter("pulsemaps")
+        dtype: str = self.GetParameter("dtype")
 
         # Check(s)
         assert keys is not None
@@ -103,11 +101,12 @@ class GraphNeTModuleBase(I3Module):
         # predictions are applied.
         self.model.inference()
 
-    def Physics(self, frame: I3Frame):  # pylint: disable=invalid-name
+    def Physics(
+        self, frame: I3Frame
+    ) -> None:  # py-l-i-n-t-:- -d-i-s-able=invalid-name
         """Process Physics I3Frame and write predictions."""
-
         # Extract features
-        features = self.extract_feature_array_from_frame(frame)
+        features = self._extract_feature_array_from_frame(frame)
 
         # Prepare graph data
         n_pulses = torch.tensor([features.shape[0]], dtype=torch.int32)
@@ -132,14 +131,14 @@ class GraphNeTModuleBase(I3Module):
                 predictions
             )  # @TODO: Special case for single task
         except:  # noqa: E722
-            logger.warning(data)
+            print("data:", data)
             raise
 
         # Write predictions to frame
-        frame = self.write_predictions_to_frame(frame, predictions)
+        frame = self._write_predictions_to_frame(frame, predictions)
         self.PushFrame(frame)
 
-    def extract_feature_array_from_frame(self, frame: I3Frame) -> np.array:
+    def _extract_feature_array_from_frame(self, frame: I3Frame) -> np.array:
         features = None
         for i3extractor in self.i3extractors:
             feature_dict = i3extractor(frame)
@@ -154,7 +153,7 @@ class GraphNeTModuleBase(I3Module):
                 )
         return features
 
-    def write_predictions_to_frame(
+    def _write_predictions_to_frame(
         self, frame: I3Frame, prediction: np.array
     ) -> I3Frame:
         nb_preds = prediction.shape[0]
@@ -175,21 +174,21 @@ class GraphNeTModuleBase(I3Module):
 
 
 class GraphNeTModuleIceCube86(GraphNeTModuleBase):
-    """I3Module for running graphnet models on IceCube-86 data in I3Tray chains."""
+    """Module for running GraphNeT models on standard IceCube-86 data."""
 
     FEATURES = FEATURES.ICECUBE86
     I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCube86
 
 
 class GraphNeTModuleIceCubeDeepCore(GraphNeTModuleBase):
-    """I3Module for running graphnet models on IceCube DeepCore data in I3Tray chains."""
+    """Module for running GraphNeT models on standard IceCube-DeepCore data."""
 
     FEATURES = FEATURES.DEEPCORE
     I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCubeDeepCore
 
 
 class GraphNeTModuleIceCubeUpgrade(GraphNeTModuleBase):
-    """I3Module for running graphnet models on IceCube Upgrade data in I3Tray chains."""
+    """Module for running GraphNeT models on standard IceCube-Upgrade data."""
 
     FEATURES = FEATURES.UPGRADE
     I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCubeUpgrade

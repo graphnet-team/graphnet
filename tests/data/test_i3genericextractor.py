@@ -1,4 +1,5 @@
-"""Unit tests for I3GenericExtractor."""
+"""Unit tests for I3GenericExtractor class."""
+
 import os
 
 import numpy as np
@@ -34,9 +35,8 @@ def get_file_path(backend: str, test_data_dir: str) -> str:
 
 
 # Unit test(s)
-def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR):
+def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR) -> None:
     """Test the implementation of `I3GenericExtractor`."""
-
     # Constants(s)
     mc_tree = "I3MCTree"
     pulse_series = "SRTInIcePulses"

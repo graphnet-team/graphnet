@@ -1,4 +1,9 @@
+"""Example of training Model for direction reconstruction."""
+
+
 import os
+from typing import Any, Dict
+
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
@@ -11,8 +16,9 @@ from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
 from graphnet.models import StandardModel
+from graphnet.models.coarsening import DOMCoarsening
 from graphnet.models.detector.icecube import IceCubeDeepCore
-from graphnet.models.gnn.dynedge import DynEdge, DOMCoarsenedDynEdge
+from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import (
     ZenithReconstructionWithKappa,
@@ -48,7 +54,8 @@ wandb_logger = WandbLogger(
 )
 
 
-def train(config):
+def train(config: Dict[str, Any]) -> None:
+    """Train model with configuration given by `config`."""
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
 
@@ -77,13 +84,13 @@ def train(config):
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
     if config["node_pooling"]:
-        gnn = DOMCoarsenedDynEdge(
-            nb_inputs=detector.nb_outputs,
-        )
+        coarsening = DOMCoarsening()
     else:
-        gnn = DynEdge(
-            nb_inputs=detector.nb_outputs,
-        )
+        coarsening = None
+    gnn = DynEdge(
+        nb_inputs=detector.nb_outputs,
+        global_pooling_schemes=["min", "max", "mean", "sum"],
+    )
     if config["target"] == "zenith":
         task = ZenithReconstructionWithKappa(
             hidden_size=gnn.nb_outputs,
@@ -99,6 +106,7 @@ def train(config):
 
     model = StandardModel(
         detector=detector,
+        coarsening=coarsening,
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,
@@ -155,8 +163,8 @@ def train(config):
     )
 
 
-# Main function definition
-def main():
+def main() -> None:
+    """Run example."""
     for target in ["zenith", "azimuth"]:
         archive = "/remote/ceph/user/o/oersoe/high_energy_example/results"
         run_name = "dynedge_{}_example".format(target)
@@ -180,6 +188,5 @@ def main():
         train(config)
 
 
-# Main function call
 if __name__ == "__main__":
     main()

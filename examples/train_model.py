@@ -1,4 +1,7 @@
+"""Example of training Model."""
+
 import os
+from typing import cast
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
@@ -46,9 +49,8 @@ wandb_logger = WandbLogger(
 )
 
 
-# Main function definition
-def main():
-
+def main() -> None:
+    """Run example."""
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
 
@@ -71,20 +73,22 @@ def main():
     wandb_logger.experiment.config.update(config)
 
     # Common variables
-    train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
+    train_selection, _ = get_equal_proportion_neutrino_indices(
+        cast(str, config["db"])
+    )
     train_selection = train_selection[0:50000]
 
     (
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
-        config["db"],
+        cast(str, config["db"]),
         train_selection,
-        config["pulsemap"],
+        cast(str, config["pulsemap"]),
         features,
         truth,
-        batch_size=config["batch_size"],
-        num_workers=config["num_workers"],
+        batch_size=cast(int, config["batch_size"]),
+        num_workers=cast(int, config["num_workers"]),
     )
 
     # Building model
@@ -112,7 +116,7 @@ def main():
             "milestones": [
                 0,
                 len(training_dataloader) / 2,
-                len(training_dataloader) * config["n_epochs"],
+                len(training_dataloader) * cast(int, config["n_epochs"]),
             ],
             "factors": [1e-2, 1, 1e-02],
         },
@@ -150,13 +154,12 @@ def main():
         trainer,
         model,
         validation_dataloader,
-        [config["target"] + "_pred"],
-        additional_attributes=[config["target"], "event_no"],
+        [cast(str, config["target"]) + "_pred"],
+        additional_attributes=[cast(str, config["target"]), "event_no"],
     )
 
-    save_results(config["db"], run_name, results, archive, model)
+    save_results(cast(str, config["db"]), run_name, results, archive, model)
 
 
-# Main function call
 if __name__ == "__main__":
     main()

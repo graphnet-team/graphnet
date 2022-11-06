@@ -1,5 +1,6 @@
-import subprocess
-import sys
+# type: ignore[no-untyped-call]
+"""Setup script for the GraphNeT package."""
+
 from setuptools import setup, find_packages
 import versioneer
 
@@ -11,6 +12,7 @@ SETUP_REQUIRES = [
 INSTALL_REQUIRES = [
     "awkward>=1.8",
     "colorlog>=6.6",
+    "configupdater",
     "dill>=0.3",
     "matplotlib>=3.5",
     "numpy>=1.21",
@@ -30,7 +32,9 @@ EXTRAS_REQUIRE = {
     "develop": [
         "black",
         "coverage",
+        "docformatter",
         "MarkupSafe<=2.1",
+        "mypy",
         "pre-commit",
         "pydocstyle",
         "pylint",
