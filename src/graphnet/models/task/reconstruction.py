@@ -3,11 +3,10 @@
 import numpy as np
 import torch
 from torch import Tensor
-from torch.nn import Softmax
 
 from graphnet.models.task import Task
 from graphnet.utilities.maths import eps_like
-from graphnet.models.config import save_config
+
 
 class AzimuthReconstructionWithKappa(Task):
     """Reconstructs azimuthal angle and associated kappa (1/var)."""
@@ -141,52 +140,6 @@ class PositionReconstruction(Task):
 
 class TimeReconstruction(Task):
     """Reconstructs time."""
-
-
-class ClassificationTask(Task):
-    # Requires the same number of features as the number of classes being predicted
-    @save_config
-    def __init__(self, nb_classes, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._nb_classes = nb_classes
-        self._softmax = Softmax()
-    
-    @property
-    def nb_inputs(self):
-        """Number of outputs from Multiclass Classification."""
-        return self._nb_classes
-
-    def _forward(self, x):
-        """Transform latent features into probabilities."""
-        return self._softmax(x)
-
-
-class MulticlassClassificationTask(Task):
-    # Requires the same number of features as the number of classes being predicted
-    @save_config
-    def __init__(self, nb_inputs, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
-        self._nb_inputs = nb_inputs
-        self._softmax = Softmax()
-
-    @property
-    def nb_inputs(self):
-        """Number of outputs from Multiclass Classification."""
-        return self._nb_inputs
-
-    def _forward(self, x):
-        """Transform latent features into probabilities."""
-        return self._softmax(x)
-
-
-class BinaryClassificationTask(Task):
-    # requires one feature: probability of being neutrino?
-    nb_inputs = 1
-
-    def _forward(self, x: Tensor) -> Tensor:
-
-        # Leave as it is
-        return x
 
 
 class InelasticityReconstruction(Task):
