@@ -1,5 +1,5 @@
 # This is a simple action to generate paper draft PDFs.
-name: paper
+name: Paper
 
 on:
   push:
@@ -10,8 +10,8 @@ on:
 
 jobs:
   paper-2022-joss:
+    name: Compile draft PDF
     runs-on: ubuntu-latest
-    name: paper-draft-pdf
     steps:
       - name: Checkout
         uses: actions/checkout@v2

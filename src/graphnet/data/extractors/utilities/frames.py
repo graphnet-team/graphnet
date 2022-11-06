@@ -1,9 +1,8 @@
-from typing import Optional, Tuple
+"""Utility methods for working with I3Frames."""
+
+from typing import Any, Optional, Tuple
 
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import get_logger
-
-logger = get_logger()
 
 if has_icecube_package():
     from icecube import (
@@ -13,10 +12,12 @@ if has_icecube_package():
 
 
 def frame_is_montecarlo(frame: "icetray.I3Frame") -> bool:
+    """Check whether `frame` is from Monte Carlo simulation."""
     return ("MCInIcePrimary" in frame) or ("I3MCTree" in frame)
 
 
 def frame_is_noise(frame: "icetray.I3Frame") -> bool:
+    """Check whether `frame` is from noise."""
     try:
         frame["I3MCTree"][0].energy
         return False
@@ -32,15 +33,16 @@ def get_om_keys_and_pulseseries(
     frame: "icetray.I3Frame",
     pulseseries: str,
     calibration: Optional["dataclasses.I3Calibration"] = None,
-) -> Tuple:
-    """Gets the indicies for the gcd_dict and the pulse series
+) -> Tuple[Any, Any]:
+    """Get the indicies for the gcd_dict and the pulse series.
 
     Args:
-        frame (i3 physics frame): i3 physics frame
+        frame: Physics (P) I3-frame from which to extract OM keys and pulse
+            series
 
     Returns:
-        om_keys (index): the indicies for the gcd_dict
-        data    (??)   : the pulse series
+        Tuple containing the OM keys/indicesfor the GCD dictionary, and the
+        pulse series data.
     """
     try:
         data = frame[pulseseries]

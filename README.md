@@ -95,9 +95,9 @@ These are categorised as either "Reconstruction challenges" that are considered 
 | --- | --- | --- | --- |
 | Low-energy neutrino classification and reconstruction | Done | Rasmus Ørsøe | https://arxiv.org/abs/2209.03042 |
 | High-energy neutrino classification and reconstruction | Active | Rasmus Ørsøe | |
-| Pulse noise cleaning | Paused | Kaare Iversen (past) | |
+| Pulse noise cleaning | Paused | Rasmus Ørsøe, Kaare Iversen (past), Morten Holm | |
 | (In-)elasticity reconstruction | Paused | Marc Jacquart (past) | |
-| Multi-class event classification |  | | |
+| Multi-class event classification | Active | Morten Holm, Peter Andresen | |
 | Data/MC difference mitigation |  | | |
 | Systematic uncertainty mitigation |  | | |
 

@@ -1,5 +1,6 @@
-# This is a simple workflow to check that all files are black-compliant
-name: black
+# This is a simple workflow to check that all modified files satisfy code
+# quality requirements
+name: Code quality
 
 # Controls when the workflow will run
 on:
@@ -13,12 +14,17 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  black:
+
+  pre-commit:
+    name: Pre-commit - ${{ matrix.hook }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hook: ["black", "flake8", "docformatter", "pydocstyle", "mypy"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install package
         uses: ./.github/actions/install-cpu
-      - name: Run black
+      - name: Run ${{ matrix.hook }}
         run: |
-          black . --check --diff --config black.toml
+          pre-commit run ${{ matrix.hook }} --all-files

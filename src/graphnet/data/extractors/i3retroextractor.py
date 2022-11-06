@@ -1,16 +1,27 @@
+"""I3Extractor class(es) for extracting RETRO reconstruction."""
+
+from typing import TYPE_CHECKING, Any, Dict
+
 from graphnet.data.extractors.i3extractor import I3Extractor
 from graphnet.data.extractors.utilities.frames import (
     frame_is_montecarlo,
     frame_is_noise,
 )
 
+if TYPE_CHECKING:
+    from icecube import icetray  # pyright: reportMissingImports=false
+
 
 class I3RetroExtractor(I3Extractor):
-    def __init__(self, name="retro"):
+    """Class for extracting RETRO reconstruction."""
+
+    def __init__(self, name: str = "retro"):
+        """Construct `I3RetroExtractor`."""
+        # Base class constructor
         super().__init__(name)
 
-    def __call__(self, frame) -> dict:
-        """Extracts RETRO reco. and associated quantities if available."""
+    def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
+        """Extract RETRO reconstruction and associated quantities."""
         output = {}
 
         if self._frame_contains_retro(frame):
@@ -89,14 +100,16 @@ class I3RetroExtractor(I3Extractor):
 
         return output
 
-    def _frame_contains_retro(self, frame):
+    def _frame_contains_retro(self, frame: "icetray.I3Frame") -> bool:
         return "L7_reconstructed_zenith" in frame
 
-    def _frame_contains_classifiers(self, frame):
+    def _frame_contains_classifiers(self, frame: "icetray.I3Frame") -> bool:
         return "L4_MuonClassifier_Data_ProbNu" in frame
 
-    def _try_get_key(self, frame, key, default_value=-1):
-        """Return `key` in `frame` if it exists; otherwise return `default_value."""
+    def _try_get_key(
+        self, frame: "icetray.I3Frame", key: str, default_value: int = -1
+    ) -> Any:
+        """Return `key` in `frame` if it exists; otherwise `default_value`."""
         try:
             return frame[key]
         except KeyError:

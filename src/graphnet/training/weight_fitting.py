@@ -1,9 +1,10 @@
+"""Classes for fitting per-event weights for training."""
+
 import numpy as np
 import pandas as pd
 import sqlite3
-from typing import Optional, List, Callable
+from typing import Any, Optional, List, Callable
 from graphnet.data.sqlite.sqlite_utilities import (
-    run_sql_code,
     save_to_sql,
     create_table,
 )
@@ -12,18 +13,27 @@ from graphnet.utilities.logging import LoggerMixin
 
 
 class WeightFitter(ABC, LoggerMixin):
+    """Produces per-event weights.
+
+    Weights are returned by the public method `fit_weights()`, and the weights
+    can be saved as a table in the database.
+    """
+
     def __init__(
         self,
-        database_path,
-        truth_table="truth",
-        index_column="event_no",
+        database_path: str,
+        truth_table: str = "truth",
+        index_column: str = "event_no",
     ):
+        """Construct `UniformWeightFitter`."""
         self._database_path = database_path
         self._truth_table = truth_table
         self._index_column = index_column
 
-    def _get_truth(self, variable: str, selection: Optional[List[int]] = None):
-        """Return truth `variable`, optionally only for `selection` event nos."""
+    def _get_truth(
+        self, variable: str, selection: Optional[List[int]] = None
+    ) -> pd.DataFrame:
+        """Return truth `variable`, optionally only for `selection` events."""
         if selection is None:
             query = f"select {self._index_column}, {variable} from {self._truth_table}"
         else:
@@ -40,24 +50,31 @@ class WeightFitter(ABC, LoggerMixin):
         add_to_database: bool = False,
         selection: Optional[List[int]] = None,
         transform: Optional[Callable] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> pd.DataFrame:
-        """Fits weights. Calls private _fit_weights method. Output is returned as a pandas.DataFrame and optionally saved to sql.
+        """Fit weights.
+
+        Calls private `_fit_weights` method. Output is returned as a
+        pandas.DataFrame and optionally saved to sql.
 
         Args:
-            bins (np.ndarray): Desired bins used for fitting.
-            variable (str): the name of the variable. Must match corresponding column name in the truth table.
-            weight_name (Optional[str], optional): Name of the weights. Defaults to None.
-            add_to_database (bool, optional): if True, the weights are saved to sql in a table named weight_name. Defaults to False.
-            selection (Optional[List[int]], optional): a list of event_no's. If given, only events in the selection is used for fitting. Defaults to None.
-            transform (Optional[Callable], optional): A callable method that transform the variable into a desired space. E.g. np.log10 for energy. If given, fitting will happen in this space.
-            **kwargs: additional arguments
+            bins: Desired bins used for fitting.
+            variable: the name of the variable. Must match corresponding column
+                name in the truth table.
+            weight_name: Name of the weights.
+            add_to_database: If True, the weights are saved to sql in a table
+                named weight_name.
+            selection: a list of event_no's. If given, only events in the
+                selection is used for fitting.
+            transform: A callable method that transform the variable into a
+                desired space. E.g. np.log10 for energy. If given, fitting will
+                happen in this space.
+            **kwargs: Additional arguments passed to `_fit_weights`.
 
         Returns:
-            pd.DataFrame: a pandas.DataFrame that contains weights, event_nos
+            DataFrame that contains weights, event_nos.
         """
-
-        # member_variables
+        # Member variables
         self._variable = variable
         self._add_to_database = add_to_database
         self._selection = selection
@@ -80,25 +97,25 @@ class WeightFitter(ABC, LoggerMixin):
         return weights.sort_values(self._index_column).reset_index(drop=True)
 
     @abstractmethod
-    def _fit_weights(self, truth, **kwargs) -> pd.DataFrame:
-        return
+    def _fit_weights(self, truth: pd.DataFrame) -> pd.DataFrame:
+        pass
 
     @abstractmethod
-    def _generate_weight_name(self):
-        return
+    def _generate_weight_name(self) -> str:
+        pass
 
 
 class Uniform(WeightFitter):
-    """Produces per-event weights making fitted variable distribution uniform."""
+    """Produces per-event weights making variable distribution uniform."""
 
     def _fit_weights(self, truth: pd.DataFrame) -> pd.DataFrame:
-        """Produces per-event weights making fitted variable distribution uniform.
+        """Fit per-event weights.
 
         Args:
-            truth (pd.DataFrame): a pandas.DataFrame containing the truth information.
+            truth: DataFrame containing the truth information.
 
         Returns:
-            pd.DataFrame: The fitted weights.
+            The fitted weights.
         """
         # Histogram `truth_values`
         bin_counts, _ = np.histogram(truth[self._variable], bins=self._bins)
@@ -114,25 +131,32 @@ class Uniform(WeightFitter):
         truth[self._weight_name] = sample_weights
         return truth.sort_values("event_no").reset_index(drop=True)
 
-    def _generate_weight_name(self):
+    def _generate_weight_name(self) -> str:
         return self._variable + "_uniform_weight"
 
 
 class BjoernLow(WeightFitter):
-    """Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve."""
+    """Produces per-event weights.
 
-    def _fit_weights(
+    Events below x_low are weighted to be uniform, whereas events above x_low
+    are weighted to follow a 1/(1+a*(x_low -x)) curve.
+    """
+
+    def _fit_weights(  # type: ignore[override]
         self, truth: pd.DataFrame, x_low: float, alpha: float = 0.05
     ) -> pd.DataFrame:
-        """Produces pr. event weights. Events below x_low are weighted to be uniform, whereas events above x_low are weighted to follow a 1/(1+a*(x_low -x)) curve.
+        """Fit per-event weights.
 
         Args:
-            truth (pd.DataFrame): A pandas.DataFrame containing the truth information.
-            x_low (float): The cut-off for the truth variable. Values at or below x_low will be weighted to be uniform. Values above will follow a 1/(1+a*(x_low -x)) curve
-            alpha (float, optional): A scalar factor that controls how fast the weights above x_low approaches zero. Larger means faster. Defaults to 0.05.
+            truth: DataFrame containing the truth information.
+            x_low: The cut-off for the truth variable. Values at or below x_low
+                will be weighted to be uniform. Values above will follow a
+                1/(1+a*(x_low -x)) curve.
+            alpha: A scalar factor that controls how fast the weights above
+                x_low approaches zero. Larger means faster.
 
         Returns:
-            pd.DataFrame: A pandas.DataFrame containing the fitted weights.
+            The fitted weights.
         """
         # Histogram `truth_values`
         bin_counts, _ = np.histogram(truth[self._variable], bins=self._bins)
@@ -167,5 +191,5 @@ class BjoernLow(WeightFitter):
         )
         return truth.sort_values(self._index_column).reset_index(drop=True)
 
-    def _generate_weight_name(self):
+    def _generate_weight_name(self) -> str:
         return self._variable + "_bjoern_low_weight"

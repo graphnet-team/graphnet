@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: GraphNeT
+doi: 10.5281/zenodo.7152630
+authors:
+- family-names: "Søgaard"
+  given-names: "Andreas"
+  orcid: "https://orcid.org/0000-0002-0823-056X"
+- family-names: "F. Ørsøe"
+  given-names: "Rasmus"
+  orcid: "https://orcid.org/0000-0001-8890-4124"
+- family-names: "Bozianu"
+  given-names: "Leon"
+  orcid: "https://orcid.org/0000-0002-1243-9980"
+- family-names: "Holm"
+  given-names: "Morten"
+  orcid: "https://orcid.org/0000-0003-1383-2810"
+- family-names: "C. Petersen"
+  given-names: "Troels"
+  orcid: "https://orcid.org/0000-0003-0221-3037"
+- family-names: "E. Iversen"
+  given-names: "Kaare"
+  orcid: "https://orcid.org/0000-0001-6533-4085"
+- family-names: "Guggenmos"
+  given-names: "Tim"
+- family-names: "Andresen"
+  given-names: "Peter"
+- family-names: "Ha Minh"
+  given-names: "Martin"
+  orcid: "https://orcid.org/0000-0001-7776-4875"
+- family-names: "Eller"
+  given-names: "Philipp"
+  orcid: "https://orcid.org/0000-0001-6354-5209"
+version: 0.2.2
+date-released: 2022-10-06
+url: "https://github.com/graphnet-team/graphnet"
+license: Apache-2.0
+type: software
