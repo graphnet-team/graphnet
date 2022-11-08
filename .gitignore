@@ -142,6 +142,7 @@ wandb/
 checkpoints/
 
 # Data and outputs
+test_data/output/
 **.png
 **.pth
 **.db
