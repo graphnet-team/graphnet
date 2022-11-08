@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 
+import graphnet.constants
 from graphnet.data.extractors import (
     I3FeatureExtractorIceCube86,
     I3TruthExtractor,
@@ -15,23 +16,13 @@ if has_icecube_package():
     from icecube import dataio  # pyright: reportMissingImports=false
 
 # Global variable(s)
-TEST_DATA_DIR = os.path.abspath("./test_data/")
-FILE_NAME = "oscNext_genie_level7_v03.01_pass2.160000.000001"
+TEST_DATA_DIR = os.path.join(
+    graphnet.constants.TEST_DATA_DIR, "i3", "oscNext_genie_level7_v02"
+)
+FILE_NAME = "oscNext_genie_level7_v02_first_5_frames"
 GCD_FILE = (
     "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz"
 )
-
-
-# Utility method(s)
-def get_file_path(backend: str, test_data_dir: str) -> str:
-    """Return the path to the output file for `backend`."""
-    suffix = {
-        "sqlite": ".db",
-        "parquet": ".parquet",
-    }[backend]
-
-    path = os.path.join(test_data_dir, FILE_NAME + suffix)
-    return path
 
 
 # Unit test(s)
@@ -46,7 +37,7 @@ def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR) -> None:
     truth_extractor = I3TruthExtractor()
     feature_extractor = I3FeatureExtractorIceCube86(pulse_series)
 
-    i3_file = os.path.join(test_data_dir, FILE_NAME) + ".i3.zst"
+    i3_file = os.path.join(test_data_dir, FILE_NAME) + ".i3.gz"
     gcd_file = os.path.join(test_data_dir, GCD_FILE)
 
     generic_extractor.set_files(i3_file, gcd_file)
@@ -54,7 +45,7 @@ def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR) -> None:
     feature_extractor.set_files(i3_file, gcd_file)
 
     i3_file_io = dataio.I3File(i3_file, "r")
-    ix_test = 10
+    ix_test = 5
     while i3_file_io.more():
         try:
             frame = i3_file_io.pop_physics()
@@ -65,7 +56,7 @@ def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR) -> None:
         truth_data = truth_extractor(frame)
         feature_data = feature_extractor(frame)
 
-        if ix_test == 10:
+        if ix_test == 5:
             print(list(generic_data[pulse_series].keys()))
             print(list(truth_data.keys()))
             print(list(feature_data.keys()))
