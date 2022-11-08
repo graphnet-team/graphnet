@@ -19,7 +19,7 @@ from graphnet.models import StandardModel
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
-from graphnet.models.task.reconstruction import ClassificationTask
+from graphnet.models.task.classification import ClassificationTask
 from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
 from graphnet.training.utils import (
     get_predictions,
