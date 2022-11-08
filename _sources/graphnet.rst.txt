@@ -14,6 +14,17 @@ Subpackages
    graphnet.training
    graphnet.utilities
 
+Submodules
+----------
+
+graphnet.constants module
+-------------------------
+
+.. automodule:: graphnet.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
