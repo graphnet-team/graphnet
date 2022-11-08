@@ -14,26 +14,6 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
-  check-cobalt-credentials:
-    name: Check Cobalt credentials
-    runs-on: ubuntu-latest
-    outputs:
-      has_credentials: ${{ steps.setvar.outputs.has_credentials }}
-    steps:
-      - name: Check secrets
-        id: setvar
-        run: |
-         if [[ "${{ secrets.PUB_WISC_HOST }}" != "" && \
-               "${{ secrets.PUB_WISC_USERNAME }}" != "" && \
-               "${{ secrets.PUB_WISC_PASSWORD }}" != "" ]]; \
-         then
-           echo "Credentials to access Cobalt found"
-           echo has_credentials="true" >> $GITHUB_OUTPUT
-         else
-           echo "Credentials to access Cobalt not found"
-           echo has_credentials="false" >> $GITHUB_OUTPUT
-         fi
-
   check-codeclimate-credentials:
     name: Check CodeClimate credentials
     runs-on: ubuntu-latest
@@ -54,8 +34,7 @@ jobs:
 
   build-icetray:
     name: Unit tests - IceTray
-    needs: [ check-cobalt-credentials, check-codeclimate-credentials ]
-    if: needs.check-cobalt-credentials.outputs.has_credentials == 'true'
+    needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-latest
     container: icecube/icetray:combo-stable
     steps:
@@ -64,7 +43,7 @@ jobs:
           echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
           echo "PYTHONPATH=/usr/local/icetray/lib:$PYTHONPATH" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=/usr/local/icetray/lib:/usr/local/icetray/cernroot/lib:/usr/local/icetray/lib/tools:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Upgrade packages already installed on icecube/icetray
         run: |
           pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
@@ -73,29 +52,6 @@ jobs:
         uses: ./.github/actions/install-cpu
         with:
           editable: true
-      - name: Retrieve test data
-        run: |
-          # Create test data directory
-          mkdir -p $TEST_DATA_DIR
-
-          # Copy test data
-          apt-get install sshpass
-          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no $USERNAME@$HOST:$SOURCE $TEST_DATA_DIR
-          ls -l $TEST_DATA_DIR
-
-          # Check integrity of test data
-          find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g'
-          MD5CHECK="$(find $TEST_DATA_DIR -name '*.i3.*' -type f -exec md5sum {} \; | sort -k 2 | sed 's@'"$TEST_DATA_DIR"'@@g' | md5sum | cut -d" " -f1)"
-          echo "$MD5CHECK vs. $MD5HASH"
-          if [[ $MD5CHECK == $MD5HASH ]]; then echo "Checksums agree"; else exit 1; fi
-        env:
-          HOST: ${{ secrets.PUB_WISC_HOST }}
-          USERNAME: ${{ secrets.PUB_WISC_USERNAME }}
-          PASSWORD: ${{ secrets.PUB_WISC_PASSWORD }}
-          SOURCE: "graphnet/data/test/*.i3.*"
-          TEST_DATA_DIR: ./test_data/
-          MD5HASH: 80006a6d58338eb8ea153d2b7b02c0a1
-        shell: bash
       - name: Run unit tests and generate coverage report
         run: |
           coverage run --source=graphnet -m pytest tests/
@@ -119,9 +75,9 @@ jobs:
       matrix:
         python-version: [3.7, 3.8, 3.9, '3.10']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install package
