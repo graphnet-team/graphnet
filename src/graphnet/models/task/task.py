@@ -221,7 +221,8 @@ class Task(Model):
                 transform_prediction_and_target
             )
             self._transform_target = transform_prediction_and_target
-        elif transform_target is not None:
-            assert transform_inference is not None
-            self._transform_prediction_inference = transform_inference
-            self._transform_target = transform_target
+        else:
+            if transform_target is not None:
+                self._transform_target = transform_target
+            if transform_inference is not None:
+                self._transform_prediction_inference = transform_inference
