@@ -142,7 +142,7 @@ class ProgressBar(TQDMProgressBar):
         """
         super().on_train_epoch_end(trainer, model)
 
-        h = logger.handlers[0]
+        h = logger.logger.handlers[0]
         assert isinstance(h, logging.StreamHandler)
         level = h.level
         h.setLevel(logging.ERROR)

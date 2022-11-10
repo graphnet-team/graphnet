@@ -83,7 +83,7 @@ class RepeatFilter(object):
 
 def get_logger(
     level: Optional[int] = None, log_folder: str = LOG_FOLDER
-) -> logging.Logger:
+) -> logging.LoggerAdapter:
     """Get `logger` instance, to be used in place of `print()`.
 
     The logger will print the specified level of output to the terminal, and
@@ -130,9 +130,9 @@ def get_logger(
     logger.addHandler(file_handler)
 
     # Make className empty by default
-    logger = logging.LoggerAdapter(logger, extra={"className": ""})
+    logger_adapter = logging.LoggerAdapter(logger, extra={"className": ""})
 
-    logger.info(f"Writing log to \033[1m{log_path}\033[0m")
+    logger_adapter.info(f"Writing log to \033[1m{log_path}\033[0m")
 
     # Have pytorch lightning write to same log file
     pl_logger = logging.getLogger("pytorch_lightning")
@@ -140,7 +140,7 @@ def get_logger(
     pl_logger.addHandler(pl_file_handler)
 
     # Store as global variable
-    LOGGER = logger
+    LOGGER = logger_adapter
 
     return LOGGER
 
