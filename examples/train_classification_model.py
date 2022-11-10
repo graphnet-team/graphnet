@@ -10,7 +10,7 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.training.loss_functions import CrossEntropyLoss
+from graphnet.training.loss_functions import NLLLoss
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_selection import (
     get_desired_event_numbers,
@@ -68,7 +68,7 @@ def main() -> None:
 
     # Configuration
     config = {
-        "db": "/groups/icecube/petersen/GraphNetDatabaseRepository/moon_pointing_analysis/monte_carlo/small/last_one_lvl3MC_1000_events.db",
+        "db": "/groups/icecube/petersen/GraphNetDatabaseRepository/Leon_MC_data/last_one_lvl3MC.db",
         "pulsemap": "SplitInIcePulses",
         "batch_size": 128,
         "num_workers": 1,
@@ -121,7 +121,7 @@ def main() -> None:
         nb_classes=len(unique(list(config["classification"].values()))),
         hidden_size=gnn.nb_outputs,
         target_labels=config["target"],
-        loss_function=CrossEntropyLoss(options=config["classification"]),
+        loss_function=NLLLoss(options=config["classification"]),
     )
     model = StandardModel(
         detector=detector,
