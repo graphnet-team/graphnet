@@ -12,7 +12,6 @@ class ClassificationTask(Task):
     def __init__(self, nb_inputs: int, *args, **kwargs):
         self._nb_inputs = nb_inputs
         super().__init__(*args, **kwargs)
-        
         self._softmax = Softmax()
     
     @property
@@ -22,14 +21,4 @@ class ClassificationTask(Task):
 
     def _forward(self, x: Tensor) -> Tensor:
         """Transform latent features into probabilities."""
-        return self._softmax(x)
-
-
-class BinaryClassificationTaskLogits(Task):
-    """Performs binary classification form logits."""
-
-    # Requires one feature, logit for being signal class.
-    nb_inputs = 1
-
-    def _forward(self, x: Tensor) -> Tensor:
-        return x
+        return x #self._softmax(x)
