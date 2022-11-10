@@ -132,19 +132,30 @@ class NLLLoss(LossFunction):
         super().__init__(*args, **kwargs)
         self._options = options
 
+
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        nb_classes = self._options
-        if isinstance(nb_classes, int):
+        if isinstance(self._options, int):
+            # classes is an integer
+            assert self._options.dtype in [torch.int32, torch.int64]
+            # minimum number of classes is atleast a binary case
+            assert self._options >= 2
+            nb_classes = self._options
+
+            # target integers are positive
             assert torch.all(target >= 0)
-            assert torch.all(target < nb_classes)
-            # minimum number of classes is a binary case
-            assert nb_classes >= 2
+            # target does not contain fewer classes than classes
+            assert torch.all(target < self._options)
+
             assert target.dtype in [torch.int32, torch.int64]
             target_integer = target
-        elif isinstance(nb_classes, list):
+        
+        elif isinstance(self._options, list):
+            nb_classes = len(self._options)
             # list of classes; (1,12,13,..,N) -> (0,1,2,..,N)
             target_integer = torch.tensor(target)
-        elif isinstance(nb_classes, dict):
+        
+        elif isinstance(self._options, dict):
+            nb_classes = len(np.unique(list(self._options.values())))
             # encodes the target according dict rules; # (1,-1,12,-12,..,N,-N) -> (0,1,..,N)
             target_integer = torch.tensor(
                 [self._options[int(value)] for value in target]
@@ -154,12 +165,8 @@ class NLLLoss(LossFunction):
 
         # pid_transform = {1:0,12:2,13:1,14:2,16:2}
         target_new = one_hot(target_integer, nb_classes)
-        return NLLLoss(
-            prediction.float(), target_new.float(), reduction="none"
-        )
-        #cross_entropy(
-        #    prediction.float(), target_new.float(), reduction="none"
-        #)
+        loss = NLLLoss(reduction="none")
+        return loss(prediction.float(), target_new.float())
 
 
 class BinaryCrossEntropyLoss(LossFunction):
