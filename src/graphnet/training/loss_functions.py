@@ -16,7 +16,7 @@ except ImportError:  # Python version < 3.8
     def final(f):  # type: ignore  # noqa: D103
         return f
 
-
+from torch.nn import NLLLoss
 from torch.nn.functional import (
     one_hot,
     cross_entropy,
@@ -120,31 +120,31 @@ class LogCoshLoss(LossFunction):
         return elements
 
 
-class CrossEntropyLoss(LossFunction):
-    """Compute cross entropy loss.
+class NLLLoss(LossFunction):
+    """Compute negative log likelihood loss for classification tasks.
 
     Predictions are an [N, num_class]-matrix of values between 0 and 1, and
     targets are an [N,1]-matrix with integer values in (0, num_classes - 1).
     """
 
     @save_config
-    def __init__(self, options: Union[int,list,dict], *args, **kwargs):
+    def __init__(self, options: Union[int, list, dict], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._options = options
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        if isinstance(self._options, int):
-            nb_classes = self._options
+        nb_classes = self._options
+        if isinstance(nb_classes, int):
             assert torch.all(target >= 0)
             assert torch.all(target < nb_classes)
+            # minimum number of classes is a binary case
+            assert nb_classes >= 2
             assert target.dtype in [torch.int32, torch.int64]
             target_integer = target
-        elif isinstance(self._options, list):
-            nb_classes = len(self._options)
+        elif isinstance(nb_classes, list):
             # list of classes; (1,12,13,..,N) -> (0,1,2,..,N)
             target_integer = torch.tensor(target)
-        elif isinstance(self._options, dict):
-            nb_classes = len(self._options)
+        elif isinstance(nb_classes, dict):
             # encodes the target according dict rules; # (1,-1,12,-12,..,N,-N) -> (0,1,..,N)
             target_integer = torch.tensor(
                 [self._options[int(value)] for value in target]
@@ -154,9 +154,12 @@ class CrossEntropyLoss(LossFunction):
 
         # pid_transform = {1:0,12:2,13:1,14:2,16:2}
         target_new = one_hot(target_integer, nb_classes)
-        return cross_entropy(
+        return NLLLoss(
             prediction.float(), target_new.float(), reduction="none"
         )
+        #cross_entropy(
+        #    prediction.float(), target_new.float(), reduction="none"
+        #)
 
 
 class BinaryCrossEntropyLoss(LossFunction):
