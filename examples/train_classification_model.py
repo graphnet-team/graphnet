@@ -13,7 +13,7 @@ from torch.optim.adam import Adam
 from graphnet.training.loss_functions import CrossEntropyLoss
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_selection import (
-    get_equal_proportion_neutrino_indices,
+    get_desired_event_numbers,
 )
 from graphnet.models import StandardModel
 from graphnet.models.detector.icecube import IceCubeDeepCore
@@ -57,9 +57,9 @@ def main() -> None:
 
     # single integer definition of class
     #class_options = 3
-    # list of 
-    #class_options = []
-    # transformation of input to a given class integer
+    # list of classes
+    #class_options = [0,1,2]
+    # transformation of target to a given class integer
     class_options = {
     1:0,-1:0,
     13:1,-13:1,
@@ -68,12 +68,12 @@ def main() -> None:
 
     # Configuration
     config = {
-        "db": "/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db",
-        "pulsemap": "SRTTWOfflinePulsesDC",
-        "batch_size": 512,
-        "num_workers": 10,
-        "accelerator": "gpu",
-        "devices": [0],
+        "db": "/groups/icecube/petersen/GraphNetDatabaseRepository/moon_pointing_analysis/monte_carlo/small/last_one_lvl3MC_1000_events.db",
+        "pulsemap": "SplitInIcePulses",
+        "batch_size": 128,
+        "num_workers": 1,
+        "accelerator": "cpu", #gpu
+        "devices": 1,#[0],
         "target": "pid",
         "classification": class_options,
         "n_epochs": 5,
@@ -86,10 +86,15 @@ def main() -> None:
     wandb_logger.experiment.config.update(config)
 
     # Common variables
-    train_selection, _ = get_equal_proportion_neutrino_indices(
-        cast(str, config["db"])
+    train_selection = get_desired_event_numbers(
+    database = cast(str, config["db"]),
+    desired_size = 1000,
+    fraction_noise = float(1/3),
+    fraction_muon = float(1/3),
+    fraction_nu_e = float(1/9),
+    fraction_nu_mu = float(1/9),
+    fraction_nu_tau = float(1/9),
     )
-    train_selection = train_selection[0:50000]
 
     (
         training_dataloader,
