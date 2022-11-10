@@ -2,7 +2,7 @@
 
 import os
 from typing import cast
-from numpy import unique
+import numpy as np
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
@@ -70,8 +70,8 @@ def main() -> None:
     config = {
         "db": "/groups/icecube/petersen/GraphNetDatabaseRepository/Leon_MC_data/last_one_lvl3MC.db",
         "pulsemap": "SplitInIcePulses",
-        "batch_size": 128,
-        "num_workers": 1,
+        "batch_size": 32,
+        "num_workers": 5,
         "accelerator": "cpu", #gpu
         "devices": 1,#[0],
         "target": "pid",
@@ -118,10 +118,12 @@ def main() -> None:
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = ClassificationTask(
-        nb_classes=len(unique(list(config["classification"].values()))),
+        nb_classes=len(np.unique(list(class_options.values()))),
         hidden_size=gnn.nb_outputs,
         target_labels=config["target"],
-        loss_function=NLLLoss(options=config["classification"]),
+        loss_function=NLLLoss(
+            options=config["classification"]
+            ),
     )
     model = StandardModel(
         detector=detector,
