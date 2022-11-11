@@ -1,6 +1,6 @@
 """`Dataset` class(es) for reading from Parquet files."""
 
-from typing import Any, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 import numpy as np
 import awkward as ak
@@ -44,6 +44,36 @@ class ParquetDataset(Dataset):
             )
         )
 
+    def _format_dictionary_result(
+        self, dictionary: Dict
+    ) -> List[Tuple[Any, ...]]:
+        """Convert the output of `ak.to_list()` into a list of tuples."""
+        # All scalar values
+        if all(map(np.isscalar, dictionary.values())):
+            return [tuple(dictionary.values())]
+
+        # All arrays should have same length
+        array_lengths = [
+            len(values)
+            for values in dictionary.values()
+            if not np.isscalar(values)
+        ]
+        assert len(set(array_lengths)) == 1, (
+            f"Arrays in {dictionary} have differing lengths "
+            f"({set(array_lengths)})."
+        )
+        nb_elements = array_lengths[0]
+
+        # Broadcast scalars
+        for key in dictionary:
+            value = dictionary[key]
+            if np.isscalar(value):
+                dictionary[key] = np.repeat(
+                    value, repeats=nb_elements
+                ).tolist()
+
+        return list(map(tuple, list(zip(*dictionary.values()))))
+
     def _query_table(
         self,
         table: str,
@@ -64,41 +94,28 @@ class ParquetDataset(Dataset):
 
         try:
             if index is None:
-                ak_array = self._parquet_hook[table][columns][index]
-            else:
                 ak_array = self._parquet_hook[table][columns][:]
+            else:
+                ak_array = self._parquet_hook[table][columns][index]
         except ValueError as e:
             if "does not exist (not in record)" in str(e):
                 raise ColumnMissingException(str(e))
             else:
                 raise e
 
-        dictionary = ak_array.to_list()
-        assert list(dictionary.keys()) == columns
+        output = ak_array.to_list()
 
-        if all(map(np.isscalar, dictionary.values())):
-            result = [tuple(dictionary.values())]
+        result: List[Tuple[Any, ...]] = []
 
-        else:
-            # All arrays should have same length
-            array_lengths = [
-                len(values)
-                for values in dictionary.values()
-                if not np.isscalar(values)
-            ]
-            assert (
-                len(set(array_lengths)) == 1
-            ), f"Arrays in {dictionary} have differing lengths"
-            nb_elements = array_lengths[0]
+        # Querying single index
+        if isinstance(output, dict):
+            assert list(output.keys()) == columns
+            result = self._format_dictionary_result(output)
 
-            # Broadcast scalars
-            for key in dictionary:
-                value = dictionary[key]
-                if np.isscalar(value):
-                    dictionary[key] = np.repeat(
-                        value, repeats=nb_elements
-                    ).tolist()
-
-            result = list(map(tuple, list(zip(*dictionary.values()))))
+        # Querying entire columm
+        elif isinstance(output, list):
+            for dictionary in output:
+                assert list(dictionary.keys()) == columns
+                result.extend(self._format_dictionary_result(dictionary))
 
         return result
