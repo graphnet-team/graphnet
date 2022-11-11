@@ -23,6 +23,9 @@ class Configurable(LoggerMixin, ABC):
         """Construct `Configurable`."""
         self._config: "BaseConfig"
 
+        # Base class constructor
+        super().__init__()
+
     @final
     @property
     def config(self) -> "BaseConfig":
