@@ -77,33 +77,15 @@ class ModelConfig(BaseConfig):
             >>> model = ModelConfig.load("model.yml").construct_model()
         """
         # Parse any nested `ModelConfig` arguments
-        def _is_model_config_entry(entry: Dict[str, Any]) -> bool:
-            return (
-                isinstance(entry, dict)
-                and len(entry) == 1
-                and self.__class__.__name__ in entry
-            )
-
-        def _parse_model_config_entry(
-            entry: Dict[str, Any]
-        ) -> Union["ModelConfig", Any]:
-            """Parse dictionary entry to `ModelConfig`."""
-            assert _is_model_config_entry(entry)
-            config_dict = entry[self.__class__.__name__]
-            config = self.__class__(**config_dict)
-            return config
-
         for arg in data["arguments"]:
             value = data["arguments"][arg]
-            if _is_model_config_entry(value):
-                data["arguments"][arg] = _parse_model_config_entry(value)
-
-            elif isinstance(value, (tuple, list)):
+            if isinstance(value, (tuple, list)):
                 for ix, elem in enumerate(value):
-                    if _is_model_config_entry(elem):
-                        data["arguments"][arg][ix] = _parse_model_config_entry(
-                            elem
-                        )
+                    data["arguments"][arg][
+                        ix
+                    ] = self._parse_if_model_config_entry(elem)
+            else:
+                data["arguments"][arg] = self._parse_model_config_entry(value)
 
         # Base class constructor
         super().__init__(**data)
@@ -163,6 +145,25 @@ class ModelConfig(BaseConfig):
 
         # Construct model based on arguments
         return namespace_classes[self.class_name](**arguments)
+
+    def _is_model_config_entry(self, entry: Dict[str, Any]) -> bool:
+        """Check whether dictionary entry is a `ModelConfig`."""
+        return (
+            isinstance(entry, dict)
+            and len(entry) == 1
+            and self.__class__.__name__ in entry
+        )
+
+    def _parse_if_model_config_entry(
+        self, entry: Dict[str, Any]
+    ) -> Union["ModelConfig", Any]:
+        """Parse dictionary entry to `ModelConfig`."""
+        if self._is_model_config_entry(entry):
+            config_dict = entry[self.__class__.__name__]
+            config = self.__class__(**config_dict)
+            return config
+        else:
+            return entry
 
     @classmethod
     def _deserialise(cls, obj: Any, trust: bool = False) -> Any:
