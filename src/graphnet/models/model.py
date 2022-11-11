@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 import dill
 import os.path
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 try:
     from typing import final
@@ -19,33 +19,16 @@ import torch
 from torch import Tensor
 from torch_geometric.data import Data
 
-
 from graphnet.utilities.logging import LoggerMixin
-
-if TYPE_CHECKING:
-    # Avoid cyclic dependency
-    from graphnet.models.config import ModelConfig
+from graphnet.utilities.config import Configurable, ModelConfig
 
 
-class Model(LightningModule, LoggerMixin, ABC):
+class Model(Configurable, LightningModule, LoggerMixin, ABC):
     """Base class for all models in graphnet."""
 
     @abstractmethod
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
-
-    @final
-    @property
-    def config(self) -> "ModelConfig":
-        """Return configuration to re-create the model."""
-        try:
-            return self._config
-        except AttributeError:
-            self.error(
-                "ModelConfig was not set. "
-                "Did you wrap the class constructor with `save_config`?"
-            )
-            raise
 
     def save(self, path: str) -> None:
         """Save entire model to `path`."""
@@ -83,15 +66,10 @@ class Model(LightningModule, LoggerMixin, ABC):
             state_dict = path
         return super().load_state_dict(state_dict)
 
-    @final
-    def save_config(self, path: str) -> None:
-        """Save ModelConfig to `path` as YAML file."""
-        self.config.dump(path)
-
     @classmethod
-    def from_config(
+    def from_config(  # type: ignore[override]
         cls,
-        source: Union["ModelConfig", str],
+        source: Union[ModelConfig, str],
         trust: bool = False,
         load_modules: Optional[List[str]] = None,
     ) -> "Model":
@@ -100,15 +78,18 @@ class Model(LightningModule, LoggerMixin, ABC):
         Arguments:
             trust: Whether to trust the ModelConfig file enough to `eval(...)`
                 any lambda function expressions contained.
+            load_modules: List of modules used in the definition of the model
+                which, as a consequence, need to be loaded into the global
+                namespace. Defaults to loading `torch`.
 
         Raises:
             ValueError: If the ModelConfig contains lambda functions but
                 `trust = False`.
         """
-        from graphnet.models.config import ModelConfig
-
         if isinstance(source, str):
             source = ModelConfig.load(source)
 
-        assert isinstance(source, ModelConfig)
+        assert isinstance(
+            source, ModelConfig
+        ), f"Argument `source` of type ({type(source)}) is not a `ModelConfig"
         return source.construct_model(trust=trust, load_modules=load_modules)
