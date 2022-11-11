@@ -4,7 +4,7 @@ import torch
 from torch_geometric.data import Data, Batch
 
 from graphnet.models.components.pool import group_by
-from graphnet.models.coarsening import Coarsening
+from graphnet.models.coarsening import AttributeCoarsening
 
 
 # Utility method(s)
@@ -105,14 +105,6 @@ def _get_test_data() -> Batch:
     return batch
 
 
-class SimpleCoarsening(Coarsening):
-    """Simple coarsening operation for the purposes of testing."""
-
-    def _perform_clustering(self, data: Data) -> torch.LongTensor:
-        """Cluster nodes in `data` by assigning a cluster index to each."""
-        return group_by(data, ["x0", "x1", "x2"])
-
-
 # Unit test(s)
 def test_attribute_transfer() -> None:
     """Testing the transfering of auxillary attributes during coarsening."""
@@ -120,7 +112,11 @@ def test_attribute_transfer() -> None:
     data = _get_test_data()
 
     # Perform coarsening
-    coarsening = SimpleCoarsening(reduce="avg", transfer_attributes=False)
+    coarsening = AttributeCoarsening(
+        attributes=["x0", "x1", "x2"],
+        reduce="avg",
+        transfer_attributes=False,
+    )
     pooled_data = coarsening(data)
 
     # Test(s)
@@ -131,7 +127,11 @@ def test_attribute_transfer() -> None:
     assert not hasattr(pooled_data, "attr2")
 
     # Perform coarsening
-    coarsening = SimpleCoarsening(reduce="avg", transfer_attributes=True)
+    coarsening = AttributeCoarsening(
+        attributes=["x0", "x1", "x2"],
+        reduce="avg",
+        transfer_attributes=True,
+    )
     pooled_data = coarsening(data)
 
     # Test(s)
@@ -151,7 +151,11 @@ def test_batch_reconstruction() -> None:
     data = _get_test_data()
     original_batch_idx = data.batch
     # Perform coarsening
-    coarsening = SimpleCoarsening(reduce="avg", transfer_attributes=False)
+    coarsening = coarsening = AttributeCoarsening(
+        attributes=["x0", "x1", "x2"],
+        reduce="avg",
+        transfer_attributes=False,
+    )
     pooled_data = coarsening(data)
 
     # Check that the number of batches is as expected.
