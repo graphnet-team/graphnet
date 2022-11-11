@@ -51,7 +51,10 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.data.parquet.parquet_dataset">graphnet.data.parquet.parquet_dataset module</a><ul>
-<li><a class="reference internal" href="#graphnet.data.parquet.parquet_dataset.ParquetDataset"><code class="docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.parquet.parquet_dataset.ParquetDataset"><code class="docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.parquet.parquet_dataset.ParquetDataset._format_dictionary_result"><code class="docutils literal notranslate"><span class="pre">ParquetDataset._format_dictionary_result()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.data.parquet">Module contents</a></li>
@@ -187,6 +190,20 @@ files output by the current instance are merged.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.parquet.parquet_dataset.ParquetDataset._format_dictionary_result">
+<span class="sig-name descname"><span class="pre">_format_dictionary_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/parquet/parquet_dataset.html#ParquetDataset._format_dictionary_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.parquet.parquet_dataset.ParquetDataset._format_dictionary_result" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the output of <cite>ak.to_list()</cite> into a list of tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dictionary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
