@@ -90,6 +90,19 @@ class EnergyReconstruction(Task):
     def _forward(self, x: Tensor) -> Tensor:
         # Transform energy
         return torch.pow(10, x[:, 0] + 1.0).unsqueeze(1)
+    
+class EnergyReconstructionPreventFlow(Task):
+        """Reconstructs energy without transforming."""
+
+        # Requires one feature: untransformed energy
+        nb_inputs = 1
+
+        def _forward(self, x):
+            # transform to positive energy domain + smallest float 32 ofsett to ensure no -inf in logcosh
+            # prevents overflow and underflow error
+            softplus = torch.nn.Softplus(beta = 0.05, threshold=20)
+            return softplus(x)+np.nextafter(np.float32(0), np.float32(1))
+
 
 
 class EnergyReconstructionWithUncertainty(EnergyReconstruction):
