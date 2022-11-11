@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from graphnet.training.loss_functions import LossFunction  # type: ignore[attr-defined]
 
 from graphnet.models import Model
-from graphnet.models.config import save_config
+from graphnet.utilities.config.model_config import save_config
 
 
 class Task(Model):
