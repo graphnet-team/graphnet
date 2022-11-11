@@ -273,7 +273,7 @@ def save_config(init_fn: Callable) -> Callable:
 
 
 def list_all_submodules(*packages: types.ModuleType) -> List[types.ModuleType]:
-    """List all submodules in `packages`."""
+    """List all submodules in `packages` recursively."""
     # Resolve one or more packages
     if len(packages) > 1:
         return list(
@@ -315,27 +315,24 @@ def get_all_grapnet_classes(*packages: types.ModuleType) -> Dict[str, type]:
 
 def is_graphnet_module(obj: types.ModuleType) -> bool:
     """Return whether `obj` is a module in graphnet."""
-    if not isinstance(obj, types.ModuleType):
-        return False
-    return obj.__name__.startswith("graphnet.")
+    return isinstance(obj, types.ModuleType) and obj.__name__.startswith(
+        "graphnet."
+    )
 
 
 def is_graphnet_class(obj: type) -> bool:
     """Return whether `obj` is a class in graphnet."""
-    if not isinstance(obj, type):
-        return False
-    return obj.__module__.startswith("graphnet.")
+    return isinstance(obj, type) and obj.__module__.startswith("graphnet.")
 
 
 def get_graphnet_classes(module: types.ModuleType) -> Dict[str, type]:
     """Return a lookup of all graphnet class names in `module`."""
-    namespace = module.__dict__
     if not is_graphnet_module(module):
         logger.info(f"{module} is not a graphnet module")
         return {}
-
     classes = {
-        key: val for key, val in namespace.items() if is_graphnet_class(val)
+        key: val
+        for key, val in module.__dict__.items()
+        if is_graphnet_class(val)
     }
-
     return classes
