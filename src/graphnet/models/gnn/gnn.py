@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_geometric.data import Data
 
 from graphnet.models import Model
-from graphnet.models.config import save_config
+from graphnet.utilities.config.model_config import save_config
 
 
 class GNN(Model):

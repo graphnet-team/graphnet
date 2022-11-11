@@ -22,7 +22,7 @@ import scipy.special
 import torch
 from torch import Tensor
 
-from graphnet.models.config import save_config
+from graphnet.utilities.config.model_config import save_config
 from graphnet.models.model import Model
 
 

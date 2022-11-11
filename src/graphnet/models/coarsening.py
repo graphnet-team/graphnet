@@ -22,7 +22,7 @@ from graphnet.models.components.pool import (
     std_pool_x,
 )
 from graphnet.models import Model
-from graphnet.models.config import save_config
+from graphnet.utilities.config import save_config
 
 # Utility method(s)
 from torch_geometric.utils import degree
