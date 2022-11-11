@@ -106,28 +106,16 @@ class ModelConfig(BaseConfig):
             ValueError: If the ModelConfig contains lambda functions but
                 `trust = False`.
         """
-        # Get a lookup for all classes in `graphnet`
-        submodules = list_all_submodules(
-            graphnet.data, graphnet.models, graphnet.training
-        )
-        namespace_classes: Dict[str, type] = {}
-        for submodule in submodules:
-            new_classes = get_namespace_classes(submodule)
-            for key in new_classes:
-                if (
-                    key in namespace_classes
-                    and namespace_classes[key] != new_classes[key]
-                ):
-                    self.warning(
-                        f"Class {key} found in both {namespace_classes[key]} "
-                        f"and {new_classes[key]}. Keeping first instance. "
-                        "Consider renaming."
-                    )
-            namespace_classes.update(new_classes)
-
-        # Load any additional modules into the global namespace
+        # Check(s)
         if load_modules is None:
             load_modules = ["torch"]
+
+        # Get a lookup for all classes in `graphnet`
+        namespace_classes = get_all_grapnet_classes(
+            graphnet.data, graphnet.models, graphnet.training
+        )
+
+        # Load any additional modules into the global namespace
         if load_modules:
             for module in load_modules:
                 assert re.match("^[a-zA-Z_]+$", module) is not None
@@ -283,7 +271,7 @@ def save_config(init_fn: Callable) -> Callable:
 
 
 def list_all_submodules(*packages: types.ModuleType) -> List[types.ModuleType]:
-    """List all submodules in `package`."""
+    """List all submodules in `packages`."""
     # Resolve one or more packages
     if len(packages) > 1:
         return list(
@@ -305,6 +293,24 @@ def list_all_submodules(*packages: types.ModuleType) -> List[types.ModuleType]:
     return submodules
 
 
+def get_all_grapnet_classes(*packages: types.ModuleType) -> Dict[str, type]:
+    """List all grapnet classes in `packages`."""
+    submodules = list_all_submodules(*packages)
+    classes: Dict[str, type] = {}
+    for submodule in submodules:
+        new_classes = get_graphnet_classes(submodule)
+        for key in new_classes:
+            if key in classes and classes[key] != new_classes[key]:
+                logger.warning(
+                    f"Class {key} found in both {classes[key]} and "
+                    f"{new_classes[key]}. Keeping first instance. "
+                    "Consider renaming."
+                )
+        classes.update(new_classes)
+
+    return classes
+
+
 def is_graphnet_module(obj: types.ModuleType) -> bool:
     """Return whether `obj` is a module in graphnet."""
     if not isinstance(obj, types.ModuleType):
@@ -319,7 +325,7 @@ def is_graphnet_class(obj: type) -> bool:
     return obj.__module__.startswith("graphnet.")
 
 
-def get_namespace_classes(module: types.ModuleType) -> Dict[str, type]:
+def get_graphnet_classes(module: types.ModuleType) -> Dict[str, type]:
     """Return a lookup of all graphnet class names in `module`."""
     namespace = module.__dict__
     if not is_graphnet_module(module):
