@@ -153,6 +153,7 @@ def make_train_validation_dataloader(
     )
 
 
+# @TODO: Remove
 def get_predictions(
     trainer: Trainer,
     model: Model,
@@ -214,6 +215,7 @@ def get_predictions(
     return results
 
 
+# @TODO: Remove
 def save_results(
     db: str, tag: str, results: pd.DataFrame, archive: str, model: Model
 ) -> None:
