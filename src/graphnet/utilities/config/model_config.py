@@ -77,33 +77,17 @@ class ModelConfig(BaseConfig):
             >>> model = ModelConfig.load("model.yml").construct_model()
         """
         # Parse any nested `ModelConfig` arguments
-        def _is_model_config_entry(entry: Dict[str, Any]) -> bool:
-            return (
-                isinstance(entry, dict)
-                and len(entry) == 1
-                and self.__class__.__name__ in entry
-            )
-
-        def _parse_model_config_entry(
-            entry: Dict[str, Any]
-        ) -> Union["ModelConfig", Any]:
-            """Parse dictionary entry to `ModelConfig`."""
-            assert _is_model_config_entry(entry)
-            config_dict = entry[self.__class__.__name__]
-            config = self.__class__(**config_dict)
-            return config
-
         for arg in data["arguments"]:
             value = data["arguments"][arg]
-            if _is_model_config_entry(value):
-                data["arguments"][arg] = _parse_model_config_entry(value)
-
-            elif isinstance(value, (tuple, list)):
+            if isinstance(value, (tuple, list)):
                 for ix, elem in enumerate(value):
-                    if _is_model_config_entry(elem):
-                        data["arguments"][arg][ix] = _parse_model_config_entry(
-                            elem
-                        )
+                    data["arguments"][arg][
+                        ix
+                    ] = self._parse_if_model_config_entry(elem)
+            else:
+                data["arguments"][arg] = self._parse_if_model_config_entry(
+                    value
+                )
 
         # Base class constructor
         super().__init__(**data)
@@ -124,28 +108,16 @@ class ModelConfig(BaseConfig):
             ValueError: If the ModelConfig contains lambda functions but
                 `trust = False`.
         """
-        # Get a lookup for all classes in `graphnet`
-        submodules = list_all_submodules(
-            graphnet.data, graphnet.models, graphnet.training
-        )
-        namespace_classes: Dict[str, type] = {}
-        for submodule in submodules:
-            new_classes = get_namespace_classes(submodule)
-            for key in new_classes:
-                if (
-                    key in namespace_classes
-                    and namespace_classes[key] != new_classes[key]
-                ):
-                    self.warning(
-                        f"Class {key} found in both {namespace_classes[key]} "
-                        f"and {new_classes[key]}. Keeping first instance. "
-                        "Consider renaming."
-                    )
-            namespace_classes.update(new_classes)
-
-        # Load any additional modules into the global namespace
+        # Check(s)
         if load_modules is None:
             load_modules = ["torch"]
+
+        # Get a lookup for all classes in `graphnet`
+        namespace_classes = get_all_grapnet_classes(
+            graphnet.data, graphnet.models, graphnet.training
+        )
+
+        # Load any additional modules into the global namespace
         if load_modules:
             for module in load_modules:
                 assert re.match("^[a-zA-Z_]+$", module) is not None
@@ -163,6 +135,25 @@ class ModelConfig(BaseConfig):
 
         # Construct model based on arguments
         return namespace_classes[self.class_name](**arguments)
+
+    def _is_model_config_entry(self, entry: Dict[str, Any]) -> bool:
+        """Check whether dictionary entry is a `ModelConfig`."""
+        return (
+            isinstance(entry, dict)
+            and len(entry) == 1
+            and self.__class__.__name__ in entry
+        )
+
+    def _parse_if_model_config_entry(
+        self, entry: Dict[str, Any]
+    ) -> Union["ModelConfig", Any]:
+        """Parse dictionary entry to `ModelConfig`."""
+        if self._is_model_config_entry(entry):
+            config_dict = entry[self.__class__.__name__]
+            config = self.__class__(**config_dict)
+            return config
+        else:
+            return entry
 
     @classmethod
     def _deserialise(cls, obj: Any, trust: bool = False) -> Any:
@@ -189,9 +180,9 @@ class ModelConfig(BaseConfig):
             else:
                 raise ValueError(
                     f"Constructing model containing a class ({obj}) with "
-                    "`trust=False`. If you trust the class definitions in this "
-                    "ModelConfig, set `trust=True` and reconstruct the model "
-                    "again."
+                    "`trust=False`. If you trust the class definitions in "
+                    "this ModelConfig, set `trust=True` and reconstruct the "
+                    "model again."
                 )
 
         else:
@@ -282,7 +273,7 @@ def save_config(init_fn: Callable) -> Callable:
 
 
 def list_all_submodules(*packages: types.ModuleType) -> List[types.ModuleType]:
-    """List all submodules in `package`."""
+    """List all submodules in `packages` recursively."""
     # Resolve one or more packages
     if len(packages) > 1:
         return list(
@@ -304,29 +295,44 @@ def list_all_submodules(*packages: types.ModuleType) -> List[types.ModuleType]:
     return submodules
 
 
+def get_all_grapnet_classes(*packages: types.ModuleType) -> Dict[str, type]:
+    """List all grapnet classes in `packages`."""
+    submodules = list_all_submodules(*packages)
+    classes: Dict[str, type] = {}
+    for submodule in submodules:
+        new_classes = get_graphnet_classes(submodule)
+        for key in new_classes:
+            if key in classes and classes[key] != new_classes[key]:
+                logger.warning(
+                    f"Class {key} found in both {classes[key]} and "
+                    f"{new_classes[key]}. Keeping first instance. "
+                    "Consider renaming."
+                )
+        classes.update(new_classes)
+
+    return classes
+
+
 def is_graphnet_module(obj: types.ModuleType) -> bool:
     """Return whether `obj` is a module in graphnet."""
-    if not isinstance(obj, types.ModuleType):
-        return False
-    return obj.__name__.startswith("graphnet.")
+    return isinstance(obj, types.ModuleType) and obj.__name__.startswith(
+        "graphnet."
+    )
 
 
 def is_graphnet_class(obj: type) -> bool:
     """Return whether `obj` is a class in graphnet."""
-    if not isinstance(obj, type):
-        return False
-    return obj.__module__.startswith("graphnet.")
+    return isinstance(obj, type) and obj.__module__.startswith("graphnet.")
 
 
-def get_namespace_classes(module: types.ModuleType) -> Dict[str, type]:
+def get_graphnet_classes(module: types.ModuleType) -> Dict[str, type]:
     """Return a lookup of all graphnet class names in `module`."""
-    namespace = module.__dict__
     if not is_graphnet_module(module):
         logger.info(f"{module} is not a graphnet module")
         return {}
-
     classes = {
-        key: val for key, val in namespace.items() if is_graphnet_class(val)
+        key: val
+        for key, val in module.__dict__.items()
+        if is_graphnet_class(val)
     }
-
     return classes
