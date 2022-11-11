@@ -85,7 +85,9 @@ class ModelConfig(BaseConfig):
                         ix
                     ] = self._parse_if_model_config_entry(elem)
             else:
-                data["arguments"][arg] = self._parse_model_config_entry(value)
+                data["arguments"][arg] = self._parse_if_model_config_entry(
+                    value
+                )
 
         # Base class constructor
         super().__init__(**data)
