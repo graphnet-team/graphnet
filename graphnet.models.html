@@ -44,6 +44,12 @@
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-graphnet.models.coarsening">graphnet.models.coarsening module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.coarsening.AttributeCoarsening"><code class="docutils literal notranslate"><span class="pre">AttributeCoarsening</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.coarsening.AttributeCoarsening.__init__"><code class="docutils literal notranslate"><span class="pre">AttributeCoarsening.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.AttributeCoarsening._perform_clustering"><code class="docutils literal notranslate"><span class="pre">AttributeCoarsening._perform_clustering()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.coarsening.AttributeCoarsening.training"><code class="docutils literal notranslate"><span class="pre">AttributeCoarsening.training</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening"><code class="docutils literal notranslate"><span class="pre">Coarsening</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening.__init__"><code class="docutils literal notranslate"><span class="pre">Coarsening.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.coarsening.Coarsening._additional_features"><code class="docutils literal notranslate"><span class="pre">Coarsening._additional_features()</span></code></a></li>
@@ -263,7 +269,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore._forward"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore._forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.features"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.features</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.precision"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.precision</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeDeepCore.training"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore.training</span></code></a></li>
@@ -505,6 +513,56 @@
 <section id="module-graphnet.models.coarsening">
 <span id="graphnet-models-coarsening-module"></span><h2>graphnet.models.coarsening module<a class="headerlink" href="#module-graphnet.models.coarsening" title="Permalink to this heading"></a></h2>
 <p>Class(es) for coarsening operations (i.e., clustering, or local pooling).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.AttributeCoarsening">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">AttributeCoarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'avg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#AttributeCoarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.AttributeCoarsening" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.coarsening.Coarsening" title="graphnet.models.coarsening.Coarsening"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coarsening</span></code></a></p>
+<p>Coarsen pulses based on specified attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attributes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
+<li><p><strong>reduce</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'avg'</span></code>) – </p></li>
+<li><p><strong>transfer_attributes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.AttributeCoarsening.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'avg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#AttributeCoarsening.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.AttributeCoarsening.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>SimpleCoarsening</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attributes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
+<li><p><strong>reduce</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'avg'</span></code>) – </p></li>
+<li><p><strong>transfer_attributes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.AttributeCoarsening._perform_clustering">
+<span class="sig-name descname"><span class="pre">_perform_clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#AttributeCoarsening._perform_clustering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.AttributeCoarsening._perform_clustering" title="Permalink to this definition"></a></dt>
+<dd><p>Cluster nodes in <cite>data</cite> by assigning a cluster index to each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code>]) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.AttributeCoarsening.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.coarsening.AttributeCoarsening.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">Coarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'avg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/coarsening.html#Coarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.Coarsening" title="Permalink to this definition"></a></dt>
