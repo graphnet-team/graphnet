@@ -87,6 +87,7 @@
     <span class="n">std_pool_x</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.config</span> <span class="kn">import</span> <span class="n">save_config</span>
 
 <span class="c1"># Utility method(s)</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">degree</span>
@@ -127,7 +128,8 @@
         <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">sum_pool</span><span class="p">,</span> <span class="n">sum_pool_x</span><span class="p">),</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="Coarsening.__init__"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.Coarsening.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Coarsening.__init__"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.Coarsening.__init__">[docs]</a>    <span class="nd">@save_config</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span>
         <span class="n">transfer_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -258,12 +260,33 @@
         <span class="k">return</span> <span class="n">pooled</span></div>
 
 
+<div class="viewcode-block" id="AttributeCoarsening"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.AttributeCoarsening">[docs]</a><span class="k">class</span> <span class="nc">AttributeCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Coarsen pulses based on specified attributes.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AttributeCoarsening.__init__"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.AttributeCoarsening.__init__">[docs]</a>    <span class="nd">@save_config</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span>
+        <span class="n">transfer_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct `SimpleCoarsening`.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduce</span><span class="p">,</span> <span class="n">transfer_attributes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AttributeCoarsening._perform_clustering"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.AttributeCoarsening._perform_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Cluster nodes in `data` by assigning a cluster index to each.&quot;&quot;&quot;</span>
+        <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dom_index</span></div></div>
+
+
 <div class="viewcode-block" id="DOMCoarsening"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.DOMCoarsening">[docs]</a><span class="k">class</span> <span class="nc">DOMCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Coarsen pulses to DOM-level.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DOMCoarsening._perform_clustering"><a class="viewcode-back" href="../../../graphnet.models.html#graphnet.models.coarsening.DOMCoarsening._perform_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Cluster nodes in `data` by assigning a cluster index to each.&quot;&quot;&quot;</span>
-        <span class="c1"># dom_index = group_pulses_to_dom(data)</span>
         <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;dom_x&quot;</span><span class="p">,</span> <span class="s2">&quot;dom_y&quot;</span><span class="p">,</span> <span class="s2">&quot;dom_z&quot;</span><span class="p">,</span> <span class="s2">&quot;rde&quot;</span><span class="p">,</span> <span class="s2">&quot;pmt_area&quot;</span><span class="p">]</span>
         <span class="p">)</span>
