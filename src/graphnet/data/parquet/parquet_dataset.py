@@ -48,7 +48,7 @@ class ParquetDataset(Dataset):
         self,
         table: str,
         columns: Union[List[str], str],
-        sequential_index: int,
+        sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
         # Check(s)
@@ -56,10 +56,17 @@ class ParquetDataset(Dataset):
             selection is None
         ), "Argument `selection` is currently not supported"
 
-        index = cast(List[int], self._indices)[sequential_index]
+        index: Optional[int]
+        if sequential_index is None:
+            index = None
+        else:
+            index = cast(List[int], self._indices)[sequential_index]
 
         try:
-            ak_array = self._parquet_hook[table][columns][index]
+            if index is None:
+                ak_array = self._parquet_hook[table][columns][index]
+            else:
+                ak_array = self._parquet_hook[table][columns][:]
         except ValueError as e:
             if "does not exist (not in record)" in str(e):
                 raise ColumnMissingException(str(e))
