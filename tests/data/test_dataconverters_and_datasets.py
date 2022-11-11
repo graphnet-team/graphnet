@@ -155,9 +155,10 @@ def test_dataset_query_table(backend: str) -> None:
     assert os.path.exists(path)
 
     # Constructor DataConverter instance
+    pulsemap = "SRTInIcePulses"
     opt = dict(
         path=path,
-        pulsemaps="SRTInIcePulses",
+        pulsemaps=pulsemap,
         features=FEATURES.DEEPCORE,
         truth=TRUTH.DEEPCORE,
     )
@@ -172,13 +173,13 @@ def test_dataset_query_table(backend: str) -> None:
     # Compare to expectations
     nb_events_to_test = 5
     results_all = dataset._query_table(
-        opt["pulsemaps"],
+        pulsemap,
         columns=["event_no", opt["features"][0]],
     )
     for ix_test in range(nb_events_to_test):
 
         results_single = dataset._query_table(
-            opt["pulsemaps"],
+            pulsemap,
             columns=["event_no", opt["features"][0]],
             sequential_index=ix_test,
         )
