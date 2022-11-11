@@ -48,32 +48,31 @@ class ParquetDataset(Dataset):
         self, dictionary: Dict
     ) -> List[Tuple[Any, ...]]:
         """Convert the output of `ak.to_list()` into a list of tuples."""
+        # All scalar values
         if all(map(np.isscalar, dictionary.values())):
-            result = [tuple(dictionary.values())]
+            return [tuple(dictionary.values())]
 
-        else:
-            # All arrays should have same length
-            array_lengths = [
-                len(values)
-                for values in dictionary.values()
-                if not np.isscalar(values)
-            ]
-            assert (
-                len(set(array_lengths)) == 1
-            ), f"Arrays in {dictionary} have differing lengths"
-            nb_elements = array_lengths[0]
+        # All arrays should have same length
+        array_lengths = [
+            len(values)
+            for values in dictionary.values()
+            if not np.isscalar(values)
+        ]
+        assert len(set(array_lengths)) == 1, (
+            f"Arrays in {dictionary} have differing lengths "
+            f"({set(array_lengths)})."
+        )
+        nb_elements = array_lengths[0]
 
-            # Broadcast scalars
-            for key in dictionary:
-                value = dictionary[key]
-                if np.isscalar(value):
-                    dictionary[key] = np.repeat(
-                        value, repeats=nb_elements
-                    ).tolist()
+        # Broadcast scalars
+        for key in dictionary:
+            value = dictionary[key]
+            if np.isscalar(value):
+                dictionary[key] = np.repeat(
+                    value, repeats=nb_elements
+                ).tolist()
 
-            result = list(map(tuple, list(zip(*dictionary.values()))))
-
-        return result
+        return list(map(tuple, list(zip(*dictionary.values()))))
 
     def _query_table(
         self,
