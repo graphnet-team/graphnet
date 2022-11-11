@@ -1,6 +1,14 @@
 graphnet.utilities package
 ==========================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   graphnet.utilities.config
+
 Submodules
 ----------
 

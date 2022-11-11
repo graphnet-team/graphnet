@@ -23,14 +23,6 @@ graphnet.models.coarsening module
    :undoc-members:
    :show-inheritance:
 
-graphnet.models.config module
------------------------------
-
-.. automodule:: graphnet.models.config
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 graphnet.models.graph\_builders module
 --------------------------------------
 

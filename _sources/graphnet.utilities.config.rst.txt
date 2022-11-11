@@ -1,0 +1,37 @@
+graphnet.utilities.config package
+=================================
+
+Submodules
+----------
+
+graphnet.utilities.config.base\_config module
+---------------------------------------------
+
+.. automodule:: graphnet.utilities.config.base_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.utilities.config.configurable module
+---------------------------------------------
+
+.. automodule:: graphnet.utilities.config.configurable
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.utilities.config.model\_config module
+----------------------------------------------
+
+.. automodule:: graphnet.utilities.config.model_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: graphnet.utilities.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
