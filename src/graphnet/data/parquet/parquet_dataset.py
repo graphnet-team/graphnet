@@ -1,6 +1,6 @@
 """`Dataset` class(es) for reading from Parquet files."""
 
-from typing import Any, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 import numpy as np
 import awkward as ak
@@ -44,38 +44,10 @@ class ParquetDataset(Dataset):
             )
         )
 
-    def _query_table(
-        self,
-        table: str,
-        columns: Union[List[str], str],
-        sequential_index: Optional[int] = None,
-        selection: Optional[str] = None,
+    def _format_dictionary_result(
+        self, dictionary: Dict
     ) -> List[Tuple[Any, ...]]:
-        # Check(s)
-        assert (
-            selection is None
-        ), "Argument `selection` is currently not supported"
-
-        index: Optional[int]
-        if sequential_index is None:
-            index = None
-        else:
-            index = cast(List[int], self._indices)[sequential_index]
-
-        try:
-            if index is None:
-                ak_array = self._parquet_hook[table][columns][index]
-            else:
-                ak_array = self._parquet_hook[table][columns][:]
-        except ValueError as e:
-            if "does not exist (not in record)" in str(e):
-                raise ColumnMissingException(str(e))
-            else:
-                raise e
-
-        dictionary = ak_array.to_list()
-        assert list(dictionary.keys()) == columns
-
+        """Convert the output of `ak.to_list()` into a list of tuples."""
         if all(map(np.isscalar, dictionary.values())):
             result = [tuple(dictionary.values())]
 
@@ -100,5 +72,51 @@ class ParquetDataset(Dataset):
                     ).tolist()
 
             result = list(map(tuple, list(zip(*dictionary.values()))))
+
+        return result
+
+    def _query_table(
+        self,
+        table: str,
+        columns: Union[List[str], str],
+        sequential_index: Optional[int] = None,
+        selection: Optional[str] = None,
+    ) -> List[Tuple[Any, ...]]:
+        # Check(s)
+        assert (
+            selection is None
+        ), "Argument `selection` is currently not supported"
+
+        index: Optional[int]
+        if sequential_index is None:
+            index = None
+        else:
+            index = cast(List[int], self._indices)[sequential_index]
+
+        try:
+            if index is None:
+                ak_array = self._parquet_hook[table][columns][:]
+            else:
+                ak_array = self._parquet_hook[table][columns][index]
+        except ValueError as e:
+            if "does not exist (not in record)" in str(e):
+                raise ColumnMissingException(str(e))
+            else:
+                raise e
+
+        output = ak_array.to_list()
+
+        result: List[Tuple[Any, ...]] = []
+
+        # Querying single index
+        if isinstance(output, dict):
+            assert list(output.keys()) == columns
+            result = self._format_dictionary_result(output)
+
+        # Querying entire columm
+        elif isinstance(output, list):
+            for dictionary in output:
+                assert list(dictionary.keys()) == columns
+                result.extend(self._format_dictionary_result(dictionary))
 
         return result
