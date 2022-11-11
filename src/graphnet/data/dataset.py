@@ -7,6 +7,7 @@ import numpy as np
 import torch
 from torch_geometric.data import Data
 
+from graphnet.utilities.config import Configurable, DatasetConfig
 from graphnet.utilities.logging import LoggerMixin
 
 
@@ -14,7 +15,7 @@ class ColumnMissingException(Exception):
     """Exception to indicate a missing column in a dataset."""
 
 
-class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
+class Dataset(Configurable, torch.utils.data.Dataset, LoggerMixin, ABC):
     """Base Dataset class for reading from any intermediate file format."""
 
     def __init__(
@@ -149,6 +150,18 @@ class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
 
         # Implementation-specific post-init code.
         self._post_init()
+
+    def from_config(  # type: ignore[override]
+        cls, source: Union[DatasetConfig, str]
+    ) -> Union["Dataset", List["Dataset"]]:
+        """Construct `Dataset` from `source` configuration."""
+        if isinstance(source, str):
+            source = DatasetConfig.load(source)
+
+        assert isinstance(
+            source, DatasetConfig
+        ), f"Argument `source` of type ({type(source)}) is not a `DatasetConfig"
+        return source.construct_dataset()
 
     # Abstract method(s)
     @abstractmethod
