@@ -190,9 +190,9 @@ class ModelConfig(BaseConfig):
             else:
                 raise ValueError(
                     f"Constructing model containing a class ({obj}) with "
-                    "`trust=False`. If you trust the class definitions in this "
-                    "ModelConfig, set `trust=True` and reconstruct the model "
-                    "again."
+                    "`trust=False`. If you trust the class definitions in "
+                    "this ModelConfig, set `trust=True` and reconstruct the "
+                    "model again."
                 )
 
         else:
