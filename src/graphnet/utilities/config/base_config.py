@@ -11,7 +11,7 @@ from graphnet.utilities.logging import LoggerMixin
 CONFIG_FILES_SUFFIXES = (".yml", ".yaml")
 
 
-class BaseConfig(BaseModel, LoggerMixin):
+class BaseConfig(BaseModel):
     """Base class for Configs."""
 
     @classmethod

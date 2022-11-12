@@ -1,0 +1,31 @@
+path: /groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db
+pulsemaps:
+  - SRTTWOfflinePulsesDC
+features:
+  - dom_x
+  - dom_y
+  - dom_z
+  - dom_time
+  - charge
+  - rde
+  - pmt_area
+truth:
+  - energy
+  - energy_track
+  - position_x
+  - position_y
+  - position_z
+  - azimuth
+  - zenith
+  - pid
+  - elasticity
+  - sim_type
+  - interaction_type
+  - interaction_time
+  - inelasticity
+index_column: event_no
+truth_table: truth
+selection:
+  test: event_no % 5 == 0
+  validation: event_no % 5 == 1
+  train: event_no % 5 > 1
