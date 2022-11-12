@@ -21,7 +21,7 @@ class ColumnMissingException(Exception):
     """Exception to indicate a missing column in a dataset."""
 
 
-class Dataset(Configurable, torch.utils.data.Dataset, LoggerMixin, ABC):
+class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
     """Base Dataset class for reading from any intermediate file format."""
 
     @save_dataset_config
@@ -161,6 +161,9 @@ class Dataset(Configurable, torch.utils.data.Dataset, LoggerMixin, ABC):
 
         # Implementation-specific post-init code.
         self._post_init()
+
+        # Base class constructor
+        super().__init__()
 
     @classmethod
     def from_config(  # type: ignore[override]
