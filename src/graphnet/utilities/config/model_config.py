@@ -17,7 +17,10 @@ from typing import (
 )
 
 import graphnet
-from graphnet.utilities.config.base_config import BaseConfig
+from graphnet.utilities.config.base_config import (
+    BaseConfig,
+    get_all_argument_values,
+)
 from graphnet.utilities.logging import get_logger
 
 if TYPE_CHECKING:
@@ -242,21 +245,8 @@ def save_config(init_fn: Callable) -> Callable:
         # Call wrapped method
         ret = init_fn(self, *args, **kwargs)
 
-        # Get all default argument values
-        cfg = OrderedDict()
-        for key, parameter in inspect.signature(init_fn).parameters.items():
-            if key == "self":
-                continue
-            if parameter.default == inspect._empty:
-                continue
-            cfg[key] = parameter.default
-
-        # Add positional arguments
-        for key, val in zip(cfg.keys(), args):
-            cfg[key] = val
-
-        # Add keyword arguments
-        cfg.update(kwargs)
+        # Get all argument values, including defaults
+        cfg = get_all_argument_values(init_fn, *args, **kwargs)
 
         # Handle nested `Model`s, etc.
         cfg = traverse_and_apply(cfg, _replace_model_instance_with_config)

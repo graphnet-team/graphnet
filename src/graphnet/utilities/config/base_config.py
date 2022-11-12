@@ -1,6 +1,8 @@
 """Base config class(es)."""
 
-from typing import Optional
+from collections import OrderedDict
+import inspect
+from typing import Any, Callable, Dict, Optional
 
 from pydantic import BaseModel
 import ruamel.yaml as yaml
@@ -37,3 +39,26 @@ class BaseConfig(BaseModel):
             return None
         else:
             return yaml.dump(config_dict)
+
+
+def get_all_argument_values(
+    fn: Callable, *args: Any, **kwargs: Any
+) -> Dict[str, Any]:
+    """Return dict of all argument values to `fn`, including defaults."""
+    # Get all default argument values
+    cfg = OrderedDict()
+    for key, parameter in inspect.signature(fn).parameters.items():
+        if key == "self":
+            continue
+        if parameter.default == inspect._empty:
+            continue
+        cfg[key] = parameter.default
+
+    # Add positional arguments
+    for key, val in zip(cfg.keys(), args):
+        cfg[key] = val
+
+    # Add keyword arguments
+    cfg.update(kwargs)
+
+    return cfg
