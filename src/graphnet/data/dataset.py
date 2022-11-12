@@ -169,7 +169,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
     def from_config(  # type: ignore[override]
         cls,
         source: Union[DatasetConfig, str],
-    ) -> "DatasetConfig":
+    ) -> Union["Dataset", Dict[str, "Dataset"]]:
         """Construct `Model` instance from `source` configuration.
 
         Arguments:
