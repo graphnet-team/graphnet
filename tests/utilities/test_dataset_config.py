@@ -1,6 +1,7 @@
 """Unit tests for `DatasetConfig` class."""
 
 import os.path
+from typing import Dict
 
 import pytest
 import torch
@@ -80,7 +81,7 @@ def test_dataset_config(
     }
     dataset.save_config(config_path)
 
-    datasets = Dataset.from_config(config_path)
+    datasets: Dict[str, Dataset] = Dataset.from_config(config_path)
     assert isinstance(datasets, dict)
     assert len(datasets) == 2
     assert "train" in datasets and "test" in datasets
