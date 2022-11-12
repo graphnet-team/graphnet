@@ -186,9 +186,10 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         if isinstance(source, str):
             source = DatasetConfig.load(source)
 
-        assert isinstance(
-            source, DatasetConfig
-        ), f"Argument `source` of type ({type(source)}) is not a `DatasetConfig"
+        assert isinstance(source, DatasetConfig), (
+            f"Argument `source` of type ({type(source)}) is not a "
+            "`DatasetConfig"
+        )
         return source.construct_model()
 
     # Abstract method(s)
