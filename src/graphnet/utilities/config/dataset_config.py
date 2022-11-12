@@ -77,6 +77,19 @@ class DatasetConfig(BaseConfig):
 
             Or identically:
             >>> dataset = DatasetConfig.load("dataset.yml").construct_dataset()
+
+            # Uniquely for `DatasetConfig`, you can also define and load multiple datasets
+            >>> dataset.config.selection = {
+                "train": "event_no % 2 == 0",
+                "test": "event_no % 2 == 1",
+            }
+            >>> dataset.config.dump("dataset.yml")
+            >>> datasets: Dict[str, Dataset] = Dataset.from_config("dataset.yml")
+            >>> datasets
+            {
+                "train": Dataset(...),
+                "test": Dataset(...),
+            }
         """
         # Single-key dictioaries are unpacked
         if isinstance(data["selection"], dict) and len(data["selection"]) == 1:
@@ -132,7 +145,9 @@ class DatasetConfig(BaseConfig):
 
     def _construct_datasets(self) -> Dict[str, "Dataset"]:
         """Construct `Dataset` for each entry in `self.selection`."""
-        datasets: Dict[str, "Dataset"] = {}
+        from graphnet.data.dataset import Dataset
+
+        datasets: Dict[str, Dataset] = {}
         selections: Dict[str, Union[str, Sequence]] = dict(**self.selection)
         for key, selection in selections.items():
             self.selection = selection
