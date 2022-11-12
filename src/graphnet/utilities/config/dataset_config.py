@@ -92,7 +92,7 @@ class DatasetConfig(BaseConfig):
         if isinstance(self.path, list):
             path = self.path[0]
         else:
-            assert isinstance(path, str)
+            assert isinstance(self.path, str)
             path = self.path
         suffix = path.split(".")[-1]
         try:
@@ -117,7 +117,7 @@ class DatasetConfig(BaseConfig):
 
         return dataset_class
 
-    def construct_datataset(self) -> Union["Dataset", Dict[str, "Dataset"]]:
+    def construct_dataset(self) -> Union["Dataset", Dict[str, "Dataset"]]:
         """Construct `Dataset` based on current config.
 
         If `self.selection` is a dictionary of selections, a dictionary of
@@ -136,7 +136,7 @@ class DatasetConfig(BaseConfig):
         selections: Dict[str, Union[str, Sequence]] = dict(**self.selection)
         for key, selection in selections.items():
             self.selection = selection
-            dataset = self.construct_datataset()
+            dataset = self.construct_dataset()
             assert isinstance(dataset, Dataset)
             datasets[key] = dataset
 
