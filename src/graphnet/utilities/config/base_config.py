@@ -1,5 +1,6 @@
 """Base config class(es)."""
 
+from abc import abstractmethod
 from collections import OrderedDict
 import inspect
 from typing import Any, Callable, Dict, Optional
@@ -23,7 +24,8 @@ class BaseConfig(BaseModel):
             CONFIG_FILES_SUFFIXES
         ), "Please specify YAML config file."
         with open(path, "r") as f:
-            config_dict = yaml.safe_load(f)
+            yaml_ = yaml.YAML(typ="safe", pure=True)
+            config_dict = yaml_.load(f)
 
         return cls(**config_dict)
 
@@ -31,14 +33,22 @@ class BaseConfig(BaseModel):
         """Save BaseConfig to `path` as YAML file, or return as string."""
         config_dict = self._as_dict()[self.__class__.__name__]
 
+        yaml_ = yaml.YAML(typ="safe", pure=True)
         if path:
             if not path.endswith(CONFIG_FILES_SUFFIXES):
                 path += CONFIG_FILES_SUFFIXES[0]
             with open(path, "w") as f:
-                yaml.dump(config_dict, f)
+                yaml_.dump(config_dict, f)
             return None
         else:
-            return yaml.dump(config_dict)
+            return yaml_.dump(config_dict)
+
+    def _as_dict(self) -> Dict[str, Dict[str, Any]]:
+        """Represent BaseConfig as a dict.
+
+        This builds on `BaseModel.dict()` but can be overwritten
+        """
+        return {self.__class__.__name__: self.dict()}
 
 
 def get_all_argument_values(
