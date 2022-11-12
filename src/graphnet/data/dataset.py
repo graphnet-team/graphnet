@@ -190,7 +190,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             f"Argument `source` of type ({type(source)}) is not a "
             "`DatasetConfig"
         )
-        return source.construct_model()
+        return source.construct_dataset()
 
     # Abstract method(s)
     @abstractmethod
