@@ -268,9 +268,11 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         syntax, e.g., "event_no % 5 > 0".
         """
         self.info(f"Resolving selection: {selection}")
-        pattern = "[_a-zA-Z]+[_a-zA-Z0-9]*"
-        variables = set(re.findall(pattern, selection, re.DOTALL))
-
+        pattern = "(^| )([_a-zA-Z]+[_a-zA-Z0-9]*)"
+        variables = set(
+            [groups[1] for groups in re.findall(pattern, selection, re.DOTALL)]
+        )
+        self.info(f"  Found variables: {selection}")
         variables.add(self._index_column)
 
         df_values = pd.DataFrame(
@@ -334,6 +336,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
                 if table not in self._missing_variables:
                     self._missing_variables[table] = []
                 self._missing_variables[table].append(column)
+            except IndexError:
+                self.warning("Dataset contains no entries")
 
         return self._missing_variables.get(table, [])
 
