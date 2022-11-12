@@ -40,6 +40,7 @@ def test_dataset_config(
         pulsemaps="SRTInIcePulses",
         features=FEATURES.DEEPCORE,
         truth=TRUTH.DEEPCORE,
+        selection="event_no % 5 > 0",
     )
 
     if backend == "sqlite":
@@ -59,7 +60,7 @@ def test_dataset_config(
     assert isinstance(loaded_config, DatasetConfig)
     assert loaded_config == dataset.config
 
-    # Construct model
+    # Construct dataset
     constructed_dataset_1 = Dataset.from_config(loaded_config)
     constructed_dataset_2 = loaded_config.construct_dataset()
     assert isinstance(constructed_dataset_1, Dataset)
@@ -71,3 +72,30 @@ def test_dataset_config(
         assert torch.all(
             constructed_dataset_1[ix].x == constructed_dataset_2[ix].x
         )
+
+    # Construct multiple datasets
+    dataset.config.selection = {
+        "train": "event_no % 5 > 0",
+        "test": "event_no % 5 == 0",
+    }
+    dataset.save_config(config_path)
+
+    datasets = Dataset.from_config(config_path)
+    assert isinstance(datasets, dict)
+    assert len(datasets) == 2
+    assert "train" in datasets and "test" in datasets
+
+    # Check that selections work by making sure there is no overlap between
+    # event_nos
+    assert (
+        len(
+            set(datasets["train"]._indices).intersection(
+                set(datasets["test"]._indices)
+            )
+        )
+        == 0
+    )
+
+
+if __name__ == "__main__":
+    test_dataset_config("sqlite")
