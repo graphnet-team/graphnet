@@ -1,12 +1,19 @@
 """Base `Dataset` class(es) used in GraphNeT."""
 
 from abc import ABC, abstractmethod
+import re
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
+import pandas as pd
 import torch
 from torch_geometric.data import Data
 
+from graphnet.utilities.config import (
+    Configurable,
+    DatasetConfig,
+    save_dataset_config,
+)
 from graphnet.utilities.logging import LoggerMixin
 
 
@@ -14,9 +21,10 @@ class ColumnMissingException(Exception):
     """Exception to indicate a missing column in a dataset."""
 
 
-class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
+class Dataset(Configurable, torch.utils.data.Dataset, LoggerMixin, ABC):
     """Base Dataset class for reading from any intermediate file format."""
 
+    @save_dataset_config
     def __init__(
         self,
         path: Union[str, List[str]],
@@ -140,6 +148,10 @@ class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
         self._indices: Union[List[int], List[List[int]]]
         if selection is None:
             self._indices = self._get_all_indices()
+        elif isinstance(selection, str):
+            self._indices = self._resolve_string_selection_to_indices(
+                selection
+            )
         else:
             self._indices = selection
 
@@ -149,6 +161,32 @@ class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
 
         # Implementation-specific post-init code.
         self._post_init()
+
+    @classmethod
+    def from_config(  # type: ignore[override]
+        cls,
+        source: Union[DatasetConfig, str],
+    ) -> "DatasetConfig":
+        """Construct `Model` instance from `source` configuration.
+
+        Arguments:
+            trust: Whether to trust the ModelConfig file enough to `eval(...)`
+                any lambda function expressions contained.
+            load_modules: List of modules used in the definition of the model
+                which, as a consequence, need to be loaded into the global
+                namespace. Defaults to loading `torch`.
+
+        Raises:
+            ValueError: If the ModelConfig contains lambda functions but
+                `trust = False`.
+        """
+        if isinstance(source, str):
+            source = DatasetConfig.load(source)
+
+        assert isinstance(
+            source, DatasetConfig
+        ), f"Argument `source` of type ({type(source)}) is not a `DatasetConfig"
+        return source.construct_model()
 
     # Abstract method(s)
     @abstractmethod
@@ -217,6 +255,30 @@ class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
         return graph
 
     # Internal method(s)
+    def _resolve_string_selection_to_indices(
+        self, selection: str
+    ) -> List[int]:
+        """Resolve selection as string to list of indicies.
+
+        Selections are expected to have pandas.DataFrame.query-compatible
+        syntax, e.g., "event_no % 5 > 0".
+        """
+        self.info(f"Resolving selection: {selection}")
+        pattern = "[_a-zA-Z]+[_a-zA-Z0-9]*"
+        variables = set(re.findall(pattern, selection, re.DOTALL))
+
+        variables.add(self._index_column)
+
+        df_values = pd.DataFrame(
+            data=self._query_table(self._truth_table, list(variables)),
+            columns=list(variables),
+        )
+        indices = df_values.query(selection)[
+            self._index_column
+        ].values.tolist()
+
+        return indices
+
     def _remove_missing_columns(self) -> None:
         """Remove columns that are not present in the input file.
 
