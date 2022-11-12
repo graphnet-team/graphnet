@@ -62,6 +62,8 @@ def test_dataset_config(
     # Construct model
     constructed_dataset_1 = Dataset.from_config(loaded_config)
     constructed_dataset_2 = loaded_config.construct_dataset()
+    assert isinstance(constructed_dataset_1, Dataset)
+    assert isinstance(constructed_dataset_2, Dataset)
     assert constructed_dataset_1.config == constructed_dataset_2.config
     assert len(constructed_dataset_1) == len(constructed_dataset_2)
     nb_test_events = min(5, len(constructed_dataset_1))
