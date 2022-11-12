@@ -14,7 +14,7 @@ from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.loss_functions import LogCoshLoss
 
 
-def test_simple_config(path: str = "/tmp/simple.yml") -> None:
+def test_simple_model_config(path: str = "/tmp/simple_model.yml") -> None:
     """Test saving, loading, and reconstructing simple model."""
     # Construct single Model
     model = DynEdge(
@@ -40,7 +40,7 @@ def test_simple_config(path: str = "/tmp/simple.yml") -> None:
     assert repr(constructed_model_1) == repr(constructed_model_2)
 
 
-def test_nested_config(path: str = "/tmp/tested.yml") -> None:
+def test_nested_model_config(path: str = "/tmp/nested_model.yml") -> None:
     """Test saving, loading, and reconstructing nested model."""
     # Construct nested Model
     model = IceCubeDeepCore(
@@ -62,7 +62,7 @@ def test_nested_config(path: str = "/tmp/tested.yml") -> None:
     assert repr(constructed_model) == repr(model)
 
 
-def test_complete_config(path: str = "/tmp/complete.yml") -> None:
+def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
     """Test saving, loading, and reconstructing nested model."""
     # Construct StandardModel
     detector = IceCubeDeepCore(
