@@ -85,5 +85,10 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
+          pwd
+          ls tests/
+          ls test_data/
+          ls test_data/parquet/
+          ls test_data/parquet/oscNext_genie_level7_v02
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/data/
           coverage report -m
