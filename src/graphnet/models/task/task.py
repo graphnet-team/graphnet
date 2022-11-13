@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from graphnet.training.loss_functions import LossFunction  # type: ignore[attr-defined]
 
 from graphnet.models import Model
-from graphnet.utilities.config.model_config import save_config
+from graphnet.utilities.config.model_config import save_model_config
 
 
 class Task(Model):
@@ -35,7 +35,7 @@ class Task(Model):
     def nb_inputs(self) -> int:
         """Return number of inputs assumed by task."""
 
-    @save_config
+    @save_model_config
     def __init__(
         self,
         hidden_size: int,

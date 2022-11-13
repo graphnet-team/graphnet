@@ -3,7 +3,7 @@
 from abc import abstractmethod
 from typing import List
 
-from graphnet.utilities.config.model_config import save_config
+from graphnet.utilities.config.model_config import save_model_config
 
 try:
     from typing import final
@@ -30,7 +30,7 @@ class Detector(Model):
     def features(self) -> List[str]:
         """List of features used/assumed by inheriting `Detector` objects."""
 
-    @save_config
+    @save_model_config
     def __init__(
         self, graph_builder: GraphBuilder, scalers: List[dict] = None
     ):

@@ -2,4 +2,4 @@
 
 from .configurable import Configurable
 from .dataset_config import DatasetConfig, save_dataset_config
-from .model_config import ModelConfig, save_config
+from .model_config import ModelConfig, save_model_config
