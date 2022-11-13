@@ -5,15 +5,6 @@ from typing import TYPE_CHECKING, List, Tuple, Union
 from typing import Callable, Optional
 import numpy as np
 
-try:
-    from typing import final
-except ImportError:  # Python version < 3.8
-
-    # Identity decorator
-    def final(f):  # type: ignore  # noqa: D103
-        return f
-
-
 import torch
 from torch import Tensor
 from torch.nn import Linear
@@ -25,6 +16,7 @@ if TYPE_CHECKING:
 
 from graphnet.models import Model
 from graphnet.utilities.config.model_config import save_config
+from graphnet.utilities.decorators import final
 
 
 class Task(Model):
