@@ -3,16 +3,8 @@
 from abc import ABC, abstractclassmethod
 from typing import Any, Union
 
-try:
-    from typing import final
-except ImportError:  # Python version < 3.8
-
-    # Identity decorator
-    def final(f):  # type: ignore  # noqa: D103
-        return f
-
-
 from graphnet.utilities.config.base_config import BaseConfig
+from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import LoggerMixin
 
 
