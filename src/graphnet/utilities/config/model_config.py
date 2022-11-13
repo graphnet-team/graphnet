@@ -151,8 +151,7 @@ class ModelConfig(BaseConfig):
         return {self.__class__.__name__: config_dict}
 
 
-# @TODO: Rename
-def save_config(init_fn: Callable) -> Callable:
+def save_model_config(init_fn: Callable) -> Callable:
     """Save the arguments to `__init__` functions as a member `ModelConfig`."""
 
     def _replace_model_instance_with_config(
