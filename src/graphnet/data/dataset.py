@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 import re
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -190,7 +190,31 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             f"Argument `source` of type ({type(source)}) is not a "
             "`DatasetConfig"
         )
-        return source.construct_dataset()
+
+        # Parse set of `selection``.
+        if isinstance(source.selection, dict):
+            return cls._construct_datasets(source)
+
+        return source._dataset_class(**source.dict())
+
+    @classmethod
+    def _construct_datasets(
+        cls, config: DatasetConfig
+    ) -> Dict[str, "Dataset"]:
+        """Construct `Dataset` for each entry in `self.selection`."""
+        assert isinstance(config.selection, dict)
+        datasets: Dict[str, "Dataset"] = {}
+        selections: Dict[str, Union[str, Sequence]] = dict(**config.selection)
+        for key, selection in selections.items():
+            config.selection = selection
+            dataset = Dataset.from_config(config)
+            assert isinstance(dataset, Dataset)
+            datasets[key] = dataset
+
+        # Reset `selections`.
+        config.selection = selections
+
+        return datasets
 
     # Abstract method(s)
     @abstractmethod
