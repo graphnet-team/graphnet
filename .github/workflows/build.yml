@@ -82,18 +82,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install package
         uses: ./.github/actions/install-cpu
+        with:
+          editable: true
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          pwd
-          ls tests/
-          ls test_data/
-          ls test_data/parquet/
-          ls test_data/parquet/oscNext_genie_level7_v02
-          python -c "import graphnet; print(dir(graphnet))"
-          python -c "import graphnet; print(f'file: {graphnet.__file__}')"
-          python -c "import graphnet; print(f'path: {graphnet.__path__}')"
-          python -c "import graphnet; print(f'package: {graphnet.__package__}')"
-          python -c "import graphnet; print(f'spec: {graphnet.__spec__}')"
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/data/
           coverage report -m
