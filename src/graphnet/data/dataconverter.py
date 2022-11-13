@@ -27,15 +27,6 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-try:
-    from typing import final
-except ImportError:  # Python version < 3.8
-
-    # Identity decorator
-    def final(f):  # type: ignore  # noqa: D103
-        return f
-
-
 from graphnet.data.utilities.random import pairwise_shuffle
 from graphnet.data.extractors import (
     I3Extractor,
@@ -44,6 +35,7 @@ from graphnet.data.extractors import (
     I3TruthExtractor,
     I3GenericExtractor,
 )
+from graphnet.utilities.decorators import final
 from graphnet.utilities.filesys import find_i3_files
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import LoggerMixin
