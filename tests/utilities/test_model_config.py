@@ -34,10 +34,9 @@ def test_simple_model_config(path: str = "/tmp/simple_model.yml") -> None:
     assert loaded_config == model.config
 
     # Construct model
-    constructed_model_1 = Model.from_config(loaded_config)
-    constructed_model_2 = loaded_config.construct_model()
-    assert constructed_model_1.config == constructed_model_2.config
-    assert repr(constructed_model_1) == repr(constructed_model_2)
+    constructed_model = Model.from_config(loaded_config)
+    assert constructed_model.config == model.config
+    assert repr(constructed_model) == repr(model)
 
 
 def test_nested_model_config(path: str = "/tmp/nested_model.yml") -> None:
