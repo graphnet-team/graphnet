@@ -88,7 +88,9 @@ class ModelConfig(BaseConfig):
     def _deserialise(cls, obj: Any, trust: bool = False) -> Any:
 
         if isinstance(obj, ModelConfig):
-            return obj.construct_model(trust=trust)
+            from graphnet.models import Model
+
+            return Model.from_config(obj, trust=trust)
 
         elif isinstance(obj, str) and obj.startswith("!lambda"):
             if trust:
