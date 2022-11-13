@@ -21,14 +21,14 @@ class Configurable(LoggerMixin, ABC):
 
     def __init__(self) -> None:
         """Construct `Configurable`."""
-        self._config: "BaseConfig"
+        self._config: BaseConfig
 
         # Base class constructor
         super().__init__()
 
     @final
     @property
-    def config(self) -> "BaseConfig":
+    def config(self) -> BaseConfig:
         """Return configuration to re-create the instance."""
         try:
             return self._config
@@ -45,5 +45,5 @@ class Configurable(LoggerMixin, ABC):
         self.config.dump(path)
 
     @abstractclassmethod
-    def from_config(cls, source: Union["BaseConfig", str]) -> Any:
+    def from_config(cls, source: Union[BaseConfig, str]) -> Any:
         """Construct instance from `source` configuration."""
