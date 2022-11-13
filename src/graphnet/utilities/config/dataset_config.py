@@ -78,13 +78,16 @@ class DatasetConfig(BaseConfig):
             Or identically:
             >>> dataset = DatasetConfig.load("dataset.yml").construct_dataset()
 
-            # Uniquely for `DatasetConfig`, you can also define and load multiple datasets
+            # Uniquely for `DatasetConfig`, you can also define and load
+            # multiple datasets
             >>> dataset.config.selection = {
                 "train": "event_no % 2 == 0",
                 "test": "event_no % 2 == 1",
             }
             >>> dataset.config.dump("dataset.yml")
-            >>> datasets: Dict[str, Dataset] = Dataset.from_config("dataset.yml")
+            >>> datasets: Dict[str, Dataset] = Dataset.from_config(
+                "dataset.yml"
+            )
             >>> datasets
             {
                 "train": Dataset(...),
