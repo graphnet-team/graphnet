@@ -62,17 +62,13 @@ def test_dataset_config(
     assert loaded_config == dataset.config
 
     # Construct dataset
-    constructed_dataset_1 = Dataset.from_config(loaded_config)
-    constructed_dataset_2 = loaded_config.construct_dataset()
-    assert isinstance(constructed_dataset_1, Dataset)
-    assert isinstance(constructed_dataset_2, Dataset)
-    assert constructed_dataset_1.config == constructed_dataset_2.config
-    assert len(constructed_dataset_1) == len(constructed_dataset_2)
-    nb_test_events = min(5, len(constructed_dataset_1))
+    constructed_dataset = Dataset.from_config(loaded_config)
+    assert isinstance(constructed_dataset, Dataset)
+    assert constructed_dataset.config == dataset.config
+    assert len(constructed_dataset) == len(dataset)
+    nb_test_events = min(5, len(constructed_dataset))
     for ix in range(nb_test_events):
-        assert torch.all(
-            constructed_dataset_1[ix].x == constructed_dataset_2[ix].x
-        )
+        assert torch.all(constructed_dataset[ix].x == dataset[ix].x)
 
     # Construct multiple datasets
     dataset.config.selection = {
