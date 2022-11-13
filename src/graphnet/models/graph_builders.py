@@ -6,7 +6,7 @@ import torch
 from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
 
-from graphnet.utilities.config.model_config import save_model_config
+from graphnet.utilities.config import save_model_config
 from graphnet.models.utils import calculate_distance_matrix
 from graphnet.models import Model
 

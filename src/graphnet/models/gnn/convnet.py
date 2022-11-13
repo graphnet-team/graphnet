@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch_geometric.nn import TAGConv, global_add_pool, global_max_pool
 from torch_geometric.data import Data
 
-from graphnet.utilities.config.model_config import save_model_config
+from graphnet.utilities.config import save_model_config
 from graphnet.models.gnn.gnn import GNN
 
 
