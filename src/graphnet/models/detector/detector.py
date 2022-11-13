@@ -3,7 +3,7 @@
 from abc import abstractmethod
 from typing import List
 
-from graphnet.utilities.config.model_config import save_model_config
+from graphnet.utilities.config import save_model_config
 
 try:
     from typing import final
