@@ -90,30 +90,4 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             source, ModelConfig
         ), f"Argument `source` of type ({type(source)}) is not a `ModelConfig"
 
-        # Check(s)
-        if load_modules is None:
-            load_modules = ["torch"]
-        assert isinstance(load_modules, list)
-
-        # Get a lookup for all classes in `graphnet`
-        namespace_classes = get_all_grapnet_classes(
-            graphnet.data, graphnet.models, graphnet.training
-        )
-
-        # Load any additional modules into the global namespace
-        for module in load_modules:
-            assert re.match("^[a-zA-Z_]+$", module) is not None
-            if module in globals():
-                continue
-            exec(f"import {module}", globals())
-
-        # Parse potential ModelConfig arguments
-        arguments = dict(**source.arguments)
-        arguments = traverse_and_apply(
-            arguments,
-            source._deserialise,
-            fn_kwargs={"trust": trust},
-        )
-
-        # Construct model based on arguments
-        return namespace_classes[source.class_name](**arguments)
+        return source._construct_model(trust, load_modules)

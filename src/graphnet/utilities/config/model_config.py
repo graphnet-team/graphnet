@@ -1,19 +1,26 @@
 """Config classes for the `graphnet.models` module."""
 from functools import wraps
 import inspect
+import re
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
     Dict,
+    List,
+    Optional,
     Union,
 )
 
+import graphnet
 from graphnet.utilities.config.base_config import (
     BaseConfig,
     get_all_argument_values,
 )
-from graphnet.utilities.config.parsing import traverse_and_apply
+from graphnet.utilities.config.parsing import (
+    traverse_and_apply,
+    get_all_grapnet_classes,
+)
 
 if TYPE_CHECKING:
     from graphnet.models import Model
@@ -84,9 +91,45 @@ class ModelConfig(BaseConfig):
         else:
             return entry
 
+    def _construct_model(
+        self,
+        trust: bool = False,
+        load_modules: Optional[List[str]] = None,
+    ) -> "Model":
+        """Construct `Model` instance from `self` configuration.
+
+        Used as the basis for `Model.from_config`.
+        """
+        # Check(s)
+        if load_modules is None:
+            load_modules = ["torch"]
+        assert isinstance(load_modules, list)
+
+        # Load any additional modules into the global namespace
+        for module in load_modules:
+            assert re.match("^[a-zA-Z_]+$", module) is not None
+            if module in globals():
+                continue
+            exec(f"import {module}", globals())
+
+        # Get a lookup for all classes in `graphnet`
+        namespace_classes = get_all_grapnet_classes(
+            graphnet.data, graphnet.models, graphnet.training
+        )
+
+        # Parse potential ModelConfig arguments
+        arguments = dict(**self.arguments)
+        arguments = traverse_and_apply(
+            arguments,
+            self._deserialise,
+            fn_kwargs={"trust": trust},
+        )
+
+        # Construct model based on arguments
+        return namespace_classes[self.class_name](**arguments)
+
     @classmethod
     def _deserialise(cls, obj: Any, trust: bool = False) -> Any:
-
         if isinstance(obj, ModelConfig):
             from graphnet.models import Model
 
