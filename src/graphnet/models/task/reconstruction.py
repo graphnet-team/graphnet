@@ -98,7 +98,7 @@ class EnergyReconstructionWithoutPowerTransform(Task):
     # Requires one feature: untransformed energy
     nb_inputs = 1
 
-    def _forward(self, x):
+    def _forward(self, x: Tensor) -> Tensor:
         # Transform to positive energy domain avoiding `-inf` in `log10`
         # Transform, thereby preventing overflow and underflow error.
         return torch.nn.functional.softplus(x, beta=0.05) + eps_like(x)
