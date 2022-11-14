@@ -82,18 +82,7 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
 
 
 class EnergyReconstruction(Task):
-    """Reconstructs energy."""
-
-    # Requires one feature: untransformed energy
-    nb_inputs = 1
-
-    def _forward(self, x: Tensor) -> Tensor:
-        # Transform energy
-        return torch.pow(10, x[:, 0] + 1.0).unsqueeze(1)
-
-
-class EnergyReconstructionWithoutPowerTransform(Task):
-    """Reconstructs energy without power-10 transformation."""
+    """Reconstructs energy using stable method."""
 
     # Requires one feature: untransformed energy
     nb_inputs = 1
