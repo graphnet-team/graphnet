@@ -91,8 +91,8 @@ class EnergyReconstruction(Task):
         # Transform energy
         return torch.pow(10, x[:, 0] + 1.0).unsqueeze(1)
     
-class EnergyReconstructionPreventFlow(Task):
-        """Reconstructs energy without transforming."""
+class EnergyReconstructionWithoutPowerTransform(Task):
+        """Reconstructs energy without power-10 transformation."""
 
         # Requires one feature: untransformed energy
         nb_inputs = 1
