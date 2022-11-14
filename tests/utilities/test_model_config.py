@@ -100,7 +100,7 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
 
     # Construct model
     try:
-        constructed_model = Model.from_config(loaded_config)
+        constructed_model = Model.from_config(loaded_config, load_modules=[])
     except ValueError:
         # Expected behaviour for Model that utilises lambda functions and non-
         # graphnet classes
@@ -141,3 +141,6 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
     )
 
     assert repr(constructed_model) == repr(model)
+
+
+test_complete_model_config()
