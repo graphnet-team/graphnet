@@ -93,6 +93,17 @@ class EnergyReconstruction(Task):
         return torch.nn.functional.softplus(x, beta=0.05) + eps_like(x)
 
 
+class EnergyReconstructionWithPower(Task):
+    """Reconstructs energy."""
+
+    # Requires one feature: untransformed energy
+    nb_inputs = 1
+
+    def _forward(self, x: Tensor) -> Tensor:
+        # Transform energy
+        return torch.pow(10, x[:, 0] + 1.0).unsqueeze(1)
+
+
 class EnergyReconstructionWithUncertainty(EnergyReconstruction):
     """Reconstructs energy and associated uncertainty (log(var))."""
 
