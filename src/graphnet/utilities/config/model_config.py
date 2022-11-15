@@ -166,7 +166,7 @@ class ModelConfig(BaseConfig):
     def _serialise(cls, obj: Any) -> Any:
         """Serialise `obj` to a format that can be saved to file."""
         if isinstance(obj, ModelConfig):
-            return obj._as_dict()
+            return obj.as_dict()
         elif isinstance(obj, type):
             return f"!class {obj.__module__} {obj.__name__}"
         elif isinstance(obj, Callable):  # type: ignore[arg-type]
@@ -181,7 +181,7 @@ class ModelConfig(BaseConfig):
 
         return obj
 
-    def _as_dict(self) -> Dict[str, Dict[str, Any]]:
+    def as_dict(self) -> Dict[str, Dict[str, Any]]:
         """Represent ModelConfig as a dict.
 
         This builds on `BaseModel.dict()` but wraps the output in a single-key
