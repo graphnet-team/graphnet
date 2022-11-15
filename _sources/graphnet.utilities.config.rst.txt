@@ -20,10 +20,26 @@ graphnet.utilities.config.configurable module
    :undoc-members:
    :show-inheritance:
 
+graphnet.utilities.config.dataset\_config module
+------------------------------------------------
+
+.. automodule:: graphnet.utilities.config.dataset_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.utilities.config.model\_config module
 ----------------------------------------------
 
 .. automodule:: graphnet.utilities.config.model_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+graphnet.utilities.config.parsing module
+----------------------------------------
+
+.. automodule:: graphnet.utilities.config.parsing
    :members:
    :undoc-members:
    :show-inheritance:

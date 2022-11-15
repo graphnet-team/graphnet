@@ -72,7 +72,7 @@
 <span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="kn">import</span> <span class="n">scatter_max</span><span class="p">,</span> <span class="n">scatter_mean</span><span class="p">,</span> <span class="n">scatter_min</span><span class="p">,</span> <span class="n">scatter_sum</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.components.layers</span> <span class="kn">import</span> <span class="n">DynEdgeConv</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.config.model_config</span> <span class="kn">import</span> <span class="n">save_config</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">save_model_config</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="kn">import</span> <span class="n">GNN</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.utils</span> <span class="kn">import</span> <span class="n">calculate_xyzt_homophily</span>
 
@@ -87,7 +87,7 @@
 <div class="viewcode-block" id="DynEdge"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge">[docs]</a><span class="k">class</span> <span class="nc">DynEdge</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;DynEdge (dynamical edge convolutional) model.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DynEdge.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.__init__">[docs]</a>    <span class="nd">@save_config</span>
+<div class="viewcode-block" id="DynEdge.__init__"><a class="viewcode-back" href="../../../../graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge.__init__">[docs]</a>    <span class="nd">@save_model_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nb_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>

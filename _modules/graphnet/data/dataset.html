@@ -66,12 +66,19 @@
 <span></span><span class="sd">&quot;&quot;&quot;Base `Dataset` class(es) used in GraphNeT.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
 
+<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Configurable</span><span class="p">,</span>
+    <span class="n">DatasetConfig</span><span class="p">,</span>
+    <span class="n">save_dataset_config</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
 
 
@@ -79,10 +86,11 @@
     <span class="sd">&quot;&quot;&quot;Exception to indicate a missing column in a dataset.&quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Configurable</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base Dataset class for reading from any intermediate file format.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Dataset.__init__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Dataset.__init__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__init__">[docs]</a>    <span class="nd">@save_dataset_config</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
@@ -205,6 +213,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span>
         <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_all_indices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">selection</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_string_selection_to_indices</span><span class="p">(</span>
+                <span class="n">selection</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span> <span class="o">=</span> <span class="n">selection</span>
 
@@ -213,7 +225,61 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_remove_missing_columns</span><span class="p">()</span>
 
         <span class="c1"># Implementation-specific post-init code.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Dataset.from_config"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.from_config">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetConfig</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Construct `Model` instance from `source` configuration.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            trust: Whether to trust the ModelConfig file enough to `eval(...)`</span>
+<span class="sd">                any lambda function expressions contained.</span>
+<span class="sd">            load_modules: List of modules used in the definition of the model</span>
+<span class="sd">                which, as a consequence, need to be loaded into the global</span>
+<span class="sd">                namespace. Defaults to loading `torch`.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the ModelConfig contains lambda functions but</span>
+<span class="sd">                `trust = False`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">DatasetConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DatasetConfig</span><span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Argument `source` of type (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="si">}</span><span class="s2">) is not a &quot;</span>
+            <span class="s2">&quot;`DatasetConfig&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Parse set of `selection``.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_construct_datasets</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">source</span><span class="o">.</span><span class="n">_dataset_class</span><span class="p">(</span><span class="o">**</span><span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Dataset._construct_datasets"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._construct_datasets">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_construct_datasets</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DatasetConfig</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Construct `Dataset` for each entry in `self.selection`.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">selections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">selections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selection</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">)</span>
+            <span class="n">datasets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
+
+        <span class="c1"># Reset `selections`.</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selections</span>
+
+        <span class="k">return</span> <span class="n">datasets</span></div>
 
     <span class="c1"># Abstract method(s)</span>
 <div class="viewcode-block" id="Dataset._init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._init">[docs]</a>    <span class="nd">@abstractmethod</span>
@@ -282,6 +348,32 @@
         <span class="k">return</span> <span class="n">graph</span></div>
 
     <span class="c1"># Internal method(s)</span>
+<div class="viewcode-block" id="Dataset._resolve_string_selection_to_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._resolve_string_selection_to_indices">[docs]</a>    <span class="k">def</span> <span class="nf">_resolve_string_selection_to_indices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Resolve selection as string to list of indicies.</span>
+
+<span class="sd">        Selections are expected to have pandas.DataFrame.query-compatible</span>
+<span class="sd">        syntax, e.g., &quot;event_no % 5 &gt; 0&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resolving selection: </span><span class="si">{</span><span class="n">selection</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="s2">&quot;(^| )([_a-zA-Z]+[_a-zA-Z0-9]*)&quot;</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">groups</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">groups</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Found variables: </span><span class="si">{</span><span class="n">selection</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">variables</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">)</span>
+
+        <span class="n">df_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">variables</span><span class="p">)),</span>
+            <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">variables</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">df_values</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">selection</span><span class="p">)[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">indices</span></div>
+
 <div class="viewcode-block" id="Dataset._remove_missing_columns"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._remove_missing_columns">[docs]</a>    <span class="k">def</span> <span class="nf">_remove_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Remove columns that are not present in the input file.</span>
 
@@ -333,6 +425,8 @@
                 <span class="k">if</span> <span class="n">table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dataset contains no entries&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[])</span></div>
 

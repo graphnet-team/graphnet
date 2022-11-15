@@ -88,6 +88,7 @@
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset.__init__"><code class="docutils literal notranslate"><span class="pre">Dataset.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset.__len__"><code class="docutils literal notranslate"><span class="pre">Dataset.__len__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._check_missing_columns"><code class="docutils literal notranslate"><span class="pre">Dataset._check_missing_columns()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._construct_datasets"><code class="docutils literal notranslate"><span class="pre">Dataset._construct_datasets()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._create_graph"><code class="docutils literal notranslate"><span class="pre">Dataset._create_graph()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._get_all_indices"><code class="docutils literal notranslate"><span class="pre">Dataset._get_all_indices()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._get_dbang_label"><code class="docutils literal notranslate"><span class="pre">Dataset._get_dbang_label()</span></code></a></li>
@@ -97,7 +98,9 @@
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._query"><code class="docutils literal notranslate"><span class="pre">Dataset._query()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._query_table"><code class="docutils literal notranslate"><span class="pre">Dataset._query_table()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset._remove_missing_columns"><code class="docutils literal notranslate"><span class="pre">Dataset._remove_missing_columns()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset._resolve_string_selection_to_indices"><code class="docutils literal notranslate"><span class="pre">Dataset._resolve_string_selection_to_indices()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.dataset.Dataset.add_label"><code class="docutils literal notranslate"><span class="pre">Dataset.add_label()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.dataset.Dataset.from_config"><code class="docutils literal notranslate"><span class="pre">Dataset.from_config()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -734,7 +737,7 @@ files output by the current instance are merged.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string_selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_default_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>, <a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.configurable.Configurable" title="graphnet.utilities.config.configurable.Configurable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configurable</span></code></a>, <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>Base Dataset class for reading from any intermediate file format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -841,6 +844,20 @@ is provided, this value is ignored. Defaults to None.</p></li>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._construct_datasets">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_construct_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._construct_datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._construct_datasets" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>Dataset</cite> for each entry in <cite>self.selection</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig" title="graphnet.utilities.config.dataset_config.DatasetConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatasetConfig</span></code></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1006,6 +1023,22 @@ returned</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset._resolve_string_selection_to_indices">
+<span class="sig-name descname"><span class="pre">_resolve_string_selection_to_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset._resolve_string_selection_to_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset._resolve_string_selection_to_indices" title="Permalink to this definition"></a></dt>
+<dd><p>Resolve selection as string to list of indicies.</p>
+<p>Selections are expected to have pandas.DataFrame.query-compatible
+syntax, e.g., “event_no % 5 &gt; 0”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>selection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.add_label">
 <span class="sig-name descname"><span class="pre">add_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset.add_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.add_label" title="Permalink to this definition"></a></dt>
 <dd><p>Add custom graph label define using function <cite>fn</cite>.</p>
@@ -1018,6 +1051,31 @@ returned</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.from_config">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/dataset.html#Dataset.from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.from_config" title="Permalink to this definition"></a></dt>
+<dd><p>Construct <cite>Model</cite> instance from <cite>source</cite> configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trust</strong> – Whether to trust the ModelConfig file enough to <cite>eval(…)</cite>
+any lambda function expressions contained.</p></li>
+<li><p><strong>load_modules</strong> – List of modules used in the definition of the model
+which, as a consequence, need to be loaded into the global
+namespace. Defaults to loading <cite>torch</cite>.</p></li>
+<li><p><strong>source</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig" title="graphnet.utilities.config.dataset_config.DatasetConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatasetConfig</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the ModelConfig contains lambda functions but
+    <cite>trust = False</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>

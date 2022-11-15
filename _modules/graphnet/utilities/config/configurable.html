@@ -78,14 +78,14 @@
 
 <div class="viewcode-block" id="Configurable.__init__"><a class="viewcode-back" href="../../../../graphnet.utilities.config.html#graphnet.utilities.config.configurable.Configurable.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Construct `Configurable`.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="s2">&quot;BaseConfig&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">BaseConfig</span>
 
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
 
     <span class="nd">@final</span>
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BaseConfig&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseConfig</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return configuration to re-create the instance.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
@@ -102,7 +102,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Configurable.from_config"><a class="viewcode-back" href="../../../../graphnet.utilities.config.html#graphnet.utilities.config.configurable.Configurable.from_config">[docs]</a>    <span class="nd">@abstractclassmethod</span>
-    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;BaseConfig&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BaseConfig</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Construct instance from `source` configuration.&quot;&quot;&quot;</span></div></div>
 </pre></div>
 
