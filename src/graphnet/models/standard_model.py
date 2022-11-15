@@ -157,6 +157,4 @@ class StandardModel(Model):
         if mode:
             for task in self._tasks:
                 task.train_eval()
-        else:
-            self.inference()
         return self
