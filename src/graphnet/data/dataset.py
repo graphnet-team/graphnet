@@ -1,6 +1,8 @@
 """Base `Dataset` class(es) used in GraphNeT."""
 
 from abc import ABC, abstractmethod
+import json
+import os.path
 import re
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -291,12 +293,25 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         Selections are expected to have pandas.DataFrame.query-compatible
         syntax, e.g., "event_no % 5 > 0".
         """
-        self.info(f"Resolving selection: {selection}")
+        self.debug(f"Resolving selection: {selection}")
+
+        import hashlib
+
+        unique_string = f"{self._path if isinstance(self._path, str) else '-'.join(self._path)}-{self._truth_table}-{selection}"
+        hex = hashlib.sha256(unique_string.encode("utf-8")).hexdigest()
+        cache = f"/tmp/selection-{hex}.json"
+
+        if os.path.exists(cache):
+            self.debug(f"> Reading from {cache}")
+            with open(cache, "r") as f:
+                indices = json.load(f)
+            return indices
+
         pattern = "(^| )([_a-zA-Z]+[_a-zA-Z0-9]*)"
         variables = set(
             [groups[1] for groups in re.findall(pattern, selection, re.DOTALL)]
         )
-        self.info(f"  Found variables: {selection}")
+        self.info(f"> Found variables: {variables}")
         variables.add(self._index_column)
 
         df_values = pd.DataFrame(
@@ -306,6 +321,10 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         indices = df_values.query(selection)[
             self._index_column
         ].values.tolist()
+
+        self.debug(f"> Saving to {cache}")
+        with open(cache, "w") as f:
+            json.dump(indices, f)
 
         return indices
 
