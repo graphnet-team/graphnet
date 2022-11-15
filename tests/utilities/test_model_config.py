@@ -6,7 +6,7 @@ import torch
 from torch.optim.adam import Adam
 
 from graphnet.models import StandardModel, Model
-from graphnet.utilities.config.model_config import ModelConfig
+from graphnet.utilities.config import ModelConfig
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
@@ -14,7 +14,7 @@ from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.loss_functions import LogCoshLoss
 
 
-def test_simple_config(path: str = "/tmp/simple.yml") -> None:
+def test_simple_model_config(path: str = "/tmp/simple_model.yml") -> None:
     """Test saving, loading, and reconstructing simple model."""
     # Construct single Model
     model = DynEdge(
@@ -34,13 +34,12 @@ def test_simple_config(path: str = "/tmp/simple.yml") -> None:
     assert loaded_config == model.config
 
     # Construct model
-    constructed_model_1 = Model.from_config(loaded_config)
-    constructed_model_2 = loaded_config.construct_model()
-    assert constructed_model_1.config == constructed_model_2.config
-    assert repr(constructed_model_1) == repr(constructed_model_2)
+    constructed_model = Model.from_config(loaded_config)
+    assert constructed_model.config == model.config
+    assert repr(constructed_model) == repr(model)
 
 
-def test_nested_config(path: str = "/tmp/tested.yml") -> None:
+def test_nested_model_config(path: str = "/tmp/nested_model.yml") -> None:
     """Test saving, loading, and reconstructing nested model."""
     # Construct nested Model
     model = IceCubeDeepCore(
@@ -62,7 +61,7 @@ def test_nested_config(path: str = "/tmp/tested.yml") -> None:
     assert repr(constructed_model) == repr(model)
 
 
-def test_complete_config(path: str = "/tmp/complete.yml") -> None:
+def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
     """Test saving, loading, and reconstructing nested model."""
     # Construct StandardModel
     detector = IceCubeDeepCore(
@@ -101,7 +100,7 @@ def test_complete_config(path: str = "/tmp/complete.yml") -> None:
 
     # Construct model
     try:
-        constructed_model = Model.from_config(loaded_config)
+        constructed_model = Model.from_config(loaded_config, load_modules=[])
     except ValueError:
         # Expected behaviour for Model that utilises lambda functions and non-
         # graphnet classes
@@ -142,3 +141,6 @@ def test_complete_config(path: str = "/tmp/complete.yml") -> None:
     )
 
     assert repr(constructed_model) == repr(model)
+
+
+test_complete_model_config()

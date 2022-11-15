@@ -11,6 +11,7 @@ from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
 from graphnet.data.constants import FEATURES, TRUTH
+from graphnet.data.dataset import Dataset
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.data.parquet.parquet_dataset import ParquetDataset
 from graphnet.utilities.logging import get_logger
@@ -80,10 +81,12 @@ def main(backend: str) -> None:
         truth,
         truth_table=truth_table,
     )
+    assert isinstance(dataset, Dataset)
 
     logger.info(dataset[1])
     logger.info(dataset[1].x)
     if backend == "sqlite":
+        assert isinstance(dataset, SQLiteDataset)
         dataset._close_connection()  # This is necessary iff `dataset` has been indexed between instantiation and passing to `DataLoader`
 
     dataloader = torch.utils.data.DataLoader(
