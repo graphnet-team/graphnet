@@ -18,6 +18,7 @@ from graphnet.utilities.logging import get_logger
 logger = get_logger()
 
 
+# @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_dataloader(
     db: str,
     pulsemaps: Union[str, List[str]],
@@ -74,6 +75,7 @@ def make_dataloader(
     return dataloader
 
 
+# @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_train_validation_dataloader(
     db: str,
     selection: List[int],
@@ -153,7 +155,7 @@ def make_train_validation_dataloader(
     )
 
 
-# @TODO: Remove
+# @TODO: Remove in favour of Model.predict{,_as_dataframe}
 def get_predictions(
     trainer: Trainer,
     model: Model,
