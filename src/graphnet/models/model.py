@@ -6,18 +6,8 @@ import dill
 import os.path
 from typing import Any, Dict, List, Optional, Union
 
-try:
-    from typing import final
-except ImportError:  # Python version < 3.8
-
-    # Identity decorator
-    def final(f):  # type: ignore  # noqa: D103
-        return f
-
-
 import numpy as np
 import pandas as pd
-
 from pytorch_lightning import Trainer, LightningModule
 from pytorch_lightning.callbacks.callback import Callback
 from pytorch_lightning.loggers.logger import Logger
@@ -226,4 +216,5 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         assert isinstance(
             source, ModelConfig
         ), f"Argument `source` of type ({type(source)}) is not a `ModelConfig"
-        return source.construct_model(trust=trust, load_modules=load_modules)
+
+        return source._construct_model(trust, load_modules)

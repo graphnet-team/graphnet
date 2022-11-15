@@ -82,6 +82,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install package
         uses: ./.github/actions/install-cpu
+        with:
+          editable: true
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest

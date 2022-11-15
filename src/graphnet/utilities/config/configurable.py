@@ -3,16 +3,8 @@
 from abc import ABC, abstractclassmethod
 from typing import Any, Union
 
-try:
-    from typing import final
-except ImportError:  # Python version < 3.8
-
-    # Identity decorator
-    def final(f):  # type: ignore  # noqa: D103
-        return f
-
-
 from graphnet.utilities.config.base_config import BaseConfig
+from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import LoggerMixin
 
 
@@ -21,14 +13,14 @@ class Configurable(LoggerMixin, ABC):
 
     def __init__(self) -> None:
         """Construct `Configurable`."""
-        self._config: "BaseConfig"
+        self._config: BaseConfig
 
         # Base class constructor
         super().__init__()
 
     @final
     @property
-    def config(self) -> "BaseConfig":
+    def config(self) -> BaseConfig:
         """Return configuration to re-create the instance."""
         try:
             return self._config
@@ -45,5 +37,5 @@ class Configurable(LoggerMixin, ABC):
         self.config.dump(path)
 
     @abstractclassmethod
-    def from_config(cls, source: Union["BaseConfig", str]) -> Any:
+    def from_config(cls, source: Union[BaseConfig, str]) -> Any:
         """Construct instance from `source` configuration."""

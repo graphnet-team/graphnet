@@ -9,7 +9,7 @@ from torch.optim import Adam
 from torch_geometric.data import Data
 
 from graphnet.models.coarsening import Coarsening
-from graphnet.utilities.config import save_config
+from graphnet.utilities.config import save_model_config
 from graphnet.models.detector.detector import Detector
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.model import Model
@@ -23,7 +23,7 @@ class StandardModel(Model):
     model (detector read-in, GNN architecture, and task-specific read-outs).
     """
 
-    @save_config
+    @save_model_config
     def __init__(
         self,
         *,
