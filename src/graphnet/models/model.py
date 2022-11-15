@@ -61,9 +61,13 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             gradient_clip_val=gradient_clip_val,
             **trainer_kwargs,
         )
-        trainer.fit(
-            self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
-        )
+        try:
+            trainer.fit(
+                self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
+            )
+        except KeyboardInterrupt:
+            self.warning("[ctrl+c] Exiting gracefully.")
+            pass
 
     def predict(self, dataloader: DataLoader) -> List[Tensor]:
         """Return predictions for `dataloader`.
