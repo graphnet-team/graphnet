@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 import dill
 import os.path
+import re
 from typing import Dict, List, Optional, Union
 
 from pytorch_lightning import LightningModule
@@ -10,8 +11,13 @@ import torch
 from torch import Tensor
 from torch_geometric.data import Data
 
+import graphnet
 from graphnet.utilities.logging import LoggerMixin
 from graphnet.utilities.config import Configurable, ModelConfig
+from graphnet.utilities.config.parsing import (
+    traverse_and_apply,
+    get_all_grapnet_classes,
+)
 
 
 class Model(Configurable, LightningModule, LoggerMixin, ABC):
@@ -83,4 +89,5 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         assert isinstance(
             source, ModelConfig
         ), f"Argument `source` of type ({type(source)}) is not a `ModelConfig"
-        return source.construct_model(trust=trust, load_modules=load_modules)
+
+        return source._construct_model(trust, load_modules)
