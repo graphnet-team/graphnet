@@ -172,19 +172,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         cls,
         source: Union[DatasetConfig, str],
     ) -> Union["Dataset", Dict[str, "Dataset"]]:
-        """Construct `Model` instance from `source` configuration.
-
-        Arguments:
-            trust: Whether to trust the ModelConfig file enough to `eval(...)`
-                any lambda function expressions contained.
-            load_modules: List of modules used in the definition of the model
-                which, as a consequence, need to be loaded into the global
-                namespace. Defaults to loading `torch`.
-
-        Raises:
-            ValueError: If the ModelConfig contains lambda functions but
-                `trust = False`.
-        """
+        """Construct `Dataset` instance from `source` configuration."""
         if isinstance(source, str):
             source = DatasetConfig.load(source)
 
