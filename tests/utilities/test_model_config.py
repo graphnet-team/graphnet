@@ -96,7 +96,7 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
     #     functions are serialised as strings and do not match the original
     #     ones. Casting both to dict means that lambda functions are serialised
     #     to strings for both and are thus comparable.
-    assert loaded_config._as_dict() == model.config._as_dict()
+    assert loaded_config.as_dict() == model.config.as_dict()
 
     # Construct model
     try:
