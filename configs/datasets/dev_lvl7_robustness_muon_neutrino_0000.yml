@@ -11,7 +11,6 @@ features:
   - pmt_area
 truth:
   - energy
-  - energy_track
   - position_x
   - position_y
   - position_z
@@ -21,11 +20,9 @@ truth:
   - elasticity
   - sim_type
   - interaction_type
-  - interaction_time
-  - inelasticity
 index_column: event_no
 truth_table: truth
 selection:
-  test: event_no % 5 == 0
-  validation: event_no % 5 == 1
-  train: event_no % 5 > 1
+  test: event_no % 5 == 0 & event_no < 50000
+  validation: event_no % 5 == 1 & event_no < 50000
+  train: event_no % 5 > 1 & event_no < 50000
