@@ -6,7 +6,7 @@ import torch
 from torch.optim.adam import Adam
 
 from graphnet.models import StandardModel, Model
-from graphnet.models.config import ModelConfig
+from graphnet.utilities.config.model_config import ModelConfig
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder

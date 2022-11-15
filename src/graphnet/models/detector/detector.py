@@ -3,23 +3,14 @@
 from abc import abstractmethod
 from typing import List
 
-from graphnet.models.config import save_config
-
-try:
-    from typing import final
-except ImportError:  # Python version < 3.8
-
-    # Identity decorator
-    def final(f):  # type: ignore  # noqa: D103
-        return f
-
-
 import torch
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 
 from graphnet.models.graph_builders import GraphBuilder
 from graphnet.models import Model
+from graphnet.utilities.config.model_config import save_config
+from graphnet.utilities.decorators import final
 
 
 class Detector(Model):
