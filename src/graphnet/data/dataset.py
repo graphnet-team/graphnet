@@ -2,9 +2,11 @@
 
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+
 import numpy as np
 import torch
 from torch_geometric.data import Data
+
 from graphnet.utilities.logging import LoggerMixin
 
 
@@ -12,7 +14,7 @@ class ColumnMissingException(Exception):
     """Exception to indicate a missing column in a dataset."""
 
 
-class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
+class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
     """Base Dataset class for reading from any intermediate file format."""
 
     def __init__(
@@ -165,7 +167,7 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
         self,
         table: str,
         columns: Union[List[str], str],
-        sequential_index: int,
+        sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
         """Query a table at a specific index, optionally with some selection.
@@ -175,7 +177,8 @@ class Dataset(ABC, torch.utils.data.Dataset, LoggerMixin):
             columns: Columns to read out.
             sequential_index: Sequentially numbered index
                 (i.e. in [0,len(self))) of the event to query. This _may_
-                differ from the indexation used in `self._indices`.
+                differ from the indexation used in `self._indices`. If no value
+                is provided, the entire column is returned.
             selection: Selection to be imposed before reading out data.
                 Defaults to None.
 

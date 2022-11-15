@@ -1,19 +1,29 @@
-"""Config classes for the `graphnet.data` module."""
+"""Config classes for the `graphnet.models` module."""
 from functools import wraps
 import inspect
+import itertools
+import pkgutil
 import re
 import types
-from typing import Any, Callable, Dict, List, Union, Optional, OrderedDict
-
-from pydantic import BaseModel
-import ruamel.yaml as yaml
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Union,
+    Optional,
+    OrderedDict,
+)
 
 import graphnet
-from graphnet.models import Model
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.config.base_config import BaseConfig
+from graphnet.utilities.logging import get_logger
 
+if TYPE_CHECKING:
+    from graphnet.models import Model
 
-CONFIG_FILES_SUFFIXES = (".yml", ".yaml")
+logger = get_logger()
 
 
 def traverse_and_apply(
@@ -33,7 +43,7 @@ def traverse_and_apply(
         return fn(obj, **fn_kwargs)
 
 
-class ModelConfig(BaseModel, LoggerMixin):
+class ModelConfig(BaseConfig):
     """Configuration for all `Model`s."""
 
     # Fields
@@ -41,7 +51,7 @@ class ModelConfig(BaseModel, LoggerMixin):
     arguments: Dict[str, Any]
 
     def __init__(self, **data: Any) -> None:
-        """ModelConfig.
+        """Construct `ModelConfig`.
 
         Can be used for model configuration as code, thereby making model
         construction more transparent and reproducible. Note that this does
@@ -67,76 +77,45 @@ class ModelConfig(BaseModel, LoggerMixin):
             >>> model = ModelConfig.load("model.yml").construct_model()
         """
         # Parse any nested `ModelConfig` arguments
-        def _is_model_config_entry(entry: Dict[str, Any]) -> bool:
-            return (
-                isinstance(entry, dict)
-                and len(entry) == 1
-                and self.__class__.__name__ in entry
-            )
-
-        def _parse_model_config_entry(
-            entry: Dict[str, Any]
-        ) -> Union["ModelConfig", Any]:
-            """Parse dictionary entry to `ModelConfig`."""
-            assert _is_model_config_entry(entry)
-            config_dict = entry[self.__class__.__name__]
-            config = self.__class__(**config_dict)
-            return config
-
         for arg in data["arguments"]:
             value = data["arguments"][arg]
-            if _is_model_config_entry(value):
-                data["arguments"][arg] = _parse_model_config_entry(value)
-
-            elif isinstance(value, (tuple, list)):
+            if isinstance(value, (tuple, list)):
                 for ix, elem in enumerate(value):
-                    if _is_model_config_entry(elem):
-                        data["arguments"][arg][ix] = _parse_model_config_entry(
-                            elem
-                        )
+                    data["arguments"][arg][
+                        ix
+                    ] = self._parse_if_model_config_entry(elem)
+            else:
+                data["arguments"][arg] = self._parse_if_model_config_entry(
+                    value
+                )
 
         # Base class constructor
         super().__init__(**data)
 
-    @classmethod
-    def load(cls, path: str) -> "ModelConfig":
-        """Load ModelConfig from `path`."""
-        assert path.endswith(
-            CONFIG_FILES_SUFFIXES
-        ), "Please specify YAML config file."
-        with open(path, "r") as f:
-            config_dict = yaml.safe_load(f)
-
-        return cls(**config_dict)
-
-    def dump(self, path: Optional[str] = None) -> Optional[str]:
-        """Save ModelConfig to `path` as YAML file, or return as string."""
-        config_dict = self._as_dict()[self.__class__.__name__]
-
-        if path:
-            if not path.endswith(CONFIG_FILES_SUFFIXES):
-                path += CONFIG_FILES_SUFFIXES[0]
-            with open(path, "w") as f:
-                yaml.dump(config_dict, f)
-            return None
-        else:
-            return yaml.dump(config_dict)
-
     def construct_model(
         self, trust: bool = False, load_modules: Optional[List[str]] = None
     ) -> "Model":
-        """Construct model based on current config.
+        """Construct `Model` based on current config.
 
         Arguments:
-            trust (bool): Whether to trust the ModelConfig file enough to
-                `eval(...)` any lambda function expressions contained.
+            trust: Whether to trust the ModelConfig file enough to  `eval(...)`
+                any lambda function expressions contained.
+            load_modules: List of modules used in the definition of the model
+                which, as a consequence, need to be loaded into the global
+                namespace. Defaults to loading `torch`.
 
         Raises:
             ValueError: If the ModelConfig contains lambda functions but
                 `trust = False`.
         """
+        # Check(s)
+        if load_modules is None:
+            load_modules = ["torch"]
+
         # Get a lookup for all classes in `graphnet`
-        namespace_classes = get_namespace_classes(graphnet)
+        namespace_classes = get_all_grapnet_classes(
+            graphnet.data, graphnet.models, graphnet.training
+        )
 
         # Load any additional modules into the global namespace
         if load_modules:
@@ -156,6 +135,25 @@ class ModelConfig(BaseModel, LoggerMixin):
 
         # Construct model based on arguments
         return namespace_classes[self.class_name](**arguments)
+
+    def _is_model_config_entry(self, entry: Dict[str, Any]) -> bool:
+        """Check whether dictionary entry is a `ModelConfig`."""
+        return (
+            isinstance(entry, dict)
+            and len(entry) == 1
+            and self.__class__.__name__ in entry
+        )
+
+    def _parse_if_model_config_entry(
+        self, entry: Dict[str, Any]
+    ) -> Union["ModelConfig", Any]:
+        """Parse dictionary entry to `ModelConfig`."""
+        if self._is_model_config_entry(entry):
+            config_dict = entry[self.__class__.__name__]
+            config = self.__class__(**config_dict)
+            return config
+        else:
+            return entry
 
     @classmethod
     def _deserialise(cls, obj: Any, trust: bool = False) -> Any:
@@ -181,10 +179,10 @@ class ModelConfig(BaseModel, LoggerMixin):
                 return eval(class_name)
             else:
                 raise ValueError(
-                    f"Constructing model containing a class ({obj}) with"
-                    "`trust=False`. If you trust the class definitions in this "
-                    "ModelConfig, set `trust=True` and reconstruct the model "
-                    "again."
+                    f"Constructing model containing a class ({obj}) with "
+                    "`trust=False`. If you trust the class definitions in "
+                    "this ModelConfig, set `trust=True` and reconstruct the "
+                    "model again."
                 )
 
         else:
@@ -228,9 +226,11 @@ def save_config(init_fn: Callable) -> Callable:
     """Save the arguments to `__init__` functions as a member `ModelConfig`."""
 
     def _replace_model_instance_with_config(
-        obj: Union[Model, Any]
+        obj: Union["Model", Any]
     ) -> Union[ModelConfig, Any]:
         """Replace `Model` instances in `obj` with their `ModelConfig`."""
+        from graphnet.models import Model
+
         if isinstance(obj, Model):
             return obj.config
         else:
@@ -272,33 +272,67 @@ def save_config(init_fn: Callable) -> Callable:
     return wrapper
 
 
-def is_graphnet_module(obj: Any) -> bool:
+def list_all_submodules(*packages: types.ModuleType) -> List[types.ModuleType]:
+    """List all submodules in `packages` recursively."""
+    # Resolve one or more packages
+    if len(packages) > 1:
+        return list(
+            itertools.chain.from_iterable(map(list_all_submodules, packages))
+        )
+    else:
+        assert len(packages) == 1, "No packages specified"
+        package = packages[0]
+
+    submodules: List[types.ModuleType] = []
+    for _, module_name, is_pkg in pkgutil.walk_packages(
+        package.__path__, package.__name__ + "."
+    ):
+        module = __import__(module_name, fromlist="dummylist")
+        submodules.append(module)
+        if is_pkg:
+            submodules.extend(list_all_submodules(module))
+
+    return submodules
+
+
+def get_all_grapnet_classes(*packages: types.ModuleType) -> Dict[str, type]:
+    """List all grapnet classes in `packages`."""
+    submodules = list_all_submodules(*packages)
+    classes: Dict[str, type] = {}
+    for submodule in submodules:
+        new_classes = get_graphnet_classes(submodule)
+        for key in new_classes:
+            if key in classes and classes[key] != new_classes[key]:
+                logger.warning(
+                    f"Class {key} found in both {classes[key]} and "
+                    f"{new_classes[key]}. Keeping first instance. "
+                    "Consider renaming."
+                )
+        classes.update(new_classes)
+
+    return classes
+
+
+def is_graphnet_module(obj: types.ModuleType) -> bool:
     """Return whether `obj` is a module in graphnet."""
-    if not isinstance(obj, types.ModuleType):
-        return False
-    return obj.__name__.startswith("graphnet.")
+    return isinstance(obj, types.ModuleType) and obj.__name__.startswith(
+        "graphnet."
+    )
 
 
-def is_graphnet_class(obj: Any) -> bool:
+def is_graphnet_class(obj: type) -> bool:
     """Return whether `obj` is a class in graphnet."""
-    if not isinstance(obj, type):
-        return False
-    return obj.__module__.startswith("graphnet.")
+    return isinstance(obj, type) and obj.__module__.startswith("graphnet.")
 
 
-def get_namespace_classes(module: types.ModuleType) -> Dict:
+def get_graphnet_classes(module: types.ModuleType) -> Dict[str, type]:
     """Return a lookup of all graphnet class names in `module`."""
-    namespace = module.__dict__
-
-    submodules = {
-        key: val for key, val in namespace.items() if is_graphnet_module(val)
-    }
+    if not is_graphnet_module(module):
+        logger.info(f"{module} is not a graphnet module")
+        return {}
     classes = {
-        key: val for key, val in namespace.items() if is_graphnet_class(val)
+        key: val
+        for key, val in module.__dict__.items()
+        if is_graphnet_class(val)
     }
-
-    if len(submodules):
-        for val in submodules.values():
-            classes.update(**get_namespace_classes(val))
-
     return classes

@@ -9,7 +9,7 @@ from torch.optim import Adam
 from torch_geometric.data import Data
 
 from graphnet.models.coarsening import Coarsening
-from graphnet.models.config import save_config
+from graphnet.utilities.config import save_config
 from graphnet.models.detector.detector import Detector
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.model import Model
@@ -157,4 +157,6 @@ class StandardModel(Model):
         if mode:
             for task in self._tasks:
                 task.train_eval()
+        else:
+            self.inference()
         return self

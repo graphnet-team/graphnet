@@ -43,7 +43,7 @@ class SQLiteDataset(Dataset):
         self,
         table: str,
         columns: Union[List[str], str],
-        sequential_index: int,
+        sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
         """Query table at a specific index, optionally with some selection."""
@@ -54,22 +54,30 @@ class SQLiteDataset(Dataset):
         if not selection:  # I.e., `None` or `""`
             selection = "1=1"  # Identically true, to select all
 
-        index_ = self._indices[sequential_index]
-        index: int
-        if self._database_list is None:
-            assert isinstance(index_, int)
-            index = index_
-        else:
-            assert isinstance(index_, list)
-            index = index_[0]
+        index: int = 0
+        if sequential_index is not None:
+            index_ = self._indices[sequential_index]
+            if self._database_list is None:
+                assert isinstance(index_, int)
+                index = index_
+            else:
+                assert isinstance(index_, list)
+                index = index_[0]
 
         # Query table
         self._establish_connection(index)
         try:
             assert self._conn
+            if sequential_index is None:
+                combined_selections = selection
+            else:
+                combined_selections = (
+                    f"{self._index_column} = {index} and {selection}"
+                )
+
             result = self._conn.execute(
                 f"SELECT {columns} FROM {table} WHERE "
-                f"{self._index_column} = {index} and {selection}"
+                f"{combined_selections}"
             ).fetchall()
         except sqlite3.OperationalError as e:
             if "no such column" in str(e):
