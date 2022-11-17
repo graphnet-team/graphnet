@@ -1,12 +1,19 @@
 """Base `Dataset` class(es) used in GraphNeT."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+import re
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
+import pandas as pd
 import torch
 from torch_geometric.data import Data
 
+from graphnet.utilities.config import (
+    Configurable,
+    DatasetConfig,
+    save_dataset_config,
+)
 from graphnet.utilities.logging import LoggerMixin
 
 
@@ -14,9 +21,10 @@ class ColumnMissingException(Exception):
     """Exception to indicate a missing column in a dataset."""
 
 
-class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
+class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
     """Base Dataset class for reading from any intermediate file format."""
 
+    @save_dataset_config
     def __init__(
         self,
         path: Union[str, List[str]],
@@ -140,6 +148,10 @@ class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
         self._indices: Union[List[int], List[List[int]]]
         if selection is None:
             self._indices = self._get_all_indices()
+        elif isinstance(selection, str):
+            self._indices = self._resolve_string_selection_to_indices(
+                selection
+            )
         else:
             self._indices = selection
 
@@ -149,6 +161,60 @@ class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
 
         # Implementation-specific post-init code.
         self._post_init()
+
+        # Base class constructor
+        super().__init__()
+
+    @classmethod
+    def from_config(  # type: ignore[override]
+        cls,
+        source: Union[DatasetConfig, str],
+    ) -> Union["Dataset", Dict[str, "Dataset"]]:
+        """Construct `Model` instance from `source` configuration.
+
+        Arguments:
+            trust: Whether to trust the ModelConfig file enough to `eval(...)`
+                any lambda function expressions contained.
+            load_modules: List of modules used in the definition of the model
+                which, as a consequence, need to be loaded into the global
+                namespace. Defaults to loading `torch`.
+
+        Raises:
+            ValueError: If the ModelConfig contains lambda functions but
+                `trust = False`.
+        """
+        if isinstance(source, str):
+            source = DatasetConfig.load(source)
+
+        assert isinstance(source, DatasetConfig), (
+            f"Argument `source` of type ({type(source)}) is not a "
+            "`DatasetConfig"
+        )
+
+        # Parse set of `selection``.
+        if isinstance(source.selection, dict):
+            return cls._construct_datasets(source)
+
+        return source._dataset_class(**source.dict())
+
+    @classmethod
+    def _construct_datasets(
+        cls, config: DatasetConfig
+    ) -> Dict[str, "Dataset"]:
+        """Construct `Dataset` for each entry in `self.selection`."""
+        assert isinstance(config.selection, dict)
+        datasets: Dict[str, "Dataset"] = {}
+        selections: Dict[str, Union[str, Sequence]] = dict(**config.selection)
+        for key, selection in selections.items():
+            config.selection = selection
+            dataset = Dataset.from_config(config)
+            assert isinstance(dataset, Dataset)
+            datasets[key] = dataset
+
+        # Reset `selections`.
+        config.selection = selections
+
+        return datasets
 
     # Abstract method(s)
     @abstractmethod
@@ -217,6 +283,32 @@ class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
         return graph
 
     # Internal method(s)
+    def _resolve_string_selection_to_indices(
+        self, selection: str
+    ) -> List[int]:
+        """Resolve selection as string to list of indicies.
+
+        Selections are expected to have pandas.DataFrame.query-compatible
+        syntax, e.g., "event_no % 5 > 0".
+        """
+        self.info(f"Resolving selection: {selection}")
+        pattern = "(^| )([_a-zA-Z]+[_a-zA-Z0-9]*)"
+        variables = set(
+            [groups[1] for groups in re.findall(pattern, selection, re.DOTALL)]
+        )
+        self.info(f"  Found variables: {selection}")
+        variables.add(self._index_column)
+
+        df_values = pd.DataFrame(
+            data=self._query_table(self._truth_table, list(variables)),
+            columns=list(variables),
+        )
+        indices = df_values.query(selection)[
+            self._index_column
+        ].values.tolist()
+
+        return indices
+
     def _remove_missing_columns(self) -> None:
         """Remove columns that are not present in the input file.
 
@@ -268,6 +360,8 @@ class Dataset(torch.utils.data.Dataset, LoggerMixin, ABC):
                 if table not in self._missing_variables:
                     self._missing_variables[table] = []
                 self._missing_variables[table].append(column)
+            except IndexError:
+                self.warning("Dataset contains no entries")
 
         return self._missing_variables.get(table, [])
 
