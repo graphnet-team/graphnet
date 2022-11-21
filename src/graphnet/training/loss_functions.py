@@ -16,7 +16,8 @@ except ImportError:  # Python version < 3.8
     def final(f):  # type: ignore  # noqa: D103
         return f
 
-from torch.nn import NLLLoss
+
+from torch import nn
 from torch.nn.functional import (
     one_hot,
     cross_entropy,
@@ -128,18 +129,21 @@ class NLLLoss(LossFunction):
     """
 
     @save_config
-    def __init__(self, options: Union[int, list, dict], *args, **kwargs):
+    def __init__(
+        self, options: Union[int, list, dict], *args: Any, **kwargs: Any
+    ):
+        """Initialize of class options."""
         super().__init__(*args, **kwargs)
         self._options = options
 
-
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Transform outputs to angle and prepare prediction."""
         if isinstance(self._options, int):
             # classes is an integer
-            assert self._options.dtype in [torch.int32, torch.int64]
+            assert self._options in [torch.int32, torch.int64]
             # minimum number of classes is atleast a binary case
             assert self._options >= 2
-            nb_classes = self._options
+            # nb_classes = self._options
 
             # target integers are positive
             assert torch.all(target >= 0)
@@ -148,14 +152,14 @@ class NLLLoss(LossFunction):
 
             assert target.dtype in [torch.int32, torch.int64]
             target_integer = target
-        
+
         elif isinstance(self._options, list):
-            nb_classes = len(self._options)
+            # nb_classes = len(self._options)
             # list of classes; (1,12,13,..,N) -> (0,1,2,..,N)
             target_integer = torch.tensor(target)
-        
+
         elif isinstance(self._options, dict):
-            nb_classes = len(np.unique(list(self._options.values())))
+            # nb_classes = len(np.unique(list(self._options.values())))
             # encodes the target according dict rules; # (1,-1,12,-12,..,N,-N) -> (0,1,..,N)
             target_integer = torch.tensor(
                 [self._options[int(value)] for value in target]
@@ -164,9 +168,9 @@ class NLLLoss(LossFunction):
             self.error("Type (type(self._options)) not supported")
 
         # pid_transform = {1:0,12:2,13:1,14:2,16:2}
-        target_new = one_hot(target_integer, nb_classes)
-        loss = NLLLoss(reduction="none")
-        return loss(prediction.float(), target_new.float())
+        # target_new = one_hot(target_integer, nb_classes)
+        loss = nn.NLLLoss(reduction="none")
+        return loss(prediction.float(), target_integer)
 
 
 class BinaryCrossEntropyLoss(LossFunction):
