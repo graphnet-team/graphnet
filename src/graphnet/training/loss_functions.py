@@ -7,16 +7,14 @@ handles per-event weights, etc.
 from abc import abstractmethod
 from typing import Any, Optional, Union
 
+import numpy as np
+import scipy.special
+import torch
+from torch import Tensor
 
-try:
-    from typing import final
-except ImportError:  # Python version < 3.8
-
-    # Identity decorator
-    def final(f):  # type: ignore  # noqa: D103
-        return f
-
-
+from graphnet.utilities.config import save_model_config
+from graphnet.models.model import Model
+from graphnet.utilities.decorators import final
 from torch import nn
 from torch.nn.functional import (
     one_hot,
@@ -24,19 +22,12 @@ from torch.nn.functional import (
     binary_cross_entropy,
     softplus,
 )
-import numpy as np
-import scipy.special
-import torch
-from torch import Tensor
-
-from graphnet.models.config import save_config
-from graphnet.models.model import Model
 
 
 class LossFunction(Model):
     """Base class for loss functions in `graphnet`."""
 
-    @save_config
+    @save_model_config
     def __init__(self, **kwargs: Any) -> None:
         """Construct `LossFunction`, saving model config."""
         super().__init__(**kwargs)
@@ -128,7 +119,7 @@ class NLLLoss(LossFunction):
     targets are an [N,1]-matrix with integer values in (0, num_classes - 1).
     """
 
-    @save_config
+    @save_model_config
     def __init__(
         self, options: Union[int, list, dict], *args: Any, **kwargs: Any
     ):

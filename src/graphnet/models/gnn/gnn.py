@@ -6,13 +6,13 @@ from torch import Tensor
 from torch_geometric.data import Data
 
 from graphnet.models import Model
-from graphnet.models.config import save_config
+from graphnet.utilities.config import save_model_config
 
 
 class GNN(Model):
     """Base class for all core GNN models in graphnet."""
 
-    @save_config
+    @save_model_config
     def __init__(self, nb_inputs: int, nb_outputs: int) -> None:
         """Construct `GNN`."""
         # Base class constructor

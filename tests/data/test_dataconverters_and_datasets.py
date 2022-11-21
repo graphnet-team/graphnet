@@ -5,6 +5,7 @@ import os
 import numpy as np
 import pytest
 
+import graphnet.constants
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.extractors import (
@@ -31,22 +32,25 @@ if has_icecube_package():
 
 
 # Global variable(s)
-TEST_DATA_DIR = os.path.abspath("./test_data/")
-FILE_NAME = "oscNext_genie_level7_v03.01_pass2.160000.000001"
+TEST_DATA_DIR = os.path.join(
+    graphnet.constants.TEST_DATA_DIR, "i3", "oscNext_genie_level7_v02"
+)
+OUTPUT_DATA_DIR = os.path.join(graphnet.constants.TEST_DATA_DIR, "output")
+FILE_NAME = "oscNext_genie_level7_v02_first_5_frames"
 GCD_FILE = (
     "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz"
 )
 
 
 # Utility method(s)
-def get_file_path(backend: str, test_data_dir: str) -> str:
+def get_file_path(backend: str) -> str:
     """Return the path to the output file for `backend`."""
     suffix = {
         "sqlite": ".db",
         "parquet": ".parquet",
     }[backend]
 
-    path = os.path.join(test_data_dir, FILE_NAME + suffix)
+    path = os.path.join(OUTPUT_DATA_DIR, FILE_NAME + suffix)
     return path
 
 
@@ -74,7 +78,7 @@ def test_dataconverter(
             I3RetroExtractor(),
             I3FeatureExtractorIceCube86("SRTInIcePulses"),
         ],
-        outdir=test_data_dir,
+        outdir=OUTPUT_DATA_DIR,
         gcd_rescue=os.path.join(
             test_data_dir,
             GCD_FILE,
@@ -94,15 +98,15 @@ def test_dataconverter(
     converter(test_data_dir)
 
     # Check output
-    path = get_file_path(backend, test_data_dir)
+    path = get_file_path(backend)
     assert os.path.exists(path), path
 
 
 @pytest.mark.order(3)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR) -> None:
+def test_dataset(backend: str) -> None:
     """Test the implementation of `Dataset` for `backend`."""
-    path = get_file_path(backend, test_data_dir)
+    path = get_file_path(backend)
     assert os.path.exists(path)
 
     # Constructor DataConverter instance
@@ -121,31 +125,14 @@ def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR) -> None:
         assert False, "Shouldn't reach here"
 
     # Compare to expectations
-    expected_number_of_events = 5552
-    test_indices = list(range(10)) + list(
-        range(expected_number_of_events - 10, expected_number_of_events)
-    )
+    expected_number_of_events = 5
+    test_indices = list(range(expected_number_of_events))
     expected_numbers_of_pulses = [
+        9,
+        9,
+        12,
         11,
-        13,
-        9,
-        13,
-        8,
-        8,
-        9,
-        9,
-        9,
-        8,
-        147,
-        21,
-        238,
-        469,
-        181,
-        22,
-        47,
-        121,
-        18,
-        246,
+        15,
     ]
 
     assert len(dataset) == expected_number_of_events
@@ -160,5 +147,48 @@ def test_dataset(backend: str, test_data_dir: str = TEST_DATA_DIR) -> None:
         assert len(event.features) == len(opt["features"])
 
 
+@pytest.mark.order(4)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+def test_dataset_query_table(backend: str) -> None:
+    """Test the implementation of `Dataset._query_table` for `backend`."""
+    path = get_file_path(backend)
+    assert os.path.exists(path)
+
+    # Constructor DataConverter instance
+    pulsemap = "SRTInIcePulses"
+    opt = dict(
+        path=path,
+        pulsemaps=pulsemap,
+        features=FEATURES.DEEPCORE,
+        truth=TRUTH.DEEPCORE,
+    )
+
+    if backend == "sqlite":
+        dataset = SQLiteDataset(**opt)  # type: ignore[arg-type]
+    elif backend == "parquet":
+        dataset = ParquetDataset(**opt)  # type: ignore[arg-type]
+    else:
+        assert False, "Shouldn't reach here"
+
+    # Compare to expectations
+    nb_events_to_test = 5
+    results_all = dataset._query_table(
+        pulsemap,
+        columns=["event_no", opt["features"][0]],
+    )
+    for ix_test in range(nb_events_to_test):
+
+        results_single = dataset._query_table(
+            pulsemap,
+            columns=["event_no", opt["features"][0]],
+            sequential_index=ix_test,
+        )
+        event_nos = list(set([res[0] for res in results_single]))
+        assert len(event_nos) == 1
+        event_no: int = event_nos[0]
+        results_all_subset = [res for res in results_all if res[0] == event_no]
+        assert results_all_subset == results_single
+
+
 if __name__ == "__main__":
-    test_dataconverter("sqlite")
+    test_dataset_query_table("parquet")
