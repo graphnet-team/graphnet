@@ -7,7 +7,10 @@ from graphnet.models.detector.icecube import IceCube86
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.gnn import DynEdge
 from graphnet.models.task.reconstruction import EnergyReconstruction
-from graphnet.training.loss_functions import LogCoshLoss
+from graphnet.models.task.classification import ClassificationTask
+from graphnet.training.loss_functions import LogCoshLoss, NLLLoss
+
+import numpy as np
 
 
 def test_transform_prediction_and_target() -> None:
@@ -51,69 +54,65 @@ def test_transform_prediction_and_target() -> None:
             transform_inference=torch.log10,
         )
 
-def test_ClassificationTask():
-    """Test implementation of `class_options` arguments to `Task`."""
-    detector = IceCube86(
-        graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
-    )
-    gnn = DynEdge(
-        nb_inputs=detector.nb_outputs,
-    )
-    
-    with pytest.raises(
-        AssertionError,
-        match=(
-            "The provided transforms for targets during training and "
-            "predictions during inference are not inverse. Please adjust "
-            "transformation functions or support."
-        ),
-    ):
-        # single integer definition of class
-        class_options = 3
 
-        task = ClassificationTask(
-            nb_classes=len(unique(list(class_options.values()))),
-            hidden_size=gnn.nb_outputs,
-            target_labels="pid",
-            loss_function=NLLLoss(options=config["classification"]),
-        )
+# def test_ClassificationTask() -> None:
+#     """Test implementation of `class_options` arguments to `Task`."""
+#     detector = IceCube86(
+#         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
+#     )
+#     gnn = DynEdge(
+#         nb_inputs=detector.nb_outputs,
+#     )
 
-    with pytest.raises(
-        AssertionError,
-        match=(
-            "The provided transforms for targets during training and "
-            "predictions during inference are not inverse. Please adjust "
-            "transformation functions or support."
-        ),
-    ):
-        # list of classes
-        class_options = [0,1,2]
+#     with pytest.raises(
+#         AssertionError,
+#         match=(""),
+#     ):
+#         # single integer definition of class
+#         class_options = 3
 
-        task = ClassificationTask(
-            nb_classes=len(unique(list(class_options.values()))),
-            hidden_size=gnn.nb_outputs,
-            target_labels="pid",
-            loss_function=NLLLoss(options=config["classification"]),
-        )
+#         task = ClassificationTask(
+#             nb_classes=len(np.unique(list(class_options))),
+#             hidden_size=gnn.nb_outputs,
+#             target_labels="pid",
+#             loss_function=NLLLoss(options=class_options),
+#         )
 
-    with pytest.raises(
-        AssertionError,
-        match=(
-            "The provided transforms for targets during training and "
-            "predictions during inference are not inverse. Please adjust "
-            "transformation functions or support."
-        ),
-    ):
-        # transformation of target to a given class integer
-        class_options = {
-        1:0,-1:0,
-        13:1,-13:1,
-        12:2,-12:2,14:2,-14:2,16:2,-16:2
-        }
+#     with pytest.raises(
+#         AssertionError,
+#         match=(""),
+#     ):
+#         # list of classes
+#         class_options = [0, 1, 2]
 
-        task = ClassificationTask(
-            nb_classes=len(unique(list(class_options.values()))),
-            hidden_size=gnn.nb_outputs,
-            target_labels="pid",
-            loss_function=NLLLoss(options=config["classification"]),
-        )
+#         task = ClassificationTask(
+#             nb_classes=len(np.unique(list(class_options))),
+#             hidden_size=gnn.nb_outputs,
+#             target_labels="pid",
+#             loss_function=NLLLoss(options=class_options),
+#         )
+
+#     with pytest.raises(
+#         AssertionError,
+#         match=(""),
+#     ):
+#         # transformation of target to a given class integer
+#         class_options = {
+#             1: 0,
+#             -1: 0,
+#             13: 1,
+#             -13: 1,
+#             12: 2,
+#             -12: 2,
+#             14: 2,
+#             -14: 2,
+#             16: 2,
+#             -16: 2,
+#         }
+
+#         task = ClassificationTask(
+#             nb_classes=len(np.unique(list(class_options.values()))),
+#             hidden_size=gnn.nb_outputs,
+#             target_labels="pid",
+#             loss_function=NLLLoss(options=class_options),
+#         )

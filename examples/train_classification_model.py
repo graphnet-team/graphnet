@@ -6,7 +6,8 @@ import numpy as np
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
-from pytorch_lightning.loggers import WandbLogger
+
+# from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
@@ -26,9 +27,10 @@ from graphnet.training.utils import (
     make_train_validation_dataloader,
     save_results,
 )
-from graphnet.utilities.logging import get_logger
 
-logger = get_logger()
+# from graphnet.utilities.logging import get_logger
+
+# logger = get_logger()
 
 # Configurations
 torch.multiprocessing.set_sharing_strategy("file_system")
@@ -42,58 +44,65 @@ WANDB_DIR = "./wandb/"
 os.makedirs(WANDB_DIR, exist_ok=True)
 
 # Initialise Weights & Biases (W&B) run
-wandb_logger = WandbLogger(
-    project="example-script",
-    entity="graphnet-team",
-    save_dir=WANDB_DIR,
-    log_model=True,
-)
+# wandb_logger = WandbLogger(
+#    project="example-script",
+#    entity="graphnet-team",
+#    save_dir=WANDB_DIR,
+#    log_model=True,
+# )
 
 
 def main() -> None:
     """Run example."""
-    logger.info(f"features: {features}")
-    logger.info(f"truth: {truth}")
+    # logger.info(f"features: {features}")
+    # logger.info(f"truth: {truth}")
 
     # single integer definition of class
-    #class_options = 3
+    # class_options = 3
     # list of classes
-    #class_options = [0,1,2]
+    # class_options = [0,1,2]
     # transformation of target to a given class integer
     class_options = {
-    1:0,-1:0,
-    13:1,-13:1,
-    12:2,-12:2,14:2,-14:2,16:2,-16:2
+        1: 0,
+        -1: 0,
+        13: 1,
+        -13: 1,
+        12: 2,
+        -12: 2,
+        14: 2,
+        -14: 2,
+        16: 2,
+        -16: 2,
     }
 
     # Configuration
     config = {
         "db": "/groups/icecube/petersen/GraphNetDatabaseRepository/Leon_MC_data/last_one_lvl3MC.db",
         "pulsemap": "SplitInIcePulses",
-        "batch_size": 32,
-        "num_workers": 5,
-        "accelerator": "cpu", #gpu
-        "devices": 1,#[0],
+        "batch_size": 512,
+        "num_workers": 10,
+        "accelerator": "cpu",  # gpu
+        "devices": 1,  # [0],
         "target": "pid",
         "classification": class_options,
-        "n_epochs": 5,
+        "n_epochs": 10,
         "patience": 5,
     }
-    archive = "/groups/icecube/asogaard/gnn/results/"
+    archive = "/groups/icecube/petersen/GraphNetDatabaseRepository/example_results/train_classification_model"
     run_name = "dynedge_{}_example".format(config["target"])
 
     # Log configuration to W&B
-    wandb_logger.experiment.config.update(config)
+    # wandb_logger.experiment.config.update(config)
 
     # Common variables
     train_selection = get_desired_event_numbers(
-    database = cast(str, config["db"]),
-    desired_size = 1000,
-    fraction_noise = float(1/3),
-    fraction_muon = float(1/3),
-    fraction_nu_e = float(1/9),
-    fraction_nu_mu = float(1/9),
-    fraction_nu_tau = float(1/9),
+        database=cast(str, config["db"]),
+        desired_size=1000,
+        fraction_noise=float(1 / 3),
+        fraction_muon=float(1 / 3),
+        fraction_nu_e=float(1 / 9),
+        fraction_nu_mu=float(1 / 9),
+        fraction_nu_tau=float(1 / 9),
     )
 
     (
@@ -121,9 +130,7 @@ def main() -> None:
         nb_classes=len(np.unique(list(class_options.values()))),
         hidden_size=gnn.nb_outputs,
         target_labels=config["target"],
-        loss_function=NLLLoss(
-            options=config["classification"]
-            ),
+        loss_function=NLLLoss(options=config["classification"]),
     )
     model = StandardModel(
         detector=detector,
@@ -160,13 +167,13 @@ def main() -> None:
         max_epochs=config["n_epochs"],
         callbacks=callbacks,
         log_every_n_steps=1,
-        logger=wandb_logger,
+        # logger=wandb_logger,
     )
 
     try:
         trainer.fit(model, training_dataloader, validation_dataloader)
     except KeyboardInterrupt:
-        logger.warning("[ctrl+c] Exiting gracefully.")
+        # logger.warning("[ctrl+c] Exiting gracefully.")
         pass
 
     # Saving predictions to file
@@ -174,7 +181,11 @@ def main() -> None:
         trainer,
         model,
         validation_dataloader,
-        [cast(str, config["target"]) + "_pred"],
+        [
+            cast(str, config["target"]) + "_noise_pred",
+            cast(str, config["target"]) + "_muon_pred",
+            cast(str, config["target"]) + "_neutrino_pred",
+        ],
         additional_attributes=[cast(str, config["target"]), "event_no"],
     )
 
