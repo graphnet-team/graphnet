@@ -22,6 +22,7 @@ from graphnet.models.components.pool import (
     std_pool_x,
 )
 from graphnet.models import Model
+from graphnet.utilities.config import save_model_config
 
 # Utility method(s)
 from torch_geometric.utils import degree
@@ -62,6 +63,7 @@ class Coarsening(Model):
         "sum": (sum_pool, sum_pool_x),
     }
 
+    @save_model_config
     def __init__(
         self,
         reduce: str = "avg",
@@ -193,12 +195,33 @@ class Coarsening(Model):
         return pooled
 
 
+class AttributeCoarsening(Coarsening):
+    """Coarsen pulses based on specified attributes."""
+
+    @save_model_config
+    def __init__(
+        self,
+        attributes: List[str],
+        reduce: str = "avg",
+        transfer_attributes: bool = True,
+    ):
+        """Construct `SimpleCoarsening`."""
+        self._attributes = attributes
+
+        # Base class constructor
+        super().__init__(reduce, transfer_attributes)
+
+    def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
+        """Cluster nodes in `data` by assigning a cluster index to each."""
+        dom_index = group_by(data, self._attributes)
+        return dom_index
+
+
 class DOMCoarsening(Coarsening):
     """Coarsen pulses to DOM-level."""
 
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Cluster nodes in `data` by assigning a cluster index to each."""
-        # dom_index = group_pulses_to_dom(data)
         dom_index = group_by(
             data, ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
         )
