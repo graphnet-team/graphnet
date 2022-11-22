@@ -293,7 +293,10 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         import hashlib
 
-        unique_string = f"{self._path if isinstance(self._path, str) else '-'.join(self._path)}-{self._truth_table}-{selection}"
+        path_string = (
+            self._path if isinstance(self._path, str) else "-".join(self._path)
+        )
+        unique_string = f"{path_string}-{self._truth_table}-{selection}"
         hex = hashlib.sha256(unique_string.encode("utf-8")).hexdigest()
         cache = f"/tmp/selection-{hex}.json"
 
