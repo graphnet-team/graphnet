@@ -20,7 +20,7 @@ def collate_fn(graphs: List[Data]) -> Batch:
 
 def do_shuffle(selection_name: str) -> bool:
     """Check whether to shuffle selection with name `selection_name`."""
-    return selection_name.lower().startswith("train")
+    return "train" in selection_name.lower()
 
 
 class DataLoader(torch.utils.data.DataLoader):
