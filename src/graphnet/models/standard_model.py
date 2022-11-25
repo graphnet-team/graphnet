@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 from torch.nn import ModuleList
 from torch.optim import Adam
+from torch.utils.data import DataLoader
 from torch_geometric.data import Data
 
 from graphnet.models.coarsening import Coarsening
@@ -158,3 +159,8 @@ class StandardModel(Model):
             for task in self._tasks:
                 task.train_eval()
         return self
+
+    def predict(self, dataloader: DataLoader) -> List[Tensor]:
+        """Return predictions for `dataloader`."""
+        self.inference()
+        return super().predict(dataloader)

@@ -1,6 +1,8 @@
 """Base `Dataset` class(es) used in GraphNeT."""
 
 from abc import ABC, abstractmethod
+import json
+import os.path
 import re
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -42,6 +44,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         loss_weight_table: Optional[str] = None,
         loss_weight_column: Optional[str] = None,
         loss_weight_default_value: Optional[float] = None,
+        seed: Optional[int] = None,
     ):
         """Construct Dataset.
 
@@ -81,6 +84,10 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
                 in this case to events with no value in the corresponding
                 table/column. That is, if no per-event loss weight table/column
                 is provided, this value is ignored. Defaults to None.
+            seed: Random number generator seed, used for selecting a random
+                subset of events when resolving a string-based selection (e.g.,
+                `"10000 random events ~ event_no % 5 > 0"` or `"20% random
+                events ~ event_no % 5 > 0"`).
         """
         # Check(s)
         if isinstance(pulsemaps, str):
@@ -140,6 +147,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         self._dtype = dtype
 
         self._label_fns: Dict[str, Callable[[Data], Any]] = {}
+        self._seed = seed
 
         # Implementation-specific initialisation.
         self._init()
@@ -170,19 +178,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         cls,
         source: Union[DatasetConfig, str],
     ) -> Union["Dataset", Dict[str, "Dataset"]]:
-        """Construct `Model` instance from `source` configuration.
-
-        Arguments:
-            trust: Whether to trust the ModelConfig file enough to `eval(...)`
-                any lambda function expressions contained.
-            load_modules: List of modules used in the definition of the model
-                which, as a consequence, need to be loaded into the global
-                namespace. Defaults to loading `torch`.
-
-        Raises:
-            ValueError: If the ModelConfig contains lambda functions but
-                `trust = False`.
-        """
+        """Construct `Dataset` instance from `source` configuration."""
         if isinstance(source, str):
             source = DatasetConfig.load(source)
 
@@ -289,25 +285,111 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """Resolve selection as string to list of indicies.
 
         Selections are expected to have pandas.DataFrame.query-compatible
-        syntax, e.g., "event_no % 5 > 0".
+        syntax, e.g., ``` "event_no % 5 > 0" ``` Selections may also specify a
+        fixed number of events to randomly sample, e.g., ``` "10000 random
+        events ~ event_no % 5 > 0" "20% random events ~ event_no % 5 > 0" ```
         """
-        self.info(f"Resolving selection: {selection}")
+        self.debug(f"Resolving selection: {selection}")
+
+        import hashlib
+
+        path_string = (
+            self._path if isinstance(self._path, str) else "-".join(self._path)
+        )
+        unique_string = f"{path_string}-{self._truth_table}-{selection}"
+        hex = hashlib.sha256(unique_string.encode("utf-8")).hexdigest()
+        cache = f"/tmp/selection-{hex}.json"
+
+        if os.path.exists(cache):
+            self.debug(f"> Reading from {cache}")
+            with open(cache, "r") as f:
+                indices = json.load(f)
+            return indices
+
+        # Check whether to do random sampling
+        (
+            nb_events,
+            frac_events,
+            selection,
+        ) = self._get_random_events_from_selection(selection)
+
+        # Parse selection variables
         pattern = "(^| )([_a-zA-Z]+[_a-zA-Z0-9]*)"
         variables = set(
             [groups[1] for groups in re.findall(pattern, selection, re.DOTALL)]
         )
-        self.info(f"  Found variables: {selection}")
+        self.debug(f"> Found variables: {variables}")
         variables.add(self._index_column)
 
+        # Perform selection using pd.DataFrame.query
         df_values = pd.DataFrame(
             data=self._query_table(self._truth_table, list(variables)),
             columns=list(variables),
         )
-        indices = df_values.query(selection)[
-            self._index_column
-        ].values.tolist()
+        df_values_selection = df_values.query(selection)
+
+        # Get random subset, if necessary.
+        if nb_events or frac_events:
+            random_state: Optional[int] = None
+            if self._seed is not None:
+                # Make sure that a dataset config with a single `seed` yields
+                # different random samples for potentially different selection
+                # (i.e., train, test, val).
+                selection_hex = hashlib.sha256(
+                    selection.encode("utf-8")
+                ).hexdigest()
+                random_state = (self._seed + int(selection_hex, 16)) % 2**32
+
+            df_values_selection = df_values_selection.sample(
+                n=nb_events,
+                frac=frac_events,
+                replace=False,
+                random_state=random_state,
+            )
+
+        indices = df_values_selection[self._index_column].values.tolist()
+
+        self.debug(f"> Saving to {cache}")
+        with open(cache, "w") as f:
+            json.dump(indices, f)
 
         return indices
+
+    def _get_random_events_from_selection(
+        self, selection: str
+    ) -> Tuple[Optional[int], Optional[float], str]:
+        """Parse the `selection` to extract num/frac of random events."""
+        random_events_pattern = (
+            r" *([0-9]+[eE0-9\.-]*[%]?) +random events ~ *(.*)$"
+        )
+        nb_events: Optional[int] = None
+        frac_events: Optional[float] = None
+        m = re.search(random_events_pattern, selection)
+        if m:
+            nb_events_str, selection = m.group(1), m.group(2)
+            if "%" in nb_events_str:
+                frac_events = float(nb_events_str.split("%")[0]) / 100.0
+                assert (
+                    frac_events > 0
+                ), "Got a non-positive fraction of random events."
+                assert (
+                    frac_events <= 1
+                ), "Got a fraction of random events greater than 100%."
+            else:
+                nb_events_float = float(nb_events_str)
+                assert (
+                    nb_events_float > 0
+                ), "Got a non-positive number of random events."
+                if nb_events_float < 1:
+                    self.warning(
+                        "Got a number of random events between 0 and 1. "
+                        "Interpreting this as a fraction of random events."
+                    )
+                    frac_events = nb_events_float
+                else:
+                    nb_events = int(nb_events_float)
+
+        return nb_events, frac_events, selection
 
     def _remove_missing_columns(self) -> None:
         """Remove columns that are not present in the input file.
