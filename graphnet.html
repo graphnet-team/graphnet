@@ -161,6 +161,24 @@
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataconverter.init_global_index"><code class="docutils literal notranslate"><span class="pre">init_global_index()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.html#module-graphnet.data.dataloader">graphnet.data.dataloader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader"><code class="docutils literal notranslate"><span class="pre">DataLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.__init__"><code class="docutils literal notranslate"><span class="pre">DataLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.batch_size"><code class="docutils literal notranslate"><span class="pre">DataLoader.batch_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.dataset"><code class="docutils literal notranslate"><span class="pre">DataLoader.dataset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.drop_last"><code class="docutils literal notranslate"><span class="pre">DataLoader.drop_last</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.from_dataset_config"><code class="docutils literal notranslate"><span class="pre">DataLoader.from_dataset_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.num_workers"><code class="docutils literal notranslate"><span class="pre">DataLoader.num_workers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.pin_memory"><code class="docutils literal notranslate"><span class="pre">DataLoader.pin_memory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.prefetch_factor"><code class="docutils literal notranslate"><span class="pre">DataLoader.prefetch_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.sampler"><code class="docutils literal notranslate"><span class="pre">DataLoader.sampler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.DataLoader.timeout"><code class="docutils literal notranslate"><span class="pre">DataLoader.timeout</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.collate_fn"><code class="docutils literal notranslate"><span class="pre">collate_fn()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataloader.do_shuffle"><code class="docutils literal notranslate"><span class="pre">do_shuffle()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.html#module-graphnet.data.dataset">graphnet.data.dataset module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.ColumnMissingException"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><ul>
@@ -173,6 +191,7 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_all_indices"><code class="docutils literal notranslate"><span class="pre">Dataset._get_all_indices()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_dbang_label"><code class="docutils literal notranslate"><span class="pre">Dataset._get_dbang_label()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_labels"><code class="docutils literal notranslate"><span class="pre">Dataset._get_labels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_random_events_from_selection"><code class="docutils literal notranslate"><span class="pre">Dataset._get_random_events_from_selection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._init"><code class="docutils literal notranslate"><span class="pre">Dataset._init()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._post_init"><code class="docutils literal notranslate"><span class="pre">Dataset._post_init()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._query"><code class="docutils literal notranslate"><span class="pre">Dataset._query()</span></code></a></li>
@@ -325,10 +344,13 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.html#module-graphnet.models.model">graphnet.models.model module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.fit"><code class="docutils literal notranslate"><span class="pre">Model.fit()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.forward"><code class="docutils literal notranslate"><span class="pre">Model.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.from_config"><code class="docutils literal notranslate"><span class="pre">Model.from_config()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.load"><code class="docutils literal notranslate"><span class="pre">Model.load()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.load_state_dict"><code class="docutils literal notranslate"><span class="pre">Model.load_state_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.predict"><code class="docutils literal notranslate"><span class="pre">Model.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.predict_as_dataframe"><code class="docutils literal notranslate"><span class="pre">Model.predict_as_dataframe()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.save"><code class="docutils literal notranslate"><span class="pre">Model.save()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.save_state_dict"><code class="docutils literal notranslate"><span class="pre">Model.save_state_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.model.Model.training"><code class="docutils literal notranslate"><span class="pre">Model.training</span></code></a></li>
@@ -345,6 +367,7 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.forward"><code class="docutils literal notranslate"><span class="pre">StandardModel.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.inference"><code class="docutils literal notranslate"><span class="pre">StandardModel.inference()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.precision"><code class="docutils literal notranslate"><span class="pre">StandardModel.precision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.predict"><code class="docutils literal notranslate"><span class="pre">StandardModel.predict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">StandardModel.prepare_data_per_node</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.shared_step"><code class="docutils literal notranslate"><span class="pre">StandardModel.shared_step()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.models.html#graphnet.models.standard_model.StandardModel.train"><code class="docutils literal notranslate"><span class="pre">StandardModel.train()</span></code></a></li>
@@ -530,6 +553,7 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config.dataset_config">graphnet.utilities.config.dataset_config module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config.model_config">graphnet.utilities.config.model_config module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config.parsing">graphnet.utilities.config.parsing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config.training_config">graphnet.utilities.config.training_config module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config">Module contents</a></li>
 </ul>
 </li>

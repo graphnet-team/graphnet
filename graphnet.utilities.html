@@ -120,7 +120,7 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.utilities.config.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config.base_config">graphnet.utilities.config.base_config module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.base_config.BaseConfig"><code class="docutils literal notranslate"><span class="pre">BaseConfig</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.base_config.BaseConfig._as_dict"><code class="docutils literal notranslate"><span class="pre">BaseConfig._as_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.base_config.BaseConfig.as_dict"><code class="docutils literal notranslate"><span class="pre">BaseConfig.as_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.base_config.BaseConfig.dump"><code class="docutils literal notranslate"><span class="pre">BaseConfig.dump()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.base_config.BaseConfig.load"><code class="docutils literal notranslate"><span class="pre">BaseConfig.load()</span></code></a></li>
 </ul>
@@ -150,6 +150,7 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig.node_truth_table"><code class="docutils literal notranslate"><span class="pre">DatasetConfig.node_truth_table</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig.path"><code class="docutils literal notranslate"><span class="pre">DatasetConfig.path</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig.pulsemaps"><code class="docutils literal notranslate"><span class="pre">DatasetConfig.pulsemaps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig.seed"><code class="docutils literal notranslate"><span class="pre">DatasetConfig.seed</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig.selection"><code class="docutils literal notranslate"><span class="pre">DatasetConfig.selection</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig.string_selection"><code class="docutils literal notranslate"><span class="pre">DatasetConfig.string_selection</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig.truth"><code class="docutils literal notranslate"><span class="pre">DatasetConfig.truth</span></code></a></li>
@@ -162,12 +163,12 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config.model_config">graphnet.utilities.config.model_config module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig"><code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig.__init__"><code class="docutils literal notranslate"><span class="pre">ModelConfig.__init__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig._as_dict"><code class="docutils literal notranslate"><span class="pre">ModelConfig._as_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig._construct_model"><code class="docutils literal notranslate"><span class="pre">ModelConfig._construct_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig._is_model_config_entry"><code class="docutils literal notranslate"><span class="pre">ModelConfig._is_model_config_entry()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig._parse_if_model_config_entry"><code class="docutils literal notranslate"><span class="pre">ModelConfig._parse_if_model_config_entry()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig._serialise"><code class="docutils literal notranslate"><span class="pre">ModelConfig._serialise()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig.arguments"><code class="docutils literal notranslate"><span class="pre">ModelConfig.arguments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig.as_dict"><code class="docutils literal notranslate"><span class="pre">ModelConfig.as_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.model_config.ModelConfig.class_name"><code class="docutils literal notranslate"><span class="pre">ModelConfig.class_name</span></code></a></li>
 </ul>
 </li>
@@ -181,6 +182,16 @@
 <li class="toctree-l3"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.parsing.is_graphnet_module"><code class="docutils literal notranslate"><span class="pre">is_graphnet_module()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.parsing.list_all_submodules"><code class="docutils literal notranslate"><span class="pre">list_all_submodules()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.parsing.traverse_and_apply"><code class="docutils literal notranslate"><span class="pre">traverse_and_apply()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config.training_config">graphnet.utilities.config.training_config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.training_config.TrainingConfig"><code class="docutils literal notranslate"><span class="pre">TrainingConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.training_config.TrainingConfig.dataloader"><code class="docutils literal notranslate"><span class="pre">TrainingConfig.dataloader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.training_config.TrainingConfig.early_stopping_patience"><code class="docutils literal notranslate"><span class="pre">TrainingConfig.early_stopping_patience</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.training_config.TrainingConfig.fit"><code class="docutils literal notranslate"><span class="pre">TrainingConfig.fit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.utilities.config.html#graphnet.utilities.config.training_config.TrainingConfig.target"><code class="docutils literal notranslate"><span class="pre">TrainingConfig.target</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.utilities.config.html#module-graphnet.utilities.config">Module contents</a></li>

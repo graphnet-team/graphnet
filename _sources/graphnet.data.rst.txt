@@ -31,6 +31,14 @@ graphnet.data.dataconverter module
    :undoc-members:
    :show-inheritance:
 
+graphnet.data.dataloader module
+-------------------------------
+
+.. automodule:: graphnet.data.dataloader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.data.dataset module
 ----------------------------
 

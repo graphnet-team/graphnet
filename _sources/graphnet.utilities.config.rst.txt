@@ -44,6 +44,14 @@ graphnet.utilities.config.parsing module
    :undoc-members:
    :show-inheritance:
 
+graphnet.utilities.config.training\_config module
+-------------------------------------------------
+
+.. automodule:: graphnet.utilities.config.training_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
