@@ -174,9 +174,6 @@ class Task(Model):
             (transform_prediction_and_target is not None)
             and (transform_target is not None)
         ), "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
-        assert (transform_target is not None) == (
-            transform_inference is not None
-        ), "Please specify both `transform_inference` and `transform_target`"
 
         if transform_target is not None:
             assert transform_target is not None
