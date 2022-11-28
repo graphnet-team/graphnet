@@ -161,7 +161,7 @@ class CrossEntropyLoss(LossFunction):
                 [self._options[int(value)] for value in target]
             )
         else:
-            self.error("Type (type(self._options)) not supported")
+            self.error(f"Type {type(self._options)} not supported")
 
         # pid_transform = {1:0,12:2,13:1,14:2,16:2}
         target_new: Tensor = one_hot(target_integer, nb_classes)
