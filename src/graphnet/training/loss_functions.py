@@ -5,7 +5,7 @@ handles per-event weights, etc.
 """
 
 from abc import abstractmethod
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, List, Dict
 
 import numpy as np
 import scipy.special
@@ -112,7 +112,7 @@ class LogCoshLoss(LossFunction):
         return elements
 
 
-class NLLLoss(LossFunction):
+class CrossEntropyLoss(LossFunction):
     """Compute negative log likelihood loss for classification tasks.
 
     Predictions are an [N, num_class]-matrix of values between 0 and 1, and
@@ -121,7 +121,10 @@ class NLLLoss(LossFunction):
 
     @save_model_config
     def __init__(
-        self, options: Union[int, list, dict], *args: Any, **kwargs: Any
+        self,
+        options: Union[int, List[Any], Dict[Any, int]],
+        *args: Any,
+        **kwargs: Any,
     ):
         """Initialize of class options."""
         super().__init__(*args, **kwargs)
@@ -134,7 +137,7 @@ class NLLLoss(LossFunction):
             assert self._options in [torch.int32, torch.int64]
             # minimum number of classes is atleast a binary case
             assert self._options >= 2
-            # nb_classes = self._options
+            nb_classes = self._options
 
             # target integers are positive
             assert torch.all(target >= 0)
@@ -145,12 +148,14 @@ class NLLLoss(LossFunction):
             target_integer = target
 
         elif isinstance(self._options, list):
-            # nb_classes = len(self._options)
+            nb_classes = len(self._options)
             # list of classes; (1,12,13,..,N) -> (0,1,2,..,N)
-            target_integer = torch.tensor(target)
+            target_integer = torch.tensor(
+                [self._options.index(value) for value in target]
+            )
 
         elif isinstance(self._options, dict):
-            # nb_classes = len(np.unique(list(self._options.values())))
+            nb_classes = len(np.unique(list(self._options.values())))
             # encodes the target according dict rules; # (1,-1,12,-12,..,N,-N) -> (0,1,..,N)
             target_integer = torch.tensor(
                 [self._options[int(value)] for value in target]
@@ -159,9 +164,9 @@ class NLLLoss(LossFunction):
             self.error("Type (type(self._options)) not supported")
 
         # pid_transform = {1:0,12:2,13:1,14:2,16:2}
-        # target_new = one_hot(target_integer, nb_classes)
-        loss = nn.NLLLoss(reduction="none")
-        return loss(prediction.float(), target_integer)
+        target_new: Tensor = one_hot(target_integer, nb_classes)
+        loss = nn.CrossEntropyLoss(reduction="none")
+        return loss(prediction.float(), target_new.float())
 
 
 class BinaryCrossEntropyLoss(LossFunction):
