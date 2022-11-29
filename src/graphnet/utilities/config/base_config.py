@@ -3,12 +3,11 @@
 from abc import abstractmethod
 from collections import OrderedDict
 import inspect
+import sys
 from typing import Any, Callable, Dict, Optional
 
 from pydantic import BaseModel
 import ruamel.yaml as yaml
-
-from graphnet.utilities.logging import LoggerMixin
 
 
 CONFIG_FILES_SUFFIXES = (".yml", ".yaml")
@@ -41,7 +40,7 @@ class BaseConfig(BaseModel):
                 yaml_.dump(config_dict, f)
             return None
         else:
-            return yaml_.dump(config_dict)
+            return yaml_.dump(config_dict, sys.stdout)
 
     def as_dict(self) -> Dict[str, Dict[str, Any]]:
         """Represent BaseConfig as a dict.
