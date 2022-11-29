@@ -76,10 +76,17 @@ def main() -> None:
     )
 
     # Get predictions
+    if isinstance(config.target, str):
+        prediction_columns = [config.target + "_pred"]
+        additional_attributes = [config.target]
+    else:
+        prediction_columns = [target + "_pred" for target in config.target]
+        additional_attributes = config.target
+
     results = model.predict_as_dataframe(
         dataloaders["test"],
-        prediction_columns=[config.target + "_pred"],
-        additional_attributes=[config.target, "event_no"],
+        prediction_columns=prediction_columns,
+        additional_attributes=additional_attributes + ["event_no"],
     )
 
     # Save predictions and model to file
