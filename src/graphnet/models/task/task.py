@@ -1,7 +1,7 @@
 """Base physics task-specific `Model` class(es)."""
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, List, Tuple, Union
+from typing import Any, TYPE_CHECKING, List, Tuple, Union
 from typing import Callable, Optional
 import numpy as np
 
@@ -196,15 +196,29 @@ class Task(Model):
                     np.concatenate([-x_test[::-1], [0], x_test])
                 )
 
-            # Add feature dimension before inference transformation to make it match the dimensions of a standard prediction. Remove it again before comparison. Temporary
-            t_test = torch.unsqueeze(transform_target(x_test), -1)
-            t_test = torch.squeeze(transform_inference(t_test), -1)
-            valid = torch.isfinite(t_test)
+            # Add feature dimension before inference transformation to make it
+            # match the dimensions of a standard prediction. Remove it again
+            # before comparison. Temporary
+            try:
+                t_test = torch.unsqueeze(transform_target(x_test), -1)
+                t_test = torch.squeeze(transform_inference(t_test), -1)
+                valid = torch.isfinite(t_test)
 
-            assert torch.allclose(
-                t_test[valid], x_test[valid]
-            ), "The provided transforms for targets during training and predictions during inference are not inverse. Please adjust transformation functions or support."
-            del x_test, t_test, valid
+                assert torch.allclose(t_test[valid], x_test[valid]), (
+                    "The provided transforms for targets during training and "
+                    "predictions during inference are not inverse. Please "
+                    "adjust transformation functions or support."
+                )
+                del x_test, t_test, valid
+
+            except IndexError:
+                self.warning(
+                    "transform_target and/or transform_inference rely on "
+                    "indexing, which we won't validate. Please make sure that "
+                    "they are mutually inverse, i.e. that\n"
+                    "  x = transform_inference(transform_target(x))\n"
+                    "for all x that are within your target range."
+                )
 
         # Set transforms
         if transform_prediction_and_target is not None:
@@ -216,3 +230,28 @@ class Task(Model):
             assert transform_inference is not None
             self._transform_prediction_inference = transform_inference
             self._transform_target = transform_target
+
+
+class IdentityTask(Task):
+    """Identity, or trivial, task."""
+
+    @save_model_config
+    def __init__(self, nb_outputs: int, *args: Any, **kwargs: Any):
+        """Construct IdentityTask.
+
+        Return the `nb_outputs` as a direct, affine transformation of the last
+        hidden layer.
+        """
+        self._nb_inputs = nb_outputs
+
+        # Base class constructor
+        super().__init__(*args, **kwargs)
+
+    @property
+    def nb_inputs(self) -> int:
+        """Return number of inputs assumed by task."""
+        return self._nb_inputs
+
+    def _forward(self, x: Tensor) -> Tensor:
+        # Leave it as is.
+        return x
