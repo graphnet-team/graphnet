@@ -203,10 +203,10 @@ class ModelConfig(BaseConfig):
                         raise ValueError
                 except (TypeError, ValueError):
                     raise ValueError(
-                        f"Object `{obj}` is callable but not a lambda or regular "
-                        "function. Please wrap in a, e.g., lambda function to "
-                        "allow for saving this function verbatim in a model "
-                        "config file."
+                        f"Object `{obj}` is callable but not a lambda or "
+                        "regular function. Please wrap in a, e.g., lambda "
+                        "function to allow for saving this function verbatim "
+                        "in a model config file."
                     )
 
         return obj
