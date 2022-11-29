@@ -66,7 +66,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Base physics task-specific `Model` class(es).&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -261,15 +261,29 @@
                     <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="o">-</span><span class="n">x_test</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_test</span><span class="p">])</span>
                 <span class="p">)</span>
 
-            <span class="c1"># Add feature dimension before inference transformation to make it match the dimensions of a standard prediction. Remove it again before comparison. Temporary</span>
-            <span class="n">t_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">transform_target</span><span class="p">(</span><span class="n">x_test</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">t_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">transform_inference</span><span class="p">(</span><span class="n">t_test</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">valid</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">t_test</span><span class="p">)</span>
+            <span class="c1"># Add feature dimension before inference transformation to make it</span>
+            <span class="c1"># match the dimensions of a standard prediction. Remove it again</span>
+            <span class="c1"># before comparison. Temporary</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">t_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">transform_target</span><span class="p">(</span><span class="n">x_test</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">t_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">transform_inference</span><span class="p">(</span><span class="n">t_test</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">valid</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">t_test</span><span class="p">)</span>
 
-            <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
-                <span class="n">t_test</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span> <span class="n">x_test</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
-            <span class="p">),</span> <span class="s2">&quot;The provided transforms for targets during training and predictions during inference are not inverse. Please adjust transformation functions or support.&quot;</span>
-            <span class="k">del</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">t_test</span><span class="p">,</span> <span class="n">valid</span>
+                <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">t_test</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span> <span class="n">x_test</span><span class="p">[</span><span class="n">valid</span><span class="p">]),</span> <span class="p">(</span>
+                    <span class="s2">&quot;The provided transforms for targets during training and &quot;</span>
+                    <span class="s2">&quot;predictions during inference are not inverse. Please &quot;</span>
+                    <span class="s2">&quot;adjust transformation functions or support.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">del</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">t_test</span><span class="p">,</span> <span class="n">valid</span>
+
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;transform_target and/or transform_inference rely on &quot;</span>
+                    <span class="s2">&quot;indexing, which we won&#39;t validate. Please make sure that &quot;</span>
+                    <span class="s2">&quot;they are mutually inverse, i.e. that</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;  x = transform_inference(transform_target(x))</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;for all x that are within your target range.&quot;</span>
+                <span class="p">)</span>
 
         <span class="c1"># Set transforms</span>
         <span class="k">if</span> <span class="n">transform_prediction_and_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -281,6 +295,31 @@
             <span class="k">assert</span> <span class="n">transform_inference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_inference</span> <span class="o">=</span> <span class="n">transform_inference</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span> <span class="o">=</span> <span class="n">transform_target</span></div></div>
+
+
+<div class="viewcode-block" id="IdentityTask"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.IdentityTask">[docs]</a><span class="k">class</span> <span class="nc">IdentityTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Identity, or trivial, task.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="IdentityTask.__init__"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.IdentityTask.__init__">[docs]</a>    <span class="nd">@save_model_config</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_outputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct IdentityTask.</span>
+
+<span class="sd">        Return the `nb_outputs` as a direct, affine transformation of the last</span>
+<span class="sd">        hidden layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span> <span class="o">=</span> <span class="n">nb_outputs</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return number of inputs assumed by task.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># Leave it as is.</span>
+        <span class="k">return</span> <span class="n">x</span></div>
 </pre></div>
 
            </div>

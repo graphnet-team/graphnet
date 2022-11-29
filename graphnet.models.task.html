@@ -152,6 +152,15 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.models.task.task">graphnet.models.task.task module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.task.IdentityTask"><code class="docutils literal notranslate"><span class="pre">IdentityTask</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.task.task.IdentityTask.__init__"><code class="docutils literal notranslate"><span class="pre">IdentityTask.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.IdentityTask.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">IdentityTask.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.IdentityTask.nb_inputs"><code class="docutils literal notranslate"><span class="pre">IdentityTask.nb_inputs</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.IdentityTask.precision"><code class="docutils literal notranslate"><span class="pre">IdentityTask.precision</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.IdentityTask.prepare_data_per_node"><code class="docutils literal notranslate"><span class="pre">IdentityTask.prepare_data_per_node</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.task.task.IdentityTask.training"><code class="docutils literal notranslate"><span class="pre">IdentityTask.training</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#graphnet.models.task.task.Task"><code class="docutils literal notranslate"><span class="pre">Task</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.models.task.task.Task.__init__"><code class="docutils literal notranslate"><span class="pre">Task.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.models.task.task.Task._forward"><code class="docutils literal notranslate"><span class="pre">Task._forward()</span></code></a></li>
@@ -813,6 +822,70 @@
 <section id="module-graphnet.models.task.task">
 <span id="graphnet-models-task-task-module"></span><h2>graphnet.models.task.task module<a class="headerlink" href="#module-graphnet.models.task.task" title="Permalink to this heading"></a></h2>
 <p>Base physics task-specific <cite>Model</cite> class(es).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">IdentityTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_outputs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/task/task.html#IdentityTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.IdentityTask" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
+<p>Identity, or trivial, task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_outputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+<li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_outputs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/task/task.html#IdentityTask.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Construct IdentityTask.</p>
+<p>Return the <cite>nb_outputs</cite> as a direct, affine transformation of the last
+hidden layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_outputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>args</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+<li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.allow_zero_length_dataloader_with_multiple_devices">
+<span class="sig-name descname"><span class="pre">allow_zero_length_dataloader_with_multiple_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.allow_zero_length_dataloader_with_multiple_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.nb_inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.nb_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Return number of inputs assumed by task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.prepare_data_per_node">
+<span class="sig-name descname"><span class="pre">prepare_data_per_node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.prepare_data_per_node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.task.Task">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">Task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_prediction_and_target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_inference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_support</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/task/task.html#Task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.Task" title="Permalink to this definition"></a></dt>
