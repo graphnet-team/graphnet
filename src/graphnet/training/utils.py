@@ -18,6 +18,7 @@ from graphnet.utilities.logging import get_logger
 logger = get_logger()
 
 
+# @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_dataloader(
     db: str,
     pulsemaps: Union[str, List[str]],
@@ -74,91 +75,7 @@ def make_dataloader(
     return dataloader
 
 
-def split_selection(
-    selection: List[int] = None,
-) -> Tuple[DataLoader, DataLoader, DataLoader]:
-    """Produce a 60%, 20%, 20% split for training, validation and test sets.
-
-    Args:
-        selection (pandas.DataFrame): A dataframe containing your selection
-
-    Returns:
-        train: indices for training. numpy.ndarray
-        validate: indices for validation. numpy.ndarray
-        test: indices for testing. numpy.ndarray
-    """
-    train, validate, test = np.split(
-        selection,
-        [
-            int(0.6 * len(selection)),  # type: ignore
-            int(0.8 * len(selection)),  # type: ignore
-        ],
-    )
-    return train.tolist(), validate.tolist(), test.tolist()
-
-
-def make_dataloaders(
-    data_path: str,
-    pulsemaps: Union[str, List[str]],
-    features: List[str],
-    truth: List[str],
-    *,
-    batch_size: int,
-    selection: List[int] = None,
-    num_workers: int = 10,
-    parquet: bool = False,
-    persistent_workers: bool = True,
-    node_truth: List[str] = None,
-    node_truth_table: str = None,
-    string_selection: List[int] = None,
-    truth_table: str = "truth",
-    pid_column: str = "pid",
-    interaction_type_column: str = "interaction_type",
-    index_column: str = "event_no",
-) -> Tuple[DataLoader, DataLoader, DataLoader]:
-    """Construct `DataLoader` instance with 3 outputs."""
-    (train_selection, validate_selection, test_selection) = split_selection(
-        selection
-    )
-    common_kwargs = dict(
-        data_path=data_path,
-        pulsemaps=pulsemaps,
-        features=features,
-        truth=truth,
-        batch_size=batch_size,
-        num_workers=num_workers,
-        persistent_workers=persistent_workers,
-        node_truth=node_truth,
-        node_truth_table=node_truth_table,
-        string_selection=string_selection,
-        parquet=parquet,
-        truth_table=truth_table,
-        pid_column=pid_column,
-        interaction_type_column=interaction_type_column,
-        index_column=index_column,
-    )
-
-    training_dataloader = make_dataloader(
-        selection=train_selection,
-        shuffle=True,
-        **common_kwargs,  # type: ignore[arg-type]
-    )
-
-    validation_dataloader = make_dataloader(
-        shuffle=False,
-        selection=validate_selection,
-        **common_kwargs,  # type: ignore[arg-type]
-    )
-
-    test_dataloader = make_dataloader(
-        shuffle=False,
-        selection=test_selection,
-        **common_kwargs,  # type: ignore[arg-type]
-    )
-
-    return training_dataloader, validation_dataloader, test_dataloader
-
-
+# @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_train_validation_dataloader(
     db: str,
     selection: List[int],
@@ -238,6 +155,7 @@ def make_train_validation_dataloader(
     )
 
 
+# @TODO: Remove in favour of Model.predict{,_as_dataframe}
 def get_predictions(
     trainer: Trainer,
     model: Model,
@@ -299,6 +217,7 @@ def get_predictions(
     return results
 
 
+# @TODO: Remove
 def save_results(
     db: str, tag: str, results: pd.DataFrame, archive: str, model: Model
 ) -> None:
