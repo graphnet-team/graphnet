@@ -17,7 +17,8 @@ class ClassificationTask(Task):
         """Initialize of number of class and softmax method."""
         self._nb_classes = nb_classes
         super().__init__(*args, **kwargs)
-        self._softmax = Softmax(dim=-1)
+        # TODO: find a way to remove the transform_inference argument and use softmax here.
+        self._softmax = None
 
     @property
     def nb_inputs(self) -> Tensor:
@@ -26,7 +27,7 @@ class ClassificationTask(Task):
 
     def _forward(self, x: Tensor) -> Tensor:
         """Transform latent features into probabilities."""
-        return self._softmax(x)
+        return x
 
 
 class BinaryClassificationTask(Task):
