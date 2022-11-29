@@ -31,7 +31,7 @@ class BaseConfig(BaseModel):
 
     def dump(self, path: Optional[str] = None) -> Optional[str]:
         """Save BaseConfig to `path` as YAML file, or return as string."""
-        config_dict = self._as_dict()[self.__class__.__name__]
+        config_dict = self.as_dict()[self.__class__.__name__]
 
         yaml_ = yaml.YAML(typ="safe", pure=True)
         if path:
@@ -43,10 +43,10 @@ class BaseConfig(BaseModel):
         else:
             return yaml_.dump(config_dict)
 
-    def _as_dict(self) -> Dict[str, Dict[str, Any]]:
+    def as_dict(self) -> Dict[str, Dict[str, Any]]:
         """Represent BaseConfig as a dict.
 
-        This builds on `BaseModel.dict()` but can be overwritten
+        This builds on `BaseModel.dict()` but can be overwritten.
         """
         return {self.__class__.__name__: self.dict()}
 

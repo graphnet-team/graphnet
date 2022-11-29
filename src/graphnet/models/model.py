@@ -1,23 +1,23 @@
 """Base class(es) for building models."""
 
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 import dill
 import os.path
-import re
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
-from pytorch_lightning import LightningModule
+import numpy as np
+import pandas as pd
+from pytorch_lightning import Trainer, LightningModule
+from pytorch_lightning.callbacks.callback import Callback
+from pytorch_lightning.loggers.logger import Logger
 import torch
 from torch import Tensor
+from torch.utils.data import DataLoader, SequentialSampler
 from torch_geometric.data import Data
 
-import graphnet
 from graphnet.utilities.logging import LoggerMixin
 from graphnet.utilities.config import Configurable, ModelConfig
-from graphnet.utilities.config.parsing import (
-    traverse_and_apply,
-    get_all_grapnet_classes,
-)
 
 
 class Model(Configurable, LightningModule, LoggerMixin, ABC):
@@ -26,6 +26,137 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
     @abstractmethod
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
+
+    def fit(
+        self,
+        train_dataloader: DataLoader,
+        val_dataloader: Optional[DataLoader] = None,
+        *,
+        max_epochs: int = 10,
+        gpus: Optional[Union[List[int], int]] = None,
+        callbacks: Optional[List[Callback]] = None,
+        ckpt_path: Optional[str] = None,
+        logger: Optional[Logger] = None,
+        log_every_n_steps: int = 1,
+        gradient_clip_val: Optional[float] = None,
+        **trainer_kwargs: Any,
+    ) -> None:
+        """Fit `Model` using `pytorch_lightning.Trainer`."""
+        self.train(mode=True)
+
+        if gpus:
+            accelerator = "gpu"
+            devices = gpus
+        else:
+            accelerator = "cpu"
+            devices = None
+
+        trainer = Trainer(
+            accelerator=accelerator,
+            devices=devices,
+            max_epochs=max_epochs,
+            callbacks=callbacks,
+            log_every_n_steps=log_every_n_steps,
+            logger=logger,
+            gradient_clip_val=gradient_clip_val,
+            **trainer_kwargs,
+        )
+        try:
+            trainer.fit(
+                self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
+            )
+        except KeyboardInterrupt:
+            self.warning("[ctrl+c] Exiting gracefully.")
+            pass
+
+    def predict(self, dataloader: DataLoader) -> List[Tensor]:
+        """Return predictions for `dataloader`.
+
+        Returns a list of Tensors, one for each model output.
+        """
+        self.train(mode=False)
+
+        predictions_list = self.trainer.predict(self, dataloader)
+        assert len(predictions_list), "Got no predictions"
+
+        nb_outputs = len(predictions_list[0])
+        predictions: List[Tensor] = [
+            torch.cat([preds[ix] for preds in predictions_list], dim=0)
+            for ix in range(nb_outputs)
+        ]
+
+        return predictions
+
+    def predict_as_dataframe(
+        self,
+        dataloader: DataLoader,
+        prediction_columns: List[str],
+        *,
+        node_level: bool = False,
+        additional_attributes: Optional[List[str]] = None,
+        index_column: str = "event_no",
+    ) -> pd.DataFrame:
+        """Return predictions for `dataloader` as a DataFrame.
+
+        Include `additional_attributes` as additional columns in the output
+        DataFrame.
+        """
+        # Check(s)
+        if additional_attributes is None:
+            additional_attributes = []
+        assert isinstance(additional_attributes, list)
+
+        if (
+            not isinstance(dataloader.sampler, SequentialSampler)
+            and additional_attributes
+        ):
+            print(dataloader.sampler)
+            raise UserWarning(
+                "DataLoader has a `sampler` that is not `SequentialSampler`, "
+                "indicating that shuffling is enabled. Using "
+                "`predict_as_dataframe` with `additional_attributes` assumes "
+                "that the sequence of batches in `dataloader` are "
+                "deterministic. Either call this method a `dataloader` which "
+                "doesn't resample batches; or do not request "
+                "`additional_attributes`."
+            )
+
+        predictions_torch = self.predict(dataloader)
+        predictions = (
+            torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
+        )
+        assert len(prediction_columns) == predictions.shape[1], (
+            f"Number of provided column names ({len(prediction_columns)}) and "
+            f"number of output columns ({predictions.shape[1]}) don't match."
+        )
+
+        # Get additional attributes
+        attributes: Dict[str, List[np.ndarray]] = OrderedDict(
+            [(attr, []) for attr in additional_attributes]
+        )
+        for batch in dataloader:
+            for attr in attributes:
+                attribute = batch[attr].detach().cpu().numpy()
+                if node_level:
+                    if attr == index_column:
+                        attribute = np.repeat(
+                            attribute, batch.n_pulses.detach().cpu().numpy()
+                        )
+                attributes[attr].extend(attribute)
+
+        data = np.concatenate(
+            [predictions]
+            + [
+                np.asarray(values)[:, np.newaxis]
+                for values in attributes.values()
+            ],
+            axis=1,
+        )
+
+        results = pd.DataFrame(
+            data, columns=prediction_columns + additional_attributes
+        )
+        return results
 
     def save(self, path: str) -> None:
         """Save entire model to `path`."""
