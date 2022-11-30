@@ -8,7 +8,7 @@ from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.gnn import DynEdge
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.models.task.classification import ClassificationTask
-from graphnet.training.loss_functions import LogCoshLoss, NLLLoss
+from graphnet.training.loss_functions import LogCoshLoss
 
 import numpy as np
 
