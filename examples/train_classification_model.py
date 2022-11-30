@@ -22,7 +22,7 @@ from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.classification import ClassificationTask
-from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
+from graphnet.training.callbacks import ProgressBar
 from graphnet.training.utils import (
     get_predictions,
     make_train_validation_dataloader,
@@ -61,7 +61,7 @@ def train(config: Dict[str, Any]) -> None:
     # Common variables
     train_selection = get_desired_event_numbers(
         database=cast(str, config["db"]),
-        desired_size=1000,
+        desired_size=cast(str, config["event_numbers"]),
         fraction_noise=float(1 / 3),
         fraction_muon=float(1 / 3),
         fraction_nu_e=float(1 / 9),
@@ -105,19 +105,7 @@ def train(config: Dict[str, Any]) -> None:
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,
-        optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
-        scheduler_class=PiecewiseLinearLR,
-        scheduler_kwargs={
-            "milestones": [
-                0,
-                len(training_dataloader) / 2,
-                len(training_dataloader) * cast(int, config["n_epochs"]),
-            ],
-            "factors": [1e-2, 1, 1e-02],
-        },
-        scheduler_config={
-            "interval": "step",
-        },
+        optimizer_kwargs={"lr": 1e-04, "eps": 1e-03},
     )
 
     # Training model
@@ -190,20 +178,20 @@ def main() -> None:
     # Configuration
     config = {
         "db": "/groups/icecube/petersen/GraphNetDatabaseRepository/Leon2022_DataAndMC_CSVandDB_StoppedMuons/last_one_lvl3MC.db",
-        "pulsemap": "SplitInIcePulses",
+        "pulsemap": "SRTInIcePulses",
         "batch_size": 512,
         "num_workers": 10,
-        "accelerator": "cpu",  # gpu
-        "devices": 1,  # [0],
+        "accelerator": "gpu",
+        "devices": [1],
         "target": target,
+        "event_numbers": 1000,
         "class_options": class_options,
-        "n_epochs": 2,
-        "patience": 1,
+        "n_epochs": 50,
+        "patience": 5,
         "archive": archive,
         "run_name": run_name,
-        "max_events": 50000,
-        "node_pooling": True,
     }
+
     train(config)
 
 
