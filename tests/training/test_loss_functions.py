@@ -181,35 +181,3 @@ def test_von_mises_fisher_approximation_large_kappa(
     assert torch.allclose(
         grads_approx[exact_is_valid], grads_exact[exact_is_valid], rtol=1e-2
     )
-
-
-# def test_NLLLoss():
-#     import random
-#     with pytest.raises(
-#         AssertionError,
-#         match=(
-#             "Binary case"
-#         ),
-#     ):
-#     pid_sample = np.array([0,1])
-#     pid_list = random.choices(pid_sample,k=50)
-
-#     with pytest.raises(
-#         AssertionError,
-#         match=(
-#             "Multi case"
-#         ),
-#     ):
-#     pid_sample = np.array([1,-1,12,-12,13,-13])
-#     pid_list = random.choices(pid_sample,k=50)
-
-#     class_options = {
-#         1: 0,
-#         -1: 0,
-#         12: 2,
-#         -12: 2,
-#         13: 1,
-#         -13: 1,
-#     }
-
-#     NLLLoss(options=class_options)
