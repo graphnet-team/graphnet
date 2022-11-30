@@ -1,7 +1,7 @@
 """Base physics task-specific `Model` class(es)."""
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, List, Tuple, Union
+from typing import TYPE_CHECKING, List, Tuple, Union, Any
 from typing import Callable, Optional
 import numpy as np
 
@@ -215,3 +215,28 @@ class Task(Model):
                 self._transform_target = transform_target
             if transform_inference is not None:
                 self._transform_prediction_inference = transform_inference
+
+
+class IdentityTask(Task):
+    """Identity, or trivial, task."""
+
+    @save_model_config
+    def __init__(self, nb_outputs: int, *args: Any, **kwargs: Any):
+        """Construct IdentityTask.
+
+        Return the `nb_outputs` as a direct, affine transformation of the last
+        hidden layer.
+        """
+        self._nb_inputs = nb_outputs
+
+        # Base class constructor
+        super().__init__(*args, **kwargs)
+
+    @property
+    def nb_inputs(self) -> int:
+        """Return number of inputs assumed by task."""
+        return self._nb_inputs
+
+    def _forward(self, x: Tensor) -> Tensor:
+        # Leave it as is.
+        return x
