@@ -9,7 +9,6 @@ from torch.autograd import grad
 from graphnet.training.loss_functions import (
     LogCoshLoss,
     VonMisesFisherLoss,
-    NLLLoss,
 )
 from graphnet.utilities.maths import eps_like
 
