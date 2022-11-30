@@ -31,14 +31,14 @@ def main() -> None:
     """Run example."""
     # Configuration
     config = TrainingConfig(
-        target="energy",
+        target=["position_x", "position_y", "position_z"],
         early_stopping_patience=5,
-        fit={"gpus": [0], "max_epochs": 5},
+        fit={"gpus": [1], "max_epochs": 5},
         dataloader={"batch_size": 512, "num_workers": 10},
     )
 
     archive = "/groups/icecube/asogaard/gnn/results/"
-    run_name = "dynedge_{}_example".format(config.target)
+    run_name = "dynedge_position_custom_scaling_example.yml"
 
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
