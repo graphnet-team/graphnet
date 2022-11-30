@@ -1,7 +1,7 @@
 """Base physics task-specific `Model` class(es)."""
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, List, Tuple, Union, Any
+from typing import Any, TYPE_CHECKING, List, Tuple, Union
 from typing import Callable, Optional
 import numpy as np
 
