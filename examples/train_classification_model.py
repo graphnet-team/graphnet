@@ -58,10 +58,10 @@ def train(config: Dict[str, Any]) -> None:
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
 
-    # Common variables
+    # Common variables; equal distribution of pid.
     train_selection = get_desired_event_numbers(
         database=cast(str, config["db"]),
-        desired_size=cast(str, config["event_numbers"]),
+        desired_size=cast(int, config["event_numbers"]),
         fraction_noise=float(1 / 3),
         fraction_muon=float(1 / 3),
         fraction_nu_e=float(1 / 9),
