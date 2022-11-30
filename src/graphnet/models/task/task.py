@@ -194,15 +194,29 @@ class Task(Model):
                     np.concatenate([-x_test[::-1], [0], x_test])
                 )
 
-            # Add feature dimension before inference transformation to make it match the dimensions of a standard prediction. Remove it again before comparison. Temporary
-            t_test = torch.unsqueeze(transform_target(x_test), -1)
-            t_test = torch.squeeze(transform_inference(t_test), -1)
-            valid = torch.isfinite(t_test)
+            # Add feature dimension before inference transformation to make it
+            # match the dimensions of a standard prediction. Remove it again
+            # before comparison. Temporary
+            try:
+                t_test = torch.unsqueeze(transform_target(x_test), -1)
+                t_test = torch.squeeze(transform_inference(t_test), -1)
+                valid = torch.isfinite(t_test)
 
-            assert torch.allclose(
-                t_test[valid], x_test[valid]
-            ), "The provided transforms for targets during training and predictions during inference are not inverse. Please adjust transformation functions or support."
-            del x_test, t_test, valid
+                assert torch.allclose(t_test[valid], x_test[valid]), (
+                    "The provided transforms for targets during training and "
+                    "predictions during inference are not inverse. Please "
+                    "adjust transformation functions or support."
+                )
+                del x_test, t_test, valid
+
+            except IndexError:
+                self.warning(
+                    "transform_target and/or transform_inference rely on "
+                    "indexing, which we won't validate. Please make sure that "
+                    "they are mutually inverse, i.e. that\n"
+                    "  x = transform_inference(transform_target(x))\n"
+                    "for all x that are within your target range."
+                )
 
         # Set transforms
         if transform_prediction_and_target is not None:
