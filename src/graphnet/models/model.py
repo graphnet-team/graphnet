@@ -59,6 +59,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             log_every_n_steps=log_every_n_steps,
             logger=logger,
             gradient_clip_val=gradient_clip_val,
+            strategy="ddp",
             **trainer_kwargs,
         )
         try:
