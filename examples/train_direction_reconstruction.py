@@ -163,7 +163,7 @@ def main() -> None:
             "accelerator": "gpu",
             "devices": [1],
             "target": target,
-            "n_epochs": 1,
+            "n_epochs": 5,
             "patience": 5,
             "archive": ARCHIVE,
             "run_name": run_name,
