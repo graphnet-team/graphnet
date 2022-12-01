@@ -113,6 +113,7 @@ class StandardModel(Model):
             prog_bar=True,
             on_epoch=True,
             on_step=False,
+            sync_dist=True,
         )
         return loss
 
@@ -126,6 +127,7 @@ class StandardModel(Model):
             prog_bar=True,
             on_epoch=True,
             on_step=False,
+            sync_dist=True,
         )
         return loss
 
