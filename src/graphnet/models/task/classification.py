@@ -1,11 +1,12 @@
 """Classification-specific `Model` class(es)."""
 
-from torch import Tensor, sigmoid
-from torch.nn import Softmax
-from graphnet.utilities.config.model_config import save_model_config
+from typing import Any
+
+import torch
+from torch import Tensor
 
 from graphnet.models.task import Task
-from typing import Any
+from graphnet.utilities.config.model_config import save_model_config
 
 
 class ClassificationTask(Task):
