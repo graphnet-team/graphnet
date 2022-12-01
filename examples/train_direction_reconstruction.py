@@ -35,30 +35,16 @@ from graphnet.utilities.logging import get_logger
 logger = get_logger()
 
 # Configurations
-torch.multiprocessing.set_sharing_strategy("file_system")
+DB_PATH = "/mnt/scratch/rasmus_orsoe/databases/HE/dev_lvl5_NuE_NuMu_NuTau_Mirco/data/dev_lvl5_NuE_NuMu_NuTau_Mirco.db"
+ARCHIVE = "direction_recoexample/"
 
 # Constants
 features = FEATURES.DEEPCORE
 truth = TRUTH.DEEPCORE[:-1]
 
-# Make sure W&B output directory exists
-WANDB_DIR = "./wandb/"
-os.makedirs(WANDB_DIR, exist_ok=True)
-
-# Initialise Weights & Biases (W&B) run
-wandb_logger = WandbLogger(
-    project="example-script",
-    entity="graphnet-team",
-    save_dir=WANDB_DIR,
-    log_model=True,
-)
-
 
 def train(config: Dict[str, Any]) -> None:
     """Train model with configuration given by `config`."""
-    # Log configuration to W&B
-    wandb_logger.experiment.config.update(config)
-
     # Common variables
     train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
     train_selection = train_selection[0:50000]
@@ -140,7 +126,6 @@ def train(config: Dict[str, Any]) -> None:
         max_epochs=config["n_epochs"],
         callbacks=callbacks,
         log_every_n_steps=1,
-        logger=wandb_logger,
     )
 
     try:
@@ -154,7 +139,7 @@ def train(config: Dict[str, Any]) -> None:
         trainer,
         model,
         validation_dataloader,
-        [config["target"] + "_pred"],
+        [config["target"] + "_pred", config["target"] + "_kappa_pred"],
         additional_attributes=[config["target"], "event_no"],
     )
 
@@ -166,21 +151,20 @@ def train(config: Dict[str, Any]) -> None:
 def main() -> None:
     """Run example."""
     for target in ["zenith", "azimuth"]:
-        archive = "/remote/ceph/user/o/oersoe/high_energy_example/results"
         run_name = "dynedge_{}_example".format(target)
 
         # Configuration
         config = {
-            "db": "/mnt/scratch/rasmus_orsoe/databases/HE/dev_lvl5_NuE_NuMu_NuTau_Mirco/data/dev_lvl5_NuE_NuMu_NuTau_Mirco.db",
-            "pulsemap": "TWSRTOfflinePulses",
-            "batch_size": 512,
+            "db": DB_PATH,
+            "pulsemap": "SRTTWOfflinePulsesDC",
+            "batch_size": 64,
             "num_workers": 10,
             "accelerator": "gpu",
-            "devices": [2],
+            "devices": [1],
             "target": target,
-            "n_epochs": 5,
+            "n_epochs": 1,
             "patience": 5,
-            "archive": archive,
+            "archive": ARCHIVE,
             "run_name": run_name,
             "max_events": 50000,
             "node_pooling": True,
