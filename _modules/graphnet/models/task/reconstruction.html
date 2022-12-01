@@ -147,6 +147,18 @@
 
 
 <div class="viewcode-block" id="EnergyReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction">[docs]</a><span class="k">class</span> <span class="nc">EnergyReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reconstructs energy using stable method.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Requires one feature: untransformed energy</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># Transform to positive energy domain avoiding `-inf` in `log10`</span>
+        <span class="c1"># Transform, thereby preventing overflow and underflow error.</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EnergyReconstructionWithPower"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithPower">[docs]</a><span class="k">class</span> <span class="nc">EnergyReconstructionWithPower</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reconstructs energy.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires one feature: untransformed energy</span>
