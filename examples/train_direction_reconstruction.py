@@ -36,7 +36,7 @@ logger = get_logger()
 
 # Configurations
 DB_PATH = "/mnt/scratch/rasmus_orsoe/databases/HE/dev_lvl5_NuE_NuMu_NuTau_Mirco/data/dev_lvl5_NuE_NuMu_NuTau_Mirco.db"
-ARCHIVE = "direction_recoexample/"
+ARCHIVE = "direction_reco_example/"
 
 # Constants
 features = FEATURES.DEEPCORE
