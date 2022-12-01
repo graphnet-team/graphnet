@@ -158,7 +158,7 @@ def main() -> None:
         config = {
             "db": DB_PATH,
             "pulsemap": PULSEMAP,
-            "batch_size": 64,
+            "batch_size": 512,
             "num_workers": 10,
             "accelerator": "gpu",
             "devices": [1],
