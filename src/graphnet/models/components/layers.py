@@ -3,13 +3,13 @@
 from typing import Any, Callable, Optional, Sequence, Union
 
 from torch.functional import Tensor
-
 from torch_geometric.nn import EdgeConv
 from torch_geometric.nn.pool import knn_graph
 from torch_geometric.typing import Adj
+from pytorch_lightning import LightningModule
 
 
-class DynEdgeConv(EdgeConv):
+class DynEdgeConv(EdgeConv, LightningModule):
     """Dynamical edge convolution layer."""
 
     def __init__(
@@ -56,6 +56,6 @@ class DynEdgeConv(EdgeConv):
             x=x[:, self.features_subset],
             k=self.nb_neighbors,
             batch=batch,
-        ).to(x.device)
+        ).to(self.device)
 
         return x, edge_index
