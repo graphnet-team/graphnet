@@ -37,6 +37,7 @@ logger = get_logger()
 # Configurations
 DB_PATH = "/mnt/scratch/rasmus_orsoe/databases/HE/dev_lvl5_NuE_NuMu_NuTau_Mirco/data/dev_lvl5_NuE_NuMu_NuTau_Mirco.db"
 ARCHIVE = "direction_reco_example/"
+PULSEMAP = "TWSRTOfflinePulses"
 
 # Constants
 features = FEATURES.DEEPCORE
@@ -156,7 +157,7 @@ def main() -> None:
         # Configuration
         config = {
             "db": DB_PATH,
-            "pulsemap": "SRTTWOfflinePulsesDC",
+            "pulsemap": PULSEMAP,
             "batch_size": 64,
             "num_workers": 10,
             "accelerator": "gpu",
