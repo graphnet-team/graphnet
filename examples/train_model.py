@@ -35,7 +35,7 @@ def main() -> None:
         target="energy",
         early_stopping_patience=5,
         fit={"gpus": [0, 1], "max_epochs": 5},
-        dataloader={"batch_size": 4, "num_workers": 10},
+        dataloader={"batch_size": 128, "num_workers": 10},
     )
 
     archive = "/groups/icecube/asogaard/gnn/results/"
