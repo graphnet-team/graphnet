@@ -4,6 +4,7 @@ import os
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.utilities import rank_zero_only
 
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import Model
@@ -33,15 +34,12 @@ def main() -> None:
     config = TrainingConfig(
         target="energy",
         early_stopping_patience=5,
-        fit={"gpus": [0], "max_epochs": 5},
-        dataloader={"batch_size": 512, "num_workers": 10},
+        fit={"gpus": [0, 1], "max_epochs": 5},
+        dataloader={"batch_size": 128, "num_workers": 10},
     )
 
     archive = "/groups/icecube/asogaard/gnn/results/"
     run_name = "dynedge_{}_example".format(config.target)
-
-    # Log configuration to W&B
-    wandb_logger.experiment.config.update(config)
 
     # Construct dataloaders
     dataset_config = DatasetConfig.load(
@@ -51,12 +49,18 @@ def main() -> None:
         dataset_config,
         **config.dataloader,
     )
-    wandb_logger.experiment.config.update(dataset_config.as_dict())
 
     # Build model
     model_config = ModelConfig.load(f"configs/models/{run_name}.yml")
     model = Model.from_config(model_config, trust=True)
-    wandb_logger.experiment.config.update(model_config.as_dict())
+
+    # Log configurations to W&B
+    # NB: Only log to W&B on the rank-zero process in case of multi-GPU
+    #     training.
+    if rank_zero_only == 0:
+        wandb_logger.experiment.config.update(config)
+        wandb_logger.experiment.config.update(model_config.as_dict())
+        wandb_logger.experiment.config.update(dataset_config.as_dict())
 
     # Train model
     callbacks = [

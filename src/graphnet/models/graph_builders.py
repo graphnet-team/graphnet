@@ -25,7 +25,6 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
         self,
         nb_nearest_neighbours: int,
         columns: List[int] = None,
-        device: str = None,
     ):
         """Construct `KNNGraphBuilder`."""
         # Base class constructor
@@ -38,7 +37,6 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
         # Member variable(s)
         self._nb_nearest_neighbours = nb_nearest_neighbours
         self._columns = columns
-        self._device = device
 
     def forward(self, data: Data) -> Data:
         """Forward pass."""
@@ -54,7 +52,7 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
             data.x[:, self._columns],
             self._nb_nearest_neighbours,
             data.batch,
-        ).to(self._device)
+        ).to(self.device)
 
         return data
 
@@ -67,7 +65,6 @@ class RadialGraphBuilder(GraphBuilder):
         self,
         radius: float,
         columns: List[int] = None,
-        device: str = None,
     ):
         """Construct `RadialGraphBuilder`."""
         # Base class constructor
@@ -80,7 +77,6 @@ class RadialGraphBuilder(GraphBuilder):
         # Member variable(s)
         self._radius = radius
         self._columns = columns
-        self._device = device
 
     def forward(self, data: Data) -> Data:
         """Forward pass."""
@@ -96,7 +92,7 @@ class RadialGraphBuilder(GraphBuilder):
             data.x[:, self._columns],
             self._radius,
             data.batch,
-        ).to(self._device)
+        ).to(self.device)
 
         return data
 
