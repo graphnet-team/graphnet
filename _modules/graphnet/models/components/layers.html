@@ -68,13 +68,13 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">torch.functional</span> <span class="kn">import</span> <span class="n">Tensor</span>
-
 <span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="kn">import</span> <span class="n">EdgeConv</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.nn.pool</span> <span class="kn">import</span> <span class="n">knn_graph</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.typing</span> <span class="kn">import</span> <span class="n">Adj</span>
+<span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">LightningModule</span>
 
 
-<div class="viewcode-block" id="DynEdgeConv"><a class="viewcode-back" href="../../../../graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv">[docs]</a><span class="k">class</span> <span class="nc">DynEdgeConv</span><span class="p">(</span><span class="n">EdgeConv</span><span class="p">):</span>
+<div class="viewcode-block" id="DynEdgeConv"><a class="viewcode-back" href="../../../../graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv">[docs]</a><span class="k">class</span> <span class="nc">DynEdgeConv</span><span class="p">(</span><span class="n">EdgeConv</span><span class="p">,</span> <span class="n">LightningModule</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Dynamical edge convolution layer.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DynEdgeConv.__init__"><a class="viewcode-back" href="../../../../graphnet.models.components.html#graphnet.models.components.layers.DynEdgeConv.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -121,7 +121,7 @@
             <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_subset</span><span class="p">],</span>
             <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_neighbors</span><span class="p">,</span>
             <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span></div></div>
 </pre></div>
