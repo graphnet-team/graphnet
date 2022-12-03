@@ -11,16 +11,17 @@ import numpy as np
 import scipy.special
 import torch
 from torch import Tensor
-
-from graphnet.utilities.config import save_model_config
-from graphnet.models.model import Model
-from graphnet.utilities.decorators import final
+from torch import nn
 from torch.nn.functional import (
     one_hot,
     cross_entropy,
     binary_cross_entropy,
     softplus,
 )
+
+from graphnet.utilities.config import save_model_config
+from graphnet.models.model import Model
+from graphnet.utilities.decorators import final
 
 
 class LossFunction(Model):
@@ -115,7 +116,7 @@ class CrossEntropyLoss(LossFunction):
     """Compute cross-entropy loss for classification tasks.
 
     Predictions are an [N, num_class]-matrix of logits (i.e., non-softmax'ed
-    probabilities), and targets are an [N,1]-matrix with integer values in 
+    probabilities), and targets are an [N,1]-matrix with integer values in
     (0, num_classes - 1).
     """
 
@@ -129,33 +130,35 @@ class CrossEntropyLoss(LossFunction):
         """Construct CrossEntropyLoss."""
         # Base class constructor
         super().__init__(*args, **kwargs)
-        
+
         # Member variables
         self._options = options
         self._nb_classes: int
         if isinstance(self._options, int):
             assert self._options in [torch.int32, torch.int64]
-            assert self._options >= 2, (
-                f"Minimum of two classes required. Got {self._options}."
-            )
-            self._nb_classes = options
+            assert (
+                self._options >= 2
+            ), f"Minimum of two classes required. Got {self._options}."
+            self._nb_classes = options  # type: ignore
         elif isinstance(self._options, list):
-            self._nb_classes = len(self._options) 
+            self._nb_classes = len(self._options)  # type: ignore
         elif isinstance(self._options, dict):
-            self._nb_classes = len(np.unique(list(self._options.values())))
+            self._nb_classes = len(
+                np.unique(list(self._options.values()))
+            )  # type: ignore
         else:
             raise ValueError(
                 f"Class options of type {type(self._options)} not supported"
             )
-            
+
         self._loss = nn.CrossEntropyLoss(reduction="none")
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Transform outputs to angle and prepare prediction."""
         if isinstance(self._options, int):
-            # Integer number of classes: Targets are expected to be in 
+            # Integer number of classes: Targets are expected to be in
             # (0, nb_classes - 1).
-            
+
             # Target integers are positive
             assert torch.all(target >= 0)
 
@@ -166,7 +169,7 @@ class CrossEntropyLoss(LossFunction):
             target_integer = target
 
         elif isinstance(self._options, list):
-            # List of classes: Mapping target classes in list onto 
+            # List of classes: Mapping target classes in list onto
             # (0, nb_classes - 1). Example:
             #    Given options: [1, 12, 13, ...]
             #    Yields: [1, 13, 12] -> [0, 2, 1, ...]
@@ -175,22 +178,21 @@ class CrossEntropyLoss(LossFunction):
             )
 
         elif isinstance(self._options, dict):
-            # Dictionary of classes: Mapping target classes in dict onto 
+            # Dictionary of classes: Mapping target classes in dict onto
             # (0, nb_classes - 1). Example:
             #     Given options: {1: 0, -1: 0, 12: 1, -12: 1, ...}
             #     Yields: [1, -1, -12, ...] -> [0, 0, 1, ...]
             target_integer = torch.tensor(
                 [self._options[int(value)] for value in target]
             )
-            
+
         else:
             assert False, "Shouldn't reach here."
 
-        target_one_hot: Tensor = (
-            one_hot(target_integer, nb_classes)
-            .to(prediction.device)
+        target_one_hot: Tensor = one_hot(target_integer, self._nb_classes).to(
+            prediction.device
         )
-        
+
         return self._loss(prediction.float(), target_one_hot.float())
 
 
