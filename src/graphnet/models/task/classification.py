@@ -5,8 +5,7 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from graphnet.models.task import Task
-from graphnet.utilities.config.model_config import save_model_config
+from graphnet.models.task import Task, IdentityTask
 
 
 class MulticlassClassificationTask(IdentityTask):
