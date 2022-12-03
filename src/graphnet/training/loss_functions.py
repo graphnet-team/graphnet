@@ -15,7 +15,6 @@ from torch import Tensor
 from graphnet.utilities.config import save_model_config
 from graphnet.models.model import Model
 from graphnet.utilities.decorators import final
-from torch import nn
 from torch.nn.functional import (
     one_hot,
     cross_entropy,
