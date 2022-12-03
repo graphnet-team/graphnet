@@ -141,6 +141,14 @@ class PositionReconstruction(Task):
 class TimeReconstruction(Task):
     """Reconstructs time."""
 
+    # Requires one feature, time.
+    nb_inputs = 1
+
+    def _forward(self, x: Tensor) -> Tensor:
+
+        # Leave as it is
+        return x
+
 
 class InelasticityReconstruction(Task):
     """Reconstructs interaction inelasticity.
