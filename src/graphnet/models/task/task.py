@@ -174,11 +174,11 @@ class Task(Model):
             (transform_prediction_and_target is not None)
             and (transform_target is not None)
         ), "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
-if (transform_target is not None) != (transform_inference is not None):
-    self.warning(
-        "Setting one of `transform_target` and `transform_inference`, but not "
-        "the other."
-    )
+        if (transform_target is not None) != (transform_inference is not None):
+            self.warning(
+                "Setting one of `transform_target` and `transform_inference`, but not "
+                "the other."
+            )
 
         if transform_target is not None:
             assert transform_target is not None
