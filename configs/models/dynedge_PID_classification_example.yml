@@ -32,13 +32,13 @@ arguments:
         hidden_size: 128
         loss_function:
           ModelConfig:
-            arguments: {options=config["class_options"]}
+            arguments: {options=general_config["class_options"]}
             class_name: CrossEntropyLoss
         loss_weight: null
         target_labels: pid
-        transform_inference: 'lambda x: softmax(x, dim=-1)'
+        transform_inference: '!lambda x: softmax(x, dim=-1)'
         transform_prediction: null
         transform_support: null
         transform_target: null
-      class_name: EnergyReconstruction
+      class_name: MulticlassClassificationTask
 class_name: StandardModel
