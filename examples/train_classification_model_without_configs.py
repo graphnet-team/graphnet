@@ -94,7 +94,7 @@ def train(config: Dict[str, Any]) -> None:
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = MulticlassClassificationTask(
-        nb_classes=len(np.unique(list(config["class_options"].values()))),
+        nb_outputs=len(np.unique(list(config["class_options"].values()))),
         hidden_size=gnn.nb_outputs,
         target_labels=config["target"],
         loss_function=CrossEntropyLoss(options=config["class_options"]),
@@ -186,7 +186,7 @@ def main() -> None:
         "target": target,
         "event_numbers": 1000,
         "class_options": class_options,
-        "n_epochs": 50,
+        "n_epochs": 10,
         "patience": 5,
         "archive": archive,
         "run_name": run_name,
