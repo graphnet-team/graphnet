@@ -112,10 +112,11 @@ class LogCoshLoss(LossFunction):
 
 
 class CrossEntropyLoss(LossFunction):
-    """Compute negative log likelihood loss for classification tasks.
+    """Compute cross-entropy loss for classification tasks.
 
-    Predictions are an [N, num_class]-matrix of values between 0 and 1, and
-    targets are an [N,1]-matrix with integer values in (0, num_classes - 1).
+    Predictions are an [N, num_class]-matrix of logits (i.e., non-softmax'ed
+    probabilities), and targets are an [N,1]-matrix with integer values in 
+    (0, num_classes - 1).
     """
 
     @save_model_config
@@ -125,49 +126,72 @@ class CrossEntropyLoss(LossFunction):
         *args: Any,
         **kwargs: Any,
     ):
-        """Initialize of class options."""
+        """Construct CrossEntropyLoss."""
+        # Base class constructor
         super().__init__(*args, **kwargs)
+        
+        # Member variables
         self._options = options
+        self._nb_classes: int
+        if isinstance(self._options, int):
+            assert self._options in [torch.int32, torch.int64]
+            assert self._options >= 2, (
+                f"Minimum of two classes required. Got {self._options}."
+            )
+            self._nb_classes = options
+        elif isinstance(self._options, list):
+            self._nb_classes = len(self._options) 
+        elif isinstance(self._options, dict):
+            self._nb_classes = len(np.unique(list(self._options.values())))
+        else:
+            raise ValueError(
+                f"Class options of type {type(self._options)} not supported"
+            )
+            
+        self._loss = nn.CrossEntropyLoss(reduction="none")
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Transform outputs to angle and prepare prediction."""
         if isinstance(self._options, int):
-            # classes is an integer
-            assert self._options in [torch.int32, torch.int64]
-            # minimum number of classes is atleast a binary case
-            assert self._options >= 2
-            nb_classes = self._options
-
-            # target integers are positive
+            # Integer number of classes: Targets are expected to be in 
+            # (0, nb_classes - 1).
+            
+            # Target integers are positive
             assert torch.all(target >= 0)
-            # target does not contain fewer classes than classes
+
+            # Target integers are consistent with the expected number of class.
             assert torch.all(target < self._options)
 
             assert target.dtype in [torch.int32, torch.int64]
             target_integer = target
 
         elif isinstance(self._options, list):
-            nb_classes = len(self._options)
-            # list of classes; (1,12,13,..,N) -> (0,1,2,..,N)
+            # List of classes: Mapping target classes in list onto 
+            # (0, nb_classes - 1). Example:
+            #    Given options: [1, 12, 13, ...]
+            #    Yields: [1, 13, 12] -> [0, 2, 1, ...]
             target_integer = torch.tensor(
                 [self._options.index(value) for value in target]
             )
 
         elif isinstance(self._options, dict):
-            nb_classes = len(np.unique(list(self._options.values())))
-            # encodes the target according dict rules; # (1,-1,12,-12,..,N,-N) -> (0,1,..,N)
+            # Dictionary of classes: Mapping target classes in dict onto 
+            # (0, nb_classes - 1). Example:
+            #     Given options: {1: 0, -1: 0, 12: 1, -12: 1, ...}
+            #     Yields: [1, -1, -12, ...] -> [0, 0, 1, ...]
             target_integer = torch.tensor(
                 [self._options[int(value)] for value in target]
             )
+            
         else:
-            self.error(f"Type {type(self._options)} not supported")
+            assert False, "Shouldn't reach here."
 
-        # pid_transform = {1:0,12:2,13:1,14:2,16:2}
-        device = prediction.device
-        target_new: Tensor = one_hot(target_integer, nb_classes).to(device)
-
-        loss = nn.CrossEntropyLoss(reduction="none")
-        return loss(prediction.float(), target_new.float())
+        target_one_hot: Tensor = (
+            one_hot(target_integer, nb_classes)
+            .to(prediction.device)
+        )
+        
+        return self._loss(prediction.float(), target_one_hot.float())
 
 
 class BinaryCrossEntropyLoss(LossFunction):
