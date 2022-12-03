@@ -9,26 +9,13 @@ from graphnet.models.task import Task
 from graphnet.utilities.config.model_config import save_model_config
 
 
-class ClassificationTask(Task):
-    """Generic Classification task for binary and multi classification."""
+class MulticlassClassificationTask(IdentityTask):
+    """General task for classifying any number of classes.
 
-    # Requires the same number of features as the number of classes being predicted
-    @save_model_config
-    def __init__(self, nb_classes: int, *args: Any, **kwargs: Any):
-        """Initialize of number of class and softmax method."""
-        self._nb_classes = nb_classes
-        super().__init__(*args, **kwargs)
-        # TODO: find a way to remove the transform_inference argument and use softmax here.
-        self._softmax = None
-
-    @property
-    def nb_inputs(self) -> Tensor:
-        """Output from Classification."""
-        return self._nb_classes
-
-    def _forward(self, x: Tensor) -> Tensor:
-        """Transform latent features into probabilities."""
-        return x
+    Requires the same number of input features as the number of classes being
+    predicted. Returns the untransformed latent features, which are interpreted
+    as the logits for each class being classified.
+    """
 
 
 class BinaryClassificationTask(Task):
