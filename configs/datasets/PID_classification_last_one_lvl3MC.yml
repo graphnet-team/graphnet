@@ -1,6 +1,6 @@
 path: /groups/icecube/petersen/GraphNetDatabaseRepository/Leon2022_DataAndMC_CSVandDB_StoppedMuons/last_one_lvl3MC.db
 pulsemaps:
-  - SplitInIcePulses
+  - SRTInIcePulses
 features:
   - dom_x
   - dom_y
