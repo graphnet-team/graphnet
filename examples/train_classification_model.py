@@ -55,7 +55,9 @@ def train(general_config: Dict[str, Any]) -> None:
     wandb_logger.experiment.config.update(dataset_config.as_dict())
 
     # Build model
-    model_config = ModelConfig.load(f"configs/models/{run_name}.yml")
+    model_config = ModelConfig.load(
+        "configs/models/" + general_config["model"] + ".yml"
+    )
     model = Model.from_config(model_config, trust=True)
     wandb_logger.experiment.config.update(model_config.as_dict())
 
@@ -105,26 +107,10 @@ def train(general_config: Dict[str, Any]) -> None:
 
 def main() -> None:
     """Run example."""
-    # transformation of target to a given class integer
-    class_options = {
-        1: 0,
-        -1: 0,
-        13: 1,
-        -13: 1,
-        12: 2,
-        -12: 2,
-        14: 2,
-        -14: 2,
-        16: 2,
-        -16: 2,
-    }
-
     # General configuration
     general_config = {
-        "db": "/groups/icecube/petersen/GraphNetDatabaseRepository/Leon2022_DataAndMC_CSVandDB_StoppedMuons/last_one_lvl3MC.db",
         "dataset": "PID_classification_last_one_lvl3MC.yml",
         "model": "dynedge_PID_Classification_noise_muon_neutrino_example.yml",
-        "class_options": class_options,
         "archive": "/groups/icecube/petersen/GraphNetDatabaseRepository/example_results/train_classification_model",
     }
 
