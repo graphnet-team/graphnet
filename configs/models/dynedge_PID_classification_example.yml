@@ -1,4 +1,5 @@
 arguments:
+  class_options: {1: 0, -1: 0, 13: 1, -13: 1, 12: 2, -12: 2, 14: 2, -14: 2, 16: 2, -16: 2}
   coarsening: null
   detector:
     ModelConfig:
