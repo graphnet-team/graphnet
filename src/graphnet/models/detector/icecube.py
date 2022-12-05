@@ -10,14 +10,13 @@ from graphnet.models.components.pool import (
 )
 from graphnet.data.constants import FEATURES
 from graphnet.models.detector.detector import Detector
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-
-class IceCube86(Detector,features = None :list[object]):
+class IceCube86(Detector):
     """`Detector` class for IceCube-86."""
 
     # Implementing abstract class attribute
-    if features == None:
-        features = FEATURES.ICECUBE86
+    features = FEATURES.ICECUBE86
 
     def _forward(self, data: Data) -> Data:
         """Ingest data, build graph, and preprocess features.
