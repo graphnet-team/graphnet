@@ -96,6 +96,7 @@ class SQLiteDataConverter(DataConverter):
                         column_names,
                         table_name,
                         output_file,
+                        default_type="FLOAT",
                         integer_primary_key=not (
                             is_pulse_map(table_name) or is_mc_tree(table_name)
                         ),
