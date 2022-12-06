@@ -35,18 +35,3 @@ def test_transform_prediction_and_target() -> None:
             transform_target=torch.log10,
             transform_inference=torch.log10,
         )
-
-    # Test wrong combination of inputs
-    with pytest.raises(
-        AssertionError,
-        match=(
-            "Please specify both `transform_inference` and `transform_target`"
-        ),
-    ):
-        EnergyReconstruction(
-            hidden_size=gnn.nb_outputs,
-            target_labels="energy",
-            loss_function=LogCoshLoss(),
-            transform_prediction_and_target=torch.log10,
-            transform_inference=torch.log10,
-        )
