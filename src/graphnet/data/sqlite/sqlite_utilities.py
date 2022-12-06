@@ -57,7 +57,9 @@ def create_table(
     columns: List[str],
     table_name: str,
     database_path: str,
+    *,
     index_column: str = "event_no",
+    default_type: str = "NOT NULL",
     integer_primary_key: bool = True,
 ) -> None:
     """Create a table.
@@ -67,6 +69,7 @@ def create_table(
         table_name: Name of the table.
         database_path: Path to the database.
         index_column: Name of the index column.
+        default_type: The type used for all non-index columns.
         integer_primary_key: Whether or not to create the `index_column` with
             the `INTEGER PRIMARY KEY` type. Such a column is required to have
             unique, integer values for each row. This is appropriate when the
@@ -78,10 +81,12 @@ def create_table(
     # Prepare column names and types
     query_columns = []
     for column in columns:
-        if column == index_column and integer_primary_key:
-            type_ = "INTEGER PRIMARY KEY NOT NULL"
-        else:
-            type_ = "NOT NULL"
+        type_ = default_type
+        if column == index_column:
+            if integer_primary_key:
+                type_ = "INTEGER PRIMARY KEY NOT NULL"
+            else:
+                type_ = "NOT NULL"
 
         query_columns.append(f"{column} {type_}")
 
