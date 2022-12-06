@@ -118,23 +118,26 @@ class ParquetToSQLiteConverter(LoggerMixin):
         df = self._convert_to_dataframe(ak_array, field_name, n_events_in_file)
         if field_name in self._created_tables:
             save_to_sql(
-                database_path,
-                field_name,
                 df,
+                field_name,
+                database_path,
             )
         else:
             if len(df) > n_events_in_file:
                 is_pulse_map = True
             else:
                 is_pulse_map = False
-            create_table(df, field_name, database_path, is_pulse_map)
-            if is_pulse_map:
-                attach_index(database_path, table_name=field_name)
+            create_table(
+                df.columns,
+                field_name,
+                database_path,
+                integer_primary_key=not is_pulse_map,
+            )
             self._created_tables.append(field_name)
             save_to_sql(
-                database_path,
-                field_name,
                 df,
+                field_name,
+                database_path,
             )
 
     def _convert_to_dataframe(
