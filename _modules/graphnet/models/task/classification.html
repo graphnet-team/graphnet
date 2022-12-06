@@ -65,10 +65,21 @@
   <h1>Source code for graphnet.models.task.classification</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Classification-specific `Model` class(es).&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.models.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.task</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">IdentityTask</span>
+
+
+<div class="viewcode-block" id="MulticlassClassificationTask"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.classification.MulticlassClassificationTask">[docs]</a><span class="k">class</span> <span class="nc">MulticlassClassificationTask</span><span class="p">(</span><span class="n">IdentityTask</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;General task for classifying any number of classes.</span>
+
+<span class="sd">    Requires the same number of input features as the number of classes being</span>
+<span class="sd">    predicted. Returns the untransformed latent features, which are interpreted</span>
+<span class="sd">    as the logits for each class being classified.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="BinaryClassificationTask"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.classification.BinaryClassificationTask">[docs]</a><span class="k">class</span> <span class="nc">BinaryClassificationTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>

@@ -70,12 +70,19 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.special</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn.functional</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">one_hot</span><span class="p">,</span>
+    <span class="n">cross_entropy</span><span class="p">,</span>
+    <span class="n">binary_cross_entropy</span><span class="p">,</span>
+    <span class="n">softplus</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">save_model_config</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.model</span> <span class="kn">import</span> <span class="n">Model</span>
@@ -161,13 +168,97 @@
 <span class="sd">        Used to avoid `inf` for even moderately large differences.</span>
 <span class="sd">        See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">softplus</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LogCoshLoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.LogCoshLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Implement loss calculation.&quot;&quot;&quot;</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">prediction</span> <span class="o">-</span> <span class="n">target</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_cosh</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">elements</span></div></div>
+
+
+<div class="viewcode-block" id="CrossEntropyLoss"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.CrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">CrossEntropyLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute cross-entropy loss for classification tasks.</span>
+
+<span class="sd">    Predictions are an [N, num_class]-matrix of logits (i.e., non-softmax&#39;ed</span>
+<span class="sd">    probabilities), and targets are an [N,1]-matrix with integer values in</span>
+<span class="sd">    (0, num_classes - 1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CrossEntropyLoss.__init__"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.CrossEntropyLoss.__init__">[docs]</a>    <span class="nd">@save_model_config</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct CrossEntropyLoss.&quot;&quot;&quot;</span>
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Member variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="n">options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb_classes</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="ow">in</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Minimum of two classes required. Got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nb_classes</span> <span class="o">=</span> <span class="n">options</span>  <span class="c1"># type: ignore</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nb_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nb_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Class options of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">)</span><span class="si">}</span><span class="s2"> not supported&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CrossEntropyLoss._forward"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.CrossEntropyLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Transform outputs to angle and prepare prediction.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="c1"># Integer number of classes: Targets are expected to be in</span>
+            <span class="c1"># (0, nb_classes - 1).</span>
+
+            <span class="c1"># Target integers are positive</span>
+            <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">target</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Target integers are consistent with the expected number of class.</span>
+            <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">target</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">]</span>
+            <span class="n">target_integer</span> <span class="o">=</span> <span class="n">target</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="c1"># List of classes: Mapping target classes in list onto</span>
+            <span class="c1"># (0, nb_classes - 1). Example:</span>
+            <span class="c1">#    Given options: [1, 12, 13, ...]</span>
+            <span class="c1">#    Yields: [1, 13, 12] -&gt; [0, 2, 1, ...]</span>
+            <span class="n">target_integer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">target</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="c1"># Dictionary of classes: Mapping target classes in dict onto</span>
+            <span class="c1"># (0, nb_classes - 1). Example:</span>
+            <span class="c1">#     Given options: {1: 0, -1: 0, 12: 1, -12: 1, ...}</span>
+            <span class="c1">#     Yields: [1, -1, -12, ...] -&gt; [0, 0, 1, ...]</span>
+            <span class="n">target_integer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">target</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Shouldn&#39;t reach here.&quot;</span>
+
+        <span class="n">target_one_hot</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="n">one_hot</span><span class="p">(</span><span class="n">target_integer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb_classes</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+            <span class="n">prediction</span><span class="o">.</span><span class="n">device</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span><span class="p">(</span><span class="n">prediction</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">target_one_hot</span><span class="o">.</span><span class="n">float</span><span class="p">())</span></div></div>
 
 
 <div class="viewcode-block" id="BinaryCrossEntropyLoss"><a class="viewcode-back" href="../../../graphnet.training.html#graphnet.training.loss_functions.BinaryCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">BinaryCrossEntropyLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
@@ -178,7 +269,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">binary_cross_entropy</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">binary_cross_entropy</span><span class="p">(</span>
             <span class="n">prediction</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
         <span class="p">)</span></div>
 

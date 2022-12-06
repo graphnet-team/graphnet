@@ -95,6 +95,7 @@
 <div class="viewcode-block" id="Task.__init__"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.Task.__init__">[docs]</a>    <span class="nd">@save_model_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
         <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">target_labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">loss_function</span><span class="p">:</span> <span class="s2">&quot;LossFunction&quot;</span><span class="p">,</span>
@@ -238,9 +239,11 @@
             <span class="p">(</span><span class="n">transform_prediction_and_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
             <span class="ow">and</span> <span class="p">(</span><span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
         <span class="p">),</span> <span class="s2">&quot;Please specify at most one of `transform_prediction_and_target` and `transform_target`&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span>
-            <span class="n">transform_inference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;Please specify both `transform_inference` and `transform_target`&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">transform_inference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Setting one of `transform_target` and `transform_inference`, but not &quot;</span>
+                <span class="s2">&quot;the other.&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -291,10 +294,11 @@
                 <span class="n">transform_prediction_and_target</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span> <span class="o">=</span> <span class="n">transform_prediction_and_target</span>
-        <span class="k">elif</span> <span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">transform_inference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_inference</span> <span class="o">=</span> <span class="n">transform_inference</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span> <span class="o">=</span> <span class="n">transform_target</span></div></div>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">transform_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span> <span class="o">=</span> <span class="n">transform_target</span>
+            <span class="k">if</span> <span class="n">transform_inference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_inference</span> <span class="o">=</span> <span class="n">transform_inference</span></div></div>
 
 
 <div class="viewcode-block" id="IdentityTask"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.task.IdentityTask">[docs]</a><span class="k">class</span> <span class="nc">IdentityTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
