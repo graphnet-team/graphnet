@@ -1,5 +1,7 @@
 """SQLite-specific utility functions for use in `graphnet.data`."""
 
+from typing import List
+
 import pandas as pd
 import sqlalchemy
 import sqlite3
@@ -33,47 +35,59 @@ def save_to_sql(df: pd.DataFrame, table_name: str, database: str) -> None:
     engine.dispose()
 
 
-def attach_index(database: str, table_name: str) -> None:
-    """Attaches the table index.
+def attach_index(
+    database_path: str, table_name: str, index_column: str = "event_no"
+) -> None:
+    """Attach the table (i.e., event) index.
 
     Important for query times!
     """
     code = (
         "PRAGMA foreign_keys=off;\n"
         "BEGIN TRANSACTION;\n"
-        f"CREATE INDEX event_no_{table_name} ON {table_name} (event_no);\n"
+        f"CREATE INDEX {index_column}_{table_name} "
+        f"ON {table_name} ({index_column});\n"
         "COMMIT TRANSACTION;\n"
         "PRAGMA foreign_keys=on;"
     )
-    run_sql_code(database, code)
+    run_sql_code(database_path, code)
 
 
 def create_table(
-    df: pd.DataFrame,
+    columns: List[str],
     table_name: str,
     database_path: str,
-    is_pulse_map: bool = False,
+    index_column: str = "event_no",
+    integer_primary_key: bool = True,
 ) -> None:
     """Create a table.
 
     Args:
-        df: Data to be saved to table
+        columns: Column names to be created in table.
         table_name: Name of the table.
         database_path: Path to the database.
-        is_pulse_map: Whether or not this is a pulse map table.
+        index_column: Name of the index column.
+        integer_primary_key: Whether or not to create the `index_column` with
+            the `INTEGER PRIMARY KEY` type. Such a column is required to have
+            unique, integer values for each row. This is appropriate when the
+            table has one row per event, e.g., event-level MC truth. It is not
+            appropriate for pulse map series, particle-level MC truth, and
+            other such data that is expected to have more that one row per
+            event (i.e., with the same index).
     """
-    query_columns = list()
-    for column in df.columns:
-        if column == "event_no":
-            if not is_pulse_map:
-                type_ = "INTEGER PRIMARY KEY NOT NULL"
-            else:
-                type_ = "NOT NULL"
+    # Prepare column names and types
+    query_columns = []
+    for column in columns:
+        if column == index_column and integer_primary_key:
+            type_ = "INTEGER PRIMARY KEY NOT NULL"
         else:
             type_ = "NOT NULL"
+
         query_columns.append(f"{column} {type_}")
+
     query_columns_string = ", ".join(query_columns)
 
+    # Run SQL code
     code = (
         "PRAGMA foreign_keys=off;\n"
         f"CREATE TABLE {table_name} ({query_columns_string});\n"
@@ -83,3 +97,6 @@ def create_table(
         database_path,
         code,
     )
+
+    if not integer_primary_key:
+        attach_index(database_path, table_name)

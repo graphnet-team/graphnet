@@ -23,7 +23,7 @@ from graphnet.data.sqlite import (
     SQLiteDataConverter,
 )
 from graphnet.data.sqlite.sqlite_dataconverter import (
-    is_pulsemap_check,
+    is_pulse_map,
 )
 from graphnet.utilities.imports import has_icecube_package
 
@@ -57,12 +57,12 @@ def get_file_path(backend: str) -> str:
 # Unit test(s)
 def test_is_pulsemap_check() -> None:
     """Test behaviour of `is_pulsemap_check`."""
-    assert is_pulsemap_check("SplitInIcePulses") is True
-    assert is_pulsemap_check("SRTInIcePulses") is True
-    assert is_pulsemap_check("InIceDSTPulses") is True
-    assert is_pulsemap_check("RTTWOfflinePulses") is True
-    assert is_pulsemap_check("truth") is False
-    assert is_pulsemap_check("retro") is False
+    assert is_pulse_map("SplitInIcePulses") is True
+    assert is_pulse_map("SRTInIcePulses") is True
+    assert is_pulse_map("InIceDSTPulses") is True
+    assert is_pulse_map("RTTWOfflinePulses") is True
+    assert is_pulse_map("truth") is False
+    assert is_pulse_map("retro") is False
 
 
 @pytest.mark.order(1)

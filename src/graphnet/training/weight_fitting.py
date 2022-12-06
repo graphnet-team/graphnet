@@ -92,7 +92,9 @@ class WeightFitter(ABC, LoggerMixin):
         weights = self._fit_weights(truth, **kwargs)
 
         if add_to_database:
-            create_table(weights, self._weight_name, self._database_path)
+            create_table(
+                weights.columns, self._weight_name, self._database_path
+            )
             save_to_sql(weights, self._weight_name, self._database_path)
         return weights.sort_values(self._index_column).reset_index(drop=True)
 

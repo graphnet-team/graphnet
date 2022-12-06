@@ -13,7 +13,7 @@ import sqlite3
 import torch
 from torch.utils.data import DataLoader
 
-from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
+from graphnet.data.sqlite.sqlite_utilities import save_to_sql, create_table
 from graphnet.training.utils import get_predictions, make_dataloader
 
 from graphnet.utilities.logging import get_logger
@@ -216,38 +216,11 @@ class InSQLitePipeline(ABC):
         pipeline_database = outdir + "/%s.db" % self._pipeline_name
         if i == 0:
             # Only setup table schemes if its the first time appending
-            self._create_table(pipeline_database, "reconstruction", df)
-            self._create_table(pipeline_database, "truth", truth)
+            create_table(df.columns, "reconstruction", pipeline_database)
+            create_table(truth.columns, "truth", pipeline_database)
         save_to_sql(df, "reconstruction", pipeline_database)
         save_to_sql(truth, "truth", pipeline_database)
         if isinstance(retro, pd.DataFrame):
             if i == 0:
-                self._create_table(pipeline_database, "retro", retro)
+                create_table(retro.columns, "retro", pipeline_database)
             save_to_sql(retro, self._retro_table_name, pipeline_database)
-
-    # @FIXME: Duplicate.
-    def _create_table(
-        self, pipeline_database: str, table_name: str, df: pd.DataFrame
-    ) -> None:
-        """Create a table.
-
-        Args:
-            pipeline_database: Path to the pipeline database.
-            table_name: Name of the table in pipeline database.
-            df: DataFrame of combined predictions.
-        """
-        query_columns_list = list()
-        for column in df.columns:
-            if column == "event_no":
-                type_ = "INTEGER PRIMARY KEY NOT NULL"
-            else:
-                type_ = "FLOAT"
-            query_columns_list.append(f"{column} {type_}")
-        query_columns = ", ".join(query_columns_list)
-
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            f"CREATE TABLE {table_name} ({query_columns});\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(pipeline_database, code)
