@@ -26,7 +26,7 @@ runs:
       shell: bash
     - name: Install dependencies
       run: |
-        pip install --upgrade pip
+        pip install --upgrade pip>=20
         pip install wheel setuptools==59.5.0
       shell: bash
     - name: Install package
