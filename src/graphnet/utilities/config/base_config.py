@@ -57,7 +57,7 @@ def get_all_argument_values(
     # Get all default argument values
     cfg = OrderedDict()
     for key, parameter in inspect.signature(fn).parameters.items():
-        if key == "self" or parameter.default == inspect._empty:
+        if key == "self":
             continue
         cfg[key] = parameter.default
 
