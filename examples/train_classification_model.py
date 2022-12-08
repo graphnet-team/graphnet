@@ -6,6 +6,7 @@ from typing import Dict, Any
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 
+from graphnet.constants import GRAPHNET_ROOT_DIR
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import Model
 from graphnet.training.callbacks import ProgressBar
@@ -14,6 +15,8 @@ from graphnet.utilities.config import (
     ModelConfig,
     TrainingConfig,
 )
+from graphnet.data.dataset import Dataset
+from torch.utils.data import ConcatDataset
 
 # Make sure W&B output directory exists
 WANDB_DIR = "./wandb/"
@@ -43,20 +46,39 @@ def train(general_config: Dict[str, Any]) -> None:
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
 
-    # Construct dataloaders
+    #
     dataset_config = DatasetConfig.load(
-        "configs/datasets/" + general_config["dataset"] + ".yml"
+        GRAPHNET_ROOT_DIR + "/configs/datasets/" + general_config["dataset"]
     )
-    # dataloader_test, dataloader_valid, ..
-    dataloaders = DataLoader.from_dataset_config(
-        dataset_config,
-        **config.dataloader,
+    datasets = Dataset.from_config(dataset_config)
+
+    # Construct datasets from multiple selections
+    train_dataset = ConcatDataset(
+        [datasets[key] for key in datasets if key.startswith("train")]
     )
+    valid_dataset = ConcatDataset(
+        [datasets[key] for key in datasets if key.startswith("valid")]
+    )
+    test_dataset = ConcatDataset(
+        [datasets[key] for key in datasets if key.startswith("test")]
+    )
+
+    # Construct dataloaders
+    train_dataloaders = DataLoader(
+        train_dataset, shuffle=True, **config.dataloader
+    )
+    valid_dataloaders = DataLoader(
+        valid_dataset, shuffle=False, **config.dataloader
+    )
+    test_dataloaders = DataLoader(
+        test_dataset, shuffle=False, **config.dataloader
+    )
+
     wandb_logger.experiment.config.update(dataset_config.as_dict())
 
     # Build model
     model_config = ModelConfig.load(
-        "configs/models/" + general_config["model"] + ".yml"
+        GRAPHNET_ROOT_DIR + "/configs/models/" + general_config["model"]
     )
     model = Model.from_config(model_config, trust=True)
     wandb_logger.experiment.config.update(model_config.as_dict())
@@ -71,8 +93,8 @@ def train(general_config: Dict[str, Any]) -> None:
     ]
 
     model.fit(
-        dataloaders["train"],
-        dataloaders["validation"],
+        train_dataloaders,
+        valid_dataloaders,
         callbacks=callbacks,
         logger=wandb_logger,
         **config.fit,
@@ -91,7 +113,7 @@ def train(general_config: Dict[str, Any]) -> None:
         additional_attributes = config.target
 
     results = model.predict_as_dataframe(
-        dataloaders["test"],
+        test_dataloaders,
         prediction_columns=prediction_columns,
         additional_attributes=additional_attributes + ["event_no"],
     )
@@ -110,7 +132,7 @@ def main() -> None:
     # General configuration
     general_config = {
         "dataset": "PID_classification_last_one_lvl3MC.yml",
-        "model": "dynedge_PID_Classification_noise_muon_neutrino_example.yml",
+        "model": "dynedge_PID_classification_example.yml",
         "archive": "/groups/icecube/petersen/GraphNetDatabaseRepository/example_results/train_classification_model",
     }
 
