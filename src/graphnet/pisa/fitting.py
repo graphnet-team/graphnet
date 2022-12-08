@@ -20,7 +20,7 @@ from pisa.core.pipeline import Pipeline
 from pisa.analysis.analysis import Analysis
 from pisa import ureg
 
-from graphnet.data.sqlite import save_to_sql, create_table
+from graphnet.data.sqlite import create_table_and_save_to_sql
 
 mpl.use("pdf")
 plt.rc("font", family="serif")
@@ -157,8 +157,9 @@ class WeightFitter:
             results = results.append(data)
 
         if add_to_database:
-            create_table(results.columns, weight_name, self._database_path)
-            save_to_sql(results, weight_name, self._database_path)
+            create_table_and_save_to_sql(
+                results.columns, weight_name, self._database_path
+            )
         return results.sort_values("event_no").reset_index(drop=True)
 
     def _make_config(
