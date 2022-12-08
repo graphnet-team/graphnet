@@ -75,8 +75,12 @@ class ParquetToSQLiteConverter(LoggerMixin):
         database_path = os.path.join(
             outdir, database_name, "data", database_name + ".db"
         )
+        self.info(f"Processing {len(self._parquet_files)} Parquet file(s)")
         for i in trange(
-            len(self._parquet_files), desc="Main", colour="#0000ff", position=0
+            len(self._parquet_files),
+            unit="file(s)",
+            colour="green",
+            position=0,
         ):
             parquet_file = ak.from_parquet(self._parquet_files[i])
             n_events_in_file = self._count_events(parquet_file)
