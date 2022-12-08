@@ -2,7 +2,9 @@
 
 import os
 
+import pandas as pd
 import pytest
+import sqlite3
 import torch
 
 import graphnet.constants
@@ -214,5 +216,35 @@ def test_parquet_to_sqlite_converter() -> None:
         assert torch.allclose(dataset_from_parquet[ix].x, dataset[ix].x)
 
 
+@pytest.mark.order(5)
+@pytest.mark.parametrize("pulsemap", ["SRTInIcePulses"])
+@pytest.mark.parametrize("event_no", [1])
+def test_database_query_plan(pulsemap: str, event_no: int) -> None:
+    """Test query plan agreement in original and parquet-converted database."""
+    # Configure paths to databases to compare
+    database_name = FILE_NAME + "_from_parquet"
+    parquet_converted_database = (
+        f"{OUTPUT_DATA_DIR}/{database_name}/data/{database_name}.db"
+    )
+    sqlite_database = get_file_path("sqlite")
+
+    # Get query plans
+    query = f"EXPLAIN QUERY PLAN SELECT * FROM {pulsemap} WHERE event_no={event_no}"
+    with sqlite3.connect(sqlite_database) as conn:
+        sqlite_plan = pd.read_sql(query, conn)
+
+    with sqlite3.connect(parquet_converted_database) as conn:
+        parquet_plan = pd.read_sql(query, conn)
+
+    # Compare
+    assert "USING INDEX event_no" in sqlite_plan["detail"].iloc[0]
+    assert "USING INDEX event_no" in parquet_plan["detail"].iloc[0]
+
+    assert (sqlite_plan["detail"] == parquet_plan["detail"]).all()
+
+
 if __name__ == "__main__":
+    test_dataconverter("sqlite")
+    test_dataconverter("parquet")
     test_parquet_to_sqlite_converter()
+    test_database_query_plan("SRTInIcePulses", 1)
