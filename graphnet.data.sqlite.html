@@ -43,8 +43,6 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite.sqlite_dataconverter">graphnet.data.sqlite.sqlite_dataconverter module</a><ul>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter</span></code></a><ul>
-<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._attach_index()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._create_table"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._create_table()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_everything"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._extract_everything()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_table_names"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._extract_table_names()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._merge_temporary_databases()</span></code></a></li>
@@ -56,7 +54,8 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe"><code class="docutils literal notranslate"><span class="pre">construct_dataframe()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.is_pulsemap_check"><code class="docutils literal notranslate"><span class="pre">is_pulsemap_check()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree"><code class="docutils literal notranslate"><span class="pre">is_mc_tree()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map"><code class="docutils literal notranslate"><span class="pre">is_pulse_map()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.data.sqlite.sqlite_dataset">graphnet.data.sqlite.sqlite_dataset module</a><ul>
@@ -87,6 +86,9 @@
 <li><a class="reference internal" href="#module-graphnet.data.sqlite.sqlite_utilities">graphnet.data.sqlite.sqlite_utilities module</a><ul>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.attach_index"><code class="docutils literal notranslate"><span class="pre">attach_index()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.create_table"><code class="docutils literal notranslate"><span class="pre">create_table()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.create_table_and_save_to_sql"><code class="docutils literal notranslate"><span class="pre">create_table_and_save_to_sql()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.database_exists"><code class="docutils literal notranslate"><span class="pre">database_exists()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.database_table_exists"><code class="docutils literal notranslate"><span class="pre">database_table_exists()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.run_sql_code"><code class="docutils literal notranslate"><span class="pre">run_sql_code()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.sqlite.sqlite_utilities.save_to_sql"><code class="docutils literal notranslate"><span class="pre">save_to_sql()</span></code></a></li>
 </ul>
@@ -148,43 +150,6 @@
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index">
-<span class="sig-name descname"><span class="pre">_attach_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter._attach_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index" title="Permalink to this definition"></a></dt>
-<dd><p>Attach the table index.</p>
-<p>Important for query times!</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
-<li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._create_table">
-<span class="sig-name descname"><span class="pre">_create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_pulse_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter._create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._create_table" title="Permalink to this definition"></a></dt>
-<dd><p>Create a table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to the database.</p></li>
-<li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the table.</p></li>
-<li><p><strong>columns</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The names of the columns of the table.</p></li>
-<li><p><strong>is_pulse_map</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether or not this is a pulse map table.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_everything">
 <span class="sig-name descname"><span class="pre">_extract_everything</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter._extract_everything"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_everything" title="Permalink to this definition"></a></dt>
@@ -332,9 +297,23 @@ all files/databases output by the current instance are merged.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.is_pulsemap_check">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_pulsemap_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#is_pulsemap_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.is_pulsemap_check" title="Permalink to this definition"></a></dt>
-<dd><p>Check whether <cite>table_name</cite> corresponds to a pulsemap.</p>
+<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_mc_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#is_mc_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether <cite>table_name</cite> corresponds to an MC tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_pulse_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_dataconverter.html#is_pulse_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether <cite>table_name</cite> corresponds to a pulse map.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
@@ -638,14 +617,15 @@ is provided, this value is ignored. Defaults to None.</p></li>
 <p>SQLite-specific utility functions for use in <cite>graphnet.data</cite>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.attach_index">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">attach_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#attach_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.attach_index" title="Permalink to this definition"></a></dt>
-<dd><p>Attaches the table index.</p>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">attach_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#attach_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.attach_index" title="Permalink to this definition"></a></dt>
+<dd><p>Attach the table (i.e., event) index.</p>
 <p>Important for query times!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
 <li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -656,15 +636,23 @@ is provided, this value is ignored. Defaults to None.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.create_table">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_pulse_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.create_table" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NOT</span> <span class="pre">NULL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integer_primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.create_table" title="Permalink to this definition"></a></dt>
 <dd><p>Create a table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Data to be saved to table</p></li>
+<li><p><strong>columns</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Column names to be created in table.</p></li>
 <li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the table.</p></li>
 <li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to the database.</p></li>
-<li><p><strong>is_pulse_map</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether or not this is a pulse map table.</p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – Name of the index column.</p></li>
+<li><p><strong>default_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'NOT</span> <span class="pre">NULL'</span></code>) – The type used for all non-index columns.</p></li>
+<li><p><strong>integer_primary_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Whether or not to create the <cite>index_column</cite> with
+the <cite>INTEGER PRIMARY KEY</cite> type. Such a column is required to have
+unique, integer values for each row. This is appropriate when the
+table has one row per event, e.g., event-level MC truth. It is not
+appropriate for pulse map series, particle-level MC truth, and
+other such data that is expected to have more that one row per
+event (i.e., with the same index).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -674,13 +662,65 @@ is provided, this value is ignored. Defaults to None.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.create_table_and_save_to_sql">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">create_table_and_save_to_sql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NOT</span> <span class="pre">NULL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integer_primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#create_table_and_save_to_sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.create_table_and_save_to_sql" title="Permalink to this definition"></a></dt>
+<dd><p>Create table if it doesn’t exist and save dataframe to it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – </p></li>
+<li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – </p></li>
+<li><p><strong>default_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'NOT</span> <span class="pre">NULL'</span></code>) – </p></li>
+<li><p><strong>integer_primary_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.database_exists">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">database_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#database_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.database_exists" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether database exists at <cite>database_path</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.database_table_exists">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">database_table_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#database_table_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.database_table_exists" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether <cite>table_name</cite> exists in database at <cite>database_path</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.run_sql_code">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">run_sql_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#run_sql_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.run_sql_code" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">run_sql_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#run_sql_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.run_sql_code" title="Permalink to this definition"></a></dt>
 <dd><p>Execute SQLite code.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to databases</p></li>
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to databases</p></li>
 <li><p><strong>code</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – SQLite code</p></li>
 </ul>
 </dd>
@@ -692,7 +732,7 @@ is provided, this value is ignored. Defaults to None.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_utilities.save_to_sql">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">save_to_sql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#save_to_sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.save_to_sql" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_utilities.</span></span><span class="sig-name descname"><span class="pre">save_to_sql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/sqlite/sqlite_utilities.html#save_to_sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_utilities.save_to_sql" title="Permalink to this definition"></a></dt>
 <dd><p>Save a dataframe <cite>df</cite> to a table <cite>table_name</cite> in SQLite <cite>database</cite>.</p>
 <p>Table must exist already.</p>
 <dl class="field-list simple">
@@ -700,7 +740,7 @@ is provided, this value is ignored. Defaults to None.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Dataframe with data to be stored in sqlite table</p></li>
 <li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of table. Must exist already</p></li>
-<li><p><strong>database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to SQLite database</p></li>
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to SQLite database</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>

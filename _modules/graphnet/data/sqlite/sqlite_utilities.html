@@ -65,25 +65,46 @@
   <h1>Source code for graphnet.data.sqlite.sqlite_utilities</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;SQLite-specific utility functions for use in `graphnet.data`.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 
 
-<div class="viewcode-block" id="run_sql_code"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.run_sql_code">[docs]</a><span class="k">def</span> <span class="nf">run_sql_code</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="database_exists"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.database_exists">[docs]</a><span class="k">def</span> <span class="nf">database_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check whether database exists at `database_path`.&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">database_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+        <span class="s2">&quot;.db&quot;</span>
+    <span class="p">),</span> <span class="s2">&quot;Provided database path does not end in `.db`.&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="database_table_exists"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.database_table_exists">[docs]</a><span class="k">def</span> <span class="nf">database_table_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check whether `table_name` exists in database at `database_path`.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">database_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39; AND name=&#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;;&quot;</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="run_sql_code"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.run_sql_code">[docs]</a><span class="k">def</span> <span class="nf">run_sql_code</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Execute SQLite code.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        database: Path to databases</span>
+<span class="sd">        database_path: Path to databases</span>
 <span class="sd">        code: SQLite code</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database_path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="save_to_sql"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.save_to_sql">[docs]</a><span class="k">def</span> <span class="nf">save_to_sql</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="save_to_sql"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.save_to_sql">[docs]</a><span class="k">def</span> <span class="nf">save_to_sql</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Save a dataframe `df` to a table `table_name` in SQLite `database`.</span>
 
 <span class="sd">    Table must exist already.</span>
@@ -91,54 +112,71 @@
 <span class="sd">    Args:</span>
 <span class="sd">        df: Dataframe with data to be stored in sqlite table</span>
 <span class="sd">        table_name: Name of table. Must exist already</span>
-<span class="sd">        database: Path to SQLite database</span>
+<span class="sd">        database_path: Path to SQLite database</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="s2">&quot;sqlite:///&quot;</span> <span class="o">+</span> <span class="n">database</span><span class="p">)</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="s2">&quot;sqlite:///&quot;</span> <span class="o">+</span> <span class="n">database_path</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">)</span>
     <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="attach_index"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.attach_index">[docs]</a><span class="k">def</span> <span class="nf">attach_index</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Attaches the table index.</span>
+<div class="viewcode-block" id="attach_index"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.attach_index">[docs]</a><span class="k">def</span> <span class="nf">attach_index</span><span class="p">(</span>
+    <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_no&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Attach the table (i.e., event) index.</span>
 
 <span class="sd">    Important for query times!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;PRAGMA foreign_keys=off;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;BEGIN TRANSACTION;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;CREATE INDEX event_no_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> ON </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (event_no);</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;CREATE INDEX </span><span class="si">{</span><span class="n">index_column</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;ON </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">index_column</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;COMMIT TRANSACTION;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;PRAGMA foreign_keys=on;&quot;</span>
     <span class="p">)</span>
-    <span class="n">run_sql_code</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span></div>
+    <span class="n">run_sql_code</span><span class="p">(</span><span class="n">database_path</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span>
-    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">is_pulse_map</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
+    <span class="n">default_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NOT NULL&quot;</span><span class="p">,</span>
+    <span class="n">integer_primary_key</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a table.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        df: Data to be saved to table</span>
+<span class="sd">        columns: Column names to be created in table.</span>
 <span class="sd">        table_name: Name of the table.</span>
 <span class="sd">        database_path: Path to the database.</span>
-<span class="sd">        is_pulse_map: Whether or not this is a pulse map table.</span>
+<span class="sd">        index_column: Name of the index column.</span>
+<span class="sd">        default_type: The type used for all non-index columns.</span>
+<span class="sd">        integer_primary_key: Whether or not to create the `index_column` with</span>
+<span class="sd">            the `INTEGER PRIMARY KEY` type. Such a column is required to have</span>
+<span class="sd">            unique, integer values for each row. This is appropriate when the</span>
+<span class="sd">            table has one row per event, e.g., event-level MC truth. It is not</span>
+<span class="sd">            appropriate for pulse map series, particle-level MC truth, and</span>
+<span class="sd">            other such data that is expected to have more that one row per</span>
+<span class="sd">            event (i.e., with the same index).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">query_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="s2">&quot;event_no&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_pulse_map</span><span class="p">:</span>
+    <span class="c1"># Prepare column names and types</span>
+    <span class="n">query_columns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+        <span class="n">type_</span> <span class="o">=</span> <span class="n">default_type</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="n">index_column</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">integer_primary_key</span><span class="p">:</span>
                 <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;INTEGER PRIMARY KEY NOT NULL&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;NOT NULL&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;NOT NULL&quot;</span>
+
         <span class="n">query_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="n">query_columns_string</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">query_columns</span><span class="p">)</span>
 
+    <span class="c1"># Run SQL code</span>
     <span class="n">code</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;PRAGMA foreign_keys=off;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;CREATE TABLE </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">query_columns_string</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -147,7 +185,33 @@
     <span class="n">run_sql_code</span><span class="p">(</span>
         <span class="n">database_path</span><span class="p">,</span>
         <span class="n">code</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+
+    <span class="c1"># Attaching index to all non-truth-like tables (e.g., pulse maps).</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">integer_primary_key</span><span class="p">:</span>
+        <span class="n">attach_index</span><span class="p">(</span><span class="n">database_path</span><span class="p">,</span> <span class="n">table_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_table_and_save_to_sql"><a class="viewcode-back" href="../../../../graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table_and_save_to_sql">[docs]</a><span class="k">def</span> <span class="nf">create_table_and_save_to_sql</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
+    <span class="n">default_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NOT NULL&quot;</span><span class="p">,</span>
+    <span class="n">integer_primary_key</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create table if it doesn&#39;t exist and save dataframe to it.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">database_table_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
+        <span class="n">create_table</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+            <span class="n">table_name</span><span class="p">,</span>
+            <span class="n">database_path</span><span class="p">,</span>
+            <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
+            <span class="n">default_type</span><span class="o">=</span><span class="n">default_type</span><span class="p">,</span>
+            <span class="n">integer_primary_key</span><span class="o">=</span><span class="n">integer_primary_key</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">save_to_sql</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">database_path</span><span class="o">=</span><span class="n">database_path</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

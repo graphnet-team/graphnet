@@ -120,7 +120,6 @@
 <li><a class="reference internal" href="#graphnet.data.pipeline.InSQLitePipeline"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.data.pipeline.InSQLitePipeline.__call__"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline.__call__()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.pipeline.InSQLitePipeline.__init__"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline.__init__()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.data.pipeline.InSQLitePipeline._create_table"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline._create_table()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -306,8 +305,6 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataconverter">graphnet.data.sqlite.sqlite_dataconverter module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._attach_index()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._create_table"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._create_table()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_everything"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._extract_everything()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._extract_table_names"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._extract_table_names()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._merge_temporary_databases"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter._merge_temporary_databases()</span></code></a></li>
@@ -319,7 +316,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe"><code class="docutils literal notranslate"><span class="pre">construct_dataframe()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.is_pulsemap_check"><code class="docutils literal notranslate"><span class="pre">is_pulsemap_check()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree"><code class="docutils literal notranslate"><span class="pre">is_mc_tree()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map"><code class="docutils literal notranslate"><span class="pre">is_pulse_map()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_dataset">graphnet.data.sqlite.sqlite_dataset module</a><ul>
@@ -350,6 +348,9 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.html#module-graphnet.data.sqlite.sqlite_utilities">graphnet.data.sqlite.sqlite_utilities module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.attach_index"><code class="docutils literal notranslate"><span class="pre">attach_index()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table"><code class="docutils literal notranslate"><span class="pre">create_table()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table_and_save_to_sql"><code class="docutils literal notranslate"><span class="pre">create_table_and_save_to_sql()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.database_exists"><code class="docutils literal notranslate"><span class="pre">database_exists()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.database_table_exists"><code class="docutils literal notranslate"><span class="pre">database_table_exists()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.run_sql_code"><code class="docutils literal notranslate"><span class="pre">run_sql_code()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.save_to_sql"><code class="docutils literal notranslate"><span class="pre">save_to_sql()</span></code></a></li>
 </ul>
@@ -751,7 +752,7 @@ files output by the current instance are merged.</p></li>
 <li><p><strong>shuffle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
 <li><p><strong>num_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – </p></li>
 <li><p><strong>persistent_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
-<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f71b8ba24d0&gt;</span></code>) – </p></li>
+<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7fc09ebf24d0&gt;</span></code>) – </p></li>
 <li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
 </ul>
 </dd>
@@ -768,7 +769,7 @@ files output by the current instance are merged.</p></li>
 <li><p><strong>shuffle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
 <li><p><strong>num_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – </p></li>
 <li><p><strong>persistent_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
-<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f71b8ba24d0&gt;</span></code>) – </p></li>
+<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7fc09ebf24d0&gt;</span></code>) – </p></li>
 <li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
 </ul>
 </dd>
@@ -1258,24 +1259,6 @@ stored.</p></li>
 <li><p><strong>pipeline_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'pipeline'</span></code>) – Name of the pipeline. If such a pipeline already
 exists, an error will be prompted to avoid overwriting.</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline._create_table">
-<span class="sig-name descname"><span class="pre">_create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/pipeline.html#InSQLitePipeline._create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline._create_table" title="Permalink to this definition"></a></dt>
-<dd><p>Create a table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pipeline_database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to the pipeline database.</p></li>
-<li><p><strong>table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the table in pipeline database.</p></li>
-<li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – DataFrame of combined predictions.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>

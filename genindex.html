@@ -225,8 +225,6 @@
         <li><a href="graphnet.models.html#graphnet.models.coarsening.CustomDOMCoarsening._additional_features">(graphnet.models.coarsening.CustomDOMCoarsening method)</a>
 </li>
       </ul></li>
-      <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._attach_index">_attach_index() (graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter method)</a>
-</li>
       <li><a href="graphnet.models.gnn.html#graphnet.models.gnn.dynedge.DynEdge._calculate_global_variables">_calculate_global_variables() (graphnet.models.gnn.dynedge.DynEdge method)</a>
 </li>
       <li><a href="graphnet.data.extractors.html#graphnet.data.extractors.i3genericextractor.I3GenericExtractor._cast_mc_tree">_cast_mc_tree() (graphnet.data.extractors.i3genericextractor.I3GenericExtractor method)</a>
@@ -247,12 +245,6 @@
 </li>
       <li><a href="graphnet.data.html#graphnet.data.dataset.Dataset._create_graph">_create_graph() (graphnet.data.dataset.Dataset method)</a>
 </li>
-      <li><a href="graphnet.data.html#graphnet.data.pipeline.InSQLitePipeline._create_table">_create_table() (graphnet.data.pipeline.InSQLitePipeline method)</a>
-
-      <ul>
-        <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter._create_table">(graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter method)</a>
-</li>
-      </ul></li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataset.SQLiteDataset._establish_connection">_establish_connection() (graphnet.data.sqlite.sqlite_dataset.SQLiteDataset method)</a>
 </li>
       <li><a href="graphnet.training.html#graphnet.training.loss_functions.VonMisesFisherLoss._evaluate">_evaluate() (graphnet.training.loss_functions.VonMisesFisherLoss method)</a>
@@ -485,6 +477,8 @@
 </li>
       <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table">create_table() (in module graphnet.data.sqlite.sqlite_utilities)</a>
 </li>
+      <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.create_table_and_save_to_sql">create_table_and_save_to_sql() (in module graphnet.data.sqlite.sqlite_utilities)</a>
+</li>
       <li><a href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin.critical">critical() (graphnet.utilities.logging.LoggerMixin method)</a>
 </li>
       <li><a href="graphnet.training.html#graphnet.training.loss_functions.CrossEntropyLoss">CrossEntropyLoss (class in graphnet.training.loss_functions)</a>
@@ -497,6 +491,10 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.database_exists">database_exists() (in module graphnet.data.sqlite.sqlite_utilities)</a>
+</li>
+      <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_utilities.database_table_exists">database_table_exists() (in module graphnet.data.sqlite.sqlite_utilities)</a>
+</li>
       <li><a href="graphnet.data.html#graphnet.data.dataconverter.DataConverter">DataConverter (class in graphnet.data.dataconverter)</a>
 </li>
       <li><a href="graphnet.data.html#graphnet.data.dataloader.DataLoader">DataLoader (class in graphnet.data.dataloader)</a>
@@ -515,10 +513,10 @@
         <li><a href="graphnet.data.html#graphnet.data.constants.TRUTH.DEEPCORE">(graphnet.data.constants.TRUTH attribute)</a>
 </li>
       </ul></li>
-      <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector">Detector (class in graphnet.models.detector.detector)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="graphnet.models.detector.html#graphnet.models.detector.detector.Detector">Detector (class in graphnet.models.detector.detector)</a>
+</li>
       <li><a href="graphnet.training.html#graphnet.training.labels.Direction">Direction (class in graphnet.training.labels)</a>
 </li>
       <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa">DirectionReconstructionWithKappa (class in graphnet.models.task.reconstruction)</a>
@@ -1321,10 +1319,10 @@
 </li>
       <li><a href="graphnet.models.detector.html#graphnet.models.detector.icecube.IceCubeUpgrade_V2">IceCubeUpgrade_V2 (class in graphnet.models.detector.icecube)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.models.task.html#graphnet.models.task.task.IdentityTask">IdentityTask (class in graphnet.models.task.task)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="graphnet.utilities.config.html#graphnet.utilities.config.dataset_config.DatasetConfig.index_column">index_column (graphnet.utilities.config.dataset_config.DatasetConfig attribute)</a>
 </li>
       <li><a href="graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction">InelasticityReconstruction (class in graphnet.models.task.reconstruction)</a>
@@ -1363,9 +1361,11 @@
 </li>
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.is_icecube_class">is_icecube_class() (in module graphnet.data.extractors.utilities.types)</a>
 </li>
+      <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree">is_mc_tree() (in module graphnet.data.sqlite.sqlite_dataconverter)</a>
+</li>
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.is_method">is_method() (in module graphnet.data.extractors.utilities.types)</a>
 </li>
-      <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.is_pulsemap_check">is_pulsemap_check() (in module graphnet.data.sqlite.sqlite_dataconverter)</a>
+      <li><a href="graphnet.data.sqlite.html#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map">is_pulse_map() (in module graphnet.data.sqlite.sqlite_dataconverter)</a>
 </li>
       <li><a href="graphnet.data.extractors.utilities.html#graphnet.data.extractors.utilities.types.is_type">is_type() (in module graphnet.data.extractors.utilities.types)</a>
 </li>
