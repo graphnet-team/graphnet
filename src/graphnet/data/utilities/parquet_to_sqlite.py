@@ -100,8 +100,9 @@ class ParquetToSQLiteConverter(LoggerMixin):
                     )
             self._event_counter += n_events_in_file
         self._save_config(outdir, database_name)
-        print(
-            f"Database saved at: \n{outdir}/{database_name}/data/{database_name}.db"
+        self.info(
+            "Database saved at: \n"
+            f"{outdir}/{database_name}/data/{database_name}.db"
         )
 
     def _count_events(self, open_parquet_file: ak.Array) -> int:
@@ -138,9 +139,10 @@ class ParquetToSQLiteConverter(LoggerMixin):
         if len(df.columns) == 1:
             if df.columns == ["values"]:
                 df.columns = [field_name]
-        if (
-            len(df) != n_events_in_file
-        ):  # if true, the dataframe contains more than 1 row pr. event (e.g. Pulsemap).
+
+        # If true, the dataframe contains more than 1 row pr. event (i.e.,
+        # pulsemap).
+        if len(df) != n_events_in_file:
             event_nos = []
             c = 0
             for event_no in range(
@@ -150,7 +152,10 @@ class ParquetToSQLiteConverter(LoggerMixin):
                     event_nos.extend(
                         np.repeat(event_no, len(df[df.columns[0]][c])).tolist()
                     )
-                except KeyError:  # KeyError indicates that this df has no entry for event_no (e.g. an event with no detector response)
+
+                # KeyError indicates that this df has no entry for event_no
+                # (e.g., an event with no detector response).
+                except KeyError:
                     pass
                 c += 1
         else:
