@@ -10,7 +10,10 @@ import sqlite3
 from tqdm import tqdm
 
 from graphnet.data.dataconverter import DataConverter  # type: ignore[attr-defined]
-from graphnet.data.sqlite.sqlite_utilities import run_sql_code, save_to_sql
+from graphnet.data.sqlite.sqlite_utilities import (
+    create_table,
+    create_table_and_save_to_sql,
+)
 
 
 class SQLiteDataConverter(DataConverter):
@@ -51,7 +54,15 @@ class SQLiteDataConverter(DataConverter):
         saved_any = False
         for table, df in dataframe.items():
             if len(df) > 0:
-                save_to_sql(df, table, output_file)
+                create_table_and_save_to_sql(
+                    df,
+                    table,
+                    output_file,
+                    default_type="FLOAT",
+                    integer_primary_key=not (
+                        is_pulse_map(table) or is_mc_tree(table)
+                    ),
+                )
                 saved_any = True
 
         if saved_any:
@@ -92,12 +103,14 @@ class SQLiteDataConverter(DataConverter):
                     input_files, table_name
                 )
                 if len(column_names) > 1:
-                    is_pulse_map = is_pulsemap_check(table_name)
-                    self._create_table(
-                        output_file,
-                        table_name,
+                    create_table(
                         column_names,
-                        is_pulse_map=is_pulse_map,
+                        table_name,
+                        output_file,
+                        default_type="FLOAT",
+                        integer_primary_key=not (
+                            is_pulse_map(table_name) or is_mc_tree(table_name)
+                        ),
                     )
 
             # Merge temporary databases into newly created one
@@ -156,60 +169,6 @@ class SQLiteDataConverter(DataConverter):
 
         pulsemap_dicts = [data_dict[pulsemap] for pulsemap in self._pulsemaps]
         return any(d["dom_x"] for d in pulsemap_dicts)
-
-    def _attach_index(self, database: str, table_name: str) -> None:
-        """Attach the table index.
-
-        Important for query times!
-        """
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            "BEGIN TRANSACTION;\n"
-            f"CREATE INDEX event_no_{table_name} ON {table_name} (event_no);\n"
-            "COMMIT TRANSACTION;\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(database, code)
-
-    def _create_table(
-        self,
-        database: str,
-        table_name: str,
-        columns: List[str],
-        is_pulse_map: bool = False,
-    ) -> None:
-        """Create a table.
-
-        Args:
-            database: Path to the database.
-            table_name: Name of the table.
-            columns: The names of the columns of the table.
-            is_pulse_map: Whether or not this is a pulse map table.
-        """
-        query_columns = list()
-        for column in columns:
-            if column == "event_no":
-                if not is_pulse_map:
-                    type_ = "INTEGER PRIMARY KEY NOT NULL"
-                else:
-                    type_ = "NOT NULL"
-            else:
-                type_ = "FLOAT"
-            query_columns.append(f"{column} {type_}")
-        query_columns_string = ", ".join(query_columns)
-
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            f"CREATE TABLE {table_name} ({query_columns_string});\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(database, code)
-
-        if is_pulse_map:
-            self.debug(table_name)
-            self.debug("Attaching indices")
-            self._attach_index(database, table_name)
-        return
 
     def _submit_to_database(
         self, database: str, key: str, data: pd.DataFrame
@@ -280,9 +239,11 @@ def construct_dataframe(extraction: Dict[str, Any]) -> pd.DataFrame:
     return out
 
 
-def is_pulsemap_check(table_name: str) -> bool:
-    """Check whether `table_name` corresponds to a pulsemap."""
-    if "pulse" in table_name.lower():
-        return True
-    else:
-        return False
+def is_pulse_map(table_name: str) -> bool:
+    """Check whether `table_name` corresponds to a pulse map."""
+    return "pulse" in table_name.lower() or "series" in table_name.lower()
+
+
+def is_mc_tree(table_name: str) -> bool:
+    """Check whether `table_name` corresponds to an MC tree."""
+    return "I3MCTree" in table_name
