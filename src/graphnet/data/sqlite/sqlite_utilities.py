@@ -97,9 +97,6 @@ def create_table(
             other such data that is expected to have more that one row per
             event (i.e., with the same index).
     """
-    print(
-        f"!! {table_name} in {database_path} has integer_primary_key = {integer_primary_key}"
-    )
     # Prepare column names and types
     query_columns = []
     for column in columns:
@@ -127,7 +124,6 @@ def create_table(
 
     # Attaching index to all non-truth-like tables (e.g., pulse maps).
     if not integer_primary_key:
-        print(f"!! Attaching index for {table_name} in {database_path}")
         attach_index(database_path, table_name)
 
 
