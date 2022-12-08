@@ -1,5 +1,4 @@
 arguments:
-  class_options: {1: 0, -1: 0, 13: 1, -13: 1, 12: 2, -12: 2, 14: 2, -14: 2, 16: 2, -16: 2}
   coarsening: null
   detector:
     ModelConfig:
@@ -33,7 +32,7 @@ arguments:
         hidden_size: 128
         loss_function:
           ModelConfig:
-            arguments: {options=general_config["class_options"]}
+            arguments: {options: {1: 0, -1: 0, 13: 1, -13: 1, 12: 2, -12: 2, 14: 2, -14: 2, 16: 2, -16: 2}}
             class_name: CrossEntropyLoss
         loss_weight: null
         target_labels: pid
