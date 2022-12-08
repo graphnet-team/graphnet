@@ -229,7 +229,11 @@ def test_database_query_plan(pulsemap: str, event_no: int) -> None:
     sqlite_database = get_file_path("sqlite")
 
     # Get query plans
-    query = f"EXPLAIN QUERY PLAN SELECT * FROM {pulsemap} WHERE event_no={event_no}"
+    query = f"""
+    EXPLAIN QUERY PLAN
+    SELECT * FROM {pulsemap}
+    WHERE event_no={event_no}
+    """
     with sqlite3.connect(sqlite_database) as conn:
         sqlite_plan = pd.read_sql(query, conn)
 
