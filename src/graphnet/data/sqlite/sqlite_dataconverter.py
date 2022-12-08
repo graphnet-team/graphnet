@@ -10,7 +10,10 @@ import sqlite3
 from tqdm import tqdm
 
 from graphnet.data.dataconverter import DataConverter  # type: ignore[attr-defined]
-from graphnet.data.sqlite.sqlite_utilities import save_to_sql, create_table
+from graphnet.data.sqlite.sqlite_utilities import (
+    create_table,
+    create_table_and_save_to_sql,
+)
 
 
 class SQLiteDataConverter(DataConverter):
@@ -51,7 +54,15 @@ class SQLiteDataConverter(DataConverter):
         saved_any = False
         for table, df in dataframe.items():
             if len(df) > 0:
-                save_to_sql(df, table, output_file)
+                create_table_and_save_to_sql(
+                    df,
+                    table,
+                    output_file,
+                    default_type="FLOAT",
+                    integer_primary_key=not (
+                        is_pulse_map(table) or is_mc_tree(table)
+                    ),
+                )
                 saved_any = True
 
         if saved_any:
