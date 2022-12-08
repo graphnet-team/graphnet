@@ -1,5 +1,6 @@
 """SQLite-specific utility functions for use in `graphnet.data`."""
 
+import os.path
 from typing import List
 
 import pandas as pd
@@ -7,20 +8,38 @@ import sqlalchemy
 import sqlite3
 
 
-def run_sql_code(database: str, code: str) -> None:
+def database_exists(database_path: str) -> bool:
+    """Check whether database exists at `database_path`."""
+    assert database_path.endswith(
+        ".db"
+    ), "Provided database path does not end in `.db`."
+    return os.path.exists(database_path)
+
+
+def database_table_exists(database_path: str, table_name: str) -> bool:
+    """Check whether `table_name` exists in database at `database_path`."""
+    if not database_exists(database_path):
+        return False
+    query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';"
+    with sqlite3.connect(database_path) as conn:
+        result = pd.read_sql(query, conn)
+    return len(result) == 1
+
+
+def run_sql_code(database_path: str, code: str) -> None:
     """Execute SQLite code.
 
     Args:
-        database: Path to databases
+        database_path: Path to databases
         code: SQLite code
     """
-    conn = sqlite3.connect(database)
+    conn = sqlite3.connect(database_path)
     c = conn.cursor()
     c.executescript(code)
     c.close()
 
 
-def save_to_sql(df: pd.DataFrame, table_name: str, database: str) -> None:
+def save_to_sql(df: pd.DataFrame, table_name: str, database_path: str) -> None:
     """Save a dataframe `df` to a table `table_name` in SQLite `database`.
 
     Table must exist already.
@@ -28,9 +47,9 @@ def save_to_sql(df: pd.DataFrame, table_name: str, database: str) -> None:
     Args:
         df: Dataframe with data to be stored in sqlite table
         table_name: Name of table. Must exist already
-        database: Path to SQLite database
+        database_path: Path to SQLite database
     """
-    engine = sqlalchemy.create_engine("sqlite:///" + database)
+    engine = sqlalchemy.create_engine("sqlite:///" + database_path)
     df.to_sql(table_name, con=engine, index=False, if_exists="append")
     engine.dispose()
 
@@ -78,6 +97,9 @@ def create_table(
             other such data that is expected to have more that one row per
             event (i.e., with the same index).
     """
+    print(
+        f"!! {table_name} in {database_path} has integer_primary_key = {integer_primary_key}"
+    )
     # Prepare column names and types
     query_columns = []
     for column in columns:
@@ -103,5 +125,29 @@ def create_table(
         code,
     )
 
+    # Attaching index to all non-truth-like tables (e.g., pulse maps).
     if not integer_primary_key:
+        print(f"!! Attaching index for {table_name} in {database_path}")
         attach_index(database_path, table_name)
+
+
+def create_table_and_save_to_sql(
+    df: pd.DataFrame,
+    table_name: str,
+    database_path: str,
+    *,
+    index_column: str = "event_no",
+    default_type: str = "NOT NULL",
+    integer_primary_key: bool = True,
+) -> None:
+    """Create table if it doesn't exist and save dataframe to it."""
+    if not database_table_exists(database_path, table_name):
+        create_table(
+            df.columns,
+            table_name,
+            database_path,
+            index_column=index_column,
+            default_type=default_type,
+            integer_primary_key=integer_primary_key,
+        )
+    save_to_sql(df, table_name=table_name, database_path=database_path)
