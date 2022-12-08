@@ -9,11 +9,7 @@ import numpy as np
 import pandas as pd
 from tqdm.auto import trange
 
-from graphnet.data.sqlite.sqlite_utilities import (
-    save_to_sql,
-    attach_index,
-    create_table,
-)
+from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
 from graphnet.utilities.logging import LoggerMixin
 
 
@@ -54,7 +50,6 @@ class ParquetToSQLiteConverter(LoggerMixin):
             self._excluded_fields = []
         self._mc_truth_table = mc_truth_table
         self._event_counter = 0
-        self._created_tables: List[str] = []
 
     def _find_parquet_files(self, paths: Union[str, List[str]]) -> List[str]:
         if isinstance(paths, str):
@@ -116,29 +111,18 @@ class ParquetToSQLiteConverter(LoggerMixin):
         n_events_in_file: int,
     ) -> None:
         df = self._convert_to_dataframe(ak_array, field_name, n_events_in_file)
-        if field_name in self._created_tables:
-            save_to_sql(
-                df,
-                field_name,
-                database_path,
-            )
+
+        if len(df) > n_events_in_file:
+            is_pulse_map = True
         else:
-            if len(df) > n_events_in_file:
-                is_pulse_map = True
-            else:
-                is_pulse_map = False
-            create_table(
-                df.columns,
-                field_name,
-                database_path,
-                integer_primary_key=not is_pulse_map,
-            )
-            self._created_tables.append(field_name)
-            save_to_sql(
-                df,
-                field_name,
-                database_path,
-            )
+            is_pulse_map = False
+
+        create_table_and_save_to_sql(
+            df,
+            field_name,
+            database_path,
+            integer_primary_key=not is_pulse_map,
+        )
 
     def _convert_to_dataframe(
         self,
