@@ -13,7 +13,7 @@ import sqlite3
 import torch
 from torch.utils.data import DataLoader
 
-from graphnet.data.sqlite.sqlite_utilities import save_to_sql, create_table
+from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
 from graphnet.training.utils import get_predictions, make_dataloader
 
 from graphnet.utilities.logging import get_logger
@@ -97,7 +97,7 @@ class InSQLitePipeline(ABC):
                 df = self._inference(device, dataloader)
                 truth = self._get_truth(database, event_batches[i].tolist())
                 retro = self._get_retro(database, event_batches[i].tolist())
-                self._append_to_pipeline(outdir, truth, retro, df, i)
+                self._append_to_pipeline(outdir, truth, retro, df)
                 i += 1
         else:
             logger.info(outdir)
@@ -210,17 +210,12 @@ class InSQLitePipeline(ABC):
         truth: pd.DataFrame,
         retro: pd.DataFrame,
         df: pd.DataFrame,
-        i: int,
     ) -> None:
         os.makedirs(outdir, exist_ok=True)
         pipeline_database = outdir + "/%s.db" % self._pipeline_name
-        if i == 0:
-            # Only setup table schemes if its the first time appending
-            create_table(df.columns, "reconstruction", pipeline_database)
-            create_table(truth.columns, "truth", pipeline_database)
-        save_to_sql(df, "reconstruction", pipeline_database)
-        save_to_sql(truth, "truth", pipeline_database)
+        create_table_and_save_to_sql(df, "reconstruction", pipeline_database)
+        create_table_and_save_to_sql(truth, "truth", pipeline_database)
         if isinstance(retro, pd.DataFrame):
-            if i == 0:
-                create_table(retro.columns, "retro", pipeline_database)
-            save_to_sql(retro, self._retro_table_name, pipeline_database)
+            create_table_and_save_to_sql(
+                retro, self._retro_table_name, pipeline_database
+            )
