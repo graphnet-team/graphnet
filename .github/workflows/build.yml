@@ -44,12 +44,6 @@ jobs:
           echo "PYTHONPATH=/usr/local/icetray/lib:$PYTHONPATH" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=/usr/local/icetray/lib:/usr/local/icetray/cernroot/lib:/usr/local/icetray/lib/tools:$LD_LIBRARY_PATH" >> $GITHUB_ENV
       - uses: actions/checkout@v3
-      - name: Debug
-        run: |
-          which python
-          python -V
-          echo $PYTHONPATH
-          echo $PATH
       - name: Upgrade packages already installed on icecube/icetray
         run: |
           pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
