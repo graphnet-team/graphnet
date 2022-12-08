@@ -1,14 +1,13 @@
 """Classes for fitting per-event weights for training."""
 
+from abc import ABC, abstractmethod
+from typing import Any, Optional, List, Callable
+
 import numpy as np
 import pandas as pd
 import sqlite3
-from typing import Any, Optional, List, Callable
-from graphnet.data.sqlite.sqlite_utilities import (
-    save_to_sql,
-    create_table,
-)
-from abc import ABC, abstractmethod
+
+from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
 from graphnet.utilities.logging import LoggerMixin
 
 
@@ -92,8 +91,9 @@ class WeightFitter(ABC, LoggerMixin):
         weights = self._fit_weights(truth, **kwargs)
 
         if add_to_database:
-            create_table(weights, self._weight_name, self._database_path)
-            save_to_sql(weights, self._weight_name, self._database_path)
+            create_table_and_save_to_sql(
+                weights, self._weight_name, self._database_path
+            )
         return weights.sort_values(self._index_column).reset_index(drop=True)
 
     @abstractmethod
