@@ -30,6 +30,7 @@ class Task(Model):
     @save_model_config
     def __init__(
         self,
+        *,
         hidden_size: int,
         target_labels: Union[str, List[str]],
         loss_function: "LossFunction",
@@ -173,9 +174,11 @@ class Task(Model):
             (transform_prediction_and_target is not None)
             and (transform_target is not None)
         ), "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
-        assert (transform_target is not None) == (
-            transform_inference is not None
-        ), "Please specify both `transform_inference` and `transform_target`"
+        if (transform_target is not None) != (transform_inference is not None):
+            self.warning(
+                "Setting one of `transform_target` and `transform_inference`, but not "
+                "the other."
+            )
 
         if transform_target is not None:
             assert transform_target is not None
@@ -226,10 +229,11 @@ class Task(Model):
                 transform_prediction_and_target
             )
             self._transform_target = transform_prediction_and_target
-        elif transform_target is not None:
-            assert transform_inference is not None
-            self._transform_prediction_inference = transform_inference
-            self._transform_target = transform_target
+        else:
+            if transform_target is not None:
+                self._transform_target = transform_target
+            if transform_inference is not None:
+                self._transform_prediction_inference = transform_inference
 
 
 class IdentityTask(Task):
