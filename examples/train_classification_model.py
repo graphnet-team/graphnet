@@ -5,9 +5,11 @@ from typing import Dict, Any
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
+from torch.utils.data import ConcatDataset
 
 from graphnet.constants import GRAPHNET_ROOT_DIR
 from graphnet.data.dataloader import DataLoader
+from graphnet.data.dataset import Dataset
 from graphnet.models import Model
 from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.config import (
@@ -15,8 +17,7 @@ from graphnet.utilities.config import (
     ModelConfig,
     TrainingConfig,
 )
-from graphnet.data.dataset import Dataset
-from torch.utils.data import ConcatDataset
+
 
 # Make sure W&B output directory exists
 WANDB_DIR = "./wandb/"
@@ -121,7 +122,7 @@ def train(general_config: Dict[str, Any]) -> None:
     # Save predictions and model to file
     db_name = dataset_config.path.split("/")[-1].split(".")[0]
     path = os.path.join(general_config["archive"], db_name, run_name)
-
+    os.makedirs(path, exist_ok=True)
     results.to_csv(f"{path}/results.csv")
     model.save_state_dict(f"{path}/state_dict.pth")
     model.save(f"{path}/model.pth")
@@ -131,9 +132,9 @@ def main() -> None:
     """Run example."""
     # General configuration
     general_config = {
-        "dataset": "PID_classification_last_one_lvl3MC.yml",
+        "dataset": "PID_classification_dev_lvl7_robustness_muon_neutrino_0000",
         "model": "dynedge_PID_classification_example.yml",
-        "archive": "/groups/icecube/petersen/GraphNetDatabaseRepository/example_results/train_classification_model",
+        "archive": "/groups/icecube/asogaard/gnn/results/",
     }
 
     train(general_config)
