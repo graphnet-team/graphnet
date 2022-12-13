@@ -103,7 +103,7 @@ jobs:
         uses: ./.github/actions/install
         with:
           editable: true
-          hardware: "macOS"
+          hardware: "macos"
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
