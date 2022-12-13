@@ -90,8 +90,7 @@ jobs:
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/data/
           coverage report -m
 
-
-  build-matrix:
+  build-macos:
     name: Unit tests - macOS
     runs-on: macos-latest
     steps:
