@@ -14,6 +14,10 @@ inputs:
     description: "Extras flags for pip installation of graphnet"
     required: true
     default: "[develop,torch]"
+  hardware:
+    description: "The requirements file depends on the hardware, i.e., CPU, GPU, or macOS"
+    required: true
+    default: "cpu"
 
 runs:
   using: "composite"
@@ -31,5 +35,5 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        pip install -r requirements/torch_cpu.txt ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
+        pip install -r requirements/torch_${{ inputs.hardware }}.txt ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
       shell: bash
