@@ -178,6 +178,99 @@ def make_train_validation_dataloader(
     )
 
 
+# @TODO: Remove in favour of DataLoader{,.from_dataset_config}
+def make_train_validation_test_dataloader(
+    db: str,
+    selection: List[int],
+    pulsemaps: Union[str, List[str]],
+    features: List[str],
+    truth: List[str],
+    *,
+    batch_size: int,
+    database_indices: List[int] = None,
+    seed: int = 42,
+    test_size: float = 0.33,
+    num_workers: int = 10,
+    persistent_workers: bool = True,
+    node_truth: str = None,
+    node_truth_table: str = None,
+    string_selection: List[int] = None,
+    loss_weight_column: str = None,
+    loss_weight_table: str = None,
+) -> Tuple[DataLoader, DataLoader]:
+    """Construct train and test `DataLoader` instances."""
+    # Reproducibility
+    rng = np.random.RandomState(seed=seed)
+
+    # Checks(s)
+    if isinstance(pulsemaps, str):
+        pulsemaps = [pulsemaps]
+
+    # Perform train/validation split
+    if isinstance(db, list):
+        df_for_shuffle = pd.DataFrame(
+            {"event_no": selection, "db": database_indices}
+        )
+        shuffled_df = df_for_shuffle.sample(
+            frac=1, replace=False, random_state=rng
+        )
+        training_df, rem_df = train_test_split(
+            shuffled_df, test_size=test_size, random_state=rng
+        )
+        validation_df, test_df = train_test_split(
+            rem_df, test_size=0.5, random_state=rng
+        )
+        training_selection = training_df.values.tolist()
+        validation_selection = validation_df.values.tolist()
+        test_selection = test_df.values.tolist()
+    else:
+        training_selection, rem_selection = train_test_split(
+            selection, test_size=test_size, random_state=rng
+        )
+        validation_selection, test_selection = train_test_split(
+            rem_selection, test_size=0.5, random_state=rng
+        )
+
+    # Create DataLoaders
+    common_kwargs = dict(
+        db=db,
+        pulsemaps=pulsemaps,
+        features=features,
+        truth=truth,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        persistent_workers=persistent_workers,
+        node_truth=node_truth,
+        node_truth_table=node_truth_table,
+        string_selection=string_selection,
+        loss_weight_column=loss_weight_column,
+        loss_weight_table=loss_weight_table,
+    )
+
+    training_dataloader = make_dataloader(
+        shuffle=True,
+        selection=training_selection,
+        **common_kwargs,  # type: ignore[arg-type]
+    )
+
+    validation_dataloader = make_dataloader(
+        shuffle=False,
+        selection=validation_selection,
+        **common_kwargs,  # type: ignore[arg-type]
+    )
+
+    test_dataloader = make_dataloader(
+        shuffle=False,
+        selection=test_selection,
+        **common_kwargs,  # type: ignore[arg-type]
+    )
+
+    return (
+        training_dataloader,
+        validation_dataloader,
+        test_dataloader
+    )
+
 # @TODO: Remove in favour of Model.predict{,_as_dataframe}
 def get_predictions(
     trainer: Trainer,
