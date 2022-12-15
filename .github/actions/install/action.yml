@@ -18,6 +18,7 @@ inputs:
     description: "The requirements file depends on the hardware, i.e., CPU, GPU, or macOS"
     required: true
     default: "cpu"
+    options: ["cpu", "gpu", "macos"]
 
 runs:
   using: "composite"
