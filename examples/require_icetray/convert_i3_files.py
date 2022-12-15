@@ -83,12 +83,13 @@ def main_icecube_upgrade(backend: str) -> None:
 
 if __name__ == "__main__":
 
+    # Parse command-line arguments
     parser = argparse.ArgumentParser(
         description="""
     Convert I3 files to an intermediate format.
     """
     )
-    # Parse command-line arguments
+
     parser.add_argument("backend", choices=["sqlite", "parquet"])
     parser.add_argument("detector", choices=["icecube-86", "icecube-upgrade"])
 
