@@ -1,8 +1,10 @@
 """Example of comparing the result of converting to SQLite and Parquet."""
 
+import argparse
 import logging
 import os
 
+from graphnet.constants import TEST_DATA_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite import (
     SQLiteDataConverter,
@@ -18,32 +20,28 @@ from graphnet.utilities.logging import get_logger
 
 logger = get_logger(level=logging.INFO)
 
-TEST_DATA_DIR = os.path.abspath("./test_data/")
+OUTPUT_DIR = f"{TEST_DATA_DIR}/output/compare_sqlite_and_parquet"
 PULSEMAP = "SRTInIcePulses"
 
 
 def convert_data() -> None:
     """Convert I3 files to SQLite and Parquet."""
     # Configuration
-    paths = TEST_DATA_DIR
-    gcd_rescue = os.path.join(
-        TEST_DATA_DIR,
-        "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz",
-    )
+    path = f"{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02/"
+
     opt = dict(
         extractors=[
             I3TruthExtractor(),
             I3RetroExtractor(),
             I3FeatureExtractorIceCube86(PULSEMAP),
         ],
-        outdir=TEST_DATA_DIR,
-        gcd_rescue=gcd_rescue,
+        outdir=OUTPUT_DIR,
         workers=10,
     )
 
     # Run data converters.
-    SQLiteDataConverter(**opt)(paths)  # type: ignore[arg-type]
-    ParquetDataConverter(**opt)(paths)  # type: ignore[arg-type]
+    SQLiteDataConverter(**opt)(path)  # type: ignore[arg-type]
+    ParquetDataConverter(**opt)(path)  # type: ignore[arg-type]
 
 
 def load_data() -> None:
@@ -57,11 +55,11 @@ def load_data() -> None:
     )
 
     data_sqlite = SQLiteDataset(
-        os.path.join(TEST_DATA_DIR, filename + ".db"),
+        os.path.join(OUTPUT_DIR, filename + ".db"),
         **opt,  # type: ignore[arg-type]
     )
     data_parquet = ParquetDataset(
-        os.path.join(TEST_DATA_DIR, filename + ".parquet"),
+        os.path.join(OUTPUT_DIR, filename + ".parquet"),
         **opt,  # type: ignore[arg-type]
     )
 
@@ -75,5 +73,15 @@ def load_data() -> None:
 
 
 if __name__ == "__main__":
+
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(
+        description="""
+    Convert I3 files to both SQLite and Parquet formats, and see that the
+    results agree.
+    """
+    )
+
+    # Run example script(s)
     convert_data()
     load_data()
