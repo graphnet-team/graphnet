@@ -1,10 +1,10 @@
 """Example of converting I3-files to SQLite and Parquet."""
 
+import argparse
 import logging
 import os
 
-from graphnet.utilities.logging import get_logger
-
+from graphnet.constants import TEST_DATA_DIR
 from graphnet.data.extractors import (
     I3FeatureExtractorIceCubeUpgrade,
     I3RetroExtractor,
@@ -14,6 +14,7 @@ from graphnet.data.extractors import (
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.sqlite import SQLiteDataConverter
+from graphnet.utilities.logging import get_logger
 
 logger = get_logger(level=logging.INFO)
 
@@ -28,8 +29,8 @@ def main_icecube86(backend: str) -> None:
     # Check(s)
     assert backend in CONVERTER_CLASS
 
-    inputs = ["./test_data/"]
-    outdir = "./temp/test_ic86"
+    inputs = [f"{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02"]
+    outdir = f"{TEST_DATA_DIR}/output/convert_i3_files/ic86"
 
     converter: DataConverter = CONVERTER_CLASS[backend](
         [
@@ -53,8 +54,8 @@ def main_icecube_upgrade(backend: str) -> None:
     # Check(s)
     assert backend in CONVERTER_CLASS
 
-    inputs = ["test_data_upgrade_2"]
-    outdir = "./temp/test_upgrade"
+    inputs = [f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998"]
+    outdir = f"{TEST_DATA_DIR}/output/convert_i3_files/ic86"
     workers = 1
 
     converter: DataConverter = CONVERTER_CLASS[backend](
@@ -81,7 +82,20 @@ def main_icecube_upgrade(backend: str) -> None:
 
 
 if __name__ == "__main__":
-    backend = "parquet"
-    # backend = "sqlite"
-    main_icecube86(backend)
-    # main_icecube_upgrade(backend)
+
+    parser = argparse.ArgumentParser(
+        description="""
+    Convert I3 files to an intermediate format.
+    """
+    )
+    # Parse command-line arguments
+    parser.add_argument("backend", choices=["sqlite", "parquet"])
+    parser.add_argument("detector", choices=["icecube-86", "icecube-upgrade"])
+
+    args = parser.parse_args()
+
+    # Run example script
+    if args.detector == "icecube-86":
+        main_icecube86(args.backend)
+    else:
+        main_icecube_upgrade(args.backend)
