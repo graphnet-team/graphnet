@@ -10,7 +10,7 @@ SETUP_REQUIRES = [
 ]
 
 INSTALL_REQUIRES = [
-    "awkward>=1.8",
+    "awkward>=1.8,<2.0",
     "colorlog>=6.6",
     "configupdater",
     "dill>=0.3",
