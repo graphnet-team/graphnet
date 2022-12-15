@@ -20,7 +20,7 @@ from pisa.core.pipeline import Pipeline
 from pisa.analysis.analysis import Analysis
 from pisa import ureg
 
-from graphnet.data.sqlite import run_sql_code, save_to_sql
+from graphnet.data.sqlite import create_table_and_save_to_sql
 
 mpl.use("pdf")
 plt.rc("font", family="serif")
@@ -157,37 +157,10 @@ class WeightFitter:
             results = results.append(data)
 
         if add_to_database:
-            self._create_table(self._database_path, weight_name, results)
-            save_to_sql(results, weight_name, self._database_path)
+            create_table_and_save_to_sql(
+                results.columns, weight_name, self._database_path
+            )
         return results.sort_values("event_no").reset_index(drop=True)
-
-    # @TODO: Remove duplication wrt. method with same name in
-    #        `src/graphnet/data/sqlite/sqlite_dataconverter.py`
-    def _create_table(
-        self, database: str, table_name: str, df: pd.DataFrame
-    ) -> None:
-        """Create a table.
-
-        Args:
-            database: Path to the pipeline database.
-            table_name: Name of the table to be created.
-            df: DataFrame of combined predictions.
-        """
-        query_columns_list = list()
-        for column in df.columns:
-            if column == "event_no":
-                type_ = "INTEGER PRIMARY KEY NOT NULL"
-            else:
-                type_ = "FLOAT"
-            query_columns_list.append(f"{column} {type_}")
-        query_columns = ", ".join(query_columns_list)
-
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            f"CREATE TABLE {table_name} ({query_columns});\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(database, code)
 
     def _make_config(
         self,

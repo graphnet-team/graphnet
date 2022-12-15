@@ -2,7 +2,7 @@
 
 | Usage | Development |
 | --- | --- |
-| [![Slack](https://img.shields.io/badge/slack-4A154B.svg?logo=slack)](https://join.slack.com/t/graphnet-team/signup) | ![build](https://github.com/graphnet-team/graphnet/actions/workflows/build.yml/badge.svg) | 
+| [![Slack](https://img.shields.io/badge/slack-4A154B.svg?logo=slack)](https://join.slack.com/t/graphnet-team/signup) | ![build](https://github.com/graphnet-team/graphnet/actions/workflows/build.yml/badge.svg) |
 | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6720188.svg)](https://doi.org/10.5281/zenodo.6720188) | ![code-quality](https://github.com/graphnet-team/graphnet/actions/workflows/code-quality.yml/badge.svg) |
 | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
 | ![Supported python versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue) | [![Maintainability](https://api.codeclimate.com/v1/badges/b273a774112e32643162/maintainability)](https://codeclimate.com/github/graphnet-team/graphnet/maintainability) |
@@ -67,6 +67,7 @@ $ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc cudat
 $ conda activate graphnet  # Optional
 (graphnet) $ pip install -r requirements/torch_cpu.txt -e .[develop,torch]  # CPU-only torch
 (graphnet) $ pip install -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU support
+(graphnet) $ pip install -r requirements/torch_macos.txt -e .[develop,torch]  # On macOS
 ```
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
