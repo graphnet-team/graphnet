@@ -56,10 +56,14 @@ def get_all_argument_values(
     """Return dict of all argument values to `fn`, including defaults."""
     # Get all default argument values
     cfg = OrderedDict()
-    for key, parameter in inspect.signature(fn).parameters.items():
-        if key == "self" or parameter.default == inspect._empty:
+    for key, param in inspect.signature(fn).parameters.items():
+        # Don't save `self`, `*args`, or `**kwargs`
+        if key == "self" or param.kind in [
+            param.VAR_POSITIONAL,
+            param.VAR_KEYWORD,
+        ]:
             continue
-        cfg[key] = parameter.default
+        cfg[key] = param.default
 
     # Add positional arguments
     for key, val in zip(cfg.keys(), args):
