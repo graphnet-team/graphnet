@@ -1,6 +1,5 @@
 """Example of comparing the result of converting to SQLite and Parquet."""
 
-import argparse
 import logging
 import os
 
@@ -16,6 +15,7 @@ from graphnet.data.extractors import (
     I3TruthExtractor,
     I3RetroExtractor,
 )
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger(level=logging.INFO)
@@ -46,7 +46,7 @@ def convert_data() -> None:
 
 def load_data() -> None:
     """Load converted data and compare.."""
-    filename = "oscNext_genie_level7_v03.01_pass2.160000.000001"
+    filename = "oscNext_genie_level7_v02_first_5_frames"
 
     opt = dict(
         pulsemaps=PULSEMAP,
@@ -75,7 +75,7 @@ def load_data() -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description="""
     Convert I3 files to both SQLite and Parquet formats, and see that the
     results agree.

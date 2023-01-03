@@ -10,10 +10,12 @@ import torch.utils.data
 from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
+from graphnet.constants import TEST_DATA_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.dataset import Dataset
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.data.parquet.parquet_dataset import ParquetDataset
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import get_logger
 
 
@@ -27,17 +29,8 @@ DATASET_CLASS = {
 }
 
 # Constants
-# features = FEATURES.UPGRADE  # From I3FeatureExtractor
-features = [  # From I3GenericExtractor
-    "position__x",
-    "position__y",
-    "position__z",
-    "time",
-    "charge",
-    "relative_dom_eff",
-    "area",
-]
-truth = TRUTH.UPGRADE
+features = FEATURES.DEEPCORE
+truth = TRUTH.DEEPCORE
 
 
 def main(backend: str) -> None:
@@ -50,7 +43,8 @@ def main(backend: str) -> None:
         "parquet": "parquet",
     }[backend]
 
-    path = f"./temp/test_ic86/oscNext_genie_level7_v03.01_pass2.160000.000001.{suffix}"
+    dset = "oscNext_genie_level7_v02"
+    path = f"{TEST_DATA_DIR}/{backend}/{dset}/{dset}_first_5_frames.{suffix}"
     pulsemap = "SRTInIcePulses"
     truth_table = "truth"
     batch_size = 128
@@ -87,7 +81,9 @@ def main(backend: str) -> None:
     logger.info(dataset[1].x)
     if backend == "sqlite":
         assert isinstance(dataset, SQLiteDataset)
-        dataset._close_connection()  # This is necessary iff `dataset` has been indexed between instantiation and passing to `DataLoader`
+        # This is necessary iff `dataset` has been indexed between
+        # instantiation and passing to `DataLoader`.
+        dataset._close_connection()
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
@@ -109,6 +105,15 @@ def main(backend: str) -> None:
 
 
 if __name__ == "__main__":
-    backend = "parquet"
-    backend = "sqlite"
-    main(backend)
+
+    # Parse command-line arguments
+    parser = ArgumentParser(
+        description="""Read a few events from data in an intermediate format.
+    """
+    )
+
+    parser.add_argument("backend", choices=["sqlite", "parquet"])
+
+    args = parser.parse_args()
+
+    main(args.backend)

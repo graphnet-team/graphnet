@@ -1,6 +1,5 @@
 """Example of converting I3-files to SQLite and Parquet."""
 
-import argparse
 import logging
 import os
 
@@ -14,6 +13,7 @@ from graphnet.data.extractors import (
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.sqlite import SQLiteDataConverter
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger(level=logging.INFO)
@@ -84,10 +84,10 @@ def main_icecube_upgrade(backend: str) -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description="""
-    Convert I3 files to an intermediate format.
-    """
+Convert I3 files to an intermediate format.
+"""
     )
 
     parser.add_argument("backend", choices=["sqlite", "parquet"])
