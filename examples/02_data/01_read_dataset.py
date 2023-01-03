@@ -10,7 +10,7 @@ import torch.utils.data
 from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
-from graphnet.constants import TEST_DATA_DIR
+from graphnet.constants import TEST_SQLITE_DATA
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.dataset import Dataset
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
@@ -38,13 +38,7 @@ def main(backend: str) -> None:
     # Check(s)
     assert backend in DATASET_CLASS
 
-    suffix = {
-        "sqlite": "db",
-        "parquet": "parquet",
-    }[backend]
-
-    dset = "oscNext_genie_level7_v02"
-    path = f"{TEST_DATA_DIR}/{backend}/{dset}/{dset}_first_5_frames.{suffix}"
+    path = TEST_SQLITE_DATA
     pulsemap = "SRTInIcePulses"
     truth_table = "truth"
     batch_size = 128
@@ -108,8 +102,9 @@ if __name__ == "__main__":
 
     # Parse command-line arguments
     parser = ArgumentParser(
-        description="""Read a few events from data in an intermediate format.
-    """
+        description="""
+Read a few events from data in an intermediate format.
+"""
     )
 
     parser.add_argument("backend", choices=["sqlite", "parquet"])
