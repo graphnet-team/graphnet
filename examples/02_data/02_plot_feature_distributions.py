@@ -79,8 +79,11 @@ if __name__ == "__main__":
 
     # Parse command-line arguments
     parser = ArgumentParser(
-        description="""Plot feature distributions in dataset.
-    """
+        description="""
+Plot feature distributions in dataset.
+"""
     )
+
+    args = parser.parse_args()
 
     main()
