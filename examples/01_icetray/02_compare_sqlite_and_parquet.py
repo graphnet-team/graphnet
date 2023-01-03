@@ -77,10 +77,12 @@ if __name__ == "__main__":
     # Parse command-line arguments
     parser = ArgumentParser(
         description="""
-    Convert I3 files to both SQLite and Parquet formats, and see that the
-    results agree.
-    """
+Convert I3 files to both SQLite and Parquet formats, and see that the results
+agree.
+"""
     )
+
+    args = parser.parse_args()
 
     # Run example script(s)
     convert_data()
