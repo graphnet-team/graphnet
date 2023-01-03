@@ -25,7 +25,7 @@ def main() -> None:
     plt.hist(
         weights["zenith"], bins=bins, weights=weights["zenith_uniform_weight"]
     )
-    fig.savefig("test_hist.png")
+    fig.savefig("test_hist_weighting_uniform.png")
 
 
 if __name__ == "__main__":
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # Parse command-line arguments
     parser = ArgumentParser(
         description="""
-Fit per-event weight to make the truth-level zenith distribution uniform.
+Fit per-event weights to make the truth-level zenith distribution uniform.
 """
     )
 
