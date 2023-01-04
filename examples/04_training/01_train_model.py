@@ -9,6 +9,7 @@ from pytorch_lightning.utilities import rank_zero_only
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import Model
 from graphnet.training.callbacks import ProgressBar
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.config import (
     DatasetConfig,
     ModelConfig,
@@ -19,40 +20,46 @@ from graphnet.utilities.config import (
 WANDB_DIR = "./wandb/"
 os.makedirs(WANDB_DIR, exist_ok=True)
 
-# Initialise Weights & Biases (W&B) run
-wandb_logger = WandbLogger(
-    project="example-script",
-    entity="graphnet-team",
-    save_dir=WANDB_DIR,
-    log_model=True,
-)
 
-
-def main() -> None:
+def main(dataset_config_path: str, model_config_path: str) -> None:
     """Run example."""
+    # Initialise Weights & Biases (W&B) run
+    wandb_logger = WandbLogger(
+        project="example-script",
+        entity="graphnet-team",
+        save_dir=WANDB_DIR,
+        log_model=True,
+    )
+
+    # Build model
+    model_config = ModelConfig.load(model_config_path)
+    model = Model.from_config(model_config, trust=True)
+
+    print(model._tasks[0]._target_labels)
+    print(model._detector.nb_inputs)
+
     # Configuration
     config = TrainingConfig(
         target="energy",
         early_stopping_patience=5,
-        fit={"gpus": [0, 1], "max_epochs": 5},
+        fit={
+            "gpus": [
+                0,
+            ],
+            "max_epochs": 25,
+        },
         dataloader={"batch_size": 128, "num_workers": 10},
     )
 
-    archive = "/groups/icecube/asogaard/gnn/results/"
+    archive = "/tmp/graphnet/results/"
     run_name = "dynedge_{}_example".format(config.target)
 
     # Construct dataloaders
-    dataset_config = DatasetConfig.load(
-        "configs/datasets/dev_lvl7_robustness_muon_neutrino_0000.yml"
-    )
+    dataset_config = DatasetConfig.load(dataset_config_path)
     dataloaders = DataLoader.from_dataset_config(
         dataset_config,
         **config.dataloader,
     )
-
-    # Build model
-    model_config = ModelConfig.load(f"configs/models/{run_name}.yml")
-    model = Model.from_config(model_config, trust=True)
 
     # Log configurations to W&B
     # NB: Only log to W&B on the rank-zero process in case of multi-GPU
@@ -103,4 +110,27 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+
+    # Parse command-line arguments
+    parser = ArgumentParser(
+        description="""
+Train GNN model.
+"""
+    )
+
+    parser.add_argument(
+        "--dataset-config",
+        action="store",
+        help="Path to dataset config file (default: %(default)s)",
+        default="configs/datasets/example_data_sqlite.yml",
+    )
+    parser.add_argument(
+        "--model-config",
+        action="store",
+        help="Path to model config file (default: %(default)s)",
+        default="configs/models/example_model.yml",
+    )
+
+    args = parser.parse_args()
+
+    main(args.dataset_config, args.model_config)
