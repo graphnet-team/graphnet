@@ -8,7 +8,7 @@ from graphnet.models.detector.detector import Detector
 class Prototype(Detector):
     """`Detector` class for Prometheus prototype."""
 
-    features = ["x", "y", "z", "t"]
+    features = ["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t"]
 
     def _forward(self, data: Data) -> Data:
         """Ingest data, build graph, and preprocess features.
@@ -30,9 +30,5 @@ class Prototype(Detector):
         data.x[:, 3] /= 1.05e04  # dom_time
         data.x[:, 3] -= 1.0
         data.x[:, 3] *= 20.0
-        # data.x[:, 4] /= 1.0  # charge
-        # data.x[:, 5] -= 1.25  # rde
-        # data.x[:, 5] /= 0.25
-        # data.x[:, 6] /= 0.05  # pmt_area
 
         return data
