@@ -608,8 +608,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
         """Return dictionary of  labels, to be added as graph attributes."""
-        abs_pid = abs(truth_dict["pid"])
-        sim_type = truth_dict["sim_type"]
+        abs_pid = abs(truth_dict.get("pid", 0))
+        sim_type = truth_dict.get("sim_type")
 
         labels_dict = {
             "event_no": truth_dict["event_no"],
@@ -623,7 +623,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             "v_u": int(abs_pid == 14),
             "v_t": int(abs_pid == 16),
             "track": int(
-                (abs_pid == 14) & (truth_dict["interaction_type"] == 1)
+                (abs_pid == 14) & (truth_dict.get("interaction_type") == 1)
             ),
             "dbang": self._get_dbang_label(truth_dict),
             "corsika": int(abs_pid > 20),
