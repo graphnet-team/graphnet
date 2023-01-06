@@ -143,6 +143,7 @@ checkpoints/
 
 # Data and outputs
 test_data/output/
+training_example_data/
 **.png
 **.pth
 **.db
