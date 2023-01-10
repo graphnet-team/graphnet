@@ -1,8 +1,10 @@
-"""Consistent and configurable logging across the project."""
+"""Consistent and configurable logging across `graphnet`."""
 
 from collections import Counter
+from functools import lru_cache
 import re
-from typing import Optional
+from typing import Any, Optional
+import typing
 import colorlog
 import datetime
 import logging
@@ -18,7 +20,7 @@ LOG_FOLDER = "logs"
 
 
 # Utility method(s)
-def set_logging_level(level: int = logging.INFO):
+def set_logging_level(level: int = logging.INFO) -> None:
     """Set the logging level for all loggers."""
     global LOGGER
     if LOGGER is None:
@@ -28,8 +30,7 @@ def set_logging_level(level: int = logging.INFO):
 
 
 def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
-    """Get coloured and non-coloured logging formatters"""
-
+    """Get coloured and non-coloured logging formatters."""
     # Common configuration
     colorlog_format = (
         "\033[1;34m%(name)s\033[0m: "
@@ -53,28 +54,36 @@ def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
     return basic_formatter, colored_formatter
 
 
+@lru_cache(1)
+def warn_once(logger: logging.Logger, message: str) -> None:
+    """Print `message` as warning exactly once."""
+    logger.warn(message)
+
+
 class RepeatFilter(object):
     """Filter out repeat messages."""
 
-    def __init__(self):
-        self._messages = Counter()
+    def __init__(self) -> None:
+        """Construct `RepeatFilter`."""
+        self._messages: typing.Counter[str] = Counter()
         self.nb_repeats_allowed = 20
 
-    def filter(self, record):
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Filter messages printed more than `nb_repeats_allowed` times."""
+        self._messages[record.msg] += 1
         count = self._messages[record.msg]
-        ret = count <= self.nb_repeats_allowed
         if count == self.nb_repeats_allowed:
             get_logger().debug(
-                f"Will not print the below message again ({self.nb_repeats_allowed} repeats reached)."
+                "Will not print the below message again "
+                f"({self.nb_repeats_allowed} repeats reached)."
             )
 
-        self._messages[record.msg] += 1
-        return ret
+        return count <= self.nb_repeats_allowed
 
 
 def get_logger(
     level: Optional[int] = None, log_folder: str = LOG_FOLDER
-) -> logging.Logger:
+) -> logging.LoggerAdapter:
     """Get `logger` instance, to be used in place of `print()`.
 
     The logger will print the specified level of output to the terminal, and
@@ -121,9 +130,9 @@ def get_logger(
     logger.addHandler(file_handler)
 
     # Make className empty by default
-    logger = logging.LoggerAdapter(logger, extra={"className": ""})
+    logger_adapter = logging.LoggerAdapter(logger, extra={"className": ""})
 
-    logger.info(f"Writing log to \033[1m{log_path}\033[0m")
+    logger_adapter.info(f"Writing log to \033[1m{log_path}\033[0m")
 
     # Have pytorch lightning write to same log file
     pl_logger = logging.getLogger("pytorch_lightning")
@@ -131,16 +140,40 @@ def get_logger(
     pl_logger.addHandler(pl_file_handler)
 
     # Store as global variable
-    LOGGER = logger
+    LOGGER = logger_adapter
 
     return LOGGER
 
 
 class LoggerMixin(object):
-    @property
-    def logger(self):
-        logger = colorlog.getLogger(LOGGER_NAME)
-        logger = logging.LoggerAdapter(
-            logger, extra={"className": self.__class__.__name__ + "."}
-        )
-        return logger
+    """Class for enabling logging directly from inheriting classes."""
+
+    def _get_logger(self) -> logging.Logger:
+        """Construct Logger instance if not already done."""
+        if not hasattr(self, "_logger"):
+            logger = colorlog.getLogger(LOGGER_NAME)
+            logger = logging.LoggerAdapter(
+                logger, extra={"className": self.__class__.__name__ + "."}
+            )
+            self._logger = logger
+        return self._logger
+
+    def critical(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        """Delegate a critical call to member logger."""
+        return self._get_logger().critical(msg, *args, **kwargs)
+
+    def error(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        """Delegate an error call to member logger."""
+        return self._get_logger().error(msg, *args, **kwargs)
+
+    def warning(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        """Delegate a warning call to member logger."""
+        return self._get_logger().warning(msg, *args, **kwargs)
+
+    def info(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        """Delegate an info call to member logger."""
+        return self._get_logger().info(msg, *args, **kwargs)
+
+    def debug(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        """Delegate a debug call to member logger."""
+        return self._get_logger().debug(msg, *args, **kwargs)

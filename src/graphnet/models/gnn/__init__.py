@@ -1,2 +1,5 @@
-from .dynedge import DynEdge, DynEdge_V2, DynEdge_V3
+"""GNN-specific modules, for performing the main learnable operations."""
+
 from .convnet import ConvNet
+from .dynedge import DynEdge
+from .dynedge_jinst import DynEdgeJINST

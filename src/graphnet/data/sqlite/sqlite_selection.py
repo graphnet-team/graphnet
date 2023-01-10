@@ -1,12 +1,12 @@
-"""Selection-specific utility functions relevant to the graphnet.data package."""
+"""Selection-specific utility functions for use in `graphnet.data.sqlite`."""
 
 import sqlite3
-from typing import List, Tuple
+from typing import List, Tuple, Optional
+
 import numpy as np
 import pandas as pd
 
 from graphnet.utilities.logging import get_logger
-
 
 logger = get_logger()
 
@@ -24,17 +24,17 @@ def get_desired_event_numbers(
     """Get event numbers for specified fractions of physics processes.
 
     Args:
-        database (str): Path to database from which to get event numbers.
-        desired_size (int): Number of event numbers to get.
-        fraction_noise (float, optional): Fraction of noise events. Defaults to 0.
-        fraction_muon (float, optional): Fraction of noise events. Defaults to 0.
-        fraction_nu_e (float, optional): Fraction of nu_e events. Defaults to 0.
-        fraction_nu_mu (float, optional): Fraction of nu_mu events. Defaults to 0.
-        fraction_nu_tau (float, optional): Fraction of nu_tau events. Defaults to 0.
-        seed (int, optional): Random number generator reed. Defaults to 0.
+        database: Path to database from which to get event numbers.
+        desired_size: Number of event numbers to get.
+        fraction_noise: Fraction of noise events.
+        fraction_muon: Fraction of noise events.
+        fraction_nu_e: Fraction of nu_e events.
+        fraction_nu_mu: Fraction of nu_mu events.
+        fraction_nu_tau: Fraction of nu_tau events.
+        seed: Random number generator reed.
 
     Returns:
-        List[int]: Event numbers.
+        List of event numbers.
     """
     assert (
         fraction_noise
@@ -70,7 +70,7 @@ def get_desired_event_numbers(
                 )
             )
 
-        list_of_dataframes = []
+        list_of_dataframes: List[pd.DataFrame] = []
         restart_trigger = True
         while restart_trigger:
             restart_trigger = False
@@ -94,7 +94,7 @@ def get_desired_event_numbers(
                                 particle_type
                             )
                         )
-                        return None
+                        raise
                     logger.info(
                         "There have been {} requested of particle {}, we can only supply {}. \nRenormalising...".format(
                             number, particle_type, len(tmp_dataframe)
@@ -123,15 +123,15 @@ def get_desired_event_numbers(
 
 def get_equal_proportion_neutrino_indices(
     database: str, seed: int = 42
-) -> Tuple[List[int]]:
-    """Utility method to get indices for neutrino events in equal flavour proportions.
+) -> Tuple[List[int], List[int]]:
+    """Get indices for neutrino events in equal flavour proportions.
 
     Args:
-        database (str): Path to database from which to get the event numbers.
-        seed (int, optional): Random number generator seed. Defaults to 42.
+        database: Path to database from which to get the event numbers.
+        seed: Random number generator seed.
 
     Returns:
-        tuple: Training and test event numbers, resp.
+        Tuple containing lists of training and test event numbers, resp.
     """
     # Common variables
     pids = ["12", "14", "16"]
@@ -185,16 +185,16 @@ def get_even_signal_background_indicies(database: str) -> List[int]:
     """Get event numbers with equal proportion neutrino and muon events.
 
     Args:
-        database (str): Path to database from which to get the event numbers.
+        database: Path to database from which to get the event numbers.
 
     Returns:
-        List[int]: Event numbers.
+        List of event numbers.
     """
     with sqlite3.connect(database) as con:
         query = "select event_no from truth where abs(pid) = 13"
         muons = pd.read_sql(query, con)
-    neutrinos, _ = get_equal_proportion_neutrino_indices(database)
-    neutrinos = pd.DataFrame(neutrinos)
+    neutrinos_list, _ = get_equal_proportion_neutrino_indices(database)
+    neutrinos = pd.DataFrame(neutrinos_list)
 
     if len(neutrinos) > len(muons):
         neutrinos = neutrinos.sample(len(muons))
@@ -208,14 +208,16 @@ def get_even_signal_background_indicies(database: str) -> List[int]:
     return df_for_shuffle.values.ravel().tolist()
 
 
-def get_even_track_cascade_indicies(database: str) -> List[int]:
-    """Get event numbers with equal (?) proportion CC and NC e/mu neutrino events.
+def get_even_track_cascade_indicies(
+    database: str,
+) -> Tuple[List[int], List[int]]:
+    """Get event numbers with equal proportion CC and NC e/mu neutrino events.
 
     Args:
-        database (str): Path to database from which to get the event numbers.
+        database: Path to database from which to get the event numbers.
 
     Returns:
-        List[int]: Event numbers.
+        Tuple containing lists of training and test event numbers, resp.
     """
     with sqlite3.connect(database) as con:
         query = "select event_no from truth where abs(pid) = 12 and interaction_type = 1"
@@ -260,21 +262,22 @@ def get_even_track_cascade_indicies(database: str) -> List[int]:
 
 
 def get_even_dbang_selection(
-    database: str, min_max_decay_length=None, seed: int = 42
-) -> Tuple[List[int]]:
-    """Get event numbers for neutrino events with equal dbang / non-dbang labels.
+    database: str,
+    min_max_decay_length: Optional[Tuple[float, float]] = None,
+    seed: int = 42,
+) -> Tuple[List[int], List[int]]:
+    """Get event numbers for equal numbers of dbang / non-dbang events.
 
     Args:
-        db (str): Path to database.
-        seed (int, optional): Random number generator seed. Defaults to 42.
+        db : Path to database.
+        seed: Random number generator seed. Defaults to 42.
 
     Returns:
-        tuple: Training and test event numbers, resp.
+        Tuple containing lists of training and test event numbers, resp.
     """
     # Common variables
     pids = ["12", "14", "16"]
     non_dbangs_indicies = {}
-    dbangs_indicies = {}
     indices = []
     rng = np.random.RandomState(seed=seed)
 
