@@ -1,11 +1,16 @@
 """Simplified example of training Model."""
 
+from typing import List, Optional
 import os
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
-
+from graphnet.constants import (
+    TRAINING_EXAMPLE_DATA_DIR,
+    TRAINING_EXAMPLE_SQLITE_DATA,
+    TRAINING_EXAMPLE_PARQUET_DATA,
+)
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import Model
 from graphnet.training.callbacks import ProgressBar
@@ -15,14 +20,39 @@ from graphnet.utilities.config import (
     ModelConfig,
     TrainingConfig,
 )
+from graphnet.utilities.logging import get_logger
+
 
 # Make sure W&B output directory exists
 WANDB_DIR = "./wandb/"
 os.makedirs(WANDB_DIR, exist_ok=True)
 
+logger = get_logger()
 
-def main(dataset_config_path: str, model_config_path: str) -> None:
+
+def main(
+    dataset_config_path: str,
+    model_config_path: str,
+    gpus: Optional[List[int]],
+    max_epochs: int,
+    early_stopping_patience: int,
+    batch_size: int,
+    num_workers: int,
+) -> None:
     """Run example."""
+    # Check data availability
+    if "training_example_data" in dataset_config_path:
+        if not (
+            os.path.exists(TRAINING_EXAMPLE_DATA_DIR)
+            and os.path.exists(TRAINING_EXAMPLE_SQLITE_DATA)
+            and os.path.exists(TRAINING_EXAMPLE_PARQUET_DATA)
+        ):
+            logger.error("Training example data was not found in:")
+            logger.error(f"  {TRAINING_EXAMPLE_DATA_DIR}")
+            logger.error("Please download it using:")
+            logger.error("$ source get_training_example_data.sh")
+            return
+
     # Initialise Weights & Biases (W&B) run
     wandb_logger = WandbLogger(
         project="example-script",
@@ -35,20 +65,15 @@ def main(dataset_config_path: str, model_config_path: str) -> None:
     model_config = ModelConfig.load(model_config_path)
     model = Model.from_config(model_config, trust=True)
 
-    print(model._tasks[0]._target_labels)
-    print(model._detector.nb_inputs)
-
     # Configuration
     config = TrainingConfig(
-        target="energy",
-        early_stopping_patience=5,
+        target=model._tasks[0]._target_labels[0],
+        early_stopping_patience=early_stopping_patience,
         fit={
-            "gpus": [
-                0,
-            ],
-            "max_epochs": 25,
+            "gpus": gpus,
+            "max_epochs": max_epochs,
         },
-        dataloader={"batch_size": 128, "num_workers": 10},
+        dataloader={"batch_size": batch_size, "num_workers": num_workers},
     )
 
     archive = "/tmp/graphnet/results/"
@@ -120,17 +145,31 @@ Train GNN model.
 
     parser.add_argument(
         "--dataset-config",
-        action="store",
         help="Path to dataset config file (default: %(default)s)",
-        default="configs/datasets/example_data_sqlite.yml",
+        default="configs/datasets/training_example_data_sqlite.yml",
     )
     parser.add_argument(
         "--model-config",
-        action="store",
         help="Path to model config file (default: %(default)s)",
         default="configs/models/example_model.yml",
     )
 
+    parser.with_standard_arguments(
+        "gpus",
+        "max-epochs",
+        "early-stopping-patience",
+        "batch-size",
+        "num-workers",
+    )
+
     args = parser.parse_args()
 
-    main(args.dataset_config, args.model_config)
+    main(
+        args.dataset_config,
+        args.model_config,
+        args.gpus,
+        args.max_epochs,
+        args.early_stopping_patience,
+        args.batch_size,
+        args.num_workers,
+    )
