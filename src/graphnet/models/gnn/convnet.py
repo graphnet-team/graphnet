@@ -1,9 +1,6 @@
 """Implementation of the ConvNet GNN model architecture.
 
-[Description of what this architecture does.]
-
 Author: Martin Ha Minh
-Email: ###@###.###
 """
 
 import torch
@@ -13,22 +10,30 @@ import torch.nn.functional as F
 from torch_geometric.nn import TAGConv, global_add_pool, global_max_pool
 from torch_geometric.data import Data
 
+from graphnet.utilities.config import save_model_config
 from graphnet.models.gnn.gnn import GNN
 
 
 class ConvNet(GNN):
+    """ConvNet (convolutional network) model."""
+
+    @save_model_config
     def __init__(
-        self, nb_inputs, nb_outputs, nb_intermediate=128, dropout_ratio=0.3
+        self,
+        nb_inputs: int,
+        nb_outputs: int,
+        nb_intermediate: int = 128,
+        dropout_ratio: float = 0.3,
     ):
-        """ConvNet model.
+        """Construct `ConvNet`.
 
         Args:
-            nb_inputs (int): Number of input features, i.e. dimension of input
+            nb_inputs: Number of input features, i.e. dimension of input
                 layer.
-            nb_outputs (int): Number of prediction labels, i.e. dimension of
+            nb_outputs: Number of prediction labels, i.e. dimension of
                 output layer.
-            nb_intermediate (int): Number of nodes in intermediate layer(s)
-            dropout_ratio (float): Fraction of nodes to drop
+            nb_intermediate: Number of nodes in intermediate layer(s).
+            dropout_ratio: Fraction of nodes to drop.
         """
         # Base class constructor
         super().__init__(nb_inputs, nb_outputs)
@@ -59,15 +64,7 @@ class ConvNet(GNN):
         self.out = Linear(self.nb_intermediate2, self.nb_outputs)
 
     def forward(self, data: Data) -> Tensor:
-        """Model forward pass.
-
-        Args:
-            data (Data): Graph of input features.
-
-        Returns:
-            Tensor: Model output.
-        """
-
+        """Apply learnable forward pass."""
         # Convenience variables
         x, edge_index, batch = data.x, data.edge_index, data.batch
 

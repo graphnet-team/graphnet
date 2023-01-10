@@ -1,5 +1,6 @@
-import subprocess
-import sys
+# type: ignore[no-untyped-call]
+"""Setup script for the GraphNeT package."""
+
 from setuptools import setup, find_packages
 import versioneer
 
@@ -10,11 +11,15 @@ SETUP_REQUIRES = [
 
 INSTALL_REQUIRES = [
     "awkward>=1.8",
+    "colorlog>=6.6",
+    "configupdater",
     "dill>=0.3",
     "matplotlib>=3.5",
     "numpy>=1.21",
     "pandas>=1.3",
     "pyarrow",
+    "pydantic",
+    "ruamel.yaml",
     "scikit_learn>=1.0",
     "scipy>=1.7",
     "sqlalchemy>=1.4",
@@ -26,9 +31,10 @@ INSTALL_REQUIRES = [
 EXTRAS_REQUIRE = {
     "develop": [
         "black",
-        "colorlog",
         "coverage",
+        "docformatter",
         "MarkupSafe<=2.1",
+        "mypy",
         "pre-commit",
         "pydocstyle",
         "pylint",
@@ -36,6 +42,7 @@ EXTRAS_REQUIRE = {
         "pytest-order",
         "sphinx",
         "sphinx_rtd_theme",
+        "sphinx-autodoc-typehints",
         "versioneer",
     ],
     "torch": [
@@ -77,8 +84,8 @@ setup(
         "telescope experiments."
     ),
     license="Apache 2.0",
-    author="The IceCube Collaboration",
-    url="https://github.com/icecube/graphnet",
+    author="The GraphNeT development team",
+    url="https://github.com/graphnet-team/graphnet",
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(where="src"),
     package_dir={"": "src"},

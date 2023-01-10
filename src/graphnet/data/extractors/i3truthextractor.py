@@ -1,29 +1,42 @@
+"""I3Extractor class(es) for extracting truth-level information."""
+
 import numpy as np
 import matplotlib.path as mpath
-from typing import Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from graphnet.data.extractors.i3extractor import I3Extractor
-from graphnet.data.extractors.utilities import (
+from graphnet.data.extractors.utilities.frames import (
     frame_is_montecarlo,
     frame_is_noise,
 )
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.imports import has_icecube_package
 
-logger = get_logger()
-
-try:
+if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
         dataclasses,
         icetray,
         phys_services,
     )  # pyright: reportMissingImports=false
-except ImportError:
-    logger.warning("icecube package not available.")
 
 
 class I3TruthExtractor(I3Extractor):
-    def __init__(self, name="truth", borders=None):
+    """Class for extracting truth-level information."""
+
+    def __init__(
+        self, name: str = "truth", borders: Optional[List[np.ndarray]] = None
+    ):
+        """Construct I3TruthExtractor.
+
+        Args:
+            name: Name of the `I3Extractor` instance.
+            borders: Array of boundaries of the detector volume as ((x,y),z)-
+                coordinates, for identifying, e.g., particles starting and
+                stopping within the detector. Defaults to hard-coded boundary
+                coordinates.
+        """
+        # Base class constructor
         super().__init__(name)
+
         if borders is None:
             border_xy = np.array(
                 [
@@ -62,8 +75,10 @@ class I3TruthExtractor(I3Extractor):
         else:
             self._borders = borders
 
-    def __call__(self, frame, padding_value=-1) -> dict:
-        """Extracts truth features."""
+    def __call__(
+        self, frame: "icetray.I3Frame", padding_value: Any = -1
+    ) -> Dict[str, Any]:
+        """Extract truth-level information."""
         is_mc = frame_is_montecarlo(frame)
         is_noise = frame_is_noise(frame)
         sim_type = self._find_data_type(is_mc, self._i3_file)
@@ -103,7 +118,10 @@ class I3TruthExtractor(I3Extractor):
         # Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.
         # At low levels i3files contain several other P frame splits (e.g NullSplit),
         # we remove those here.
-        if frame["I3EventHeader"].sub_event_stream != "InIceSplit":
+        if frame["I3EventHeader"].sub_event_stream not in [
+            "InIceSplit",
+            "Final",
+        ]:
             return output
 
         if "FilterMask" in frame:
@@ -150,10 +168,14 @@ class I3TruthExtractor(I3Extractor):
             ) = self._get_primary_particle_interaction_type_and_elasticity(
                 frame, sim_type
             )
-            (
-                energy_track,
-                inelasticity,
-            ) = self._get_primary_track_energy_and_inelasticity(frame)
+            try:
+                (
+                    energy_track,
+                    inelasticity,
+                ) = self._get_primary_track_energy_and_inelasticity(frame)
+            except RuntimeError:  # track energy fails on northeren tracks with ""Hadrons" has no mass implemented. Cannot get total energy."
+                energy_track, inelasticity = (padding_value, padding_value)
+
             output.update(
                 {
                     "energy": MCInIcePrimary.energy,
@@ -192,7 +214,9 @@ class I3TruthExtractor(I3Extractor):
 
         return output
 
-    def _extract_dbang_decay_length(self, frame, padding_value):
+    def _extract_dbang_decay_length(
+        self, frame: "icetray.I3Frame", padding_value: float = -1
+    ) -> float:
         mctree = frame["I3MCTree"]
         try:
             p_true = mctree.primaries[0]
@@ -233,23 +257,34 @@ class I3TruthExtractor(I3Extractor):
             return padding_value
 
     def _muon_stopped(
-        self, truth, borders, horizontal_pad=100.0, vertical_pad=100.0
-    ):
-        """
-        Calculates where a simulated muon stops and if this is inside the detectors fiducial volume.
-        IMPORTANT: The final position of the muon is saved in truth extractor/databases as position_x,position_y and position_z.
-                This is analogoues to the neutrinos whose interaction vertex is saved under the same name.
+        self,
+        truth: Dict[str, Any],
+        borders: List[np.ndarray],
+        shrink_horizontally: float = 100.0,
+        shrink_vertically: float = 100.0,
+    ) -> Dict[str, Any]:
+        """Calculate whether a simulated muon within the detector volume.
+
+        IMPORTANT: The final position of the muon is saved in truth extractor/
+        databases as position_x, position_y and position_z. This is analogouos
+        to the neutrinos whose interaction vertex is saved under the same name.
 
         Args:
-            truth (dict) : dictionary of already extracted values
-            borders (tuple) : first entry xy outline, second z min/max depth. See I3TruthExtractor for hard-code example.
-            horizontal_pad (float) : shrink xy plane further with exclusion zone
-            vertical_pad (float) : further shrink detector depth with exclusion height
+            truth: Dictionary of already extracted truth-level information.
+            borders: The first entry are the (x,y) coordinates, the second
+                entry is the z-axis min/max depths. See I3TruthExtractor
+                constructor for hard-code example.
+            shrink_horizontally: Shrink (x,y)-plane further with exclusion
+                zone. Defaults to 100 meters. shrink_vertically: Further shrink
+                detector depth with exclusion height. Defaults to 100 meters.
 
         Returns:
-            dictionary (dict) : containing the x,y,z co-ordinates of final muon position and contained boolean (0 or 1)
+            Dictionary containing the (x,y,z)-coordinates of final the muon
+                position as well as a boolean indicating whether the muon
+                stopped within the chosen fiducial volume.
         """
-        # to do:remove hard-coded border coords and replace with GCD file contents using string no's
+        # @TODO: Remove hard-coded border coords and replace with GCD file
+        # contents using string no's
         border = mpath.Path(borders[0])
 
         start_pos = np.array(
@@ -271,10 +306,10 @@ class I3TruthExtractor(I3Extractor):
         end_pos = start_pos + travel_vec
 
         stopped_xy = border.contains_point(
-            (end_pos[0], end_pos[1]), radius=-horizontal_pad
+            (end_pos[0], end_pos[1]), radius=-shrink_horizontally
         )
-        stopped_z = (end_pos[2] > borders[1][0] + vertical_pad) * (
-            end_pos[2] < borders[1][1] - vertical_pad
+        stopped_z = (end_pos[2] > borders[1][0] + shrink_vertically) * (
+            end_pos[2] < borders[1][1] - shrink_vertically
         )
 
         return {
@@ -285,23 +320,27 @@ class I3TruthExtractor(I3Extractor):
         }
 
     def _get_primary_particle_interaction_type_and_elasticity(
-        self, frame, sim_type, padding_value=-1
-    ):
-        """ "Returns primary particle, interaction type, and elasticity.
+        self,
+        frame: "icetray.I3Frame",
+        sim_type: str,
+        padding_value: float = -1.0,
+    ) -> Tuple[Any, int, float]:
+        """Return primary particle, interaction type, and elasticity.
 
-        A case handler that does two things
+        A case handler that does two things:
             1) Catches issues related to determining the primary MC particle.
-            2) Error handles cases where interaction type and elasticity doesnt exist
+            2) Error handles cases where interaction type and elasticity
+                doesn't exist
 
         Args:
-            frame (i3 physics frame): ...
-            sim_type (string): Simulation type
-            padding_value (int | float): The value used for padding.
+            frame: Physics frame containing MC record.
+            sim_type: Simulation type.
+            padding_value: The value used for padding.
 
         Returns
-            McInIcePrimary (?): The primary particle
-            interaction_type (int): Either 1 (charged current), 2 (neutral current), 0 (neither)
-            elasticity (float): In ]0,1[
+            A tuple containing the MCInIcePrimary, if it exists; the primary
+                particle, encoded as 1 (charged current), 2 (neutral current),
+                or 0 (neither); and the elasticity in the range ]0,1[.
         """
         if sim_type != "noise":
             try:
@@ -332,14 +371,14 @@ class I3TruthExtractor(I3Extractor):
         self,
         frame: "icetray.I3Frame",
     ) -> Tuple[float, float]:
-        """Get the total energy of tracks from primary, and corresponding inelasticity.
+        """Get the total energy of tracks from primary, and inelasticity.
 
         Args:
-            frame (icetray.I3Frame): Physics frame containing MC record.
+            frame: Physics frame containing MC record.
 
         Returns:
-            Tuple[float, float]: Energy of tracks from primary, and corresponding
-                inelasticity.
+            Tuple containing the energy of tracks from primary, and the
+                corresponding inelasticity.
         """
         mc_tree = frame["I3MCTree"]
         primary = mc_tree.primaries[0]
@@ -359,17 +398,17 @@ class I3TruthExtractor(I3Extractor):
         return energy_track, inelasticity
 
     # Utility methods
-    def _find_data_type(self, mc, input_file):
-        """Determines the data type
+    def _find_data_type(self, mc: bool, input_file: str) -> str:
+        """Determine the data type.
 
         Args:
-            mc (boolean): is this montecarlo?
-            input_file (str): path to i3 file
+            mc: Whether `input_file` is Monte Carlo simulation.
+            input_file: Path to I3-file.
 
         Returns:
-            str: the simulation/data type
+            The simulation/data type.
         """
-        # @TODO: Rewrite to make automaticallu infer `mc` from `input_file`?
+        # @TODO: Rewrite to automatically infer `mc` from `input_file`?
         if not mc:
             sim_type = "data"
         else:
@@ -385,5 +424,5 @@ class I3TruthExtractor(I3Extractor):
         if "L2" in input_file:  # not robust
             sim_type = "dbang"
         if sim_type == "lol":
-            logger.info("SIM TYPE NOT FOUND!")
+            self.info("SIM TYPE NOT FOUND!")
         return sim_type

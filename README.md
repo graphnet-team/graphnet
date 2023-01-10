@@ -1,10 +1,16 @@
 ![logo](./assets/identity/graphnet-logo-and-wordmark.png)
 
-| Usage | Development | Quality |
-| --- | --- | --- |
-| [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6720188.svg)](https://doi.org/10.5281/zenodo.6720188) | [![Slack](https://img.shields.io/badge/slack-4A154B.svg?logo=slack)](https://join.slack.com/t/graphnet-team/signup) | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-| [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) | ![build](https://github.com/icecube/graphnet/actions/workflows/build-matrix.yml/badge.svg) | [![Maintainability](https://api.codeclimate.com/v1/badges/f244df0fc73c77102b47/maintainability)](https://codeclimate.com/github/asogaard/graphnet/maintainability) |
-| ![Supported python versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue) | ![build](https://github.com/icecube/graphnet/actions/workflows/build-icetray.yml/badge.svg) | [![Test Coverage](https://api.codeclimate.com/v1/badges/f244df0fc73c77102b47/test_coverage)](https://codeclimate.com/github/asogaard/graphnet/test_coverage) |
+| Usage | Development |
+| --- | --- |
+| [![Slack](https://img.shields.io/badge/slack-4A154B.svg?logo=slack)](https://join.slack.com/t/graphnet-team/signup) | ![build](https://github.com/graphnet-team/graphnet/actions/workflows/build.yml/badge.svg) | 
+| [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6720188.svg)](https://doi.org/10.5281/zenodo.6720188) | ![code-quality](https://github.com/graphnet-team/graphnet/actions/workflows/code-quality.yml/badge.svg) |
+| [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
+| ![Supported python versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue) | [![Maintainability](https://api.codeclimate.com/v1/badges/b273a774112e32643162/maintainability)](https://codeclimate.com/github/graphnet-team/graphnet/maintainability) |
+| [![Docker image](https://img.shields.io/docker/v/asogaard/graphnet?color=blue&logo=docker&sort=semver)](https://hub.docker.com/repository/docker/asogaard/graphnet) | [![Test Coverage](https://api.codeclimate.com/v1/badges/b273a774112e32643162/test_coverage)](https://codeclimate.com/github/graphnet-team/graphnet/test_coverage) |
+
+## :rocket: About
+
+**GraphNeT** is an open-source python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). GraphNeT makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques.
 
 ## :gear:  Install
 
@@ -57,24 +63,82 @@ If you don't need to interface with [IceTray](https://github.com/icecube/icetray
 ```bash
 $ git clone git@github.com:<your-username>/graphnet.git
 $ cd graphnet
-$ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc -y  # Optional
+$ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc cudatoolkit=11.5 -c conda-forge -y  # Optional
 $ conda activate graphnet  # Optional
 (graphnet) $ pip install -r requirements/torch_cpu.txt -e .[develop,torch]  # CPU-only torch
 (graphnet) $ pip install -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU support
 ```
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
-A stand-alone installation requires specifying a supported python version (see above) and ensuring that the C++ compilers (gcc) are up to date. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already have recent versions (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
-If you have an older system version of GCC than this installed and you install newer compiler though the above command, you should add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/lib/` to your `.bashrc` script or similar.
+A stand-alone installation requires specifying a supported python version (see above), ensuring that the C++ compilers (gcc) are up to date, and possible installing the CUDA Toolkit. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already have recent versions (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
+If you install the CUDA Toolkit and/or newer compilers the  though the above command, you should add **one of**:
+```bash
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/lib/
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/miniconda3/lib/
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/envs/graphnet/lib/
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/miniconda3/envs/graphnet/lib/
+```
+depending on your setup to your `.bashrc` script or similar to make sure that the corresponding library files are accessible. Check which one of the above path contains the `.so`-files your looking to use, and add that path
 
 </blockquote>
 </details>
+
+
+## :ringed_planet:  Use cases
+
+Below is an incomplete list of potential use cases for GNNs in neutrino telescopes.
+These are categorised as either "Reconstruction challenges" that are considered common and that may benefit several experiments physics analyses; and those same "Experiments" and "Physics analyses".
+
+<details>
+<summary><b>Reconstruction challenges</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| Low-energy neutrino classification and reconstruction | Done | Rasmus Ørsøe | https://arxiv.org/abs/2209.03042 |
+| High-energy neutrino classification and reconstruction | Active | Rasmus Ørsøe | |
+| Pulse noise cleaning | Paused | Rasmus Ørsøe, Kaare Iversen (past), Morten Holm | |
+| (In-)elasticity reconstruction | Paused | Marc Jacquart (past) | |
+| Multi-class event classification | Active | Morten Holm, Peter Andresen | |
+| Data/MC difference mitigation |  | | |
+| Systematic uncertainty mitigation |  | | |
+
+</details>
+
+<details>
+<summary><b>Experiments</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| IceCube | Active | (...) | |
+| IceCube-Upgrade | Active | (...) | |
+| IceCube-Gen2 | Active | (...) | |
+| P-ONE | | (...) | |
+| KM3NeT-ARCA | | (...) | |
+| KM3NeT-ORCA | | (...) | |
+
+</details>
+
+<details>
+<summary><b>Physics analyses</b></summary>
+
+| Title | Status | People | Materials |
+| --- | --- | --- | --- |
+| Neutrino oscillations | | | |
+| Point source searches | | | |
+| Low-energy cosmic alerts | | | |
+| High-energy cosmic alerts | | | |
+| Moon pointing | | | |
+| Muon decay asymmetry | | | |
+| Spectra measurements | | | |
+
+</details>
+
 
 ## :handshake:  Contributing
 
 To make sure that the process of contributing is as smooth and effective as possible, we provide a few guidelines in the [contributing guide](CONTRIBUTING.md) that we encourage contributors to follow.
 
-In short, everyone who wants to contribute to this project is more than welcome to do so! Contributions are handled through pull requests, that should be linked to a [GitHub issue](https://github.com/icecube/graphnet/issues) describing the feature to be added or bug to be fixed. Pull requests will be reviewed by the project maintainers and merged into the main branch when accepted.
+In short, everyone who wants to contribute to this project is more than welcome to do so! Contributions are handled through pull requests, that should be linked to a [GitHub issue](https://github.com/graphnet-team/graphnet/issues) describing the feature to be added or bug to be fixed. Pull requests will be reviewed by the project maintainers and merged into the main branch when accepted.
 
 
 ## :test_tube:  Experiment tracking
@@ -96,4 +160,13 @@ $ wandb online
 
 The [examples/train_model.py](examples/train_model.py) script shows how to train a model and log the results to W&B.
 
-[^1]: Examples of this are shown in the [examples/convert_i3_to_sqlite.py](examples/convert_i3_to_sqlite.py) and [examples/convert_i3_to_parquet.py](examples/convert_i3_to_parquet.py) scripts
+## :memo: License
+
+GraphNeT has an Apache 2.0 license, as found in the [LICENSE](LICENSE) file.
+
+## :raised_hands: Acknowledgements
+
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778, and the PUNCH4NFDI consortium via DFG fund “NFDI39/1”.
+
+
+[^1]: Examples of this are shown in the [examples/convert_i3_files.py](examples/convert_i3_files.py) script

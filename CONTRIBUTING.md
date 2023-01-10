@@ -28,11 +28,11 @@ This repository aims to support python 3 version that are actively supported (cu
 
 ## Code quality
 
-To ensure consistency in code style and adherence to select best practices, we recommend that all developers use `black` and `flake8` for automatically formatting and checking their code. This can conveniently be done using pre-commit hooks. To set this up, first make sure that you have installed the `pre-commit` python package. It comes with included when installing `graphnet` with the `develop` tag, i.e., `pip install -e .[develop]`. Then, do
+To ensure consistency in code style and adherence to select best practices, we recommend that all developers use `black`, `flake8`, `mypy`, `pydocstyle`, and `docformatter` for automatically formatting and checking their code. This can conveniently be done using pre-commit hooks. To set this up, first make sure that you have installed the `pre-commit` python package. It comes with included when installing `graphnet` with the `develop` tag, i.e., `pip install -e .[develop]`. Then, do
 ```bash
 $ pre-commit install
 ```
-Then, everytime you commit a change, your code will automatically be formatted using `black` and `flake8` will check for errors and adherence to PEP8. See the illustration below:
+Then, everytime you commit a change, your code and docstrings will automatically be formatted using `black` and `docformatter`, and `flake8`, `mypy`, and `pydocstyle` will check for errors and adherence to PEP8, PEP257, and static typing. See an illustration of the concept below:
 ![pre-commit pipeline](./assets/images/precommit_pipeline.png)
 Image source: https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
 

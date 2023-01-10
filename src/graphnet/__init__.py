@@ -1,4 +1,4 @@
-"""graphnet - Graph neural networks for neutrino telescope event reconstruction.
+"""graphnet: Graph neural networks for neutrino telescope event reconstruction.
 
 **graphnet** is a python package that provides convenient, common, and
 collaboratively developed tools for building graph neural networks (GNNs) to
@@ -29,4 +29,4 @@ Main features:
 
 from . import _version
 
-__version__ = _version.get_versions()["version"]
+__version__ = _version.get_versions()["version"]  # type: ignore[no-untyped-call]
