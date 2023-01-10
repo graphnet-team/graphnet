@@ -2,8 +2,10 @@
 
 import os
 
-import numpy as np
+import pandas as pd
 import pytest
+import sqlite3
+import torch
 
 import graphnet.constants
 from graphnet.data.constants import FEATURES, TRUTH
@@ -12,19 +14,11 @@ from graphnet.data.extractors import (
     I3FeatureExtractorIceCube86,
     I3TruthExtractor,
     I3RetroExtractor,
-    I3GenericExtractor,
 )
-from graphnet.data.parquet import (
-    ParquetDataset,
-    ParquetDataConverter,
-)
-from graphnet.data.sqlite import (
-    SQLiteDataset,
-    SQLiteDataConverter,
-)
-from graphnet.data.sqlite.sqlite_dataconverter import (
-    is_pulsemap_check,
-)
+from graphnet.data.parquet import ParquetDataset, ParquetDataConverter
+from graphnet.data.sqlite import SQLiteDataset, SQLiteDataConverter
+from graphnet.data.sqlite.sqlite_dataconverter import is_pulse_map
+from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
 from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package():
@@ -57,12 +51,12 @@ def get_file_path(backend: str) -> str:
 # Unit test(s)
 def test_is_pulsemap_check() -> None:
     """Test behaviour of `is_pulsemap_check`."""
-    assert is_pulsemap_check("SplitInIcePulses") is True
-    assert is_pulsemap_check("SRTInIcePulses") is True
-    assert is_pulsemap_check("InIceDSTPulses") is True
-    assert is_pulsemap_check("RTTWOfflinePulses") is True
-    assert is_pulsemap_check("truth") is False
-    assert is_pulsemap_check("retro") is False
+    assert is_pulse_map("SplitInIcePulses") is True
+    assert is_pulse_map("SRTInIcePulses") is True
+    assert is_pulse_map("InIceDSTPulses") is True
+    assert is_pulse_map("RTTWOfflinePulses") is True
+    assert is_pulse_map("truth") is False
+    assert is_pulse_map("retro") is False
 
 
 @pytest.mark.order(1)
@@ -102,7 +96,7 @@ def test_dataconverter(
     assert os.path.exists(path), path
 
 
-@pytest.mark.order(3)
+@pytest.mark.order(2)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
 def test_dataset(backend: str) -> None:
     """Test the implementation of `Dataset` for `backend`."""
@@ -147,7 +141,7 @@ def test_dataset(backend: str) -> None:
         assert len(event.features) == len(opt["features"])
 
 
-@pytest.mark.order(4)
+@pytest.mark.order(3)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
 def test_dataset_query_table(backend: str) -> None:
     """Test the implementation of `Dataset._query_table` for `backend`."""
@@ -190,5 +184,71 @@ def test_dataset_query_table(backend: str) -> None:
         assert results_all_subset == results_single
 
 
+@pytest.mark.order(4)
+def test_parquet_to_sqlite_converter() -> None:
+    """Test the implementation of `ParquetToSQLiteConverter`."""
+    # Constructor ParquetToSQLiteConverter instance
+    converter = ParquetToSQLiteConverter(
+        parquet_path=get_file_path("parquet"),
+        mc_truth_table="truth",
+    )
+
+    # Perform conversion from I3 to `backend`
+    database_name = FILE_NAME + "_from_parquet"
+    converter.run(OUTPUT_DATA_DIR, database_name)
+
+    # Check that output exists
+    path = f"{OUTPUT_DATA_DIR}/{database_name}/data/{database_name}.db"
+    assert os.path.exists(path), path
+
+    # Check that datasets agree
+    opt = dict(
+        pulsemaps="SRTInIcePulses",
+        features=FEATURES.DEEPCORE,
+        truth=TRUTH.DEEPCORE,
+    )
+
+    dataset_from_parquet = SQLiteDataset(path, **opt)  # type: ignore[arg-type]
+    dataset = SQLiteDataset(get_file_path("sqlite"), **opt)  # type: ignore[arg-type]
+
+    assert len(dataset_from_parquet) == len(dataset)
+    for ix in range(len(dataset)):
+        assert torch.allclose(dataset_from_parquet[ix].x, dataset[ix].x)
+
+
+@pytest.mark.order(5)
+@pytest.mark.parametrize("pulsemap", ["SRTInIcePulses"])
+@pytest.mark.parametrize("event_no", [1])
+def test_database_query_plan(pulsemap: str, event_no: int) -> None:
+    """Test query plan agreement in original and parquet-converted database."""
+    # Configure paths to databases to compare
+    database_name = FILE_NAME + "_from_parquet"
+    parquet_converted_database = (
+        f"{OUTPUT_DATA_DIR}/{database_name}/data/{database_name}.db"
+    )
+    sqlite_database = get_file_path("sqlite")
+
+    # Get query plans
+    query = f"""
+    EXPLAIN QUERY PLAN
+    SELECT * FROM {pulsemap}
+    WHERE event_no={event_no}
+    """
+    with sqlite3.connect(sqlite_database) as conn:
+        sqlite_plan = pd.read_sql(query, conn)
+
+    with sqlite3.connect(parquet_converted_database) as conn:
+        parquet_plan = pd.read_sql(query, conn)
+
+    # Compare
+    assert "USING INDEX event_no" in sqlite_plan["detail"].iloc[0]
+    assert "USING INDEX event_no" in parquet_plan["detail"].iloc[0]
+
+    assert (sqlite_plan["detail"] == parquet_plan["detail"]).all()
+
+
 if __name__ == "__main__":
-    test_dataset_query_table("parquet")
+    test_dataconverter("sqlite")
+    test_dataconverter("parquet")
+    test_parquet_to_sqlite_converter()
+    test_database_query_plan("SRTInIcePulses", 1)

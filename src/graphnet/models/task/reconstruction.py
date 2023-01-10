@@ -82,6 +82,18 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
 
 
 class EnergyReconstruction(Task):
+    """Reconstructs energy using stable method."""
+
+    # Requires one feature: untransformed energy
+    nb_inputs = 1
+
+    def _forward(self, x: Tensor) -> Tensor:
+        # Transform to positive energy domain avoiding `-inf` in `log10`
+        # Transform, thereby preventing overflow and underflow error.
+        return torch.nn.functional.softplus(x, beta=0.05) + eps_like(x)
+
+
+class EnergyReconstructionWithPower(Task):
     """Reconstructs energy."""
 
     # Requires one feature: untransformed energy

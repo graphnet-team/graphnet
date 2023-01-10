@@ -26,6 +26,11 @@ if TYPE_CHECKING:
     from graphnet.models import Model
 
 
+FUNCTION_DEFINITION_PATTERN = (
+    r"^def (?P<function_name>[a-zA-Z]{1}[a-zA-Z0-9_]+) *\(.*\) *:"
+)
+
+
 class ModelConfig(BaseConfig):
     """Configuration for all `Model`s."""
 
@@ -146,6 +151,22 @@ class ModelConfig(BaseConfig):
                     "reconstruct the model again."
                 )
 
+        elif isinstance(obj, str) and obj.startswith("!function"):
+            if trust:
+                source = obj[10:]
+                match = re.match(FUNCTION_DEFINITION_PATTERN, source)
+                assert match
+                exec(source)
+                fn = eval(match.group("function_name"))
+                return fn
+            else:
+                raise ValueError(
+                    f"Constructing model containing a function ({obj}) with "
+                    "`trust=False`. If you trust the functions in this "
+                    "ModelConfig, set `trust=True` and reconstruct the model "
+                    "again."
+                )
+
         elif isinstance(obj, str) and obj.startswith("!class"):
             if trust:
                 module, class_name = obj.split()[1:]
@@ -166,22 +187,31 @@ class ModelConfig(BaseConfig):
     def _serialise(cls, obj: Any) -> Any:
         """Serialise `obj` to a format that can be saved to file."""
         if isinstance(obj, ModelConfig):
-            return obj._as_dict()
+            return obj.as_dict()
         elif isinstance(obj, type):
             return f"!class {obj.__module__} {obj.__name__}"
         elif isinstance(obj, Callable):  # type: ignore[arg-type]
             if hasattr(obj, "__name__") and obj.__name__ == "<lambda>":
                 return "!" + inspect.getsource(obj).split("=")[1].strip("\n ,")
             else:
-                raise ValueError(
-                    f"Object `{obj}` is callable but not a lambda function. "
-                    "Please wrap in a lambda function to allow for saving "
-                    "this function verbatim in a model config file."
-                )
+                try:
+                    source = inspect.getsource(obj)
+                    match = re.match(FUNCTION_DEFINITION_PATTERN, source)
+                    if match and match.group("function_name"):
+                        return f"!function {source}"
+                    else:
+                        raise ValueError
+                except (TypeError, ValueError):
+                    raise ValueError(
+                        f"Object `{obj}` is callable but not a lambda or "
+                        "regular function. Please wrap in a, e.g., lambda "
+                        "function to allow for saving this function verbatim "
+                        "in a model config file."
+                    )
 
         return obj
 
-    def _as_dict(self) -> Dict[str, Dict[str, Any]]:
+    def as_dict(self) -> Dict[str, Dict[str, Any]]:
         """Represent ModelConfig as a dict.
 
         This builds on `BaseModel.dict()` but wraps the output in a single-key

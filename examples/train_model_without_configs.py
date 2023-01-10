@@ -1,8 +1,7 @@
-"""Example of training Model for direction reconstruction."""
-
+"""Example of training Model."""
 
 import os
-from typing import Any, Dict
+from typing import cast
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
@@ -10,20 +9,16 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.training.loss_functions import VonMisesFisher2DLoss
+from graphnet.training.loss_functions import LogCoshLoss
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_selection import (
     get_equal_proportion_neutrino_indices,
 )
 from graphnet.models import StandardModel
-from graphnet.models.coarsening import DOMCoarsening
 from graphnet.models.detector.icecube import IceCubeDeepCore
-from graphnet.models.gnn.dynedge import DynEdge
+from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
-from graphnet.models.task.reconstruction import (
-    ZenithReconstructionWithKappa,
-    AzimuthReconstructionWithKappa,
-)
+from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
 from graphnet.training.utils import (
     get_predictions,
@@ -35,65 +30,83 @@ from graphnet.utilities.logging import get_logger
 logger = get_logger()
 
 # Configurations
-DB_PATH = "/mnt/scratch/rasmus_orsoe/databases/HE/dev_lvl5_NuE_NuMu_NuTau_Mirco/data/dev_lvl5_NuE_NuMu_NuTau_Mirco.db"
-ARCHIVE = "direction_reco_example/"
-PULSEMAP = "TWSRTOfflinePulses"
+torch.multiprocessing.set_sharing_strategy("file_system")
 
 # Constants
 features = FEATURES.DEEPCORE
 truth = TRUTH.DEEPCORE[:-1]
 
+# Make sure W&B output directory exists
+WANDB_DIR = "./wandb/"
+os.makedirs(WANDB_DIR, exist_ok=True)
 
-def train(config: Dict[str, Any]) -> None:
-    """Train model with configuration given by `config`."""
-    # Common variables
-    train_selection, _ = get_equal_proportion_neutrino_indices(config["db"])
-    train_selection = train_selection[0:50000]
+# Initialise Weights & Biases (W&B) run
+wandb_logger = WandbLogger(
+    project="example-script",
+    entity="graphnet-team",
+    save_dir=WANDB_DIR,
+    log_model=True,
+)
 
+
+def main() -> None:
+    """Run example."""
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
+
+    # Configuration
+    config = {
+        "db": "/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db",
+        "pulsemap": "SRTTWOfflinePulsesDC",
+        "batch_size": 512,
+        "num_workers": 10,
+        "accelerator": "gpu",
+        "devices": [0],
+        "target": "energy",
+        "n_epochs": 5,
+        "patience": 5,
+    }
+    archive = "/groups/icecube/asogaard/gnn/results/"
+    run_name = "dynedge_{}_example".format(config["target"])
+
+    # Log configuration to W&B
+    wandb_logger.experiment.config.update(config)
+
+    # Common variables
+    train_selection, _ = get_equal_proportion_neutrino_indices(
+        cast(str, config["db"])
+    )
+    train_selection = train_selection[0:50000]
 
     (
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
-        config["db"],
+        cast(str, config["db"]),
         train_selection,
-        config["pulsemap"],
+        cast(str, config["pulsemap"]),
         features,
         truth,
-        batch_size=config["batch_size"],
-        num_workers=config["num_workers"],
+        batch_size=cast(int, config["batch_size"]),
+        num_workers=cast(int, config["num_workers"]),
     )
 
     # Building model
     detector = IceCubeDeepCore(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
-    if config["node_pooling"]:
-        coarsening = DOMCoarsening()
-    else:
-        coarsening = None
     gnn = DynEdge(
         nb_inputs=detector.nb_outputs,
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
-    if config["target"] == "zenith":
-        task = ZenithReconstructionWithKappa(
-            hidden_size=gnn.nb_outputs,
-            target_labels=config["target"],
-            loss_function=VonMisesFisher2DLoss(),
-        )
-    elif config["target"] == "azimuth":
-        task = AzimuthReconstructionWithKappa(
-            hidden_size=gnn.nb_outputs,
-            target_labels=config["target"],
-            loss_function=VonMisesFisher2DLoss(),
-        )
-
+    task = EnergyReconstruction(
+        hidden_size=gnn.nb_outputs,
+        target_labels=config["target"],
+        loss_function=LogCoshLoss(),
+        transform_prediction_and_target=torch.log10,
+    )
     model = StandardModel(
         detector=detector,
-        coarsening=coarsening,
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,
@@ -103,7 +116,7 @@ def train(config: Dict[str, Any]) -> None:
             "milestones": [
                 0,
                 len(training_dataloader) / 2,
-                len(training_dataloader) * config["n_epochs"],
+                len(training_dataloader) * cast(int, config["n_epochs"]),
             ],
             "factors": [1e-2, 1, 1e-02],
         },
@@ -127,6 +140,7 @@ def train(config: Dict[str, Any]) -> None:
         max_epochs=config["n_epochs"],
         callbacks=callbacks,
         log_every_n_steps=1,
+        logger=wandb_logger,
     )
 
     try:
@@ -140,37 +154,11 @@ def train(config: Dict[str, Any]) -> None:
         trainer,
         model,
         validation_dataloader,
-        [config["target"] + "_pred", config["target"] + "_kappa_pred"],
-        additional_attributes=[config["target"], "event_no"],
+        [cast(str, config["target"]) + "_pred"],
+        additional_attributes=[cast(str, config["target"]), "event_no"],
     )
 
-    save_results(
-        config["db"], config["run_name"], results, config["archive"], model
-    )
-
-
-def main() -> None:
-    """Run example."""
-    for target in ["zenith", "azimuth"]:
-        run_name = "dynedge_{}_example".format(target)
-
-        # Configuration
-        config = {
-            "db": DB_PATH,
-            "pulsemap": PULSEMAP,
-            "batch_size": 512,
-            "num_workers": 10,
-            "accelerator": "gpu",
-            "devices": [1],
-            "target": target,
-            "n_epochs": 5,
-            "patience": 5,
-            "archive": ARCHIVE,
-            "run_name": run_name,
-            "max_events": 50000,
-            "node_pooling": True,
-        }
-        train(config)
+    save_results(cast(str, config["db"]), run_name, results, archive, model)
 
 
 if __name__ == "__main__":

@@ -9,11 +9,7 @@ import numpy as np
 import pandas as pd
 from tqdm.auto import trange
 
-from graphnet.data.sqlite.sqlite_utilities import (
-    save_to_sql,
-    attach_index,
-    create_table,
-)
+from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
 from graphnet.utilities.logging import LoggerMixin
 
 
@@ -54,7 +50,6 @@ class ParquetToSQLiteConverter(LoggerMixin):
             self._excluded_fields = []
         self._mc_truth_table = mc_truth_table
         self._event_counter = 0
-        self._created_tables: List[str] = []
 
     def _find_parquet_files(self, paths: Union[str, List[str]]) -> List[str]:
         if isinstance(paths, str):
@@ -80,8 +75,12 @@ class ParquetToSQLiteConverter(LoggerMixin):
         database_path = os.path.join(
             outdir, database_name, "data", database_name + ".db"
         )
+        self.info(f"Processing {len(self._parquet_files)} Parquet file(s)")
         for i in trange(
-            len(self._parquet_files), desc="Main", colour="#0000ff", position=0
+            len(self._parquet_files),
+            unit="file(s)",
+            colour="green",
+            position=0,
         ):
             parquet_file = ak.from_parquet(self._parquet_files[i])
             n_events_in_file = self._count_events(parquet_file)
@@ -101,8 +100,9 @@ class ParquetToSQLiteConverter(LoggerMixin):
                     )
             self._event_counter += n_events_in_file
         self._save_config(outdir, database_name)
-        print(
-            f"Database saved at: \n{outdir}/{database_name}/data/{database_name}.db"
+        self.info(
+            "Database saved at: \n"
+            f"{outdir}/{database_name}/data/{database_name}.db"
         )
 
     def _count_events(self, open_parquet_file: ak.Array) -> int:
@@ -116,26 +116,18 @@ class ParquetToSQLiteConverter(LoggerMixin):
         n_events_in_file: int,
     ) -> None:
         df = self._convert_to_dataframe(ak_array, field_name, n_events_in_file)
-        if field_name in self._created_tables:
-            save_to_sql(
-                database_path,
-                field_name,
-                df,
-            )
+
+        if len(df) > n_events_in_file:
+            is_pulse_map = True
         else:
-            if len(df) > n_events_in_file:
-                is_pulse_map = True
-            else:
-                is_pulse_map = False
-            create_table(df, field_name, database_path, is_pulse_map)
-            if is_pulse_map:
-                attach_index(database_path, table_name=field_name)
-            self._created_tables.append(field_name)
-            save_to_sql(
-                database_path,
-                field_name,
-                df,
-            )
+            is_pulse_map = False
+
+        create_table_and_save_to_sql(
+            df,
+            field_name,
+            database_path,
+            integer_primary_key=not is_pulse_map,
+        )
 
     def _convert_to_dataframe(
         self,
@@ -147,9 +139,10 @@ class ParquetToSQLiteConverter(LoggerMixin):
         if len(df.columns) == 1:
             if df.columns == ["values"]:
                 df.columns = [field_name]
-        if (
-            len(df) != n_events_in_file
-        ):  # if true, the dataframe contains more than 1 row pr. event (e.g. Pulsemap).
+
+        # If true, the dataframe contains more than 1 row pr. event (i.e.,
+        # pulsemap).
+        if len(df) != n_events_in_file:
             event_nos = []
             c = 0
             for event_no in range(
@@ -159,7 +152,10 @@ class ParquetToSQLiteConverter(LoggerMixin):
                     event_nos.extend(
                         np.repeat(event_no, len(df[df.columns[0]][c])).tolist()
                     )
-                except KeyError:  # KeyError indicates that this df has no entry for event_no (e.g. an event with no detector response)
+
+                # KeyError indicates that this df has no entry for event_no
+                # (e.g., an event with no detector response).
+                except KeyError:
                     pass
                 c += 1
         else:

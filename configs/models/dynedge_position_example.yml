@@ -33,12 +33,12 @@ arguments:
         loss_function:
           ModelConfig:
             arguments: {}
-            class_name: LogCoshLoss
+            class_name: MSELoss
         loss_weight: null
-        target_labels: energy
+        target_labels: ["position_x", "position_y", "position_y"]
         transform_inference: null
-        transform_prediction_and_target: '!lambda x: torch.log10(x)'
+        transform_prediction_and_target: null
         transform_support: null
         transform_target: null
-      class_name: EnergyReconstruction
+      class_name: PositionReconstruction
 class_name: StandardModel
