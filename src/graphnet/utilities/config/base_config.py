@@ -3,12 +3,11 @@
 from abc import abstractmethod
 from collections import OrderedDict
 import inspect
+import sys
 from typing import Any, Callable, Dict, Optional
 
 from pydantic import BaseModel
 import ruamel.yaml as yaml
-
-from graphnet.utilities.logging import LoggerMixin
 
 
 CONFIG_FILES_SUFFIXES = (".yml", ".yaml")
@@ -31,7 +30,7 @@ class BaseConfig(BaseModel):
 
     def dump(self, path: Optional[str] = None) -> Optional[str]:
         """Save BaseConfig to `path` as YAML file, or return as string."""
-        config_dict = self._as_dict()[self.__class__.__name__]
+        config_dict = self.as_dict()[self.__class__.__name__]
 
         yaml_ = yaml.YAML(typ="safe", pure=True)
         if path:
@@ -41,12 +40,12 @@ class BaseConfig(BaseModel):
                 yaml_.dump(config_dict, f)
             return None
         else:
-            return yaml_.dump(config_dict)
+            return yaml_.dump(config_dict, sys.stdout)
 
-    def _as_dict(self) -> Dict[str, Dict[str, Any]]:
+    def as_dict(self) -> Dict[str, Dict[str, Any]]:
         """Represent BaseConfig as a dict.
 
-        This builds on `BaseModel.dict()` but can be overwritten
+        This builds on `BaseModel.dict()` but can be overwritten.
         """
         return {self.__class__.__name__: self.dict()}
 
@@ -57,10 +56,14 @@ def get_all_argument_values(
     """Return dict of all argument values to `fn`, including defaults."""
     # Get all default argument values
     cfg = OrderedDict()
-    for key, parameter in inspect.signature(fn).parameters.items():
-        if key == "self" or parameter.default == inspect._empty:
+    for key, param in inspect.signature(fn).parameters.items():
+        # Don't save `self`, `*args`, or `**kwargs`
+        if key == "self" or param.kind in [
+            param.VAR_POSITIONAL,
+            param.VAR_KEYWORD,
+        ]:
             continue
-        cfg[key] = parameter.default
+        cfg[key] = param.default
 
     # Add positional arguments
     for key, val in zip(cfg.keys(), args):

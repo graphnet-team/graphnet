@@ -1,10 +1,10 @@
-"""Simplified example of training Model."""
+"""Example of training Model."""
 
 import os
+from typing import Dict, Any
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
-from pytorch_lightning.utilities import rank_zero_only
 
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import Model
@@ -28,41 +28,40 @@ wandb_logger = WandbLogger(
 )
 
 
-def main() -> None:
-    """Run example."""
+def train(general_config: Dict[str, Any]) -> None:
+    """Train model with configuration given by `config`."""
     # Configuration
     config = TrainingConfig(
-        target="energy",
+        target="pid",
         early_stopping_patience=5,
-        fit={"gpus": [0, 1], "max_epochs": 5},
-        dataloader={"batch_size": 128, "num_workers": 10},
+        fit={"gpus": [0], "max_epochs": 5},
+        dataloader={"batch_size": 512, "num_workers": 10},
     )
 
-    archive = "/groups/icecube/asogaard/gnn/results/"
-    run_name = "dynedge_{}_example".format(config.target)
+    run_name = "dynedge_{}_classification_example".format(config.target)
+
+    # Log configuration to W&B
+    wandb_logger.experiment.config.update(config)
 
     # Construct dataloaders
     dataset_config = DatasetConfig.load(
-        "configs/datasets/dev_lvl7_robustness_muon_neutrino_0000.yml"
+        "configs/datasets/" + general_config["dataset"] + ".yml"
     )
+    # dataloader_test, dataloader_valid, ..
     dataloaders = DataLoader.from_dataset_config(
         dataset_config,
         **config.dataloader,
     )
+    wandb_logger.experiment.config.update(dataset_config.as_dict())
 
     # Build model
-    model_config = ModelConfig.load(f"configs/models/{run_name}.yml")
+    model_config = ModelConfig.load(
+        "configs/models/" + general_config["model"] + ".yml"
+    )
     model = Model.from_config(model_config, trust=True)
+    wandb_logger.experiment.config.update(model_config.as_dict())
 
-    # Log configurations to W&B
-    # NB: Only log to W&B on the rank-zero process in case of multi-GPU
-    #     training.
-    if rank_zero_only == 0:
-        wandb_logger.experiment.config.update(config)
-        wandb_logger.experiment.config.update(model_config.as_dict())
-        wandb_logger.experiment.config.update(dataset_config.as_dict())
-
-    # Train model
+    # Training model
     callbacks = [
         EarlyStopping(
             monitor="val_loss",
@@ -81,7 +80,11 @@ def main() -> None:
 
     # Get predictions
     if isinstance(config.target, str):
-        prediction_columns = [config.target + "_pred"]
+        prediction_columns = [
+            config.target + "_noise_pred",
+            config.target + "_muon_pred",
+            config.target + "_neutrino_pred",
+        ]
         additional_attributes = [config.target]
     else:
         prediction_columns = [target + "_pred" for target in config.target]
@@ -95,11 +98,23 @@ def main() -> None:
 
     # Save predictions and model to file
     db_name = dataset_config.path.split("/")[-1].split(".")[0]
-    path = os.path.join(archive, db_name, run_name)
+    path = os.path.join(general_config["archive"], db_name, run_name)
 
     results.to_csv(f"{path}/results.csv")
     model.save_state_dict(f"{path}/state_dict.pth")
     model.save(f"{path}/model.pth")
+
+
+def main() -> None:
+    """Run example."""
+    # General configuration
+    general_config = {
+        "dataset": "PID_classification_last_one_lvl3MC.yml",
+        "model": "dynedge_PID_Classification_noise_muon_neutrino_example.yml",
+        "archive": "/groups/icecube/petersen/GraphNetDatabaseRepository/example_results/train_classification_model",
+    }
+
+    train(general_config)
 
 
 if __name__ == "__main__":

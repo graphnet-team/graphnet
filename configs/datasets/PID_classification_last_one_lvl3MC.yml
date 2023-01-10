@@ -1,0 +1,43 @@
+path: /groups/icecube/petersen/GraphNetDatabaseRepository/Leon2022_DataAndMC_CSVandDB_StoppedMuons/last_one_lvl3MC.db
+pulsemaps:
+  - SRTInIcePulses
+features:
+  - dom_x
+  - dom_y
+  - dom_z
+  - dom_time
+  - charge
+  - rde
+  - pmt_area
+truth:
+  - energy
+  - position_x
+  - position_y
+  - position_z
+  - azimuth
+  - zenith
+  - pid
+  - elasticity
+  - sim_type
+  - interaction_type
+index_column: event_no
+truth_table: truth
+seed: 21
+selection:
+  test_nu_e: 10000 random events ~ event_no % 5 == 0 & abs(pid) == 12
+  test_nu_mu: 10000 random events ~ event_no % 5 == 0 & abs(pid) == 14
+  test_nu_tau: 10000 random events ~ event_no % 5 == 0 & abs(pid) == 16
+  test_mu: 10000 random events ~ event_no % 5 == 0 & abs(pid) == 13
+  test_noise: 10000 random events ~ event_no % 5 == 0 & abs(pid) == 1
+
+  validation_nu_e: 10000 random events ~ event_no % 5 == 1 & abs(pid) == 12
+  validation_nu_mu: 10000 random events ~ event_no % 5 == 1 & abs(pid) == 14
+  validation_nu_tau: 10000 random events ~ event_no % 5 == 1 & abs(pid) == 16
+  validation_mu: 10000 random events ~ event_no % 5 == 1 & abs(pid) == 13
+  validation_noise: 10000 random events ~ event_no % 5 == 1 & abs(pid) == 1
+
+  train_nu_e: 50000 random events ~ event_no % 5 > 1 & abs(pid) == 12
+  train_nu_mu: 50000 random events ~ event_no % 5 > 1 & abs(pid) == 14
+  train_nu_tau: 50000 random events ~ event_no % 5 > 1 & abs(pid) == 16
+  train_mu: 50000 random events ~ event_no % 5 > 1 & abs(pid) == 13
+  train_noise: 50000 random events ~ event_no % 5 > 1 & abs(pid) == 1

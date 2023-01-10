@@ -1,11 +1,12 @@
 arguments:
+  class_options: {1: 0, -1: 0, 13: 1, -13: 1, 12: 2, -12: 2, 14: 2, -14: 2, 16: 2, -16: 2}
   coarsening: null
   detector:
     ModelConfig:
       arguments:
         graph_builder:
           ModelConfig:
-            arguments: {columns: null, nb_nearest_neighbours: 8}
+            arguments: {columns: null, device: null, nb_nearest_neighbours: 8}
             class_name: KNNGraphBuilder
         scalers: null
       class_name: IceCubeDeepCore
@@ -32,13 +33,13 @@ arguments:
         hidden_size: 128
         loss_function:
           ModelConfig:
-            arguments: {}
-            class_name: LogCoshLoss
+            arguments: {options=general_config["class_options"]}
+            class_name: CrossEntropyLoss
         loss_weight: null
-        target_labels: energy
-        transform_inference: null
-        transform_prediction_and_target: '!lambda x: torch.log10(x)'
+        target_labels: pid
+        transform_inference: '!lambda x: softmax(x, dim=-1)'
+        transform_prediction: null
         transform_support: null
         transform_target: null
-      class_name: EnergyReconstruction
+      class_name: MulticlassClassificationTask
 class_name: StandardModel

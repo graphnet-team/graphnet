@@ -38,13 +38,14 @@ class DatasetConfig(BaseConfig):
     truth_table: str = "truth"
     node_truth_table: Optional[str] = None
     string_selection: Optional[List[int]] = None
+    selection: Optional[
+        Union[str, Sequence[int], Dict[str, Union[str, Sequence[int]]]]
+    ]
     loss_weight_table: Optional[str] = None
     loss_weight_column: Optional[str] = None
     loss_weight_default_value: Optional[float] = None
 
-    selection: Optional[
-        Union[str, Sequence[int], Dict[str, Union[str, Sequence[int]]]]
-    ]
+    seed: Optional[int] = None
 
     def __init__(self, **data: Any) -> None:
         """Construct `DataConfig`.
