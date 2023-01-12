@@ -22,11 +22,15 @@ class I3PISAExtractor(I3Extractor):
         """Extract quantities required by PISA."""
         output = {}
         required_keys = ["OneWeight", "gen_ratio", "NEvents", "GENIEWeight"]
+        for key in required_keys:
+            output.update({key: padding_value})  # pads the entry
         if "I3MCWeightDict" in frame:
             for key in required_keys:
                 try:
-                    output.update({key: frame["I3MCWeightDict"][key]})
+                    output.update(
+                        {key: frame["I3MCWeightDict"][key]}
+                    )  # removes the padding if value is in frame
                 except KeyError:
-                    output.update({key: padding_value})
+                    pass
 
         return output
