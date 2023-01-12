@@ -71,6 +71,7 @@ def test_dataconverter(
             I3TruthExtractor(),
             I3RetroExtractor(),
             I3FeatureExtractorIceCube86("SRTInIcePulses"),
+            I3FeatureExtractorIceCube86("pulsemap_not_in_files_Pulses"),
         ],
         outdir=OUTPUT_DATA_DIR,
         gcd_rescue=os.path.join(
