@@ -5,6 +5,9 @@ intermediate file formats  and reading this data.
 """
 
 # Configuration
-import torch
+from graphnet.utilities.imports import has_torch_package
 
-torch.multiprocessing.set_sharing_strategy("file_system")
+if has_torch_package():
+    import torch
+
+    torch.multiprocessing.set_sharing_strategy("file_system")

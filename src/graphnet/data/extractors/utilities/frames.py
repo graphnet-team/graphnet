@@ -44,10 +44,10 @@ def get_om_keys_and_pulseseries(
         Tuple containing the OM keys/indicesfor the GCD dictionary, and the
         pulse series data.
     """
-    try:
-        data = frame[pulseseries]
-    except KeyError:
-        raise KeyError(f"Pulse series {pulseseries} does not exist in `frame`")
+    # try:
+    data = frame[pulseseries]
+    # except KeyError:
+    #    raise KeyError(f"Pulse series {pulseseries} does not exist in `frame`")
 
     try:
         om_keys = data.keys()
