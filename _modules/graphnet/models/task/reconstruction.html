@@ -1,33 +1,70 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>graphnet.models.task.reconstruction &mdash; graphnet  documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
         <script src="../../../../_static/sphinx_highlight.js"></script>
-    <script src="../../../../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../../../../index.html" class="icon icon-home"> graphnet
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -35,33 +72,83 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <!-- Local TOC -->
               <div class="local-toc"></div>
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../../index.html">graphnet</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
-          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">graphnet.models.task.reconstruction</li>
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphnet.models.task.reconstruction</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+            
   <h1>Source code for graphnet.models.task.reconstruction</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Reconstruction-specific `Model` class(es).&quot;&quot;&quot;</span>
 
@@ -74,7 +161,7 @@
 
 
 <div class="viewcode-block" id="AzimuthReconstructionWithKappa"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa">[docs]</a><span class="k">class</span> <span class="nc">AzimuthReconstructionWithKappa</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs azimuthal angle and associated kappa (1/var).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs azimuthal angle and associated kappa (1/var).&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires two features: untransformed points in (x,y)-space.</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">2</span>
@@ -90,7 +177,7 @@
 
 
 <div class="viewcode-block" id="AzimuthReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.AzimuthReconstruction">[docs]</a><span class="k">class</span> <span class="nc">AzimuthReconstruction</span><span class="p">(</span><span class="n">AzimuthReconstructionWithKappa</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs azimuthal angle.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs azimuthal angle.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires two features: untransformed points in (x,y)-space.</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">2</span>
@@ -108,7 +195,7 @@
 
 
 <div class="viewcode-block" id="DirectionReconstructionWithKappa"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa">[docs]</a><span class="k">class</span> <span class="nc">DirectionReconstructionWithKappa</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs direction with kappa from the 3D-vMF distribution.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs direction with kappa from the 3D-vMF distribution.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires three features: untransformed points in (x,y,z)-space.</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">3</span>
@@ -123,7 +210,7 @@
 
 
 <div class="viewcode-block" id="ZenithReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstruction">[docs]</a><span class="k">class</span> <span class="nc">ZenithReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs zenith angle.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs zenith angle.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires two features: zenith angle itself.</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
@@ -134,7 +221,7 @@
 
 
 <div class="viewcode-block" id="ZenithReconstructionWithKappa"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa">[docs]</a><span class="k">class</span> <span class="nc">ZenithReconstructionWithKappa</span><span class="p">(</span><span class="n">ZenithReconstruction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs zenith angle and associated kappa (1/var).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs zenith angle and associated kappa (1/var).&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires one feature in addition to `ZenithReconstruction`: kappa (unceratinty; 1/variance).</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">2</span>
@@ -147,7 +234,7 @@
 
 
 <div class="viewcode-block" id="EnergyReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstruction">[docs]</a><span class="k">class</span> <span class="nc">EnergyReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs energy using stable method.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs energy using stable method.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires one feature: untransformed energy</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
@@ -159,7 +246,7 @@
 
 
 <div class="viewcode-block" id="EnergyReconstructionWithPower"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithPower">[docs]</a><span class="k">class</span> <span class="nc">EnergyReconstructionWithPower</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs energy.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs energy.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires one feature: untransformed energy</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
@@ -170,7 +257,7 @@
 
 
 <div class="viewcode-block" id="EnergyReconstructionWithUncertainty"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty">[docs]</a><span class="k">class</span> <span class="nc">EnergyReconstructionWithUncertainty</span><span class="p">(</span><span class="n">EnergyReconstruction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs energy and associated uncertainty (log(var)).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs energy and associated uncertainty (log(var)).&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires one feature in addition to `EnergyReconstruction`: log-variance (uncertainty).</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">2</span>
@@ -184,7 +271,7 @@
 
 
 <div class="viewcode-block" id="VertexReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.VertexReconstruction">[docs]</a><span class="k">class</span> <span class="nc">VertexReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs vertex position and time.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs vertex position and time.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires four features, x, y, z, and t.</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">4</span>
@@ -200,7 +287,7 @@
 
 
 <div class="viewcode-block" id="PositionReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.PositionReconstruction">[docs]</a><span class="k">class</span> <span class="nc">PositionReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs vertex position.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs vertex position.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires three features, x, y, and z.</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">3</span>
@@ -216,7 +303,7 @@
 
 
 <div class="viewcode-block" id="TimeReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.TimeReconstruction">[docs]</a><span class="k">class</span> <span class="nc">TimeReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs time.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs time.&quot;&quot;&quot;</span>
 
     <span class="c1"># Requires one feature, time.</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
@@ -228,7 +315,7 @@
 
 
 <div class="viewcode-block" id="InelasticityReconstruction"><a class="viewcode-back" href="../../../../graphnet.models.task.html#graphnet.models.task.reconstruction.InelasticityReconstruction">[docs]</a><span class="k">class</span> <span class="nc">InelasticityReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reconstructs interaction inelasticity.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstructs interaction inelasticity.</span>
 
 <span class="sd">    That is, tracks vs. hadronic energy.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -242,30 +329,46 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021, IceCube Collaboration.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

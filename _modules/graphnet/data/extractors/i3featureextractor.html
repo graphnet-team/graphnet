@@ -1,33 +1,70 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>graphnet.data.extractors.i3featureextractor &mdash; graphnet  documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
         <script src="../../../../_static/sphinx_highlight.js"></script>
-    <script src="../../../../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../../../../index.html" class="icon icon-home"> graphnet
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -35,33 +72,83 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <!-- Local TOC -->
               <div class="local-toc"></div>
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../../index.html">graphnet</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
-          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">graphnet.data.extractors.i3featureextractor</li>
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphnet.data.extractors.i3featureextractor</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+            
   <h1>Source code for graphnet.data.extractors.i3featureextractor</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;I3Extractor class(es) for extracting specific, reconstructed features.&quot;&quot;&quot;</span>
 
@@ -80,10 +167,10 @@
 
 
 <div class="viewcode-block" id="I3FeatureExtractor"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractor</span><span class="p">(</span><span class="n">I3Extractor</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for extracting specific, reconstructed features.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for extracting specific, reconstructed features.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="I3FeatureExtractor.__init__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pulsemap</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Construct I3FeatureExtractor.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct I3FeatureExtractor.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            pulsemap: Name of the pulse (series) map for which to extract</span>
@@ -97,10 +184,10 @@
 
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCube86"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCube86</span><span class="p">(</span><span class="n">I3FeatureExtractor</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-86.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-86.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCube86.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCube86.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            frame: Physics (P) I3-frame from which to extract reconstructed</span>
@@ -128,11 +215,14 @@
         <span class="p">}</span>
 
         <span class="c1"># Get OM data</span>
-        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
-            <span class="n">frame</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
 
         <span class="c1"># Added these :</span>
         <span class="n">bright_doms</span> <span class="o">=</span> <span class="kc">None</span>
@@ -225,14 +315,14 @@
 
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCubeDeepCore"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeDeepCore">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCubeDeepCore</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-DeepCore.&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-DeepCore.&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3FeatureExtractorIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-Upgrade.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for extracting reconstructed features for IceCube-Upgrade.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="I3FeatureExtractorIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractorIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            frame: Physics (P) I3-frame from which to extract reconstructed</span>
@@ -257,11 +347,14 @@
         <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_icecube86</span><span class="p">)</span>
 
         <span class="c1"># Get OM data</span>
-        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
-            <span class="n">frame</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
 
         <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
             <span class="c1"># Common values for each OM</span>
@@ -288,10 +381,10 @@
 
 
 <div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade">[docs]</a><span class="k">class</span> <span class="nc">I3PulseNoiseTruthFlagIceCubeUpgrade</span><span class="p">(</span><span class="n">I3FeatureExtractorIceCube86</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Feature extractor class with pulse noise truth flag added.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Feature extractor class with pulse noise truth flag added.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="I3PulseNoiseTruthFlagIceCubeUpgrade.__call__"><a class="viewcode-back" href="../../../../graphnet.data.extractors.html#graphnet.data.extractors.i3featureextractor.I3PulseNoiseTruthFlagIceCubeUpgrade.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">&quot;icetray.I3Frame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract reconstructed features from `frame`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            frame: Physics (P) I3-frame from which to extract reconstructed</span>
@@ -310,11 +403,14 @@
         <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_icecube_upgrade</span><span class="p">)</span>
 
         <span class="c1"># Get OM data</span>
-        <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
-            <span class="n">frame</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
 
         <span class="k">for</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">om_keys</span><span class="p">:</span>
             <span class="c1"># Loop over pulses for each OM</span>
@@ -326,30 +422,46 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021, IceCube Collaboration.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

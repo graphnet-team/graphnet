@@ -1,33 +1,70 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>graphnet.data.dataconverter &mdash; graphnet  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
-    <script src="../../../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../../../index.html" class="icon icon-home"> graphnet
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -35,33 +72,83 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <!-- Local TOC -->
               <div class="local-toc"></div>
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">graphnet</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
-          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">graphnet.data.dataconverter</li>
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphnet.data.dataconverter</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+            
   <h1>Source code for graphnet.data.dataconverter</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base `DataConverter` class(es) used in GraphNeT.&quot;&quot;&quot;</span>
 <span class="c1"># type: ignore[name-defined]  # Due to use of `init_global_index`.</span>
@@ -125,7 +212,7 @@
 
 <span class="c1"># Utility method(s)</span>
 <div class="viewcode-block" id="init_global_index"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.init_global_index">[docs]</a><span class="k">def</span> <span class="nf">init_global_index</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="n">Synchronized</span><span class="p">,</span> <span class="n">output_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Make `global_index` available to pool workers.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make `global_index` available to pool workers.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">global_index</span><span class="p">,</span> <span class="n">global_output_files</span>  <span class="c1"># type: ignore[name-defined]</span>
     <span class="n">global_index</span><span class="p">,</span> <span class="n">global_output_files</span> <span class="o">=</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">output_files</span><span class="p">)</span>  <span class="c1"># type: ignore[name-defined]</span></div>
 
@@ -134,7 +221,7 @@
 
 
 <div class="viewcode-block" id="cache_output_files"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.cache_output_files">[docs]</a><span class="k">def</span> <span class="nf">cache_output_files</span><span class="p">(</span><span class="n">process_method</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Decorate `process_method` to cache output file names.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorate `process_method` to cache output file names.&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">process_method</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
@@ -153,12 +240,12 @@
 
 
 <div class="viewcode-block" id="DataConverter"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter">[docs]</a><span class="k">class</span> <span class="nc">DataConverter</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for converting I3-files to intermediate file format.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for converting I3-files to intermediate file format.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">file_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Suffix to use on output files.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Suffix to use on output files.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DataConverter.__init__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -173,7 +260,7 @@
         <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
         <span class="n">icetray_verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Construct DataConverter.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct DataConverter.</span>
 
 <span class="sd">        When using `input_file_batch_pattern`, regular expressions are used to</span>
 <span class="sd">        group files according to their names. All files that match a certain</span>
@@ -254,7 +341,7 @@
 
 <div class="viewcode-block" id="DataConverter.__call__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.__call__">[docs]</a>    <span class="nd">@final</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Convert I3-files in `directories.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert I3-files in `directories.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            directories: One or more directories, the I3 files within which</span>
@@ -281,7 +368,7 @@
 
 <div class="viewcode-block" id="DataConverter.execute"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.execute">[docs]</a>    <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filesets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FileSet</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;General method for processing a set of I3 files.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;General method for processing a set of I3 files.</span>
 
 <span class="sd">        The files are converted individually according to the inheriting class/</span>
 <span class="sd">        intermediate file format.</span>
@@ -360,7 +447,7 @@
 
 <div class="viewcode-block" id="DataConverter.save_data"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.save_data">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">],</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Implementation-specific method for saving data to file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implementation-specific method for saving data to file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: List of extracted features.</span>
@@ -371,7 +458,7 @@
     <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">input_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Implementation-specific method for merging output files.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implementation-specific method for merging output files.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            output_file: Name of the output file containing the merged results.</span>
@@ -404,7 +491,7 @@
 <div class="viewcode-block" id="DataConverter._iterate_over_batches_of_files"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._iterate_over_batches_of_files">[docs]</a>    <span class="k">def</span> <span class="nf">_iterate_over_batches_of_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">FileSet</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">Pool</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Iterate over a batch of files and save results on worker process.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over a batch of files and save results on worker process.&quot;&quot;&quot;</span>
         <span class="c1"># Get appropriate mapping function</span>
         <span class="n">map_fn</span><span class="p">,</span> <span class="n">pool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_map_function</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;batch(es)&quot;</span><span class="p">)</span>
 
@@ -419,7 +506,7 @@
 <div class="viewcode-block" id="DataConverter._update_shared_variables"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._update_shared_variables">[docs]</a>    <span class="k">def</span> <span class="nf">_update_shared_variables</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">Pool</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update `self._index` and `self._output_files`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update `self._index` and `self._output_files`.</span>
 
 <span class="sd">        If `pool` is set, it means that multiprocessing was used. In this case,</span>
 <span class="sd">        the worker processes will not have been able to write directly to</span>
@@ -464,7 +551,7 @@
         <span class="k">return</span> <span class="n">output_file</span>
 
 <div class="viewcode-block" id="DataConverter._extract_data"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._extract_data">[docs]</a>    <span class="k">def</span> <span class="nf">_extract_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileset</span><span class="p">:</span> <span class="n">FileSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Extract data from single I3 file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract data from single I3 file.</span>
 
 <span class="sd">        If the saving strategy is 1:1 (i.e., each I3 file is converted to a</span>
 <span class="sd">        corresponding intermediate file) the data is saved to such a file, and</span>
@@ -525,7 +612,7 @@
 <div class="viewcode-block" id="DataConverter.get_map_function"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter.get_map_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_map_function</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">nb_files</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;I3 file(s)&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">Pool</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Identify map function to use (pure python or multiprocess).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify map function to use (pure python or multiprocess).&quot;&quot;&quot;</span>
         <span class="c1"># Choose relevant map-function given the requested number of workers.</span>
         <span class="n">workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">,</span> <span class="n">nb_files</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">workers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -574,7 +661,7 @@
             <span class="p">]</span>
             <span class="n">nb_fields</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sub_from</span> <span class="o">=</span> <span class="s2">&quot;.*&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sub_to</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\\</span><span class="si">{</span><span class="n">ix</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_fields</span><span class="p">)])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sub_to</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\\</span><span class="si">{</span><span class="n">ix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_fields</span><span class="p">)])</span>
 
             <span class="k">if</span> <span class="n">sequential_batch_pattern</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Argument `sequential_batch_pattern` ignored.&quot;</span><span class="p">)</span>
@@ -596,7 +683,7 @@
         <span class="k">return</span> <span class="n">save_strategy</span>
 
 <div class="viewcode-block" id="DataConverter._save_filenames"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataconverter.DataConverter._save_filenames">[docs]</a>    <span class="k">def</span> <span class="nf">_save_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Save I3 file names in CSV format.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save I3 file names in CSV format.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving input file names to config CSV.&quot;</span><span class="p">)</span>
         <span class="n">config_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">config_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -614,30 +701,46 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021, IceCube Collaboration.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

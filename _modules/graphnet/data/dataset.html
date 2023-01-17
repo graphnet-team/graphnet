@@ -1,33 +1,70 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>graphnet.data.dataset &mdash; graphnet  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
-    <script src="../../../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../../../index.html" class="icon icon-home"> graphnet
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -35,33 +72,83 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <!-- Local TOC -->
               <div class="local-toc"></div>
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">graphnet</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
-          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">graphnet.data.dataset</li>
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphnet.data.dataset</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+            
   <h1>Source code for graphnet.data.dataset</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base `Dataset` class(es) used in GraphNeT.&quot;&quot;&quot;</span>
 
@@ -85,11 +172,11 @@
 
 
 <div class="viewcode-block" id="ColumnMissingException"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.ColumnMissingException">[docs]</a><span class="k">class</span> <span class="nc">ColumnMissingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Exception to indicate a missing column in a dataset.&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception to indicate a missing column in a dataset.&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Configurable</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base Dataset class for reading from any intermediate file format.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Dataset class for reading from any intermediate file format.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Dataset.__init__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__init__">[docs]</a>    <span class="nd">@save_dataset_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -111,7 +198,7 @@
         <span class="n">loss_weight_default_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Construct Dataset.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Dataset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path: Path to the file(s) from which this `Dataset` should read.</span>
@@ -243,7 +330,7 @@
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetConfig</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Construct `Dataset` instance from `source` configuration.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` instance from `source` configuration.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">DatasetConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
@@ -262,7 +349,7 @@
     <span class="k">def</span> <span class="nf">_construct_datasets</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DatasetConfig</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Construct `Dataset` for each entry in `self.selection`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` for each entry in `self.selection`.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">datasets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">selections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">)</span>
@@ -280,14 +367,14 @@
     <span class="c1"># Abstract method(s)</span>
 <div class="viewcode-block" id="Dataset._init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._init">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set internal representation needed to read data from input file.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set internal representation needed to read data from input file.&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="Dataset._post_init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._post_init">[docs]</a>    <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Implemenation-specific code to be run after the main constructor.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implemenation-specific code to be run after the main constructor.&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="Dataset._get_all_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_all_indices">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of all available values in `self._index_column`.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of all available values in `self._index_column`.&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="Dataset._query_table"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._query_table">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_query_table</span><span class="p">(</span>
@@ -297,7 +384,7 @@
         <span class="n">sequential_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Query a table at a specific index, optionally with some selection.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query a table at a specific index, optionally with some selection.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            table: Table to be queried.</span>
@@ -321,21 +408,21 @@
 
     <span class="c1"># Public method(s)</span>
 <div class="viewcode-block" id="Dataset.add_label"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.add_label">[docs]</a>    <span class="k">def</span> <span class="nf">add_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Data</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add custom graph label define using function `fn`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add custom graph label define using function `fn`.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span>
         <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;A custom label </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has already been defined.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span></div>
 
 <div class="viewcode-block" id="Dataset.__len__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return number of graphs in `Dataset`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of graphs in `Dataset`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dataset.__getitem__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return graph `Data` object at `index`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return graph `Data` object at `index`.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">sequential_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">sequential_index</span><span class="si">}</span><span class="s2"> not in range [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">sequential_index</span><span class="si">}</span><span class="s2"> not in range [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">]&quot;</span>
             <span class="p">)</span>
         <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span>
             <span class="n">sequential_index</span>
@@ -347,7 +434,7 @@
 <div class="viewcode-block" id="Dataset._resolve_string_selection_to_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._resolve_string_selection_to_indices">[docs]</a>    <span class="k">def</span> <span class="nf">_resolve_string_selection_to_indices</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Resolve selection as string to list of indicies.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve selection as string to list of indicies.</span>
 
 <span class="sd">        Selections are expected to have pandas.DataFrame.query-compatible</span>
 <span class="sd">        syntax, e.g., ``` &quot;event_no % 5 &gt; 0&quot; ``` Selections may also specify a</span>
@@ -423,7 +510,7 @@
 <div class="viewcode-block" id="Dataset._get_random_events_from_selection"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_random_events_from_selection">[docs]</a>    <span class="k">def</span> <span class="nf">_get_random_events_from_selection</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Parse the `selection` to extract num/frac of random events.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the `selection` to extract num/frac of random events.&quot;&quot;&quot;</span>
         <span class="n">random_events_pattern</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">r</span><span class="s2">&quot; *([0-9]+[eE0-9\.-]*[%]?) +random events ~ *(.*)$&quot;</span>
         <span class="p">)</span>
@@ -457,7 +544,7 @@
         <span class="k">return</span> <span class="n">nb_events</span><span class="p">,</span> <span class="n">frac_events</span><span class="p">,</span> <span class="n">selection</span></div>
 
 <div class="viewcode-block" id="Dataset._remove_missing_columns"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._remove_missing_columns">[docs]</a>    <span class="k">def</span> <span class="nf">_remove_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Remove columns that are not present in the input file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove columns that are not present in the input file.</span>
 
 <span class="sd">        Columns are removed from `self._features` and `self._truth`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -499,7 +586,7 @@
         <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list missing columns in `table`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list missing columns in `table`.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
@@ -520,7 +607,7 @@
         <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span>
         <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Query file for event features and truth information.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query file for event features and truth information.</span>
 
 <span class="sd">        The returned lists have lengths correspondings to the number of pulses</span>
 <span class="sd">        in the event. Their constituent tuples have lengths corresponding to</span>
@@ -579,7 +666,7 @@
         <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create Pytorch Data (i.e. graph) object.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create Pytorch Data (i.e. graph) object.</span>
 
 <span class="sd">        No preprocessing is performed at this stage, just as no node adjancency</span>
 <span class="sd">        is imposed. This means that the `edge_attr` and `edge_weight`</span>
@@ -672,7 +759,7 @@
         <span class="k">return</span> <span class="n">graph</span></div>
 
 <div class="viewcode-block" id="Dataset._get_labels"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_labels">[docs]</a>    <span class="k">def</span> <span class="nf">_get_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return dictionary of  labels, to be added as graph attributes.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return dictionary of  labels, to be added as graph attributes.&quot;&quot;&quot;</span>
         <span class="n">abs_pid</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">&quot;pid&quot;</span><span class="p">])</span>
         <span class="n">sim_type</span> <span class="o">=</span> <span class="n">truth_dict</span><span class="p">[</span><span class="s2">&quot;sim_type&quot;</span><span class="p">]</span>
 
@@ -696,7 +783,7 @@
         <span class="k">return</span> <span class="n">labels_dict</span></div>
 
 <div class="viewcode-block" id="Dataset._get_dbang_label"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_dbang_label">[docs]</a>    <span class="k">def</span> <span class="nf">_get_dbang_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get label for double-bang classification.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get label for double-bang classification.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">label</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">&quot;dbang_decay_length&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">label</span>
@@ -705,30 +792,46 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021, IceCube Collaboration.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
