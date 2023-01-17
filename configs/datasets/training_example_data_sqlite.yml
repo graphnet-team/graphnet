@@ -1,4 +1,4 @@
-path: /groups/icecube/asogaard/work/development/graphnet/training_example_data/prometheus-1250-events.db
+path: /groups/icecube/asogaard/work/development/graphnet/training_example_data/prometheus-events.db
 pulsemaps:
   - total
 features:
