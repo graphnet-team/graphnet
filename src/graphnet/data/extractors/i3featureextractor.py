@@ -63,11 +63,14 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         }
 
         # Get OM data
-        om_keys, data = get_om_keys_and_pulseseries(
-            frame,
-            self._pulsemap,
-            self._calibration,
-        )
+        if self._pulsemap in frame:
+            om_keys, data = get_om_keys_and_pulseseries(
+                frame,
+                self._pulsemap,
+                self._calibration,
+            )
+        else:
+            return output
 
         # Added these :
         bright_doms = None
@@ -192,11 +195,14 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         output.update(output_icecube86)
 
         # Get OM data
-        om_keys, data = get_om_keys_and_pulseseries(
-            frame,
-            self._pulsemap,
-            self._calibration,
-        )
+        if self._pulsemap in frame:
+            om_keys, data = get_om_keys_and_pulseseries(
+                frame,
+                self._pulsemap,
+                self._calibration,
+            )
+        else:
+            return output
 
         for om_key in om_keys:
             # Common values for each OM
@@ -245,11 +251,14 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
         output.update(output_icecube_upgrade)
 
         # Get OM data
-        om_keys, data = get_om_keys_and_pulseseries(
-            frame,
-            self._pulsemap,
-            self._calibration,
-        )
+        if self._pulsemap in frame:
+            om_keys, data = get_om_keys_and_pulseseries(
+                frame,
+                self._pulsemap,
+                self._calibration,
+            )
+        else:
+            return output
 
         for om_key in om_keys:
             # Loop over pulses for each OM
