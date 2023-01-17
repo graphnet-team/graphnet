@@ -66,12 +66,17 @@ def test_dataconverter(
 ) -> None:
     """Test the implementation of `DataConverter` for `backend`."""
     # Constructor DataConverter instance
+    extractors = [
+        I3TruthExtractor(),
+        I3RetroExtractor(),
+        I3FeatureExtractorIceCube86("SRTInIcePulses"),
+    ]
+    if backend == "sqlite":
+        extractors.append(
+            I3FeatureExtractorIceCube86("pulsemap_not_in_files_Pulses")
+        )
     opt = dict(
-        extractors=[
-            I3TruthExtractor(),
-            I3RetroExtractor(),
-            I3FeatureExtractorIceCube86("SRTInIcePulses"),
-        ],
+        extractors=extractors,
         outdir=OUTPUT_DATA_DIR,
         gcd_rescue=os.path.join(
             test_data_dir,
