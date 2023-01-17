@@ -140,6 +140,9 @@ class ParquetToSQLiteConverter(LoggerMixin):
             if df.columns == ["values"]:
                 df.columns = [field_name]
 
+        if "event_no" in df.columns:
+            return df
+
         # If true, the dataframe contains more than 1 row pr. event (i.e.,
         # pulsemap).
         if len(df) != n_events_in_file:
