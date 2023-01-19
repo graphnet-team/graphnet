@@ -5,10 +5,36 @@ from typing import List, Tuple, Optional
 
 import numpy as np
 import pandas as pd
-
+import random
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
+
+
+def get_random_fraction(
+    database: str, fraction: float, seed: int = 0
+) -> List[int]:
+    """Get a random unique fraction without any special selection criteria.
+
+    Args:
+        database: Path to database from which to get event numbers.
+        fraction: desired fraction of the total number of events.
+        seed: Random number generator seed.
+
+    Returns:
+        List of event numbers.
+    """
+    rng = np.random.RandomState(seed=seed)
+    with sqlite3.connect(database) as con:
+        total_query = "SELECT event_no FROM truth"
+
+        tmp_dataframe = pd.read_sql(total_query, con)
+    event_no_list = (
+        tmp_dataframe.sample(frac=fraction, replace=False, random_state=rng)
+        .values.ravel()
+        .tolist()
+    )
+    return event_no_list
 
 
 def get_desired_event_numbers(
