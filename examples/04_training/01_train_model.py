@@ -6,7 +6,7 @@ import os
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
-from graphnet.constants import TEST_DATA_DIR
+from graphnet.constants import EXAMPLE_OUTPUT_DIR
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import Model
 from graphnet.training.callbacks import ProgressBar
@@ -62,7 +62,7 @@ def main(
         dataloader={"batch_size": batch_size, "num_workers": num_workers},
     )
 
-    archive = os.path.join(TEST_DATA_DIR, "output", "train_model")
+    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model")
     run_name = "dynedge_{}_example".format("_".join(config.target))
 
     # Construct dataloaders
