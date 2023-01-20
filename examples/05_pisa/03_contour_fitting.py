@@ -1,6 +1,7 @@
-"""Example of fitting contours using PISA."""
+"""Example of fitting oscillation parameter contours using PISA."""
 
 from graphnet.pisa.fitting import ContourFitter
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_pisa_package
 from graphnet.utilities.logging import get_logger
 
@@ -68,4 +69,13 @@ if __name__ == "__main__":
         )
 
     else:
+        # Parse command-line arguments
+        parser = ArgumentParser(
+            description="""
+Fit oscillation parameter contours using PISA.
+"""
+        )
+
+        args = parser.parse_args()
+
         main()
