@@ -1,7 +1,7 @@
 """Consistent CLI argument parsing across `graphnet`."""
 
 import argparse
-from typing import List, Optional
+from typing import Any, Optional, Union, Tuple
 
 
 ASCII_LOGO = r"""
@@ -14,6 +14,47 @@ ASCII_LOGO = r"""
 Graph neural networks for neutrino telescope event reconstruction
 _________________________________________________________________
 """
+
+
+class Options:
+    """Class to handle standard argument options to ArgumentParser."""
+
+    def __init__(self, *options: Union[str, Tuple[str, Any]]):
+        """Construct `Options`."""
+        self._options = list(options)
+
+    def _get_index(self, option: str) -> Optional[int]:
+        indices = [
+            ix
+            for ix, o in enumerate(self._options)
+            if option == o or (isinstance(o, tuple) and option == o[0])
+        ]
+        ret: Optional[int] = None
+        if len(indices):
+            assert len(indices) == 1, "Got mutiple matches."
+            ret = indices[0]
+        return ret
+
+    def contains(self, option: str) -> bool:
+        """Check if `option` is present."""
+        return self._get_index(option) is not None
+
+    def pop_default(self, option: str) -> Optional[Any]:
+        """Return the default value for `option`, if any."""
+        index = self._get_index(option)
+        assert index is not None
+        value = self._options[index]
+        del self._options[index]
+        default = value[1] if isinstance(value, tuple) else None
+        return default
+
+    def __len__(self) -> int:
+        """Return the number of options."""
+        return len(self._options)
+
+    def __repr__(self) -> str:
+        """Return string representation of options."""
+        return repr(self._options)
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -36,11 +77,14 @@ class ArgumentParser(argparse.ArgumentParser):
             formatter_class=argparse.RawTextHelpFormatter,
         )
 
-    def with_standard_arguments(self, *args: str) -> "ArgumentParser":
+    def with_standard_arguments(
+        self, *args: Union[str, Tuple[str, Any]]
+    ) -> "ArgumentParser":
         """Add standard, named arguments to the `ArgumentParser`."""
-        remaining = list(args)
+        remaining = Options(*args)
 
-        if "gpus" in remaining:
+        if remaining.contains("gpus"):
+            default = remaining.pop_default("gpus")
             self.add_argument(
                 "--gpus",
                 nargs="+",
@@ -49,21 +93,22 @@ class ArgumentParser(argparse.ArgumentParser):
                     "Indices of GPUs to use for training (default: "
                     "%(default)s)"
                 ),
+                default=default or None,
             )
-            remaining.remove("gpus")
 
-        if "max-epochs":
+        if remaining.contains("max-epochs"):
+            default = remaining.pop_default("max-epochs")
             self.add_argument(
                 "--max-epochs",
                 type=int,
                 help=(
                     "Maximum number of epochs to train (default: %(default)s)"
                 ),
-                default=5,
+                default=default or 50,
             )
-            remaining.remove("max-epochs")
 
-        if "early-stopping-patience" in remaining:
+        if remaining.contains("early-stopping-patience"):
+            default = remaining.pop_default("early-stopping-patience")
             self.add_argument(
                 "--early-stopping-patience",
                 type=int,
@@ -71,27 +116,26 @@ class ArgumentParser(argparse.ArgumentParser):
                     "Number of epochs with no improvement in validation loss "
                     "after which to stop training (default: %(default)s)"
                 ),
-                default=5,
+                default=default or 5,
             )
-            remaining.remove("early-stopping-patience")
 
-        if "batch-size":
+        if remaining.contains("batch-size"):
+            default = remaining.pop_default("batch-size")
             self.add_argument(
                 "--batch-size",
                 type=int,
                 help="Batch size to use for training (default: %(default)s)",
-                default=128,
+                default=default or 128,
             )
-            remaining.remove("batch-size")
 
-        if "num-workers" in remaining:
+        if remaining.contains("num-workers"):
+            default = remaining.pop_default("num-workers")
             self.add_argument(
                 "--num-workers",
                 type=int,
                 help="Number of workers to fetch data (default: %(default)s)",
-                default=10,
+                default=default or 10,
             )
-            remaining.remove("num-workers")
 
         assert (
             len(remaining) == 0
