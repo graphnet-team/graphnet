@@ -4,6 +4,7 @@ from typing import Dict, List
 
 from graphnet.data.pipeline import InSQLitePipeline
 from graphnet.data.constants import TRUTH, FEATURES
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_pisa_package
 from graphnet.utilities.logging import get_logger
 
@@ -88,4 +89,13 @@ if __name__ == "__main__":
         )
 
     else:
+        # Parse command-line arguments
+        parser = ArgumentParser(
+            description="""
+Build and run PISA Pipeline with SQLite inputs.
+"""
+        )
+
+        args = parser.parse_args()
+
         main()

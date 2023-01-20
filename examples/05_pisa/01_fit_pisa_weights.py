@@ -1,6 +1,7 @@
 """Example of using the PISA WeightFitter class."""
 
 from graphnet.pisa.fitting import WeightFitter
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_pisa_package
 from graphnet.utilities.logging import get_logger
 
@@ -50,4 +51,13 @@ if __name__ == "__main__":
         )
 
     else:
+        # Parse command-line arguments
+        parser = ArgumentParser(
+            description="""
+Use the PISA WeightFitter class.
+"""
+        )
+
+        args = parser.parse_args()
+
         main()

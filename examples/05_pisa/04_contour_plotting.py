@@ -9,6 +9,7 @@ it yourself!
 """
 
 from graphnet.pisa.plotting import plot_2D_contour, plot_1D_contour
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_pisa_package
 from graphnet.utilities.logging import get_logger
 
@@ -78,5 +79,12 @@ if __name__ == "__main__":
         )
 
     else:
+        # Parse command-line arguments
+        parser = ArgumentParser(
+            description="""
+Plot oscillation parameter contours using PISA.
+"""
+        )
+
         example_plot_2d_contour()
         example_plot_1d_contour()
