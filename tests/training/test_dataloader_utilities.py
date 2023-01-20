@@ -4,36 +4,23 @@
 member methods in `DataLoader`.
 """
 
-import os.path
 from typing import Tuple
 
 import pytest
 
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.constants import TEST_DATA_DIR
+from graphnet.constants import TEST_PARQUET_DATA, TEST_SQLITE_DATA
 from graphnet.training.utils import make_train_validation_dataloader
 
 # Configuration
 NB_EVENTS_TOTAL = 5
-PATH_SQLITE = os.path.join(
-    TEST_DATA_DIR,
-    "sqlite",
-    "oscNext_genie_level7_v02",
-    "oscNext_genie_level7_v02_first_5_frames.db",
-)
-PATH_PARQUET = os.path.join(
-    TEST_DATA_DIR,
-    "parquet",
-    "oscNext_genie_level7_v02",
-    "oscNext_genie_level7_v02_first_5_frames.parquet",
-)
 
 
 # Unit test(s)
 def test_none_selection() -> None:
     """Test agreement of the two ways to calculate this loss."""
     (train_dataloader, test_dataloader,) = make_train_validation_dataloader(
-        PATH_SQLITE,
+        TEST_SQLITE_DATA,
         selection=None,
         pulsemaps=["SRTInIcePulses"],
         features=FEATURES.DEEPCORE,
@@ -55,7 +42,7 @@ def test_none_selection() -> None:
 def test_array_selection(selection: Tuple[int]) -> None:
     """Test agreement of the two ways to calculate this loss."""
     (train_dataloader, test_dataloader) = make_train_validation_dataloader(
-        PATH_SQLITE,
+        TEST_SQLITE_DATA,
         selection=list(selection),
         pulsemaps=["SRTInIcePulses"],
         features=FEATURES.DEEPCORE,
@@ -70,7 +57,7 @@ def test_empty_selection() -> None:
     """Test agreement of the two ways to calculate this loss."""
     try:
         _ = make_train_validation_dataloader(
-            PATH_SQLITE,
+            TEST_SQLITE_DATA,
             selection=list(),
             pulsemaps=["SRTInIcePulses"],
             features=FEATURES.DEEPCORE,
@@ -86,7 +73,7 @@ def test_parquet() -> None:
     """Test agreement of the two ways to calculate this loss."""
     try:
         _ = make_train_validation_dataloader(
-            PATH_PARQUET,
+            TEST_PARQUET_DATA,
             selection=None,
             pulsemaps=["SRTInIcePulses"],
             features=FEATURES.DEEPCORE,
