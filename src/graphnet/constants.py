@@ -20,18 +20,3 @@ TEST_PARQUET_DATA = os.path.join(
     _test_dataset_name,
     f"{_test_dataset_file}.parquet",
 )
-
-# Training example data
-TRAINING_EXAMPLE_DATA_DIR = os.path.join(
-    GRAPHNET_ROOT_DIR, "training_example_data"
-)
-
-_example_dataset_file = "prometheus-1250-events"
-TRAINING_EXAMPLE_SQLITE_DATA = os.path.join(
-    TRAINING_EXAMPLE_DATA_DIR, f"{_example_dataset_file}.db"
-)
-TRAINING_EXAMPLE_PARQUET_DATA = os.path.join(
-    TRAINING_EXAMPLE_DATA_DIR, f"{_example_dataset_file}.parquet"
-)
-
-del _test_dataset_name, _test_dataset_file, _example_dataset_file
