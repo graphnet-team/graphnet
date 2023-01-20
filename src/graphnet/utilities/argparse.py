@@ -4,6 +4,8 @@ import argparse
 import copy
 from typing import Any, Dict, Optional, Union, Tuple
 
+from graphnet.constants import CONFIG_DIR
+
 
 ASCII_LOGO = r"""
   _____              __   _  __  ______
@@ -67,7 +69,7 @@ class ArgumentParser(argparse.ArgumentParser):
             "nargs": "+",
             "type": int,
             "help": (
-                "Indices of GPUs to use for training (default: " "%(default)s)"
+                "Indices of GPUs to use for training (default: %(default)s)"
             ),
             "default": None,
         },
@@ -88,13 +90,25 @@ class ArgumentParser(argparse.ArgumentParser):
         },
         "batch-size": {
             "type": int,
-            "help": ("Batch size to use for training (default: %(default)s)"),
+            "help": "Batch size to use for training (default: %(default)s)",
             "default": 128,
         },
         "num-workers": {
             "type": int,
-            "help": ("Number of workers to fetch data (default: %(default)s)"),
+            "help": "Number of workers to fetch data (default: %(default)s)",
             "default": 10,
+        },
+        "dataset-config": {
+            "help": "Path to dataset config file (default: %(default)s)",
+            "default": (
+                f"{CONFIG_DIR}/datasets/training_example_data_sqlite.yml"
+            ),
+        },
+        "model-config": {
+            "help": "Path to model config file (default: %(default)s)",
+            "default": (
+                f"{CONFIG_DIR}/models/example_energy_reconstruction_model.yml"
+            ),
         },
     }
 
