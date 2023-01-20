@@ -4,6 +4,10 @@ from typing import Dict, List
 
 from graphnet.data.pipeline import InSQLitePipeline
 from graphnet.data.constants import TRUTH, FEATURES
+from graphnet.utilities.imports import has_pisa_package
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 
 def get_output_column_names(target: str) -> List[str]:
@@ -71,4 +75,17 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if not has_pisa_package():
+        logger.error(
+            "This example requries PISA to be installed, which doesn't seem "
+            "to be the case. Please install PISA or run an example scripts in "
+            "one of the other folders:"
+            "\n * examples/01_icetray/"
+            "\n * examples/02_data/"
+            "\n * examples/03_weights/"
+            "\n * examples/04_training/"
+            "\nExiting."
+        )
+
+    else:
+        main()
