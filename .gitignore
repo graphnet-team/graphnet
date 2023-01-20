@@ -142,10 +142,12 @@ wandb/
 checkpoints/
 
 # Data and outputs
-test_data/output/
+data/tests/output/
+data/examples/output/
 **.png
 **.pth
 **.db
+**.parquet
 
 # Notebooks
 **.ipynb

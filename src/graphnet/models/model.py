@@ -62,6 +62,20 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             strategy="ddp",
             **trainer_kwargs,
         )
+
+        inference_devices = devices
+        if isinstance(inference_devices, list):
+            inference_devices = inference_devices[:1]
+
+        self._inference_trainer = Trainer(
+            accelerator=accelerator,
+            devices=inference_devices,
+            callbacks=callbacks,
+            logger=logger,
+            strategy=None,
+            **trainer_kwargs,
+        )
+
         try:
             trainer.fit(
                 self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
@@ -77,7 +91,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         """
         self.train(mode=False)
 
-        predictions_list = self.trainer.predict(self, dataloader)
+        predictions_list = self._inference_trainer.predict(self, dataloader)
         assert len(predictions_list), "Got no predictions"
 
         nb_outputs = len(predictions_list[0])
