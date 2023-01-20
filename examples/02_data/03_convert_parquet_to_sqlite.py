@@ -1,18 +1,31 @@
 """Example of converting Parquet files to SQLite database."""
 
-from graphnet.constants import EXAMPLE_DATA_DIR, TEST_PARQUET_DATA
+import os.path
+
+from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_PARQUET_DATA
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
 from graphnet.utilities.argparse import ArgumentParser
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 
 def main(parquet_path: str, mc_truth_table: str) -> None:
     """Run example."""
     # Path to where you want the database to be stored
-    outdir = f"{EXAMPLE_DATA_DIR}/output/convert_parquet_to_sqlite/"
+    outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_parquet_to_sqlite/"
 
     # Name of the database.
     # Will be saved in {outdir}/{database_name}/data/{database_name}.db
     database_name = parquet_path.split("/")[-1].split(".")[0]
+    output_path = f"{outdir}/{database_name}/data/{database_name}.db"
+
+    if os.path.exists(output_path):
+        logger.error(
+            f"Output database {output_path} already exists. The conversion "
+            "will likely fail. If so, please remove the output database "
+            "before running this script again."
+        )
 
     converter = ParquetToSQLiteConverter(
         mc_truth_table=mc_truth_table,
