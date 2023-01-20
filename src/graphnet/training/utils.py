@@ -29,14 +29,15 @@ def make_dataloader(
     *,
     batch_size: int,
     shuffle: bool,
-    selection: List[int] = None,
+    selection: Optional[List[int]] = None,
     num_workers: int = 10,
     persistent_workers: bool = True,
     node_truth: List[str] = None,
-    node_truth_table: str = None,
+    truth_table: str = "truth",
+    node_truth_table: Optional[str] = None,
     string_selection: List[int] = None,
-    loss_weight_table: str = None,
-    loss_weight_column: str = None,
+    loss_weight_table: Optional[str] = None,
+    loss_weight_column: Optional[str] = None,
 ) -> DataLoader:
     """Construct `DataLoader` instance."""
     # Check(s)
@@ -50,6 +51,7 @@ def make_dataloader(
         truth=truth,
         selection=selection,
         node_truth=node_truth,
+        truth_table=truth_table,
         node_truth_table=node_truth_table,
         string_selection=string_selection,
         loss_weight_table=loss_weight_table,
@@ -86,16 +88,17 @@ def make_train_validation_dataloader(
     truth: List[str],
     *,
     batch_size: int,
-    database_indices: List[int] = None,
+    database_indices: Optional[List[int]] = None,
     seed: int = 42,
     test_size: float = 0.33,
     num_workers: int = 10,
     persistent_workers: bool = True,
-    node_truth: str = None,
-    node_truth_table: str = None,
-    string_selection: List[int] = None,
-    loss_weight_column: str = None,
-    loss_weight_table: str = None,
+    node_truth: Optional[str] = None,
+    truth_table: str = "truth",
+    node_truth_table: Optional[str] = None,
+    string_selection: Optional[List[int]] = None,
+    loss_weight_column: Optional[str] = None,
+    loss_weight_table: Optional[str] = None,
 ) -> Tuple[DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
     # Reproducibility
@@ -109,9 +112,13 @@ def make_train_validation_dataloader(
         # If no selection is provided, use all events in dataset.
         dataset: Dataset
         if db.endswith(".db"):
-            dataset = SQLiteDataset(db, pulsemaps, features, truth)
+            dataset = SQLiteDataset(
+                db, pulsemaps, features, truth, truth_table=truth_table
+            )
         elif db.endswith(".parquet"):
-            dataset = ParquetDataset(db, pulsemaps, features, truth)
+            dataset = ParquetDataset(
+                db, pulsemaps, features, truth, truth_table=truth_table
+            )
         else:
             raise RuntimeError(
                 f"File {db} with format {db.split('.'[-1])} not supported."
@@ -146,6 +153,7 @@ def make_train_validation_dataloader(
         num_workers=num_workers,
         persistent_workers=persistent_workers,
         node_truth=node_truth,
+        truth_table=truth_table,
         node_truth_table=node_truth_table,
         string_selection=string_selection,
         loss_weight_column=loss_weight_column,
