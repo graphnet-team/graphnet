@@ -3,7 +3,7 @@
 import logging
 import os
 
-from graphnet.constants import TEST_DATA_DIR
+from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite import (
     SQLiteDataConverter,
@@ -21,7 +21,7 @@ from graphnet.utilities.logging import get_logger
 
 logger = get_logger(level=logging.INFO)
 
-OUTPUT_DIR = f"{TEST_DATA_DIR}/output/compare_sqlite_and_parquet"
+OUTPUT_DIR = f"{EXAMPLE_OUTPUT_DIR}/compare_sqlite_and_parquet"
 PULSEMAP = "SRTInIcePulses"
 
 
