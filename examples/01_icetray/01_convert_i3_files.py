@@ -3,7 +3,7 @@
 import logging
 import os
 
-from graphnet.constants import TEST_DATA_DIR
+from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
 from graphnet.data.extractors import (
     I3FeatureExtractorIceCubeUpgrade,
     I3RetroExtractor,
@@ -31,7 +31,7 @@ def main_icecube86(backend: str) -> None:
     assert backend in CONVERTER_CLASS
 
     inputs = [f"{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02"]
-    outdir = f"{TEST_DATA_DIR}/output/convert_i3_files/ic86"
+    outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/ic86"
 
     converter: DataConverter = CONVERTER_CLASS[backend](
         [
@@ -56,7 +56,7 @@ def main_icecube_upgrade(backend: str) -> None:
     assert backend in CONVERTER_CLASS
 
     inputs = [f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998"]
-    outdir = f"{TEST_DATA_DIR}/output/convert_i3_files/ic86"
+    outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/ic86"
     workers = 1
 
     converter: DataConverter = CONVERTER_CLASS[backend](
