@@ -101,8 +101,8 @@ if __name__ == "__main__":
         # Parse command-line arguments
         parser = ArgumentParser(
             description="""
-    Convert I3 files to an intermediate format.
-    """
+Convert I3 files to an intermediate format.
+"""
         )
 
         parser.add_argument("backend", choices=["sqlite", "parquet"])
