@@ -1,6 +1,6 @@
 """Example of converting Parquet files to SQLite database."""
 
-from graphnet.constants import TEST_DATA_DIR, TEST_PARQUET_DATA
+from graphnet.constants import EXAMPLE_DATA_DIR, TEST_PARQUET_DATA
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
 from graphnet.utilities.argparse import ArgumentParser
 
@@ -8,7 +8,7 @@ from graphnet.utilities.argparse import ArgumentParser
 def main(parquet_path: str, mc_truth_table: str) -> None:
     """Run example."""
     # Path to where you want the database to be stored
-    outdir = f"{TEST_DATA_DIR}/output/convert_parquet_to_sqlite/"
+    outdir = f"{EXAMPLE_DATA_DIR}/output/convert_parquet_to_sqlite/"
 
     # Name of the database.
     # Will be saved in {outdir}/{database_name}/data/{database_name}.db

@@ -8,7 +8,7 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.constants import TEST_DATA_DIR
+from graphnet.constants import EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
@@ -69,9 +69,7 @@ def main(
         },
     }
 
-    archive = os.path.join(
-        TEST_DATA_DIR, "output", "train_model_without_configs"
-    )
+    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model_without_configs")
     run_name = "dynedge_{}_example".format(config["target"])
 
     # Log configuration to W&B
