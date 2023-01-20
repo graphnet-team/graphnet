@@ -1,30 +1,24 @@
 """Example of training Model."""
 
 import os
-from typing import cast
+from typing import cast, List, Optional
 
-from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
 
-from graphnet.training.loss_functions import LogCoshLoss
+from graphnet.constants import TEST_DATA_DIR
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.sqlite.sqlite_selection import (
-    get_equal_proportion_neutrino_indices,
-)
 from graphnet.models import StandardModel
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
-from graphnet.training.utils import (
-    get_predictions,
-    make_train_validation_dataloader,
-    save_results,
-)
+from graphnet.training.loss_functions import LogCoshLoss
+from graphnet.training.utils import make_train_validation_dataloader
+from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
@@ -46,41 +40,48 @@ wandb_logger = WandbLogger(
 )
 
 
-def main() -> None:
+def main(
+    path: str,
+    pulsemap: str,
+    target: str,
+    gpus: Optional[List[int]],
+    max_epochs: int,
+    early_stopping_patience: int,
+    batch_size: int,
+    num_workers: int,
+) -> None:
     """Run example."""
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
 
     # Configuration
     config = {
-        "db": "/groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db",
-        "pulsemap": "SRTTWOfflinePulsesDC",
-        "batch_size": 512,
-        "num_workers": 10,
-        "accelerator": "gpu",
-        "devices": [0],
-        "target": "energy",
-        "n_epochs": 5,
-        "patience": 5,
+        "path": path,
+        "pulsemap": pulsemap,
+        "batch_size": batch_size,
+        "num_workers": num_workers,
+        "target": target,
+        "early_stopping_patience": early_stopping_patience,
+        "fit": {
+            "gpus": gpus,
+            "max_epochs": max_epochs,
+        },
     }
-    archive = "/groups/icecube/asogaard/gnn/results/"
+
+    archive = os.path.join(
+        TEST_DATA_DIR, "output", "train_model_without_configs"
+    )
     run_name = "dynedge_{}_example".format(config["target"])
 
     # Log configuration to W&B
     wandb_logger.experiment.config.update(config)
 
-    # Common variables
-    train_selection, _ = get_equal_proportion_neutrino_indices(
-        cast(str, config["db"])
-    )
-    train_selection = train_selection[0:50000]
-
     (
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
-        cast(str, config["db"]),
-        train_selection,
+        cast(str, config["path"]),
+        None,
         cast(str, config["pulsemap"]),
         features,
         truth,
@@ -113,7 +114,7 @@ def main() -> None:
             "milestones": [
                 0,
                 len(training_dataloader) / 2,
-                len(training_dataloader) * cast(int, config["n_epochs"]),
+                len(training_dataloader) * cast(int, config["max_epochs"]),
             ],
             "factors": [1e-2, 1, 1e-02],
         },
@@ -126,37 +127,90 @@ def main() -> None:
     callbacks = [
         EarlyStopping(
             monitor="val_loss",
-            patience=config["patience"],
+            patience=config["early_stopping_patience"],
         ),
         ProgressBar(),
     ]
 
-    trainer = Trainer(
-        accelerator=config["accelerator"],
-        devices=config["devices"],
-        max_epochs=config["n_epochs"],
-        callbacks=callbacks,
-        log_every_n_steps=1,
-        logger=wandb_logger,
-    )
-
-    try:
-        trainer.fit(model, training_dataloader, validation_dataloader)
-    except KeyboardInterrupt:
-        logger.warning("[ctrl+c] Exiting gracefully.")
-        pass
-
-    # Saving predictions to file
-    results = get_predictions(
-        trainer,
-        model,
+    model.fit(
+        training_dataloader,
         validation_dataloader,
-        [cast(str, config["target"]) + "_pred"],
-        additional_attributes=[cast(str, config["target"]), "event_no"],
+        callbacks=callbacks,
+        logger=wandb_logger,
+        **config["fit"],
     )
 
-    save_results(cast(str, config["db"]), run_name, results, archive, model)
+    # Get predictions
+    prediction_columns = [cast(str, config["target"]) + "_pred"]
+    additional_attributes = [config["target"]]
+
+    results = model.predict_as_dataframe(
+        validation_dataloader,
+        prediction_columns=prediction_columns,
+        additional_attributes=additional_attributes + ["event_no"],
+    )
+
+    # Save predictions and model to file
+    db_name = path.split("/")[-1].split(".")[0]
+    path = os.path.join(archive, db_name, run_name)
+    logger.info(f"Writing results to {path}")
+    os.makedirs(path, exist_ok=True)
+
+    results.to_csv(f"{path}/results.csv")
+    model.save_state_dict(f"{path}/state_dict.pth")
+    model.save(f"{path}/model.pth")
 
 
 if __name__ == "__main__":
-    main()
+
+    # Parse command-line arguments
+    parser = ArgumentParser(
+        description="""
+Train GNN model without the use of config files.
+"""
+    )
+
+    parser.add_argument(
+        "--path",
+        help="Path to dataset file (default: %(default)s)",
+        default=(
+            "/groups/icecube/asogaard/work/development/graphnet/test_data/"
+            "sqlite/prometheus/prometheus-events.db"
+        ),
+    )
+
+    parser.add_argument(
+        "--pulsemap",
+        help="Name of pulsemap to use (default: %(default)s)",
+        default="total",
+    )
+
+    parser.add_argument(
+        "--target",
+        help=(
+            "Name of feature to use as regression target (default: "
+            "%(default)s)"
+        ),
+        default="total_energy",
+    )
+
+    parser.with_standard_arguments(
+        "gpus",
+        ("max-epochs", 5),
+        "early-stopping-patience",
+        ("batch-size", 16),
+        "num-workers",
+    )
+
+    args = parser.parse_args()
+
+    main(
+        args.path,
+        args.pulsemap,
+        args.target,
+        args.gpus,
+        args.max_epochs,
+        args.early_stopping_patience,
+        args.batch_size,
+        args.num_workers,
+    )
