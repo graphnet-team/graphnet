@@ -6,7 +6,7 @@ import io
 import multiprocessing
 import os
 import random
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 from configupdater import ConfigUpdater
 import matplotlib as mpl
@@ -14,11 +14,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import pisa
-from pisa.core.distribution_maker import DistributionMaker
-from pisa.core.pipeline import Pipeline
-from pisa.analysis.analysis import Analysis
-from pisa import ureg
+from graphnet.utilities.imports import has_pisa_package
+
+if has_pisa_package() or TYPE_CHECKING:
+    import pisa  # pyright: reportMissingImports=false
+    from pisa.core.distribution_maker import DistributionMaker
+    from pisa.core.pipeline import Pipeline
+    from pisa.analysis.analysis import Analysis
+    from pisa import ureg
 
 from graphnet.data.sqlite import create_table_and_save_to_sql
 
