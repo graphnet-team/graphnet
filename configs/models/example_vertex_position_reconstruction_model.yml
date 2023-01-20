@@ -1,0 +1,46 @@
+arguments:
+  coarsening: null
+  detector:
+    ModelConfig:
+      arguments:
+        graph_builder:
+          ModelConfig:
+            arguments: {columns: null, nb_nearest_neighbours: 8}
+            class_name: KNNGraphBuilder
+        scalers: null
+      class_name: Prometheus
+  gnn:
+    ModelConfig:
+      arguments:
+        add_global_variables_after_pooling: false
+        dynedge_layer_sizes: null
+        features_subset: null
+        global_pooling_schemes: [min, max, mean, sum]
+        nb_inputs: 4
+        nb_neighbours: 8
+        post_processing_layer_sizes: null
+        readout_layer_sizes: null
+      class_name: DynEdge
+  optimizer_class: '!class torch.optim.adam Adam'
+  optimizer_kwargs: {eps: 0.001, lr: 0.001}
+  scheduler_class: '!class graphnet.training.callbacks PiecewiseLinearLR'
+  scheduler_config: {interval: step}
+  scheduler_kwargs:
+    factors: [0.01, 1, 0.01]
+    milestones: [0, 33.0, 330]
+  tasks:
+  - ModelConfig:
+      arguments:
+        hidden_size: 128
+        loss_function:
+          ModelConfig:
+            arguments: {}
+            class_name: MSELoss
+        nb_outputs: 3
+        target_labels: [injection_position_x, injection_position_y, injection_position_z]
+        transform_inference: "!function def unscale_XYZ(x):\n    x[:,0] = 764.431509*x[:,0]\n    x[:,1] =\
+          \ 785.041607*x[:,1]\n    x[:,2] = 1083.249944*x[:,2]\n    return x\n"
+        transform_target: "!function def scale_XYZ(x):\n    x[:,0] = x[:,0]/764.431509\n    x[:,1] =\
+          \ x[:,1]/785.041607\n    x[:,2] = x[:,2]/1083.249944\n    return x\n"
+      class_name: IdentityTask
+class_name: StandardModel

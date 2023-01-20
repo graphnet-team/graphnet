@@ -1,15 +1,17 @@
 """Callback class(es) for using during model training."""
 
 import logging
-import numpy as np
 from typing import Dict, List
 import warnings
 
-from torch.optim.lr_scheduler import _LRScheduler
-from torch.optim import Optimizer
+import numpy as np
 from tqdm.std import Bar
+
 from pytorch_lightning import LightningModule, Trainer
 from pytorch_lightning.callbacks import TQDMProgressBar
+from pytorch_lightning.utilities import rank_zero_only
+from torch.optim import Optimizer
+from torch.optim.lr_scheduler import _LRScheduler
 
 from graphnet.utilities.logging import get_logger
 
@@ -142,9 +144,10 @@ class ProgressBar(TQDMProgressBar):
         """
         super().on_train_epoch_end(trainer, model)
 
-        h = logger.logger.handlers[0]
-        assert isinstance(h, logging.StreamHandler)
-        level = h.level
-        h.setLevel(logging.ERROR)
-        logger.info(str(super().main_progress_bar))
-        h.setLevel(level)
+        if rank_zero_only == 0:
+            h = logger.logger.handlers[0]
+            assert isinstance(h, logging.StreamHandler)
+            level = h.level
+            h.setLevel(logging.ERROR)
+            logger.info(str(super().main_progress_bar))
+            h.setLevel(level)

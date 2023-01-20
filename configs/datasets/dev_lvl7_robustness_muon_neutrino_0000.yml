@@ -1,4 +1,4 @@
-path: /groups/icecube/asogaard/data/sqlite/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db
+path: /groups/icecube/asogaard/data/example/dev_lvl7_robustness_muon_neutrino_0000.db
 pulsemaps:
   - SRTTWOfflinePulsesDC
 features:

@@ -1,0 +1,42 @@
+path: /groups/icecube/asogaard/work/development/graphnet/data/examples/parquet/prometheus/prometheus-events.parquet
+pulsemaps:
+  - total
+features:
+  - sensor_pos_x
+  - sensor_pos_y
+  - sensor_pos_z
+  - t
+truth:
+  - injection_energy
+  - injection_type
+  - injection_interaction_type
+  - injection_zenith
+  - injection_azimuth
+  - injection_bjorkenx
+  - injection_bjorkeny
+  - injection_position_x
+  - injection_position_y
+  - injection_position_z
+  - injection_column_depth
+  - primary_lepton_1_type
+  - primary_hadron_1_type
+  - primary_lepton_1_position_x
+  - primary_lepton_1_position_y
+  - primary_lepton_1_position_z
+  - primary_hadron_1_position_x
+  - primary_hadron_1_position_y
+  - primary_hadron_1_position_z
+  - primary_lepton_1_direction_theta
+  - primary_lepton_1_direction_phi
+  - primary_hadron_1_direction_theta
+  - primary_hadron_1_direction_phi
+  - primary_lepton_1_energy
+  - primary_hadron_1_energy
+  - total_energy
+index_column: event_no
+truth_table: mc_truth
+seed: 21
+selection:
+  test: event_no % 5 == 0
+  validation: event_no % 5 == 1
+  train: event_no % 5 > 1

@@ -1,0 +1,26 @@
+path: /groups/icecube/asogaard/work/development/graphnet/data/tests/sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db
+pulsemaps:
+  - SRTInIcePulses
+features:
+  - dom_x
+  - dom_y
+  - dom_z
+  - dom_time
+  - charge
+  - rde
+  - pmt_area
+truth:
+  - energy
+  - position_x
+  - position_y
+  - position_z
+  - azimuth
+  - zenith
+  - pid
+  - elasticity
+  - sim_type
+  - interaction_type
+index_column: event_no
+truth_table: truth
+seed: 21
+selection: null
