@@ -20,3 +20,6 @@ TEST_PARQUET_DATA = os.path.join(
     _test_dataset_name,
     f"{_test_dataset_file}.parquet",
 )
+
+# Configuration files
+CONFIG_DIR = os.path.join(GRAPHNET_ROOT_DIR, "configs")
