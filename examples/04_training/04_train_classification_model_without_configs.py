@@ -33,9 +33,6 @@ from graphnet.utilities.logging import get_logger
 
 logger = get_logger()
 
-# Configurations
-torch.multiprocessing.set_sharing_strategy("file_system")
-
 # Constants
 features = FEATURES.DEEPCORE
 truth = TRUTH.DEEPCORE[:-1]
