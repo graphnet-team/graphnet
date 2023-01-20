@@ -9,6 +9,10 @@ it yourself!
 """
 
 from graphnet.pisa.plotting import plot_2D_contour, plot_1D_contour
+from graphnet.utilities.imports import has_pisa_package
+from graphnet.utilities.logging import get_logger
+
+logger = get_logger()
 
 
 def example_plot_2d_contour() -> None:
@@ -60,5 +64,19 @@ def example_plot_1d_contour() -> None:
 
 
 if __name__ == "__main__":
-    example_plot_2d_contour()
-    example_plot_1d_contour()
+
+    if not has_pisa_package():
+        logger.error(
+            "This example requries PISA to be installed, which doesn't seem "
+            "to be the case. Please install PISA or run an example scripts in "
+            "one of the other folders:"
+            "\n * examples/01_icetray/"
+            "\n * examples/02_data/"
+            "\n * examples/03_weights/"
+            "\n * examples/04_training/"
+            "\nExiting."
+        )
+
+    else:
+        example_plot_2d_contour()
+        example_plot_1d_contour()

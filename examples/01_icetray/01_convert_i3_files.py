@@ -14,6 +14,7 @@ from graphnet.data.dataconverter import DataConverter
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.utilities.argparse import ArgumentParser
+from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger(level=logging.INFO)
@@ -83,20 +84,36 @@ def main_icecube_upgrade(backend: str) -> None:
 
 if __name__ == "__main__":
 
-    # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
-Convert I3 files to an intermediate format.
-"""
-    )
+    if not has_icecube_package():
+        logger.error(
+            "This example requries IceTray to be installed, which doesn't "
+            "seem to be the case. Please install IceTray; run this example in "
+            "the GraphNeT Docker container which comes with IceTray "
+            "installed; or run an example scripts in one of the other folders:"
+            "\n * examples/02_data/"
+            "\n * examples/03_weights/"
+            "\n * examples/04_training/"
+            "\n * examples/05_pisa/"
+            "\nExiting."
+        )
 
-    parser.add_argument("backend", choices=["sqlite", "parquet"])
-    parser.add_argument("detector", choices=["icecube-86", "icecube-upgrade"])
-
-    args = parser.parse_args()
-
-    # Run example script
-    if args.detector == "icecube-86":
-        main_icecube86(args.backend)
     else:
-        main_icecube_upgrade(args.backend)
+        # Parse command-line arguments
+        parser = ArgumentParser(
+            description="""
+    Convert I3 files to an intermediate format.
+    """
+        )
+
+        parser.add_argument("backend", choices=["sqlite", "parquet"])
+        parser.add_argument(
+            "detector", choices=["icecube-86", "icecube-upgrade"]
+        )
+
+        args = parser.parse_args()
+
+        # Run example script
+        if args.detector == "icecube-86":
+            main_icecube86(args.backend)
+        else:
+            main_icecube_upgrade(args.backend)

@@ -16,6 +16,7 @@ from graphnet.data.extractors import (
     I3RetroExtractor,
 )
 from graphnet.utilities.argparse import ArgumentParser
+from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import get_logger
 
 logger = get_logger(level=logging.INFO)
@@ -74,16 +75,30 @@ def load_data() -> None:
 
 if __name__ == "__main__":
 
-    # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
-Convert I3 files to both SQLite and Parquet formats, and see that the results
-agree.
-"""
-    )
+    if not has_icecube_package():
+        logger.error(
+            "This example requries IceTray to be installed, which doesn't "
+            "seem to be the case. Please install IceTray; run this example in "
+            "the GraphNeT Docker container which comes with IceTray "
+            "installed; or run an example scripts in one of the other folders:"
+            "\n * examples/02_data/"
+            "\n * examples/03_weights/"
+            "\n * examples/04_training/"
+            "\n * examples/05_pisa/"
+            "\nExiting."
+        )
 
-    args = parser.parse_args()
+    else:
+        # Parse command-line arguments
+        parser = ArgumentParser(
+            description="""
+    Convert I3 files to both SQLite and Parquet formats, and see that the results
+    agree.
+    """
+        )
 
-    # Run example script(s)
-    convert_data()
-    load_data()
+        args = parser.parse_args()
+
+        # Run example script(s)
+        convert_data()
+        load_data()
