@@ -22,12 +22,16 @@ def main() -> None:
     }
 
     # Where you want the .csv-file with the results.
-    outdir = "/home/iwsatlas1/oersoe/phd/oscillations/sensitivities"
+    outdir = "/home/iwsatlas1/oersoe/phd/oscillations/sensitivities"  # @TEMP
 
     # What you call your run.
     run_name = "this_is_a_test_run"
 
-    pipeline_path = "/mnt/scratch/rasmus_orsoe/databases/oscillations/dev_lvl7_robustness_muon_neutrino_0000/pipelines/pipeline_oscillation_final/pipeline_oscillation_final.db"
+    pipeline_path = (
+        "/mnt/scratch/rasmus_orsoe/databases/oscillations/"
+        "dev_lvl7_robustness_muon_neutrino_0000/pipelines/"
+        "pipeline_oscillation_final/pipeline_oscillation_final.db"
+    )
 
     fitter = ContourFitter(
         outdir=outdir,

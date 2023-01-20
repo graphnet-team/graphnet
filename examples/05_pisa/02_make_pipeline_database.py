@@ -31,9 +31,10 @@ def build_module_dictionary(targets: List[str]) -> Dict[str, Dict]:
     module_dict: Dict[str, Dict] = {}
     for target in targets:
         module_dict[target] = {}
-        module_dict[target][
-            "path"
-        ] = f"/home/iwsatlas1/oersoe/phd/oscillations/models/final/dynedge_oscillation_final_{target}.pth"
+        module_dict[target]["path"] = (  # @TEMP
+            "/home/iwsatlas1/oersoe/phd/oscillations/models/final/"
+            f"dynedge_oscillation_final_{target}.pth"
+        )
         module_dict[target]["output_column_names"] = get_output_column_names(
             target
         )
@@ -51,7 +52,11 @@ def main() -> None:
     device = "cuda:1"
     targets = ["track", "energy", "zenith"]
     pipeline_name = "pipeline_oscillation"
-    database = "/mnt/scratch/rasmus_orsoe/databases/oscillations/dev_lvl7_robustness_muon_neutrino_0000/data/dev_lvl7_robustness_muon_neutrino_0000.db"
+    database = (  # @TEMP
+        "/mnt/scratch/rasmus_orsoe/databases/oscillations/"
+        "dev_lvl7_robustness_muon_neutrino_0000/data/"
+        "dev_lvl7_robustness_muon_neutrino_0000.db"
+    )
 
     # Remove `interaction_time` if it exists
     try:

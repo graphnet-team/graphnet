@@ -20,13 +20,21 @@ def example_plot_2d_contour() -> None:
     """Plot 2D contour from PISA fit."""
     contour_data_2D = [
         {
-            "path": "/mnt/scratch/rasmus_orsoe/oscillation/30x30_std_config_final_num_bins_15_lbe_0.4_hbe_0.8/merged_results.csv",
+            "path": (
+                "/mnt/scratch/rasmus_orsoe/oscillation/"
+                "30x30_std_config_final_num_bins_15_lbe_0.4_hbe_0.8/"
+                "merged_results.csv"
+            ),
             "model": "dynedge",
             "label": "dynedge",
             "color": "tab:blue",
         },
         {
-            "path": "/mnt/scratch/rasmus_orsoe/oscillation/30x30_oscNext_config_final_num_bins_15_lbe_0.5_hbe_0.85/merged_results.csv",
+            "path": (
+                "/mnt/scratch/rasmus_orsoe/oscillation/"
+                "30x30_oscNext_config_final_num_bins_15_lbe_0.5_hbe_0.85/"
+                "merged_results.csv"
+            ),
             "model": "retro",
             "label": "retro",
             "color": "tab:orange",
@@ -43,14 +51,22 @@ def example_plot_1d_contour() -> None:
     """Plot 1D contour from PISA fit."""
     contour_data_1D = [
         {
-            "path": "/home/iwsatlas1/oersoe/phd/oscillations/sensitivities/100x_bfgs_pid_bin_05_8by8_bins_fix_all_True_philipp_idea/merged_results.csv",
+            "path": (
+                "/home/iwsatlas1/oersoe/phd/oscillations/sensitivities/"
+                "100x_bfgs_pid_bin_05_8by8_bins_fix_all_True_philipp_idea/"
+                "merged_results.csv"
+            ),
             "color": "tab:orange",
             "model": "retro",
             "label": "retro - vanilla bin",
             "ls": "--",
         },
         {
-            "path": "/home/iwsatlas1/oersoe/phd/oscillations/sensitivities/100x_bfgs_pid_bin_05_8by8_bins_fix_all_True_philipp_idea/merged_results.csv",
+            "path": (
+                "/home/iwsatlas1/oersoe/phd/oscillations/sensitivities/"
+                "100x_bfgs_pid_bin_05_8by8_bins_fix_all_True_philipp_idea/"
+                "merged_results.csv"
+            ),
             "color": "tab:blue",
             "model": "dynedge",
             "label": "dynedge - vanilla bin",

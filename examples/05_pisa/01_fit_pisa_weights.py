@@ -11,8 +11,11 @@ logger = get_logger()
 def main() -> None:
     """Run example."""
     # Configuration
-    outdir = "/mnt/scratch/rasmus_orsoe/weight_test"
-    database_path = "/mnt/scratch/rasmus_orsoe/databases/dev_lvl3_genie_burnsample_v5/data/dev_lvl3_genie_burnsample_v5.db"
+    outdir = "/mnt/scratch/rasmus_orsoe/weight_test"  # @TEMP
+    database_path = (  # @TEMP
+        "/mnt/scratch/rasmus_orsoe/databases/dev_lvl3_genie_burnsample_v5/data"
+        "/dev_lvl3_genie_burnsample_v5.db"
+    )
     fitter = WeightFitter(database_path=database_path)
 
     pisa_config_dict = {
