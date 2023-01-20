@@ -56,7 +56,7 @@ def test_array_selection(selection: Tuple[int]) -> None:
     """Test agreement of the two ways to calculate this loss."""
     (train_dataloader, test_dataloader) = make_train_validation_dataloader(
         PATH_SQLITE,
-        selection=selection,
+        selection=list(selection),
         pulsemaps=["SRTInIcePulses"],
         features=FEATURES.DEEPCORE,
         truth=TRUTH.DEEPCORE,
@@ -71,7 +71,7 @@ def test_empty_selection() -> None:
     try:
         _ = make_train_validation_dataloader(
             PATH_SQLITE,
-            selection=tuple(),
+            selection=list(),
             pulsemaps=["SRTInIcePulses"],
             features=FEATURES.DEEPCORE,
             truth=TRUTH.DEEPCORE,
