@@ -19,6 +19,7 @@ def main() -> None:
     # Construct dataloader
     dataset = Dataset.from_config("configs/datasets/test_data_sqlite.yml")
 
+    assert isinstance(dataset, Dataset)
     features = dataset._features[1:]
 
     # Building model
