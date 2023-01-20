@@ -8,6 +8,7 @@ import sqlite3
 import torch
 
 import graphnet.constants
+from graphnet.constants import TEST_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.extractors import (
@@ -29,7 +30,6 @@ if has_icecube_package():
 TEST_DATA_DIR = os.path.join(
     graphnet.constants.TEST_DATA_DIR, "i3", "oscNext_genie_level7_v02"
 )
-OUTPUT_DATA_DIR = os.path.join(graphnet.constants.TEST_DATA_DIR, "output")
 FILE_NAME = "oscNext_genie_level7_v02_first_5_frames"
 GCD_FILE = (
     "GeoCalibDetectorStatus_AVG_55697-57531_PASS2_SPE_withScaledNoise.i3.gz"
@@ -44,7 +44,7 @@ def get_file_path(backend: str) -> str:
         "parquet": ".parquet",
     }[backend]
 
-    path = os.path.join(OUTPUT_DATA_DIR, FILE_NAME + suffix)
+    path = os.path.join(TEST_OUTPUT_DIR, FILE_NAME + suffix)
     return path
 
 
@@ -77,7 +77,7 @@ def test_dataconverter(
         )
     opt = dict(
         extractors=extractors,
-        outdir=OUTPUT_DATA_DIR,
+        outdir=TEST_OUTPUT_DIR,
         gcd_rescue=os.path.join(
             test_data_dir,
             GCD_FILE,
@@ -200,10 +200,10 @@ def test_parquet_to_sqlite_converter() -> None:
 
     # Perform conversion from I3 to `backend`
     database_name = FILE_NAME + "_from_parquet"
-    converter.run(OUTPUT_DATA_DIR, database_name)
+    converter.run(TEST_OUTPUT_DIR, database_name)
 
     # Check that output exists
-    path = f"{OUTPUT_DATA_DIR}/{database_name}/data/{database_name}.db"
+    path = f"{TEST_OUTPUT_DIR}/{database_name}/data/{database_name}.db"
     assert os.path.exists(path), path
 
     # Check that datasets agree
@@ -229,7 +229,7 @@ def test_database_query_plan(pulsemap: str, event_no: int) -> None:
     # Configure paths to databases to compare
     database_name = FILE_NAME + "_from_parquet"
     parquet_converted_database = (
-        f"{OUTPUT_DATA_DIR}/{database_name}/data/{database_name}.db"
+        f"{TEST_OUTPUT_DIR}/{database_name}/data/{database_name}.db"
     )
     sqlite_database = get_file_path("sqlite")
 
