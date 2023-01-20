@@ -5,7 +5,7 @@ from torch_geometric.data import Data
 from graphnet.models.detector.detector import Detector
 
 
-class Prototype(Detector):
+class Prometheus(Detector):
     """`Detector` class for Prometheus prototype."""
 
     features = ["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t"]
