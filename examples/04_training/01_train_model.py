@@ -6,11 +6,7 @@ import os
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
-from graphnet.constants import (
-    TRAINING_EXAMPLE_DATA_DIR,
-    TRAINING_EXAMPLE_SQLITE_DATA,
-    TRAINING_EXAMPLE_PARQUET_DATA,
-)
+from graphnet.constants import TEST_DATA_DIR
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import Model
 from graphnet.training.callbacks import ProgressBar
@@ -40,19 +36,6 @@ def main(
     num_workers: int,
 ) -> None:
     """Run example."""
-    # Check data availability
-    if "training_example_data" in dataset_config_path:
-        if not (
-            os.path.exists(TRAINING_EXAMPLE_DATA_DIR)
-            and os.path.exists(TRAINING_EXAMPLE_SQLITE_DATA)
-            and os.path.exists(TRAINING_EXAMPLE_PARQUET_DATA)
-        ):
-            logger.error("Training example data was not found in:")
-            logger.error(f"  {TRAINING_EXAMPLE_DATA_DIR}")
-            logger.error("Please download it using:")
-            logger.error("$ source get_training_example_data.sh")
-            return
-
     # Initialise Weights & Biases (W&B) run
     wandb_logger = WandbLogger(
         project="example-script",
@@ -76,7 +59,7 @@ def main(
         dataloader={"batch_size": batch_size, "num_workers": num_workers},
     )
 
-    archive = "/tmp/graphnet/results/"
+    archive = os.path.join(TEST_DATA_DIR, "output", "train_model")
     run_name = "dynedge_{}_example".format(config.target)
 
     # Construct dataloaders
@@ -128,6 +111,8 @@ def main(
     # Save predictions and model to file
     db_name = dataset_config.path.split("/")[-1].split(".")[0]
     path = os.path.join(archive, db_name, run_name)
+    logger.info(f"Writing results to {path}")
+    os.makedirs(path, exist_ok=True)
 
     results.to_csv(f"{path}/results.csv")
     model.save_state_dict(f"{path}/state_dict.pth")
@@ -156,9 +141,9 @@ Train GNN model.
 
     parser.with_standard_arguments(
         "gpus",
-        "max-epochs",
+        ("max-epochs", 5),
         "early-stopping-patience",
-        "batch-size",
+        ("batch-size", 16),
         "num-workers",
     )
 
