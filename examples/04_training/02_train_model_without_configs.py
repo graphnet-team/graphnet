@@ -1,7 +1,7 @@
 """Example of training Model."""
 
 import os
-from typing import cast, List, Optional
+from typing import cast, Any, Dict, List, Optional
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
@@ -11,7 +11,7 @@ from torch.optim.adam import Adam
 from graphnet.constants import TEST_DATA_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
-from graphnet.models.detector.icecube import IceCubeDeepCore
+from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import EnergyReconstruction
@@ -24,8 +24,8 @@ from graphnet.utilities.logging import get_logger
 logger = get_logger()
 
 # Constants
-features = FEATURES.DEEPCORE
-truth = TRUTH.DEEPCORE[:-1]
+features = FEATURES.PROMETHEUS
+truth = TRUTH.PROMETHEUS
 
 # Make sure W&B output directory exists
 WANDB_DIR = "./wandb/"
@@ -44,6 +44,7 @@ def main(
     path: str,
     pulsemap: str,
     target: str,
+    truth_table: str,
     gpus: Optional[List[int]],
     max_epochs: int,
     early_stopping_patience: int,
@@ -55,7 +56,7 @@ def main(
     logger.info(f"truth: {truth}")
 
     # Configuration
-    config = {
+    config: Dict[str, Any] = {
         "path": path,
         "pulsemap": pulsemap,
         "batch_size": batch_size,
@@ -87,10 +88,11 @@ def main(
         truth,
         batch_size=cast(int, config["batch_size"]),
         num_workers=cast(int, config["num_workers"]),
+        truth_table=truth_table,
     )
 
     # Building model
-    detector = IceCubeDeepCore(
+    detector = Prometheus(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
     gnn = DynEdge(
@@ -114,7 +116,8 @@ def main(
             "milestones": [
                 0,
                 len(training_dataloader) / 2,
-                len(training_dataloader) * cast(int, config["max_epochs"]),
+                len(training_dataloader)
+                * cast(int, config["fit"]["max_epochs"]),
             ],
             "factors": [1e-2, 1, 1e-02],
         },
@@ -194,6 +197,12 @@ Train GNN model without the use of config files.
         default="total_energy",
     )
 
+    parser.add_argument(
+        "--truth-table",
+        help="Name of truth table to be used (default: %(default)s)",
+        default="mc_truth",
+    )
+
     parser.with_standard_arguments(
         "gpus",
         ("max-epochs", 5),
@@ -208,6 +217,7 @@ Train GNN model without the use of config files.
         args.path,
         args.pulsemap,
         args.target,
+        args.truth_table,
         args.gpus,
         args.max_epochs,
         args.early_stopping_patience,
