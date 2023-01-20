@@ -1,6 +1,7 @@
 """Consistent CLI argument parsing across `graphnet`."""
 
 import argparse
+import copy
 from typing import Any, Dict, Optional, Union, Tuple
 
 
@@ -39,19 +40,14 @@ class Options:
         """Check if `option` is present."""
         return self._get_index(option) is not None
 
-    def get_default(self, option: str) -> Optional[Any]:
-        """Return the default value for `option`, if any."""
+    def pop_default(self, option: str) -> Optional[Any]:
+        """Return the default value for `option`, if any, and remove entry."""
         index = self._get_index(option)
         assert index is not None
         value = self._options[index]
+        del self._options[index]
         default = value[1] if isinstance(value, tuple) else None
         return default
-
-    def remove(self, option: str) -> None:
-        """Remove the entry `option`."""
-        index = self._get_index(option)
-        assert index is not None
-        del self._options[index]
 
     def __len__(self) -> int:
         """Return the number of options."""
@@ -64,6 +60,43 @@ class Options:
 
 class ArgumentParser(argparse.ArgumentParser):
     """Class for parsing command-line arguments."""
+
+    # Class variable(s)
+    standard_arguments: Dict[str, Dict[str, Any]] = {
+        "gpus": {
+            "nargs": "+",
+            "type": int,
+            "help": (
+                "Indices of GPUs to use for training (default: " "%(default)s)"
+            ),
+            "default": None,
+        },
+        "max-epochs": {
+            "type": int,
+            "help": (
+                "Maximum number of epochs to train (default: %(default)s)"
+            ),
+            "default": 50,
+        },
+        "early-stopping-patience": {
+            "type": int,
+            "help": (
+                "Number of epochs with no improvement in validation loss "
+                "after which to stop training (default: %(default)s)"
+            ),
+            "default": 5,
+        },
+        "batch-size": {
+            "type": int,
+            "help": ("Batch size to use for training (default: %(default)s)"),
+            "default": 128,
+        },
+        "num-workers": {
+            "type": int,
+            "help": ("Number of workers to fetch data (default: %(default)s)"),
+            "default": 10,
+        },
+    }
 
     def __init__(
         self,
@@ -88,52 +121,14 @@ class ArgumentParser(argparse.ArgumentParser):
         """Add standard, named arguments to the `ArgumentParser`."""
         remaining = Options(*args)
 
-        possible_arguments: Dict[str, Dict[str, Any]] = {
-            "gpus": {
-                "nargs": "+",
-                "type": int,
-                "help": (
-                    "Indices of GPUs to use for training (default: "
-                    "%(default)s)"
-                ),
-                "default": remaining.get_default("gpus") or None,
-            },
-            "max-epochs": {
-                "type": int,
-                "help": (
-                    "Maximum number of epochs to train (default: %(default)s)"
-                ),
-                "default": remaining.get_default("max-epochs") or 50,
-            },
-            "early-stopping-patience": {
-                "type": int,
-                "help": (
-                    "Number of epochs with no improvement in validation loss "
-                    "after which to stop training (default: %(default)s)"
-                ),
-                "default": remaining.get_default("early-stopping-patience")
-                or 5,
-            },
-            "batch-size": {
-                "type": int,
-                "help": (
-                    "Batch size to use for training (default: %(default)s)"
-                ),
-                "default": remaining.get_default("batch-size") or 128,
-            },
-            "num-workers": {
-                "type": int,
-                "help": (
-                    "Number of workers to fetch data (default: %(default)s)"
-                ),
-                "default": remaining.get_default("num-workers") or 10,
-            },
-        }
-
-        for argument, options in possible_arguments.items():
+        for argument, options in copy.deepcopy(
+            self.standard_arguments
+        ).items():
             if remaining.contains(argument):
+                options["default"] = (
+                    remaining.pop_default(argument) or options["default"]
+                )
                 self.add_argument("--" + argument, **options)
-                remaining.remove(argument)
 
         assert (
             len(remaining) == 0
