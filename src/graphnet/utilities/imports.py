@@ -26,12 +26,26 @@ def has_icecube_package() -> bool:
 def has_torch_package() -> bool:
     """Check whether the `torch` package is available."""
     try:
-        import torch
+        import torch  # pyright: reportMissingImports=false
 
         return True
     except ImportError:
         warn_once(
             logger, "`torch` not available. Some functionality may be missing."
+        )
+        return False
+
+
+def has_pisa_package() -> bool:
+    """Check whether the `pisa` package is available."""
+    try:
+        import pisa  # pyright: reportMissingImports=false
+
+        return True
+    except ImportError:
+        warn_once(
+            logger,
+            "`pisa` not available. Some functionality may be missing.",
         )
         return False
 
