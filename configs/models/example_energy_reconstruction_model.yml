@@ -8,7 +8,7 @@ arguments:
             arguments: {columns: null, nb_nearest_neighbours: 8}
             class_name: KNNGraphBuilder
         scalers: null
-      class_name: Prototype
+      class_name: Prometheus
   gnn:
     ModelConfig:
       arguments:
