@@ -1,7 +1,7 @@
 """Example of training Model."""
 
 import os
-from typing import cast, Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
@@ -86,8 +86,8 @@ def main(
         config["pulsemap"],
         features,
         truth,
-        batch_size=cast(int, config["batch_size"]),
-        num_workers=cast(int, config["num_workers"]),
+        batch_size=config["batch_size"],
+        num_workers=config["num_workers"],
         truth_table=truth_table,
     )
 
@@ -116,8 +116,7 @@ def main(
             "milestones": [
                 0,
                 len(training_dataloader) / 2,
-                len(training_dataloader)
-                * cast(int, config["fit"]["max_epochs"]),
+                len(training_dataloader) * config["fit"]["max_epochs"],
             ],
             "factors": [1e-2, 1, 1e-02],
         },
@@ -144,7 +143,7 @@ def main(
     )
 
     # Get predictions
-    prediction_columns = [cast(str, config["target"]) + "_pred"]
+    prediction_columns = [config["target"] + "_pred"]
     additional_attributes = [config["target"]]
 
     results = model.predict_as_dataframe(
