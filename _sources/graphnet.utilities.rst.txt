@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+graphnet.utilities.argparse module
+----------------------------------
+
+.. automodule:: graphnet.utilities.argparse
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.utilities.decorators module
 ------------------------------------
 

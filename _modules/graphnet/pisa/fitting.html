@@ -1,0 +1,1009 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>graphnet.pisa.fitting &mdash; graphnet  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> graphnet
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">graphnet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphnet.pisa.fitting</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for graphnet.pisa.fitting</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Functions and classes for fitting contours using PISA.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span> <span class="nn">configupdater</span> <span class="kn">import</span> <span class="n">ConfigUpdater</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_pisa_package</span>
+
+<span class="k">if</span> <span class="n">has_pisa_package</span><span class="p">()</span> <span class="ow">or</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pisa</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+    <span class="kn">from</span> <span class="nn">pisa.core.distribution_maker</span> <span class="kn">import</span> <span class="n">DistributionMaker</span>
+    <span class="kn">from</span> <span class="nn">pisa.core.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+    <span class="kn">from</span> <span class="nn">pisa.analysis.analysis</span> <span class="kn">import</span> <span class="n">Analysis</span>
+    <span class="kn">from</span> <span class="nn">pisa</span> <span class="kn">import</span> <span class="n">ureg</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.data.sqlite</span> <span class="kn">import</span> <span class="n">create_table_and_save_to_sql</span>
+
+<span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;pdf&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;serif&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="config_updater"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.config_updater">[docs]</a><span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">config_updater</span><span class="p">(</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">new_config_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dummy_section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;temp&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigUpdater</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update config files and saves them to file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_path: Path to original config file.</span>
+<span class="sd">        new_config_path: Path to save updated config file.</span>
+<span class="sd">        dummy_section: Dummy section name to use for config files without</span>
+<span class="sd">            section headers.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        ConfigUpdater instance for programatically updating config file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Modify original config file is no new config path is provided.</span>
+    <span class="k">if</span> <span class="n">new_config_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">new_config_path</span> <span class="o">=</span> <span class="n">config_path</span>
+
+    <span class="c1"># Load config file</span>
+    <span class="n">updater</span> <span class="o">=</span> <span class="n">ConfigUpdater</span><span class="p">()</span>
+    <span class="n">has_dummy_section</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">updater</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+
+    <span class="c1"># If it is missing section headers (e.g., binning.cfg), add a dummy section</span>
+    <span class="c1"># header before reading file contents.</span>
+    <span class="k">except</span> <span class="n">configparser</span><span class="o">.</span><span class="n">MissingSectionHeaderError</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+            <span class="n">updater</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">dummy_section</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">configfile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">has_dummy_section</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Expose updater instance in contest (i.e.,</span>
+    <span class="c1"># `with config_updater(...) as updater:``).</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">updater</span>
+
+    <span class="c1"># Write new config to file</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">new_config_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">has_dummy_section</span><span class="p">:</span>
+                <span class="c1"># Removing dummy section header if necessary</span>
+                <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+                    <span class="n">updater</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                    <span class="n">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">lines</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">configfile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">updater</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">configfile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WeightFitter"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.WeightFitter">[docs]</a><span class="k">class</span> <span class="nc">WeightFitter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for fitting weights using PISA.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WeightFitter.__init__"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.WeightFitter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;truth&quot;</span><span class="p">,</span>
+        <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
+        <span class="n">statistical_fit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `WeightFitter`.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span> <span class="o">=</span> <span class="n">database_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span> <span class="o">=</span> <span class="n">truth_table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span> <span class="o">=</span> <span class="n">index_column</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_fit</span> <span class="o">=</span> <span class="n">statistical_fit</span></div>
+
+<div class="viewcode-block" id="WeightFitter.fit_weights"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.WeightFitter.fit_weights">[docs]</a>    <span class="k">def</span> <span class="nf">fit_weights</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">weight_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">pisa_config_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">add_to_database</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit flux weights to each neutrino event in `self._database_path`.</span>
+
+<span class="sd">        If `statistical_fit=True`, only statistical effects are accounted for.</span>
+<span class="sd">        If `True`, certain systematic effects are included, but not</span>
+<span class="sd">        hypersurfaces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config_outdir: The output directory in which to store the</span>
+<span class="sd">                configuration.</span>
+<span class="sd">            weight_name: The name of the weight. If `add_to_database=True`,</span>
+<span class="sd">                this will be the name of the table.</span>
+<span class="sd">            pisa_config_dict: The dictionary of PISA configurations. Can be</span>
+<span class="sd">                used to change assumptions regarding the fit.</span>
+<span class="sd">            add_to_database: If `True`, a table will be added to the database</span>
+<span class="sd">                called `weight_name` with two columns:</span>
+<span class="sd">                `[index_column, weight_name]`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dataframe with columns `[index_column, weight_name]`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If its a standard weight</span>
+        <span class="k">if</span> <span class="n">pisa_config_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">weight_name</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">weight_name</span><span class="p">)</span>
+                <span class="n">weight_name</span> <span class="o">=</span> <span class="s2">&quot;pisa_weight_graphnet_standard&quot;</span>
+
+        <span class="c1"># If it is a custom weight without name</span>
+        <span class="k">elif</span> <span class="n">pisa_config_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">weight_name</span><span class="p">:</span>
+                <span class="n">weight_name</span> <span class="o">=</span> <span class="s2">&quot;pisa_custom_weight&quot;</span>
+
+        <span class="n">pisa_config_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_config</span><span class="p">(</span>
+            <span class="n">config_outdir</span><span class="p">,</span> <span class="n">weight_name</span><span class="p">,</span> <span class="n">pisa_config_dict</span>
+        <span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">pisa_config_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_fit</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+            <span class="c1"># Only free parameters will be [aeff_scale] - corresponding to a statistical fit</span>
+            <span class="n">free_params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">free</span><span class="o">.</span><span class="n">names</span>
+            <span class="k">for</span> <span class="n">free_param</span> <span class="ow">in</span> <span class="n">free_params</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">free_param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;aeff_scale&quot;</span><span class="p">]:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">free_param</span><span class="p">]</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># for stage in range(len(model.stages)):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">apply_mode</span> <span class="o">=</span> <span class="s2">&quot;events&quot;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">calc_mode</span> <span class="o">=</span> <span class="s2">&quot;events&quot;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">container</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">container</span><span class="p">[</span><span class="s2">&quot;event_no&quot;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;event_no&quot;</span><span class="p">])</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">weight_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">container</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">add_to_database</span><span class="p">:</span>
+            <span class="n">create_table_and_save_to_sql</span><span class="p">(</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">weight_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;event_no&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_make_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">weight_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pisa_config_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">config_outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">weight_name</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pisa_config_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Run on standard settings</span>
+            <span class="n">pisa_config_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;reco_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_bins&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+                <span class="s2">&quot;reco_coszen&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_bins&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+                <span class="s2">&quot;pid&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bin_edges&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+                <span class="s2">&quot;true_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_bins&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">},</span>
+                <span class="s2">&quot;true_coszen&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_bins&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">},</span>
+                <span class="s2">&quot;livetime&quot;</span><span class="p">:</span> <span class="mi">10</span>
+                <span class="o">*</span> <span class="mf">0.01</span><span class="p">,</span>  <span class="c1"># set to 1% of 10 years - correspond to the size of the oscNext burn sample</span>
+            <span class="p">}</span>
+
+        <span class="n">pisa_config_dict</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span>
+        <span class="n">pisa_config_dict</span><span class="p">[</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">pipeline_cfg_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_configs</span><span class="p">(</span>
+            <span class="n">pisa_config_dict</span><span class="p">,</span> <span class="n">config_outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">weight_name</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pipeline_cfg_path</span>
+
+    <span class="k">def</span> <span class="nf">_create_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># Update binning config</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config_name</span> <span class="o">=</span> <span class="s2">&quot;config</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># config_dict[&quot;post_fix&quot;] = &#39;_pred&#39;</span>
+            <span class="n">config_name</span> <span class="o">=</span> <span class="s2">&quot;config&quot;</span>
+
+        <span class="k">with</span> <span class="n">config_updater</span><span class="p">(</span>
+            <span class="n">root</span>
+            <span class="o">+</span> <span class="s2">&quot;/resources/configuration_templates/binning_config_template.cfg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/binning_</span><span class="si">%s</span><span class="s2">.cfg&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">),</span>
+            <span class="n">dummy_section</span><span class="o">=</span><span class="s2">&quot;binning&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">updater</span><span class="p">:</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;graphnet_dynamic_binning.reco_energy&quot;</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;num_bins&#39;:</span><span class="si">%s</span><span class="s2">, &#39;is_log&#39;:True, &#39;domain&#39;:[0.5,55] * units.GeV, &#39;tex&#39;: r&#39;E_{</span><span class="se">\\</span><span class="s2">rm reco}&#39;}&quot;</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;reco_energy&quot;</span><span class="p">][</span><span class="s2">&quot;num_bins&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;graphnet_dynamic_binning.reco_coszen&quot;</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;num_bins&#39;:</span><span class="si">%s</span><span class="s2">, &#39;is_lin&#39;:True, &#39;domain&#39;:[-1,1], &#39;tex&#39;:r&#39;</span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">theta}_{</span><span class="se">\\</span><span class="s2">rm reco}&#39;}&quot;</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;reco_coszen&quot;</span><span class="p">][</span><span class="s2">&quot;num_bins&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span><span class="s2">&quot;graphnet_dynamic_binning.pid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;bin_edges&#39;: </span><span class="si">%s</span><span class="s2">, &#39;tex&#39;:r&#39;{</span><span class="se">\\</span><span class="s2">rm PID}&#39;}&quot;</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;pid&quot;</span><span class="p">][</span><span class="s2">&quot;bin_edges&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span><span class="s2">&quot;true_allsky_fine.true_energy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;num_bins&#39;:</span><span class="si">%s</span><span class="s2">, &#39;is_log&#39;:True, &#39;domain&#39;:[1,1000] * units.GeV, &#39;tex&#39;: r&#39;E_{</span><span class="se">\\</span><span class="s2">rm true}&#39;}&quot;</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;true_energy&quot;</span><span class="p">][</span><span class="s2">&quot;num_bins&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span><span class="s2">&quot;true_allsky_fine.true_coszen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;num_bins&#39;:</span><span class="si">%s</span><span class="s2">, &#39;is_lin&#39;:True, &#39;domain&#39;:[-1,1], &#39;tex&#39;:r&#39;</span><span class="se">\\</span><span class="s2">cos\,</span><span class="se">\\</span><span class="s2">theta_{Z,{</span><span class="se">\\</span><span class="s2">rm true}}&#39;}&quot;</span>  <span class="c1"># noqa: W605</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;true_coszen&quot;</span><span class="p">][</span><span class="s2">&quot;num_bins&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+
+        <span class="c1"># Update pipeline config</span>
+        <span class="k">with</span> <span class="n">config_updater</span><span class="p">(</span>
+            <span class="n">root</span>
+            <span class="o">+</span> <span class="s2">&quot;/resources/configuration_templates/pipeline_config_weight_template.cfg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/pipeline_</span><span class="si">%s</span><span class="s2">.cfg&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">),</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">updater</span><span class="p">:</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_before</span><span class="o">.</span><span class="n">comment</span><span class="p">(</span>
+                <span class="s2">&quot;#include </span><span class="si">%s</span><span class="s2">/binning_</span><span class="si">%s</span><span class="s2">.cfg as binning&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;data.sqlite_loader&quot;</span><span class="p">][</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">config_dict</span><span class="p">[</span>
+                <span class="s2">&quot;post_fix&quot;</span>
+            <span class="p">]</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;data.sqlite_loader&quot;</span><span class="p">][</span><span class="s2">&quot;database&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">config_dict</span><span class="p">[</span>
+                <span class="s2">&quot;pipeline&quot;</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;livetime&quot;</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;aeff.aeff&quot;</span><span class="p">][</span><span class="s2">&quot;param.livetime&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> * units.common_year&quot;</span> <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;livetime&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/pipeline_</span><span class="si">%s</span><span class="s2">.cfg&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContourFitter"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.ContourFitter">[docs]</a><span class="k">class</span> <span class="nc">ContourFitter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for fitting contours using PISA.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ContourFitter.__init__"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.ContourFitter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pipeline_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">post_fix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_pred&quot;</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gnn&quot;</span><span class="p">,</span>
+        <span class="n">include_retro</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">statistical_fit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `ContourFitter`.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">=</span> <span class="n">outdir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_path</span> <span class="o">=</span> <span class="n">pipeline_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_fix</span> <span class="o">=</span> <span class="n">post_fix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_include_retro</span> <span class="o">=</span> <span class="n">include_retro</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_fit</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">statistical_fit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_contour_types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span> <span class="s2">&quot;2d&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ContourFitter.fit_1d_contour"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.ContourFitter.fit_1d_contour">[docs]</a>    <span class="k">def</span> <span class="nf">fit_1d_contour</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">theta23_minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">36.0</span><span class="p">,</span> <span class="mf">54.0</span><span class="p">),</span>
+        <span class="n">dm31_minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.3</span><span class="p">,</span> <span class="mf">2.7</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit 1D contours.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_contours</span><span class="p">(</span>
+            <span class="n">config_dict</span><span class="o">=</span><span class="n">config_dict</span><span class="p">,</span>
+            <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+            <span class="n">grid_size</span><span class="o">=</span><span class="n">grid_size</span><span class="p">,</span>
+            <span class="n">n_workers</span><span class="o">=</span><span class="n">n_workers</span><span class="p">,</span>
+            <span class="n">theta23_minmax</span><span class="o">=</span><span class="n">theta23_minmax</span><span class="p">,</span>
+            <span class="n">dm31_minmax</span><span class="o">=</span><span class="n">dm31_minmax</span><span class="p">,</span>
+            <span class="n">contour_type</span><span class="o">=</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContourFitter.fit_2d_contour"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.ContourFitter.fit_2d_contour">[docs]</a>    <span class="k">def</span> <span class="nf">fit_2d_contour</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">theta23_minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">36.0</span><span class="p">,</span> <span class="mf">54.0</span><span class="p">),</span>
+        <span class="n">dm31_minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.3</span><span class="p">,</span> <span class="mf">2.7</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit 2D contours.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_contours</span><span class="p">(</span>
+            <span class="n">config_dict</span><span class="o">=</span><span class="n">config_dict</span><span class="p">,</span>
+            <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+            <span class="n">grid_size</span><span class="o">=</span><span class="n">grid_size</span><span class="p">,</span>
+            <span class="n">n_workers</span><span class="o">=</span><span class="n">n_workers</span><span class="p">,</span>
+            <span class="n">theta23_minmax</span><span class="o">=</span><span class="n">theta23_minmax</span><span class="p">,</span>
+            <span class="n">dm31_minmax</span><span class="o">=</span><span class="n">dm31_minmax</span><span class="p">,</span>
+            <span class="n">contour_type</span><span class="o">=</span><span class="s2">&quot;2d&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContourFitter._check_inputs"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.ContourFitter._check_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">_check_inputs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contour_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dm31_minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">theta23_minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether inputs are as expected.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">contour_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_contour_types</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> not recognized as valid contour type. Only </span><span class="si">%s</span><span class="s2"> is recognized&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">contour_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_contour_types</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta23_minmax</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dm31_minmax</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">dm31_minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">dm31_minmax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">theta23_minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">theta23_minmax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;theta23 or dm31 min max values are not understood. Please provide a list on the form [min, max] for both variables&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">n_workers</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;found n_workers &lt; 1. n_workers must be positive integers.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ContourFitter._fit_contours"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.ContourFitter._fit_contours">[docs]</a>    <span class="k">def</span> <span class="nf">_fit_contours</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">contour_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">theta23_minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">dm31_minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit contours.&quot;&quot;&quot;</span>
+        <span class="n">inputs_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">(</span>
+            <span class="n">contour_type</span><span class="o">=</span><span class="n">contour_type</span><span class="p">,</span>
+            <span class="n">dm31_minmax</span><span class="o">=</span><span class="n">dm31_minmax</span><span class="p">,</span>
+            <span class="n">theta23_minmax</span><span class="o">=</span><span class="n">theta23_minmax</span><span class="p">,</span>
+            <span class="n">n_workers</span><span class="o">=</span><span class="n">n_workers</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inputs_ok</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">minimizer_cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_minimizer_path</span><span class="p">(</span><span class="n">config_dict</span><span class="p">)</span>
+        <span class="n">cfgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_config_files</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">)</span>
+        <span class="n">theta23_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="n">theta23_minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">theta23_minmax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grid_size</span>
+        <span class="p">)</span>
+        <span class="n">dm31_range</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">dm31_minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dm31_minmax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grid_size</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-3</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">contour_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;1d&quot;</span><span class="p">:</span>
+            <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_1d_settings</span><span class="p">(</span>
+                <span class="n">cfgs</span><span class="o">=</span><span class="n">cfgs</span><span class="p">,</span>
+                <span class="n">grid_size</span><span class="o">=</span><span class="n">grid_size</span><span class="p">,</span>
+                <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+                <span class="n">minimizer_cfg</span><span class="o">=</span><span class="n">minimizer_cfg</span><span class="p">,</span>
+                <span class="n">theta23_range</span><span class="o">=</span><span class="n">theta23_range</span><span class="p">,</span>
+                <span class="n">dm31_range</span><span class="o">=</span><span class="n">dm31_range</span><span class="p">,</span>
+                <span class="n">n_workers</span><span class="o">=</span><span class="n">n_workers</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">settings</span><span class="p">))</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map_async</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parallel_fit_1d_contour</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="c1"># self._parallel_fit_1d_contour(settings[0])</span>
+        <span class="k">elif</span> <span class="n">contour_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;2d&quot;</span><span class="p">:</span>
+            <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_2d_settings</span><span class="p">(</span>
+                <span class="n">cfgs</span><span class="o">=</span><span class="n">cfgs</span><span class="p">,</span>
+                <span class="n">grid_size</span><span class="o">=</span><span class="n">grid_size</span><span class="p">,</span>
+                <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+                <span class="n">minimizer_cfg</span><span class="o">=</span><span class="n">minimizer_cfg</span><span class="p">,</span>
+                <span class="n">theta23_range</span><span class="o">=</span><span class="n">theta23_range</span><span class="p">,</span>
+                <span class="n">dm31_range</span><span class="o">=</span><span class="n">dm31_range</span><span class="p">,</span>
+                <span class="n">n_workers</span><span class="o">=</span><span class="n">n_workers</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">settings</span><span class="p">))</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map_async</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parallel_fit_2d_contour</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="c1"># self._parallel_fit_2d_contour(settings[0])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_temporary_files</span><span class="p">(</span><span class="n">run_name</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;/merged_results.csv&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_merge_temporary_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;/tmp&quot;</span><span class="p">)</span>
+        <span class="n">is_first</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_first</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;/tmp/&quot;</span> <span class="o">+</span> <span class="n">file</span>
+                <span class="p">)</span>
+                <span class="n">is_first</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;/tmp/&quot;</span> <span class="o">+</span> <span class="n">file</span>
+                    <span class="p">),</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+<div class="viewcode-block" id="ContourFitter._parallel_fit_2d_contour"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.ContourFitter._parallel_fit_2d_contour">[docs]</a>    <span class="k">def</span> <span class="nf">_parallel_fit_2d_contour</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit 2D contours in parallel.</span>
+
+<span class="sd">        Length of settings determines the amount of jobs this worker gets.</span>
+<span class="sd">        Results are saved to temporary .csv-files that are later merged.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            settings: A list of fitting settings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">settings</span><span class="p">)):</span>
+            <span class="p">(</span>
+                <span class="n">cfg_path</span><span class="p">,</span>
+                <span class="n">model_name</span><span class="p">,</span>
+                <span class="n">outdir</span><span class="p">,</span>
+                <span class="n">theta23_value</span><span class="p">,</span>
+                <span class="n">deltam31_value</span><span class="p">,</span>
+                <span class="nb">id</span><span class="p">,</span>
+                <span class="n">run_name</span><span class="p">,</span>
+                <span class="n">fix_all</span><span class="p">,</span>
+                <span class="n">minimizer_cfg</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">minimizer_cfg</span> <span class="o">=</span> <span class="n">pisa</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">fileio</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">minimizer_cfg</span><span class="p">)</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">DistributionMaker</span><span class="p">([</span><span class="n">cfg_path</span><span class="p">])</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">(</span><span class="n">return_sum</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">ana</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">fix_all</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+                <span class="c1"># Only free parameters will be [parameter, aeff_scale] - corresponding to a statistical fit</span>
+                <span class="n">free_params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">free</span><span class="o">.</span><span class="n">names</span>
+                <span class="k">for</span> <span class="n">free_param</span> <span class="ow">in</span> <span class="n">free_params</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">free_param</span> <span class="o">!=</span> <span class="s2">&quot;aeff_scale&quot;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">free_param</span> <span class="o">==</span> <span class="s2">&quot;theta23&quot;</span><span class="p">:</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">nominal_value</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">theta23_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">free_param</span> <span class="o">==</span> <span class="s2">&quot;deltam31&quot;</span><span class="p">:</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">nominal_value</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">deltam31_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">electron_volt</span><span class="o">**</span><span class="mi">2</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">free_param</span><span class="p">]</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Only fixed parameters will be [parameter]</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">nominal_value</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">theta23_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span>
+                <span class="p">)</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">nominal_value</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">deltam31_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">electron_volt</span><span class="o">**</span><span class="mi">2</span>
+                <span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">reset_all</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">ana</span><span class="o">.</span><span class="n">fit_hypo</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">model</span><span class="p">,</span>
+                <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;mod_chi2&quot;</span><span class="p">,</span>
+                <span class="n">minimizer_settings</span><span class="o">=</span><span class="n">minimizer_cfg</span><span class="p">,</span>
+                <span class="n">fit_octants_separately</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">theta23_value</span><span class="p">,</span>
+                    <span class="n">deltam31_value</span><span class="p">,</span>
+                    <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;params&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;params&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;metric_val&quot;</span><span class="p">],</span>
+                    <span class="n">model_name</span><span class="p">,</span>
+                    <span class="nb">id</span><span class="p">,</span>
+                    <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;minimizer_metadata&quot;</span><span class="p">][</span><span class="s2">&quot;success&quot;</span><span class="p">],</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_temporary_results</span><span class="p">(</span>
+            <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span> <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContourFitter._parallel_fit_1d_contour"><a class="viewcode-back" href="../../../graphnet.pisa.html#graphnet.pisa.fitting.ContourFitter._parallel_fit_1d_contour">[docs]</a>    <span class="k">def</span> <span class="nf">_parallel_fit_1d_contour</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit 1D contours in parallel.</span>
+
+<span class="sd">        Length of settings determines the amount of jobs this worker gets.</span>
+<span class="sd">        Results are saved to temporary .csv-files that are later merged.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            settings: A list of fitting settings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">settings</span><span class="p">)):</span>
+            <span class="p">(</span>
+                <span class="n">cfg_path</span><span class="p">,</span>
+                <span class="n">model_name</span><span class="p">,</span>
+                <span class="n">outdir</span><span class="p">,</span>
+                <span class="n">theta23_value</span><span class="p">,</span>
+                <span class="n">deltam31_value</span><span class="p">,</span>
+                <span class="nb">id</span><span class="p">,</span>
+                <span class="n">run_name</span><span class="p">,</span>
+                <span class="n">parameter</span><span class="p">,</span>
+                <span class="n">fix_all</span><span class="p">,</span>
+                <span class="n">minimizer_cfg</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">minimizer_cfg</span> <span class="o">=</span> <span class="n">pisa</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">fileio</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">minimizer_cfg</span><span class="p">)</span>
+            <span class="n">ana</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">()</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">DistributionMaker</span><span class="p">([</span><span class="n">cfg_path</span><span class="p">])</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">(</span><span class="n">return_sum</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fix_all</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+                <span class="c1"># Only free parameters will be [parameter, aeff_scale] - corresponding to a statistical fit</span>
+                <span class="n">free_params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">free</span><span class="o">.</span><span class="n">names</span>
+                <span class="k">for</span> <span class="n">free_param</span> <span class="ow">in</span> <span class="n">free_params</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">free_param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;aeff_scale&quot;</span><span class="p">,</span> <span class="s2">&quot;theta23&quot;</span><span class="p">,</span> <span class="s2">&quot;deltam31&quot;</span><span class="p">]:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">free_param</span><span class="p">]</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;theta23&quot;</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">nominal_value</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">theta23_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;deltam31&quot;</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">nominal_value</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">deltam31_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">electron_volt</span><span class="o">**</span><span class="mi">2</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Only fixed parameters will be [parameter]</span>
+                <span class="k">if</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;theta23&quot;</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">nominal_value</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">theta23_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;deltam31&quot;</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">nominal_value</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">deltam31_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">electron_volt</span><span class="o">**</span><span class="mi">2</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;parameter not supported: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">reset_all</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">ana</span><span class="o">.</span><span class="n">fit_hypo</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">model</span><span class="p">,</span>
+                <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;mod_chi2&quot;</span><span class="p">,</span>
+                <span class="n">minimizer_settings</span><span class="o">=</span><span class="n">minimizer_cfg</span><span class="p">,</span>
+                <span class="n">fit_octants_separately</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">theta23_value</span><span class="p">,</span>
+                    <span class="n">deltam31_value</span><span class="p">,</span>
+                    <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;params&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">theta23</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;params&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">deltam31</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;metric_val&quot;</span><span class="p">],</span>
+                    <span class="n">model_name</span><span class="p">,</span>
+                    <span class="nb">id</span><span class="p">,</span>
+                    <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;minimizer_metadata&quot;</span><span class="p">][</span><span class="s2">&quot;success&quot;</span><span class="p">],</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_temporary_results</span><span class="p">(</span>
+            <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span> <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_save_temporary_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;/tmp&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
+                <span class="s2">&quot;theta23_fixed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dm31_fixed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;theta23_best_fit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dm31_best_fit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mod_chi2&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;converged&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">results_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+            <span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;/tmp&quot;</span> <span class="o">+</span> <span class="s2">&quot;/tmp_</span><span class="si">%s</span><span class="s2">.csv&quot;</span> <span class="o">%</span> <span class="nb">id</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_2d_settings</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cfgs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">minimizer_cfg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">theta23_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">dm31_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">cfgs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">):</span>
+                    <span class="n">settings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="n">cfgs</span><span class="p">[</span><span class="n">model_name</span><span class="p">],</span>
+                            <span class="n">model_name</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span>
+                            <span class="n">theta23_range</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                            <span class="n">dm31_range</span><span class="p">[</span><span class="n">k</span><span class="p">],</span>
+                            <span class="n">count</span><span class="p">,</span>
+                            <span class="n">run_name</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_fit</span><span class="p">,</span>
+                            <span class="n">minimizer_cfg</span><span class="p">,</span>
+                        <span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">n_workers</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_1d_settings</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cfgs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">minimizer_cfg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">theta23_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">dm31_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">cfgs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">):</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">cfgs</span><span class="p">[</span><span class="n">model_name</span><span class="p">],</span>
+                        <span class="n">model_name</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span>
+                        <span class="n">theta23_range</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                        <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">count</span><span class="p">,</span>
+                        <span class="n">run_name</span><span class="p">,</span>
+                        <span class="s2">&quot;theta23&quot;</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_fit</span><span class="p">,</span>
+                        <span class="n">minimizer_cfg</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">):</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">cfgs</span><span class="p">[</span><span class="n">model_name</span><span class="p">],</span>
+                        <span class="n">model_name</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span>
+                        <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">dm31_range</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                        <span class="n">count</span><span class="p">,</span>
+                        <span class="n">run_name</span><span class="p">,</span>
+                        <span class="s2">&quot;deltam31&quot;</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_fit</span><span class="p">,</span>
+                        <span class="n">minimizer_cfg</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">n_workers</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_setup_config_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="n">cfgs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cfgs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_configs</span><span class="p">(</span>
+            <span class="n">outdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span>
+            <span class="n">post_fix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_post_fix</span><span class="p">,</span>
+            <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+            <span class="n">is_retro</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">pipeline_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_path</span><span class="p">,</span>
+            <span class="n">config_dict</span><span class="o">=</span><span class="n">config_dict</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_include_retro</span><span class="p">:</span>
+            <span class="n">cfgs</span><span class="p">[</span><span class="s2">&quot;retro&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_configs</span><span class="p">(</span>
+                <span class="n">outdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span>
+                <span class="n">post_fix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_post_fix</span><span class="p">,</span>
+                <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+                <span class="n">is_retro</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">pipeline_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_path</span><span class="p">,</span>
+                <span class="n">config_dict</span><span class="o">=</span><span class="n">config_dict</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cfgs</span>
+
+    <span class="k">def</span> <span class="nf">_get_minimizer_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;minimizer_cfg&quot;</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">minimizer_cfg</span> <span class="o">=</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;minimizer_cfg&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="n">minimizer_cfg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">root</span> <span class="o">+</span> <span class="s2">&quot;/resources/minimizer/graphnet_standard.json&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">minimizer_cfg</span>
+
+    <span class="k">def</span> <span class="nf">_create_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># Update binning config</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config_name</span> <span class="o">=</span> <span class="s2">&quot;config</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_name</span> <span class="o">=</span> <span class="s2">&quot;config&quot;</span>
+
+        <span class="k">with</span> <span class="n">config_updater</span><span class="p">(</span>
+            <span class="n">root</span>
+            <span class="o">+</span> <span class="s2">&quot;/resources/configuration_templates/binning_config_template.cfg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/binning_</span><span class="si">%s</span><span class="s2">.cfg&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">),</span>
+            <span class="n">dummy_section</span><span class="o">=</span><span class="s2">&quot;binning&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">updater</span><span class="p">:</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;graphnet_dynamic_binning.reco_energy&quot;</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;num_bins&#39;:</span><span class="si">%s</span><span class="s2">, &#39;is_log&#39;:True, &#39;domain&#39;:[0.5,55] * units.GeV, &#39;tex&#39;: r&#39;E_{</span><span class="se">\\</span><span class="s2">rm reco}&#39;}&quot;</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;reco_energy&quot;</span><span class="p">][</span><span class="s2">&quot;num_bins&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;graphnet_dynamic_binning.reco_coszen&quot;</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;num_bins&#39;:</span><span class="si">%s</span><span class="s2">, &#39;is_lin&#39;:True, &#39;domain&#39;:[-1,1], &#39;tex&#39;:r&#39;</span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">theta}_{</span><span class="se">\\</span><span class="s2">rm reco}&#39;}&quot;</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;reco_coszen&quot;</span><span class="p">][</span><span class="s2">&quot;num_bins&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span><span class="s2">&quot;graphnet_dynamic_binning.pid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;bin_edges&#39;: </span><span class="si">%s</span><span class="s2">, &#39;tex&#39;:r&#39;{</span><span class="se">\\</span><span class="s2">rm PID}&#39;}&quot;</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;pid&quot;</span><span class="p">][</span><span class="s2">&quot;bin_edges&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span><span class="s2">&quot;true_allsky_fine.true_energy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;num_bins&#39;:</span><span class="si">%s</span><span class="s2">, &#39;is_log&#39;:True, &#39;domain&#39;:[1,1000] * units.GeV, &#39;tex&#39;: r&#39;E_{</span><span class="se">\\</span><span class="s2">rm true}&#39;}&quot;</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;true_energy&quot;</span><span class="p">][</span><span class="s2">&quot;num_bins&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;binning&quot;</span><span class="p">][</span><span class="s2">&quot;true_allsky_fine.true_coszen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;{&#39;num_bins&#39;:</span><span class="si">%s</span><span class="s2">, &#39;is_lin&#39;:True, &#39;domain&#39;:[-1,1], &#39;tex&#39;:r&#39;</span><span class="se">\\</span><span class="s2">cos\,</span><span class="se">\\</span><span class="s2">theta_{Z,{</span><span class="se">\\</span><span class="s2">rm true}}&#39;}&quot;</span>  <span class="c1"># noqa: W605</span>
+                <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;true_coszen&quot;</span><span class="p">][</span><span class="s2">&quot;num_bins&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># noqa: W605</span>
+
+        <span class="c1"># Update pipeline config</span>
+        <span class="k">with</span> <span class="n">config_updater</span><span class="p">(</span>
+            <span class="n">root</span>
+            <span class="o">+</span> <span class="s2">&quot;/resources/configuration_templates/pipeline_config_template.cfg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/pipeline_</span><span class="si">%s</span><span class="s2">.cfg&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">),</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">updater</span><span class="p">:</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_before</span><span class="o">.</span><span class="n">comment</span><span class="p">(</span>
+                <span class="s2">&quot;#include </span><span class="si">%s</span><span class="s2">/binning_</span><span class="si">%s</span><span class="s2">.cfg as binning&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;data.sqlite_loader&quot;</span><span class="p">][</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">config_dict</span><span class="p">[</span>
+                <span class="s2">&quot;post_fix&quot;</span>
+            <span class="p">]</span>
+            <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;data.sqlite_loader&quot;</span><span class="p">][</span><span class="s2">&quot;database&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">config_dict</span><span class="p">[</span>
+                <span class="s2">&quot;pipeline&quot;</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;livetime&quot;</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">updater</span><span class="p">[</span><span class="s2">&quot;aeff.aeff&quot;</span><span class="p">][</span><span class="s2">&quot;param.livetime&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> * units.common_year&quot;</span> <span class="o">%</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;livetime&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/pipeline_</span><span class="si">%s</span><span class="s2">.cfg&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_configs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">is_retro</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">pipeline_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">post_fix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_pred&quot;</span><span class="p">,</span>
+        <span class="n">config_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Run on standard settings</span>
+            <span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;reco_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_bins&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+                <span class="s2">&quot;reco_coszen&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_bins&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+                <span class="s2">&quot;pid&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bin_edges&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+                <span class="s2">&quot;true_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_bins&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">},</span>
+                <span class="s2">&quot;true_coszen&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_bins&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">},</span>
+                <span class="s2">&quot;livetime&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pipeline_path</span>
+        <span class="k">if</span> <span class="n">is_retro</span><span class="p">:</span>
+            <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;_retro&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;post_fix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">post_fix</span>
+        <span class="n">pipeline_cfg_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_configs</span><span class="p">(</span>
+            <span class="n">config_dict</span><span class="p">,</span> <span class="n">outdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pipeline_cfg_path</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, IceCube Collaboration.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

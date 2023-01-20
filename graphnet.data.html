@@ -94,12 +94,14 @@
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES"><code class="docutils literal notranslate"><span class="pre">FEATURES</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES.DEEPCORE"><code class="docutils literal notranslate"><span class="pre">FEATURES.DEEPCORE</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES.ICECUBE86"><code class="docutils literal notranslate"><span class="pre">FEATURES.ICECUBE86</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.constants.FEATURES.PROMETHEUS"><code class="docutils literal notranslate"><span class="pre">FEATURES.PROMETHEUS</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES.UPGRADE"><code class="docutils literal notranslate"><span class="pre">FEATURES.UPGRADE</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH"><code class="docutils literal notranslate"><span class="pre">TRUTH</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH.DEEPCORE"><code class="docutils literal notranslate"><span class="pre">TRUTH.DEEPCORE</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH.ICECUBE86"><code class="docutils literal notranslate"><span class="pre">TRUTH.ICECUBE86</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.constants.TRUTH.PROMETHEUS"><code class="docutils literal notranslate"><span class="pre">TRUTH.PROMETHEUS</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH.UPGRADE"><code class="docutils literal notranslate"><span class="pre">TRUTH.UPGRADE</span></code></a></li>
 </ul>
 </li>
@@ -490,6 +492,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.constants.FEATURES.PROMETHEUS">
+<span class="sig-name descname"><span class="pre">PROMETHEUS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['sensor_pos_x',</span> <span class="pre">'sensor_pos_y',</span> <span class="pre">'sensor_pos_z',</span> <span class="pre">'t']</span></em><a class="headerlink" href="#graphnet.data.constants.FEATURES.PROMETHEUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.data.constants.FEATURES.UPGRADE">
 <span class="sig-name descname"><span class="pre">UPGRADE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dom_x',</span> <span class="pre">'dom_y',</span> <span class="pre">'dom_z',</span> <span class="pre">'dom_time',</span> <span class="pre">'charge',</span> <span class="pre">'rde',</span> <span class="pre">'pmt_area',</span> <span class="pre">'string',</span> <span class="pre">'pmt_number',</span> <span class="pre">'dom_number',</span> <span class="pre">'pmt_dir_x',</span> <span class="pre">'pmt_dir_y',</span> <span class="pre">'pmt_dir_z',</span> <span class="pre">'dom_type']</span></em><a class="headerlink" href="#graphnet.data.constants.FEATURES.UPGRADE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -509,6 +516,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.data.constants.TRUTH.ICECUBE86">
 <span class="sig-name descname"><span class="pre">ICECUBE86</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['energy',</span> <span class="pre">'energy_track',</span> <span class="pre">'position_x',</span> <span class="pre">'position_y',</span> <span class="pre">'position_z',</span> <span class="pre">'azimuth',</span> <span class="pre">'zenith',</span> <span class="pre">'pid',</span> <span class="pre">'elasticity',</span> <span class="pre">'sim_type',</span> <span class="pre">'interaction_type',</span> <span class="pre">'interaction_time',</span> <span class="pre">'inelasticity',</span> <span class="pre">'stopped_muon']</span></em><a class="headerlink" href="#graphnet.data.constants.TRUTH.ICECUBE86" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.constants.TRUTH.PROMETHEUS">
+<span class="sig-name descname"><span class="pre">PROMETHEUS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['injection_energy',</span> <span class="pre">'injection_type',</span> <span class="pre">'injection_interaction_type',</span> <span class="pre">'injection_zenith',</span> <span class="pre">'injection_azimuth',</span> <span class="pre">'injection_bjorkenx',</span> <span class="pre">'injection_bjorkeny',</span> <span class="pre">'injection_position_x',</span> <span class="pre">'injection_position_y',</span> <span class="pre">'injection_position_z',</span> <span class="pre">'injection_column_depth',</span> <span class="pre">'primary_lepton_1_type',</span> <span class="pre">'primary_hadron_1_type',</span> <span class="pre">'primary_lepton_1_position_x',</span> <span class="pre">'primary_lepton_1_position_y',</span> <span class="pre">'primary_lepton_1_position_z',</span> <span class="pre">'primary_hadron_1_position_x',</span> <span class="pre">'primary_hadron_1_position_y',</span> <span class="pre">'primary_hadron_1_position_z',</span> <span class="pre">'primary_lepton_1_direction_theta',</span> <span class="pre">'primary_lepton_1_direction_phi',</span> <span class="pre">'primary_hadron_1_direction_theta',</span> <span class="pre">'primary_hadron_1_direction_phi',</span> <span class="pre">'primary_lepton_1_energy',</span> <span class="pre">'primary_hadron_1_energy',</span> <span class="pre">'total_energy']</span></em><a class="headerlink" href="#graphnet.data.constants.TRUTH.PROMETHEUS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -836,7 +848,7 @@ files output by the current instance are merged.</p></li>
 <li><p><strong>shuffle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
 <li><p><strong>num_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – </p></li>
 <li><p><strong>persistent_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
-<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f85c8f3d990&gt;</span></code>) – </p></li>
+<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f0c68155ab0&gt;</span></code>) – </p></li>
 <li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
 </ul>
 </dd>
@@ -853,7 +865,7 @@ files output by the current instance are merged.</p></li>
 <li><p><strong>shuffle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
 <li><p><strong>num_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – </p></li>
 <li><p><strong>persistent_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
-<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f85c8f3d990&gt;</span></code>) – </p></li>
+<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f0c68155ab0&gt;</span></code>) – </p></li>
 <li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
 </ul>
 </dd>

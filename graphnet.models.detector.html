@@ -125,10 +125,10 @@
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-graphnet.models.detector.prototype">graphnet.models.detector.prototype module</a><ul>
-<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype"><code class="docutils literal notranslate"><span class="pre">Prototype</span></code></a><ul>
-<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype._forward"><code class="docutils literal notranslate"><span class="pre">Prototype._forward()</span></code></a></li>
-<li><a class="reference internal" href="#graphnet.models.detector.prototype.Prototype.features"><code class="docutils literal notranslate"><span class="pre">Prototype.features</span></code></a></li>
+<li><a class="reference internal" href="#module-graphnet.models.detector.prometheus">graphnet.models.detector.prometheus module</a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.prometheus.Prometheus"><code class="docutils literal notranslate"><span class="pre">Prometheus</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.models.detector.prometheus.Prometheus._forward"><code class="docutils literal notranslate"><span class="pre">Prometheus._forward()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.models.detector.prometheus.Prometheus.features"><code class="docutils literal notranslate"><span class="pre">Prometheus.features</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -446,12 +446,12 @@
 </dd></dl>
 
 </section>
-<section id="module-graphnet.models.detector.prototype">
-<span id="graphnet-models-detector-prototype-module"></span><h2>graphnet.models.detector.prototype module<a class="headerlink" href="#module-graphnet.models.detector.prototype" title="Permalink to this heading">¶</a></h2>
+<section id="module-graphnet.models.detector.prometheus">
+<span id="graphnet-models-detector-prometheus-module"></span><h2>graphnet.models.detector.prometheus module<a class="headerlink" href="#module-graphnet.models.detector.prometheus" title="Permalink to this heading">¶</a></h2>
 <p>Prometheus-specific <cite>Detector</cite> class(es).</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.detector.prototype.Prototype">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.prototype.</span></span><span class="sig-name descname"><span class="pre">Prototype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_builder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/detector/prototype.html#Prototype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.prototype.Prototype" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.detector.prometheus.Prometheus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.prometheus.</span></span><span class="sig-name descname"><span class="pre">Prometheus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_builder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/detector/prometheus.html#Prometheus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.prometheus.Prometheus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detector</span></code></a></p>
 <p><cite>Detector</cite> class for Prometheus prototype.</p>
 <dl class="field-list simple">
@@ -463,8 +463,8 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.detector.prototype.Prototype._forward">
-<span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/detector/prototype.html#Prototype._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.prototype.Prototype._forward" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.detector.prometheus.Prometheus._forward">
+<span class="sig-name descname"><span class="pre">_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/models/detector/prometheus.html#Prometheus._forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.prometheus.Prometheus._forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ingest data, build graph, and preprocess features.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -480,8 +480,8 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.models.detector.prototype.Prototype.features">
-<span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['x',</span> <span class="pre">'y',</span> <span class="pre">'z',</span> <span class="pre">'t']</span></em><a class="headerlink" href="#graphnet.models.detector.prototype.Prototype.features" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.detector.prometheus.Prometheus.features">
+<span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['sensor_pos_x',</span> <span class="pre">'sensor_pos_y',</span> <span class="pre">'sensor_pos_z',</span> <span class="pre">'t']</span></em><a class="headerlink" href="#graphnet.models.detector.prometheus.Prometheus.features" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

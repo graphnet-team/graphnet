@@ -20,10 +20,10 @@ graphnet.models.detector.icecube module
    :undoc-members:
    :show-inheritance:
 
-graphnet.models.detector.prototype module
------------------------------------------
+graphnet.models.detector.prometheus module
+------------------------------------------
 
-.. automodule:: graphnet.models.detector.prototype
+.. automodule:: graphnet.models.detector.prometheus
    :members:
    :undoc-members:
    :show-inheritance:

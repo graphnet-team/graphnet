@@ -89,7 +89,25 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">graphnet.pisa package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#graphnet-pisa-fitting-module">graphnet.pisa.fitting module</a></li>
+<li><a class="reference internal" href="#module-graphnet.pisa.fitting">graphnet.pisa.fitting module</a><ul>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.ContourFitter"><code class="docutils literal notranslate"><span class="pre">ContourFitter</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.ContourFitter.__init__"><code class="docutils literal notranslate"><span class="pre">ContourFitter.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.ContourFitter._check_inputs"><code class="docutils literal notranslate"><span class="pre">ContourFitter._check_inputs()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.ContourFitter._fit_contours"><code class="docutils literal notranslate"><span class="pre">ContourFitter._fit_contours()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.ContourFitter._parallel_fit_1d_contour"><code class="docutils literal notranslate"><span class="pre">ContourFitter._parallel_fit_1d_contour()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.ContourFitter._parallel_fit_2d_contour"><code class="docutils literal notranslate"><span class="pre">ContourFitter._parallel_fit_2d_contour()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.ContourFitter.fit_1d_contour"><code class="docutils literal notranslate"><span class="pre">ContourFitter.fit_1d_contour()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.ContourFitter.fit_2d_contour"><code class="docutils literal notranslate"><span class="pre">ContourFitter.fit_2d_contour()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.WeightFitter"><code class="docutils literal notranslate"><span class="pre">WeightFitter</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.WeightFitter.__init__"><code class="docutils literal notranslate"><span class="pre">WeightFitter.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.WeightFitter.fit_weights"><code class="docutils literal notranslate"><span class="pre">WeightFitter.fit_weights()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphnet.pisa.fitting.config_updater"><code class="docutils literal notranslate"><span class="pre">config_updater()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.pisa.plotting">graphnet.pisa.plotting module</a><ul>
 <li><a class="reference internal" href="#graphnet.pisa.plotting.plot_1D_contour"><code class="docutils literal notranslate"><span class="pre">plot_1D_contour()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.pisa.plotting.plot_2D_contour"><code class="docutils literal notranslate"><span class="pre">plot_2D_contour()</span></code></a></li>
@@ -171,8 +189,246 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="graphnet-pisa-fitting-module">
-<h2>graphnet.pisa.fitting module<a class="headerlink" href="#graphnet-pisa-fitting-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-graphnet.pisa.fitting">
+<span id="graphnet-pisa-fitting-module"></span><h2>graphnet.pisa.fitting module<a class="headerlink" href="#module-graphnet.pisa.fitting" title="Permalink to this heading">¶</a></h2>
+<p>Functions and classes for fitting contours using PISA.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.ContourFitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.pisa.fitting.</span></span><span class="sig-name descname"><span class="pre">ContourFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_fix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_pred'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gnn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_retro</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistical_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#ContourFitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.ContourFitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for fitting contours using PISA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>pipeline_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>post_fix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'_pred'</span></code>) – </p></li>
+<li><p><strong>model_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'gnn'</span></code>) – </p></li>
+<li><p><strong>include_retro</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
+<li><p><strong>statistical_fit</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.ContourFitter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_fix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_pred'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gnn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_retro</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistical_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#ContourFitter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.ContourFitter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct <cite>ContourFitter</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>pipeline_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>post_fix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'_pred'</span></code>) – </p></li>
+<li><p><strong>model_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'gnn'</span></code>) – </p></li>
+<li><p><strong>include_retro</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
+<li><p><strong>statistical_fit</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.ContourFitter._check_inputs">
+<span class="sig-name descname"><span class="pre">_check_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm31_minmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta23_minmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#ContourFitter._check_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.ContourFitter._check_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether inputs are as expected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contour_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>dm31_minmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – </p></li>
+<li><p><strong>theta23_minmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – </p></li>
+<li><p><strong>n_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.ContourFitter._fit_contours">
+<span class="sig-name descname"><span class="pre">_fit_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta23_minmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm31_minmax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#ContourFitter._fit_contours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.ContourFitter._fit_contours" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit contours.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>config_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>) – </p></li>
+<li><p><strong>grid_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>n_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>contour_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>theta23_minmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – </p></li>
+<li><p><strong>dm31_minmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.ContourFitter._parallel_fit_1d_contour">
+<span class="sig-name descname"><span class="pre">_parallel_fit_1d_contour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#ContourFitter._parallel_fit_1d_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.ContourFitter._parallel_fit_1d_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit 1D contours in parallel.</p>
+<p>Length of settings determines the amount of jobs this worker gets.
+Results are saved to temporary .csv-files that are later merged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>settings</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]) – A list of fitting settings.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.ContourFitter._parallel_fit_2d_contour">
+<span class="sig-name descname"><span class="pre">_parallel_fit_2d_contour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#ContourFitter._parallel_fit_2d_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.ContourFitter._parallel_fit_2d_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit 2D contours in parallel.</p>
+<p>Length of settings determines the amount of jobs this worker gets.
+Results are saved to temporary .csv-files that are later merged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>settings</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]) – A list of fitting settings.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.ContourFitter.fit_1d_contour">
+<span class="sig-name descname"><span class="pre">fit_1d_contour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta23_minmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(36.0,</span> <span class="pre">54.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm31_minmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(2.3,</span> <span class="pre">2.7)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#ContourFitter.fit_1d_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.ContourFitter.fit_1d_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit 1D contours.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>config_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>) – </p></li>
+<li><p><strong>grid_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">30</span></code>) – </p></li>
+<li><p><strong>n_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – </p></li>
+<li><p><strong>theta23_minmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">(36.0,</span> <span class="pre">54.0)</span></code>) – </p></li>
+<li><p><strong>dm31_minmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">(2.3,</span> <span class="pre">2.7)</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.ContourFitter.fit_2d_contour">
+<span class="sig-name descname"><span class="pre">fit_2d_contour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta23_minmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(36.0,</span> <span class="pre">54.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm31_minmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(2.3,</span> <span class="pre">2.7)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#ContourFitter.fit_2d_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.ContourFitter.fit_2d_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit 2D contours.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>config_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>) – </p></li>
+<li><p><strong>grid_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">30</span></code>) – </p></li>
+<li><p><strong>n_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – </p></li>
+<li><p><strong>theta23_minmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">(36.0,</span> <span class="pre">54.0)</span></code>) – </p></li>
+<li><p><strong>dm31_minmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">(2.3,</span> <span class="pre">2.7)</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.WeightFitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.pisa.fitting.</span></span><span class="sig-name descname"><span class="pre">WeightFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistical_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#WeightFitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.WeightFitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for fitting weights using PISA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – </p></li>
+<li><p><strong>statistical_fit</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.WeightFitter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event_no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistical_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#WeightFitter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.WeightFitter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct <cite>WeightFitter</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – </p></li>
+<li><p><strong>statistical_fit</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.WeightFitter.fit_weights">
+<span class="sig-name descname"><span class="pre">fit_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pisa_config_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_to_database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#WeightFitter.fit_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.WeightFitter.fit_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit flux weights to each neutrino event in <cite>self._database_path</cite>.</p>
+<p>If <cite>statistical_fit=True</cite>, only statistical effects are accounted for.
+If <cite>True</cite>, certain systematic effects are included, but not
+hypersurfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_outdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The output directory in which to store the
+configuration.</p></li>
+<li><p><strong>weight_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">''</span></code>) – The name of the weight. If <cite>add_to_database=True</cite>,
+this will be the name of the table.</p></li>
+<li><p><strong>pisa_config_dict</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The dictionary of PISA configurations. Can be
+used to change assumptions regarding the fit.</p></li>
+<li><p><strong>add_to_database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If <cite>True</cite>, a table will be added to the database
+called <cite>weight_name</cite> with two columns:
+<cite>[index_column, weight_name]</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dataframe with columns <cite>[index_column, weight_name]</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.pisa.fitting.config_updater">
+<span class="sig-prename descclassname"><span class="pre">graphnet.pisa.fitting.</span></span><span class="sig-name descname"><span class="pre">config_updater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummy_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'temp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/pisa/fitting.html#config_updater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.pisa.fitting.config_updater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update config files and saves them to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to original config file.</p></li>
+<li><p><strong>new_config_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Path to save updated config file.</p></li>
+<li><p><strong>dummy_section</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'temp'</span></code>) – Dummy section name to use for config files without
+section headers.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>ConfigUpdater instance for programatically updating config file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigUpdater</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-graphnet.pisa.plotting">
 <span id="graphnet-pisa-plotting-module"></span><h2>graphnet.pisa.plotting module<a class="headerlink" href="#module-graphnet.pisa.plotting" title="Permalink to this heading">¶</a></h2>
