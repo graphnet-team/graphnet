@@ -10,7 +10,7 @@ import torch.utils.data
 from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
-from graphnet.constants import TEST_SQLITE_DATA
+from graphnet.constants import TEST_PARQUET_DATA, TEST_SQLITE_DATA
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.dataset import Dataset
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
@@ -36,7 +36,7 @@ def main(backend: str) -> None:
     # Check(s)
     assert backend in DATASET_CLASS
 
-    path = TEST_SQLITE_DATA
+    path = TEST_SQLITE_DATA if backend == "sqlite" else TEST_PARQUET_DATA
     pulsemap = "SRTInIcePulses"
     truth_table = "truth"
     batch_size = 128

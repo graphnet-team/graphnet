@@ -30,7 +30,7 @@ def main() -> None:
     # Get feature matrix
     x_original_list = []
     x_preprocessed_list = []
-    for batch in tqdm(dataset):
+    for batch in tqdm(dataset, colour="green"):
         x_original_list.append(batch.x.numpy())
         x_preprocessed_list.append(detector(batch).x.numpy())
 
@@ -59,7 +59,9 @@ def main() -> None:
         ax.set_yscale("log")
 
     fig.tight_layout
-    fig.savefig("feature_distribution_original.png")
+    figure_name_original = "feature_distribution_original.png"
+    fig.savefig(figure_name_original)
+    logger.info(f"Figure written to {figure_name_original}")
 
     # -- Preprocessed
     fig, axes = plt.subplots(
@@ -73,7 +75,9 @@ def main() -> None:
         ax.set_yscale("log")
 
     fig.tight_layout
-    fig.savefig("feature_distribution_preprocessed.png")
+    figure_name_preprocessed = "feature_distribution_preprocessed.png"
+    fig.savefig(figure_name_preprocessed)
+    logger.info(f"Figure written to {figure_name_preprocessed}")
 
 
 if __name__ == "__main__":
