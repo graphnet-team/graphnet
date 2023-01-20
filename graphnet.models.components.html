@@ -283,11 +283,6 @@ for, e.g., assigning the same index to all pulses on the same PMT or DOM in
 the same event. This can be used for coarsening graphs, e.g., from pulse-
 level to DOM-level by aggregating feature across each group returned by this
 method.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
-</dd>
-</dl>
 <p class="rubric">Example</p>
 <dl class="simple">
 <dt>Given:</dt><dd><p>data.f1 = [1,1,2,2,2]
@@ -304,6 +299,9 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <li><p><strong>data</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code>]) – </p></li>
 <li><p><strong>keys</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>
