@@ -81,9 +81,9 @@ def main(
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
-        cast(str, config["path"]),
+        config["path"],
         None,
-        cast(str, config["pulsemap"]),
+        config["pulsemap"],
         features,
         truth,
         batch_size=cast(int, config["batch_size"]),
