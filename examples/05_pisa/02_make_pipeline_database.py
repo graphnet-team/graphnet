@@ -1,12 +1,9 @@
 """Example of building and running PISA Pipeline with SQLite inputs."""
 
-import torch
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from graphnet.data.pipeline import InSQLitePipeline
 from graphnet.data.constants import TRUTH, FEATURES
-
-torch.multiprocessing.set_sharing_strategy("file_system")
 
 
 def get_output_column_names(target: str) -> List[str]:
