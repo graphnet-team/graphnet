@@ -553,7 +553,15 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             data = np.array([]).reshape((0, len(self._features) - 1))
 
         # Construct graph data object
-        x = torch.tensor(data, dtype=self._dtype)  # pylint: disable=C0103
+        try:
+            x = torch.tensor(data, dtype=self._dtype)  # pylint: disable=C0103
+        except TypeError as e:
+            x = torch.tensor(np.array(data, dtype=float), dtype=self._dtype)
+            self.warning(
+                r"The following type error was raised, forcing dtype float32. NaN's might occur in data! \n"
+                + str(e)
+            )
+
         n_pulses = torch.tensor(len(x), dtype=torch.int32)
         graph = Data(x=x, edge_index=None)
         graph.n_pulses = n_pulses
