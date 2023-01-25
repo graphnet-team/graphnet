@@ -38,6 +38,8 @@ def make_dataloader(
     string_selection: List[int] = None,
     loss_weight_table: Optional[str] = None,
     loss_weight_column: Optional[str] = None,
+    truth_table: str = "truth",
+
 ) -> DataLoader:
     """Construct `DataLoader` instance."""
     # Check(s)
@@ -56,6 +58,7 @@ def make_dataloader(
         string_selection=string_selection,
         loss_weight_table=loss_weight_table,
         loss_weight_column=loss_weight_column,
+        truth_table=truth_table,
     )
 
     def collate_fn(graphs: List[Data]) -> Batch:
@@ -99,6 +102,7 @@ def make_train_validation_dataloader(
     string_selection: Optional[List[int]] = None,
     loss_weight_column: Optional[str] = None,
     loss_weight_table: Optional[str] = None,
+    truth_table: str = "truth",
 ) -> Tuple[DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
     # Reproducibility
@@ -158,6 +162,7 @@ def make_train_validation_dataloader(
         string_selection=string_selection,
         loss_weight_column=loss_weight_column,
         loss_weight_table=loss_weight_table,
+        truth_table=truth_table,
     )
 
     training_dataloader = make_dataloader(
