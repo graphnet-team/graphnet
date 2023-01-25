@@ -30,6 +30,8 @@ class FEATURES:
         "t",
     ]
 
+    KAGGLE = ["x", "y", "z", "time", "charge", "auxiliary"]
+
 
 class TRUTH:
     """Namespace for standard names working with `I3TruthExtractor`."""
@@ -80,3 +82,5 @@ class TRUTH:
         "primary_hadron_1_energy",
         "total_energy",
     ]
+    KAGGLE = ["zenith", "azimuth"]
+
