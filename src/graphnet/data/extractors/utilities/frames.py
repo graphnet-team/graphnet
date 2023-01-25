@@ -11,12 +11,16 @@ if has_icecube_package():
     )  # pyright: reportMissingImports=false
 
 
-def frame_is_montecarlo(frame: "icetray.I3Frame",mctree: Optional[str] = "I3MCTree") -> bool:
+def frame_is_montecarlo(
+    frame: "icetray.I3Frame", mctree: Optional[str] = "I3MCTree"
+) -> bool:
     """Check whether `frame` is from Monte Carlo simulation."""
     return ("MCInIcePrimary" in frame) or (mctree in frame)
 
 
-def frame_is_noise(frame: "icetray.I3Frame",mctree: Optional[str] = "I3MCTree") -> bool:
+def frame_is_noise(
+    frame: "icetray.I3Frame", mctree: Optional[str] = "I3MCTree"
+) -> bool:
     """Check whether `frame` is from noise."""
     try:
         frame[mctree][0].energy

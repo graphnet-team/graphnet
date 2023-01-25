@@ -219,20 +219,26 @@ class AttributeCoarsening(Coarsening):
 
 class DOMCoarsening(Coarsening):
     """Coarsen pulses to DOM-level."""
+
     def __init__(
         self,
         reduce: str = "avg",
         transfer_attributes: bool = True,
-        keys: Optional[List[str]] = ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
+        keys: List[str] = [
+            "dom_x",
+            "dom_y",
+            "dom_z",
+            "rde",
+            "pmt_area",
+        ],
     ):
+        """Cluster pulses on the same DOM."""
         super().__init__(reduce, transfer_attributes)
         self._keys = keys
 
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Cluster nodes in `data` by assigning a cluster index to each."""
-        dom_index = group_by(
-            data, self._keys
-        )
+        dom_index = group_by(data, self._keys)
         return dom_index
 
 
@@ -279,7 +285,13 @@ class DOMAndTimeWindowCoarsening(Coarsening):
         time_window: float,
         reduce: str = "avg",
         transfer_attributes: bool = True,
-        keys: Optional[List[str]] = ["dom_x", "dom_y", "dom_z", "rde", "pmt_area"]
+        keys: List[str] = [
+            "dom_x",
+            "dom_y",
+            "dom_z",
+            "rde",
+            "pmt_area",
+        ],
     ):
         """Cluster pulses on the same DOM within `time_window`."""
         super().__init__(reduce, transfer_attributes)
@@ -289,15 +301,15 @@ class DOMAndTimeWindowCoarsening(Coarsening):
 
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Cluster nodes in `data` by assigning a cluster index to each."""
-        dom_index = group_by(
-            data, self._keys
-        )
+        dom_index = group_by(data, self._keys)
         if data.batch is not None:
             features = data.features[0]
         else:
             features = data.features
 
-        ix_time = [idx for idx, s in enumerate(features) if 'time' in s][0]# features.index("dom_time")
+        ix_time = [idx for idx, s in enumerate(features) if "time" in s][
+            0
+        ]  # features.index("dom_time")
         hit_times = data.x[:, ix_time]
 
         # Scale up dom_index to make sure clusters are well separated

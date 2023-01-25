@@ -21,12 +21,6 @@ class Detector(Model):
     def features(self) -> List[str]:
         """List of features used/assumed by inheriting `Detector` objects."""
 
-    
-    def rename_features(self, features: List[str]) -> None:
-        """reassigning list of features to given Detctor object"""
-        self.features = features
-        
-
     @save_model_config
     def __init__(
         self, graph_builder: GraphBuilder, scalers: List[dict] = None
@@ -119,3 +113,8 @@ class Detector(Model):
         assert (
             data_features == self.features
         ), f"Features on Data and Detector differ: {data_features} vs. {self.features}"
+
+    @abstractmethod
+    def rename_features(self, features: List[str]) -> None:
+        """Reassigning list of features to given Detctor object."""
+        self.features = features
