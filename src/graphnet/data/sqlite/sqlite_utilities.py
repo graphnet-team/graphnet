@@ -69,6 +69,7 @@ def attach_index(
         "COMMIT TRANSACTION;\n"
         "PRAGMA foreign_keys=on;"
     )
+    print(code)
     run_sql_code(database_path, code)
 
 
@@ -108,7 +109,7 @@ def create_table(
                 type_ = "NOT NULL"
 
         query_columns.append(f"{column} {type_}")
-
+    print(integer_primary_key, table_name)
     query_columns_string = ", ".join(query_columns)
 
     # Run SQL code
@@ -117,6 +118,7 @@ def create_table(
         f"CREATE TABLE {table_name} ({query_columns_string});\n"
         "PRAGMA foreign_keys=on;"
     )
+    print(code)
     run_sql_code(
         database_path,
         code,
@@ -124,7 +126,7 @@ def create_table(
 
     # Attaching index to all non-truth-like tables (e.g., pulse maps).
     if not integer_primary_key:
-        attach_index(database_path, table_name)
+        attach_index(database_path, table_name, index_column=index_column)
 
 
 def create_table_and_save_to_sql(

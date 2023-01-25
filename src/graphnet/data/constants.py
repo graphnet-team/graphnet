@@ -24,6 +24,8 @@ class FEATURES:
         "dom_type",
     ]
 
+    KAGGLE = ["x", "y", "z", "time", "charge", "auxiliary"]
+
 
 class TRUTH:
     """Namespace for standard names working with `I3TruthExtractor`."""
@@ -46,3 +48,4 @@ class TRUTH:
     ]
     DEEPCORE = ICECUBE86
     UPGRADE = DEEPCORE
+    KAGGLE = ["zenith", "azimuth"]
