@@ -430,7 +430,7 @@ class DataConverter(ABC, LoggerMixin):
             except:  # noqa: E722
                 continue
 
-            # Try to extract data from I3Frame else skip frame 
+            # Try to extract data from I3Frame else skip frame
             try:
                 results = self._extractors(frame)
             except KeyError as e:

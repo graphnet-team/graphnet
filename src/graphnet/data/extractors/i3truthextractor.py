@@ -23,8 +23,11 @@ class I3TruthExtractor(I3Extractor):
     """Class for extracting truth-level information."""
 
     def __init__(
-        self, name: str = "truth", borders: Optional[List[np.ndarray]] = None,
-    mctree: Optional[str] = "I3MCTree"):
+        self,
+        name: str = "truth",
+        borders: Optional[List[np.ndarray]] = None,
+        mctree: Optional[str] = "I3MCTree",
+    ):
         """Construct I3TruthExtractor.
 
         Args:
@@ -33,6 +36,7 @@ class I3TruthExtractor(I3Extractor):
                 coordinates, for identifying, e.g., particles starting and
                 stopping within the detector. Defaults to hard-coded boundary
                 coordinates.
+            mctree: Str of which MCTree to use for truth values.
         """
         # Base class constructor
         super().__init__(name)
@@ -74,14 +78,14 @@ class I3TruthExtractor(I3Extractor):
             self._borders = [border_xy, border_z]
         else:
             self._borders = borders
-        self._mctree=mctree
+        self._mctree = mctree
 
     def __call__(
         self, frame: "icetray.I3Frame", padding_value: Any = -1
     ) -> Dict[str, Any]:
         """Extract truth-level information."""
-        is_mc = frame_is_montecarlo(frame,self._mctree)
-        is_noise = frame_is_noise(frame,self._mctree)
+        is_mc = frame_is_montecarlo(frame, self._mctree)
+        is_noise = frame_is_noise(frame, self._mctree)
         sim_type = self._find_data_type(is_mc, self._i3_file)
 
         output = {

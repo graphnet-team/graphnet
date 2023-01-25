@@ -197,7 +197,7 @@ def make_train_validation_test_dataloader(
     string_selection: List[int] = None,
     loss_weight_column: str = None,
     loss_weight_table: str = None,
-) -> Tuple[DataLoader, DataLoader]:
+) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
     # Reproducibility
     rng = np.random.RandomState(seed=seed)
@@ -265,11 +265,8 @@ def make_train_validation_test_dataloader(
         **common_kwargs,  # type: ignore[arg-type]
     )
 
-    return (
-        training_dataloader,
-        validation_dataloader,
-        test_dataloader
-    )
+    return (training_dataloader, validation_dataloader, test_dataloader)
+
 
 # @TODO: Remove in favour of Model.predict{,_as_dataframe}
 def get_predictions(
