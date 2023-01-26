@@ -43,7 +43,7 @@ class IceCube86(Detector):
         return data
 
 
-class IceCube86Kaggle(Detector):
+class IceCubeKaggle(Detector):
     """`Detector` class for Kaggle Competition."""
 
     # Implementing abstract class attribute
