@@ -44,6 +44,17 @@ class ParquetDataset(Dataset):
             )
         ).tolist()
 
+    def _get_event_index(
+        self, sequential_index: Optional[int]
+    ) -> Optional[int]:
+        index: Optional[int]
+        if sequential_index is None:
+            index = None
+        else:
+            index = cast(List[int], self._indices)[sequential_index]
+
+        return index
+
     def _format_dictionary_result(
         self, dictionary: Dict
     ) -> List[Tuple[Any, ...]]:
@@ -87,11 +98,7 @@ class ParquetDataset(Dataset):
             selection is None
         ), "Argument `selection` is currently not supported"
 
-        index: Optional[int]
-        if sequential_index is None:
-            index = None
-        else:
-            index = cast(List[int], self._indices)[sequential_index]
+        index = self._get_event_index(sequential_index)
 
         try:
             if index is None:
