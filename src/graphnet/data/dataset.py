@@ -118,7 +118,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         truth_table: str = "truth",
         node_truth_table: Optional[str] = None,
         string_selection: Optional[List[int]] = None,
-        selection: Optional[Union[str, List[int], List[List[int]]]],
+        selection: Optional[Union[str, List[int], List[List[int]]]] = None,
         dtype: torch.dtype = torch.float32,
         loss_weight_table: Optional[str] = None,
         loss_weight_column: Optional[str] = None,
