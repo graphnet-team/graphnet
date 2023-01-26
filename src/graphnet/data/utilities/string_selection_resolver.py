@@ -47,25 +47,6 @@ class StringSelectionResolver(LoggerMixin):
     ```
     """
 
-    # Class method(s)
-    @classmethod
-    def _parse_variable_names(cls, selection: str) -> List[str]:
-        """Parse `selection`, return named entities that are not funtions."""
-        tree = ast.parse(selection)
-        functions = []
-        names = []
-        for node in ast.walk(tree):
-            # Save named entities
-            if isinstance(node, ast.Name):
-                names.append(node.id)
-
-            # Save names of functions
-            elif isinstance(node, ast.Call):
-                functions.append(node.func.id)  # type: ignore[attr-defined]
-
-        variables = list(set(names) - set(functions))
-        return variables
-
     def __init__(
         self,
         dataset: "Dataset",
@@ -131,6 +112,28 @@ class StringSelectionResolver(LoggerMixin):
         return indices
 
     # Internal method(s)
+    def _parse_variable_names(self, selection: str) -> List[str]:
+        """Parse `selection`, return named entities that are not funtions."""
+        tree = ast.parse(selection)
+        functions = []
+        names = []
+        for node in ast.walk(tree):
+            # Save named entities
+            if isinstance(node, ast.Name):
+                names.append(node.id)
+
+            # Save names of functions
+            elif isinstance(node, ast.Call):
+                functions.append(node.func.id)  # type: ignore[attr-defined]
+
+        variables = list(set(names) - set(functions))
+
+        self.debug(f"Parsed variable names {variables} from '{selection}'.")
+        if self._index_column not in variables:
+            variables.append(self._index_column)
+
+        return variables
+
     def _get_index_cache_path(self, selection: str) -> str:
         """Return a cache path unique to the input files and selection."""
         path = self._dataset.path
@@ -199,7 +202,6 @@ class StringSelectionResolver(LoggerMixin):
 
     def _query_selection_from_dataset(self, selection: str) -> pd.DataFrame:
         variables = self._parse_variable_names(selection)
-        self.debug(f"Parsed variable names {variables} from '{selection}'.")
 
         # (Opt.) Load cached indices, if available.
         values_cache_path = self._get_values_cache_path(variables)
