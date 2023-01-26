@@ -74,13 +74,14 @@ class ParquetDataset(Dataset):
 
         return list(map(tuple, list(zip(*dictionary.values()))))
 
-    def _query_table(
+    def query_table(
         self,
         table: str,
         columns: Union[List[str], str],
         sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
+        """Query table at a specific index, optionally with some selection."""
         # Check(s)
         assert (
             selection is None
