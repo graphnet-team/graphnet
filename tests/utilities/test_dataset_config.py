@@ -1,8 +1,10 @@
 """Unit tests for `DatasetConfig` class."""
 
+import json
 import os.path
 from typing import Dict
 
+import pandas as pd
 import pytest
 import torch
 from torch.utils.data import ConcatDataset
@@ -207,5 +209,49 @@ def test_dataset_config_functions(backend: str) -> None:
     )
 
 
+@pytest.mark.order(5)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+def test_dataset_config_files(backend: str) -> None:
+    """Test constructing Dataset with selections containing functions."""
+    # Arrange
+    config_path = CONFIG_PATHS[backend]
+
+    selection_file_csv = "/tmp/test_selection.csv"
+    selection_file_json = "/tmp/test_selection.json"
+
+    # Save selection(s) to file(s)
+    indices_csv = [1, 2, 4]
+    indices_json = [0, 3]
+    df_selection = pd.DataFrame(data=indices_csv, columns=["event_no"])
+    df_selection.to_csv(selection_file_csv)
+    with open(selection_file_json, "w") as f:
+        json.dump(indices_json, f)
+
+    # Construct multiple datasets
+    config = DatasetConfig.load(config_path)
+    config.seed = 2
+    config.selection = {
+        "CSV": f"2 random events ~ {selection_file_csv}",
+        "JSON": selection_file_json,
+    }
+
+    datasets: Dict[str, Dataset] = Dataset.from_config(config)
+
+    # Check that event counts match expectation
+    assert len(datasets["CSV"]) == 2
+    assert len(datasets["JSON"]) == 2
+
+    # Check that selections work by making sure there is no overlap between
+    # event_nos
+    assert (
+        len(
+            set(datasets["CSV"]._indices).intersection(
+                set(datasets["JSON"]._indices)
+            )
+        )
+        == 0
+    )
+
+
 if __name__ == "__main__":
-    test_dataset_config_functions("sqlite")
+    test_dataset_config_files("sqlite")
