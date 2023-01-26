@@ -604,7 +604,6 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         # Add custom labels to the graph
         for key, fn in self._label_fns.items():
             graph[key] = fn(graph)
-
         return graph
 
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
