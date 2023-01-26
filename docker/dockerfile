@@ -24,7 +24,10 @@ RUN pip install --upgrade pip && \
 #RUN pip install -r https://raw.githubusercontent.com/com/graphnet-team/graphnet/main/requirements/torch_${HARDWARE}.txt
 #RUN pip install -e git+https://github.com/icecube/graphnet.git#egg=graphnet[develop,torch]
 
-ADD ./graphnet /root/
+ADD . /root/
+WORKDIR /root/
+RUN pwd
+RUN ls -lart .
 WORKDIR /root/graphnet/
 
 # Create missing alias(es) in slim.
