@@ -19,20 +19,12 @@ class StringSelectionResolver(LoggerMixin):
     """Resolve string-based selection to event indices.
 
     String-based selection, using in `DatasetConfig`, is a very flexible way of
-    defining event selections. Below we show a few examples of how to reproduce
-    some standard event selections using this syntax.
+    defining event selections. Below we show an example of a very involved
+    event selection, which should cover most standard event selections
+    currently in use with `graphnet`.
 
-    * get_desired_event_numbers(
-        desired_size: int,
-        fraction_noise: float,
-        fraction_muon: float,
-        fraction_nu_e: float,
-        fraction_nu_mu: float,
-        fraction_nu_tau: float,
-    )
     ```yml
     # dataset/config.yml
-    (...)
     selection:
         test:
             - 50000 random events ~ event_no % 5 == 0 & abs(pid) == 12
@@ -53,18 +45,6 @@ class StringSelectionResolver(LoggerMixin):
             - 10000 random events ~ event_no % 5 > 1 & abs(pid) == 13
             - 10000 random events ~ event_no % 5 > 1 & abs(pid) == 1
     ```
-
-    * get_equal_proportion_neutrino_indices:
-    Desired outcome:
-
-    * get_even_signal_background_indicies:
-    Desired outcome:
-
-    * get_even_track_cascade_indicies:
-    Desired outcome:
-
-    * get_even_dbang_selection:
-    Desired outcome:
     """
 
     # Class method(s)
@@ -111,9 +91,9 @@ class StringSelectionResolver(LoggerMixin):
         self.info(f"Resolving selection: {selection}")
 
         # (Opt.) Load cached indices, if available.
-        cache_path = self._get_cache_path(selection)
-        if self._use_cache and os.path.exists(cache_path):
-            return self._load_cache(cache_path)
+        index_cache_path = self._get_index_cache_path(selection)
+        if self._use_cache and os.path.exists(index_cache_path):
+            return self._load_index_cache(index_cache_path)
 
         # Check whether to do random sampling
         (
@@ -146,12 +126,12 @@ class StringSelectionResolver(LoggerMixin):
 
         # (Opt.) Cache indices.
         if self._use_cache:
-            self._save_cache(indices, cache_path)
+            self._save_index_cache(indices, index_cache_path)
 
         return indices
 
     # Internal method(s)
-    def _get_cache_path(self, selection: str) -> str:
+    def _get_index_cache_path(self, selection: str) -> str:
         """Return a cache path unique to the input files and selection."""
         path = self._dataset.path
         truth_table = self._dataset.truth_table
@@ -162,17 +142,43 @@ class StringSelectionResolver(LoggerMixin):
         cache_path = f"/tmp/selection-{hex}.json"
         return cache_path
 
-    def _load_cache(self, cache_path: str) -> List[int]:
+    def _get_values_cache_path(self, variables: List[str]) -> str:
+        """Return a cache path unique to the input files and selection."""
+        path = self._dataset.path
+        truth_table = self._dataset.truth_table
+
+        path_string = path if isinstance(path, str) else "-".join(path)
+        variables_string = "-".join(variables)
+        unique_string = f"{path_string}-{truth_table}-{variables_string}"
+        hex = hashlib.sha256(unique_string.encode("utf-8")).hexdigest()
+        cache_path = f"/tmp/values-{hex}.csv"
+        return cache_path
+
+    def _load_index_cache(self, cache_path: str) -> List[int]:
         assert cache_path.endswith(".json")
-        self.debug(f"> Reading cached indices from {cache_path}")
+        self.debug(f"Reading cached indices from {cache_path}")
         with open(cache_path, "r") as f:
             indices = json.load(f)
         return indices
 
-    def _save_cache(self, indices: List[str], cache_path: str) -> None:
-        self.debug(f"> Saving indices to {cache_path}")
+    def _save_index_cache(self, indices: List[str], cache_path: str) -> None:
+        assert cache_path.endswith(".json")
+        self.debug(f"Saving indices to {cache_path}")
         with open(cache_path, "w") as f:
             json.dump(indices, f)
+
+    def _load_values_cache(self, cache_path: str) -> pd.DataFrame:
+        assert cache_path.endswith(".csv")
+        self.debug(f"Reading cached values from {cache_path}")
+        df_values = pd.read_csv(cache_path)
+        return df_values
+
+    def _save_values_cache(
+        self, df_values: pd.DataFrame, cache_path: str
+    ) -> None:
+        self.debug(f"Saving query values to {cache_path}")
+        assert cache_path.endswith(".csv")
+        df_values.to_csv(cache_path)
 
     def _read_selection_from_file(self, path: str) -> pd.DataFrame:
         self.info(f"Reading indices from: {path}")
@@ -180,7 +186,7 @@ class StringSelectionResolver(LoggerMixin):
             df_selection = pd.read_csv(path)
 
         elif path.endswith(".json"):
-            indices = self._load_cache(path)
+            indices = self._load_index_cache(path)
             df_selection = pd.DataFrame(
                 data=indices,
                 columns=[self._index_column],
@@ -194,13 +200,25 @@ class StringSelectionResolver(LoggerMixin):
     def _query_selection_from_dataset(self, selection: str) -> pd.DataFrame:
         variables = self._parse_variable_names(selection)
         self.debug(f"Parsed variable names {variables} from '{selection}'.")
-        df_values = pd.DataFrame(
-            data=self._dataset.query_table(
-                self._dataset.truth_table,
-                list(variables),
-            ),
-            columns=list(variables),
-        )
+
+        # (Opt.) Load cached indices, if available.
+        values_cache_path = self._get_values_cache_path(variables)
+        if self._use_cache and os.path.exists(values_cache_path):
+            df_values = self._load_values_cache(values_cache_path)
+
+        else:
+            df_values = pd.DataFrame(
+                data=self._dataset.query_table(
+                    self._dataset.truth_table,
+                    list(variables),
+                ),
+                columns=list(variables),
+            )
+
+        # (Opt.) Cache indices.
+        if self._use_cache and not os.path.exists(values_cache_path):
+            self._save_values_cache(df_values, values_cache_path)
+
         df_selection = df_values.query(selection)
         return df_selection
 
