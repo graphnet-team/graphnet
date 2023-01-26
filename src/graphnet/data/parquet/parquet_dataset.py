@@ -35,14 +35,14 @@ class ParquetDataset(Dataset):
         # Set custom member variable(s)
         self._parquet_hook = ak.from_parquet(self._path, lazy=False)
 
-    def _get_all_indices(self) -> np.ndarray:
+    def _get_all_indices(self) -> List[int]:
         return np.arange(
             len(
                 ak.to_numpy(
                     self._parquet_hook[self._truth_table][self._index_column]
                 ).tolist()
             )
-        )
+        ).tolist()
 
     def _format_dictionary_result(
         self, dictionary: Dict
