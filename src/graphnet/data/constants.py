@@ -29,6 +29,7 @@ class FEATURES:
         "sensor_pos_z",
         "t",
     ]
+    KAGGLE = ["x", "y", "z", "time", "charge", "auxiliary"]
 
 
 class TRUTH:
@@ -80,3 +81,4 @@ class TRUTH:
         "primary_hadron_1_energy",
         "total_energy",
     ]
+    KAGGLE = ["zenith", "azimuth"]

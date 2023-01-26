@@ -43,6 +43,34 @@ class IceCube86(Detector):
         return data
 
 
+class IceCubeKaggle(Detector):
+    """`Detector` class for Kaggle Competition."""
+
+    # Implementing abstract class attribute
+    features = FEATURES.KAGGLE
+
+    def _forward(self, data: Data) -> Data:
+        """Ingest data, build graph, and preprocess features.
+
+        Args:
+            data: Input graph data.
+
+        Returns:
+            Connected and preprocessed graph data.
+        """
+        # Check(s)
+        self._validate_features(data)
+
+        # Preprocessing
+        data.x[:, 0] /= 500.0  # x
+        data.x[:, 1] /= 500.0  # y
+        data.x[:, 2] /= 500.0  # z
+        data.x[:, 3] = (data.x[:, 3] - 1.0e04) / 3.0e4  # time
+        data.x[:, 4] = torch.log10(data.x[:, 4]) / 3.0  # charge
+
+        return data
+
+
 class IceCubeDeepCore(IceCube86):
     """`Detector` class for IceCube-DeepCore."""
 

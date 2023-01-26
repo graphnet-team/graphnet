@@ -2,7 +2,7 @@
 
 from collections import OrderedDict
 import os
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, Callable
 
 import numpy as np
 import pandas as pd
@@ -38,6 +38,8 @@ def make_dataloader(
     string_selection: List[int] = None,
     loss_weight_table: Optional[str] = None,
     loss_weight_column: Optional[str] = None,
+    index_column: str = "event_no",
+    labels: Optional[Dict[str, Callable]] = None,
 ) -> DataLoader:
     """Construct `DataLoader` instance."""
     # Check(s)
@@ -56,7 +58,13 @@ def make_dataloader(
         string_selection=string_selection,
         loss_weight_table=loss_weight_table,
         loss_weight_column=loss_weight_column,
+        index_column=index_column,
     )
+
+    # adds custom labels to dataset
+    if isinstance(labels, dict):
+        for label in labels.keys():
+            dataset.add_label(key=label, fn=labels[label])
 
     def collate_fn(graphs: List[Data]) -> Batch:
         """Remove graphs with less than two DOM hits.
@@ -99,6 +107,8 @@ def make_train_validation_dataloader(
     string_selection: Optional[List[int]] = None,
     loss_weight_column: Optional[str] = None,
     loss_weight_table: Optional[str] = None,
+    index_column: str = "event_no",
+    labels: Optional[Dict[str, Callable]] = None,
 ) -> Tuple[DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
     # Reproducibility
@@ -113,11 +123,21 @@ def make_train_validation_dataloader(
         dataset: Dataset
         if db.endswith(".db"):
             dataset = SQLiteDataset(
-                db, pulsemaps, features, truth, truth_table=truth_table
+                db,
+                pulsemaps,
+                features,
+                truth,
+                truth_table=truth_table,
+                index_column=index_column,
             )
         elif db.endswith(".parquet"):
             dataset = ParquetDataset(
-                db, pulsemaps, features, truth, truth_table=truth_table
+                db,
+                pulsemaps,
+                features,
+                truth,
+                truth_table=truth_table,
+                index_column=index_column,
             )
         else:
             raise RuntimeError(
@@ -158,6 +178,8 @@ def make_train_validation_dataloader(
         string_selection=string_selection,
         loss_weight_column=loss_weight_column,
         loss_weight_table=loss_weight_table,
+        index_column=index_column,
+        labels=labels,
     )
 
     training_dataloader = make_dataloader(
