@@ -39,7 +39,7 @@ class SQLiteDataset(Dataset):
     def _post_init(self) -> None:
         self._close_connection()
 
-    def _query_table(
+    def query_table(
         self,
         table: str,
         columns: Union[List[str], str],
@@ -54,17 +54,10 @@ class SQLiteDataset(Dataset):
         if not selection:  # I.e., `None` or `""`
             selection = "1=1"  # Identically true, to select all
 
-        index: int = 0
-        if sequential_index is not None:
-            index_ = self._indices[sequential_index]
-            if self._database_list is None:
-                assert isinstance(index_, int)
-                index = index_
-            else:
-                assert isinstance(index_, list)
-                index = index_[0]
+        index = self._get_event_index(sequential_index)
 
         # Query table
+        assert index is not None
         self._establish_connection(index)
         try:
             assert self._conn
@@ -93,6 +86,20 @@ class SQLiteDataset(Dataset):
         )
         self._close_connection()
         return indices.values.ravel().tolist()
+
+    def _get_event_index(
+        self, sequential_index: Optional[int]
+    ) -> Optional[int]:
+        index: int = 0
+        if sequential_index is not None:
+            index_ = self._indices[sequential_index]
+            if self._database_list is None:
+                assert isinstance(index_, int)
+                index = index_
+            else:
+                assert isinstance(index_, list)
+                index = index_[0]
+        return index
 
     # Custom, internal method(s)
     # @TODO: Is it necessary to return anything here?
