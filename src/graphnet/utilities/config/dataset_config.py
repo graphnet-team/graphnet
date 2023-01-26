@@ -39,7 +39,12 @@ class DatasetConfig(BaseConfig):
     node_truth_table: Optional[str] = None
     string_selection: Optional[List[int]] = None
     selection: Optional[
-        Union[str, Sequence[int], Dict[str, Union[str, Sequence[int]]]]
+        Union[
+            str,
+            List[int],
+            List[List[int]],
+            Dict[str, Union[str, List[str], List[int], List[List[int]]]],
+        ]
     ]
     loss_weight_table: Optional[str] = None
     loss_weight_column: Optional[str] = None
@@ -82,10 +87,29 @@ class DatasetConfig(BaseConfig):
                 "train": Dataset(...),
                 "test": Dataset(...),
             }
+
+            # You can also combine multiple selections into a single, named
+            # dataset
+            >>> dataset.config.selection = {
+                "train": [
+                    "event_no % 2 == 0 & abs(pid) == 12",
+                    "event_no % 2 == 0 & abs(pid) == 14",
+                    "event_no % 2 == 0 & abs(pid) == 16",
+                ],
+                (...)
+            }
+            >>> dataset.config.dump("dataset.yml")
+            >>> datasets: Dict[str, ConcatDataset] = Dataset.from_config(
+                "dataset.yml"
+            )
+            >>> datasets
+            {
+                "train": ConcatDataset(...),
+                (...)
+            }
         """
         # Single-key dictioaries are unpacked
         if isinstance(data["selection"], dict) and len(data["selection"]) == 1:
-            print("SINGLE-KEY DICT!")
             data["selection"] = next(iter(data["selection"].values()))
 
         # Base class constructor
