@@ -283,6 +283,12 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """Return a list of all available values in `self._index_column`."""
 
     @abstractmethod
+    def _get_event_index(
+        self, sequential_index: Optional[int]
+    ) -> Optional[int]:
+        """Return a the event index corresponding to a `sequential_index`."""
+
+    @abstractmethod
     def query_table(
         self,
         table: str,
