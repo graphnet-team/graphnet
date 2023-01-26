@@ -31,14 +31,6 @@ truth = TRUTH.PROMETHEUS
 WANDB_DIR = "./wandb/"
 os.makedirs(WANDB_DIR, exist_ok=True)
 
-# Initialise Weights & Biases (W&B) run
-wandb_logger = WandbLogger(
-    project="example-script",
-    entity="graphnet-team",
-    save_dir=WANDB_DIR,
-    log_model=True,
-)
-
 
 def main(
     path: str,
@@ -52,6 +44,14 @@ def main(
     num_workers: int,
 ) -> None:
     """Run example."""
+    # Initialise Weights & Biases (W&B) run
+    wandb_logger = WandbLogger(
+        project="example-script",
+        entity="graphnet-team",
+        save_dir=WANDB_DIR,
+        log_model=True,
+    )
+
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
 
