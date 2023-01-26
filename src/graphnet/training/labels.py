@@ -35,11 +35,11 @@ class Direction(Label):
 
     def __call__(self, graph: Data) -> torch.tensor:
         """Compute label for `graph`."""
-        x = torch.sin(graph[self._azimuth_key]) * torch.cos(
+        x = torch.cos(graph[self._azimuth_key]) * torch.sin(
             graph[self._zenith_key]
-        )
+        ).reshape(-1, 1)
         y = torch.sin(graph[self._azimuth_key]) * torch.sin(
             graph[self._zenith_key]
-        )
-        z = torch.cos(graph[self._azimuth_key])
-        return torch.cat([[x, y, z]], dtype=torch.float)
+        ).reshape(-1, 1)
+        z = torch.cos(graph[self._zenith_key]).reshape(-1, 1)
+        return torch.cat((x, y, z), dim=1)
