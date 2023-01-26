@@ -277,34 +277,43 @@ class StringSelectionResolver(LoggerMixin):
 
         Returns the part of `selection` that did not relate to the above.
         """
+        # Default outputs.
+        nb_events: Optional[int] = None
+        frac_events: Optional[float] = None
+
         random_events_pattern = (
             r" *([0-9]+[eE0-9\.-]*[%]?) +random events ~ *(.*)$"
         )
-        nb_events: Optional[int] = None
-        frac_events: Optional[float] = None
         m = re.search(random_events_pattern, selection)
-        if m:
-            nb_events_str, selection = m.group(1), m.group(2)
-            if "%" in nb_events_str:
-                frac_events = float(nb_events_str.split("%")[0]) / 100.0
-                assert (
-                    frac_events > 0
-                ), "Got a non-positive fraction of random events."
-                assert (
-                    frac_events <= 1
-                ), "Got a fraction of random events greater than 100%."
-            else:
-                nb_events_float = float(nb_events_str)
-                assert (
-                    nb_events_float > 0
-                ), "Got a non-positive number of random events."
-                if nb_events_float < 1:
-                    self.warning(
-                        "Got a number of random events between 0 and 1. "
-                        "Interpreting this as a fraction of random events."
-                    )
-                    frac_events = nb_events_float
-                else:
-                    nb_events = int(nb_events_float)
+        if m is None:
+            return nb_events, frac_events, selection
+
+        nb_events_str, selection = m.group(1), m.group(2)
+
+        # Percentage of events.
+        if "%" in nb_events_str:
+            frac_events = float(nb_events_str.split("%")[0]) / 100.0
+            assert (
+                frac_events > 0
+            ), "Got a non-positive fraction of random events."
+            assert (
+                frac_events <= 1
+            ), "Got a fraction of random events greater than 100%."
+            return nb_events, frac_events, selection
+
+        # Number of events
+        nb_events_float = float(nb_events_str)
+        assert (
+            nb_events_float > 0
+        ), "Got a non-positive number of random events."
+
+        if nb_events_float < 1:
+            self.warning(
+                "Got a number of random events between 0 and 1. "
+                "Interpreting this as a fraction of random events."
+            )
+            frac_events = nb_events_float
+        else:
+            nb_events = int(nb_events_float)
 
         return nb_events, frac_events, selection
