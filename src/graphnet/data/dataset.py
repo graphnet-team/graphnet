@@ -1,15 +1,12 @@
 """Base `Dataset` class(es) used in GraphNeT."""
 
-import ast
+from copy import deepcopy
 from abc import ABC, abstractmethod
-import json
-import os.path
-import re
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import cast, Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
-import pandas as pd
 import torch
+from torch.utils.data import ConcatDataset
 from torch_geometric.data import Data
 
 from graphnet.utilities.config import (
@@ -35,7 +32,12 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
     def from_config(  # type: ignore[override]
         cls,
         source: Union[DatasetConfig, str],
-    ) -> Union["Dataset", Dict[str, "Dataset"]]:
+    ) -> Union[
+        "Dataset",
+        ConcatDataset,
+        Dict[str, "Dataset"],
+        Dict[str, ConcatDataset],
+    ]:
         """Construct `Dataset` instance from `source` configuration."""
         if isinstance(source, str):
             source = DatasetConfig.load(source)
@@ -47,28 +49,61 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         # Parse set of `selection``.
         if isinstance(source.selection, dict):
-            return cls._construct_datasets(source)
+            return cls._construct_datasets_from_dict(source)
+        elif (
+            isinstance(source.selection, list)
+            and len(source.selection)
+            and isinstance(source.selection[0], str)
+        ):
+            return cls._construct_dataset_from_list_of_strings(source)
 
         return source._dataset_class(**source.dict())
 
     @classmethod
-    def _construct_datasets(
+    def concatenate(
+        cls,
+        datasets: List["Dataset"],
+    ) -> ConcatDataset:
+        """Concatenate multiple `Dataset`s into one instance."""
+        return ConcatDataset(datasets)
+
+    @classmethod
+    def _construct_datasets_from_dict(
         cls, config: DatasetConfig
     ) -> Dict[str, "Dataset"]:
-        """Construct `Dataset` for each entry in `self.selection`."""
+        """Construct `Dataset` for each entry in dict `self.selection`."""
         assert isinstance(config.selection, dict)
         datasets: Dict[str, "Dataset"] = {}
-        selections: Dict[str, Union[str, Sequence]] = dict(**config.selection)
+        selections: Dict[str, Union[str, List]] = deepcopy(config.selection)
         for key, selection in selections.items():
             config.selection = selection
             dataset = Dataset.from_config(config)
-            assert isinstance(dataset, Dataset)
+            assert isinstance(dataset, (Dataset, ConcatDataset))
             datasets[key] = dataset
 
         # Reset `selections`.
         config.selection = selections
 
         return datasets
+
+    @classmethod
+    def _construct_dataset_from_list_of_strings(
+        cls, config: DatasetConfig
+    ) -> "Dataset":
+        """Construct `Dataset` for each entry in list `self.selection`."""
+        assert isinstance(config.selection, list)
+        datasets: List["Dataset"] = []
+        selections: List[str] = deepcopy(cast(List[str], config.selection))
+        for selection in selections:
+            config.selection = selection
+            dataset = Dataset.from_config(config)
+            assert isinstance(dataset, Dataset)
+            datasets.append(dataset)
+
+        # Reset `selections`.
+        config.selection = selections
+
+        return cls.concatenate(datasets)
 
     @save_dataset_config
     def __init__(
@@ -83,7 +118,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         truth_table: str = "truth",
         node_truth_table: Optional[str] = None,
         string_selection: Optional[List[int]] = None,
-        selection: Optional[Union[List[int], List[List[int]]]] = None,
+        selection: Optional[Union[str, List[int], List[List[int]]]],
         dtype: torch.dtype = torch.float32,
         loss_weight_table: Optional[str] = None,
         loss_weight_column: Optional[str] = None,
@@ -113,9 +148,11 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             string_selection: Subset of strings for which data should be read
                 and used to construct graph objects. Defaults to None, meaning
                 all strings for which data exists are used.
-            selection: List of indicies (in `index_column`) of the events in
-                the input files that should be read. Defaults to None, meaning
-                that all events in the input files are read.
+            selection: The events that should be read. This can be given either
+                as list of indicies (in `index_column`); or a string-based
+                selection used to query the `Dataset` for events passing the
+                selection. Defaults to None, meaning that all events in the
+                input files are read.
             dtype: Type of the feature tensor on the graph objects returned.
             loss_weight_table: Name of the table containing per-event loss
                 weights.
