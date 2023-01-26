@@ -94,6 +94,7 @@
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES"><code class="docutils literal notranslate"><span class="pre">FEATURES</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES.DEEPCORE"><code class="docutils literal notranslate"><span class="pre">FEATURES.DEEPCORE</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES.ICECUBE86"><code class="docutils literal notranslate"><span class="pre">FEATURES.ICECUBE86</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.constants.FEATURES.KAGGLE"><code class="docutils literal notranslate"><span class="pre">FEATURES.KAGGLE</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES.PROMETHEUS"><code class="docutils literal notranslate"><span class="pre">FEATURES.PROMETHEUS</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.FEATURES.UPGRADE"><code class="docutils literal notranslate"><span class="pre">FEATURES.UPGRADE</span></code></a></li>
 </ul>
@@ -101,6 +102,7 @@
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH"><code class="docutils literal notranslate"><span class="pre">TRUTH</span></code></a><ul>
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH.DEEPCORE"><code class="docutils literal notranslate"><span class="pre">TRUTH.DEEPCORE</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH.ICECUBE86"><code class="docutils literal notranslate"><span class="pre">TRUTH.ICECUBE86</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.constants.TRUTH.KAGGLE"><code class="docutils literal notranslate"><span class="pre">TRUTH.KAGGLE</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH.PROMETHEUS"><code class="docutils literal notranslate"><span class="pre">TRUTH.PROMETHEUS</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.data.constants.TRUTH.UPGRADE"><code class="docutils literal notranslate"><span class="pre">TRUTH.UPGRADE</span></code></a></li>
 </ul>
@@ -492,6 +494,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.constants.FEATURES.KAGGLE">
+<span class="sig-name descname"><span class="pre">KAGGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['x',</span> <span class="pre">'y',</span> <span class="pre">'z',</span> <span class="pre">'time',</span> <span class="pre">'charge',</span> <span class="pre">'auxiliary']</span></em><a class="headerlink" href="#graphnet.data.constants.FEATURES.KAGGLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.data.constants.FEATURES.PROMETHEUS">
 <span class="sig-name descname"><span class="pre">PROMETHEUS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['sensor_pos_x',</span> <span class="pre">'sensor_pos_y',</span> <span class="pre">'sensor_pos_z',</span> <span class="pre">'t']</span></em><a class="headerlink" href="#graphnet.data.constants.FEATURES.PROMETHEUS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -516,6 +523,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.data.constants.TRUTH.ICECUBE86">
 <span class="sig-name descname"><span class="pre">ICECUBE86</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['energy',</span> <span class="pre">'energy_track',</span> <span class="pre">'position_x',</span> <span class="pre">'position_y',</span> <span class="pre">'position_z',</span> <span class="pre">'azimuth',</span> <span class="pre">'zenith',</span> <span class="pre">'pid',</span> <span class="pre">'elasticity',</span> <span class="pre">'sim_type',</span> <span class="pre">'interaction_type',</span> <span class="pre">'interaction_time',</span> <span class="pre">'inelasticity',</span> <span class="pre">'stopped_muon']</span></em><a class="headerlink" href="#graphnet.data.constants.TRUTH.ICECUBE86" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.constants.TRUTH.KAGGLE">
+<span class="sig-name descname"><span class="pre">KAGGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['zenith',</span> <span class="pre">'azimuth']</span></em><a class="headerlink" href="#graphnet.data.constants.TRUTH.KAGGLE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -848,7 +860,7 @@ files output by the current instance are merged.</p></li>
 <li><p><strong>shuffle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
 <li><p><strong>num_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – </p></li>
 <li><p><strong>persistent_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
-<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f0c68155ab0&gt;</span></code>) – </p></li>
+<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f1ee53a6170&gt;</span></code>) – </p></li>
 <li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
 </ul>
 </dd>
@@ -865,7 +877,7 @@ files output by the current instance are merged.</p></li>
 <li><p><strong>shuffle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
 <li><p><strong>num_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – </p></li>
 <li><p><strong>persistent_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
-<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f0c68155ab0&gt;</span></code>) – </p></li>
+<li><p><strong>collate_fn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;function</span> <span class="pre">collate_fn</span> <span class="pre">at</span> <span class="pre">0x7f1ee53a6170&gt;</span></code>) – </p></li>
 <li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p></li>
 </ul>
 </dd>
