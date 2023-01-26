@@ -148,8 +148,8 @@ def test_dataset(backend: str) -> None:
 
 @pytest.mark.order(3)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-def test_dataset_query_table(backend: str) -> None:
-    """Test the implementation of `Dataset._query_table` for `backend`."""
+def test_datasetquery_table(backend: str) -> None:
+    """Test the implementation of `Dataset.query_table` for `backend`."""
     path = get_file_path(backend)
     assert os.path.exists(path)
 
@@ -171,13 +171,13 @@ def test_dataset_query_table(backend: str) -> None:
 
     # Compare to expectations
     nb_events_to_test = 5
-    results_all = dataset._query_table(
+    results_all = dataset.query_table(
         pulsemap,
         columns=["event_no", opt["features"][0]],
     )
     for ix_test in range(nb_events_to_test):
 
-        results_single = dataset._query_table(
+        results_single = dataset.query_table(
             pulsemap,
             columns=["event_no", opt["features"][0]],
             sequential_index=ix_test,
