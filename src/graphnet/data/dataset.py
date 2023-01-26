@@ -557,8 +557,6 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         n_pulses = torch.tensor(len(x), dtype=torch.int32)
         graph = Data(x=x, edge_index=None)
         graph.n_pulses = n_pulses
-        if len(graph.x.shape) == 1:
-            graph.x = graph.x.unsqueeze(1)
         graph.features = self._features[1:]
 
         # Add loss weight to graph.
@@ -600,7 +598,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         # Additionally add original features as (static) attributes
         for index, feature in enumerate(graph.features):
-            graph[feature] = graph.x[:, index].detach()
+            if feature not in ["x"]:
+                graph[feature] = graph.x[:, index].detach()
 
         # Add custom labels to the graph
         for key, fn in self._label_fns.items():
