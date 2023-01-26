@@ -1,9 +1,12 @@
 """Example of plotting feature distributions from SQLite database."""
 
+import os.path
+
 import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
+from graphnet.constants import CONFIG_DIR
 from graphnet.data.dataset import Dataset
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.graph_builders import KNNGraphBuilder
@@ -17,7 +20,7 @@ logger = get_logger()
 def main() -> None:
     """Run example."""
     # Construct dataloader
-    dataset = Dataset.from_config("configs/datasets/test_data_sqlite.yml")
+    dataset = Dataset.from_config(os.path.join(CONFIG_DIR, "datasets/test_data_sqlite.yml"))
 
     assert isinstance(dataset, Dataset)
     features = dataset._features[1:]
