@@ -1,5 +1,6 @@
 """Base `Dataset` class(es) used in GraphNeT."""
 
+import ast
 from abc import ABC, abstractmethod
 import json
 import os.path
@@ -25,6 +26,24 @@ class ColumnMissingException(Exception):
 
 class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
     """Base Dataset class for reading from any intermediate file format."""
+
+    def _parse_variable_names(cls, selection: str) -> List[str]:
+        """Parse `selection`, return named entities that are not funtions."""
+        tree = ast.parse(selection)
+        functions = []
+        names = []
+        for node in ast.walk(tree):
+            # Save named entities
+            if isinstance(node, ast.Name):
+                names.append(node.id)
+
+            # Save names of functions
+            elif isinstance(node, ast.Call):
+                functions.append(node.func.id)  # type: ignore[attr-defined]
+
+        variables = list(set(names) - set(functions))
+        cls.debug(f"Parsed variable names {variables} from '{selection}'.")
+        return variables
 
     @save_dataset_config
     def __init__(
@@ -289,7 +308,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         fixed number of events to randomly sample, e.g., ``` "10000 random
         events ~ event_no % 5 > 0" "20% random events ~ event_no % 5 > 0" ```
         """
-        self.debug(f"Resolving selection: {selection}")
+        self.info(f"Resolving selection: {selection}")
 
         import hashlib
 
@@ -313,15 +332,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             selection,
         ) = self._get_random_events_from_selection(selection)
 
-        # Parse selection variables
-        pattern = "(^| )([_a-zA-Z]+[_a-zA-Z0-9]*)"
-        variables = set(
-            [groups[1] for groups in re.findall(pattern, selection, re.DOTALL)]
-        )
-        self.debug(f"> Found variables: {variables}")
-        variables.add(self._index_column)
-
         # Perform selection using pd.DataFrame.query
+        variables = self._parse_variable_names(selection)
         df_values = pd.DataFrame(
             data=self._query_table(self._truth_table, list(variables)),
             columns=list(variables),
@@ -340,12 +352,25 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
                 ).hexdigest()
                 random_state = (self._seed + int(selection_hex, 16)) % 2**32
 
-            df_values_selection = df_values_selection.sample(
-                n=nb_events,
-                frac=frac_events,
-                replace=False,
-                random_state=random_state,
-            )
+            nb_events_available = len(df_values_selection)
+            if nb_events_available == 0:
+                self.warning(f"No events passed selection `{selection}`")
+
+            else:
+                if nb_events and nb_events_available < nb_events:
+                    self.warning(
+                        f"Requested {nb_events} events but selection only "
+                        f"contains {nb_events_available}. Returning all of "
+                        "these."
+                    )
+                    nb_events = nb_events_available
+
+                df_values_selection = df_values_selection.sample(
+                    n=nb_events,
+                    frac=frac_events,
+                    replace=False,
+                    random_state=random_state,
+                )
 
         indices = df_values_selection[self._index_column].values.tolist()
 
@@ -391,11 +416,20 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         return nb_events, frac_events, selection
 
+    def _is_empty(self) -> bool:
+        """Return whether truth table (i.e., dataset) is empty."""
+        return len(self) == 0
+
     def _remove_missing_columns(self) -> None:
         """Remove columns that are not present in the input file.
 
         Columns are removed from `self._features` and `self._truth`.
         """
+        # Check if table is completely empty
+        if self._is_empty():
+            self.warning("Dataset is empty.")
+            return
+
         # Find missing features
         missing_features_set = set(self._features)
         for pulsemap in self._pulsemaps:
@@ -443,7 +477,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
                     self._missing_variables[table] = []
                 self._missing_variables[table].append(column)
             except IndexError:
-                self.warning("Dataset contains no entries")
+                self.warning(f"Dataset contains no entries for {column}")
 
         return self._missing_variables.get(table, [])
 
