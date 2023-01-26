@@ -162,6 +162,8 @@ class StringSelectionResolver(LoggerMixin):
         self.debug(f"Reading cached indices from {cache_path}")
         with open(cache_path, "r") as f:
             indices = json.load(f)
+        if isinstance(indices, dict):
+            return indices[self._index_column]
         return indices
 
     def _save_index_cache(self, indices: List[str], cache_path: str) -> None:
