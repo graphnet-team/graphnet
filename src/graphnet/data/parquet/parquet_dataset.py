@@ -35,14 +35,25 @@ class ParquetDataset(Dataset):
         # Set custom member variable(s)
         self._parquet_hook = ak.from_parquet(self._path, lazy=False)
 
-    def _get_all_indices(self) -> np.ndarray:
+    def _get_all_indices(self) -> List[int]:
         return np.arange(
             len(
                 ak.to_numpy(
                     self._parquet_hook[self._truth_table][self._index_column]
                 ).tolist()
             )
-        )
+        ).tolist()
+
+    def _get_event_index(
+        self, sequential_index: Optional[int]
+    ) -> Optional[int]:
+        index: Optional[int]
+        if sequential_index is None:
+            index = None
+        else:
+            index = cast(List[int], self._indices)[sequential_index]
+
+        return index
 
     def _format_dictionary_result(
         self, dictionary: Dict
@@ -74,23 +85,20 @@ class ParquetDataset(Dataset):
 
         return list(map(tuple, list(zip(*dictionary.values()))))
 
-    def _query_table(
+    def query_table(
         self,
         table: str,
         columns: Union[List[str], str],
         sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
+        """Query table at a specific index, optionally with some selection."""
         # Check(s)
         assert (
             selection is None
         ), "Argument `selection` is currently not supported"
 
-        index: Optional[int]
-        if sequential_index is None:
-            index = None
-        else:
-            index = cast(List[int], self._indices)[sequential_index]
+        index = self._get_event_index(sequential_index)
 
         try:
             if index is None:
