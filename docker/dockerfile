@@ -21,6 +21,8 @@ RUN pip install --upgrade pip && \
     pip install --ignore-installed PyYAML
 
 # Copy checked out package code to appropriate destination in image.
+RUN pwd
+RUN ls -lart
 WORKDIR /root/graphnet
 ADD . /root/graphnet/
 
