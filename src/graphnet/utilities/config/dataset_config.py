@@ -41,11 +41,11 @@ class DatasetConfig(BaseConfig):
     selection: Optional[
         Union[
             str,
-            List[int],
-            List[List[int]],
-            Dict[str, Union[str, List[str], List[int], List[List[int]]]],
+            List[str],
+            List[Union[int, List[int]]],
+            Dict[str, Union[str, List[str]]],
         ]
-    ]
+    ] = None
     loss_weight_table: Optional[str] = None
     loss_weight_column: Optional[str] = None
     loss_weight_default_value: Optional[float] = None
