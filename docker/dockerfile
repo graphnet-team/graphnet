@@ -20,15 +20,11 @@ RUN pip install --upgrade pip && \
     pip install --upgrade astropy && \
     pip install --ignore-installed PyYAML
 
-# Copy checked out package code to appropriate destination in image.
-RUN pwd
-RUN ls -lart
-WORKDIR /root/graphnet
-ADD . /root/graphnet/
-
 # Install GraphNeT and required dependencies.
-RUN pip install -r requirements/torch_${HARDWARE}.txt
-RUN pip install -e .[develop,torch]
+RUN pip install -r https://raw.githubusercontent.com/com/graphnet-team/graphnet/main/requirements/torch_${HARDWARE}.txt
+RUN pip install -e git+https://github.com/icecube/graphnet.git#egg=graphnet[develop,torch]
+
+WORKDIR /root/src/graphnet/
 
 # Create missing alias(es) in slim.
 RUN echo 'alias python="python3"' >> ~/.bashrc
@@ -36,9 +32,6 @@ RUN echo 'alias python="python3"' >> ~/.bashrc
 # Stylise command line prompt
 RUN echo 'PS1="🐳 \[\033[38;2;86;138;242m\]graphnet@\h \[\033[0m\]❯ \[\033[0;34m\]\w \[\033[0m\]\$ "' >> ~/.bashrc
 RUN echo 'PS2="\[\033[38;5;236m\]❯\[\033[38;5;239m\]❯\[\033[0m\]❯ "' >> ~/.bashrc
-
-# Enable colours in terminal.
-#ENV TERM xterm-256color
 
 # Default command for executing container.
 CMD [ "/bin/bash" ]
