@@ -205,6 +205,7 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.utilities.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities.parquet_to_sqlite">graphnet.data.utilities.parquet_to_sqlite module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities.random">graphnet.data.utilities.random module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities.string_selection_resolver">graphnet.data.utilities.string_selection_resolver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.utilities.html#module-graphnet.data.utilities">Module contents</a></li>
 </ul>
 </li>
@@ -271,20 +272,24 @@
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.__init__"><code class="docutils literal notranslate"><span class="pre">Dataset.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.__len__"><code class="docutils literal notranslate"><span class="pre">Dataset.__len__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._check_missing_columns"><code class="docutils literal notranslate"><span class="pre">Dataset._check_missing_columns()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._construct_datasets"><code class="docutils literal notranslate"><span class="pre">Dataset._construct_datasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._construct_dataset_from_list_of_strings"><code class="docutils literal notranslate"><span class="pre">Dataset._construct_dataset_from_list_of_strings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._construct_datasets_from_dict"><code class="docutils literal notranslate"><span class="pre">Dataset._construct_datasets_from_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._create_graph"><code class="docutils literal notranslate"><span class="pre">Dataset._create_graph()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_all_indices"><code class="docutils literal notranslate"><span class="pre">Dataset._get_all_indices()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_dbang_label"><code class="docutils literal notranslate"><span class="pre">Dataset._get_dbang_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_event_index"><code class="docutils literal notranslate"><span class="pre">Dataset._get_event_index()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_labels"><code class="docutils literal notranslate"><span class="pre">Dataset._get_labels()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._get_random_events_from_selection"><code class="docutils literal notranslate"><span class="pre">Dataset._get_random_events_from_selection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._init"><code class="docutils literal notranslate"><span class="pre">Dataset._init()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._post_init"><code class="docutils literal notranslate"><span class="pre">Dataset._post_init()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._query"><code class="docutils literal notranslate"><span class="pre">Dataset._query()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._query_table"><code class="docutils literal notranslate"><span class="pre">Dataset._query_table()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._remove_missing_columns"><code class="docutils literal notranslate"><span class="pre">Dataset._remove_missing_columns()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset._resolve_string_selection_to_indices"><code class="docutils literal notranslate"><span class="pre">Dataset._resolve_string_selection_to_indices()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.add_label"><code class="docutils literal notranslate"><span class="pre">Dataset.add_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.concatenate"><code class="docutils literal notranslate"><span class="pre">Dataset.concatenate()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.from_config"><code class="docutils literal notranslate"><span class="pre">Dataset.from_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.path"><code class="docutils literal notranslate"><span class="pre">Dataset.path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.query_table"><code class="docutils literal notranslate"><span class="pre">Dataset.query_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset.truth_table"><code class="docutils literal notranslate"><span class="pre">Dataset.truth_table</span></code></a></li>
 </ul>
 </li>
 </ul>

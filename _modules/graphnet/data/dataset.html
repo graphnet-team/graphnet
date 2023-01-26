@@ -152,15 +152,13 @@
   <h1>Source code for graphnet.data.dataset</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base `Dataset` class(es) used in GraphNeT.&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os.path</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">ConcatDataset</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="p">(</span>
@@ -169,6 +167,9 @@
     <span class="n">save_dataset_config</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.utilities.string_selection_resolver</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">StringSelectionResolver</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="ColumnMissingException"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.ColumnMissingException">[docs]</a><span class="k">class</span> <span class="nc">ColumnMissingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -177,6 +178,84 @@
 
 <div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Configurable</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Dataset class for reading from any intermediate file format.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Class method(s)</span>
+<div class="viewcode-block" id="Dataset.from_config"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.from_config">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetConfig</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="s2">&quot;Dataset&quot;</span><span class="p">,</span>
+        <span class="n">ConcatDataset</span><span class="p">,</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">],</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConcatDataset</span><span class="p">],</span>
+    <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` instance from `source` configuration.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">DatasetConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DatasetConfig</span><span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Argument `source` of type (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="si">}</span><span class="s2">) is not a &quot;</span>
+            <span class="s2">&quot;`DatasetConfig&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Parse set of `selection``.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_construct_datasets_from_dict</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">selection</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">selection</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_construct_dataset_from_list_of_strings</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">source</span><span class="o">.</span><span class="n">_dataset_class</span><span class="p">(</span><span class="o">**</span><span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Dataset.concatenate"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.concatenate">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">concatenate</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConcatDataset</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Concatenate multiple `Dataset`s into one instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ConcatDataset</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset._construct_datasets_from_dict"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._construct_datasets_from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_construct_datasets_from_dict</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DatasetConfig</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` for each entry in dict `self.selection`.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">selections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">selections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selection</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">(</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">ConcatDataset</span><span class="p">))</span>
+            <span class="n">datasets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
+
+        <span class="c1"># Reset `selections`.</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selections</span>
+
+        <span class="k">return</span> <span class="n">datasets</span></div>
+
+<div class="viewcode-block" id="Dataset._construct_dataset_from_list_of_strings"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._construct_dataset_from_list_of_strings">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_construct_dataset_from_list_of_strings</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DatasetConfig</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` for each entry in list `self.selection`.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">selections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">selections</span><span class="p">:</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selection</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">)</span>
+            <span class="n">datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="c1"># Reset `selections`.</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selections</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dataset.__init__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__init__">[docs]</a>    <span class="nd">@save_dataset_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -191,7 +270,7 @@
         <span class="n">truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;truth&quot;</span><span class="p">,</span>
         <span class="n">node_truth_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">string_selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
         <span class="n">loss_weight_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -221,9 +300,11 @@
 <span class="sd">            string_selection: Subset of strings for which data should be read</span>
 <span class="sd">                and used to construct graph objects. Defaults to None, meaning</span>
 <span class="sd">                all strings for which data exists are used.</span>
-<span class="sd">            selection: List of indicies (in `index_column`) of the events in</span>
-<span class="sd">                the input files that should be read. Defaults to None, meaning</span>
-<span class="sd">                that all events in the input files are read.</span>
+<span class="sd">            selection: The events that should be read. This can be given either</span>
+<span class="sd">                as list of indicies (in `index_column`); or a string-based</span>
+<span class="sd">                selection used to query the `Dataset` for events passing the</span>
+<span class="sd">                selection. Defaults to None, meaning that all events in the</span>
+<span class="sd">                input files are read.</span>
 <span class="sd">            dtype: Type of the feature tensor on the graph objects returned.</span>
 <span class="sd">            loss_weight_table: Name of the table containing per-event loss</span>
 <span class="sd">                weights.</span>
@@ -299,7 +380,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Data</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_string_selection_resolver</span> <span class="o">=</span> <span class="n">StringSelectionResolver</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Implementation-specific initialisation.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
@@ -325,44 +411,16 @@
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Dataset.from_config"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.from_config">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
-        <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetConfig</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` instance from `source` configuration.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">source</span> <span class="o">=</span> <span class="n">DatasetConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="c1"># Properties</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Path to the file(s) from which this `Dataset` reads.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DatasetConfig</span><span class="p">),</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Argument `source` of type (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="si">}</span><span class="s2">) is not a &quot;</span>
-            <span class="s2">&quot;`DatasetConfig&quot;</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Parse set of `selection``.</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_construct_datasets</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">source</span><span class="o">.</span><span class="n">_dataset_class</span><span class="p">(</span><span class="o">**</span><span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span></div>
-
-<div class="viewcode-block" id="Dataset._construct_datasets"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._construct_datasets">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_construct_datasets</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DatasetConfig</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` for each entry in `self.selection`.&quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="n">datasets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">selections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">selections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selection</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">)</span>
-            <span class="n">datasets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
-
-        <span class="c1"># Reset `selections`.</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selections</span>
-
-        <span class="k">return</span> <span class="n">datasets</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">truth_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the table containing event-level truth information.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span>
 
     <span class="c1"># Abstract method(s)</span>
 <div class="viewcode-block" id="Dataset._init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._init">[docs]</a>    <span class="nd">@abstractmethod</span>
@@ -376,8 +434,14 @@
     <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of all available values in `self._index_column`.&quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Dataset._query_table"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._query_table">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_query_table</span><span class="p">(</span>
+<div class="viewcode-block" id="Dataset._get_event_index"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_event_index">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_get_event_index</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a the event index corresponding to a `sequential_index`.&quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Dataset.query_table"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.query_table">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">query_table</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
@@ -441,113 +505,18 @@
 <span class="sd">        fixed number of events to randomly sample, e.g., ``` &quot;10000 random</span>
 <span class="sd">        events ~ event_no % 5 &gt; 0&quot; &quot;20% random events ~ event_no % 5 &gt; 0&quot; ```</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resolving selection: </span><span class="si">{</span><span class="n">selection</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="kn">import</span> <span class="nn">hashlib</span>
-
-        <span class="n">path_string</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">unique_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_string</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">selection</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="nb">hex</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">unique_string</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-        <span class="n">cache</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/tmp/selection-</span><span class="si">{</span><span class="nb">hex</span><span class="si">}</span><span class="s2">.json&quot;</span>
-
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt; Reading from </span><span class="si">{</span><span class="n">cache</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">indices</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">indices</span>
-
-        <span class="c1"># Check whether to do random sampling</span>
-        <span class="p">(</span>
-            <span class="n">nb_events</span><span class="p">,</span>
-            <span class="n">frac_events</span><span class="p">,</span>
-            <span class="n">selection</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random_events_from_selection</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
-
-        <span class="c1"># Parse selection variables</span>
-        <span class="n">pattern</span> <span class="o">=</span> <span class="s2">&quot;(^| )([_a-zA-Z]+[_a-zA-Z0-9]*)&quot;</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">groups</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">groups</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)]</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt; Found variables: </span><span class="si">{</span><span class="n">variables</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">variables</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">)</span>
-
-        <span class="c1"># Perform selection using pd.DataFrame.query</span>
-        <span class="n">df_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">variables</span><span class="p">)),</span>
-            <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">variables</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">df_values_selection</span> <span class="o">=</span> <span class="n">df_values</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
-
-        <span class="c1"># Get random subset, if necessary.</span>
-        <span class="k">if</span> <span class="n">nb_events</span> <span class="ow">or</span> <span class="n">frac_events</span><span class="p">:</span>
-            <span class="n">random_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1"># Make sure that a dataset config with a single `seed` yields</span>
-                <span class="c1"># different random samples for potentially different selection</span>
-                <span class="c1"># (i.e., train, test, val).</span>
-                <span class="n">selection_hex</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span>
-                    <span class="n">selection</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-                <span class="n">random_state</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">selection_hex</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span> <span class="o">%</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span>
-
-            <span class="n">df_values_selection</span> <span class="o">=</span> <span class="n">df_values_selection</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
-                <span class="n">n</span><span class="o">=</span><span class="n">nb_events</span><span class="p">,</span>
-                <span class="n">frac</span><span class="o">=</span><span class="n">frac_events</span><span class="p">,</span>
-                <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">df_values_selection</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt; Saving to </span><span class="si">{</span><span class="n">cache</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">indices</span></div>
-
-<div class="viewcode-block" id="Dataset._get_random_events_from_selection"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_random_events_from_selection">[docs]</a>    <span class="k">def</span> <span class="nf">_get_random_events_from_selection</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the `selection` to extract num/frac of random events.&quot;&quot;&quot;</span>
-        <span class="n">random_events_pattern</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot; *([0-9]+[eE0-9\.-]*[%]?) +random events ~ *(.*)$&quot;</span>
-        <span class="p">)</span>
-        <span class="n">nb_events</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">frac_events</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">random_events_pattern</span><span class="p">,</span> <span class="n">selection</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-            <span class="n">nb_events_str</span><span class="p">,</span> <span class="n">selection</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;%&quot;</span> <span class="ow">in</span> <span class="n">nb_events_str</span><span class="p">:</span>
-                <span class="n">frac_events</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nb_events_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">100.0</span>
-                <span class="k">assert</span> <span class="p">(</span>
-                    <span class="n">frac_events</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                <span class="p">),</span> <span class="s2">&quot;Got a non-positive fraction of random events.&quot;</span>
-                <span class="k">assert</span> <span class="p">(</span>
-                    <span class="n">frac_events</span> <span class="o">&lt;=</span> <span class="mi">1</span>
-                <span class="p">),</span> <span class="s2">&quot;Got a fraction of random events greater than 100%.&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">nb_events_float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nb_events_str</span><span class="p">)</span>
-                <span class="k">assert</span> <span class="p">(</span>
-                    <span class="n">nb_events_float</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                <span class="p">),</span> <span class="s2">&quot;Got a non-positive number of random events.&quot;</span>
-                <span class="k">if</span> <span class="n">nb_events_float</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Got a number of random events between 0 and 1. &quot;</span>
-                        <span class="s2">&quot;Interpreting this as a fraction of random events.&quot;</span>
-                    <span class="p">)</span>
-                    <span class="n">frac_events</span> <span class="o">=</span> <span class="n">nb_events_float</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">nb_events</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nb_events_float</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">nb_events</span><span class="p">,</span> <span class="n">frac_events</span><span class="p">,</span> <span class="n">selection</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string_selection_resolver</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dataset._remove_missing_columns"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._remove_missing_columns">[docs]</a>    <span class="k">def</span> <span class="nf">_remove_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove columns that are not present in the input file.</span>
 
 <span class="sd">        Columns are removed from `self._features` and `self._truth`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if table is completely empty</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dataset is empty.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="c1"># Find missing features</span>
         <span class="n">missing_features_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">pulsemap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">:</span>
@@ -589,13 +558,13 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list missing columns in `table`.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">ColumnMissingException</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dataset contains no entries&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset contains no entries for </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[])</span></div>
 
@@ -625,17 +594,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pulsemap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">:</span>
-            <span class="n">features_pulsemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
+            <span class="n">features_pulsemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
                 <span class="n">pulsemap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span>
             <span class="p">)</span>
             <span class="n">features</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">features_pulsemap</span><span class="p">)</span>
 
-        <span class="n">truth</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
+        <span class="n">truth</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">,</span> <span class="n">sequential_index</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="n">node_truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
+            <span class="n">node_truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_table</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">,</span>
                 <span class="n">sequential_index</span><span class="p">,</span>
@@ -647,7 +616,7 @@
         <span class="n">loss_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Default</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="n">loss_weight_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_table</span><span class="p">(</span>
+            <span class="n">loss_weight_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="p">,</span>
                 <span class="n">sequential_index</span><span class="p">,</span>
@@ -676,7 +645,8 @@
 <span class="sd">            features: List of tuples, containing event features.</span>
 <span class="sd">            truth: List of tuples, containing truth information.</span>
 <span class="sd">            node_truth: List of tuples, containing node-level truth.</span>
-<span class="sd">            loss_weight: A weight associated with the event for weighing the loss.</span>
+<span class="sd">            loss_weight: A weight associated with the event for weighing the</span>
+<span class="sd">                loss.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Graph object.</span>
@@ -713,7 +683,8 @@
 
         <span class="c1"># Add loss weight to graph.</span>
         <span class="k">if</span> <span class="n">loss_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># No loss weight was retrieved, i.e., it is missing for the current event</span>
+            <span class="c1"># No loss weight was retrieved, i.e., it is missing for the current</span>
+            <span class="c1"># event.</span>
             <span class="k">if</span> <span class="n">loss_weight</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_default_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>

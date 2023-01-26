@@ -418,6 +418,41 @@ construction more transparent and reproducible.</p>
 “test”: Dataset(…),</p>
 </div></blockquote>
 <p>}</p>
+<p># You can also combine multiple selections into a single, named
+# dataset
+&gt;&gt;&gt; dataset.config.selection = {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“train”: [</dt><dd><p>“event_no % 2 == 0 &amp; abs(pid) == 12”,
+“event_no % 2 == 0 &amp; abs(pid) == 14”,
+“event_no % 2 == 0 &amp; abs(pid) == 16”,</p>
+</dd>
+</dl>
+<p>],
+(…)</p>
+</div></blockquote>
+<p>}
+&gt;&gt;&gt; dataset.config.dump(“dataset.yml”)
+&gt;&gt;&gt; datasets: Dict[str, ConcatDataset] = Dataset.from_config(</p>
+<blockquote>
+<div><p>“dataset.yml”</p>
+</div></blockquote>
+<p>)
+&gt;&gt;&gt; datasets
+{</p>
+<blockquote>
+<div><p>“train”: ConcatDataset(…),
+(…)</p>
+</div></blockquote>
+<p>}</p>
+<p># Finally, you can still reference existing selection files in CSV
+# or JSON formats:
+&gt;&gt;&gt; dataset.config.selection = {</p>
+<blockquote>
+<div><p>“train”: “50000 random events ~ train_selection.csv”,
+“test”: “test_selection.csv”,</p>
+</div></blockquote>
+<p>}</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – </p>
@@ -477,7 +512,7 @@ construction more transparent and reproducible.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.selection">
-<span class="sig-name descname"><span class="pre">selection</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]]],</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code><span class="pre">]</span></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.selection" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">selection</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]]],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]]],</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code><span class="pre">]</span></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.selection" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

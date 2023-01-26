@@ -20,6 +20,14 @@ graphnet.data.utilities.random module
    :undoc-members:
    :show-inheritance:
 
+graphnet.data.utilities.string\_selection\_resolver module
+----------------------------------------------------------
+
+.. automodule:: graphnet.data.utilities.string_selection_resolver
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

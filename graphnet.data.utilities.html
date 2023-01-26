@@ -102,6 +102,18 @@
 <li><a class="reference internal" href="#graphnet.data.utilities.random.pairwise_shuffle"><code class="docutils literal notranslate"><span class="pre">pairwise_shuffle()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-graphnet.data.utilities.string_selection_resolver">graphnet.data.utilities.string_selection_resolver module</a><ul>
+<li><a class="reference internal" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver"><code class="docutils literal notranslate"><span class="pre">StringSelectionResolver</span></code></a><ul>
+<li><a class="reference internal" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver.__init__"><code class="docutils literal notranslate"><span class="pre">StringSelectionResolver.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_index_cache_path"><code class="docutils literal notranslate"><span class="pre">StringSelectionResolver._get_index_cache_path()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_random_events_from_selection"><code class="docutils literal notranslate"><span class="pre">StringSelectionResolver._get_random_events_from_selection()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_values_cache_path"><code class="docutils literal notranslate"><span class="pre">StringSelectionResolver._get_values_cache_path()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._parse_variable_names"><code class="docutils literal notranslate"><span class="pre">StringSelectionResolver._parse_variable_names()</span></code></a></li>
+<li><a class="reference internal" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver.resolve"><code class="docutils literal notranslate"><span class="pre">StringSelectionResolver.resolve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-graphnet.data.utilities">Module contents</a></li>
 </ul>
 </li>
@@ -273,6 +285,154 @@ gcd_shuffled: List of corresponding gcd file paths.</p>
 <dd class="field-odd"><p>i3_shuffled</p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+<section id="module-graphnet.data.utilities.string_selection_resolver">
+<span id="graphnet-data-utilities-string-selection-resolver-module"></span><h2>graphnet.data.utilities.string_selection_resolver module<a class="headerlink" href="#module-graphnet.data.utilities.string_selection_resolver" title="Permalink to this heading">¶</a></h2>
+<p>Utilities for resolving string-based selections to event indices.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.utilities.string_selection_resolver.StringSelectionResolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.utilities.string_selection_resolver.</span></span><span class="sig-name descname"><span class="pre">StringSelectionResolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/string_selection_resolver.html#StringSelectionResolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.utilities.html#graphnet.utilities.logging.LoggerMixin" title="graphnet.utilities.logging.LoggerMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a></p>
+<p>Resolve string-based selection to event indices.</p>
+<p>String-based selection, using in <cite>DatasetConfig</cite>, is a very flexible way of
+defining event selections. Below we show an example of a very involved
+event selection, which should cover most standard event selections
+currently in use with <cite>graphnet</cite>.</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>yml
+# dataset/config.yml
+selection:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>test:</dt><dd><ul class="simple">
+<li><p>50000 random events ~ event_no % 5 == 0 &amp; abs(pid) == 12</p></li>
+<li><p>50000 random events ~ event_no % 5 == 0 &amp; abs(pid) == 14</p></li>
+<li><p>50000 random events ~ event_no % 5 == 0 &amp; abs(pid) == 16</p></li>
+<li><p>50000 random events ~ event_no % 5 == 0 &amp; abs(pid) == 13</p></li>
+<li><p>50000 random events ~ event_no % 5 == 0 &amp; abs(pid) == 1</p></li>
+</ul>
+</dd>
+<dt>validation:</dt><dd><ul class="simple">
+<li><p>10000 random events ~ event_no % 5 == 1 &amp; abs(pid) == 12</p></li>
+<li><p>10000 random events ~ event_no % 5 == 1 &amp; abs(pid) == 14</p></li>
+<li><p>10000 random events ~ event_no % 5 == 1 &amp; abs(pid) == 16</p></li>
+<li><p>10000 random events ~ event_no % 5 == 1 &amp; abs(pid) == 13</p></li>
+<li><p>10000 random events ~ event_no % 5 == 1 &amp; abs(pid) == 1</p></li>
+</ul>
+</dd>
+<dt>train:</dt><dd><ul class="simple">
+<li><p>10000 random events ~ event_no % 5 &gt; 1 &amp; abs(pid) == 12</p></li>
+<li><p>10000 random events ~ event_no % 5 &gt; 1 &amp; abs(pid) == 14</p></li>
+<li><p>10000 random events ~ event_no % 5 &gt; 1 &amp; abs(pid) == 16</p></li>
+<li><p>10000 random events ~ event_no % 5 &gt; 1 &amp; abs(pid) == 13</p></li>
+<li><p>10000 random events ~ event_no % 5 &gt; 1 &amp; abs(pid) == 1</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>seed</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+<li><p><strong>use_cache</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.utilities.string_selection_resolver.StringSelectionResolver.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/string_selection_resolver.html#StringSelectionResolver.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct <cite>StringSelectionResolver</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<a class="reference internal" href="graphnet.data.html#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – </p></li>
+<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>seed</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – </p></li>
+<li><p><strong>use_cache</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_index_cache_path">
+<span class="sig-name descname"><span class="pre">_get_index_cache_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/string_selection_resolver.html#StringSelectionResolver._get_index_cache_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_index_cache_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a cache path unique to the input files and selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_random_events_from_selection">
+<span class="sig-name descname"><span class="pre">_get_random_events_from_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/string_selection_resolver.html#StringSelectionResolver._get_random_events_from_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_random_events_from_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the <cite>selection</cite> to extract num/frac of random events.</p>
+<p>Returns the part of <cite>selection</cite> that did not relate to the above.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_values_cache_path">
+<span class="sig-name descname"><span class="pre">_get_values_cache_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/string_selection_resolver.html#StringSelectionResolver._get_values_cache_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._get_values_cache_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a cache path unique to the input files and selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>variables</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._parse_variable_names">
+<span class="sig-name descname"><span class="pre">_parse_variable_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/string_selection_resolver.html#StringSelectionResolver._parse_variable_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver._parse_variable_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <cite>selection</cite>, return named entities that are not funtions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.utilities.string_selection_resolver.StringSelectionResolver.resolve">
+<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/data/utilities/string_selection_resolver.html#StringSelectionResolver.resolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver.resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve selection as string to list of indicies.</p>
+<p>Selections are expected to have pandas.DataFrame.query-compatible
+syntax, e.g., <code class="docutils literal notranslate"><span class="pre">`</span> <span class="pre">&quot;event_no</span> <span class="pre">%</span> <span class="pre">5</span> <span class="pre">&gt;</span> <span class="pre">0&quot;</span> <span class="pre">`</span></code> Selections may also specify a
+fixed number of events to randomly sample, e.g., <code class="docutils literal notranslate"><span class="pre">`</span> <span class="pre">&quot;10000</span> <span class="pre">random</span>
+<span class="pre">events</span> <span class="pre">~</span> <span class="pre">event_no</span> <span class="pre">%</span> <span class="pre">5</span> <span class="pre">&gt;</span> <span class="pre">0&quot;</span> <span class="pre">&quot;20%</span> <span class="pre">random</span> <span class="pre">events</span> <span class="pre">~</span> <span class="pre">event_no</span> <span class="pre">%</span> <span class="pre">5</span> <span class="pre">&gt;</span> <span class="pre">0&quot;</span> <span class="pre">`</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

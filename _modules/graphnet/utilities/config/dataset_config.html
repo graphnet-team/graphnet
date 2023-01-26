@@ -191,8 +191,13 @@
     <span class="n">node_truth_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">string_selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
-        <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span>
-    <span class="p">]</span>
+        <span class="n">Union</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span>
+            <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]],</span>
+            <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+        <span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">loss_weight_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">loss_weight_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">loss_weight_default_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -234,10 +239,36 @@
 <span class="sd">                &quot;train&quot;: Dataset(...),</span>
 <span class="sd">                &quot;test&quot;: Dataset(...),</span>
 <span class="sd">            }</span>
+
+<span class="sd">            # You can also combine multiple selections into a single, named</span>
+<span class="sd">            # dataset</span>
+<span class="sd">            &gt;&gt;&gt; dataset.config.selection = {</span>
+<span class="sd">                &quot;train&quot;: [</span>
+<span class="sd">                    &quot;event_no % 2 == 0 &amp; abs(pid) == 12&quot;,</span>
+<span class="sd">                    &quot;event_no % 2 == 0 &amp; abs(pid) == 14&quot;,</span>
+<span class="sd">                    &quot;event_no % 2 == 0 &amp; abs(pid) == 16&quot;,</span>
+<span class="sd">                ],</span>
+<span class="sd">                (...)</span>
+<span class="sd">            }</span>
+<span class="sd">            &gt;&gt;&gt; dataset.config.dump(&quot;dataset.yml&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; datasets: Dict[str, ConcatDataset] = Dataset.from_config(</span>
+<span class="sd">                &quot;dataset.yml&quot;</span>
+<span class="sd">            )</span>
+<span class="sd">            &gt;&gt;&gt; datasets</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;train&quot;: ConcatDataset(...),</span>
+<span class="sd">                (...)</span>
+<span class="sd">            }</span>
+
+<span class="sd">            # Finally, you can still reference existing selection files in CSV</span>
+<span class="sd">            # or JSON formats:</span>
+<span class="sd">            &gt;&gt;&gt; dataset.config.selection = {</span>
+<span class="sd">                &quot;train&quot;: &quot;50000 random events ~ train_selection.csv&quot;,</span>
+<span class="sd">                &quot;test&quot;: &quot;test_selection.csv&quot;,</span>
+<span class="sd">            }</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Single-key dictioaries are unpacked</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SINGLE-KEY DICT!&quot;</span><span class="p">)</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 
         <span class="c1"># Base class constructor</span>
