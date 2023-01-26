@@ -18,6 +18,9 @@ from graphnet.utilities.config import (
     save_dataset_config,
 )
 from graphnet.utilities.logging import LoggerMixin
+from graphnet.data.utilities.string_selection_resolver import (
+    StringSelectionResolver,
+)
 
 
 class ColumnMissingException(Exception):
@@ -27,23 +30,45 @@ class ColumnMissingException(Exception):
 class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
     """Base Dataset class for reading from any intermediate file format."""
 
-    def _parse_variable_names(cls, selection: str) -> List[str]:
-        """Parse `selection`, return named entities that are not funtions."""
-        tree = ast.parse(selection)
-        functions = []
-        names = []
-        for node in ast.walk(tree):
-            # Save named entities
-            if isinstance(node, ast.Name):
-                names.append(node.id)
+    # Class method(s)
+    @classmethod
+    def from_config(  # type: ignore[override]
+        cls,
+        source: Union[DatasetConfig, str],
+    ) -> Union["Dataset", Dict[str, "Dataset"]]:
+        """Construct `Dataset` instance from `source` configuration."""
+        if isinstance(source, str):
+            source = DatasetConfig.load(source)
 
-            # Save names of functions
-            elif isinstance(node, ast.Call):
-                functions.append(node.func.id)  # type: ignore[attr-defined]
+        assert isinstance(source, DatasetConfig), (
+            f"Argument `source` of type ({type(source)}) is not a "
+            "`DatasetConfig"
+        )
 
-        variables = list(set(names) - set(functions))
-        cls.debug(f"Parsed variable names {variables} from '{selection}'.")
-        return variables
+        # Parse set of `selection``.
+        if isinstance(source.selection, dict):
+            return cls._construct_datasets(source)
+
+        return source._dataset_class(**source.dict())
+
+    @classmethod
+    def _construct_datasets(
+        cls, config: DatasetConfig
+    ) -> Dict[str, "Dataset"]:
+        """Construct `Dataset` for each entry in `self.selection`."""
+        assert isinstance(config.selection, dict)
+        datasets: Dict[str, "Dataset"] = {}
+        selections: Dict[str, Union[str, Sequence]] = dict(**config.selection)
+        for key, selection in selections.items():
+            config.selection = selection
+            dataset = Dataset.from_config(config)
+            assert isinstance(dataset, Dataset)
+            datasets[key] = dataset
+
+        # Reset `selections`.
+        config.selection = selections
+
+        return datasets
 
     @save_dataset_config
     def __init__(
@@ -166,7 +191,12 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         self._dtype = dtype
 
         self._label_fns: Dict[str, Callable[[Data], Any]] = {}
-        self._seed = seed
+
+        self._string_selection_resolver = StringSelectionResolver(
+            self,
+            index_column=index_column,
+            seed=seed,
+        )
 
         # Implementation-specific initialisation.
         self._init()
@@ -192,44 +222,16 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         # Base class constructor
         super().__init__()
 
-    @classmethod
-    def from_config(  # type: ignore[override]
-        cls,
-        source: Union[DatasetConfig, str],
-    ) -> Union["Dataset", Dict[str, "Dataset"]]:
-        """Construct `Dataset` instance from `source` configuration."""
-        if isinstance(source, str):
-            source = DatasetConfig.load(source)
+    # Properties
+    @property
+    def path(self) -> Union[str, List[str]]:
+        """Path to the file(s) from which this `Dataset` reads."""
+        return self._path
 
-        assert isinstance(source, DatasetConfig), (
-            f"Argument `source` of type ({type(source)}) is not a "
-            "`DatasetConfig"
-        )
-
-        # Parse set of `selection``.
-        if isinstance(source.selection, dict):
-            return cls._construct_datasets(source)
-
-        return source._dataset_class(**source.dict())
-
-    @classmethod
-    def _construct_datasets(
-        cls, config: DatasetConfig
-    ) -> Dict[str, "Dataset"]:
-        """Construct `Dataset` for each entry in `self.selection`."""
-        assert isinstance(config.selection, dict)
-        datasets: Dict[str, "Dataset"] = {}
-        selections: Dict[str, Union[str, Sequence]] = dict(**config.selection)
-        for key, selection in selections.items():
-            config.selection = selection
-            dataset = Dataset.from_config(config)
-            assert isinstance(dataset, Dataset)
-            datasets[key] = dataset
-
-        # Reset `selections`.
-        config.selection = selections
-
-        return datasets
+    @property
+    def truth_table(self) -> str:
+        """Name of the table containing event-level truth information."""
+        return self._truth_table
 
     # Abstract method(s)
     @abstractmethod
@@ -244,7 +246,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """Return a list of all available values in `self._index_column`."""
 
     @abstractmethod
-    def _query_table(
+    def query_table(
         self,
         table: str,
         columns: Union[List[str], str],
@@ -308,117 +310,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         fixed number of events to randomly sample, e.g., ``` "10000 random
         events ~ event_no % 5 > 0" "20% random events ~ event_no % 5 > 0" ```
         """
-        self.info(f"Resolving selection: {selection}")
-
-        import hashlib
-
-        path_string = (
-            self._path if isinstance(self._path, str) else "-".join(self._path)
-        )
-        unique_string = f"{path_string}-{self._truth_table}-{selection}"
-        hex = hashlib.sha256(unique_string.encode("utf-8")).hexdigest()
-        cache = f"/tmp/selection-{hex}.json"
-
-        if os.path.exists(cache):
-            self.debug(f"> Reading from {cache}")
-            with open(cache, "r") as f:
-                indices = json.load(f)
-            return indices
-
-        # Check whether to do random sampling
-        (
-            nb_events,
-            frac_events,
-            selection,
-        ) = self._get_random_events_from_selection(selection)
-
-        # Perform selection using pd.DataFrame.query
-        variables = self._parse_variable_names(selection)
-        df_values = pd.DataFrame(
-            data=self._query_table(self._truth_table, list(variables)),
-            columns=list(variables),
-        )
-        df_values_selection = df_values.query(selection)
-
-        # Get random subset, if necessary.
-        if nb_events or frac_events:
-            random_state: Optional[int] = None
-            if self._seed is not None:
-                # Make sure that a dataset config with a single `seed` yields
-                # different random samples for potentially different selection
-                # (i.e., train, test, val).
-                selection_hex = hashlib.sha256(
-                    selection.encode("utf-8")
-                ).hexdigest()
-                random_state = (self._seed + int(selection_hex, 16)) % 2**32
-
-            nb_events_available = len(df_values_selection)
-            if nb_events_available == 0:
-                self.warning(f"No events passed selection `{selection}`")
-
-            else:
-                if nb_events and nb_events_available < nb_events:
-                    self.warning(
-                        f"Requested {nb_events} events but selection only "
-                        f"contains {nb_events_available}. Returning all of "
-                        "these."
-                    )
-                    nb_events = nb_events_available
-
-                df_values_selection = df_values_selection.sample(
-                    n=nb_events,
-                    frac=frac_events,
-                    replace=False,
-                    random_state=random_state,
-                )
-
-        indices = df_values_selection[self._index_column].values.tolist()
-
-        self.debug(f"> Saving to {cache}")
-        with open(cache, "w") as f:
-            json.dump(indices, f)
-
-        return indices
-
-    def _get_random_events_from_selection(
-        self, selection: str
-    ) -> Tuple[Optional[int], Optional[float], str]:
-        """Parse the `selection` to extract num/frac of random events."""
-        random_events_pattern = (
-            r" *([0-9]+[eE0-9\.-]*[%]?) +random events ~ *(.*)$"
-        )
-        nb_events: Optional[int] = None
-        frac_events: Optional[float] = None
-        m = re.search(random_events_pattern, selection)
-        if m:
-            nb_events_str, selection = m.group(1), m.group(2)
-            if "%" in nb_events_str:
-                frac_events = float(nb_events_str.split("%")[0]) / 100.0
-                assert (
-                    frac_events > 0
-                ), "Got a non-positive fraction of random events."
-                assert (
-                    frac_events <= 1
-                ), "Got a fraction of random events greater than 100%."
-            else:
-                nb_events_float = float(nb_events_str)
-                assert (
-                    nb_events_float > 0
-                ), "Got a non-positive number of random events."
-                if nb_events_float < 1:
-                    self.warning(
-                        "Got a number of random events between 0 and 1. "
-                        "Interpreting this as a fraction of random events."
-                    )
-                    frac_events = nb_events_float
-                else:
-                    nb_events = int(nb_events_float)
-
-        return nb_events, frac_events, selection
-
-    def _is_empty(self) -> bool:
-        """Return whether truth table (i.e., dataset) is empty."""
-        return len(self) == 0
+        return self._string_selection_resolver.resolve(selection)
 
     def _remove_missing_columns(self) -> None:
         """Remove columns that are not present in the input file.
@@ -426,7 +318,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         Columns are removed from `self._features` and `self._truth`.
         """
         # Check if table is completely empty
-        if self._is_empty():
+        if len(self) == 0:
             self.warning("Dataset is empty.")
             return
 
@@ -471,7 +363,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """Return a list missing columns in `table`."""
         for column in columns:
             try:
-                self._query_table(table, [column], 0)
+                self.query_table(table, [column], 0)
             except ColumnMissingException:
                 if table not in self._missing_variables:
                     self._missing_variables[table] = []
@@ -507,17 +399,17 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """
         features = []
         for pulsemap in self._pulsemaps:
-            features_pulsemap = self._query_table(
+            features_pulsemap = self.query_table(
                 pulsemap, self._features, sequential_index, self._selection
             )
             features.extend(features_pulsemap)
 
-        truth: Tuple[Any, ...] = self._query_table(
+        truth: Tuple[Any, ...] = self.query_table(
             self._truth_table, self._truth, sequential_index
         )[0]
         if self._node_truth:
             assert self._node_truth_table is not None
-            node_truth = self._query_table(
+            node_truth = self.query_table(
                 self._node_truth_table,
                 self._node_truth,
                 sequential_index,
@@ -529,7 +421,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         loss_weight: Optional[float] = None  # Default
         if self._loss_weight_column is not None:
             assert self._loss_weight_table is not None
-            loss_weight_list = self._query_table(
+            loss_weight_list = self.query_table(
                 self._loss_weight_table,
                 self._loss_weight_column,
                 sequential_index,
@@ -558,7 +450,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             features: List of tuples, containing event features.
             truth: List of tuples, containing truth information.
             node_truth: List of tuples, containing node-level truth.
-            loss_weight: A weight associated with the event for weighing the loss.
+            loss_weight: A weight associated with the event for weighing the
+                loss.
 
         Returns:
             Graph object.
@@ -595,7 +488,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         # Add loss weight to graph.
         if loss_weight is not None and self._loss_weight_column is not None:
-            # No loss weight was retrieved, i.e., it is missing for the current event
+            # No loss weight was retrieved, i.e., it is missing for the current
+            # event.
             if loss_weight < 0:
                 if self._loss_weight_default_value is None:
                     raise ValueError(

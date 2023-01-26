@@ -39,7 +39,7 @@ class SQLiteDataset(Dataset):
     def _post_init(self) -> None:
         self._close_connection()
 
-    def _query_table(
+    def query_table(
         self,
         table: str,
         columns: Union[List[str], str],
