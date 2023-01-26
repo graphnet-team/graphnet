@@ -84,6 +84,34 @@ depending on your setup to your `.bashrc` script or similar to make sure that th
 </blockquote>
 </details>
 
+<details>
+<summary><b>Running in Docker</b></summary>
+<blockquote>
+
+If you want to run GraphNeT (with IceTray), and don't intend to contribute to the package, consider using the provided [Docker image](https://hub.docker.com/repository/docker/asogaard/graphnet). With Docker, you can then run GraphNeT as:
+```bash
+$ docker run --rm -it asogaard/graphnet:latest
+🐳 graphnet@dc423315742c ❯ ~/graphnet $ python examples/01_icetray/01_convert_i3_files.py sqlite icecube-upgrade
+graphnet: INFO     2023-01-24 13:41:27 - get_logger - Writing log to logs/graphnet_20230124-134127.log
+(...)
+graphnet: INFO     2023-01-24 13:41:46 - SQLiteDataConverter.info - Saving results to /root/graphnet/data/examples/outputs/convert_i3_files/ic86
+graphnet: INFO     2023-01-24 13:41:46 - SQLiteDataConverter.info - Processing 1 I3 file(s) in main thread (not multiprocessing)
+  0%|                                                                                                                             | 0/1 [00:00<?, ?file(s)/s]graphnet: WARNING  2023-01-24 13:42:26 - SQLiteDataConverter.warning - No data saved to /root/graphnet/data/examples/outputs/convert_i3_files/ic86/upgrade_genie_step4_140028_000998_first_5_frames.db
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:39<00:00, 39.79s/file(s)]
+graphnet: INFO     2023-01-24 13:42:26 - SQLiteDataConverter.info - Merging files output by current instance.
+graphnet: INFO     2023-01-24 13:42:26 - SQLiteDataConverter.info - Merging 1 database files
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 413.88it/s]
+```
+This should allow you to run all provided examples (excluding the specialised ones requiring [PISA](https://github.com/icecube/pisa)) out of the box, and to start working on your own analysis scripts.
+
+You can use any of the following Docker image tags:
+* `main`: Image corresponding to the latest push to the `main` branch.
+* `latest`: Image corresponding to the latest named tagged version of `graphnet`.
+* `vX.Y.Z`: Image corresponding to the specific named tagged version of `graphnet`.
+
+</blockquote>
+</details>
+
 
 ## :ringed_planet:  Use cases
 
@@ -170,4 +198,4 @@ GraphNeT has an Apache 2.0 license, as found in the [LICENSE](LICENSE) file.
 This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778, and the PUNCH4NFDI consortium via DFG fund “NFDI39/1”.
 
 
-[^1]: Examples of this are shown in the [examples/convert_i3_files.py](examples/convert_i3_files.py) script
+[^1]: Examples of this are shown in the [examples/01_icetray/01_convert_i3_files.py](./examples/01_icetray/01_convert_i3_files.py) script
