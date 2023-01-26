@@ -107,6 +107,13 @@ class DatasetConfig(BaseConfig):
                 "train": ConcatDataset(...),
                 (...)
             }
+
+            # Finally, you can still reference existing selection files in CSV
+            # or JSON formats:
+            >>> dataset.config.selection = {
+                "train": "50000 random events ~ train_selection.csv",
+                "test": "test_selection.csv",
+            }
         """
         # Single-key dictioaries are unpacked
         if isinstance(data["selection"], dict) and len(data["selection"]) == 1:
