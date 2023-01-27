@@ -1,4 +1,4 @@
-path: /groups/icecube/asogaard/work/development/graphnet/data/examples/sqlite/prometheus/prometheus-events.db
+path: $GRAPHNET/data/examples/sqlite/prometheus/prometheus-events.db
 pulsemaps:
   - total
 features:

@@ -9,6 +9,7 @@ import torch
 from torch.utils.data import ConcatDataset
 from torch_geometric.data import Data
 
+from graphnet.constants import GRAPHNET_ROOT_DIR
 from graphnet.utilities.config import (
     Configurable,
     DatasetConfig,
@@ -105,6 +106,21 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         return cls.concatenate(datasets)
 
+    @classmethod
+    def _resolve_graphnet_paths(
+        cls, path: Union[str, List[str]]
+    ) -> Union[str, List[str]]:
+        if isinstance(path, list):
+            return [cast(str, cls._resolve_graphnet_paths(p)) for p in path]
+
+        assert isinstance(path, str)
+        return (
+            path.replace("$graphnet", GRAPHNET_ROOT_DIR)
+            .replace("$GRAPHNET", GRAPHNET_ROOT_DIR)
+            .replace("${graphnet}", GRAPHNET_ROOT_DIR)
+            .replace("${GRAPHNET}", GRAPHNET_ROOT_DIR)
+        )
+
     @save_dataset_config
     def __init__(
         self,
@@ -176,6 +192,9 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
+
+        # Resolve reference to `$GRAPHNET` in path(s)
+        path = self._resolve_graphnet_paths(path)
 
         # Member variable(s)
         self._path = path
