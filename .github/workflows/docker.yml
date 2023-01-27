@@ -4,8 +4,8 @@ name: Docker
 on:
   # Triggers the workflow on push/tag
   push:
-    #branches: [ main ]
-    #tags: [ 'v*' ]
+    branches: [ main ]
+    tags: [ 'v*' ]
 
 env:
   IMAGE: asogaard/graphnet
@@ -13,7 +13,7 @@ env:
 jobs:
   docker:
     name: Build and publish
-    #if: github.repository == 'graphnet-team/graphnet'
+    if: github.repository == 'graphnet-team/graphnet'
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -45,7 +45,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: "{{ defaultContext }}"
-          push: false
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
