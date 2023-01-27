@@ -27,14 +27,7 @@ RUN pip install --upgrade pip && \
 
 # -- Using current source
 WORKDIR /root/graphnet/
-RUN pwd
-RUN ls -lart .
 ADD . /root/graphnet/
-RUN ls -lart .
-#ADD ../ /root/graphnet/
-#RUN ls -lart .
-#ADD ../* /root/graphnet/
-#RUN ls -lart .
 
 RUN pip install -r requirements/torch_${HARDWARE}.txt
 RUN pip install -e .[develop,torch]
