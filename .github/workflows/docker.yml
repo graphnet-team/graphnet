@@ -45,7 +45,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: "{{ defaultContext }}:docker"
+          #context: "{{ defaultContext }}:docker"
+          context: "{{ defaultContext }}"
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
