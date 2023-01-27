@@ -20,7 +20,9 @@ logger = get_logger()
 def main() -> None:
     """Run example."""
     # Construct dataloader
-    dataset = Dataset.from_config(os.path.join(CONFIG_DIR, "datasets/test_data_sqlite.yml"))
+    dataset = Dataset.from_config(
+        os.path.join(CONFIG_DIR, "datasets/test_data_sqlite.yml")
+    )
 
     assert isinstance(dataset, Dataset)
     features = dataset._features[1:]
