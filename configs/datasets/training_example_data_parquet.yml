@@ -1,4 +1,4 @@
-path: /groups/icecube/asogaard/work/development/graphnet/data/examples/parquet/prometheus/prometheus-events.parquet
+path: $GRAPHNET/data/examples/parquet/prometheus/prometheus-events.parquet
 pulsemaps:
   - total
 features:

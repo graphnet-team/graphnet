@@ -39,6 +39,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         logger: Optional[Logger] = None,
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
+        distribution_strategy: Optional[str] = "ddp",
         **trainer_kwargs: Any,
     ) -> None:
         """Fit `Model` using `pytorch_lightning.Trainer`."""
@@ -59,7 +60,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             log_every_n_steps=log_every_n_steps,
             logger=logger,
             gradient_clip_val=gradient_clip_val,
-            strategy="ddp",
+            strategy=distribution_strategy,
             **trainer_kwargs,
         )
 
