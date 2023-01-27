@@ -21,14 +21,17 @@ RUN pip install --upgrade pip && \
     pip install --ignore-installed PyYAML
 
 # Install GraphNeT and required dependencies.
+# -- Via pip
 #RUN pip install -r https://raw.githubusercontent.com/com/graphnet-team/graphnet/main/requirements/torch_${HARDWARE}.txt
 #RUN pip install -e git+https://github.com/icecube/graphnet.git#egg=graphnet[develop,torch]
 
-ADD . /root/
-WORKDIR /root/
+# -- Using current source
+WORKDIR /root/graphnet/
+ADD ../ /root/graphnet
 RUN pwd
 RUN ls -lart .
-WORKDIR /root/graphnet/
+RUN pip install -r requirements/torch_${HARDWARE}.txt
+RUN pip install -e .[develop,torch]
 
 # Create missing alias(es) in slim.
 RUN echo 'alias python="python3"' >> ~/.bashrc
