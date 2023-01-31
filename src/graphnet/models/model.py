@@ -29,7 +29,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
 
     def _construct_trainers(
         self,
-        max_epochs: Optional[int] = 10,
+        max_epochs: int = 10,
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
         ckpt_path: Optional[str] = None,
