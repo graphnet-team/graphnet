@@ -27,11 +27,8 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
 
-    def fit(
+    def _construct_trainers(
         self,
-        train_dataloader: DataLoader,
-        val_dataloader: Optional[DataLoader] = None,
-        *,
         max_epochs: int = 10,
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
@@ -42,8 +39,6 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         distribution_strategy: Optional[str] = "ddp",
         **trainer_kwargs: Any,
     ) -> None:
-        """Fit `Model` using `pytorch_lightning.Trainer`."""
-        self.train(mode=True)
 
         if gpus:
             accelerator = "gpu"
@@ -52,7 +47,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             accelerator = "cpu"
             devices = None
 
-        trainer = Trainer(
+        self._trainer = Trainer(
             accelerator=accelerator,
             devices=devices,
             max_epochs=max_epochs,
@@ -77,21 +72,65 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             **trainer_kwargs,
         )
 
+    def fit(
+        self,
+        train_dataloader: DataLoader,
+        val_dataloader: Optional[DataLoader] = None,
+        *,
+        max_epochs: Optional[int] = 10,
+        gpus: Optional[Union[List[int], int]] = None,
+        callbacks: Optional[List[Callback]] = None,
+        ckpt_path: Optional[str] = None,
+        logger: Optional[Logger] = None,
+        log_every_n_steps: Optional[int] = 1,
+        gradient_clip_val: Optional[float] = None,
+        distribution_strategy: Optional[str] = "ddp",
+        **trainer_kwargs: Any,
+    ) -> None:
+        """Fit `Model` using `pytorch_lightning.Trainer`."""
+        self.train(mode=True)
+
+        self._construct_trainer(
+            max_epochs=max_epochs,
+            gpus=gpus,
+            callbacks=callbacks,
+            ckpt_path=ckpt_path,
+            logger=logger,
+            log_every_n_steps=log_every_n_steps,
+            gradient_clip_val=gradient_clip_val,
+            distribution_strategy=distribution_strategy,
+            **trainer_kwargs,
+        )
+
         try:
-            trainer.fit(
+            self._trainer.fit(
                 self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
             )
         except KeyboardInterrupt:
             self.warning("[ctrl+c] Exiting gracefully.")
             pass
 
-    def predict(self, dataloader: DataLoader) -> List[Tensor]:
+    def predict(
+        self,
+        dataloader: DataLoader,
+        gpus: Optional[Union[List[int], int]] = None,
+    ) -> List[Tensor]:
         """Return predictions for `dataloader`.
 
         Returns a list of Tensors, one for each model output.
         """
         self.train(mode=False)
 
+        if not hasattr(self, "_inference_trainer"):
+            self._construct_trainer(
+                gpus=gpus,
+            )
+        elif gpus is not None:
+            self.warning(
+                "A `Trainer` instance has already been constructed, possibly "
+                "when the model was trained. Will use this to get predictions. "
+                f"Argument `gpus = {gpus}` will be ignored."
+            )
         predictions_list = self._inference_trainer.predict(self, dataloader)
         assert len(predictions_list), "Got no predictions"
 
@@ -111,6 +150,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
         index_column: str = "event_no",
+        gpus: Optional[Union[List[int], int]] = None,
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
@@ -136,8 +176,10 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
                 "doesn't resample batches; or do not request "
                 "`additional_attributes`."
             )
-
-        predictions_torch = self.predict(dataloader)
+        predictions_torch = self.predict(
+            dataloader=dataloader,
+            gpus=gpus,
+        )
         predictions = (
             torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
         )
