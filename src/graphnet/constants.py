@@ -27,7 +27,7 @@ TEST_PARQUET_DATA = os.path.join(
 
 # Example data
 EXAMPLE_DATA_DIR = os.path.join(DATA_DIR, "examples")
-EXAMPLE_OUTPUT_DIR = os.path.join(EXAMPLE_DATA_DIR, "outputs")
+EXAMPLE_OUTPUT_DIR = os.path.join(EXAMPLE_DATA_DIR, "output")
 
 # Configuration files
 CONFIG_DIR = os.path.join(GRAPHNET_ROOT_DIR, "configs")
