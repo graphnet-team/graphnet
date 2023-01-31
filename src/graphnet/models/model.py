@@ -56,7 +56,6 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             logger=logger,
             gradient_clip_val=gradient_clip_val,
             strategy=distribution_strategy,
-            ckpt_path=ckpt_path,
             **trainer_kwargs,
         )
 
@@ -152,10 +151,15 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         self,
         dataloader: DataLoader,
         prediction_columns: List[str],
-        *,
         node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
         index_column: str = "event_no",
+        gpus: Optional[Union[List[int], int]] = None,
+        callbacks: Optional[List[Callback]] = None,
+        logger: Optional[Logger] = None,
+        log_every_n_steps: Optional[int] = 1,
+        distribution_strategy: Optional[str] = None,
+        **trainer_kwargs: Any,
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
@@ -181,8 +185,15 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
                 "doesn't resample batches; or do not request "
                 "`additional_attributes`."
             )
-
-        predictions_torch = self.predict(dataloader)
+        predictions_torch = self.predict(
+            dataloader=dataloader,
+            gpus=gpus,
+            callbacks=callbacks,
+            logger=logger,
+            log_every_n_steps=log_every_n_steps,
+            distribution_strategy=distribution_strategy,
+            **trainer_kwargs,
+        )
         predictions = (
             torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
         )
