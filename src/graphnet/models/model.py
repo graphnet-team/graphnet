@@ -114,11 +114,6 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         self,
         dataloader: DataLoader,
         gpus: Optional[Union[List[int], int]] = None,
-        callbacks: Optional[List[Callback]] = None,
-        logger: Optional[Logger] = None,
-        log_every_n_steps: Optional[int] = 1,
-        distribution_strategy: Optional[str] = None,
-        **trainer_kwargs: Any,
     ) -> List[Tensor]:
         """Return predictions for `dataloader`.
 
@@ -129,11 +124,6 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         if not hasattr(self, "_inference_trainer"):
             self._construct_trainer(
                 gpus=gpus,
-                callbacks=callbacks,
-                logger=logger,
-                distribution_strategy=distribution_strategy,
-                log_every_n_steps=log_every_n_steps,
-                **trainer_kwargs,
             )
 
         predictions_list = self._inference_trainer.predict(self, dataloader)
@@ -188,11 +178,6 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         predictions_torch = self.predict(
             dataloader=dataloader,
             gpus=gpus,
-            callbacks=callbacks,
-            logger=logger,
-            log_every_n_steps=log_every_n_steps,
-            distribution_strategy=distribution_strategy,
-            **trainer_kwargs,
         )
         predictions = (
             torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
