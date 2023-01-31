@@ -173,6 +173,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-graphnet.training.utils">graphnet.training.utils module</a><ul>
+<li><a class="reference internal" href="#graphnet.training.utils.collate_fn"><code class="docutils literal notranslate"><span class="pre">collate_fn()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.utils.get_predictions"><code class="docutils literal notranslate"><span class="pre">get_predictions()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.utils.make_dataloader"><code class="docutils literal notranslate"><span class="pre">make_dataloader()</span></code></a></li>
 <li><a class="reference internal" href="#graphnet.training.utils.make_train_validation_dataloader"><code class="docutils literal notranslate"><span class="pre">make_train_validation_dataloader()</span></code></a></li>
@@ -1027,6 +1028,21 @@ ensuring continuity at this point.</p>
 <section id="module-graphnet.training.utils">
 <span id="graphnet-training-utils-module"></span><h2>graphnet.training.utils module<a class="headerlink" href="#module-graphnet.training.utils" title="Permalink to this heading">¶</a></h2>
 <p>Utility functions for <cite>graphnet.training</cite>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.training.utils.collate_fn">
+<span class="sig-prename descclassname"><span class="pre">graphnet.training.utils.</span></span><span class="sig-name descname"><span class="pre">collate_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/utils.html#collate_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.utils.collate_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove graphs with less than two DOM hits.</p>
+<p>Should not occur in “production.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graphs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>]) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.training.utils.get_predictions">
 <span class="sig-prename descclassname"><span class="pre">graphnet.training.utils.</span></span><span class="sig-name descname"><span class="pre">get_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graphnet/training/utils.html#get_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.utils.get_predictions" title="Permalink to this definition">¶</a></dt>
