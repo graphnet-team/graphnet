@@ -1,4 +1,4 @@
-# Contributing
+# Contribute
 
 To make sure that the process of contributing is as smooth and effective as possible, we provide a few guidelines in this contributing guide that we encourage contributors to follow.
 
@@ -33,20 +33,5 @@ To ensure consistency in code style and adherence to select best practices, we r
 $ pre-commit install
 ```
 Then, everytime you commit a change, your code and docstrings will automatically be formatted using `black` and `docformatter`, and `flake8`, `mypy`, and `pydocstyle` will check for errors and adherence to PEP8, PEP257, and static typing. See an illustration of the concept below:
-![pre-commit pipeline](./assets/images/precommit_pipeline.png)
+![pre-commit pipeline](../../assets/images/precommit_pipeline.png)
 Image source: https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
-
-## Version control best practices
-
-From "Software Best Practices Effective Version Control", Alex Olivas, IceCube Bootcamp 2020:
-* Make the commits small enough that they don't break the code.
-    * What constitutes "broken" code? Doesn't compile. Tests don't pass.
-* **Do not** commit something that covers more than one change: E.g. `git commit -m 'Refactor and critical bugfix'` is **bad.**
-* **Do not** wait until the end of the day or week to commit.
-* **Do not** mix functional changes with whitespace cleanups.
-* **Do** write good commit messages. Examples:
-    * Good commit message: `"Fixes issue #123: Use std::shared_ptr to avoid memory leaks. See C++ Coding Standards for more information."`
-    * Bad commit message: `"blerg"`
-
-Others:
-* Keep backward compatibility in mind when you change code.
