@@ -22,7 +22,8 @@ jobs:
       - name: Build documentation
         run: |
           cd docs
-          sphinx-apidoc -f -o ../docs/source/ ../src/
+          sphinx-apidoc -M -f -o source/api ../src/
+          sphinx-apidoc -M -f -o source/examples ../examples/*
           make html
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
