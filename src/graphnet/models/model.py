@@ -125,7 +125,12 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
             self._construct_trainer(
                 gpus=gpus,
             )
-
+        elif gpus is not None:
+            self.warning(
+                "A `Trainer` instance has already been constructed, possibly "
+                "when the model was trained. Will use this to get predictions. "
+                f"Argument `gpus = {gpus}` will be ignored."
+            )
         predictions_list = self._inference_trainer.predict(self, dataloader)
         assert len(predictions_list), "Got no predictions"
 
