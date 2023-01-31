@@ -34,7 +34,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         callbacks: Optional[List[Callback]] = None,
         ckpt_path: Optional[str] = None,
         logger: Optional[Logger] = None,
-        log_every_n_steps: Optional[int] = 1,
+        log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",
         **trainer_kwargs: Any,
