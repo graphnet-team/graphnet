@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = "graphnet"
-copyright = "2021, IceCube Collaboration"
-author = "IceCube Collaboration"
+copyright = "2023, GraphNeT team"
+author = "GraphNeT team"
 
 
 # -- General configuration ---------------------------------------------------
