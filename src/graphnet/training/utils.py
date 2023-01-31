@@ -20,6 +20,15 @@ from graphnet.utilities.logging import get_logger
 logger = get_logger()
 
 
+def collate_fn(graphs: List[Data]) -> Batch:
+    """Remove graphs with less than two DOM hits.
+
+    Should not occur in "production.
+    """
+    graphs = [g for g in graphs if g.n_pulses > 1]
+    return Batch.from_data_list(graphs)
+
+
 # @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_dataloader(
     db: str,
@@ -65,14 +74,6 @@ def make_dataloader(
     if isinstance(labels, dict):
         for label in labels.keys():
             dataset.add_label(key=label, fn=labels[label])
-
-    def collate_fn(graphs: List[Data]) -> Batch:
-        """Remove graphs with less than two DOM hits.
-
-        Should not occur in "production.
-        """
-        graphs = [g for g in graphs if g.n_pulses > 1]
-        return Batch.from_data_list(graphs)
 
     dataloader = DataLoader(
         dataset,
