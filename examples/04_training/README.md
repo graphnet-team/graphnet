@@ -2,7 +2,7 @@
 
 This subfolder contains two main training scripts:
 
-**`01_train_model.py`** Shows how to train a GNN on neutrino telescope data **using configuration files** to construct the dataset that loads the data and the model that is trained. This is the recommended way to configure standard dataset and models, as it is easier to ready and share that doing so in pure code. This example can be run using a few different models targeting different physics use cases. For instance, you can try running:
+**`01_train_model.py`** Shows how to train a GNN on neutrino telescope data **using configuration files** to construct the dataset that loads the data and the model that is trained. This is the recommended way to configure standard dataset and models, as it is easier to ready and share than doing so in pure code. This example can be run using a few different models targeting different physics use cases. For instance, you can try running:
 
 ```bash
 # Show the CLI
@@ -26,7 +26,7 @@ This subfolder contains two main training scripts:
     --model-config configs/models/example_vertex_position_reconstruction_model.yml
 
 # Trains a direction (zenith, azimuth) reconstruction model. Note that the
-# chosen `Task` in the model config file also returns estemated "kappa" values,
+# chosen `Task` in the model config file also returns estimated "kappa" values,
 # i.e. inverse variance, for each predicted feature, meaning that we need to
 # manually specify the names of these.
 (graphnet) $ python examples/04_training/01_train_model.py --gpus 0 \
@@ -34,7 +34,7 @@ This subfolder contains two main training scripts:
     --prediction-names zenith_pred zenith_kappa_pred azimuth_pred azimuth_kappa_pred
 ```
 
-**`02_train_model_without_configs.py`** Shows how to train a GNN on neutrino telescope data **without configuration files,** i.e., by programatically construct the dataset and model used trained. This is good for debugging and experimenting with different dataset settings and models configurations, as it is easier to build the model using the API than by writing configuration files from scratch. For instance, try running:
+**`02_train_model_without_configs.py`** Shows how to train a GNN on neutrino telescope data **without configuration files,** i.e., by programatically constructing the dataset and model used. This is good for debugging and experimenting with different dataset settings and model configurations, as it is easier to build the model using the API than by writing configuration files from scratch. For instance, try running:
 
 ```bash
 # Show the CLI
