@@ -8,6 +8,8 @@ from torch.nn import ModuleList
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch_geometric.data import Data
+from pytorch_lightning.callbacks.callback import Callback
+from pytorch_lightning.loggers.logger import Logger
 
 from graphnet.models.coarsening import Coarsening
 from graphnet.utilities.config import save_model_config
@@ -162,7 +164,24 @@ class StandardModel(Model):
                 task.train_eval()
         return self
 
-    def predict(self, dataloader: DataLoader) -> List[Tensor]:
+    def predict(
+        self,
+        dataloader: DataLoader,
+        gpus: Optional[Union[List[int], int]] = None,
+        callbacks: Optional[List[Callback]] = None,
+        logger: Optional[Logger] = None,
+        log_every_n_steps: Optional[int] = 1,
+        distribution_strategy: Optional[str] = None,
+        **trainer_kwargs: Any,
+    ) -> List[Tensor]:
         """Return predictions for `dataloader`."""
         self.inference()
-        return super().predict(dataloader)
+        return super().predict(
+            dataloader=dataloader,
+            gpus=gpus,
+            callbacks=callbacks,
+            logger=logger,
+            log_every_n_steps=log_every_n_steps,
+            distribution_strategy=distribution_strategy,
+            **trainer_kwargs,
+        )
