@@ -144,12 +144,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
         index_column: str = "event_no",
-        gpus: Optional[Union[List[int], int]] = None,
-        callbacks: Optional[List[Callback]] = None,
-        logger: Optional[Logger] = None,
-        log_every_n_steps: Optional[int] = 1,
-        distribution_strategy: Optional[str] = None,
-        **trainer_kwargs: Any,
+         gpus: Optional[Union[List[int], int]] = None,
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
