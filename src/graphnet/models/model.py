@@ -77,12 +77,12 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         train_dataloader: DataLoader,
         val_dataloader: Optional[DataLoader] = None,
         *,
-        max_epochs: Optional[int] = 10,
+        max_epochs: int = 10,
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
         ckpt_path: Optional[str] = None,
         logger: Optional[Logger] = None,
-        log_every_n_steps: Optional[int] = 1,
+        log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",
         **trainer_kwargs: Any,
@@ -90,7 +90,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         """Fit `Model` using `pytorch_lightning.Trainer`."""
         self.train(mode=True)
 
-        self._construct_trainer(
+        self._construct_trainers(
             max_epochs=max_epochs,
             gpus=gpus,
             callbacks=callbacks,
