@@ -20,7 +20,7 @@ Finally, the fast (order millisecond) reconstruction allows for a whole new type
 :::{figure-md} flowchart
 :class: figclass
 
-<img src="../../paper/flowchart.png" alt="flowchart" width="100%">
+<img src="_static/flowchart.png" alt="flowchart" width="100%">
 
 High-level overview of a typical workflow using `GraphNeT`: `graphnet.data` enables converting domain-specific data to industry-standard, intermediate file formats and reading this data; `graphnet.models` allows for configuring and building complex GNN models using simple, physics-oriented components; `graphnet.training` manages model training and experiment logging; and finally, `graphnet.deployment` allows for using trained models for inference in domain-specific reconstruction chains.
 :::

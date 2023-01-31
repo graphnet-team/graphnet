@@ -22,8 +22,14 @@ jobs:
       - name: Build documentation
         run: |
           cd docs
+          mkdir -p source/_static
+          scp ../paper/flowchart.png source/_static/
           sphinx-apidoc -M -f -o source/api ../src/
-          sphinx-apidoc -M -f -o source/examples ../examples/*
+          sphinx-apidoc -M -f -o source/examples/01_icetray ../examples/01_icetray/
+          sphinx-apidoc -M -f -o source/examples/02_data ../examples/02_data/
+          sphinx-apidoc -M -f -o source/examples/03_weights ../examples/03_weights/
+          sphinx-apidoc -M -f -o source/examples/04_training ../examples/04_training/
+          sphinx-apidoc -M -f -o source/examples/05_pisa ../examples/05_pisa/
           make html
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
