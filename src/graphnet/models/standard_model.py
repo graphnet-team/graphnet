@@ -8,8 +8,6 @@ from torch.nn import ModuleList
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch_geometric.data import Data
-from pytorch_lightning.callbacks.callback import Callback
-from pytorch_lightning.loggers.logger import Logger
 
 from graphnet.models.coarsening import Coarsening
 from graphnet.utilities.config import save_model_config
