@@ -27,7 +27,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
 
-    def _construct_trainer(
+    def _construct_trainers(
         self,
         max_epochs: Optional[int] = 10,
         gpus: Optional[Union[List[int], int]] = None,
