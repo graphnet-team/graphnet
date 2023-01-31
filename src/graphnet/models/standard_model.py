@@ -168,20 +168,10 @@ class StandardModel(Model):
         self,
         dataloader: DataLoader,
         gpus: Optional[Union[List[int], int]] = None,
-        callbacks: Optional[List[Callback]] = None,
-        logger: Optional[Logger] = None,
-        log_every_n_steps: Optional[int] = 1,
-        distribution_strategy: Optional[str] = None,
-        **trainer_kwargs: Any,
     ) -> List[Tensor]:
         """Return predictions for `dataloader`."""
         self.inference()
         return super().predict(
             dataloader=dataloader,
             gpus=gpus,
-            callbacks=callbacks,
-            logger=logger,
-            log_every_n_steps=log_every_n_steps,
-            distribution_strategy=distribution_strategy,
-            **trainer_kwargs,
         )
