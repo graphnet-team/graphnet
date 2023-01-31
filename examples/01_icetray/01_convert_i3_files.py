@@ -63,12 +63,8 @@ def main_icecube_upgrade(backend: str) -> None:
         [
             I3TruthExtractor(),
             I3RetroExtractor(),
-            I3FeatureExtractorIceCubeUpgrade(
-                "I3RecoPulseSeriesMapRFCleaned_mDOM"
-            ),
-            I3FeatureExtractorIceCubeUpgrade(
-                "I3RecoPulseSeriesMapRFCleaned_DEgg"
-            ),
+            I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMap_mDOM"),
+            I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMap_DEgg"),
         ],
         outdir,
         workers=workers,
