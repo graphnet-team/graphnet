@@ -10,17 +10,17 @@
 
 ## :rocket: About
 
-**GraphNeT** is an open-source python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). GraphNeT makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques.
+**GraphNeT** is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). GraphNeT makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques.
 
 ## :gear:  Install
 
-We recommend installing `graphnet` in a separate environment, e.g. using python virtual environment or Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)). Below we prove installation instructions for different setups.
+We recommend installing `graphnet` in a separate environment, e.g. using a Python virtual environment or Anaconda (see details on installation [here](https://www.anaconda.com/products/individual)). Below we prove installation instructions for different setups.
 
 <details>
 <summary><b>Installing with IceTray</b></summary>
 <blockquote>
 
-You may want `graphnet` to be able to interface with IceTray, e.g., when converting I3 files to an intermediate file format for training GNN models (e.g., SQLite or parquet),[^1] or when running GNN inference as part of an IceTray chain. In these cases, you need to install `graphnet` in a python runtime that has IceTray installed.
+You may want `graphnet` to be able to interface with IceTray, e.g., when converting I3 files to an intermediate file format for training GNN models (e.g., SQLite or parquet),[^1] or when running GNN inference as part of an IceTray chain. In these cases, you need to install `graphnet` in a Python runtime that has IceTray installed.
 
 To achieve this, we recommend running the following commands in a clean bash shell:
 ```bash
@@ -29,7 +29,7 @@ $ /cvmfs/icecube.opensciencegrid.org/py3-v4.1.0/RHEL_7_x86_64/metaprojects/combo
 ```
 Optionally, you can alias these commands or save them as a bash script for convenience, as you will have to run these commands every time you want to use IceTray (with `graphnet`) in a clean shell.
 
-With the IceTray environment active, you can now install `graphnet`, either at a user level or in a python virtual environment. You can either install a light-weight version of `graphnet` without the `torch` extras, i.e., without the machine learning packages (pytorch and pytorch-geometric); this is useful when you just want to convert data from I3 files to, e.g., SQLite, and won't be running inference on I3 files later on. In this case, you don't need to specify a requirements file. If you want torch, you do.
+With the IceTray environment active, you can now install `graphnet`, either at a user level or in a Python virtual environment. You can either install a light-weight version of `graphnet` without the `torch` extras, i.e., without the machine learning packages (pytorch and pytorch-geometric); this is useful when you just want to convert data from I3 files to, e.g., SQLite, and won't be running inference on I3 files later on. In this case, you don't need to specify a requirements file. If you want torch, you do.
 
 <details>
 <summary><b>Install <i>without</i> torch</b></summary>
@@ -71,15 +71,15 @@ $ conda activate graphnet  # Optional
 ```
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
-A stand-alone installation requires specifying a supported python version (see above), ensuring that the C++ compilers (gcc) are up to date, and possible installing the CUDA Toolkit. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already have recent versions (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
-If you install the CUDA Toolkit and/or newer compilers the  though the above command, you should add **one of**:
+A stand-alone installation requires specifying a supported Python version (see above), ensuring that the C++ compilers (gcc) are up to date, and possibly installing the CUDA Toolkit. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already has a recent version (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
+If you install the CUDA Toolkit and/or newer compilers using the above command, you should add **one of**:
 ```bash
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/lib/
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/miniconda3/lib/
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/anaconda3/envs/graphnet/lib/
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/miniconda3/envs/graphnet/lib/
 ```
-depending on your setup to your `.bashrc` script or similar to make sure that the corresponding library files are accessible. Check which one of the above path contains the `.so`-files your looking to use, and add that path
+depending on your setup to your `.bashrc` script or similar to make sure that the corresponding library files are accessible. Check which one of the above paths contains the `.so`-files you're looking to use, and add that path.
 
 </blockquote>
 </details>
@@ -187,7 +187,7 @@ If you change you mind, it's as simple as:
 $ wandb online
 ```
 
-The [examples/train_model.py](examples/train_model.py) script shows how to train a model and log the results to W&B.
+The [examples/04_training/01_train_model.py](examples/04_training/01_train_model.py) script shows how to train a model and log the results to W&B.
 
 ## :memo: License
 
