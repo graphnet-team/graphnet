@@ -20,7 +20,7 @@
 project = "graphnet"
 copyright = "2023, GraphNeT team"
 author = "GraphNeT team"
-
+title = "GraphNeT"
 
 # -- General configuration ---------------------------------------------------
 
@@ -62,7 +62,7 @@ html_theme = "sphinx_material"
 html_theme_options = {
 
     # Set the name of the project to appear in the navigation.
-    'nav_title': 'GraphNeT',
+    'nav_title': title,
 
     # Set you GA account ID to enable tracking
     'google_analytics_account': 'UA-XXXXX',
@@ -77,7 +77,7 @@ html_theme_options = {
 
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/graphnet-team/graphnet/',
-    'repo_name': 'GraphNeT',
+    'repo_name': title,
 
     # Visible levels of the global TOC; -1 means unlimited
     'globaltoc_depth': 2,
