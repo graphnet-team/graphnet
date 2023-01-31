@@ -57,10 +57,10 @@ def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
 @lru_cache(1)
 def warn_once(logger: logging.Logger, message: str) -> None:
     """Print `message` as warning exactly once."""
-    logger.warn(message)
+    logger.warning(message)
 
 
-class RepeatFilter(object):
+class RepeatFilter(logging.Filter):
     """Filter out repeat messages."""
 
     def __init__(self) -> None:
@@ -148,12 +148,12 @@ def get_logger(
 class LoggerMixin(object):
     """Class for enabling logging directly from inheriting classes."""
 
-    def _get_logger(self) -> logging.Logger:
+    def _get_logger(self) -> logging.LoggerAdapter:
         """Construct Logger instance if not already done."""
         if not hasattr(self, "_logger"):
-            logger = colorlog.getLogger(LOGGER_NAME)
+            logger_base = colorlog.getLogger(LOGGER_NAME)
             logger = logging.LoggerAdapter(
-                logger, extra={"className": self.__class__.__name__ + "."}
+                logger_base, extra={"className": self.__class__.__name__ + "."}
             )
             self._logger = logger
         return self._logger
