@@ -1,20 +1,17 @@
 """Class(es) for deploying GraphNeT models in icetray as I3Modules."""
+from abc import abstractmethod
+from typing import TYPE_CHECKING, Any, List, Union, Dict, Tuple
 
-import os.path
-from typing import TYPE_CHECKING, Any, List, Union
-
+import dill
 import numpy as np
 import torch
 from torch_geometric.data import Data
 
 from graphnet.data.extractors import (
-    I3FeatureExtractorIceCube86,
-    I3FeatureExtractorIceCubeDeepCore,
+    I3FeatureExtractor,
     I3FeatureExtractorIceCubeUpgrade,
 )
-from graphnet.data.constants import FEATURES
-from graphnet.models import StandardModel
-from graphnet.models.model import Model
+from graphnet.models import Model, StandardModel
 from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package() or TYPE_CHECKING:
@@ -24,126 +21,71 @@ if has_icecube_package() or TYPE_CHECKING:
     )  # pyright: reportMissingImports=false
     from icecube.dataclasses import (
         I3Double,
+        I3MapKeyVectorDouble,
     )  # pyright: reportMissingImports=false
+    from icecube import dataclasses, dataio, icetray
 
 
-class GraphNeTModuleBase(I3Module):
-    """Base I3Module for running graphnet models in I3Tray chains."""
+class GraphNeTI3Module:
+    """Base I3 Module for GraphNeT.
 
-    # Class variables
-    FEATURES: List[str]
-    I3FEATUREEXTRACTOR_CLASS: type
-    DTYPES = {
-        "float16": torch.float16,
-        "float32": torch.float32,
-        "float64": torch.float64,
-    }
+    Contains methods for extracting pulsemaps, producing graphs and writing to
+    frames.
+    """
 
-    def __init__(self, context: Any) -> None:
-        """Construct `GraphNeTModuleBase`."""
-        # Check
-        if self.FEATURES is None:
-            raise Exception("Please use an experiment-specific I3Module.")
-
-        # Base class constructor
-        I3Module.__init__(self, context)
-
-        # Parameters to `I3Tray.Add(..., param=...)`
-        self.AddParameter("keys", "doc_string__key", None)
-        self.AddParameter("gcd_file", "doc_string__gcd_file", None)
-        self.AddParameter("model", "doc_string__model", None)
-        self.AddParameter("pulsemaps", "doc_string__pulsemaps", None)
-        self.AddParameter("dtype", "doc_string__dtype", "float32")
-
-        # Standard member variables
-        self.keys: Union[str, List[str]]
-        self.model: Model
-        self.dtype: torch.dtype
-
-    def Configure(self) -> None:  # pylint: disable=invalid-name
-        """Configure I3Module based on keyword parameters."""
-        # Extract parameters
-        keys: Union[str, List[str]] = self.GetParameter("keys")
-        gcd_file: str = self.GetParameter("gcd_file")
-        model: Union[str, Model] = self.GetParameter("model")
-        pulsemaps: Union[str, List[str]] = self.GetParameter("pulsemaps")
-        dtype: str = self.GetParameter("dtype")
-
-        # Check(s)
-        assert keys is not None
-        assert model is not None
-        assert gcd_file is not None
-        assert pulsemaps is not None
-        assert dtype in self.DTYPES
-        if isinstance(model, str):
-            assert os.path.exists(model)
-        assert isinstance(keys, (str, list, tuple))
-
-        if isinstance(pulsemaps, str):
-            pulsemaps = [pulsemaps]
-
-        # Set member variables
-        self.keys = keys
-        self.dtype = self.DTYPES[dtype]
-
-        self.i3extractors = [
-            self.I3FEATUREEXTRACTOR_CLASS(pulsemap) for pulsemap in pulsemaps
-        ]
-        for i3extractor in self.i3extractors:
-            i3extractor.set_files(None, gcd_file)
-
-        if isinstance(model, str):
-            self.model = StandardModel.load(model)
+    def __init__(
+        self,
+        pulsemap: str,
+        features: List[str],
+        pulsemap_extractor: Union[
+            List[I3FeatureExtractor], I3FeatureExtractor
+        ],
+    ):
+        """Add member variables and extractors."""
+        self._pulsemap = pulsemap
+        self._features = features
+        if isinstance(pulsemap_extractor, list):
+            self._i3_extractors = pulsemap_extractor
         else:
-            self.model = model
+            self._i3_extractors = [pulsemap_extractor]
 
-        # Toggle inference mode on, to ensure that any transforms of the model
-        # predictions are applied.
-        self.model.inference()
+    @abstractmethod
+    def __call__(self, frame: I3Frame) -> bool:
+        """Define here how the module acts on the frame.
 
-    def Physics(
+        Must return True if successful.
+        """
+        return True
+
+    def _make_graph(
         self, frame: I3Frame
-    ) -> None:  # py-l-i-n-t-:- -d-i-s-able=invalid-name
-        """Process Physics I3Frame and write predictions."""
+    ) -> Data:  # py-l-i-n-t-:- -d-i-s-able=invalid-name
+        """Process Physics I3Frame into graph."""
         # Extract features
         features = self._extract_feature_array_from_frame(frame)
 
         # Prepare graph data
         n_pulses = torch.tensor([features.shape[0]], dtype=torch.int32)
         data = Data(
-            x=torch.tensor(features, dtype=self.dtype),
+            x=torch.tensor(features, dtype=torch.float32),
             edge_index=None,
             batch=torch.zeros(
                 features.shape[0], dtype=torch.int64
             ),  # @TODO: Necessary?
-            features=self.FEATURES,
+            features=self._features,
         )
-
         # @TODO: This sort of hard-coding is not ideal; all features should be
         #        captured by `FEATURES` and included in the output of
         #        `I3FeatureExtractor`.
         data.n_pulses = n_pulses
-
-        # Perform inference
-        try:
-            predictions = [p.detach().numpy()[0, :] for p in self.model(data)]
-            predictions = np.concatenate(
-                predictions
-            )  # @TODO: Special case for single task
-        except:  # noqa: E722
-            print("data:", data)
-            raise
-
-        # Write predictions to frame
-        frame = self._write_predictions_to_frame(frame, predictions)
-        self.PushFrame(frame)
+        return data
 
     def _extract_feature_array_from_frame(self, frame: I3Frame) -> np.array:
         features = None
-        for i3extractor in self.i3extractors:
+        for i3extractor in self._i3_extractors:
             feature_dict = i3extractor(frame)
             features_pulsemap = np.array(
-                [feature_dict[key] for key in self.FEATURES]
+                [feature_dict[key] for key in self._features]
             ).T
             if features is None:
                 features = features_pulsemap
@@ -153,42 +95,239 @@ class GraphNeTModuleBase(I3Module):
                 )
         return features
 
-    def _write_predictions_to_frame(
-        self, frame: I3Frame, prediction: np.array
+    def _submit_to_frame(
+        self, frame: I3Frame, data: Dict[str, Any]
     ) -> I3Frame:
-        nb_preds = prediction.shape[0]
-        if isinstance(self.keys, str):
-            if nb_preds > 1:
-                keys = [f"{self.keys}_{ix}" for ix in range(nb_preds)]
-            else:
-                keys = [self.keys]
-        else:
-            assert (
-                len(self.keys) == nb_preds
-            ), f"Number of key-names ({len(keys)}) doesn't match number of predictions ({nb_preds})"
-            keys = self.keys
-
-        for ix, key in enumerate(keys):
-            frame[key] = I3Double(np.float64(prediction[ix]))
+        """Write every field of data to frame."""
+        assert isinstance(
+            data, dict
+        ), f"data must be of type dict. Got {type(data)}"
+        for key in data.keys():
+            frame.Put(key, data[key])
         return frame
 
 
-class GraphNeTModuleIceCube86(GraphNeTModuleBase):
-    """Module for running GraphNeT models on standard IceCube-86 data."""
+class I3InferenceModule(GraphNeTI3Module):
+    """General class for inference on i3 frames."""
 
-    FEATURES = FEATURES.ICECUBE86
-    I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCube86
+    def __init__(
+        self,
+        pulsemap: str,
+        features: List[str],
+        pulsemap_extractor: Union[
+            List[I3FeatureExtractor], I3FeatureExtractor
+        ],
+        model: Union[Model, StandardModel, str],
+        model_name: str,
+        prediction_columns: Union[List[str], str],
+    ):
+        """Add member variables and extractors."""
+        super().__init__(
+            pulsemap=pulsemap,
+            features=features,
+            pulsemap_extractor=pulsemap_extractor,
+        )
+
+        if isinstance(model, str):
+            self.model = torch.load(
+                model, pickle_module=dill, map_location="cpu"
+            )
+        else:
+            self.model = model
+
+        if isinstance(prediction_columns, str):
+            self.prediction_columns = [prediction_columns]
+        else:
+            self.prediction_columns = prediction_columns
+
+        self.model_name = model_name
+
+    def __call__(self, frame: I3Frame) -> bool:
+        """Write predictions from model to frame."""
+        # inference
+        graph = self._make_graph(frame)
+        predictions = self._inference(graph)
+
+        # Check dimensions of predictions and prediction columns
+        if len(predictions.shape) > 1:
+            dim = predictions.shape[1]
+        else:
+            dim = len(predictions)
+        assert dim == len(
+            self.prediction_columns
+        ), f"predictions have shape {dim} but prediction columns have [{self.prediction_columns}]"
+
+        # Build Dictionary of predictions
+        data = {}
+        for i in range(len(dim)):
+            try:
+                data[
+                    self.model_name + "_" + self.prediction_columns[i]
+                ] = icetray.I3Double(predictions[:, i])
+            except IndexError:
+                data[
+                    self.model_name + "_" + self.prediction_columns[i]
+                ] = icetray.I3Double(predictions)
+
+        # Submission methods
+        frame = self._submit_to_frame(frame=frame, data=data)
+        return True
+
+    def _inference(self, data: Data) -> np.ndarray:
+        # Perform inference
+        try:
+            predictions = [p.detach().numpy()[0, :] for p in self.model(data)]
+            predictions = np.concatenate(
+                predictions
+            )  # @TODO: Special case for single task
+        except:  # noqa: E722
+            print("data:", data)
+            raise
+        return predictions
 
 
-class GraphNeTModuleIceCubeDeepCore(GraphNeTModuleBase):
-    """Module for running GraphNeT models on standard IceCube-DeepCore data."""
+class I3PulseCleanerModule(I3InferenceModule):
+    """A specialized module for pulse cleaning.
 
-    FEATURES = FEATURES.DEEPCORE
-    I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCubeDeepCore
+    It is assumed that the model provided has been trained for this.
+    """
 
+    def __init__(
+        self,
+        pulsemap: str,
+        features: List[str],
+        pulsemap_extractor: Union[
+            List[I3FeatureExtractor], I3FeatureExtractor
+        ],
+        model: Union[Model, StandardModel, str],
+        model_name: str,
+        prediction_columns: Union[List[str], str] = "",
+        *,
+        gcd_file: str,
+        threshold: float = 0.7,
+    ):
+        """Add member variables and extractors."""
+        super().__init__(
+            pulsemap=pulsemap,
+            features=features,
+            pulsemap_extractor=pulsemap_extractor,
+            model=model,
+            model_name=model_name,
+            prediction_columns=prediction_columns,
+        )
 
-class GraphNeTModuleIceCubeUpgrade(GraphNeTModuleBase):
-    """Module for running GraphNeT models on standard IceCube-Upgrade data."""
+        assert isinstance(gcd_file, str), "gcd_file must be string"
+        self._gcd_file = gcd_file
+        self._threshold = threshold
+        self._predictions_key = f"{pulsemap}_{model_name}_Predictions"
+        self._total_pulsemap_name = f"{pulsemap}_{model_name}_Pulses"
 
-    FEATURES = FEATURES.UPGRADE
-    I3FEATUREEXTRACTOR_CLASS = I3FeatureExtractorIceCubeUpgrade
+    def __call__(self, frame: I3Frame) -> bool:
+        """Add a cleaned pulsemap to frame."""
+        # inference
+        gcd_file = self._gcd_file
+        graph = self._make_graph(frame)
+        predictions = self._inference(graph)
+
+        assert predictions.shape[1] == 1
+
+        # Build Dictionary of predictions
+        data = {}
+
+        predictions_map = self._construct_prediction_map(
+            frame=frame, predictions=predictions
+        )
+
+        # Adds the raw predictions to dictionary
+        if self._predictions_key not in frame.keys():
+            data[self._predictions_key] = predictions_map
+
+        # Create a pulse map mask, indicating the pulses that are over threshold (e.g. identified as signal) and therefore should be kept
+        # Using a lambda function to evaluate which pulses to keep by checking the prediction for each pulse
+        # (Adds the actual pulsemap to dictionary)
+        if self._total_pulsemap_name not in frame.keys():
+            data[
+                self._total_pulsemap_name
+            ] = dataclasses.I3RecoPulseSeriesMapMask(
+                frame,
+                self._pulsemap,
+                lambda om_key, index, pulse: predictions_map[om_key][index]
+                >= self._threshold,
+            )
+
+        # Adds an additional pulsemap for each DOM type
+        if isinstance(
+            self._i3_extractors[0], I3FeatureExtractorIceCubeUpgrade
+        ):
+            mDOMMap, DEggMap, IceCubeMap = self._split_pulsemap_in_dom_types(
+                frame=frame, gcd_file=gcd_file
+            )
+
+            if f"{self._total_pulsemap_name}_mDOMs_Only" not in frame.keys():
+                data[
+                    f"{self._total_pulsemap_name}_mDOMs_Only"
+                ] = dataclasses.I3RecoPulseSeriesMap(mDOMMap)
+
+            if f"{self._total_pulsemap_name}_dEggs_Only" not in frame.keys():
+                data[
+                    f"{self._total_pulsemap_name}_dEggs_Only"
+                ] = dataclasses.I3RecoPulseSeriesMap(DEggMap)
+
+            if f"{self._total_pulsemap_name}_pDOMs_Only" not in frame.keys():
+                data[
+                    f"{self._total_pulsemap_name}_pDOMs_Only"
+                ] = dataclasses.I3RecoPulseSeriesMap(IceCubeMap)
+
+        # Submits the dictionary to the frame
+        frame = self._submit_to_frame(frame=frame, data=data)
+
+        return True
+
+    def _split_pulsemap_in_dom_types(
+        self, frame: I3Frame, gcd_file: Any
+    ) -> Tuple[Dict[Any, Any], Dict[Any, Any], Dict[Any, Any]]:
+        g = dataio.I3File(gcd_file)
+        gFrame = g.pop_frame()
+        while "I3Geometry" not in gFrame.keys():
+            gFrame = g.pop_frame()
+        omGeoMap = gFrame["I3Geometry"].omgeo
+
+        mDOMMap, DEggMap, IceCubeMap = {}, {}, {}
+        pulses = dataclasses.I3RecoPulseSeriesMap.from_frame(
+            frame, self._total_pulsemap_name
+        )
+        for P in pulses:
+            om = omGeoMap[P[0]]
+            if om.omtype == 130:  # "mDOM"
+                mDOMMap[P[0]] = P[1]
+            elif om.omtype == 120:  # "DEgg"
+                DEggMap[P[0]] = P[1]
+            elif om.omtype == 20:  # "IceCube / pDOM"
+                IceCubeMap[P[0]] = P[1]
+        return mDOMMap, DEggMap, IceCubeMap
+
+    def _construct_prediction_map(
+        self, frame: I3Frame, predictions: np.ndarray
+    ) -> I3MapKeyVectorDouble:
+        pulsemap = dataclasses.I3RecoPulseSeriesMap.from_frame(
+            frame, self._pulsemap
+        )
+
+        idx = 0
+        predictions_map = dataclasses.I3MapKeyVectorDouble()
+        for om_key, pulses in pulsemap.items():
+            num_pulses = len(pulses)
+            predictions_map[om_key] = predictions[
+                idx : idx + num_pulses
+            ].tolist()
+            idx += num_pulses
+
+        # Checks
+        assert idx == len(
+            predictions
+        ), "Not all predictions were mapped to pulses, validation of predictions have failed."
+
+        assert (
+            pulsemap.keys() == predictions_map.keys()
+        ), "Input pulse map and predictions map do not contain exactly the same OMs"
+        return predictions_map
