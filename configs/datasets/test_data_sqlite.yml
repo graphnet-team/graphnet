@@ -1,4 +1,4 @@
-path: /groups/icecube/asogaard/work/development/graphnet/data/tests/sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db
+path: $GRAPHNET/data/tests/sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db
 pulsemaps:
   - SRTInIcePulses
 features:
