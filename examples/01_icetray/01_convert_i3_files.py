@@ -56,19 +56,15 @@ def main_icecube_upgrade(backend: str) -> None:
     assert backend in CONVERTER_CLASS
 
     inputs = [f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998"]
-    outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/ic86"
+    outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/upgrade"
     workers = 1
 
     converter: DataConverter = CONVERTER_CLASS[backend](
         [
             I3TruthExtractor(),
             I3RetroExtractor(),
-            I3FeatureExtractorIceCubeUpgrade(
-                "I3RecoPulseSeriesMapRFCleaned_mDOM"
-            ),
-            I3FeatureExtractorIceCubeUpgrade(
-                "I3RecoPulseSeriesMapRFCleaned_DEgg"
-            ),
+            I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMap_mDOM"),
+            I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMap_DEgg"),
         ],
         outdir,
         workers=workers,
@@ -86,10 +82,10 @@ if __name__ == "__main__":
 
     if not has_icecube_package():
         logger.error(
-            "This example requries IceTray to be installed, which doesn't "
+            "This example requires IceTray to be installed, which doesn't "
             "seem to be the case. Please install IceTray; run this example in "
             "the GraphNeT Docker container which comes with IceTray "
-            "installed; or run an example scripts in one of the other folders:"
+            "installed; or run an example script in one of the other folders:"
             "\n * examples/02_data/"
             "\n * examples/03_weights/"
             "\n * examples/04_training/"
