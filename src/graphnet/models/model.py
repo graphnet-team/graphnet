@@ -152,6 +152,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         additional_attributes: Optional[List[str]] = None,
         index_column: str = "event_no",
         gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
@@ -180,6 +181,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         predictions_torch = self.predict(
             dataloader=dataloader,
             gpus=gpus,
+            distribution_strategy=distribution_strategy,
         )
         predictions = (
             torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
