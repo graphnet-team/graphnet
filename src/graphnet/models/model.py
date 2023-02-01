@@ -122,7 +122,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         self.train(mode=False)
 
         if not hasattr(self, "_inference_trainer"):
-            self._construct_trainer(
+            self._construct_trainers(
                 gpus=gpus,
             )
         elif gpus is not None:
