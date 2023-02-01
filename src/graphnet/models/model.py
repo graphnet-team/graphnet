@@ -114,6 +114,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         self,
         dataloader: DataLoader,
         gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
     ) -> List[Tensor]:
         """Return predictions for `dataloader`.
 
@@ -123,7 +124,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
 
         if not hasattr(self, "_inference_trainer"):
             self._construct_trainers(
-                gpus=gpus,
+                gpus=gpus, distribution_strategy=distribution_strategy
             )
         elif gpus is not None:
             self.warning(
