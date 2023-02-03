@@ -7,4 +7,4 @@
 
    install
    contribute
-   code
+   api.rst
