@@ -80,7 +80,7 @@ html_theme_options = {
     'repo_name': title,
 
     # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 4,
+    'globaltoc_depth': 2,
 
     # If False, expand all TOC entries
     'globaltoc_collapse': True,
@@ -135,10 +135,8 @@ napoleon_use_param = True
 napoleon_use_rtype = True
 
 
-# -- Options for sphinx-autodoc-typehints ------------------------------------
+# -- Options for sphinx-autodoc ------------------------------------
 
-always_document_param_types = True
-typehints_defaults = "comma"
 autodoc_default_options = {
     'member-order': 'bysource',
     'special-members': '__init__',
@@ -146,6 +144,12 @@ autodoc_default_options = {
     'private-members': False,
 }
 autodoc_mock_imports = ["pisa", "icecube", "icecube.icetray", "icecube.dataclasses", "icetray", "dataclasses"]
+
+
+# -- Options for sphinx-autodoc-typehints ------------------------------------
+
+always_document_param_types = True
+typehints_defaults = "comma"
 autodoc_typehints = "description"
 autodoc_typehints_format = "short"
 
@@ -153,3 +157,19 @@ autodoc_typehints_format = "short"
 # -- Options for MyST --------------------------------------------------------
 
 myst_enable_extensions = ["colon_fence"]
+
+
+# -- Hack to remove default values from call signatures ----------------------
+
+#import re
+#
+#def remove_default_value(app, what, name, obj, options, signature, return_annotation):
+#    if signature:
+#        search = re.findall(r"(\w*)=", signature)
+#        if search:
+#            signature = "({})".format(", ".join([s for s in search]))
+#
+#    return (signature, return_annotation)
+#
+#def setup(app):
+#    app.connect("autodoc-process-signature", remove_default_value)
