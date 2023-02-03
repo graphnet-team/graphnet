@@ -50,6 +50,7 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+toc_object_entries_show_parents = "hide"
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -166,12 +167,10 @@ import re
 
 def remove_default_value(app, what, name, obj, options, signature, return_annotation):
     if signature:
-        signature = re.sub(r"=[\w']+", "", signature)
+        signature = re.sub(r"=[\w'\-]+", "", signature)
     return (signature, return_annotation)
 
 def autodoc_skip_member_handler(app, what, name, obj, skip, options):
-    if "_fit" in name:
-        print(f"app: {app}, what: {what}, name: {name}, obj: {obj}, skip: {skip}, options: {options}")
     return True if (name.startswith("_") and name not in special_members) else None
 
 def setup(app):
