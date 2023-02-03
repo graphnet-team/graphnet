@@ -35,7 +35,7 @@ $ pip install --user -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU su
 
 </details>
 
-This should allow you to run the I3 conversion scripts in [examples/](./examples/) with your preferred I3 files.
+This should allow you to run the I3 conversion scripts in [examples/](https://github.com/graphnet-team/graphnet/tree/main/examples) with your preferred I3 files.
 
 
 ## Installing stand-alone
@@ -50,7 +50,7 @@ $ conda activate graphnet  # Optional
 (graphnet) $ pip install -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU support
 (graphnet) $ pip install -r requirements/torch_macos.txt -e .[develop,torch]  # On macOS
 ```
-This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
+This should allow you to e.g. run the scripts in [examples/](https://github.com/graphnet-team/graphnet/tree/main/examples) out of the box.
 
 A stand-alone installation requires specifying a supported Python version (see above), ensuring that the C++ compilers (gcc) are up to date, and possibly installing the CUDA Toolkit. Here, we have installed recent C++ compilers using conda (`gcc_linux-64 gxx_linux-64 libgcc`), but if your system already has a recent version (`$gcc --version` should be > 5, at least) you should be able to omit these from the setup.
 If you install the CUDA Toolkit and/or newer compilers using the above command, you should add **one of**:
