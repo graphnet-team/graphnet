@@ -80,7 +80,7 @@ html_theme_options = {
     'repo_name': title,
 
     # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 2,
+    'globaltoc_depth': -1,
 
     # If False, expand all TOC entries
     'globaltoc_collapse': True,
@@ -117,7 +117,7 @@ html_favicon = "../../assets/identity/favicon.svg"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+html_static_path = []
 
 
 # -- Options for Napoleon ----------------------------------------------------
@@ -137,9 +137,10 @@ napoleon_use_rtype = True
 
 # -- Options for sphinx-autodoc ------------------------------------
 
+special_members = ["__init__"]
 autodoc_default_options = {
     'member-order': 'bysource',
-    'special-members': '__init__',
+    'special-members': ", ".join(special_members),
     'undoc-members': True,
     'private-members': False,
 }
@@ -159,17 +160,20 @@ autodoc_typehints_format = "short"
 myst_enable_extensions = ["colon_fence"]
 
 
-# -- Hack to remove default values from call signatures ----------------------
+# -- Formatting and filtering ------------------------------------------------
 
-#import re
-#
-#def remove_default_value(app, what, name, obj, options, signature, return_annotation):
-#    if signature:
-#        search = re.findall(r"(\w*)=", signature)
-#        if search:
-#            signature = "({})".format(", ".join([s for s in search]))
-#
-#    return (signature, return_annotation)
-#
-#def setup(app):
-#    app.connect("autodoc-process-signature", remove_default_value)
+import re
+
+def remove_default_value(app, what, name, obj, options, signature, return_annotation):
+    if signature:
+        signature = re.sub(r"=[\w']+", "", signature)
+    return (signature, return_annotation)
+
+def autodoc_skip_member_handler(app, what, name, obj, skip, options):
+    if "_fit" in name:
+        print(f"app: {app}, what: {what}, name: {name}, obj: {obj}, skip: {skip}, options: {options}")
+    return True if (name.startswith("_") and name not in special_members) else None
+
+def setup(app):
+    app.connect("autodoc-process-signature", remove_default_value, priority=1)
+    app.connect('autodoc-skip-member', autodoc_skip_member_handler, priority=1)
