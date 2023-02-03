@@ -7,4 +7,4 @@
 
    install
    contribute
-   api.rst
+   api/graphnet.rst
