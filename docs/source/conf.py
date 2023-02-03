@@ -4,6 +4,8 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import re
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -61,52 +63,49 @@ html_theme = "sphinx_material"
 
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
-
     # Set the name of the project to appear in the navigation.
-    'nav_title': title,
-
+    "nav_title": title,
     # Set you GA account ID to enable tracking
-    'google_analytics_account': 'UA-XXXXX',
-
+    "google_analytics_account": "UA-XXXXX",
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
-    'base_url': 'https://graphnet-team.github.io/graphnet',
-
+    "base_url": "https://graphnet-team.github.io/graphnet",
     # Set the color and the accent color
-    'color_primary': 'indigo',
-    'color_accent': 'blue',
-
+    "color_primary": "indigo",
+    "color_accent": "blue",
     # Set the repo location to get a badge with stats
-    'repo_url': 'https://github.com/graphnet-team/graphnet/',
-    'repo_name': title,
-
+    "repo_url": "https://github.com/graphnet-team/graphnet/",
+    "repo_name": title,
     # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': -1,
-
+    "globaltoc_depth": -1,
     # If False, expand all TOC entries
-    'globaltoc_collapse': True,
-
+    "globaltoc_collapse": True,
     # If True, show hidden TOC entries
-    'globaltoc_includehidden': True,
-
+    "globaltoc_includehidden": True,
     "heroes": {
-        "index": "Graph neural networks for neutrino telescope event reconstruction.",
+        "index": (
+            "Graph neural networks for neutrino telescope event "
+            "reconstruction."
+        ),
         "install": "How to install and start using GraphNeT.",
         "contribute": "How to contribute, and the practices we follow.",
         "code": "Example scripts and API reference.",
     },
-
     "master_doc": False,
     "nav_links": [
         {"href": "index", "internal": True, "title": "Documentation"},
     ],
-
 }
 
 html_show_sourcelink = False
 
 html_sidebars = {
-    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+    "**": [
+        "logo-text.html",
+        "globaltoc.html",
+        "localtoc.html",
+        "searchbox.html",
+    ]
 }
 
 # The name of an image file (relative to this directory) to place at the top
@@ -140,12 +139,19 @@ napoleon_use_rtype = True
 
 special_members = ["__init__"]
 autodoc_default_options = {
-    'member-order': 'bysource',
-    'special-members': ", ".join(special_members),
-    'undoc-members': True,
-    'private-members': False,
+    "member-order": "bysource",
+    "special-members": ", ".join(special_members),
+    "undoc-members": True,
+    "private-members": False,
 }
-autodoc_mock_imports = ["pisa", "icecube", "icecube.icetray", "icecube.dataclasses", "icetray", "dataclasses"]
+autodoc_mock_imports = [
+    "pisa",
+    "icecube",
+    "icecube.icetray",
+    "icecube.dataclasses",
+    "icetray",
+    "dataclasses",
+]
 
 
 # -- Options for sphinx-autodoc-typehints ------------------------------------
@@ -163,16 +169,23 @@ myst_enable_extensions = ["colon_fence"]
 
 # -- Formatting and filtering ------------------------------------------------
 
-import re
 
-def remove_default_value(app, what, name, obj, options, signature, return_annotation):
+def remove_default_value(
+    app, what, name, obj, options, signature, return_annotation
+):
     if signature:
         signature = re.sub(r"=[\w'\-]+", "", signature)
     return (signature, return_annotation)
 
+
 def autodoc_skip_member_handler(app, what, name, obj, skip, options):
-    return True if (name.startswith("_") and name not in special_members) else None
+    return (
+        True
+        if (name.startswith("_") and name not in special_members)
+        else None
+    )
+
 
 def setup(app):
     app.connect("autodoc-process-signature", remove_default_value, priority=1)
-    app.connect('autodoc-skip-member', autodoc_skip_member_handler, priority=1)
+    app.connect("autodoc-skip-member", autodoc_skip_member_handler, priority=1)
