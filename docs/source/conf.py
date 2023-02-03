@@ -80,7 +80,7 @@ html_theme_options = {
     'repo_name': title,
 
     # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 3,
+    'globaltoc_depth': 4,
 
     # If False, expand all TOC entries
     'globaltoc_collapse': True,
@@ -139,6 +139,15 @@ napoleon_use_rtype = True
 
 always_document_param_types = True
 typehints_defaults = "comma"
+autodoc_default_options = {
+    'member-order': 'bysource',
+    'special-members': '__init__',
+    'undoc-members': True,
+    'private-members': False,
+}
+autodoc_mock_imports = ["pisa", "icecube", "icecube.icetray", "icecube.dataclasses", "icetray", "dataclasses"]
+autodoc_typehints = "description"
+autodoc_typehints_format = "short"
 
 
 # -- Options for MyST --------------------------------------------------------
