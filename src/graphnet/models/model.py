@@ -115,6 +115,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         self,
         dataloader: DataLoader,
         gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
     ) -> List[Tensor]:
         """Return predictions for `dataloader`.
 
@@ -123,8 +124,8 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         self.train(mode=False)
 
         if not hasattr(self, "_inference_trainer"):
-            self._construct_trainer(
-                gpus=gpus,
+            self._construct_trainers(
+                gpus=gpus, distribution_strategy=distribution_strategy
             )
         elif gpus is not None:
             self.warning(
@@ -152,6 +153,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         additional_attributes: Optional[List[str]] = None,
         index_column: str = "event_no",
         gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
@@ -180,6 +182,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         predictions_torch = self.predict(
             dataloader=dataloader,
             gpus=gpus,
+            distribution_strategy=distribution_strategy,
         )
         predictions = (
             torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
