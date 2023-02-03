@@ -1,0 +1,34 @@
+{# Import the theme's layout. #}
+{%- extends "!layout.html" %}
+
+{%- block htmltitle %}
+{# Add custom things to the head HTML tag #}
+{# Call the parent block #}
+{{ super() }}
+
+<style>
+  .sig-prename {
+    display: none;
+  }
+
+  .sig-name {
+    color: #37474f;
+    font-feature-settings: "kern";
+    font-family: "Roboto Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+  }
+
+  .py.class {
+    border-top: 1px solid gray;
+    padding-top: 1ex;
+  }
+  .py.function {
+    border-top: 1px solid gray;
+    padding-top: 1ex;
+  }
+  .py.method {
+    border-top: 1px solid lightgray;
+    padding-top: 1ex;
+  }
+</style>
+{%- endblock %}
