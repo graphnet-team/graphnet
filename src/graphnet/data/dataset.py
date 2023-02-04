@@ -326,7 +326,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """Return a the event index corresponding to a `sequential_index`."""
 
     @abstractmethod
-    def _setup_geometry_table(self) -> None:
+    def _setup_geometry_table(self, geometry_table: str) -> None:
         """Must assign self._geometry_table."""
 
     @abstractmethod

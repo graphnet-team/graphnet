@@ -147,3 +147,21 @@ class SQLiteDataset(Dataset):
                 self._all_connections_established = False
                 self._conn = None
         return self
+
+    def _setup_geometry_table(self, geometry_table: str) -> None:
+        if self._table_exists(geometry_table):
+            self._geoemtry_table = geometry_table
+        else:
+            assert (
+                1 == 2
+            ), f"Geometry table named {geometry_table} is not in the database {self._path}"
+
+    def _table_exists(self, geometry_table: str) -> bool:
+        assert isinstance(self._path, str)
+        with sqlite3.connect(self._path) as conn:
+            query = 'SELECT name FROM sqlite_master WHERE type == "name" '
+            all_tables = conn.execute(query).fetchall()
+        if geometry_table in all_tables:
+            return True
+        else:
+            return False
