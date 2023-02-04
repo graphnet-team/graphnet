@@ -7,6 +7,8 @@ import numpy as np
 
 from graphnet.data.dataset import Dataset, ColumnMissingException
 
+from graphnet.data.sqlite.sqlite_utilities import database_table_exists
+
 
 class SQLiteDataset(Dataset):
     """Pytorch dataset for reading data from SQLite databases."""
@@ -179,19 +181,13 @@ class SQLiteDataset(Dataset):
         return self
 
     def _setup_geometry_table(self, geometry_table: str) -> None:
-        if self._table_exists(geometry_table):
+        """Assign the geometry table to self if it exists in the database."""
+        assert isinstance(self._path, str)
+        if database_table_exists(
+            database_path=self._path, table_name=geometry_table
+        ):
             self._geoemtry_table = geometry_table
         else:
             assert (
                 1 == 2
             ), f"Geometry table named {geometry_table} is not in the database {self._path}"
-
-    def _table_exists(self, geometry_table: str) -> bool:
-        assert isinstance(self._path, str)
-        with sqlite3.connect(self._path) as conn:
-            query = 'SELECT name FROM sqlite_master WHERE type == "name" '
-            all_tables = conn.execute(query).fetchall()
-        if geometry_table in all_tables:
-            return True
-        else:
-            return False

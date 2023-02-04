@@ -1,11 +1,63 @@
 """SQLite-specific utility functions for use in `graphnet.data`."""
 
 import os.path
-from typing import List
+from typing import List, Optional, Dict
 
 import pandas as pd
 import sqlalchemy
 import sqlite3
+
+
+def add_geometry_table_to_database(
+    database: str,
+    pulsemap: str,
+    features_to_pad: List[str],
+    padding_value: int = 0,
+    additional_features: List[str] = ["rde", "pmt_area"],
+    sensor_x: str = "dom_x",
+    sensor_y: str = "dom_y",
+    sensor_z: str = "dom_z",
+    gcd_file: Optional[str] = None,
+    table_name: str = "geometry_table",
+) -> None:
+    """Add geometry table to database.
+
+    Args:
+        database: path to sqlite database
+        pulsemap: name of the pulsemap table
+        features_to_pad: list of column names that will be added to the dataframe after sqlite query. Will be padded.
+        padding_value: Value used for padding. Defaults to 0.
+        additional_features: additional features in pulsemap table that you want to include. Defaults to ["rde", "pmt_area"].
+        sensor_x: x-coordinate of sensor positions. Defaults to "dom_x".
+        sensor_y: y-coordinate of sensor positions. Defaults to "dom_y".
+        sensor_z: z-coordinate of sensor positions. Defaults to "dom_z".
+        gcd_file: Path to gcd file. Defaults to None.
+        table_name:  Name of the geometry table. . Defaults to "geometry_table".
+    """
+    if gcd_file is not None:
+        assert (
+            1 == 2
+        ), "Creation of geometry table from gcd file is not yet supported. Please make a pull request."
+    else:
+        additional_features_str = ", ".join(additional_features)
+        with sqlite3.connect(database) as con:
+            query = f"select distinct (CAST({sensor_x} AS str) || '_' || CAST({sensor_y} AS str) || '_' || CAST({sensor_z} AS str)) as UID, {sensor_x}, {sensor_y}, {sensor_z}, {additional_features_str} from {pulsemap}"
+            table = pd.read_sql(query, con)
+
+        for feature_to_pad in features_to_pad:
+            table[feature_to_pad] = padding_value
+
+    create_table(
+        table_name=table_name,
+        columns=table.columns,
+        database_path=database,
+        index_column="UID",
+        primary_key_type="STR",
+        integer_primary_key=True,
+    )
+
+    save_to_sql(df=table, table_name=table_name, database_path=database)
+    return
 
 
 def database_exists(database_path: str) -> bool:
@@ -79,6 +131,7 @@ def create_table(
     *,
     index_column: str = "event_no",
     default_type: str = "NOT NULL",
+    primary_key_type: str = "INTEGER",
     integer_primary_key: bool = True,
 ) -> None:
     """Create a table.
@@ -89,6 +142,7 @@ def create_table(
         database_path: Path to the database.
         index_column: Name of the index column.
         default_type: The type used for all non-index columns.
+        primary_key_type: the data type for the primary key. Defaults to INTEGER.
         integer_primary_key: Whether or not to create the `index_column` with
             the `INTEGER PRIMARY KEY` type. Such a column is required to have
             unique, integer values for each row. This is appropriate when the
@@ -103,7 +157,7 @@ def create_table(
         type_ = default_type
         if column == index_column:
             if integer_primary_key:
-                type_ = "INTEGER PRIMARY KEY NOT NULL"
+                type_ = f"{primary_key_type} PRIMARY KEY NOT NULL"
             else:
                 type_ = "NOT NULL"
 
@@ -134,6 +188,7 @@ def create_table_and_save_to_sql(
     index_column: str = "event_no",
     default_type: str = "NOT NULL",
     integer_primary_key: bool = True,
+    primary_key_type: str = "INTEGER",
 ) -> None:
     """Create table if it doesn't exist and save dataframe to it."""
     if not database_table_exists(database_path, table_name):
@@ -144,5 +199,6 @@ def create_table_and_save_to_sql(
             index_column=index_column,
             default_type=default_type,
             integer_primary_key=integer_primary_key,
+            primary_key_type=primary_key_type,
         )
     save_to_sql(df, table_name=table_name, database_path=database_path)
