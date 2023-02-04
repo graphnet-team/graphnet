@@ -140,7 +140,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         loss_weight_column: Optional[str] = None,
         loss_weight_default_value: Optional[float] = None,
         seed: Optional[int] = None,
-        add_inactive_sensors: bool = False,
+        include_inactive_sensors: bool = False,
         geometry_table: str = "geometry_table",
         sensor_x_position: str = "dom_x",
         sensor_y_position: str = "dom_y",
@@ -190,7 +190,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
                 subset of events when resolving a string-based selection (e.g.,
                 `"10000 random events ~ event_no % 5 > 0"` or `"20% random
                 events ~ event_no % 5 > 0"`).
-            add_inactive_sensors: If True, sensors that measured nothing during the event will be appended to the graph.
+            include_inactive_sensors: If True, sensors that measured nothing during the event will be appended to the graph.
             geometry_table: The sqlite table in which the detector geometry is stored.
             sensor_x_position: column name of x-coordinate of sensors. e.g. "dom_x",
             sensor_y_position: column name of y-coordinate of sensors. e.g. "dom_y",
@@ -215,13 +215,13 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         self._index_column = index_column
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
-        self._add_inactive_sensors = add_inactive_sensors
+        self._include_inactive_sensors = include_inactive_sensors
         self._sensor_position = {
             "sensor_x_position_column": sensor_x_position,
             "sensor_y_position_column": sensor_y_position,
             "sensor_z_position_column": sensor_z_position,
         }
-        if self._add_inactive_sensors:
+        if self._include_inactive_sensors:
             self._set_geometry_table(geometry_table)
 
         if node_truth is not None:
@@ -328,6 +328,15 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
     @abstractmethod
     def _setup_geometry_table(self, geometry_table: str) -> None:
         """Must assign self._geometry_table."""
+
+    @abstractmethod
+    def _get_inactive_sensors(
+        self,
+        features: List[Tuple[float, ...]],
+        columns: List[str],
+        sequential_index: int,
+    ) -> List[Tuple[float, ...]]:
+        """Add sensors that are inactive."""
 
     @abstractmethod
     def query_table(
@@ -501,6 +510,29 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             )
         else:
             node_truth = None
+
+        if self._include_inactive_sensors:
+            inactive_sensors = self._get_inactive_sensors(
+                features=features,
+                columns=self._features,
+                sequential_index=sequential_index,
+            )
+            result = []
+            result.extend(features)
+            result.extend(inactive_sensors)
+            result = (
+                np.concatenate(
+                    [
+                        np.repeat(sequential_index, len(result)).reshape(
+                            -1, 1
+                        ),
+                        result,
+                    ],
+                    axis=1,
+                )
+                .astype(self._dtype)
+                .tolist()  # adds event_no again.
+            )
 
         loss_weight: Optional[float] = None  # Default
         if self._loss_weight_column is not None:
