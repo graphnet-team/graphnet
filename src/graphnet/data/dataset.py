@@ -142,6 +142,9 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         seed: Optional[int] = None,
         add_inactive_sensors: bool = False,
         geometry_table: str = "geometry_table",
+        sensor_x_position: str = "dom_x",
+        sensor_y_position: str = "dom_y",
+        sensor_z_position: str = "dom_z",
     ):
         """Construct Dataset.
 
@@ -189,6 +192,9 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
                 events ~ event_no % 5 > 0"`).
             add_inactive_sensors: If True, sensors that measured nothing during the event will be appended to the graph.
             geometry_table: The sqlite table in which the detector geometry is stored.
+            sensor_x_position: column name of x-coordinate of sensors. e.g. "dom_x",
+            sensor_y_position: column name of y-coordinate of sensors. e.g. "dom_y",
+            sensor_z_position: column name of z-coordinate of sensors. e.g. "dom_z",
         """
         # Check(s)
         if isinstance(pulsemaps, str):
@@ -210,6 +216,11 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
         self._add_inactive_sensors = add_inactive_sensors
+        self._sensor_position = {
+            "sensor_x_position_column": sensor_x_position,
+            "sensor_y_position_column": sensor_y_position,
+            "sensor_z_position_column": sensor_z_position,
+        }
         if self._add_inactive_sensors:
             self._set_geometry_table(geometry_table)
 
@@ -313,6 +324,10 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         self, sequential_index: Optional[int]
     ) -> Optional[int]:
         """Return a the event index corresponding to a `sequential_index`."""
+
+    @abstractmethod
+    def _setup_geometry_table(self) -> None:
+        """Must assign self._geometry_table."""
 
     @abstractmethod
     def query_table(
