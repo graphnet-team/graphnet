@@ -140,6 +140,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         loss_weight_column: Optional[str] = None,
         loss_weight_default_value: Optional[float] = None,
         seed: Optional[int] = None,
+        add_inactive_sensors: bool = False,
+        geometry_table: str = "geometry_table",
     ):
         """Construct Dataset.
 
@@ -185,6 +187,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
                 subset of events when resolving a string-based selection (e.g.,
                 `"10000 random events ~ event_no % 5 > 0"` or `"20% random
                 events ~ event_no % 5 > 0"`).
+            add_inactive_sensors: If True, sensors that measured nothing during the event will be appended to the graph.
+            geometry_table: The sqlite table in which the detector geometry is stored.
         """
         # Check(s)
         if isinstance(pulsemaps, str):
@@ -205,6 +209,9 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         self._index_column = index_column
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
+        self._add_inactive_sensors = add_inactive_sensors
+        if self._add_inactive_sensors:
+            self._set_geometry_table(geometry_table)
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
