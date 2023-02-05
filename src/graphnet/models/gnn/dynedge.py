@@ -3,6 +3,7 @@ from typing import List, Optional, Sequence, Tuple, Union
 
 import torch
 from torch import Tensor, LongTensor
+import torch_geometric
 from torch_geometric.data import Data
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
 
@@ -34,6 +35,7 @@ class DynEdge(GNN):
         readout_layer_sizes: Optional[List[int]] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
         add_global_variables_after_pooling: bool = False,
+        use_graph_normalization: bool = False,
     ):
         """Construct `DynEdge`.
 
@@ -67,6 +69,7 @@ class DynEdge(GNN):
                 after global pooling. The alternative is to  added (distribute)
                 them to the individual nodes before any convolutional
                 operations.
+            use_graph_normalization: Whether to use graph normalization on nodes
         """
         # Latent feature subset for computing nearest neighbours in DynEdge.
         if features_subset is None:
@@ -150,6 +153,8 @@ class DynEdge(GNN):
         self._add_global_variables_after_pooling = (
             add_global_variables_after_pooling
         )
+
+        self._use_graph_normalization = use_graph_normalization
 
         # Base class constructor
         super().__init__(nb_inputs, self._readout_layer_sizes[-1])
@@ -275,6 +280,11 @@ class DynEdge(GNN):
         """Apply learnable forward pass."""
         # Convenience variables
         x, edge_index, batch = data.x, data.edge_index, data.batch
+
+        if self._use_graph_normalization:
+            x = torch_geometric.nn.norm.GraphNorm(x.size(-1), eps=1e-5)(
+                x, batch
+            )
 
         global_variables = self._calculate_global_variables(
             x,
