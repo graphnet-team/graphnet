@@ -23,9 +23,12 @@ def main(input_file: str, output_file: str) -> None:
     # Trim for whitespaces and newlines
     content = content.strip()
 
+    # Rename title
+    content = "\n".join(["# Contribute"] + content.split("\n")[1:])
+
     # Update relative links for absolute ones
     content = content.replace(
-        "./", "https://github.com/graphnet-team/graphnet/tree/main/"
+        "./", "../../"
     )
 
     # Write parsed results to output file
