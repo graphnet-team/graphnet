@@ -22,6 +22,7 @@ jobs:
       - name: Build documentation
         run: |
           cd docs
+          python parse_about.py -i ../paper/paper.md -o source/about.md
           python parse_install.py -i ../README.md -o source/install.md
           python parse_contributing.py -i ../CONTRIBUTING.md -o source/contributing.md
           make clean
