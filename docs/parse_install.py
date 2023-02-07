@@ -34,11 +34,6 @@ def main(input_file: str, output_file: str) -> None:
 
     content = content.replace("</blockquote>\n</details>", "")
 
-    # Update relative links for absolute ones
-    content = content.replace(
-        "./", "https://github.com/graphnet-team/graphnet/tree/main/"
-    )
-
     # Trim for whitespaces and newlines
     content = content.strip()
     for _ in range(2):
