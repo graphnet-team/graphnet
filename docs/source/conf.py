@@ -137,10 +137,10 @@ napoleon_use_rtype = True
 
 # -- Options for sphinx-autodoc ------------------------------------
 
-special_members = ["__init__"]
+special_members = []
 autodoc_default_options = {
     "member-order": "bysource",
-    "special-members": ", ".join(special_members),
+    "special-members": ", ".join(special_members) if special_members else None,
     "undoc-members": True,
     "private-members": False,
 }
