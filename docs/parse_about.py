@@ -18,33 +18,47 @@ def main(input_file: str, output_file: str) -> None:
     sections = list(re.finditer("^# (.*?)\n", content, re.M))
     corpus = {}
     for s1, s2 in zip(sections[:-1], sections[1:]):
-        corpus[s1.group(1)] = (
-            [par for par in content[s1.end():s2.start()].split("\n") if par]
-        )
+        corpus[s1.group(1)] = [
+            par for par in content[s1.end() : s2.start()].split("\n") if par
+        ]
 
     # Stitch together an About section
-    content = "\n\n".join([
-        "# About",
-        corpus["Summary"][1],
-        "## Impact",
-    ] + corpus["Impact on physics"] + [
-        "## Usage",
-    ] + corpus["Usage"][:1] + ["### FIGURE ###"] + corpus["Usage"][2:] + [
-        "## Acknowledgements",
-    ] + corpus["Acknowledgements"])
+    content = "\n\n".join(
+        [
+            "# About",
+            corpus["Summary"][1],
+            "## Impact",
+        ]
+        + corpus["Impact on physics"]
+        + [
+            "## Usage",
+        ]
+        + corpus["Usage"][:1]
+        + ["### FIGURE ###"]
+        + corpus["Usage"][2:]
+        + [
+            "## Acknowledgements",
+        ]
+        + corpus["Acknowledgements"]
+    )
 
     # Add figure
     figure = corpus["Usage"][1]
-    m = re.search(r"!\[(?P<caption>.*) *\\label\{.*\} *\]\((?P<path>.*)\)", figure, re.M)
+    m = re.search(
+        r"!\[(?P<caption>.*) *\\label\{.*\} *\]\((?P<path>.*)\)", figure, re.M
+    )
     caption, path = m.group("caption"), m.group("path")
-    content = content.replace("### FIGURE ###", f"""
+    content = content.replace(
+        "### FIGURE ###",
+        f"""
 :::{{figure-md}} flowchart
 :class: figclass
 
 <img src="./paper/{path.replace(".pdf", ".png")}" alt="flowchart" width="100%">
 
 {caption}
-:::""")
+:::""",
+    )
 
     # Remove references
     pattern = "\[[@\:\w]+\]"
@@ -53,10 +67,14 @@ def main(input_file: str, output_file: str) -> None:
         content = content.replace(f" {reference}", "")
 
     # Update figure reference
-    content = content.replace("\\autoref{fig:flowchart}", "[the Figure](flowchart)")
+    content = content.replace(
+        "\\autoref{fig:flowchart}", "[the Figure](flowchart)"
+    )
 
     # Update relative links for absolute ones
-    content = content.replace("./", "https://github.com/graphnet-team/graphnet/tree/main/")
+    content = content.replace(
+        "./", "https://github.com/graphnet-team/graphnet/tree/main/"
+    )
 
     # Write parsed results to output file
     with open(output_file, "w") as f:

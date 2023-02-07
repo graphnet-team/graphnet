@@ -17,18 +17,16 @@ def main(input_file: str, output_file: str) -> None:
     # Remove anything before "Install" section
     pattern = r"^##.* Install.*$\n"
     m = re.search(pattern, content, re.M)
-    content = "\n".join(["# Install", content[m.end():]])
+    content = "\n".join(["# Install", content[m.end() :]])
 
     # Remove everying after "Install"
     pattern = r"##.*$"
     m = next(re.finditer(pattern, content, re.M))
-    content = content[:m.start()]
+    content = content[: m.start()]
 
     # Convert relevant <details>-blocks to headers
     pattern = (
-        r"<details>\n"
-        r"<summary><b>(.*?)<\/b><\/summary>\n"
-        r"<blockquote>"
+        r"<details>\n" r"<summary><b>(.*?)<\/b><\/summary>\n" r"<blockquote>"
     )
     for m in re.finditer(pattern, content, re.M):
         content = content.replace(m.group(0), "## " + m.group(1))
@@ -36,7 +34,9 @@ def main(input_file: str, output_file: str) -> None:
     content = content.replace("</blockquote>\n</details>", "")
 
     # Update relative links for absolute ones
-    content = content.replace("./", "https://github.com/graphnet-team/graphnet/tree/main/")
+    content = content.replace(
+        "./", "https://github.com/graphnet-team/graphnet/tree/main/"
+    )
 
     # Trim for whitespaces and newlines
     content = content.strip()
