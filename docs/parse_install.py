@@ -5,6 +5,7 @@ import re
 
 
 def main(input_file: str, output_file: str) -> None:
+    """Parsing script."""
     # Check(s)
     assert input_file != output_file
     assert input_file.endswith(".md")
