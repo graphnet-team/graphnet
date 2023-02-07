@@ -64,9 +64,7 @@ def main(
     )
 
     if suffix is not None:
-        archive = os.path.join(
-            EXAMPLE_OUTPUT_DIR, "train_model_{}".format("_".join(suffix))
-        )
+        archive = os.path.join(EXAMPLE_OUTPUT_DIR, f"train_model_{suffix}")
     else:
         archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model")
     run_name = "dynedge_{}_example".format("_".join(config.target))
