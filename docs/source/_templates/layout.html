@@ -18,7 +18,8 @@
 
   .py.class .sig-name,
   .py.function .sig-name,
-  .py.method .sig-name {
+  .py.method .sig-name,
+  .py.exception .sig-name {
     color: #37474f;
     font-feature-settings: "kern";
     font-family: "Roboto Mono", "Courier New", Courier, monospace;
@@ -27,19 +28,22 @@
 
   .py.class .sig-object,
   .py.function .sig-object,
-  .py.method .sig-object {
+  .py.method .sig-object,
+  .py.exception .sig-object {
     padding: 1ex;
   }
 
   .py.class .sig-object,
-  .py.function .sig-object {
+  .py.function .sig-object,
+  .py.exception .sig-object {
     border-top: 1px solid gray;
   }
   .py.method .sig-object {
     border-top: 1px solid lightgray;
   }
 
-  .py.class .sig-object {
+  .py.class .sig-object,
+  .py.exception .sig-object {
     background: rgba(0,0,0,0.06);
   }
   .py.function .sig-object,
