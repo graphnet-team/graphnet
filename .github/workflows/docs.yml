@@ -25,6 +25,7 @@ jobs:
           make clean
           sphinx-apidoc \
             --module-first \
+            --separate \
             --force \
             -d 2 \
             --templatedir=source/_templates/ \
