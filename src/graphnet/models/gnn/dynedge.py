@@ -159,6 +159,11 @@ class DynEdge(GNN):
         # Base class constructor
         super().__init__(nb_inputs, self._readout_layer_sizes[-1])
 
+        # GraphNorm
+        self._graphnorm = torch_geometric.nn.norm.GraphNorm(
+            nb_inputs, eps=1e-5
+        )
+
         # Remaining member variables()
         self._activation = torch.nn.LeakyReLU()
         self._nb_inputs = nb_inputs
@@ -282,9 +287,7 @@ class DynEdge(GNN):
         x, edge_index, batch = data.x, data.edge_index, data.batch
 
         if self._use_graph_normalization:
-            x = torch_geometric.nn.norm.GraphNorm(x.size(-1), eps=1e-5)(
-                x, batch
-            )
+            x = self._graphnorm(x, batch)
 
         global_variables = self._calculate_global_variables(
             x,
