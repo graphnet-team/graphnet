@@ -55,7 +55,7 @@ def main(input_file: str, output_file: str) -> None:
 :::{{figure-md}} flowchart
 :class: figclass
 
-<img src="./paper/{path.replace(".pdf", ".png")}" alt="flowchart" width="100%">
+<img src="../../paper/{path.replace(".pdf", ".png")}" alt="flowchart" width="100%">
 
 {caption}
 :::""",
@@ -70,11 +70,6 @@ def main(input_file: str, output_file: str) -> None:
     # Update figure reference
     content = content.replace(
         "\\autoref{fig:flowchart}", "[the Figure](flowchart)"
-    )
-
-    # Update relative links for absolute ones
-    content = content.replace(
-        "./", "https://github.com/graphnet-team/graphnet/tree/main/"
     )
 
     # Write parsed results to output file
