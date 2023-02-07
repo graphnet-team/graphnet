@@ -17,13 +17,15 @@ def main(input_file: str, output_file: str) -> None:
     # Remove "Version control"-section everything after it.
     pattern = "## Version control"
     m = re.search(pattern, content)
-    content = content[:m.start()]
+    content = content[: m.start()]
 
     # Trim for whitespaces and newlines
     content = content.strip()
 
     # Update relative links for absolute ones
-    content = content.replace("./", "https://github.com/graphnet-team/graphnet/tree/main/")
+    content = content.replace(
+        "./", "https://github.com/graphnet-team/graphnet/tree/main/"
+    )
 
     # Write parsed results to output file
     with open(output_file, "w") as f:
