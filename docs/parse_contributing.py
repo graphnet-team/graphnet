@@ -14,6 +14,7 @@ def main(input_file: str, output_file: str) -> None:
     with open(input_file, "r") as f:
         content = f.read()
 
+    # Remove "Version control"-section everything after it.
     pattern = "## Version control"
     m = re.search(pattern, content)
     content = content[:m.start()]
