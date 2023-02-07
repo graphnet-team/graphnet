@@ -6,5 +6,5 @@
    :hidden:
 
    install
-   contribute
+   contributing
    api/graphnet.rst

@@ -23,6 +23,7 @@ jobs:
         run: |
           cd docs
           python parse_install.py -i ../README.md -o source/install.md
+          python parse_contributing.py -i ../CONTRIBUTING.md -o source/contributing.md
           make clean
           sphinx-apidoc \
             --module-first \
