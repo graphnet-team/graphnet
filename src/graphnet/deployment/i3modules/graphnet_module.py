@@ -40,14 +40,20 @@ class GraphNeTI3Module:
         pulsemap_extractor: Union[
             List[I3FeatureExtractor], I3FeatureExtractor
         ],
+        gcd_file: str,
     ):
         """Add member variables and extractors."""
         self._pulsemap = pulsemap
         self._features = features
+        assert isinstance(gcd_file, str), "gcd_file must be string"
+        self._gcd_file = gcd_file
         if isinstance(pulsemap_extractor, list):
             self._i3_extractors = pulsemap_extractor
         else:
             self._i3_extractors = [pulsemap_extractor]
+
+        for i3_extractor in self._i3_extractors:
+            i3_extractor.set_files(i3_file="", gcd_file=self._gcd_file)
 
     @abstractmethod
     def __call__(self, frame: I3Frame) -> bool:
@@ -68,7 +74,6 @@ class GraphNeTI3Module:
         n_pulses = torch.tensor([features.shape[0]], dtype=torch.int32)
         data = Data(
             x=torch.tensor(features, dtype=torch.float32),
-            edge_index=None,
             batch=torch.zeros(
                 features.shape[0], dtype=torch.int64
             ),  # @TODO: Necessary?
@@ -120,12 +125,14 @@ class I3InferenceModule(GraphNeTI3Module):
         model: Union[Model, StandardModel, str],
         model_name: str,
         prediction_columns: Union[List[str], str],
+        gcd_file: str,
     ):
         """Add member variables and extractors."""
         super().__init__(
             pulsemap=pulsemap,
             features=features,
             pulsemap_extractor=pulsemap_extractor,
+            gcd_file=gcd_file,
         )
 
         if isinstance(model, str):
@@ -134,6 +141,8 @@ class I3InferenceModule(GraphNeTI3Module):
             )
         else:
             self.model = model
+
+        self.model.to("cpu")
 
         if isinstance(prediction_columns, str):
             self.prediction_columns = [prediction_columns]
@@ -146,7 +155,12 @@ class I3InferenceModule(GraphNeTI3Module):
         """Write predictions from model to frame."""
         # inference
         graph = self._make_graph(frame)
-        predictions = self._inference(graph)
+        if len(graph.x) > 0:
+            predictions = self._inference(graph)
+        else:
+            predictions = np.repeat(
+                [np.nan], len(self.prediction_columns)
+            ).reshape(-1, len(self.prediction_columns))
 
         # Check dimensions of predictions and prediction columns
         if len(predictions.shape) > 1:
@@ -159,15 +173,18 @@ class I3InferenceModule(GraphNeTI3Module):
 
         # Build Dictionary of predictions
         data = {}
-        for i in range(len(dim)):
+        assert predictions.shape[0] == 1
+        for i in range(dim if isinstance(dim, int) else len(dim)):
+            # print(predictions)
             try:
+                assert len(predictions[:, i]) == 1
                 data[
                     self.model_name + "_" + self.prediction_columns[i]
-                ] = icetray.I3Double(predictions[:, i])
+                ] = I3Double(float(predictions[:, i][0]))
             except IndexError:
                 data[
                     self.model_name + "_" + self.prediction_columns[i]
-                ] = icetray.I3Double(predictions)
+                ] = I3Double(predictions[0])
 
         # Submission methods
         frame = self._submit_to_frame(frame=frame, data=data)
@@ -175,15 +192,11 @@ class I3InferenceModule(GraphNeTI3Module):
 
     def _inference(self, data: Data) -> np.ndarray:
         # Perform inference
-        try:
-            predictions = [p.detach().numpy()[0, :] for p in self.model(data)]
-            predictions = np.concatenate(
-                predictions
-            )  # @TODO: Special case for single task
-        except:  # noqa: E722
-            print("data:", data)
-            raise
-        return predictions
+        task_predictions = self.model(data)
+        assert (
+            len(task_predictions) == 1
+        ), f"This method assumes a single task. Got {len(task_predictions)} tasks."
+        return self.model(data)[0].detach().numpy()
 
 
 class I3PulseCleanerModule(I3InferenceModule):
@@ -214,10 +227,8 @@ class I3PulseCleanerModule(I3InferenceModule):
             model=model,
             model_name=model_name,
             prediction_columns=prediction_columns,
+            gcd_file=gcd_file,
         )
-
-        assert isinstance(gcd_file, str), "gcd_file must be string"
-        self._gcd_file = gcd_file
         self._threshold = threshold
         self._predictions_key = f"{pulsemap}_{model_name}_Predictions"
         self._total_pulsemap_name = f"{pulsemap}_{model_name}_Pulses"
@@ -228,6 +239,9 @@ class I3PulseCleanerModule(I3InferenceModule):
         gcd_file = self._gcd_file
         graph = self._make_graph(frame)
         predictions = self._inference(graph)
+
+        if len(predictions.shape) == 1:
+            predictions = predictions.reshape(-1, 1)
 
         assert predictions.shape[1] == 1
 
@@ -255,6 +269,9 @@ class I3PulseCleanerModule(I3InferenceModule):
                 >= self._threshold,
             )
 
+        # Submit predictions and general pulsemap
+        frame = self._submit_to_frame(frame=frame, data=data)
+        data = {}
         # Adds an additional pulsemap for each DOM type
         if isinstance(
             self._i3_extractors[0], I3FeatureExtractorIceCubeUpgrade
@@ -278,7 +295,7 @@ class I3PulseCleanerModule(I3InferenceModule):
                     f"{self._total_pulsemap_name}_pDOMs_Only"
                 ] = dataclasses.I3RecoPulseSeriesMap(IceCubeMap)
 
-        # Submits the dictionary to the frame
+        # Submits the additional pulsemaps to the frame
         frame = self._submit_to_frame(frame=frame, data=data)
 
         return True
@@ -314,6 +331,7 @@ class I3PulseCleanerModule(I3InferenceModule):
         )
 
         idx = 0
+        predictions = predictions.squeeze(1)
         predictions_map = dataclasses.I3MapKeyVectorDouble()
         for om_key, pulses in pulsemap.items():
             num_pulses = len(pulses)
