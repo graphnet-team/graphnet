@@ -42,7 +42,14 @@ class GraphNeTI3Module:
         ],
         gcd_file: str,
     ):
-        """Add member variables and extractors."""
+        """I3Module Constructor.
+
+        Arguments:
+            pulsemap: the pulse map on which the module functions
+            features: the features that is used from the pulse map. E.g. [dom_x, dom_y, dom_z, charge]
+            pulsemap_extractor: The I3FeatureExtractor used to extract the pulsemap from the I3Frames
+            gcd_file: Path to the associated gcd-file.
+        """
         self._pulsemap = pulsemap
         self._features = features
         assert isinstance(gcd_file, str), "gcd_file must be string"
@@ -86,6 +93,14 @@ class GraphNeTI3Module:
         return data
 
     def _extract_feature_array_from_frame(self, frame: I3Frame) -> np.array:
+        """Apply the I3FeatureExtractors to the I3Frame.
+
+        Arguments:
+            frame: Physics I3Frame (PFrame)
+
+        Returns:
+            array with pulsemap
+        """
         features = None
         for i3extractor in self._i3_extractors:
             feature_dict = i3extractor(frame)
@@ -103,7 +118,15 @@ class GraphNeTI3Module:
     def _submit_to_frame(
         self, frame: I3Frame, data: Dict[str, Any]
     ) -> I3Frame:
-        """Write every field of data to frame."""
+        """Submit every field in data to I3Frame.
+
+        Arguments:
+            frame: I3Frame (physics)
+            data: Dictionary containing content that will be written to frame.
+
+        Returns:
+            frame: Same I3Frame as input, but with the new entries
+        """
         assert isinstance(
             data, dict
         ), f"data must be of type dict. Got {type(data)}"
@@ -127,7 +150,17 @@ class I3InferenceModule(GraphNeTI3Module):
         prediction_columns: Union[List[str], str],
         gcd_file: str,
     ):
-        """Add member variables and extractors."""
+        """General class for inference on I3Frames (physics).
+
+        Arguments:
+            pulsemap: the pulsmap that the model is expecting as input.
+            features: the features of the pulsemap that the model is expecting.
+            pulsemap_extractor: The extractor used to extract the pulsemap.
+            model: The model (or path to pickled model) that will used for inference.
+            model_name: The name used for the model. Will help define the named entry in the I3Frame. E.g. "dynedge".
+            prediction_columns: column names for the predictions of the model.Will help define the named entry in the I3Frame.  E.g. ['energy_reco'].
+            gcd_file: path to associated gcd file.
+        """
         super().__init__(
             pulsemap=pulsemap,
             features=features,
@@ -219,7 +252,18 @@ class I3PulseCleanerModule(I3InferenceModule):
         gcd_file: str,
         threshold: float = 0.7,
     ):
-        """Add member variables and extractors."""
+        """General class for inference on I3Frames (physics).
+
+        Arguments:
+            pulsemap: the pulsmap that the model is expecting as input (the one that is being cleaned).
+            features: the features of the pulsemap that the model is expecting.
+            pulsemap_extractor: The extractor used to extract the pulsemap.
+            model: The model (or path to pickled model) that will used for inference.
+            model_name: The name used for the model. Will help define the named entry in the I3Frame. E.g. "dynedge".
+            prediction_columns: column names for the predictions of the model.Will help define the named entry in the I3Frame.  E.g. ['energy_reco'].
+            gcd_file: path to associated gcd file.
+            threshold: the threshold for being considered a positive case. E.g., predictions >= threshold will be considered to be signal, all else noise.
+        """
         super().__init__(
             pulsemap=pulsemap,
             features=features,
@@ -303,6 +347,15 @@ class I3PulseCleanerModule(I3InferenceModule):
     def _split_pulsemap_in_dom_types(
         self, frame: I3Frame, gcd_file: Any
     ) -> Tuple[Dict[Any, Any], Dict[Any, Any], Dict[Any, Any]]:
+        """Will split the cleaned pulsemap into multiple pulsemaps.
+
+        Arguments:
+            frame: I3Frame (physics)
+            gcd_file: path to associated gcd file
+
+        Returns:
+            mDOMMap, DeGGMap, IceCubeMap
+        """
         g = dataio.I3File(gcd_file)
         gFrame = g.pop_frame()
         while "I3Geometry" not in gFrame.keys():
@@ -326,6 +379,15 @@ class I3PulseCleanerModule(I3InferenceModule):
     def _construct_prediction_map(
         self, frame: I3Frame, predictions: np.ndarray
     ) -> I3MapKeyVectorDouble:
+        """Make a pulsemap from predictions (for all OM types).
+
+        Arguments:
+            frame: I3Frame (physics)
+            predictions: predictions from GNN
+
+        Returns:
+            predictions_map: a pulsemap from predictions
+        """
         pulsemap = dataclasses.I3RecoPulseSeriesMap.from_frame(
             frame, self._pulsemap
         )
