@@ -8,7 +8,6 @@ from typing import Dict, List
 
 from graphnet.deployment.i3modules import (
     GraphNeTI3Deployer,
-    GraphNeTI3Module,
     I3InferenceModule,
 )
 from graphnet.data.extractors.i3featureextractor import (
@@ -17,9 +16,8 @@ from graphnet.data.extractors.i3featureextractor import (
 from graphnet.constants import (
     TEST_DATA_DIR,
     EXAMPLE_OUTPUT_DIR,
-    FEATURES,
-    TRUTH,
 )
+from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.icecube import IceCubeUpgrade
 from graphnet.models.gnn import DynEdge
@@ -65,7 +63,7 @@ def construct_mock_model() -> StandardModel:
 
 def construct_modules(
     model_dict: Dict[str, Dict], gcd_file: str
-) -> List[GraphNeTI3Module]:
+) -> List[I3InferenceModule]:
     """Construct a list of I3InfereceModules for the I3Deployer."""
     features = FEATURES.UPGRADE
     deployment_modules = []
@@ -97,7 +95,7 @@ def main() -> None:
     gcd_file = f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/GeoCalibDetectorStatus_ICUpgrade.v58.mixed.V0.i3.bz2"
     input_files = []
     for folder in input_folders:
-        input_files.extend(glob(join(folder, "*.i3*")))
+        input_files.extend(glob(join(folder, "*.i3.gz")))
 
     # Configure Module dictionary & construct deployment modules
     model_dict = {}

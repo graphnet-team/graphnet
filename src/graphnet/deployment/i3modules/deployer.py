@@ -8,7 +8,11 @@ import time
 import numpy as np
 
 from graphnet.utilities.imports import has_icecube_package, has_torch_package
-from graphnet.deployment.i3modules import GraphNeTI3Module
+from graphnet.deployment.i3modules import (
+    GraphNeTI3Module,
+    I3InferenceModule,
+    I3PulseCleanerModule,
+)
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
@@ -26,7 +30,21 @@ class GraphNeTI3Deployer:
 
     def __init__(
         self,
-        graphnet_modules: Union[GraphNeTI3Module, List[GraphNeTI3Module]],
+        graphnet_modules: Union[
+            GraphNeTI3Module,
+            I3InferenceModule,
+            I3PulseCleanerModule,
+            List[GraphNeTI3Module],
+            List[I3InferenceModule],
+            List[I3PulseCleanerModule],
+            List[
+                Union[
+                    GraphNeTI3Module,
+                    I3InferenceModule,
+                    I3PulseCleanerModule,
+                ]
+            ],
+        ],
         gcd_file: str,
         n_workers: int = 1,
     ) -> None:
@@ -102,7 +120,12 @@ class GraphNeTI3Deployer:
             for process in processes:
                 process.join()
         else:
-            self._process_files(settings)  # type: ignore
+            self._process_files(
+                files=settings[0],
+                gcd_file=settings[1],
+                output_folder=settings[2],
+                modules=settings[3],
+            )  # type: ignore
 
     def _process_files(
         self,
