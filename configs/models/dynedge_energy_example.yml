@@ -20,7 +20,7 @@ arguments:
         nb_neighbours: 8
         post_processing_layer_sizes: null
         readout_layer_sizes: null
-        use_graph_normalization: True
+        use_graph_normalization: null
       class_name: DynEdge
   optimizer_class: '!class torch.optim.adam Adam'
   optimizer_kwargs: {eps: 0.001, lr: 1e-05}
