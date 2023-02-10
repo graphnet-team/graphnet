@@ -1,5 +1,5 @@
 """An example of how to apply GraphNetI3Modules in Icetray."""
-from typing import TYPE_CHECKING, List, Dict
+from typing import TYPE_CHECKING, List, Dict, Sequence
 from glob import glob
 from os.path import join
 
@@ -98,7 +98,7 @@ def apply_to_files(
     i3_files: List[str],
     gcd_file: str,
     output_folder: str,
-    modules: List[GraphNeTI3Module],
+    modules: Sequence[GraphNeTI3Module],
 ) -> None:
     """Will start an IceTray read/write chain with graphnet modules.
 

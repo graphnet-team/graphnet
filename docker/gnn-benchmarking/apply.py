@@ -4,15 +4,43 @@ import argparse
 from glob import glob
 from os import makedirs
 from os.path import join, dirname
-from typing import List
+from typing import List, Dict
 
 from I3Tray import I3Tray  # pyright: reportMissingImports=false
 
-from graphnet.deployment.i3modules import GraphNeTModuleIceCube86
-
+from graphnet.deployment.i3modules import I3InferenceModule
+from graphnet.data.extractors.i3featureextractor import (
+    I3FeatureExtractorIceCube86,
+)
+from graphnet.data.constants import FEATURES, TRUTH
 
 # Constants (from Dockerfile)
 MODEL_PATH = "model.pth"
+
+
+def construct_modules(
+    model_dict: Dict[str, Dict], gcd_file: str
+) -> List[I3InferenceModule]:
+    """Construct a list of I3InfereceModules for the I3Deployer."""
+    features = FEATURES.DEEPCORE
+    deployment_modules = []
+    for model_name in model_dict.keys():
+        model_path = model_dict[model_name]["model_path"]
+        prediction_columns = model_dict[model_name]["prediction_columns"]
+        pulsemap = model_dict[model_name]["pulsemap"]
+        extractor = I3FeatureExtractorIceCube86(pulsemap=pulsemap)
+        deployment_modules.append(
+            I3InferenceModule(
+                pulsemap=pulsemap,
+                features=features,
+                pulsemap_extractor=extractor,
+                model=model_path,
+                gcd_file=gcd_file,
+                prediction_columns=prediction_columns,
+                model_name=model_name,
+            )
+        )
+    return deployment_modules
 
 
 # Main function definition
@@ -34,15 +62,23 @@ def main(
     # Get all input I3-files
     input_files = [p for p in input_files if gcd_pattern not in p]
 
+    # Construct Inference Module(s)
+    model_dict = {}
+    model_dict["graphnet_dynedge_energy_reconstruction"] = {
+        "model_path": MODEL_PATH,
+        "prediction_columns": ["energy_pred"],
+        "pulsemap": "SplitInIcePulses",
+    }
+
+    deployment_modules = construct_modules(
+        model_dict=model_dict, gcd_file=gcd_file
+    )
+
     # Run GNN module in tray
     tray = I3Tray()
     tray.Add("I3Reader", filenamelist=input_files)
-    tray.Add(
-        GraphNeTModuleIceCube86,
-        key=key,
-        model_path=MODEL_PATH,
-        gcd_file=gcd_file,
-    )
+    for deployment_module in deployment_modules:
+        tray.AddModule(deployment_module)
     tray.Add("I3Writer", filename=output_file)
     if events_max > 0:
         tray.Execute(events_max)
