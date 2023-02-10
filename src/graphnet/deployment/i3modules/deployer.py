@@ -50,13 +50,16 @@ class GraphNeTI3Deployer:
     ) -> None:
         """Initialize the deployer.
 
-        Will apply graphnet i3 modules to i3 files in the order in which they appear in graphnet_modules.
-        Each module is run independently.
+        Will apply graphnet i3 modules to i3 files in the order in which they
+        appear in graphnet_modules.Each module is run independently.
 
         Args:
-            graphnet_modules: List of graphnet i3 modules. Order of appearence in the list determines order of deployment.
+            graphnet_modules: List of graphnet i3 modules.
+                              Order of appearence in the list determines order
+                              of deployment.
             gcd_file: path to gcd file.
-            n_workers: Number of workers. The deployer will divide the number of input files across workers. Defaults to 1.
+            n_workers: Number of workers. The deployer will divide the number
+                       of input files across workers. Defaults to 1.
         """
         # This makes sure that one worker cannot access more than 1 core's worth of compute.
         torch.set_num_threads(1)
@@ -78,7 +81,7 @@ class GraphNeTI3Deployer:
         except FileExistsError:
             assert (
                 1 == 2
-            ), f"{output_folder} already exists. To avoid overwriting existing files, the process has been stopped."
+            ), f"{output_folder} already exists. The process has been stopped."
         settings = []
         if self._n_workers > len(input_files):
             self._n_workers = len(input_files)
@@ -136,7 +139,11 @@ class GraphNeTI3Deployer:
     ) -> None:
         """Will start an IceTray read/write chain with graphnet modules.
 
-        If n_workers > 1, this function is run in parallel n_worker times. Each worker will loop over an allocated set of i3 files. The i3 files with reconstructions will appear as copies of the original i3 files but with reconstructions added. Original i3 files are left untouched.
+        If n_workers > 1, this function is run in parallel n_worker times.
+        Each worker will loop over an allocated set of i3 files.
+        The i3 files with reconstructions will appear as copies of the original
+        i3 files but with reconstructions added.
+        Original i3 files are left untouched.
 
         Args:
             files: Path(s) to i3 file(s) to which the graphnet modules are applied to.
