@@ -3,7 +3,7 @@ import os.path
 import os
 import random
 import multiprocessing
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Union
 import time
 import numpy as np
 
@@ -61,7 +61,8 @@ class GraphNeTI3Deployer:
             n_workers: Number of workers. The deployer will divide the number
                        of input files across workers. Defaults to 1.
         """
-        # This makes sure that one worker cannot access more than 1 core's worth of compute.
+        # This makes sure that one worker cannot access more
+        # than 1 core's worth of compute.
         torch.set_num_threads(1)
         torch.set_num_interop_threads(1)
         # Check
@@ -207,9 +208,11 @@ class GraphNeTI3Deployer:
             input_files=input_files, output_folder=output_folder
         )
         print(
-            f"processing {len(input_files)} i3 files using {self._n_workers} workers"
+            f"""processing {len(input_files)} i3 files \n
+                using {self._n_workers} workers"""
         )
         self._launch_jobs(settings)
         print(
-            f"Processing {len(input_files)} files was completed in {time.time() - start_time} seconds using {self._n_workers} cores."
+            f"""Processing {len(input_files)} files was completed in \n
+         {time.time() - start_time} seconds using {self._n_workers} cores."""
         )
