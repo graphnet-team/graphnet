@@ -102,14 +102,15 @@ class GraphNeTI3Deployer:
             ]
         return settings
 
-    def _launch_jobs(self, settings: List) -> None:
+    def _launch_jobs(self, settings: List[Settings]) -> None:
         """Will launch jobs in parallel if n_workers > 1, else run on main."""
         if self._n_workers > 1:
             processes = []
             for i in range(self._n_workers):
                 processes.append(
                     multiprocessing.Process(
-                        target=self._process_files, args=tuple(settings[i])
+                        target=self._process_files,
+                        args=settings[i],  # type: ignore
                     )
                 )
 
@@ -119,51 +120,29 @@ class GraphNeTI3Deployer:
             for process in processes:
                 process.join()
         else:
-            self._process_files(
-                files=settings[0],
-                gcd_file=settings[1],
-                output_folder=settings[2],
-                modules=settings[3],
-            )  # type: ignore
+            self._process_files(settings[0])
 
     def _process_files(
         self,
-        files: List[str],
-        gcd_file: str,
-        output_folder: str,
-        modules: List[GraphNeTI3Module],
+        settings: Settings,
     ) -> None:
         """Will start an IceTray read/write chain with graphnet modules.
 
-        If n_workers > 1, this function is run in parallel n_worker times.
-        Each worker will loop over an allocated set of i3 files.
-        The i3 files with reconstructions will appear as copies of the original
-        i3 files but with reconstructions added.
-        Original i3 files are left untouched.
-
-        Args:
-            files: The path(s) to input i3 file(s).
-            gcd_file: path to gcd_file
-            output_folder: The folder where the i3 files are written to.
-                           Must not exist beforehand.
-            modules: A list containing the graphnet i3 modules.
-                    Will be applied to the i3 files in the order in
-                    which they appear in the list.
+        If n_workers > 1, this function is run in parallel n_worker times. Each
+        worker will loop over an allocated set of i3 files. The new i3 files
+        will appear as copies of the original i3 files but with reconstructions
+        added. Original i3 files are left untouched.
         """
-        files, gcd_file, output_folder, modules
-        for i in range(0, len(files)):
-            INFILE = files[i]
+        for i3_file in settings.i3_files:
             tray = I3Tray()
             tray.context["I3FileStager"] = dataio.get_stagers()
             tray.AddModule(
                 "I3Reader",
                 "reader",
-                FilenameList=[gcd_file, INFILE],
+                FilenameList=[settings.gcd_file, i3_file],
             )
-
-            for graphnet_i3_module in modules:
-                tray.AddModule(graphnet_i3_module)
-
+            for i3_module in settings.modules:
+                tray.AddModule(i3_module)
             tray.Add(
                 "I3Writer",
                 Streams=[
@@ -172,7 +151,7 @@ class GraphNeTI3Deployer:
                     icetray.I3Frame.TrayInfo,
                     icetray.I3Frame.Simulation,
                 ],
-                filename=output_folder + "/" + INFILE.split("/")[-1],
+                filename=settings.output_folder + "/" + i3_file.split("/")[-1],
             )
             tray.Execute()
             tray.Finish()
