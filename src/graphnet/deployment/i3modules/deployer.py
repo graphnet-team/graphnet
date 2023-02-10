@@ -3,7 +3,7 @@ import os.path
 import os
 import random
 import multiprocessing
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List, Union, Sequence
 import time
 import numpy as np
 from dataclasses import dataclass
@@ -39,7 +39,7 @@ class GraphNeTI3Deployer:
 
     def __init__(
         self,
-        graphnet_modules: Union[GraphNeTI3Module, List[GraphNeTI3Module]],
+        graphnet_modules: Union[GraphNeTI3Module, Sequence[GraphNeTI3Module]],
         gcd_file: str,
         n_workers: int = 1,
     ) -> None:
