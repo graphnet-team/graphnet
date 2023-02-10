@@ -1,51 +1,30 @@
 """Script for applying GraphNeTModule in IceTray chain."""
 
+
 import argparse
 from glob import glob
 from os import makedirs
 from os.path import join, dirname
-from typing import List, Dict
+from typing import List
 
 from I3Tray import I3Tray  # pyright: reportMissingImports=false
 
 from graphnet.deployment.i3modules import I3InferenceModule
 from graphnet.data.extractors.i3featureextractor import (
-    I3FeatureExtractorIceCube86,
+    I3FeatureExtractorIceCubeDeepCore,
 )
-from graphnet.data.constants import FEATURES, TRUTH
+from graphnet.data.constants import FEATURES
+
 
 # Constants (from Dockerfile)
 MODEL_PATH = "model.pth"
 
 
-def construct_modules(
-    model_dict: Dict[str, Dict], gcd_file: str
-) -> List[I3InferenceModule]:
-    """Construct a list of I3InfereceModules for the I3Deployer."""
-    features = FEATURES.DEEPCORE
-    deployment_modules = []
-    for model_name in model_dict.keys():
-        model_path = model_dict[model_name]["model_path"]
-        prediction_columns = model_dict[model_name]["prediction_columns"]
-        pulsemap = model_dict[model_name]["pulsemap"]
-        extractor = I3FeatureExtractorIceCube86(pulsemap=pulsemap)
-        deployment_modules.append(
-            I3InferenceModule(
-                pulsemap=pulsemap,
-                features=features,
-                pulsemap_extractor=extractor,
-                model=model_path,
-                gcd_file=gcd_file,
-                prediction_columns=prediction_columns,
-                model_name=model_name,
-            )
-        )
-    return deployment_modules
-
-
-# Main function definition
 def main(
-    input_files: List[str], output_file: str, key: str, events_max: int
+    input_files: List[str],
+    output_file: str,
+    pulsemap: str,
+    events_max: int,
 ) -> None:
     """Apply GraphNeTModule in I3Tray."""
     # Make sure output directory exists
@@ -62,17 +41,20 @@ def main(
     # Get all input I3-files
     input_files = [p for p in input_files if gcd_pattern not in p]
 
-    # Construct Inference Module(s)
-    model_dict = {}
-    model_dict["graphnet_dynedge_energy_reconstruction"] = {
-        "model_path": MODEL_PATH,
-        "prediction_columns": ["energy_pred"],
-        "pulsemap": "SplitInIcePulses",
-    }
+    # Construct I3InferenceModule(s)
+    extractor = I3FeatureExtractorIceCubeDeepCore(pulsemap=pulsemap)
 
-    deployment_modules = construct_modules(
-        model_dict=model_dict, gcd_file=gcd_file
-    )
+    deployment_modules = [
+        I3InferenceModule(
+            pulsemap=pulsemap,
+            features=FEATURES.DEEPCORE,
+            pulsemap_extractor=extractor,
+            model=MODEL_PATH,
+            gcd_file=gcd_file,
+            prediction_columns=["energy_pred"],
+            model_name="graphnet_dynedge_energy_reconstruction",
+        ),
+    ]
 
     # Run GNN module in tray
     tray = I3Tray()
@@ -98,7 +80,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input_folder")
     parser.add_argument("output_folder")
-    parser.add_argument("key", nargs="?", default="gnn_zenith")
+    parser.add_argument("pulsemap", nargs="?", default="SplitInIcePulses")
     parser.add_argument("events_max", nargs="?", type=int, default=0)
 
     args = parser.parse_args()
