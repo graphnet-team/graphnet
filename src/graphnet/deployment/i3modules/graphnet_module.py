@@ -46,8 +46,10 @@ class GraphNeTI3Module:
 
         Arguments:
             pulsemap: the pulse map on which the module functions
-            features: the features that is used from the pulse map. E.g. [dom_x, dom_y, dom_z, charge]
-            pulsemap_extractor: The I3FeatureExtractor used to extract the pulsemap from the I3Frames
+            features: the features that is used from the pulse map.
+                      E.g. [dom_x, dom_y, dom_z, charge]
+            pulsemap_extractor: The I3FeatureExtractor used to extract the
+                                pulsemap from the I3Frames
             gcd_file: Path to the associated gcd-file.
         """
         self._pulsemap = pulsemap
@@ -156,9 +158,13 @@ class I3InferenceModule(GraphNeTI3Module):
             pulsemap: the pulsmap that the model is expecting as input.
             features: the features of the pulsemap that the model is expecting.
             pulsemap_extractor: The extractor used to extract the pulsemap.
-            model: The model (or path to pickled model) that will used for inference.
-            model_name: The name used for the model. Will help define the named entry in the I3Frame. E.g. "dynedge".
-            prediction_columns: column names for the predictions of the model.Will help define the named entry in the I3Frame.  E.g. ['energy_reco'].
+            model: The model (or path to pickled model) that will be
+                    used for inference.
+            model_name: The name used for the model. Will help define the
+                        named entry in the I3Frame. E.g. "dynedge".
+            prediction_columns: column names for the predictions of the model.
+                               Will help define the named entry in the I3Frame.
+                                E.g. ['energy_reco'].
             gcd_file: path to associated gcd file.
         """
         super().__init__(
@@ -202,7 +208,8 @@ class I3InferenceModule(GraphNeTI3Module):
             dim = len(predictions)
         assert dim == len(
             self.prediction_columns
-        ), f"predictions have shape {dim} but prediction columns have [{self.prediction_columns}]"
+        ), f"""predictions have shape {dim} but \n
+            prediction columns have [{self.prediction_columns}]"""
 
         # Build Dictionary of predictions
         data = {}
@@ -228,7 +235,8 @@ class I3InferenceModule(GraphNeTI3Module):
         task_predictions = self.model(data)
         assert (
             len(task_predictions) == 1
-        ), f"This method assumes a single task. Got {len(task_predictions)} tasks."
+        ), f"""This method assumes a single task. \n
+               Got {len(task_predictions)} tasks."""
         return self.model(data)[0].detach().numpy()
 
 
@@ -255,14 +263,21 @@ class I3PulseCleanerModule(I3InferenceModule):
         """General class for inference on I3Frames (physics).
 
         Arguments:
-            pulsemap: the pulsmap that the model is expecting as input (the one that is being cleaned).
+            pulsemap: the pulsmap that the model is expecting as input
+                     (the one that is being cleaned).
             features: the features of the pulsemap that the model is expecting.
             pulsemap_extractor: The extractor used to extract the pulsemap.
-            model: The model (or path to pickled model) that will used for inference.
-            model_name: The name used for the model. Will help define the named entry in the I3Frame. E.g. "dynedge".
-            prediction_columns: column names for the predictions of the model.Will help define the named entry in the I3Frame.  E.g. ['energy_reco'].
+            model: The model (or path to pickled model) that will be
+                    used for inference.
+            model_name: The name used for the model. Will help define the named
+                        entry in the I3Frame. E.g. "dynedge".
+            prediction_columns: column names for the predictions of the model.
+                                Will help define the named entry in the I3Frame.
+                                E.g. ['energy_reco'].
             gcd_file: path to associated gcd file.
-            threshold: the threshold for being considered a positive case. E.g., predictions >= threshold will be considered to be signal, all else noise.
+            threshold: the threshold for being considered a positive case.
+                        E.g., predictions >= threshold will be considered
+                        to be signal, all else noise.
         """
         super().__init__(
             pulsemap=pulsemap,
@@ -300,8 +315,10 @@ class I3PulseCleanerModule(I3InferenceModule):
         if self._predictions_key not in frame.keys():
             data[self._predictions_key] = predictions_map
 
-        # Create a pulse map mask, indicating the pulses that are over threshold (e.g. identified as signal) and therefore should be kept
-        # Using a lambda function to evaluate which pulses to keep by checking the prediction for each pulse
+        # Create a pulse map mask, indicating the pulses that are over
+        # threshold (e.g. identified as signal) and therefore should be kept
+        # Using a lambda function to evaluate which pulses to keep by
+        # checking the prediction for each pulse
         # (Adds the actual pulsemap to dictionary)
         if self._total_pulsemap_name not in frame.keys():
             data[
@@ -405,9 +422,11 @@ class I3PulseCleanerModule(I3InferenceModule):
         # Checks
         assert idx == len(
             predictions
-        ), "Not all predictions were mapped to pulses, validation of predictions have failed."
+        ), """Not all predictions were mapped to pulses,\n
+            validation of predictions have failed."""
 
         assert (
             pulsemap.keys() == predictions_map.keys()
-        ), "Input pulse map and predictions map do not contain exactly the same OMs"
+        ), """Input pulse map and predictions map do \n
+              not contain exactly the same OMs"""
         return predictions_map
