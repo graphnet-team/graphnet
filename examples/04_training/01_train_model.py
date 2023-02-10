@@ -35,7 +35,7 @@ def main(
     batch_size: int,
     num_workers: int,
     prediction_names: Optional[List[str]],
-    suffix: Optional[str],
+    suffix: Optional[str] = None,
 ) -> None:
     """Run example."""
     # Initialise Weights & Biases (W&B) run
