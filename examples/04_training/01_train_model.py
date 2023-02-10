@@ -35,6 +35,7 @@ def main(
     batch_size: int,
     num_workers: int,
     prediction_names: Optional[List[str]],
+    suffix: Optional[str] = None,
 ) -> None:
     """Run example."""
     # Initialise Weights & Biases (W&B) run
@@ -62,7 +63,10 @@ def main(
         dataloader={"batch_size": batch_size, "num_workers": num_workers},
     )
 
-    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model")
+    if suffix is not None:
+        archive = os.path.join(EXAMPLE_OUTPUT_DIR, f"train_model_{suffix}")
+    else:
+        archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model")
     run_name = "dynedge_{}_example".format("_".join(config.target))
 
     # Construct dataloaders
@@ -154,6 +158,13 @@ Train GNN model.
         default=None,
     )
 
+    parser.add_argument(
+        "--suffix",
+        type=str,
+        help="Name addition to folder (default: %(default)s)",
+        default=None,
+    )
+
     args = parser.parse_args()
 
     main(
@@ -165,4 +176,5 @@ Train GNN model.
         args.batch_size,
         args.num_workers,
         args.prediction_names,
+        args.suffix,
     )
