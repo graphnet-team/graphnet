@@ -146,10 +146,13 @@ class GraphNeTI3Deployer:
         Original i3 files are left untouched.
 
         Args:
-            files: Path(s) to i3 file(s) to which the graphnet modules are applied to.
+            files: The path(s) to input i3 file(s).
             gcd_file: path to gcd_file
-            output_folder: The folder where the i3 files are written to. Must not exist beforehand (to avoid overwriting i3 files by accident).
-            modules: A list containing the graphnet i3 modules. Will be applied to the i3 files in the order in which they appear in the list.
+            output_folder: The folder where the i3 files are written to.
+                           Must not exist beforehand.
+            modules: A list containing the graphnet i3 modules.
+                    Will be applied to the i3 files in the order in
+                    which they appear in the list.
         """
         files, gcd_file, output_folder, modules
         for i in range(0, len(files)):
@@ -186,12 +189,13 @@ class GraphNeTI3Deployer:
     ) -> None:
         """Apply given graphnet modules to input files using n workers.
 
-        The i3 files with reconstructions will appear as copies of the original i3
-        files but with reconstructions added. Original i3 files are left
-        untouched.
+        The i3 files with reconstructions will appear as copies of
+        the original i3 files but with reconstructions added.
+        Original i3 files are left untouched.
 
         Args:
-            input_files: Path(s) to i3 file(s) that you wish to apply the graphnet modules to.
+            input_files: Path(s) to i3 file(s) that you wish to
+                         apply the graphnet modules to.
             output_folder: The output folder to which the i3 files are written.
         """
         start_time = time.time()
