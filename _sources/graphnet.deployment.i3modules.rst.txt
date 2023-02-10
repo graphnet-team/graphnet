@@ -4,6 +4,14 @@ graphnet.deployment.i3modules package
 Submodules
 ----------
 
+graphnet.deployment.i3modules.deployer module
+---------------------------------------------
+
+.. automodule:: graphnet.deployment.i3modules.deployer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 graphnet.deployment.i3modules.graphnet\_module module
 -----------------------------------------------------
 
