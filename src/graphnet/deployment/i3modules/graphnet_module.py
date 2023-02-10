@@ -118,9 +118,7 @@ class GraphNeTI3Module:
                 )
         return features
 
-    def _submit_to_frame(
-        self, frame: I3Frame, data: Dict[str, Any]
-    ) -> I3Frame:
+    def _add_to_frame(self, frame: I3Frame, data: Dict[str, Any]) -> I3Frame:
         """Submit every field in data to I3Frame.
 
         Arguments:
@@ -228,7 +226,7 @@ class I3InferenceModule(GraphNeTI3Module):
                 ] = I3Double(predictions[0])
 
         # Submission methods
-        frame = self._submit_to_frame(frame=frame, data=data)
+        frame = self._add_to_frame(frame=frame, data=data)
         return True
 
     def _inference(self, data: Data) -> np.ndarray:
@@ -332,7 +330,7 @@ class I3PulseCleanerModule(I3InferenceModule):
             )
 
         # Submit predictions and general pulsemap
-        frame = self._submit_to_frame(frame=frame, data=data)
+        frame = self._add_to_frame(frame=frame, data=data)
         data = {}
         # Adds an additional pulsemap for each DOM type
         if isinstance(
@@ -358,7 +356,7 @@ class I3PulseCleanerModule(I3InferenceModule):
                 ] = dataclasses.I3RecoPulseSeriesMap(IceCubeMap)
 
         # Submits the additional pulsemaps to the frame
-        frame = self._submit_to_frame(frame=frame, data=data)
+        frame = self._add_to_frame(frame=frame, data=data)
 
         return True
 
