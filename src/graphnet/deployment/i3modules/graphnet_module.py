@@ -69,8 +69,9 @@ class GraphNeTI3Module:
         """Define here how the module acts on the frame.
 
         Must return True if successful.
+
+        Return True # SUPER IMPORTANT
         """
-        return True
 
     def _make_graph(
         self, frame: I3Frame
