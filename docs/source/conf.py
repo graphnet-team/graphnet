@@ -4,7 +4,9 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+from datetime import datetime
 import re
+
 
 # -- Path setup --------------------------------------------------------------
 
@@ -20,7 +22,7 @@ import re
 # -- Project information -----------------------------------------------------
 
 project = "graphnet"
-copyright = "2023, GraphNeT team"
+copyright = f"2021-{datetime.today().year}, GraphNeT team"
 author = "GraphNeT team"
 title = "GraphNeT"
 
@@ -138,11 +140,13 @@ napoleon_use_rtype = True
 # -- Options for sphinx-autodoc ------------------------------------
 
 special_members = []
+autoclass_content = "both"
 autodoc_default_options = {
     "member-order": "bysource",
     "special-members": ", ".join(special_members) if special_members else None,
     "undoc-members": True,
     "private-members": False,
+    "show-inheritance": True
 }
 autodoc_mock_imports = [
     "pisa",
@@ -156,7 +160,6 @@ autodoc_mock_imports = [
 
 # -- Options for sphinx-autodoc-typehints ------------------------------------
 
-always_document_param_types = True
 typehints_defaults = "comma"
 autodoc_typehints = "description"
 autodoc_typehints_format = "short"
@@ -174,7 +177,7 @@ def remove_default_value(
     app, what, name, obj, options, signature, return_annotation
 ):
     if signature:
-        signature = re.sub(r"=[\w'\-]+", "", signature)
+        signature = re.sub(r"=[\w'\-\.]+", "", signature)
     return (signature, return_annotation)
 
 
