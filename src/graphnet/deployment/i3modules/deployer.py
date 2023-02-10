@@ -11,8 +11,6 @@ from dataclasses import dataclass
 from graphnet.utilities.imports import has_icecube_package, has_torch_package
 from graphnet.deployment.i3modules import (
     GraphNeTI3Module,
-    I3InferenceModule,
-    I3PulseCleanerModule,
 )
 
 if has_icecube_package() or TYPE_CHECKING:
