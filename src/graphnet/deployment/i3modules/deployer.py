@@ -30,21 +30,7 @@ class GraphNeTI3Deployer:
 
     def __init__(
         self,
-        graphnet_modules: Union[
-            GraphNeTI3Module,
-            I3InferenceModule,
-            I3PulseCleanerModule,
-            List[GraphNeTI3Module],
-            List[I3InferenceModule],
-            List[I3PulseCleanerModule],
-            List[
-                Union[
-                    GraphNeTI3Module,
-                    I3InferenceModule,
-                    I3PulseCleanerModule,
-                ]
-            ],
-        ],
+        graphnet_modules: Union[GraphNeTI3Module, List[GraphNeTI3Module]],
         gcd_file: str,
         n_workers: int = 1,
     ) -> None:
