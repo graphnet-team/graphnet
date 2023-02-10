@@ -272,8 +272,8 @@ class I3PulseCleanerModule(I3InferenceModule):
             model_name: The name used for the model. Will help define the named
                         entry in the I3Frame. E.g. "dynedge".
             prediction_columns: column names for the predictions of the model.
-                                Will help define the named entry in the I3Frame.
-                                E.g. ['energy_reco'].
+                            Will help define the named entry in the I3Frame.
+                            E.g. ['energy_reco'].
             gcd_file: path to associated gcd file.
             threshold: the threshold for being considered a positive case.
                         E.g., predictions >= threshold will be considered
