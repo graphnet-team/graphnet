@@ -119,7 +119,7 @@ class GraphNeTI3Module:
         return features
 
     def _add_to_frame(self, frame: I3Frame, data: Dict[str, Any]) -> I3Frame:
-        """Submit every field in data to I3Frame.
+        """Add every field in data to I3Frame.
 
         Arguments:
             frame: I3Frame (physics)
