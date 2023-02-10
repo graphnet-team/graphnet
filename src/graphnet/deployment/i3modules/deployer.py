@@ -6,6 +6,7 @@ import multiprocessing
 from typing import TYPE_CHECKING, List, Union
 import time
 import numpy as np
+from dataclasses import dataclass
 
 from graphnet.utilities.imports import has_icecube_package, has_torch_package
 from graphnet.deployment.i3modules import (
@@ -20,6 +21,16 @@ if has_icecube_package() or TYPE_CHECKING:
 
 if has_torch_package or TYPE_CHECKING:
     import torch
+
+
+@dataclass
+class Settings:
+    """Dataclass for workers in GraphNeTI3Deployer."""
+
+    i3_files: List[str]
+    gcd_file: str
+    output_folder: str
+    modules: List[GraphNeTI3Module]
 
 
 class GraphNeTI3Deployer:
@@ -59,38 +70,38 @@ class GraphNeTI3Deployer:
         self._gcd_file = gcd_file
         self._n_workers = n_workers
 
-    def _setup_settings(
+    def _prepare_settings(
         self, input_files: List[str], output_folder: str
-    ) -> List:
-        """Will construct the list of arguments for each worker."""
+    ) -> List[Settings]:
+        """Will prepare the settings for each worker."""
         try:
             os.makedirs(output_folder)
         except FileExistsError:
-            assert (
-                1 == 2
-            ), f"{output_folder} already exists. The process has been stopped."
-        settings = []
+            assert False, f"""{output_folder} already exists. To avoid overwriting \n
+                    existing files, the process has been stopped."""
         if self._n_workers > len(input_files):
             self._n_workers = len(input_files)
-
         if self._n_workers > 1:
             file_batches = np.array_split(input_files, self._n_workers)
+            settings: List[Settings] = []
             for i in range(self._n_workers):
                 settings.append(
-                    [
+                    Settings(
                         file_batches[i],
                         self._gcd_file,
                         output_folder,
                         self._modules,
-                    ]
+                    )
                 )
         else:
             settings = [
-                input_files,  # type: ignore
-                self._gcd_file,  # type: ignore
-                output_folder,  # type: ignore
-                self._modules,  # type: ignore
-            ]  # type: ignore
+                Settings(
+                    input_files,
+                    self._gcd_file,
+                    output_folder,
+                    self._modules,
+                )
+            ]
         return settings
 
     def _launch_jobs(self, settings: List) -> None:
@@ -190,7 +201,7 @@ class GraphNeTI3Deployer:
             random.shuffle(input_files)
         else:
             input_files = [input_files]
-        settings = self._setup_settings(
+        settings = self._prepare_settings(
             input_files=input_files, output_folder=output_folder
         )
         print(
