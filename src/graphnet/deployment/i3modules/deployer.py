@@ -110,7 +110,7 @@ class GraphNeTI3Deployer:
                 processes.append(
                     multiprocessing.Process(
                         target=self._process_files,
-                        args=settings[i],  # type: ignore
+                        args=[settings[i]],  # type: ignore
                     )
                 )
 
