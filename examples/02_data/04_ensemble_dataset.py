@@ -2,7 +2,6 @@
 
 from timer import timer
 
-import sqlite3
 import time
 import torch.multiprocessing
 import torch.utils.data
@@ -11,7 +10,6 @@ from tqdm import tqdm
 
 from graphnet.constants import TEST_SQLITE_DATA
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.dataset import Dataset
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.data import EnsembleDataset
 from graphnet.utilities.logging import get_logger
