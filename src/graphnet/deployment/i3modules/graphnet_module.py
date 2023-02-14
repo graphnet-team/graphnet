@@ -132,7 +132,8 @@ class GraphNeTI3Module:
             data, dict
         ), f"data must be of type dict. Got {type(data)}"
         for key in data.keys():
-            frame.Put(key, data[key])
+            if key not in frame:
+                frame.Put(key, data[key])
         return frame
 
 
