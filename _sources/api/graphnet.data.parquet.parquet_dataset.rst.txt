@@ -1,0 +1,8 @@
+
+parquet\_dataset
+================
+
+.. automodule:: graphnet.data.parquet.parquet_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

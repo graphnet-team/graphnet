@@ -1,0 +1,8 @@
+
+configurable
+============
+
+.. automodule:: graphnet.utilities.config.configurable
+   :members:
+   :undoc-members:
+   :show-inheritance:

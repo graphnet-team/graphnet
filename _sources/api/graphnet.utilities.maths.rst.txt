@@ -1,0 +1,8 @@
+
+maths
+=====
+
+.. automodule:: graphnet.utilities.maths
+   :members:
+   :undoc-members:
+   :show-inheritance:

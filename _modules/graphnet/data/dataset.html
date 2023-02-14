@@ -1,71 +1,325 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>graphnet.data.dataset &mdash; graphnet  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="lang:clipboard.copy" content="Copy to clipboard">
+  <meta name="lang:clipboard.copied" content="Copied to clipboard">
+  <meta name="lang:search.language" content="en">
+  <meta name="lang:search.pipeline.stopwords" content="True">
+  <meta name="lang:search.pipeline.trimmer" content="True">
+  <meta name="lang:search.result.none" content="No matching documents">
+  <meta name="lang:search.result.one" content="1 matching document">
+  <meta name="lang:search.result.other" content="# matching documents">
+  <meta name="lang:search.tokenizer" content="[\s\-]+">
+
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
-    <script src="../../../_static/js/theme.js"></script>
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel="stylesheet">
+
+    <style>
+      body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+    </style>
+  
+
+  <link rel="stylesheet" href="../../../_static/stylesheets/application.css"/>
+  <link rel="stylesheet" href="../../../_static/stylesheets/application-palette.css"/>
+  <link rel="stylesheet" href="../../../_static/stylesheets/application-fixes.css"/>
+  
+  <link rel="stylesheet" href="../../../_static/fonts/material-icons.css"/>
+  
+  <meta name="theme-color" content="#3f51b5">
+  <script src="../../../_static/javascripts/modernizr.js"></script>
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-XXXXX');
+</script>
+  
+  
+    <title>graphnet.data.dataset &#8212; graphnet  documentation</title>
+
+<style>
+  dt:target {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+
+  /*
+    .sig-prename {
+     display: none;
+  }
+  */
+
+  .py.class .sig-name,
+  .py.function .sig-name,
+  .py.method .sig-name,
+  .py.exception .sig-name {
+    color: #37474f;
+    font-feature-settings: "kern";
+    font-family: "Roboto Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.method .sig-object,
+  .py.exception .sig-object {
+    padding: 1ex;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.exception .sig-object {
+    border-top: 1px solid gray;
+  }
+  .py.method .sig-object {
+    border-top: 1px solid lightgray;
+  }
+
+  .py.class .sig-object,
+  .py.exception .sig-object {
+    background: rgba(0,0,0,0.06);
+  }
+  .py.function .sig-object,
+  .py.method .sig-object {
+    background: rgba(0,0,0,0.03);
+  }
+
+</style>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/material.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.svg"/>
+    <link rel="author" title="About these documents" href="../../../about.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
-</head>
+    <link rel="search" title="Search" href="../../../search.html" />
+  
+   
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
+  </head>
+  <body dir=ltr
+        data-md-color-primary=indigo data-md-color-accent=blue>
+  
+  <svg class="md-svg">
+    <defs data-children-count="0">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+      
+    </defs>
+  </svg>
+  
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
+  <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+  <a href="#_modules/graphnet/data/dataset" tabindex="1" class="md-skip"> Skip to content </a>
+  <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../../../index.html" title="graphnet  documentation"
+           class="md-header-nav__button md-logo">
           
+              <img src="../../../_static/favicon-white.svg" height="26"
+                   alt="graphnet documentation logo">
           
-          <a href="../../../index.html" class="icon icon-home">
-            graphnet
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          <span class="md-header-nav__topic">GraphNeT</span>
+          <span class="md-header-nav__topic"> graphnet.data.dataset </span>
         </div>
       </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">graphnet</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">graphnet.data.dataset</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+        
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" action="../../../search.html" method="get" name="search">
+      <input type="text" class="md-search__input" name="q" placeholder="Search"
+             autocapitalize="off" autocomplete="off" spellcheck="false"
+             data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <h1>Source code for graphnet.data.dataset</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Base `Dataset` class(es) used in GraphNeT.&quot;&quot;&quot;</span>
+
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+          </div>
+        </div>
+      
+      
+  
+  <script src="../../../_static/javascripts/version_dropdown.js"></script>
+  <script>
+    var json_loc = "../../../"versions.json"",
+        target_loc = "../../../../",
+        text = "Versions";
+    $( document ).ready( add_version_dropdown(json_loc, target_loc, text));
+  </script>
+  
+
+    </div>
+  </nav>
+</header>
+
+  
+  <div class="md-container">
+    
+    
+    
+  <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+            
+            <li class="md-tabs__item"><a href="../../../index.html" class="md-tabs__link">Documentation</a></li>
+          <li class="md-tabs__item"><a href="../../index.html" class="md-tabs__link">Module code</a></li>
+      </ul>
+    </div>
+  </nav>
+    <main class="md-main">
+      <div class="md-main__inner md-grid" data-md-component="container">
+        
+          <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../../../index.html" title="graphnet documentation" class="md-nav__button md-logo">
+      
+        <img src="../../../_static/favicon-white.svg" alt=" logo" width="48" height="48">
+      
+    </a>
+    <a href="../../../index.html"
+       title="graphnet documentation">GraphNeT</a>
+  </label>
+    <div class="md-nav__source">
+      <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+    </div>
+  
+  
+
+  
+  <ul class="md-nav__list">
+    <li class="md-nav__item">
+    
+    
+      <a href="../../../install.html" class="md-nav__link">Install</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../../../contribute.html" class="md-nav__link">Contribute</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../../../api/graphnet.html" class="md-nav__link">API</a>
+      
+    
+    </li>
+  </ul>
+  
+
+</nav>
+              </div>
+            </div>
+          </div>
+          <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                
+<nav class="md-nav md-nav--secondary">
+  <ul class="md-nav__list" data-md-scrollfix="">
+  </ul>
+</nav>
+              </div>
+            </div>
+          </div>
+        
+        <div class="md-content">
+          <article class="md-content__inner md-typeset" role="main">
+            
+  <h1 id="modules-graphnet-data-dataset--page-root">Source code for graphnet.data.dataset</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Base `Dataset` class(es) used in GraphNeT."""</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -88,31 +342,31 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="ColumnMissingException"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.ColumnMissingException">[docs]</a><span class="k">class</span> <span class="nc">ColumnMissingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception to indicate a missing column in a dataset.&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="ColumnMissingException"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.ColumnMissingException">[docs]</a><span class="k">class</span> <span class="nc">ColumnMissingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Exception to indicate a missing column in a dataset."""</span></div>
 
 
-<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Configurable</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Dataset class for reading from any intermediate file format.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Configurable</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Base Dataset class for reading from any intermediate file format."""</span>
 
     <span class="c1"># Class method(s)</span>
-<div class="viewcode-block" id="Dataset.from_config"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.from_config">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Dataset.from_config"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset.from_config">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetConfig</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
-        <span class="s2">&quot;Dataset&quot;</span><span class="p">,</span>
+        <span class="s2">"Dataset"</span><span class="p">,</span>
         <span class="n">ConcatDataset</span><span class="p">,</span>
-        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">],</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">"Dataset"</span><span class="p">],</span>
         <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConcatDataset</span><span class="p">],</span>
     <span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` instance from `source` configuration.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Construct `Dataset` instance from `source` configuration."""</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">DatasetConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DatasetConfig</span><span class="p">),</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Argument `source` of type (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="si">}</span><span class="s2">) is not a &quot;</span>
-            <span class="s2">&quot;`DatasetConfig&quot;</span>
+            <span class="sa">f</span><span class="s2">"Argument `source` of type (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="si">}</span><span class="s2">) is not a "</span>
+            <span class="s2">"`DatasetConfig"</span>
         <span class="p">)</span>
 
         <span class="c1"># Parse set of `selection``.</span>
@@ -127,21 +381,21 @@
 
         <span class="k">return</span> <span class="n">source</span><span class="o">.</span><span class="n">_dataset_class</span><span class="p">(</span><span class="o">**</span><span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="Dataset.concatenate"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.concatenate">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Dataset.concatenate"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset.concatenate">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">concatenate</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">],</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">"Dataset"</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConcatDataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Concatenate multiple `Dataset`s into one instance.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Concatenate multiple `Dataset`s into one instance."""</span>
         <span class="k">return</span> <span class="n">ConcatDataset</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dataset._construct_datasets_from_dict"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._construct_datasets_from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_construct_datasets_from_dict</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DatasetConfig</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` for each entry in dict `self.selection`.&quot;&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">"Dataset"</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Construct `Dataset` for each entry in dict `self.selection`."""</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="n">datasets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">"Dataset"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">selections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">selections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selection</span>
@@ -152,15 +406,15 @@
         <span class="c1"># Reset `selections`.</span>
         <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selections</span>
 
-        <span class="k">return</span> <span class="n">datasets</span></div>
+        <span class="k">return</span> <span class="n">datasets</span>
 
-<div class="viewcode-block" id="Dataset._construct_dataset_from_list_of_strings"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._construct_dataset_from_list_of_strings">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_construct_dataset_from_list_of_strings</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DatasetConfig</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct `Dataset` for each entry in list `self.selection`.&quot;&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Dataset"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct `Dataset` for each entry in list `self.selection`."""</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-        <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">"Dataset"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">selections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">config</span><span class="o">.</span><span class="n">selection</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">selections</span><span class="p">:</span>
             <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selection</span>
@@ -171,7 +425,7 @@
         <span class="c1"># Reset `selections`.</span>
         <span class="n">config</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">selections</span>
 
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_resolve_graphnet_paths</span><span class="p">(</span>
@@ -182,13 +436,13 @@
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$graphnet&quot;</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$GRAPHNET&quot;</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{graphnet}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{GRAPHNET}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"$graphnet"</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"$GRAPHNET"</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"$</span><span class="si">{graphnet}</span><span class="s2">"</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"$</span><span class="si">{GRAPHNET}</span><span class="s2">"</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Dataset.__init__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__init__">[docs]</a>    <span class="nd">@save_dataset_config</span>
+    <span class="nd">@save_dataset_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
@@ -197,8 +451,8 @@
         <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_no&quot;</span><span class="p">,</span>
-        <span class="n">truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;truth&quot;</span><span class="p">,</span>
+        <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span><span class="p">,</span>
+        <span class="n">truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"truth"</span><span class="p">,</span>
         <span class="n">node_truth_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">string_selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -208,7 +462,7 @@
         <span class="n">loss_weight_default_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Dataset.</span>
+<span class="w">        </span><span class="sd">"""Construct Dataset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path: Path to the file(s) from which this `Dataset` should read.</span>
@@ -250,9 +504,9 @@
 <span class="sd">                is provided, this value is ignored. Defaults to None.</span>
 <span class="sd">            seed: Random number generator seed, used for selecting a random</span>
 <span class="sd">                subset of events when resolving a string-based selection (e.g.,</span>
-<span class="sd">                `&quot;10000 random events ~ event_no % 5 &gt; 0&quot;` or `&quot;20% random</span>
-<span class="sd">                events ~ event_no % 5 &gt; 0&quot;`).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">                `"10000 random events ~ event_no % 5 &gt; 0"` or `"20% random</span>
+<span class="sd">                events ~ event_no % 5 &gt; 0"`).</span>
+<span class="sd">        """</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pulsemaps</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">pulsemaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">pulsemaps</span><span class="p">]</span>
@@ -284,9 +538,9 @@
         <span class="k">if</span> <span class="n">string_selection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="p">(</span>
-                    <span class="s2">&quot;String selection detected.</span><span class="se">\n</span><span class="s2"> &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Accepted strings: </span><span class="si">{</span><span class="n">string_selection</span><span class="si">}</span><span class="se">\n</span><span class="s2"> &quot;</span>
-                    <span class="s2">&quot;All other strings are ignored!&quot;</span>
+                    <span class="s2">"String selection detected.</span><span class="se">\n</span><span class="s2"> "</span>
+                    <span class="sa">f</span><span class="s2">"Accepted strings: </span><span class="si">{</span><span class="n">string_selection</span><span class="si">}</span><span class="se">\n</span><span class="s2"> "</span>
+                    <span class="s2">"All other strings are ignored!"</span>
                 <span class="p">)</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_selection</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -296,19 +550,19 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string_selection</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;string in </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_selection</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"string in </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_selection</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="o">=</span> <span class="n">loss_weight_column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="o">=</span> <span class="n">loss_weight_table</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Error: no loss weight table specified&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Error: no loss weight table specified"</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Error: no loss weight column specified&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Error: no loss weight column specified"</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
@@ -343,38 +597,38 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span>
 
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
     <span class="c1"># Properties</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Path to the file(s) from which this `Dataset` reads.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Path to the file(s) from which this `Dataset` reads."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">truth_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the table containing event-level truth information.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Name of the table containing event-level truth information."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span>
 
     <span class="c1"># Abstract method(s)</span>
-<div class="viewcode-block" id="Dataset._init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._init">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set internal representation needed to read data from input file.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Set internal representation needed to read data from input file."""</span>
 
-<div class="viewcode-block" id="Dataset._post_init"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._post_init">[docs]</a>    <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implemenation-specific code to be run after the main constructor.&quot;&quot;&quot;</span></div>
+    <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Implemenation-specific code to be run after the main constructor."""</span>
 
-<div class="viewcode-block" id="Dataset._get_all_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_all_indices">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of all available values in `self._index_column`.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Return a list of all available values in `self._index_column`."""</span>
 
-<div class="viewcode-block" id="Dataset._get_event_index"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_event_index">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_get_event_index</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a the event index corresponding to a `sequential_index`.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Return a the event index corresponding to a `sequential_index`."""</span>
 
-<div class="viewcode-block" id="Dataset.query_table"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.query_table">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Dataset.query_table"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset.query_table">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">query_table</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -382,7 +636,7 @@
         <span class="n">sequential_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query a table at a specific index, optionally with some selection.</span>
+<span class="w">        </span><span class="sd">"""Query a table at a specific index, optionally with some selection.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            table: Table to be queried.</span>
@@ -402,53 +656,53 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            ColumnMissingException: If one or more element in `columns` is not</span>
 <span class="sd">                present in `table`.</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
+<span class="sd">        """</span></div>
 
     <span class="c1"># Public method(s)</span>
-<div class="viewcode-block" id="Dataset.add_label"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.add_label">[docs]</a>    <span class="k">def</span> <span class="nf">add_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Data</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add custom graph label define using function `fn`.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Dataset.add_label"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset.add_label">[docs]</a>    <span class="k">def</span> <span class="nf">add_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Data</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add custom graph label define using function `fn`."""</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;A custom label </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has already been defined.&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"A custom label </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has already been defined."</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span></div>
 
-<div class="viewcode-block" id="Dataset.__len__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of graphs in `Dataset`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return number of graphs in `Dataset`."""</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Dataset.__getitem__"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return graph `Data` object at `index`.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return graph `Data` object at `index`."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">sequential_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">sequential_index</span><span class="si">}</span><span class="s2"> not in range [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="sa">f</span><span class="s2">"Index </span><span class="si">{</span><span class="n">sequential_index</span><span class="si">}</span><span class="s2"> not in range [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">]"</span>
             <span class="p">)</span>
         <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span>
             <span class="n">sequential_index</span>
         <span class="p">)</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_graph</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">graph</span></div>
+        <span class="k">return</span> <span class="n">graph</span>
 
     <span class="c1"># Internal method(s)</span>
-<div class="viewcode-block" id="Dataset._resolve_string_selection_to_indices"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._resolve_string_selection_to_indices">[docs]</a>    <span class="k">def</span> <span class="nf">_resolve_string_selection_to_indices</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_resolve_string_selection_to_indices</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve selection as string to list of indicies.</span>
+<span class="w">        </span><span class="sd">"""Resolve selection as string to list of indicies.</span>
 
 <span class="sd">        Selections are expected to have pandas.DataFrame.query-compatible</span>
-<span class="sd">        syntax, e.g., ``` &quot;event_no % 5 &gt; 0&quot; ``` Selections may also specify a</span>
-<span class="sd">        fixed number of events to randomly sample, e.g., ``` &quot;10000 random</span>
-<span class="sd">        events ~ event_no % 5 &gt; 0&quot; &quot;20% random events ~ event_no % 5 &gt; 0&quot; ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string_selection_resolver</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span></div>
+<span class="sd">        syntax, e.g., ``` "event_no % 5 &gt; 0" ``` Selections may also specify a</span>
+<span class="sd">        fixed number of events to randomly sample, e.g., ``` "10000 random</span>
+<span class="sd">        events ~ event_no % 5 &gt; 0" "20% random events ~ event_no % 5 &gt; 0" ```</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string_selection_resolver</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Dataset._remove_missing_columns"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._remove_missing_columns">[docs]</a>    <span class="k">def</span> <span class="nf">_remove_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove columns that are not present in the input file.</span>
+    <span class="k">def</span> <span class="nf">_remove_missing_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Remove columns that are not present in the input file.</span>
 
 <span class="sd">        Columns are removed from `self._features` and `self._truth`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Check if table is completely empty</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dataset is empty.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Dataset is empty."</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="c1"># Find missing features</span>
@@ -467,8 +721,8 @@
         <span class="c1"># Remove missing features</span>
         <span class="k">if</span> <span class="n">missing_features</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Removing the following (missing) features: &quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_features</span><span class="p">)</span>
+                <span class="s2">"Removing the following (missing) features: "</span>
+                <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_features</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">missing_feature</span> <span class="ow">in</span> <span class="n">missing_features</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">missing_feature</span><span class="p">)</span>
@@ -477,19 +731,19 @@
         <span class="k">if</span> <span class="n">missing_truth_variables</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="p">(</span>
-                    <span class="s2">&quot;Removing the following (missing) truth variables: &quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_truth_variables</span><span class="p">)</span>
+                    <span class="s2">"Removing the following (missing) truth variables: "</span>
+                    <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_truth_variables</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">missing_truth_variable</span> <span class="ow">in</span> <span class="n">missing_truth_variables</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">missing_truth_variable</span><span class="p">)</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">missing_truth_variable</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Dataset._check_missing_columns"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._check_missing_columns">[docs]</a>    <span class="k">def</span> <span class="nf">_check_missing_columns</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_check_missing_columns</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list missing columns in `table`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a list missing columns in `table`."""</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
@@ -498,11 +752,11 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset contains no entries for </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Dataset contains no entries for </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[])</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[])</span>
 
-<div class="viewcode-block" id="Dataset._query"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._query">[docs]</a>    <span class="k">def</span> <span class="nf">_query</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_query</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
         <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
@@ -510,7 +764,7 @@
         <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span>
         <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query file for event features and truth information.</span>
+<span class="w">        </span><span class="sd">"""Query file for event features and truth information.</span>
 
 <span class="sd">        The returned lists have lengths correspondings to the number of pulses</span>
 <span class="sd">        in the event. Their constituent tuples have lengths corresponding to</span>
@@ -525,7 +779,7 @@
 <span class="sd">            Tuple containing pulse-level event features; event-level truth</span>
 <span class="sd">                information; pulse-level truth information; and event-level</span>
 <span class="sd">                loss weights, respectively.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pulsemap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">:</span>
             <span class="n">features_pulsemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
@@ -560,16 +814,16 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">loss_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
 
-        <span class="k">return</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span></div>
+        <span class="k">return</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span>
 
-<div class="viewcode-block" id="Dataset._create_graph"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._create_graph">[docs]</a>    <span class="k">def</span> <span class="nf">_create_graph</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_create_graph</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
         <span class="n">truth</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
         <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create Pytorch Data (i.e. graph) object.</span>
+<span class="w">        </span><span class="sd">"""Create Pytorch Data (i.e. graph) object.</span>
 
 <span class="sd">        No preprocessing is performed at this stage, just as no node adjancency</span>
 <span class="sd">        is imposed. This means that the `edge_attr` and `edge_weight`</span>
@@ -584,7 +838,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Graph object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Convert nested list to simple dict</span>
         <span class="n">truth_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">key</span><span class="p">:</span> <span class="n">truth</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">)</span>
@@ -622,9 +876,9 @@
             <span class="k">if</span> <span class="n">loss_weight</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_default_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s2">&quot;At least one event is missing an entry in &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="si">}</span><span class="s2"> &quot;</span>
-                        <span class="s2">&quot;but loss_weight_default_value is None.&quot;</span>
+                        <span class="s2">"At least one event is missing an entry in "</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="si">}</span><span class="s2"> "</span>
+                        <span class="s2">"but loss_weight_default_value is None."</span>
                     <span class="p">)</span>
                 <span class="n">graph</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_default_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span>
@@ -648,94 +902,100 @@
                     <span class="c1"># e.g. `str`.</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                         <span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Could not assign `</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">` with type &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; as attribute to graph.&quot;</span>
+                            <span class="sa">f</span><span class="s2">"Could not assign `</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">` with type "</span>
+                            <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">' as attribute to graph."</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
 
         <span class="c1"># Additionally add original features as (static) attributes</span>
         <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">features</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">feature</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">feature</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"x"</span><span class="p">]:</span>
                 <span class="n">graph</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
         <span class="c1"># Add custom labels to the graph</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">graph</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">graph</span></div>
+        <span class="k">return</span> <span class="n">graph</span>
 
-<div class="viewcode-block" id="Dataset._get_labels"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_labels">[docs]</a>    <span class="k">def</span> <span class="nf">_get_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return dictionary of  labels, to be added as graph attributes.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;pid&quot;</span> <span class="ow">in</span> <span class="n">truth_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">abs_pid</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">&quot;pid&quot;</span><span class="p">])</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="n">truth_dict</span><span class="p">[</span><span class="s2">&quot;sim_type&quot;</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">_get_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return dictionary of  labels, to be added as graph attributes."""</span>
+        <span class="k">if</span> <span class="s2">"pid"</span> <span class="ow">in</span> <span class="n">truth_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">abs_pid</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">"pid"</span><span class="p">])</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="n">truth_dict</span><span class="p">[</span><span class="s2">"sim_type"</span><span class="p">]</span>
 
             <span class="n">labels_dict</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">:</span> <span class="n">truth_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">],</span>
-                <span class="s2">&quot;muon&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">13</span><span class="p">),</span>
-                <span class="s2">&quot;muon_stopped&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">truth_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stopped_muon&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="s2">&quot;noise&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">((</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sim_type</span> <span class="o">!=</span> <span class="s2">&quot;data&quot;</span><span class="p">)),</span>
-                <span class="s2">&quot;neutrino&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
+                <span class="s2">"muon"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">13</span><span class="p">),</span>
+                <span class="s2">"muon_stopped"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">truth_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stopped_muon"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="s2">"noise"</span><span class="p">:</span> <span class="nb">int</span><span class="p">((</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sim_type</span> <span class="o">!=</span> <span class="s2">"data"</span><span class="p">)),</span>
+                <span class="s2">"neutrino"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
                     <span class="p">(</span><span class="n">abs_pid</span> <span class="o">!=</span> <span class="mi">13</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">abs_pid</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="p">),</span>  <span class="c1"># @TODO: `abs_pid in [12,14,16]`?</span>
-                <span class="s2">&quot;v_e&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">12</span><span class="p">),</span>
-                <span class="s2">&quot;v_u&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">14</span><span class="p">),</span>
-                <span class="s2">&quot;v_t&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">16</span><span class="p">),</span>
-                <span class="s2">&quot;track&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">14</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">&quot;interaction_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="s2">"v_e"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">12</span><span class="p">),</span>
+                <span class="s2">"v_u"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">14</span><span class="p">),</span>
+                <span class="s2">"v_t"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="s2">"track"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">14</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">"interaction_type"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="p">),</span>
-                <span class="s2">&quot;dbang&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dbang_label</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">),</span>
-                <span class="s2">&quot;corsika&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">),</span>
+                <span class="s2">"dbang"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dbang_label</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">),</span>
+                <span class="s2">"corsika"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">),</span>
             <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">labels_dict</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">:</span> <span class="n">truth_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">],</span>
-                <span class="s2">&quot;muon&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;muon_stopped&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;noise&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;neutrino&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;v_e&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;v_u&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;v_t&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;track&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;dbang&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;corsika&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"muon"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"muon_stopped"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"noise"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"neutrino"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"v_e"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"v_u"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"v_t"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"track"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"dbang"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"corsika"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">}</span>
-        <span class="k">return</span> <span class="n">labels_dict</span></div>
+        <span class="k">return</span> <span class="n">labels_dict</span>
 
-<div class="viewcode-block" id="Dataset._get_dbang_label"><a class="viewcode-back" href="../../../graphnet.data.html#graphnet.data.dataset.Dataset._get_dbang_label">[docs]</a>    <span class="k">def</span> <span class="nf">_get_dbang_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get label for double-bang classification.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_get_dbang_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get label for double-bang classification."""</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">&quot;dbang_decay_length&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">"dbang_decay_length"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">label</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div></div>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
 </pre></div>
 
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2021, IceCube Collaboration.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          </article>
         </div>
       </div>
-    </section>
+    </main>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+  <footer class="md-footer">
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+          
+          
+        </a>
+        
+      </nav>
+    </div>
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-footer-copyright">
+          <div class="md-footer-copyright__highlight">
+              &#169; Copyright 2021-2023, GraphNeT team.
+              
+          </div>
+            Created using
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+             and
+            <a href="https://github.com/bashtage/sphinx-material/">Material for
+              Sphinx</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../../../_static/javascripts/application.js"></script>
+  <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+  </body>
 </html>

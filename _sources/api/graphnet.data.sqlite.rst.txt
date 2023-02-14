@@ -1,0 +1,40 @@
+
+sqlite
+======
+
+
+.. automodule:: graphnet.data.sqlite
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.data.sqlite.sqlite_dataconverter
+   graphnet.data.sqlite.sqlite_dataset
+   graphnet.data.sqlite.sqlite_dataset_perturbed
+   graphnet.data.sqlite.sqlite_selection
+   graphnet.data.sqlite.sqlite_utilities
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

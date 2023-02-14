@@ -1,0 +1,8 @@
+
+base\_config
+============
+
+.. automodule:: graphnet.utilities.config.base_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

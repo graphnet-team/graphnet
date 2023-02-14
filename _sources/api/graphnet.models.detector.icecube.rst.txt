@@ -1,0 +1,8 @@
+
+icecube
+=======
+
+.. automodule:: graphnet.models.detector.icecube
+   :members:
+   :undoc-members:
+   :show-inheritance:

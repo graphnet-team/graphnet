@@ -1,0 +1,8 @@
+
+callbacks
+=========
+
+.. automodule:: graphnet.training.callbacks
+   :members:
+   :undoc-members:
+   :show-inheritance:

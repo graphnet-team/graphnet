@@ -1,0 +1,8 @@
+
+dynedge\_jinst
+==============
+
+.. automodule:: graphnet.models.gnn.dynedge_jinst
+   :members:
+   :undoc-members:
+   :show-inheritance:

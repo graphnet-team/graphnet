@@ -1,0 +1,37 @@
+
+parquet
+=======
+
+
+.. automodule:: graphnet.data.parquet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.data.parquet.parquet_dataconverter
+   graphnet.data.parquet.parquet_dataset
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

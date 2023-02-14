@@ -1,0 +1,41 @@
+
+config
+======
+
+
+.. automodule:: graphnet.utilities.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.utilities.config.base_config
+   graphnet.utilities.config.configurable
+   graphnet.utilities.config.dataset_config
+   graphnet.utilities.config.model_config
+   graphnet.utilities.config.parsing
+   graphnet.utilities.config.training_config
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

@@ -1,0 +1,51 @@
+
+extractors
+==========
+
+
+.. automodule:: graphnet.data.extractors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+|start-h2| Subpackages |end-h2|
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.data.extractors.utilities
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.data.extractors.i3extractor
+   graphnet.data.extractors.i3featureextractor
+   graphnet.data.extractors.i3genericextractor
+   graphnet.data.extractors.i3hybridrecoextractor
+   graphnet.data.extractors.i3pisaextractor
+   graphnet.data.extractors.i3retroextractor
+   graphnet.data.extractors.i3splinempeextractor
+   graphnet.data.extractors.i3truthextractor
+   graphnet.data.extractors.i3tumextractor
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

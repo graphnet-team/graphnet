@@ -1,0 +1,39 @@
+
+gnn
+===
+
+
+.. automodule:: graphnet.models.gnn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.models.gnn.convnet
+   graphnet.models.gnn.dynedge
+   graphnet.models.gnn.dynedge_jinst
+   graphnet.models.gnn.gnn
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

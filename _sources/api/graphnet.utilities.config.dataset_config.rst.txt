@@ -1,0 +1,8 @@
+
+dataset\_config
+===============
+
+.. automodule:: graphnet.utilities.config.dataset_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

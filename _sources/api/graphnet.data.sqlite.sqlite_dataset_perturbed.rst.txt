@@ -1,0 +1,8 @@
+
+sqlite\_dataset\_perturbed
+==========================
+
+.. automodule:: graphnet.data.sqlite.sqlite_dataset_perturbed
+   :members:
+   :undoc-members:
+   :show-inheritance:

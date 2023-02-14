@@ -1,0 +1,38 @@
+
+detector
+========
+
+
+.. automodule:: graphnet.models.detector
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.models.detector.detector
+   graphnet.models.detector.icecube
+   graphnet.models.detector.prometheus
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

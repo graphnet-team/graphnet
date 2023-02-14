@@ -1,0 +1,8 @@
+
+fitting
+=======
+
+.. automodule:: graphnet.pisa.fitting
+   :members:
+   :undoc-members:
+   :show-inheritance:

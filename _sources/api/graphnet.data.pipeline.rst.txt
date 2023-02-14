@@ -1,0 +1,8 @@
+
+pipeline
+========
+
+.. automodule:: graphnet.data.pipeline
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,8 @@
+
+i3featureextractor
+==================
+
+.. automodule:: graphnet.data.extractors.i3featureextractor
+   :members:
+   :undoc-members:
+   :show-inheritance:

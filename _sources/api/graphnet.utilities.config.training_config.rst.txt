@@ -1,0 +1,8 @@
+
+training\_config
+================
+
+.. automodule:: graphnet.utilities.config.training_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

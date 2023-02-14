@@ -1,0 +1,8 @@
+
+dataconverter
+=============
+
+.. automodule:: graphnet.data.dataconverter
+   :members:
+   :undoc-members:
+   :show-inheritance:

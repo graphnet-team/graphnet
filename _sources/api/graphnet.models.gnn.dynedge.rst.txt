@@ -1,0 +1,8 @@
+
+dynedge
+=======
+
+.. automodule:: graphnet.models.gnn.dynedge
+   :members:
+   :undoc-members:
+   :show-inheritance:

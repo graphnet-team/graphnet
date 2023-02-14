@@ -1,0 +1,8 @@
+
+dataset
+=======
+
+.. automodule:: graphnet.data.dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

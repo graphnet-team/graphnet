@@ -1,0 +1,50 @@
+
+models
+======
+
+
+.. automodule:: graphnet.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+|start-h2| Subpackages |end-h2|
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.models.components
+   graphnet.models.detector
+   graphnet.models.gnn
+   graphnet.models.task
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.models.coarsening
+   graphnet.models.graph_builders
+   graphnet.models.model
+   graphnet.models.standard_model
+   graphnet.models.utils
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>
