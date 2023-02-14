@@ -685,9 +685,12 @@ class EnsembleDataset(torch.utils.data.Dataset):
             dataset_index += 1
         self._index = multi_indices
 
-    def __get_item__(self, sequential_idx: int) -> Data:
-        """Grab a graph from one Dataset and returns it."""
+    def __getitem__(self, sequential_idx: int) -> Data:
+        """Grab a graph from one Dataset and returns it.
+
+        Dataset idx is added to graph as ´dataset_idx´ for bookkeeping.
+        """
         multi_index = self._index[sequential_idx]
         graph = self.datasets[multi_index[0]].__getitem__(multi_index[1])
-        graph["ensemble_idx"] = torch.tensor(multi_index, dtype=torch.float)
+        graph["dataset_idx"] = torch.tensor(multi_index[0], dtype=torch.int)
         return graph
