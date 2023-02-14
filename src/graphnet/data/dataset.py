@@ -2,8 +2,19 @@
 
 from copy import deepcopy
 from abc import ABC, abstractmethod
-from typing import cast, Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import (
+    cast,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    Sequence,
+)
 
+from tqdm import tqdm
 import numpy as np
 import torch
 from torch.utils.data import ConcatDataset
@@ -642,3 +653,41 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             return label
         except KeyError:
             return -1
+
+
+class EnsembleDataset(torch.utils.data.Dataset):
+    """Construct a single dataset from a collection of datasets."""
+
+    def __init__(self, datasets: Sequence[Dataset]) -> None:
+        """Construct a single dataset from a collection of datasets.
+
+        Args:
+            datasets: A collection of Datasets
+        """
+        assert len(datasets) > 0, "Must provide at least one dataset."
+        self.datasets = datasets
+        self._setup_indices()
+
+    def __len__(self) -> int:
+        """Return length of dataset."""
+        length = 0
+        for dataset in self.datasets:
+            length += len(dataset)
+        return length
+
+    def _setup_indices(self) -> None:
+        """Create a global multi index on the form (dataset_idx, event_no)."""
+        multi_indices = []
+        dataset_index = 0
+        for dataset in tqdm(self.datasets, desc="Building Global Index"):
+            for local_event_no in range(len(dataset)):
+                multi_indices.append((dataset_index, local_event_no))
+            dataset_index += 1
+        self._index = multi_indices
+
+    def __get_item__(self, sequential_idx: int) -> Data:
+        """Grab a graph from one Dataset and returns it."""
+        multi_index = self._index[sequential_idx]
+        graph = self.datasets[multi_index[0]].__getitem__(multi_index[1])
+        graph["ensemble_idx"] = torch.tensor(multi_index, dtype=torch.float)
+        return graph
