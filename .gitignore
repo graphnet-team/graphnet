@@ -131,6 +131,7 @@ dmypy.json
 # Documentation
 docs/build/html
 docs/**/*.rst
+docs/source/*.md
 
 # Badges
 assets/badges
