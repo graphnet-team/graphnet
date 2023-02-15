@@ -22,7 +22,18 @@ jobs:
       - name: Build documentation
         run: |
           cd docs
-          sphinx-apidoc -f -o ../docs/source/ ../src/
+          python parse_about.py -i ../paper/paper.md -o source/about.md
+          python parse_install.py -i ../README.md -o source/install.md
+          python parse_contributing.py -i ../CONTRIBUTING.md -o source/contribute.md
+          make clean
+          sphinx-apidoc \
+            --module-first \
+            --separate \
+            --force \
+            -d 2 \
+            --templatedir=source/_templates/ \
+            -o source/api ../src/
+          sed -i "2s/.*/API/" source/api/graphnet.rst
           make html
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
