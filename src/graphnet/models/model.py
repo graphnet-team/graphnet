@@ -36,7 +36,6 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         logger: Optional[Logger] = None,
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
-        strategy: Optional[str] = "ddp",
         distribution_strategy: Optional[str] = "ddp",
         **trainer_kwargs: Any,
     ) -> None:
