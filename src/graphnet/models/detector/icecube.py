@@ -10,7 +10,6 @@ from graphnet.models.components.pool import (
 )
 from graphnet.data.constants import FEATURES
 from graphnet.models.detector.detector import Detector
-from typing import Any, Dict, List, Optional, Tuple, Union
 
 
 class IceCube86(Detector):
