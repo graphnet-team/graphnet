@@ -224,17 +224,20 @@ class DOMCoarsening(Coarsening):
         self,
         reduce: str = "avg",
         transfer_attributes: bool = True,
-        keys: List[str] = [
-            "dom_x",
-            "dom_y",
-            "dom_z",
-            "rde",
-            "pmt_area",
-        ],
+        keys: Optional[List[str]] = None,
     ):
         """Cluster pulses on the same DOM."""
         super().__init__(reduce, transfer_attributes)
-        self._keys = keys
+        if key is None:
+            self._keys = [
+                "dom_x",
+                "dom_y",
+                "dom_z",
+                "rde",
+                "pmt_area",
+            ]
+        else:
+            self._keys = keys
 
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Cluster nodes in `data` by assigning a cluster index to each."""
