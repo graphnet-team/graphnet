@@ -113,7 +113,3 @@ class Detector(Model):
         assert (
             data_features == self.features
         ), f"Features on Data and Detector differ: {data_features} vs. {self.features}"
-
-    def rename_features(self, features: List[str]) -> None:
-        """Reassigning list of features to given Detctor object."""
-        self.features = features
