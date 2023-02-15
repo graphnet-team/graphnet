@@ -228,7 +228,7 @@ class DOMCoarsening(Coarsening):
     ):
         """Cluster pulses on the same DOM."""
         super().__init__(reduce, transfer_attributes)
-        if key is None:
+        if keys is None:
             self._keys = [
                 "dom_x",
                 "dom_y",
