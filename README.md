@@ -96,7 +96,6 @@ graphnet: INFO     2023-01-24 13:41:27 - get_logger - Writing log to logs/graphn
 (...)
 graphnet: INFO     2023-01-24 13:41:46 - SQLiteDataConverter.info - Saving results to /root/graphnet/data/examples/outputs/convert_i3_files/ic86
 graphnet: INFO     2023-01-24 13:41:46 - SQLiteDataConverter.info - Processing 1 I3 file(s) in main thread (not multiprocessing)
-  0%|                                                                                                                             | 0/1 [00:00<?, ?file(s)/s]graphnet: WARNING  2023-01-24 13:42:26 - SQLiteDataConverter.warning - No data saved to /root/graphnet/data/examples/outputs/convert_i3_files/ic86/upgrade_genie_step4_140028_000998_first_5_frames.db
 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:39<00:00, 39.79s/file(s)]
 graphnet: INFO     2023-01-24 13:42:26 - SQLiteDataConverter.info - Merging files output by current instance.
 graphnet: INFO     2023-01-24 13:42:26 - SQLiteDataConverter.info - Merging 1 database files
