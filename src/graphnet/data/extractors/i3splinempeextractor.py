@@ -1,6 +1,6 @@
 """I3Extractor class(es) for extracting SplineMPE reconstruction."""
 
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict
 
 from graphnet.data.extractors.i3extractor import I3Extractor
 
