@@ -64,15 +64,15 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         }
 
         # Get OM data
-        if self._pulsemap in frame:
+        try:
             om_keys, data = get_om_keys_and_pulseseries(
                 frame,
                 self._pulsemap,
                 self._calibration,
             )
-        else:
-            warn_once(self, f"Pulsemap {self._pulsemap} not found in frame.")
-            return output
+        except KeyError:
+            if self._pulsemap is not None:
+                raise KeyError(f"Pulsemap {self._pulsemap} not in frame")
 
         # Added these :
         bright_doms = None
