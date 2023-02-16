@@ -425,9 +425,19 @@ class DataConverter(ABC, LoggerMixin):
         i3_file_io = dataio.I3File(fileset.i3_file, "r")
         data = list()
         while i3_file_io.more():
+            # Ignore all but physics frames
             try:
                 frame = i3_file_io.pop_physics()
             except:  # noqa: E722
+                continue
+
+            # Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.
+            # At low levels i3files contain several other P frame splits (e.g NullSplit),
+            # we remove those here.
+            # print("Sub event stream", frame["I3EventHeader"].sub_event_stream)
+            if frame["I3EventHeader"].sub_event_stream in [
+            "NullSplit"
+            ]:
                 continue
 
             # Extract data from I3Frame
