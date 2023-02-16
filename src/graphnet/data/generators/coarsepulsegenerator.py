@@ -6,11 +6,14 @@ from graphnet.data.generators import Generator
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import warn_once
 
+from copy import deepcopy
+
 from torch import Tensor, unique
 
 from sklearn.cluster import KMeans
 
 import numpy as np
+import pandas as pd
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
@@ -20,12 +23,19 @@ if has_icecube_package() or TYPE_CHECKING:
 
 
 class CoarsePulseGenerator(Generator):
+    """Generator for producing coarse pulsemaps from I3PulseSeriesMaps."""
+
     def __init__(
         self,
         pulsemap: str,
         name: str,
         method: str,
-        coarsen_on: Optional[List[str]] = None,
+        coarsen_on: List[str] = [
+            "dom_x",
+            "dom_y",
+            "dom_z",
+            "dom_time",
+        ],
         keep_columns: Optional[List[str]] = None,
         reduc: int = 100,
         min_n: int = 25,
@@ -39,6 +49,8 @@ class CoarsePulseGenerator(Generator):
             method: Method to use for coarse pulsemap generation.
             coarsen_on: List of pulsemap columns to use for pseudo-distance used by coarsening algorithm.
             keep_columns: List of pulsemap columns to keep in final coarse pulsemap.
+            reduc: Target reduction factor for coarse pulsemap.
+            min_n: Minimum number of pulses to keep in coarse pulsemap.
         """
         # Member variable(s)
         self._pulsemap = pulsemap
@@ -47,19 +59,11 @@ class CoarsePulseGenerator(Generator):
         # pseudo-distance to use for coarsening
         self._coarsen_on = coarsen_on
         # target reduction factor ie. 1/reduc
-        self.reduc = reduc
+        self._reduc = reduc
         # minimum number of pulses to keep
-        self.min_n = min_n
+        self._min_n = min_n
         # columns to keep in final coarse pulsemap
         self._keep_columns = keep_columns
-
-        # set coarsen_on if not specified
-        if coarsen_on == None:
-            self._coarsen_on = [
-                "dom_x",
-                "dom_y",
-                "dom_z",
-            ]
 
         # Base class constructor
         super().__init__(name)
@@ -69,43 +73,55 @@ class CoarsePulseGenerator(Generator):
 
         Args:
             data: Ordered dictionary generated from physics I3 frame.
+
         Returns:
             data:
         """
         # Get pulse series
         self._pulse_data = data[self._pulsemap]
         # get feature keys
-        self._pulse_names = self._pulse_data.keys()
+        self._pulse_names = list(self._pulse_data.keys())
+
         # Get keep columns
         if self._keep_columns is None:
             self._keep_columns = self._pulse_names
-        # Get time index
-        self._time_index = [i for i in self._pulse_data if "time" in i]
         # Get charge index
-        self._charge_index = [i for i in self._pulse_data if "charge" in i]
+        self._charge_index = [
+            self._pulse_names.index(i)
+            for i in self._pulse_names
+            if "charge" in i
+        ]
         # Get coarse pulse series
-        coarse_pulse_data = self.get_coarse_pulse_data(self._method)
+        coarse_pulse_data = self.get_coarse_pulse_data()
         # return coarsened pulse series
-        return OrderedDict(self._pulsemap + "_coarse", coarse_pulse_data)
+        return {self._name: coarse_pulse_data}
 
-    def get_coarse_pulse_data(self) -> any:
+    def get_coarse_pulse_data(self) -> dict:
         """Get coarse pulse series.
 
         Args:
             pulse_data: Pulse series to coarsen.
+
         Returns:
             coarse_pulse_data: Coarsened pulse series.
         """
+        # get index values of columns to keep.
+        if self._keep_columns is not None:
+            keep_index = [
+                self._pulse_names.index(i) for i in self._keep_columns
+            ]
+
+        data_CP = []
+        for i in self._coarsen_on:
+            data_CP.append(np.array(self._pulse_data[i]))
+        data_CP = np.array(data_CP)
         # Get coarse pulse series
-        data_CP = self._pulse_data.deepcopy()
         # change time into  distance using speed of light in ice.
-        data_CP[self._time_index] = (
-            data_CP[self._time_index] * 2.3 * 10 ** (-1)
-        )
+        data_CP[-1] = data_CP[-1] * 2.3 * 10 ** (-1)
         # Take the spatial + time (transformed) values and use those for the coarsening algorithm
-        tensor = Tensor(data_CP[self._coarsen_on + self._time_index]).T
-        reduc = min([len(tensor), reduc])
-        min_n = int(len(tensor) / min_n)
+        tensor = Tensor(data_CP).T
+        min_n = min([len(tensor), self._min_n])
+        reduc = int(len(tensor) / self._reduc)
         # reduce by factor 100 ensuring not to   reduce below min red (unless less dom activations in event)
         n_clusters = max([reduc, min_n])
         if self._method == "Kmeans":
@@ -116,8 +132,8 @@ class CoarsePulseGenerator(Generator):
             raise ValueError("Method not implemented")
 
         index = clusterer.fit_predict(tensor)
-
-        data_with_group = np.vstack([index, self._pulse_data])
+        pulse_df = pd.DataFrame(self._pulse_data, index=None).T
+        data_with_group = np.vstack([index, pulse_df])
         data_with_group = data_with_group.T[data_with_group[0, :].argsort()]
         data_grouped = np.array(
             np.split(
@@ -126,30 +142,25 @@ class CoarsePulseGenerator(Generator):
             ),
             dtype=object,
         )
+
         # mget mean of grouped data and multiply charge by number of pulses in group.
-        for self._pulse_data, i in zip(data_grouped, range(len(data_grouped))):
-            counter = np.shape(self._pulse_data)[0]
-            data_grouped[i] = np.mean(self._pulse_data, axis=0)
-            data_grouped[i][self._charge_index] = (
-                data_grouped[i][self._charge_index] * counter
+        for data, ind in zip(data_grouped, range(len(data_grouped))):
+            counter = np.shape(data)[0]
+            data_grouped[ind] = np.mean(data, axis=0)
+            data_grouped[ind][self._charge_index] = (
+                data_grouped[ind][self._charge_index] * counter
             )
         if len(np.shape(np.array(list(data_grouped)).T)) == 3:
             data_grouped = data_grouped[:, 0, :]
 
         result = np.array(list(data_grouped)).T
-        result = OrderedDict(result.T, columns=self._pulse_names)[
-            self._keep_columns
-        ]
+        result = dict(
+            zip(
+                list(np.array(self._pulse_names)[keep_index]),
+                result[keep_index],
+            )
+        )
 
+        # update event_no
+        result.update({"event_no": self._pulse_data["event_no"]})
         return result
-
-    def get_time_index(self):
-        """Get time index.
-
-        Args:
-            None
-        Returns:
-            time_index: Index of time feature.
-        """
-        time_index = "dom_time"
-        return time_index
