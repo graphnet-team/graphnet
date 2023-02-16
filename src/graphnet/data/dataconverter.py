@@ -35,6 +35,11 @@ from graphnet.data.extractors import (
     I3TruthExtractor,
     I3GenericExtractor,
 )
+from graphnet.data.generators import (
+    Generator,
+    GeneratorCollection,
+)
+
 from graphnet.utilities.decorators import final
 from graphnet.utilities.filesys import find_i3_files
 from graphnet.utilities.imports import has_icecube_package
@@ -101,6 +106,7 @@ class DataConverter(ABC, LoggerMixin):
         outdir: str,
         gcd_rescue: Optional[str] = None,
         *,
+        generators: Optional[List[Generator]] = None,
         nb_files_to_batch: Optional[int] = None,
         sequential_batch_pattern: Optional[str] = None,
         input_file_batch_pattern: Optional[str] = None,
@@ -169,6 +175,8 @@ class DataConverter(ABC, LoggerMixin):
 
         # Create I3Extractors
         self._extractors = I3ExtractorCollection(*extractors)
+        if generators is not None:
+            self._generators = GeneratorCollection(*generators)
 
         # Create shorthand of names of all pulsemaps queried
         self._table_names = [extractor.name for extractor in self._extractors]
@@ -452,6 +460,9 @@ class DataConverter(ABC, LoggerMixin):
             # Attach index to all tables
             for table in data_dict.keys():
                 data_dict[table][self._index_column] = index
+
+            if self._generators:
+                data_dict = self._generators(data_dict)
 
             data.append(data_dict)
 
