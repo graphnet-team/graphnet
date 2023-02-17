@@ -382,6 +382,9 @@
             <span class="s2">"is_saturated_dom"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"is_errata_dom"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"event_time"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"hlc"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"awtd"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"fadc"</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
 
         <span class="c1"># Get OM data</span>
@@ -466,6 +469,10 @@
                 <span class="n">output</span><span class="p">[</span><span class="s2">"is_saturated_dom"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_saturated_dom</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"is_errata_dom"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_errata_dom</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"event_time"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_time</span><span class="p">)</span>
+                <span class="c1"># Pulse flags</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">"hlc"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pulse</span><span class="o">.</span><span class="n">flags</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1</span><span class="p">)</span>  <span class="c1"># bit 0</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">"awtd"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pulse</span><span class="o">.</span><span class="n">flags</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1</span><span class="p">)</span>  <span class="c1"># bit 1</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">"fadc"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pulse</span><span class="o">.</span><span class="n">flags</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1</span><span class="p">)</span>  <span class="c1"># bit 2</span>
 
         <span class="k">return</span> <span class="n">output</span>
 
