@@ -11,7 +11,7 @@ from typing import (
     Optional,
     Tuple,
     Union,
-    Sequence,
+    Iterable,
 )
 
 from tqdm import tqdm
@@ -605,6 +605,9 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         # Add custom labels to the graph
         for key, fn in self._label_fns.items():
             graph[key] = fn(graph)
+
+        # Add Dataset Path. Useful if multiple datasets are concatenated.
+        graph["dataset_path"] = self._path
         return graph
 
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
@@ -655,42 +658,13 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             return -1
 
 
-class EnsembleDataset(torch.utils.data.Dataset):
+class EnsembleDataset(torch.utils.data.ConcatDataset):
     """Construct a single dataset from a collection of datasets."""
 
-    def __init__(self, datasets: Sequence[Dataset]) -> None:
+    def __init__(self, datasets: Iterable[Dataset]) -> None:
         """Construct a single dataset from a collection of datasets.
 
         Args:
             datasets: A collection of Datasets
         """
-        assert len(datasets) > 0, "Must provide at least one dataset."
-        self.datasets = datasets
-        self._setup_indices()
-
-    def __len__(self) -> int:
-        """Return length of dataset."""
-        length = 0
-        for dataset in self.datasets:
-            length += len(dataset)
-        return length
-
-    def _setup_indices(self) -> None:
-        """Create a global multi index on the form (dataset_idx, event_no)."""
-        multi_indices = []
-        dataset_index = 0
-        for dataset in tqdm(self.datasets, desc="Building Global Index"):
-            for local_event_no in range(len(dataset)):
-                multi_indices.append((dataset_index, local_event_no))
-            dataset_index += 1
-        self._index = multi_indices
-
-    def __getitem__(self, sequential_idx: int) -> Data:
-        """Grab a graph from one Dataset and returns it.
-
-        Dataset idx is added to graph as ´dataset_idx´ for bookkeeping.
-        """
-        multi_index = self._index[sequential_idx]
-        graph = self.datasets[multi_index[0]].__getitem__(multi_index[1])
-        graph["dataset_idx"] = torch.tensor(multi_index[0], dtype=torch.int)
-        return graph
+        super().__init__(datasets=datasets)

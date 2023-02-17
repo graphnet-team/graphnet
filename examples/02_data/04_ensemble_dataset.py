@@ -48,7 +48,7 @@ def main() -> None:
         truth_table=truth_table,
     )
 
-    ensemble_dataset = EnsembleDataset([dataset_1, dataset_2])
+    ensemble_dataset = EnsembleDataset(datasets=[dataset_1, dataset_2])
 
     logger.info(f"dataset_1 have length: {len(dataset_1)}")
     logger.info(f"dataset_2 have length: {len(dataset_2)}")
@@ -67,7 +67,8 @@ def main() -> None:
         for batch in tqdm(dataloader, unit=" batches", colour="green"):
             time.sleep(wait_time)
 
-    logger.info(batch["dataset_idx"])
+    for i in range(batch_size):
+        logger.info(f"Event {i} came from {batch['dataset_path'][i]}")
 
 
 if __name__ == "__main__":
