@@ -11,7 +11,6 @@ from typing import (
     Optional,
     Tuple,
     Union,
-    Iterable,
 )
 
 from tqdm import tqdm
@@ -605,9 +604,6 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         # Add custom labels to the graph
         for key, fn in self._label_fns.items():
             graph[key] = fn(graph)
-
-        # Add Dataset Path. Useful if multiple datasets are concatenated.
-        graph["dataset_path"] = self._path
         return graph
 
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
@@ -656,15 +652,3 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             return label
         except KeyError:
             return -1
-
-
-class EnsembleDataset(torch.utils.data.ConcatDataset):
-    """Construct a single dataset from a collection of datasets."""
-
-    def __init__(self, datasets: Iterable[Dataset]) -> None:
-        """Construct a single dataset from a collection of datasets.
-
-        Args:
-            datasets: A collection of Datasets
-        """
-        super().__init__(datasets=datasets)
