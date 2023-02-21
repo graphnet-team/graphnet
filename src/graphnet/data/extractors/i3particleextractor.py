@@ -1,4 +1,4 @@
-"""I3Extractor class(es) for extracting SplineMPE reconstruction."""
+"""I3Extractor class(es) for extracting I3Particle properties."""
 
 from typing import TYPE_CHECKING, Dict
 
