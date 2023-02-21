@@ -141,9 +141,11 @@ class ProgressBar(TQDMProgressBar):
         """
         super().on_train_epoch_end(trainer, model)
 
-        if rank_zero_only == 0:
+        if rank_zero_only.rank == 0:
             # Construct Logger
             logger = Logger()
+
+            # Log only to file, not stream
             h = logger.handlers[0]
             assert isinstance(h, logging.StreamHandler)
             level = h.level
