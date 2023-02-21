@@ -38,7 +38,7 @@ from graphnet.data.extractors import (
 from graphnet.utilities.decorators import final
 from graphnet.utilities.filesys import find_i3_files
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 
 if has_icecube_package():
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
@@ -87,7 +87,7 @@ def cache_output_files(process_method: F) -> F:
     return cast(F, wrapper)
 
 
-class DataConverter(ABC, LoggerMixin):
+class DataConverter(ABC, Logger):
     """Base class for converting I3-files to intermediate file format."""
 
     @property
@@ -186,6 +186,9 @@ class DataConverter(ABC, LoggerMixin):
         # Set verbosity
         if icetray_verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
+
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     @final
     def __call__(self, directories: Union[str, List[str]]) -> None:

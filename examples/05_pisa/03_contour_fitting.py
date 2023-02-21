@@ -3,9 +3,7 @@
 from graphnet.pisa.fitting import ContourFitter
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_pisa_package
-from graphnet.utilities.logging import get_logger
-
-logger = get_logger()
+from graphnet.utilities.logging import Logger
 
 
 def main() -> None:
@@ -61,7 +59,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     if not has_pisa_package():
-        logger.error(
+        Logger(log_folder=None).error(
             "This example requires PISA to be installed, which doesn't seem "
             "to be the case. Please install PISA or run an example script in "
             "one of the other folders:"

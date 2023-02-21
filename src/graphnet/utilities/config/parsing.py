@@ -11,9 +11,7 @@ from typing import (
     Optional,
 )
 
-from graphnet.utilities.logging import get_logger
-
-logger = get_logger()
+from graphnet.utilities.logging import Logger
 
 
 def traverse_and_apply(
@@ -64,7 +62,7 @@ def get_all_grapnet_classes(*packages: types.ModuleType) -> Dict[str, type]:
         new_classes = get_graphnet_classes(submodule)
         for key in new_classes:
             if key in classes and classes[key] != new_classes[key]:
-                logger.warning(
+                Logger().warning(
                     f"Class {key} found in both {classes[key]} and "
                     f"{new_classes[key]}. Keeping first instance. "
                     "Consider renaming."
@@ -89,7 +87,7 @@ def is_graphnet_class(obj: type) -> bool:
 def get_graphnet_classes(module: types.ModuleType) -> Dict[str, type]:
     """Return a lookup of all graphnet class names in `module`."""
     if not is_graphnet_module(module):
-        logger.info(f"{module} is not a graphnet module")
+        Logger().info(f"{module} is not a graphnet module")
         return {}
     classes = {
         key: val

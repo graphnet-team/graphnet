@@ -5,13 +5,14 @@ import os.path
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_PARQUET_DATA
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
 from graphnet.utilities.argparse import ArgumentParser
-from graphnet.utilities.logging import get_logger
-
-logger = get_logger()
+from graphnet.utilities.logging import Logger
 
 
 def main(parquet_path: str, mc_truth_table: str) -> None:
     """Run example."""
+    # Construct Logger
+    logger = Logger()
+
     # Path to where you want the database to be stored
     outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_parquet_to_sqlite/"
 

@@ -3,10 +3,10 @@
 from abc import ABC, abstractmethod
 import torch
 from torch_geometric.data import Data
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 
 
-class Label(ABC, LoggerMixin):
+class Label(ABC, Logger):
     """Base `Label` class for producing labels from single `Data` instance."""
 
     def __init__(self, key: str):
@@ -17,6 +17,9 @@ class Label(ABC, LoggerMixin):
                 stored. That is, `graph[key] = label`.
         """
         self._key = key
+
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     @abstractmethod
     def __call__(self, graph: Data) -> torch.tensor:
@@ -32,6 +35,9 @@ class Direction(Label):
         """Construct `Direction`."""
         self._azimuth_key = azimuth_key
         self._zenith_key = zenith_key
+
+        # Base class constructor
+        super().__init__(key="_".join([azimuth_key, zenith_key]))
 
     def __call__(self, graph: Data) -> torch.tensor:
         """Compute label for `graph`."""
