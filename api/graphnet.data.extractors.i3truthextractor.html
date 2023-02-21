@@ -347,6 +347,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.extractors.i3particleextractor.html" class="md-nav__link">i3particleextractor</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.extractors.i3pisaextractor.html" class="md-nav__link">i3pisaextractor</a>
       
     
@@ -540,7 +547,7 @@
 <p>I3Extractor class(es) for extracting truth-level information.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.extractors.i3truthextractor.I3TruthExtractor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3truthextractor.</span></span><span class="sig-name descname"><span class="pre">I3TruthExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/i3truthextractor.html#I3TruthExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.i3truthextractor.</span></span><span class="sig-name descname"><span class="pre">I3TruthExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/i3truthextractor.html#I3TruthExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.i3truthextractor.I3TruthExtractor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.extractors.i3extractor.html#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
 <p>Class for extracting truth-level information.</p>
 <p>Construct I3TruthExtractor.</p>
@@ -552,6 +559,7 @@
 coordinates, for identifying, e.g., particles starting and
 stopping within the detector. Defaults to hard-coded boundary
 coordinates.</p></li>
+<li><p><strong>mctree</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">'I3MCTree'</span></code>) – Str of which MCTree to use for truth values.</p></li>
 </ul>
 </dd>
 </dl>

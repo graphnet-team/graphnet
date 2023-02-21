@@ -26,6 +26,7 @@ extractors
    graphnet.data.extractors.i3featureextractor
    graphnet.data.extractors.i3genericextractor
    graphnet.data.extractors.i3hybridrecoextractor
+   graphnet.data.extractors.i3particleextractor
    graphnet.data.extractors.i3pisaextractor
    graphnet.data.extractors.i3retroextractor
    graphnet.data.extractors.i3splinempeextractor

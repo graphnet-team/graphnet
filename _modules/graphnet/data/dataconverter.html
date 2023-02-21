@@ -748,11 +748,15 @@
         <span class="k">while</span> <span class="n">i3_file_io</span><span class="o">.</span><span class="n">more</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">frame</span> <span class="o">=</span> <span class="n">i3_file_io</span><span class="o">.</span><span class="n">pop_physics</span><span class="p">()</span>
-            <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">"I3"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                    <span class="k">continue</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
                 <span class="k">continue</span>
 
-            <span class="c1"># Extract data from I3Frame</span>
+            <span class="c1"># Try to extract data from I3Frame</span>
             <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractors</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
             <span class="n">data_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">,</span> <span class="n">results</span><span class="p">))</span>
 
             <span class="c1"># If an I3GenericExtractor is used, we want each automatically</span>
@@ -866,7 +870,20 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="p">,</span>
             <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\.i3\..*"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"."</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">output_file</span></div>
+        <span class="k">return</span> <span class="n">output_file</span>
+
+    <span class="k">def</span> <span class="nf">_skip_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Check if frame should be skipped.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: I3Frame to check.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if frame is a null split frame, else False.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3EventHeader"</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="o">==</span> <span class="s2">"NullSplit"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
 </pre></div>
 
           </article>

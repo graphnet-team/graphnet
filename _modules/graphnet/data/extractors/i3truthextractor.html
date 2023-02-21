@@ -344,7 +344,10 @@
 <span class="w">    </span><span class="sd">"""Class for extracting truth-level information."""</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"truth"</span><span class="p">,</span> <span class="n">borders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"truth"</span><span class="p">,</span>
+        <span class="n">borders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mctree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"I3MCTree"</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct I3TruthExtractor.</span>
 
@@ -354,6 +357,7 @@
 <span class="sd">                coordinates, for identifying, e.g., particles starting and</span>
 <span class="sd">                stopping within the detector. Defaults to hard-coded boundary</span>
 <span class="sd">                coordinates.</span>
+<span class="sd">            mctree: Str of which MCTree to use for truth values.</span>
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -395,13 +399,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="p">[</span><span class="n">border_xy</span><span class="p">,</span> <span class="n">border_z</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="n">borders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span> <span class="o">=</span> <span class="n">mctree</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Extract truth-level information."""</span>
-        <span class="n">is_mc</span> <span class="o">=</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="n">is_noise</span> <span class="o">=</span> <span class="n">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">is_mc</span> <span class="o">=</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">)</span>
+        <span class="n">is_noise</span> <span class="o">=</span> <span class="n">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">)</span>
         <span class="n">sim_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_data_type</span><span class="p">(</span><span class="n">is_mc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span><span class="p">)</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
@@ -538,7 +543,7 @@
     <span class="k">def</span> <span class="nf">_extract_dbang_decay_length</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="n">mctree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3MCTree"</span><span class="p">]</span>
+        <span class="n">mctree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">p_true</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">primaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">p_daughters</span> <span class="o">=</span> <span class="n">mctree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">p_true</span><span class="p">)</span>
@@ -667,11 +672,11 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"MCInIcePrimary"</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3MCTree"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span> <span class="o">!=</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span>
             <span class="p">):</span>  <span class="c1"># This is a nan check. Only happens for some muons where second item in MCTree is primary. Weird!</span>
-                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3MCTree"</span><span class="p">][</span>
+                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">][</span>
                     <span class="mi">1</span>
                 <span class="p">]</span>  <span class="c1"># For some strange reason the second entry is identical in all variables and has no nans (always muon)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -701,7 +706,7 @@
 <span class="sd">            Tuple containing the energy of tracks from primary, and the</span>
 <span class="sd">                corresponding inelasticity.</span>
 <span class="sd">        """</span>
-        <span class="n">mc_tree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3MCTree"</span><span class="p">]</span>
+        <span class="n">mc_tree</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">]</span>
         <span class="n">primary</span> <span class="o">=</span> <span class="n">mc_tree</span><span class="o">.</span><span class="n">primaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">daughters</span> <span class="o">=</span> <span class="n">mc_tree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
         <span class="n">tracks</span> <span class="o">=</span> <span class="p">[]</span>

@@ -332,15 +332,19 @@
     <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 
 
-<div class="viewcode-block" id="frame_is_montecarlo"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.frames.html#graphnet.data.extractors.utilities.frames.frame_is_montecarlo">[docs]</a><span class="k">def</span> <span class="nf">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="frame_is_montecarlo"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.frames.html#graphnet.data.extractors.utilities.frames.frame_is_montecarlo">[docs]</a><span class="k">def</span> <span class="nf">frame_is_montecarlo</span><span class="p">(</span>
+    <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span> <span class="n">mctree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"I3MCTree"</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `frame` is from Monte Carlo simulation."""</span>
-    <span class="k">return</span> <span class="p">(</span><span class="s2">"MCInIcePrimary"</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">"I3MCTree"</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="s2">"MCInIcePrimary"</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">mctree</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="frame_is_noise"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.frames.html#graphnet.data.extractors.utilities.frames.frame_is_noise">[docs]</a><span class="k">def</span> <span class="nf">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="frame_is_noise"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.frames.html#graphnet.data.extractors.utilities.frames.frame_is_noise">[docs]</a><span class="k">def</span> <span class="nf">frame_is_noise</span><span class="p">(</span>
+    <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span> <span class="n">mctree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"I3MCTree"</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `frame` is from noise."""</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">frame</span><span class="p">[</span><span class="s2">"I3MCTree"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span>
+        <span class="n">frame</span><span class="p">[</span><span class="n">mctree</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
         <span class="k">try</span><span class="p">:</span>

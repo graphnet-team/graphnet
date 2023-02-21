@@ -541,11 +541,28 @@
 <div class="viewcode-block" id="DOMCoarsening"><a class="viewcode-back" href="../../../api/graphnet.models.coarsening.html#graphnet.models.coarsening.DOMCoarsening">[docs]</a><span class="k">class</span> <span class="nc">DOMCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Coarsen pulses to DOM-level."""</span>
 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"avg"</span><span class="p">,</span>
+        <span class="n">transfer_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Cluster pulses on the same DOM."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduce</span><span class="p">,</span> <span class="n">transfer_attributes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">"dom_x"</span><span class="p">,</span>
+                <span class="s2">"dom_y"</span><span class="p">,</span>
+                <span class="s2">"dom_z"</span><span class="p">,</span>
+                <span class="s2">"rde"</span><span class="p">,</span>
+                <span class="s2">"pmt_area"</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">keys</span>
+
     <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Cluster nodes in `data` by assigning a cluster index to each."""</span>
-        <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"dom_x"</span><span class="p">,</span> <span class="s2">"dom_y"</span><span class="p">,</span> <span class="s2">"dom_z"</span><span class="p">,</span> <span class="s2">"rde"</span><span class="p">,</span> <span class="s2">"pmt_area"</span><span class="p">]</span>
-        <span class="p">)</span>
+        <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dom_index</span></div>
 
 
@@ -592,23 +609,31 @@
         <span class="n">time_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"avg"</span><span class="p">,</span>
         <span class="n">transfer_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">"dom_x"</span><span class="p">,</span>
+            <span class="s2">"dom_y"</span><span class="p">,</span>
+            <span class="s2">"dom_z"</span><span class="p">,</span>
+            <span class="s2">"rde"</span><span class="p">,</span>
+            <span class="s2">"pmt_area"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">time_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"dom_time"</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Cluster pulses on the same DOM within `time_window`."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduce</span><span class="p">,</span> <span class="n">transfer_attributes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_window</span> <span class="o">=</span> <span class="n">time_window</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_method</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_window</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_key</span> <span class="o">=</span> <span class="n">time_key</span>
 
     <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Cluster nodes in `data` by assigning a cluster index to each."""</span>
-        <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"dom_x"</span><span class="p">,</span> <span class="s2">"dom_y"</span><span class="p">,</span> <span class="s2">"dom_z"</span><span class="p">,</span> <span class="s2">"rde"</span><span class="p">,</span> <span class="s2">"pmt_area"</span><span class="p">]</span>
-        <span class="p">)</span>
+        <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">features</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">features</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">features</span>
 
-        <span class="n">ix_time</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"dom_time"</span><span class="p">)</span>
+        <span class="n">ix_time</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_key</span><span class="p">)</span>
         <span class="n">hit_times</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="n">ix_time</span><span class="p">]</span>
 
         <span class="c1"># Scale up dom_index to make sure clusters are well separated</span>
