@@ -16,18 +16,27 @@ class I3ParticleExtractor(I3Extractor):
     """
 
     def __init__(self, name: str):
-        """Construct I3ComparisonExtractor."""
+        """Construct I3ParticleExtractor."""
         # Base class constructor
         super().__init__(name)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, float]:
-        """Extract pointing predictions."""
+        """Extract I3Particle properties from I3Particle in frame."""
         output = {}
         if self._name in frame:
             output.update(
                 {
                     "zenith_" + self._name: frame[self._name].dir.zenith,
                     "azimuth_" + self._name: frame[self._name].dir.azimuth,
+                    "dir_x_" + self._name: frame[self._name].dir.x,
+                    "dir_y_" + self._name: frame[self._name].dir.y,
+                    "dir_z_" + self._name: frame[self._name].dir.z,
+                    "pos_x_" + self._name: frame[self._name].pos.x,
+                    "pos_y_" + self._name: frame[self._name].pos.y,
+                    "pos_z_" + self._name: frame[self._name].pos.z,
+                    "time_" + self._name: frame[self._name].time,
+                    "speed_" + self._name: frame[self._name].speed,
+                    "energy_" + self._name: frame[self._name].energy,
                 }
             )
 
