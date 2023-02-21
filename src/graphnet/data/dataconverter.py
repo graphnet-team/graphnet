@@ -558,6 +558,6 @@ class DataConverter(ABC, LoggerMixin):
         Returns:
             True if frame is a null split frame, else False.
         """
-        if frame["I3EventHeader"].sub_event_stream == "nullsplit":
+        if frame["I3EventHeader"].sub_event_stream == "NullSplit":
             return False
         return True
