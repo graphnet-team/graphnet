@@ -427,6 +427,7 @@ class DataConverter(ABC, LoggerMixin):
         while i3_file_io.more():
             try:
                 frame = i3_file_io.pop_physics()
+                assert self._is_not_null_split_frame(frame)
             except:  # noqa: E722
                 continue
 
@@ -554,3 +555,16 @@ class DataConverter(ABC, LoggerMixin):
             re.sub(r"\.i3\..*", "", basename) + "." + self.file_suffix,
         )
         return output_file
+
+    def _is_not_null_split_frame(self, frame: "icetray.I3Frame") -> bool:
+        """Check if frame is a null split frame.
+
+        Args:
+            frame: I3Frame to check.
+
+        Returns:
+            True if frame is a null split frame, else False.
+        """
+        if frame["I3EventHeader"].sub_event_stream == "nullsplit":
+            return False
+        return True
