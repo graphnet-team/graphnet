@@ -431,15 +431,8 @@ class DataConverter(ABC, LoggerMixin):
             except:  # noqa: E722
                 continue
 
-            # Try to extract data from I3Frame else skip frame
-            try:
-                results = self._extractors(frame)
-            except KeyError as e:
-                if "Pulsemap" in str(e):
-                    self.warning(str(e) + ". Skipping frame")
-                    continue
-                else:
-                    raise e
+            # Try to extract data from I3Frame
+            results = self._extractors(frame)
 
             data_dict = OrderedDict(zip(self._table_names, results))
 
