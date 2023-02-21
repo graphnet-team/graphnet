@@ -295,6 +295,7 @@ class DOMAndTimeWindowCoarsening(Coarsening):
             "rde",
             "pmt_area",
         ],
+        time_key: str = "dom_time",
     ):
         """Cluster pulses on the same DOM within `time_window`."""
         super().__init__(reduce, transfer_attributes)
