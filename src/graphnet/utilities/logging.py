@@ -115,7 +115,7 @@ class Logger:
             stacklevel = {} if sys.version_info < (3, 8) else {"stacklevel": 3}
             logger.info(
                 f"Writing log to \033[1m{log_path}\033[0m",
-                extra={"className": cls.__class__.__name__ + "."},
+                extra={"className": cls.__name__ + "."},
                 **stacklevel,  # type: ignore[arg-type]
             )
 
