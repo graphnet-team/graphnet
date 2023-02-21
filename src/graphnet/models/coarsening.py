@@ -302,6 +302,7 @@ class DOMAndTimeWindowCoarsening(Coarsening):
         self._time_window = time_window
         self._cluster_method = DBSCAN(self._time_window, min_samples=1)
         self._keys = keys
+        self._time_key = time_key
 
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Cluster nodes in `data` by assigning a cluster index to each."""
