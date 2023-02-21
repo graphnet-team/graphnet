@@ -34,8 +34,8 @@ class CoarsePulseGenerator(Generator):
             "dom_x",
             "dom_y",
             "dom_z",
-            "dom_time",
         ],
+        time_label: str = "dom_time",
         keep_columns: Optional[List[str]] = None,
         reduc: int = 100,
         min_n: int = 25,
@@ -48,6 +48,7 @@ class CoarsePulseGenerator(Generator):
             name: Name of the `Generator` instance.
             method: Method to use for coarse pulsemap generation.
             coarsen_on: List of pulsemap columns to use for pseudo-distance used by coarsening algorithm.
+            time_label: Name of the time column in the pulsemap.
             keep_columns: List of pulsemap columns to keep in final coarse pulsemap.
             reduc: Target reduction factor for coarse pulsemap.
             min_n: Minimum number of pulses to keep in coarse pulsemap.
@@ -56,8 +57,8 @@ class CoarsePulseGenerator(Generator):
         self._pulsemap = pulsemap
         # reduction method
         self._method = method
-        # pseudo-distance to use for coarsening
-        self._coarsen_on = coarsen_on
+        # pseudo-distance to use for coarsening force time to be included at end.
+        self._coarsen_on = coarsen_on + [time_label]
         # target reduction factor ie. 1/reduc
         self._reduc = reduc
         # minimum number of pulses to keep
@@ -124,14 +125,21 @@ class CoarsePulseGenerator(Generator):
         reduc = int(len(tensor) / self._reduc)
         # reduce by factor 100 ensuring not to   reduce below min red (unless less dom activations in event)
         n_clusters = max([reduc, min_n])
-        if self._method == "Kmeans":
-            clusterer = KMeans(
-                n_clusters=n_clusters, random_state=10, init="random", n_init=1
-            )
-        else:
-            raise ValueError("Method not implemented")
+        if len(tensor) > self._min_n:
+            if self._method == "Kmeans":
+                clusterer = KMeans(
+                    n_clusters=n_clusters,
+                    random_state=10,
+                    init="random",
+                    n_init=1,
+                )
+            else:
+                raise ValueError("Method not implemented")
 
-        index = clusterer.fit_predict(tensor)
+            index = clusterer.fit_predict(tensor)
+        else:  # if less dom activations than clusters, just return the doms
+            index = np.arange(len(tensor))
+
         pulse_df = pd.DataFrame(self._pulse_data, index=None).T
         data_with_group = np.vstack([index, pulse_df])
         data_with_group = data_with_group.T[data_with_group[0, :].argsort()]
@@ -143,7 +151,7 @@ class CoarsePulseGenerator(Generator):
             dtype=object,
         )
 
-        # mget mean of grouped data and multiply charge by number of pulses in group.
+        # get mean of grouped data and multiply charge by number of pulses in group.
         for data, ind in zip(data_grouped, range(len(data_grouped))):
             counter = np.shape(data)[0]
             data_grouped[ind] = np.mean(data, axis=0)
@@ -154,13 +162,14 @@ class CoarsePulseGenerator(Generator):
             data_grouped = data_grouped[:, 0, :]
 
         result = np.array(list(data_grouped)).T
+        # turn the np array of np arrays into a list of lists
+        result = [list(i) for i in result[keep_index]]
+        # write to dict
         result = dict(
             zip(
                 list(np.array(self._pulse_names)[keep_index]),
-                result[keep_index],
+                result,
             )
         )
 
-        # update event_no
-        result.update({"event_no": self._pulse_data["event_no"]})
         return result

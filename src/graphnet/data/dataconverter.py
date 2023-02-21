@@ -459,7 +459,6 @@ class DataConverter(ABC, LoggerMixin):
             if self._generators:
                 data_dict = self._generators(data_dict)
 
-            data.append(data_dict)
             # Get new, unique index and increment value
             if multi_processing:
                 with global_index.get_lock():  # type: ignore[name-defined]
@@ -472,6 +471,8 @@ class DataConverter(ABC, LoggerMixin):
             # Attach index to all tables
             for table in data_dict.keys():
                 data_dict[table][self._index_column] = index
+
+            data.append(data_dict)
 
         return data
 
