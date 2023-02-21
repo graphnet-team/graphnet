@@ -312,9 +312,7 @@ class DOMAndTimeWindowCoarsening(Coarsening):
         else:
             features = data.features
 
-        ix_time = [idx for idx, s in enumerate(features) if "time" in s][
-            0
-        ]  # features.index("dom_time")
+        ix_time = features.index(self._time_key)
         hit_times = data.x[:, ix_time]
 
         # Scale up dom_index to make sure clusters are well separated
