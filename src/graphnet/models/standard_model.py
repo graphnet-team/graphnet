@@ -40,7 +40,7 @@ class StandardModel(Model):
     ) -> None:
         """Construct `StandardModel`."""
         # Base class constructor
-        super().__init__()
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Check(s)
         if isinstance(tasks, Task):

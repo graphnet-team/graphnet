@@ -15,9 +15,8 @@ from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import Logger
 
-logger = get_logger(level=logging.INFO)
 
 CONVERTER_CLASS = {
     "sqlite": SQLiteDataConverter,
@@ -81,7 +80,7 @@ def main_icecube_upgrade(backend: str) -> None:
 if __name__ == "__main__":
 
     if not has_icecube_package():
-        logger.error(
+        Logger(log_folder=None).error(
             "This example requires IceTray to be installed, which doesn't "
             "seem to be the case. Please install IceTray; run this example in "
             "the GraphNeT Docker container which comes with IceTray "

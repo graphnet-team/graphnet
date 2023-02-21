@@ -16,14 +16,12 @@ from graphnet.utilities.config import (
     ModelConfig,
     TrainingConfig,
 )
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import Logger
 
 
 # Make sure W&B output directory exists
 WANDB_DIR = "./wandb/"
 os.makedirs(WANDB_DIR, exist_ok=True)
-
-logger = get_logger()
 
 
 def main(
@@ -38,6 +36,9 @@ def main(
     suffix: Optional[str] = None,
 ) -> None:
     """Run example."""
+    # Construct Logger
+    logger = Logger()
+
     # Initialise Weights & Biases (W&B) run
     wandb_logger = WandbLogger(
         project="example-script",

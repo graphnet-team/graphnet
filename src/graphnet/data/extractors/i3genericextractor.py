@@ -14,9 +14,7 @@ from graphnet.data.extractors.utilities.collections import (
 )
 
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import get_logger
 
-logger = get_logger()
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (

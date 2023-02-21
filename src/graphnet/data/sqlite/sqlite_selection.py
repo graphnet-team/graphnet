@@ -6,9 +6,7 @@ from typing import List, Tuple, Optional
 import numpy as np
 import pandas as pd
 
-from graphnet.utilities.logging import get_logger
-
-logger = get_logger()
+from graphnet.utilities.logging import Logger
 
 
 def get_desired_event_numbers(
@@ -36,6 +34,9 @@ def get_desired_event_numbers(
     Returns:
         List of event numbers.
     """
+    # Construct Logger
+    logger = Logger()
+
     assert (
         fraction_noise
         + fraction_muon
@@ -149,7 +150,7 @@ def get_equal_proportion_neutrino_indices(
     # Subsample events for each PID to the smallest sample size
     samples_sizes = list(map(len, pid_indicies.values()))
     smallest_sample_size = min(samples_sizes)
-    logger.info(f"Smallest sample size: {smallest_sample_size}")
+    Logger().info(f"Smallest sample size: {smallest_sample_size}")
 
     indices = [
         (
@@ -275,6 +276,9 @@ def get_even_dbang_selection(
     Returns:
         Tuple containing lists of training and test event numbers, resp.
     """
+    # Construct Logger
+    logger = Logger()
+
     # Common variables
     pids = ["12", "14", "16"]
     non_dbangs_indicies = {}

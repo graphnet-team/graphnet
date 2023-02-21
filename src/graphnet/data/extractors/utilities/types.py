@@ -12,9 +12,8 @@ from graphnet.data.extractors.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import get_logger, warn_once
+from graphnet.utilities.logging import Logger
 
-logger = get_logger()
 
 if has_icecube_package():
     from icecube import (
@@ -63,9 +62,9 @@ def break_cyclic_recursion(fn: Callable) -> Callable:
         try:
             hash_ = (hash(fn), hash(obj))
             if hash_ in BEING_EVALUATED:
-                warn_once(
-                    logger,
-                    "break_cyclic_recursion - Already evaluating object. Skipping recusion.",
+                Logger().warning_once(
+                    "break_cyclic_recursion - Already evaluating object. "
+                    "Skipping recusion.",
                 )
                 return
             BEING_EVALUATED.add(hash_)
@@ -141,6 +140,7 @@ def cast_object_to_pure_python(obj: Any) -> Any:
     objects to list and dict-like objects to list, and otherwise return the
     object itself if it deemed "pythonic" in this way.
     """
+    logger = Logger()
     logger.debug(f"Value: {obj}")
     logger.debug(f"Type: {str(type(obj))}")
 
@@ -250,7 +250,7 @@ def cast_pulse_series_to_pure_python(
         try:
             om_data = flatten_nested_dictionary(om_data)
         except TypeError:
-            logger.warning("Couldn't call `flatten_nested_dictionary` on:")
+            Logger().warning("Couldn't call `flatten_nested_dictionary` on:")
             print(om_data)
             raise
 
