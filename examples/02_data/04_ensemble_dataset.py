@@ -21,6 +21,7 @@ truth = TRUTH.DEEPCORE
 
 def main() -> None:
     """Read intermediate file using `Dataset` class."""
+    # Construct Logger
     logger = Logger()
 
     # Check(s)

@@ -80,22 +80,26 @@ class Logger:
 
     @classmethod
     def _configure_root_logger(cls, log_folder: Optional[str]) -> None:
+        print(f"_configure_root_logger(log_folder={log_folder})")
         # Get logging formatters
         _, colored_formatter = cls._get_formatters()
 
         # Create logger
         logger = cls._get_root_logger()
-        logger.setLevel(logging.INFO)
 
-        # Add duplicate filter
-        # logger.addFilter(RepeatFilter())
+        # Add duplicate filter if none has been added.
+        if not any([isinstance(f, RepeatFilter) for f in logger.filters]):
+            logger.addFilter(RepeatFilter())
 
-        # Add stream handler
-        stream_handler = colorlog.StreamHandler(stream=sys.stdout)
-        stream_handler.setFormatter(colored_formatter)
-        logger.addHandler(stream_handler)
+        # Add stream handler if none has been added.
+        if not any(
+            [isinstance(h, colorlog.StreamHandler) for h in logger.handlers]
+        ):
+            stream_handler = colorlog.StreamHandler(stream=sys.stdout)
+            stream_handler.setFormatter(colored_formatter)
+            logger.addHandler(stream_handler)
 
-        # Add file handler
+        # Add file handler if log folder is specified.
         if log_folder:
             os.makedirs(log_folder, exist_ok=True)
             timestamp = (
@@ -108,7 +112,7 @@ class Logger:
             log_path = os.path.join(log_folder, f"graphnet_{timestamp}.log")
 
             file_handler = logging.FileHandler(log_path)
-            stream_handler.setLevel(logging.DEBUG)
+            file_handler.setLevel(logging.DEBUG)
             file_handler.setFormatter(colored_formatter)
             logger.addHandler(file_handler)
 
@@ -128,7 +132,16 @@ class Logger:
     def _make_sure_root_logger_is_configured(
         cls, log_folder: Optional[str] = LOG_FOLDER
     ) -> None:
-        if not cls._get_root_logger().hasHandlers():
+        root = cls._get_root_logger()
+        # Always configure if no handlers are found.
+        if not root.hasHandlers():
+            cls._configure_root_logger(log_folder)
+
+        # Also configure if no FileHandler is found, but a log folder is
+        # specified.
+        elif (log_folder is not None) and not any(
+            [isinstance(h, logging.FileHandler) for h in root.handlers]
+        ):
             cls._configure_root_logger(log_folder)
 
     def __init__(
