@@ -295,12 +295,14 @@ class DOMAndTimeWindowCoarsening(Coarsening):
             "rde",
             "pmt_area",
         ],
+        time_key: str = "dom_time",
     ):
         """Cluster pulses on the same DOM within `time_window`."""
         super().__init__(reduce, transfer_attributes)
         self._time_window = time_window
         self._cluster_method = DBSCAN(self._time_window, min_samples=1)
         self._keys = keys
+        self._time_key = time_key
 
     def _perform_clustering(self, data: Union[Data, Batch]) -> LongTensor:
         """Cluster nodes in `data` by assigning a cluster index to each."""
@@ -310,9 +312,7 @@ class DOMAndTimeWindowCoarsening(Coarsening):
         else:
             features = data.features
 
-        ix_time = [idx for idx, s in enumerate(features) if "time" in s][
-            0
-        ]  # features.index("dom_time")
+        ix_time = features.index(self._time_key)
         hit_times = data.x[:, ix_time]
 
         # Scale up dom_index to make sure clusters are well separated

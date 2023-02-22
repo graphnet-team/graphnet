@@ -435,18 +435,14 @@ class DataConverter(ABC, LoggerMixin):
         while i3_file_io.more():
             try:
                 frame = i3_file_io.pop_physics()
-            except:  # noqa: E722
+            except Exception as e:
+                if "I3" in str(e):
+                    continue
+            if self._skip_frame(frame):
                 continue
 
-            # Try to extract data from I3Frame else skip frame
-            try:
-                results = self._extractors(frame)
-            except KeyError as e:
-                if "Pulsemap" in str(e):
-                    self.warning(str(e) + ". Skipping frame")
-                    continue
-                else:
-                    raise e
+            # Try to extract data from I3Frame
+            results = self._extractors(frame)
 
             data_dict = OrderedDict(zip(self._table_names, results))
 
@@ -565,3 +561,16 @@ class DataConverter(ABC, LoggerMixin):
             re.sub(r"\.i3\..*", "", basename) + "." + self.file_suffix,
         )
         return output_file
+
+    def _skip_frame(self, frame: "icetray.I3Frame") -> bool:
+        """Check if frame should be skipped.
+
+        Args:
+            frame: I3Frame to check.
+
+        Returns:
+            True if frame is a null split frame, else False.
+        """
+        if frame["I3EventHeader"].sub_event_stream == "NullSplit":
+            return True
+        return False
