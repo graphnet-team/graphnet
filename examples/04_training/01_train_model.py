@@ -113,8 +113,8 @@ def main(
     if prediction_names:
         prediction_columns = prediction_names
 
-    print(f"config.target: {config.target}")
-    print(f"prediction_columns: {prediction_columns}")
+    logger.info(f"config.target: {config.target}")
+    logger.info(f"prediction_columns: {prediction_columns}")
 
     results = model.predict_as_dataframe(
         dataloaders["test"],
