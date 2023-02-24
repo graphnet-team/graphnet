@@ -1,7 +1,7 @@
 """Unit tests for logging functionality."""
 
 import logging
-from multiprocessing import Pool
+import multiprocessing
 import os.path
 import time
 
@@ -225,7 +225,16 @@ def test_multiprocessing_logger(nb_workers: int = 5) -> None:
     assert len(logger.file_handlers) == 1
     file_handler = logger.file_handlers[0]
 
-    with Pool(nb_workers) as p:
+    # https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods
+    # "(Using fork,) the child process, when it begins, is effectively
+    #  identical to the parent process. All resources of the parent are
+    #  inherited by the child process. (By contrast, using spawn,) the parent
+    #  process starts a fresh Python interpreter process."
+    # Forking is the behaviour we're interested in checking, and it's _not_ the
+    # default on macOS, unlike Linux, which is why we're setting it here.
+    # Spawning is a bit more involved.
+    multiprocessing.set_start_method("fork")
+    with multiprocessing.Pool(nb_workers) as p:
         p.map(parallel_function, range(nb_workers))
 
     # Check that that the log file has the expected number of lines, i.e., one
@@ -238,4 +247,7 @@ def test_multiprocessing_logger(nb_workers: int = 5) -> None:
 
     assert "MainProcess" in contents
     for ix_worker in range(nb_workers):
-        assert f"ForkPoolWorker-{ix_worker + 1}" in contents
+        assert (
+            multiprocessing.get_start_method().capitalize()
+            + f"PoolWorker-{ix_worker + 1}"
+        ) in contents
