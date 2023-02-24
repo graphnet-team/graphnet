@@ -40,7 +40,7 @@ def main(backend: str) -> None:
     path = TEST_SQLITE_DATA if backend == "sqlite" else TEST_PARQUET_DATA
     pulsemap = "SRTInIcePulses"
     truth_table = "truth"
-    batch_size = 1  # 128
+    batch_size = 128
     num_workers = 30
     wait_time = 0.00  # sec.
 
