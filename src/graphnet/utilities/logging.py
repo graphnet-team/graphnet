@@ -10,7 +10,6 @@ import sys
 import typing
 from typing import Any, List, Optional, Set, Tuple
 
-
 # Constants
 LOGGER_NAME = "graphnet"
 LOG_FOLDER = "logs"
@@ -107,15 +106,25 @@ class Logger:
 
         # Add file handler if log folder is specified.
         if log_folder:
+
+            # If a specific logfile name
+            if log_folder.endswith(".log"):
+                log_path, log_folder = log_folder, os.path.dirname(log_folder)
+
+            # If a logfile directory
+            else:
+                timestamp = (
+                    str(datetime.datetime.today())
+                    .split(".")[0]
+                    .replace("-", "")
+                    .replace(":", "")
+                    .replace(" ", "-")
+                )
+                log_path = os.path.join(
+                    log_folder, f"graphnet_{timestamp}.log"
+                )
+
             os.makedirs(log_folder, exist_ok=True)
-            timestamp = (
-                str(datetime.datetime.today())
-                .split(".")[0]
-                .replace("-", "")
-                .replace(":", "")
-                .replace(" ", "-")
-            )
-            log_path = os.path.join(log_folder, f"graphnet_{timestamp}.log")
 
             file_handler = logging.FileHandler(log_path)
             file_handler.setLevel(logging.DEBUG)
