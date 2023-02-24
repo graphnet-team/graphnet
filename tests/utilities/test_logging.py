@@ -3,6 +3,7 @@
 import logging
 from multiprocessing import Pool
 import os.path
+import time
 
 from graphnet.utilities.logging import Logger, RepeatFilter, LOG_FOLDER
 from graphnet.training.labels import Direction
@@ -34,6 +35,7 @@ def parallel_function(x: int) -> None:
     """Test function, for testing logging on workers."""
     logger = Logger()
     logger.info(f"x = {x}")
+    time.sleep(2)  # To make sure that all workers are being used.
 
 
 # Unit test(s)
