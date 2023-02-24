@@ -1,6 +1,7 @@
 """Unit tests for logging functionality."""
 
 import logging
+from multiprocessing import Pool
 import os.path
 
 from graphnet.utilities.logging import Logger, RepeatFilter, LOG_FOLDER
@@ -27,6 +28,12 @@ def clear_graphnet_loggers() -> None:
     for name in list(logging.Logger.manager.loggerDict.keys()):
         if "graphnet" in name:
             del logging.Logger.manager.loggerDict[name]
+
+
+def parallel_function(x: int) -> None:
+    """Test function, for testing logging on workers."""
+    logger = Logger()
+    logger.info(f"x = {x}")
 
 
 # Unit test(s)
@@ -202,3 +209,31 @@ def test_repeat_filter() -> None:
         assert get_number_of_lines_in_logfile(file_handler) == 1 + (
             nb_repeats_allowed + 1
         )
+
+
+def test_multiprocessing_logger(nb_workers: int = 5) -> None:
+    """Test logging on multiple workers."""
+    # Clean-up
+    clear_graphnet_loggers()
+
+    # Construct logger and access `FileHandler`.
+    logger = Logger(
+        log_folder=os.path.join(LOG_FOLDER, "test_multiprocessing_logger")
+    )
+    assert len(logger.file_handlers) == 1
+    file_handler = logger.file_handlers[0]
+
+    with Pool(nb_workers) as p:
+        p.map(parallel_function, range(nb_workers))
+
+    # Check that that the log file has the expected number of lines, i.e., one
+    # for opening the log file and one for each element in above map.
+    assert get_number_of_lines_in_logfile(file_handler) == 1 + nb_workers
+
+    # Check that the printed lines come from the expected processes.
+    with open(file_handler.baseFilename, "r") as f:
+        contents = f.read()
+
+    assert "MainProcess" in contents
+    for ix_worker in range(nb_workers):
+        assert f"ForkPoolWorker-{ix_worker + 1}" in contents
