@@ -233,7 +233,10 @@ def test_multiprocessing_logger(nb_workers: int = 5) -> None:
     # Forking is the behaviour we're interested in checking, and it's _not_ the
     # default on macOS, unlike Linux, which is why we're setting it here.
     # Spawning is a bit more involved.
-    multiprocessing.set_start_method("fork")
+    try:
+        multiprocessing.set_start_method("fork")
+    except RuntimeError:
+        pass
     with multiprocessing.Pool(nb_workers) as p:
         p.map(parallel_function, range(nb_workers))
 
