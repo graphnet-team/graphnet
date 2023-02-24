@@ -1,8 +1,14 @@
 """Unit tests for logging functionality."""
 
 import logging
+import os.path
 
-from graphnet.utilities.logging import Logger, RepeatFilter
+from graphnet.utilities.logging import (
+    Logger,
+    RepeatFilter,
+    LOG_FOLDER,
+    LOGGER_NAME,
+)
 from graphnet.training.labels import Direction
 
 
@@ -16,11 +22,27 @@ def get_number_of_lines_in_logfile(file_handler: logging.FileHandler) -> int:
     return nb_lines
 
 
+def clear_graphnet_loggers() -> None:
+    """Delete any graphnet loggers.
+
+    This is a bit hacky but useful as a way to run each unit test in a "clean"
+    environment and not each downstream unit tests be affected by the previous
+    ones.
+    """
+    graphnet_loggers = [
+        name
+        for name in logging.Logger.manager.loggerDict
+        if "graphnet" in name
+    ]
+    for name in graphnet_loggers:
+        del logging.Logger.manager.loggerDict[name]
+
+
 # Unit test(s)
 def test_logging_levels() -> None:
     """Test logging calls at different levels."""
     # Construct logger and access `FileHandler`.
-    logger = Logger()
+    logger = Logger(log_folder=os.path.join(LOG_FOLDER, "test_logging_levels"))
     assert len(logger.file_handlers) == 1
     file_handler = logger.file_handlers[0]
 
@@ -57,11 +79,18 @@ def test_logging_levels() -> None:
     logger.critical("Critical")
     assert get_number_of_lines_in_logfile(file_handler) == 7
 
+    # Clean-up
+    clear_graphnet_loggers()
+
 
 def test_logging_levels_for_different_loggers() -> None:
     """Test logging calls at different levels."""
     # Construct logger and access `FileHandler`.
-    logger = Logger()
+    logger = Logger(
+        log_folder=os.path.join(
+            LOG_FOLDER, "test_logging_levels_for_different_loggers"
+        )
+    )
     assert len(logger.file_handlers) == 1
     file_handler = logger.file_handlers[0]
 
@@ -89,6 +118,9 @@ def test_logging_levels_for_different_loggers() -> None:
     label.debug("debug - module")
     assert get_number_of_lines_in_logfile(file_handler) == 7
 
+    # Clean-up
+    clear_graphnet_loggers()
+
 
 def test_log_folder() -> None:
     """Test logging calls at different levels."""
@@ -110,21 +142,29 @@ def test_log_folder() -> None:
     logger = Logger()
     assert len(logger.file_handlers) == 2
 
+    # Clean-up
+    clear_graphnet_loggers()
+
 
 def test_logger_properties() -> None:
     """Test properties of `Logger`."""
-    logger = Logger()
+    logger = Logger(
+        log_folder=os.path.join(LOG_FOLDER, "test_logger_properties")
+    )
     assert len(logger.handlers) == 2
 
     # FileHandler inherits from StreamHandler
     assert len(logger.stream_handlers) == 2
     assert len(logger.file_handlers) == 1
 
+    # Clean-up
+    clear_graphnet_loggers()
+
 
 def test_warning_once() -> None:
     """Test `Logger.warning_once` method."""
     # Construct logger and access `FileHandler`.
-    logger = Logger()
+    logger = Logger(log_folder=os.path.join(LOG_FOLDER, "test_warning_once"))
     assert len(logger.file_handlers) == 1
     file_handler = logger.file_handlers[0]
     assert get_number_of_lines_in_logfile(file_handler) == 1
@@ -135,11 +175,14 @@ def test_warning_once() -> None:
     logger.warning_once("Warning")
     assert get_number_of_lines_in_logfile(file_handler) == 2
 
+    # Clean-up
+    clear_graphnet_loggers()
+
 
 def test_repeat_filter() -> None:
     """Test filtering of repeat messages using `RepeatFilter`."""
     # Construct logger and access `FileHandler`.
-    logger = Logger()
+    logger = Logger(log_folder=os.path.join(LOG_FOLDER, "test_repeat_filter"))
     assert len(logger.file_handlers) == 1
     file_handler = logger.file_handlers[0]
 
@@ -165,3 +208,15 @@ def test_repeat_filter() -> None:
         assert get_number_of_lines_in_logfile(file_handler) == 1 + (
             nb_repeats_allowed + 1
         )
+
+    # Clean-up
+    clear_graphnet_loggers()
+
+
+if __name__ == "__main__":
+    test_logging_levels()
+    test_logging_levels_for_different_loggers()
+    test_log_folder()
+    test_logger_properties()
+    test_warning_once()
+    test_repeat_filter()
