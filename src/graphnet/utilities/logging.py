@@ -20,10 +20,12 @@ WARNINGS: Set[str] = set()
 class RepeatFilter(logging.Filter):
     """Filter out repeat messages."""
 
+    # Class variable(s)
+    nb_repeats_allowed = 20
+
     def __init__(self) -> None:
         """Construct `RepeatFilter`."""
         self._messages: typing.Counter[str] = Counter()
-        self.nb_repeats_allowed = 20
 
     def filter(self, record: logging.LogRecord) -> bool:
         """Filter messages printed more than `nb_repeats_allowed` times."""
@@ -45,6 +47,10 @@ class Logger:
 
     This class ensures that all logging is clear and intuitive, is done to the
     same file when using multiple workers, etc.
+
+    Composition, rather than inheritance from `logging.LoggerAdapter` is chosen
+    to avoid clashing names of member variables/properties with e.g.
+    `pytorch_lightning.LightningModule`.
     """
 
     @classmethod
@@ -80,12 +86,12 @@ class Logger:
 
     @classmethod
     def _configure_root_logger(cls, log_folder: Optional[str]) -> None:
-        print(f"_configure_root_logger(log_folder={log_folder})")
         # Get logging formatters
         _, colored_formatter = cls._get_formatters()
 
         # Create logger
         logger = cls._get_root_logger()
+        logger.setLevel(logger.level or logging.INFO)
 
         # Add duplicate filter if none has been added.
         if not any([isinstance(f, RepeatFilter) for f in logger.filters]):
@@ -137,12 +143,21 @@ class Logger:
         if not root.hasHandlers():
             cls._configure_root_logger(log_folder)
 
-        # Also configure if no FileHandler is found, but a log folder is
-        # specified.
-        elif (log_folder is not None) and not any(
-            [isinstance(h, logging.FileHandler) for h in root.handlers]
-        ):
-            cls._configure_root_logger(log_folder)
+        # Also configure if no FileHandler is found and/or but a new log folder
+        # is specified.
+        elif log_folder is not None:
+            file_handlers = [
+                h for h in root.handlers if isinstance(h, logging.FileHandler)
+            ]
+            logfiles = [fh.baseFilename for fh in file_handlers]
+
+            # Check if any of the existing log files are located within the
+            # requested log folder. Otherwise re-configure with a new
+            # FileHandler.
+            if not any(
+                [lf.startswith(os.path.abspath(log_folder)) for lf in logfiles]
+            ):
+                cls._configure_root_logger(log_folder)
 
     def __init__(
         self,
@@ -165,6 +180,10 @@ class Logger:
 
         # Base class constructor
         super().__init__(**kwargs)
+
+    def setLevel(self, level: int) -> None:
+        """Delegate `setLevel` call to member logger."""
+        self._logger.setLevel(level)
 
     def critical(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate a critical call to member logger."""
@@ -212,3 +231,15 @@ class Logger:
     def handlers(self) -> List[logging.Handler]:
         """Return list of handlers for base `Logger`."""
         return self._logger.logger.handlers
+
+    @property
+    def file_handlers(self) -> List[logging.FileHandler]:
+        """Return list of `FileHandler`s for base `Logger`."""
+        return [h for h in self.handlers if isinstance(h, logging.FileHandler)]
+
+    @property
+    def stream_handlers(self) -> List[logging.StreamHandler]:
+        """Return list of `StreamHandler`s for base `Logger`."""
+        return [
+            h for h in self.handlers if isinstance(h, logging.StreamHandler)
+        ]
