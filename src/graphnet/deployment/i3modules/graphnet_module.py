@@ -180,6 +180,7 @@ class I3InferenceModule(GraphNeTI3Module):
             )
         else:
             self.model = model
+        self.model.inference()
 
         self.model.to("cpu")
 
