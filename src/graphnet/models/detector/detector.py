@@ -27,7 +27,7 @@ class Detector(Model):
     ):
         """Construct `Detector`."""
         # Base class constructor
-        super().__init__()
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Member variables
         self._graph_builder = graph_builder

@@ -9,13 +9,13 @@ from typing import List, Optional, Tuple, TYPE_CHECKING
 
 import pandas as pd
 
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 
 if TYPE_CHECKING:
     from graphnet.data.dataset import Dataset
 
 
-class StringSelectionResolver(LoggerMixin):
+class StringSelectionResolver(Logger):
     """Resolve string-based selection to event indices.
 
     String-based selection, using in `DatasetConfig`, is a very flexible way of
@@ -59,6 +59,9 @@ class StringSelectionResolver(LoggerMixin):
         self._index_column = index_column
         self._seed = seed
         self._use_cache = use_cache
+
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     # Public method(s)
     def resolve(self, selection: str) -> List[int]:

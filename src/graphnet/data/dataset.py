@@ -1,4 +1,4 @@
-"""Base `Dataset` class(es) used in GraphNeT."""
+"""Base :py:class:`Dataset` class(es) used in GraphNeT."""
 
 from copy import deepcopy
 from abc import ABC, abstractmethod
@@ -26,7 +26,7 @@ from graphnet.utilities.config import (
     DatasetConfig,
     save_dataset_config,
 )
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 from graphnet.data.utilities.string_selection_resolver import (
     StringSelectionResolver,
 )
@@ -36,7 +36,7 @@ class ColumnMissingException(Exception):
     """Exception to indicate a missing column in a dataset."""
 
 
-class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
+class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     """Base Dataset class for reading from any intermediate file format."""
 
     # Class method(s)
@@ -265,6 +265,9 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             seed=seed,
         )
 
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
+
         # Implementation-specific initialisation.
         self._init()
 
@@ -285,9 +288,6 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         # Implementation-specific post-init code.
         self._post_init()
-
-        # Base class constructor
-        super().__init__()
 
     # Properties
     @property

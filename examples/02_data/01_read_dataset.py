@@ -16,10 +16,8 @@ from graphnet.data.dataset import Dataset
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.data.parquet.parquet_dataset import ParquetDataset
 from graphnet.utilities.argparse import ArgumentParser
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import Logger
 
-
-logger = get_logger()
 
 DATASET_CLASS = {
     "sqlite": SQLiteDataset,
@@ -33,6 +31,9 @@ truth = TRUTH.DEEPCORE
 
 def main(backend: str) -> None:
     """Read intermediate file using `Dataset` class."""
+    # Construct Logger
+    logger = Logger()
+
     # Check(s)
     assert backend in DATASET_CLASS
 
@@ -40,7 +41,7 @@ def main(backend: str) -> None:
     pulsemap = "SRTInIcePulses"
     truth_table = "truth"
     batch_size = 128
-    num_workers = 30  # 30
+    num_workers = 30
     wait_time = 0.00  # sec.
 
     for table in [pulsemap, truth_table]:

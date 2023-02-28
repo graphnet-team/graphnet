@@ -19,9 +19,7 @@ from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
 from graphnet.training.loss_functions import LogCoshLoss
 from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
-from graphnet.utilities.logging import get_logger
-
-logger = get_logger()
+from graphnet.utilities.logging import Logger
 
 # Constants
 features = FEATURES.PROMETHEUS
@@ -44,6 +42,9 @@ def main(
     num_workers: int,
 ) -> None:
     """Run example."""
+    # Construct Logger
+    logger = Logger()
+
     # Initialise Weights & Biases (W&B) run
     wandb_logger = WandbLogger(
         project="example-script",

@@ -14,8 +14,6 @@ from graphnet.models import Model
 class GraphBuilder(Model):  # pylint: disable=too-few-public-methods
     """Base class for graph building."""
 
-    pass
-
 
 class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
     """Builds graph from the k-nearest neighbours."""
@@ -28,7 +26,7 @@ class KNNGraphBuilder(GraphBuilder):  # pylint: disable=too-few-public-methods
     ):
         """Construct `KNNGraphBuilder`."""
         # Base class constructor
-        super().__init__()
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Check(s)
         if columns is None:
@@ -68,7 +66,7 @@ class RadialGraphBuilder(GraphBuilder):
     ):
         """Construct `RadialGraphBuilder`."""
         # Base class constructor
-        super().__init__()
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Check(s)
         if columns is None:
@@ -114,7 +112,7 @@ class EuclideanGraphBuilder(
     ):
         """Construct `EuclideanGraphBuilder`."""
         # Base class constructor
-        super().__init__()
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Check(s)
         if columns is None:
