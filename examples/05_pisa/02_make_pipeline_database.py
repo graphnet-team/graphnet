@@ -8,6 +8,8 @@ from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_pisa_package
 from graphnet.utilities.logging import Logger
 
+from _common import ERROR_MESSAGE_MISSING_PISA
+
 
 def get_output_column_names(target: str) -> List[str]:
     """Return the relevant set of output colummn names for `target`."""
@@ -80,16 +82,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     if not has_pisa_package():
-        Logger(log_folder=None).error(
-            "This example requires PISA to be installed, which doesn't seem "
-            "to be the case. Please install PISA or run an example script in "
-            "one of the other folders:"
-            "\n * examples/01_icetray/"
-            "\n * examples/02_data/"
-            "\n * examples/03_weights/"
-            "\n * examples/04_training/"
-            "\nExiting."
-        )
+        Logger(log_folder=None).error(ERROR_MESSAGE_MISSING_PISA)
 
     else:
         # Parse command-line arguments

@@ -22,6 +22,8 @@ if has_icecube_package() or TYPE_CHECKING:
         I3InferenceModule,
     )
 
+from _common_icetray import ERROR_MESSAGE_MISSING_ICETRAY
+
 # Constants
 features = FEATURES.UPGRADE
 truth = TRUTH.UPGRADE
@@ -66,17 +68,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     if not has_icecube_package():
-        Logger(log_folder=None).error(
-            "This example requires IceTray to be installed, which doesn't "
-            "seem to be the case. Please install IceTray; run this example in "
-            "the GraphNeT Docker container which comes with IceTray "
-            "installed; or run an example script in one of the other folders:"
-            "\n * examples/02_data/"
-            "\n * examples/03_weights/"
-            "\n * examples/04_training/"
-            "\n * examples/05_pisa/"
-            "\nExiting."
-        )
+        Logger(log_folder=None).error(ERROR_MESSAGE_MISSING_ICETRAY)
 
     else:
         # Parse command-line arguments
