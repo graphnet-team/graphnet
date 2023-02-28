@@ -1,21 +1,18 @@
-"""Example for EnsembleDataset."""
-
-from timer import timer
+"""Example of combining multiple Datasets using EnsembleDataset."""
 
 import time
+from timer import timer
 import torch.multiprocessing
 import torch.utils.data
 from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
 from graphnet.constants import TEST_SQLITE_DATA
+from graphnet.data import EnsembleDataset
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
-from graphnet.data import EnsembleDataset
-from graphnet.utilities.logging import get_logger
-
-
-logger = get_logger()
+from graphnet.utilities.argparse import ArgumentParser
+from graphnet.utilities.logging import Logger
 
 # Constants
 features = FEATURES.DEEPCORE
@@ -24,6 +21,9 @@ truth = TRUTH.DEEPCORE
 
 def main() -> None:
     """Read intermediate file using `Dataset` class."""
+    # Construct Logger
+    logger = Logger()
+
     # Check(s)
     pulsemap = "SRTInIcePulses"
     truth_table = "truth"
@@ -50,9 +50,9 @@ def main() -> None:
 
     ensemble_dataset = EnsembleDataset(datasets=[dataset_1, dataset_2])
 
-    logger.info(f"dataset_1 have length: {len(dataset_1)}")
-    logger.info(f"dataset_2 have length: {len(dataset_2)}")
-    logger.info(f"EnsembleDataset have length {len(ensemble_dataset)}")
+    logger.info(f"dataset_1 has length: {len(dataset_1)}")
+    logger.info(f"dataset_2 has length: {len(dataset_2)}")
+    logger.info(f"EnsembleDataset has length {len(ensemble_dataset)}")
 
     dataloader = torch.utils.data.DataLoader(
         ensemble_dataset,
@@ -72,4 +72,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    parser = ArgumentParser(
+        description="""
+Combine multiple Datasets using EnsembleDataset.
+"""
+    )
     main()

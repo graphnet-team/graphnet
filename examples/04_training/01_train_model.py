@@ -16,14 +16,12 @@ from graphnet.utilities.config import (
     ModelConfig,
     TrainingConfig,
 )
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import Logger
 
 
 # Make sure W&B output directory exists
 WANDB_DIR = "./wandb/"
 os.makedirs(WANDB_DIR, exist_ok=True)
-
-logger = get_logger()
 
 
 def main(
@@ -38,6 +36,9 @@ def main(
     suffix: Optional[str] = None,
 ) -> None:
     """Run example."""
+    # Construct Logger
+    logger = Logger()
+
     # Initialise Weights & Biases (W&B) run
     wandb_logger = WandbLogger(
         project="example-script",
@@ -79,7 +80,7 @@ def main(
     # Log configurations to W&B
     # NB: Only log to W&B on the rank-zero process in case of multi-GPU
     #     training.
-    if rank_zero_only == 0:
+    if rank_zero_only.rank == 0:
         wandb_logger.experiment.config.update(config)
         wandb_logger.experiment.config.update(model_config.as_dict())
         wandb_logger.experiment.config.update(dataset_config.as_dict())
@@ -112,8 +113,8 @@ def main(
     if prediction_names:
         prediction_columns = prediction_names
 
-    print(f"config.target: {config.target}")
-    print(f"prediction_columns: {prediction_columns}")
+    logger.info(f"config.target: {config.target}")
+    logger.info(f"prediction_columns: {prediction_columns}")
 
     results = model.predict_as_dataframe(
         dataloaders["test"],

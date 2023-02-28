@@ -1,22 +1,10 @@
 """An example of how to apply GraphNetI3Modules in Icetray."""
-from typing import TYPE_CHECKING, List, Dict, Sequence
+
 from glob import glob
 from os.path import join
-
+from typing import TYPE_CHECKING, List, Sequence
 
 from graphnet.data.constants import FEATURES
-from graphnet.models import StandardModel
-from graphnet.models.detector.icecube import IceCubeUpgrade
-from graphnet.models.gnn import DynEdge
-from graphnet.models.graph_builders import KNNGraphBuilder
-from graphnet.models.task.reconstruction import EnergyReconstruction
-from graphnet.utilities.logging import get_logger
-from graphnet.training.loss_functions import LogCoshLoss
-from graphnet.utilities.imports import has_icecube_package, has_torch_package
-from graphnet.deployment.i3modules import (
-    I3InferenceModule,
-    GraphNeTI3Module,
-)
 from graphnet.data.extractors.i3featureextractor import (
     I3FeatureExtractorIceCubeUpgrade,
 )
@@ -24,24 +12,27 @@ from graphnet.constants import (
     TEST_DATA_DIR,
     EXAMPLE_OUTPUT_DIR,
 )
-
+from graphnet.utilities.argparse import ArgumentParser
+from graphnet.utilities.imports import has_icecube_package
+from graphnet.utilities.logging import Logger
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
     from I3Tray import I3Tray
 
-if has_torch_package or TYPE_CHECKING:
-    import torch
-    from torch.optim.adam import Adam
+    from graphnet.deployment.i3modules import (
+        I3InferenceModule,
+        GraphNeTI3Module,
+    )
 
-logger = get_logger()
+from _common_icetray import ERROR_MESSAGE_MISSING_ICETRAY
 
 
 def apply_to_files(
     i3_files: List[str],
     gcd_file: str,
     output_folder: str,
-    modules: Sequence[GraphNeTI3Module],
+    modules: Sequence["GraphNeTI3Module"],
 ) -> None:
     """Will start an IceTray read/write chain with graphnet modules.
 
@@ -109,4 +100,18 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if not has_icecube_package():
+        Logger(log_folder=None).error(ERROR_MESSAGE_MISSING_ICETRAY)
+
+    else:
+        # Parse command-line arguments
+        parser = ArgumentParser(
+            description="""
+Use GraphNeTI3Modules to deploy trained model in native IceTray.
+"""
+        )
+
+        args = parser.parse_args()
+
+        # Run example script
+        main()

@@ -5,10 +5,9 @@ from typing import Any, Union
 
 from graphnet.utilities.config.base_config import BaseConfig
 from graphnet.utilities.decorators import final
-from graphnet.utilities.logging import LoggerMixin
 
 
-class Configurable(LoggerMixin, ABC):
+class Configurable(ABC):
     """Base class for all configurable classes in graphnet."""
 
     def __init__(self) -> None:
@@ -25,11 +24,10 @@ class Configurable(LoggerMixin, ABC):
         try:
             return self._config
         except AttributeError:
-            self.error(
+            raise AttributeError(
                 "Config was not set. "
                 "Did you wrap the class constructor with `save_config`?"
             )
-            raise
 
     @final
     def save_config(self, path: str) -> None:

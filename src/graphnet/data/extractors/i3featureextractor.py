@@ -6,7 +6,6 @@ from graphnet.data.extractors.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import warn_once
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
@@ -74,7 +73,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 self._calibration,
             )
         else:
-            warn_once(self, f"Pulsemap {self._pulsemap} not found in frame.")
+            self.warning_once(f"Pulsemap {self._pulsemap} not found in frame.")
             return output
 
         # Added these :
@@ -211,7 +210,7 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
                 self._calibration,
             )
         else:
-            warn_once(self, f"Pulsemap {self._pulsemap} not found in frame.")
+            self.warning_once(f"Pulsemap {self._pulsemap} not found in frame.")
             return output
 
         for om_key in om_keys:
@@ -268,7 +267,7 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
                 self._calibration,
             )
         else:
-            warn_once(self, f"Pulsemap {self._pulsemap} not found in frame.")
+            self.warning_once(f"Pulsemap {self._pulsemap} not found in frame.")
             return output
 
         for om_key in om_keys:

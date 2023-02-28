@@ -10,15 +10,15 @@ from graphnet.constants import CONFIG_DIR
 from graphnet.data.dataset import Dataset
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.graph_builders import KNNGraphBuilder
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import Logger
 from graphnet.utilities.argparse import ArgumentParser
-
-
-logger = get_logger()
 
 
 def main() -> None:
     """Run example."""
+    # Construct Logger
+    logger = Logger()
+
     # Construct dataloader
     dataset = Dataset.from_config(
         os.path.join(CONFIG_DIR, "datasets/test_data_sqlite.yml")

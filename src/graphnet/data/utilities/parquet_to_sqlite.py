@@ -10,10 +10,10 @@ import pandas as pd
 from tqdm.auto import trange
 
 from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 
 
-class ParquetToSQLiteConverter(LoggerMixin):
+class ParquetToSQLiteConverter(Logger):
     """Convert Parquet files to a SQLite database.
 
     Each event in the parquet file(s) are assigned a unique event id. By
@@ -50,6 +50,9 @@ class ParquetToSQLiteConverter(LoggerMixin):
             self._excluded_fields = []
         self._mc_truth_table = mc_truth_table
         self._event_counter = 0
+
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     def _find_parquet_files(self, paths: Union[str, List[str]]) -> List[str]:
         if isinstance(paths, str):

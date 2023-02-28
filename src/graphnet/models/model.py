@@ -10,17 +10,17 @@ import numpy as np
 import pandas as pd
 from pytorch_lightning import Trainer, LightningModule
 from pytorch_lightning.callbacks.callback import Callback
-from pytorch_lightning.loggers.logger import Logger
+from pytorch_lightning.loggers.logger import Logger as LightningLogger
 import torch
 from torch import Tensor
 from torch.utils.data import DataLoader, SequentialSampler
 from torch_geometric.data import Data
 
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 from graphnet.utilities.config import Configurable, ModelConfig
 
 
-class Model(Configurable, LightningModule, LoggerMixin, ABC):
+class Model(Logger, Configurable, LightningModule, ABC):
     """Base class for all models in graphnet."""
 
     @abstractmethod
@@ -33,7 +33,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
         ckpt_path: Optional[str] = None,
-        logger: Optional[Logger] = None,
+        logger: Optional[LightningLogger] = None,
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",
@@ -81,7 +81,7 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
         ckpt_path: Optional[str] = None,
-        logger: Optional[Logger] = None,
+        logger: Optional[LightningLogger] = None,
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",

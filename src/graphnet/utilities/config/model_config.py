@@ -12,7 +12,6 @@ from typing import (
     Union,
 )
 
-import graphnet
 from graphnet.utilities.config.base_config import (
     BaseConfig,
     get_all_argument_values,
@@ -118,6 +117,10 @@ class ModelConfig(BaseConfig):
             exec(f"import {module}", globals())
 
         # Get a lookup for all classes in `graphnet`
+        import graphnet.data
+        import graphnet.models
+        import graphnet.training
+
         namespace_classes = get_all_grapnet_classes(
             graphnet.data, graphnet.models, graphnet.training
         )
