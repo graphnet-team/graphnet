@@ -16,7 +16,7 @@ from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
 
-from _common import ERROR_MESSAGE_MISSING_ICETRAY
+from _common_icetray import ERROR_MESSAGE_MISSING_ICETRAY
 
 CONVERTER_CLASS = {
     "sqlite": SQLiteDataConverter,

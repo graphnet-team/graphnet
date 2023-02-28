@@ -8,7 +8,7 @@ from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_pisa_package
 from graphnet.utilities.logging import Logger
 
-from _common import ERROR_MESSAGE_MISSING_PISA
+from _common_pisa import ERROR_MESSAGE_MISSING_PISA
 
 
 def get_output_column_names(target: str) -> List[str]:
