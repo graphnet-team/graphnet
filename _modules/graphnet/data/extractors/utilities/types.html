@@ -333,9 +333,8 @@
     <span class="n">get_om_keys_and_pulseseries</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">warn_once</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
 
 <span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">():</span>
     <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="p">(</span>
@@ -384,9 +383,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">hash_</span> <span class="o">=</span> <span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="n">fn</span><span class="p">),</span> <span class="nb">hash</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">hash_</span> <span class="ow">in</span> <span class="n">BEING_EVALUATED</span><span class="p">:</span>
-                <span class="n">warn_once</span><span class="p">(</span>
-                    <span class="n">logger</span><span class="p">,</span>
-                    <span class="s2">"break_cyclic_recursion - Already evaluating object. Skipping recusion."</span><span class="p">,</span>
+                <span class="n">Logger</span><span class="p">()</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+                    <span class="s2">"break_cyclic_recursion - Already evaluating object. "</span>
+                    <span class="s2">"Skipping recusion."</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">return</span>
             <span class="n">BEING_EVALUATED</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hash_</span><span class="p">)</span>
@@ -462,6 +461,7 @@
 <span class="sd">    objects to list and dict-like objects to list, and otherwise return the</span>
 <span class="sd">    object itself if it deemed "pythonic" in this way.</span>
 <span class="sd">    """</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Value: </span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Type: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
@@ -571,7 +571,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">om_data</span> <span class="o">=</span> <span class="n">flatten_nested_dictionary</span><span class="p">(</span><span class="n">om_data</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Couldn't call `flatten_nested_dictionary` on:"</span><span class="p">)</span>
+            <span class="n">Logger</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Couldn't call `flatten_nested_dictionary` on:"</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">om_data</span><span class="p">)</span>
             <span class="k">raise</span>
 

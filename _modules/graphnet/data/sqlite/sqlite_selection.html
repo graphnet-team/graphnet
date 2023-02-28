@@ -326,10 +326,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 
 
 <div class="viewcode-block" id="get_desired_event_numbers"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_selection.html#graphnet.data.sqlite.sqlite_selection.get_desired_event_numbers">[docs]</a><span class="k">def</span> <span class="nf">get_desired_event_numbers</span><span class="p">(</span>
@@ -357,6 +355,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        List of event numbers.</span>
 <span class="sd">    """</span>
+    <span class="c1"># Construct Logger</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
     <span class="k">assert</span> <span class="p">(</span>
         <span class="n">fraction_noise</span>
         <span class="o">+</span> <span class="n">fraction_muon</span>
@@ -470,7 +471,7 @@
     <span class="c1"># Subsample events for each PID to the smallest sample size</span>
     <span class="n">samples_sizes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">pid_indicies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="n">smallest_sample_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_sizes</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Smallest sample size: </span><span class="si">{</span><span class="n">smallest_sample_size</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">Logger</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Smallest sample size: </span><span class="si">{</span><span class="n">smallest_sample_size</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span>
@@ -596,6 +597,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Tuple containing lists of training and test event numbers, resp.</span>
 <span class="sd">    """</span>
+    <span class="c1"># Construct Logger</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
     <span class="c1"># Common variables</span>
     <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"12"</span><span class="p">,</span> <span class="s2">"14"</span><span class="p">,</span> <span class="s2">"16"</span><span class="p">]</span>
     <span class="n">non_dbangs_indicies</span> <span class="o">=</span> <span class="p">{}</span>

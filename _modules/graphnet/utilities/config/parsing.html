@@ -332,9 +332,7 @@
     <span class="n">Optional</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
-
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 
 
 <div class="viewcode-block" id="traverse_and_apply"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.traverse_and_apply">[docs]</a><span class="k">def</span> <span class="nf">traverse_and_apply</span><span class="p">(</span>
@@ -385,7 +383,7 @@
         <span class="n">new_classes</span> <span class="o">=</span> <span class="n">get_graphnet_classes</span><span class="p">(</span><span class="n">submodule</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_classes</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">classes</span> <span class="ow">and</span> <span class="n">classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">new_classes</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="n">Logger</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">"Class </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> found in both </span><span class="si">{</span><span class="n">classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2"> and "</span>
                     <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">new_classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">. Keeping first instance. "</span>
                     <span class="s2">"Consider renaming."</span>
@@ -410,7 +408,7 @@
 <div class="viewcode-block" id="get_graphnet_classes"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.get_graphnet_classes">[docs]</a><span class="k">def</span> <span class="nf">get_graphnet_classes</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return a lookup of all graphnet class names in `module`."""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_graphnet_module</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2"> is not a graphnet module"</span><span class="p">)</span>
+        <span class="n">Logger</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2"> is not a graphnet module"</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{}</span>
     <span class="n">classes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">key</span><span class="p">:</span> <span class="n">val</span>

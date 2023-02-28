@@ -348,7 +348,7 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `Detector`."""</span>
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
         <span class="c1"># Member variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_graph_builder</span> <span class="o">=</span> <span class="n">graph_builder</span>

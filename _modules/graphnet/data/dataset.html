@@ -319,7 +319,7 @@
           <article class="md-content__inner md-typeset" role="main">
             
   <h1 id="modules-graphnet-data-dataset--page-root">Source code for graphnet.data.dataset</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Base `Dataset` class(es) used in GraphNeT."""</span>
+<span></span><span class="sd">"""Base :py:class:`Dataset` class(es) used in GraphNeT."""</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -347,7 +347,7 @@
     <span class="n">DatasetConfig</span><span class="p">,</span>
     <span class="n">save_dataset_config</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.utilities.string_selection_resolver</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">StringSelectionResolver</span><span class="p">,</span>
 <span class="p">)</span>
@@ -357,7 +357,7 @@
 <span class="w">    </span><span class="sd">"""Exception to indicate a missing column in a dataset."""</span></div>
 
 
-<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Configurable</span><span class="p">,</span> <span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">Logger</span><span class="p">,</span> <span class="n">Configurable</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Base Dataset class for reading from any intermediate file format."""</span>
 
     <span class="c1"># Class method(s)</span>
@@ -586,6 +586,9 @@
             <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
         <span class="p">)</span>
 
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
         <span class="c1"># Implementation-specific initialisation.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
 
@@ -606,9 +609,6 @@
 
         <span class="c1"># Implementation-specific post-init code.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span>
-
-        <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
     <span class="c1"># Properties</span>
     <span class="nd">@property</span>

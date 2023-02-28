@@ -326,10 +326,9 @@
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config.base_config</span> <span class="kn">import</span> <span class="n">BaseConfig</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.decorators</span> <span class="kn">import</span> <span class="n">final</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
 
 
-<div class="viewcode-block" id="Configurable"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable">[docs]</a><span class="k">class</span> <span class="nc">Configurable</span><span class="p">(</span><span class="n">LoggerMixin</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="Configurable"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable">[docs]</a><span class="k">class</span> <span class="nc">Configurable</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Base class for all configurable classes in graphnet."""</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -346,11 +345,10 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
                 <span class="s2">"Config was not set. "</span>
                 <span class="s2">"Did you wrap the class constructor with `save_config`?"</span>
             <span class="p">)</span>
-            <span class="k">raise</span>
 
 <div class="viewcode-block" id="Configurable.save_config"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable.save_config">[docs]</a>    <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

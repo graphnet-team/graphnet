@@ -322,182 +322,257 @@
 <span></span><span class="sd">"""Consistent and configurable logging across `graphnet`."""</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">import</span> <span class="nn">typing</span>
 <span class="kn">import</span> <span class="nn">colorlog</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="c1"># Constants</span>
 <span class="n">LOGGER_NAME</span> <span class="o">=</span> <span class="s2">"graphnet"</span>
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">LOG_FOLDER</span> <span class="o">=</span> <span class="s2">"logs"</span>
-
-
-<span class="c1"># Utility method(s)</span>
-<div class="viewcode-block" id="set_logging_level"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.set_logging_level">[docs]</a><span class="k">def</span> <span class="nf">set_logging_level</span><span class="p">(</span><span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Set the logging level for all loggers."""</span>
-    <span class="k">global</span> <span class="n">LOGGER</span>
-    <span class="k">if</span> <span class="n">LOGGER</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">get_logger</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="get_formatters"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.get_formatters">[docs]</a><span class="k">def</span> <span class="nf">get_formatters</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">,</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">ColoredFormatter</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">"""Get coloured and non-coloured logging formatters."""</span>
-    <span class="c1"># Common configuration</span>
-    <span class="n">colorlog_format</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;34m</span><span class="si">%(name)s</span><span class="se">\033</span><span class="s2">[0m: "</span>
-        <span class="s2">"</span><span class="si">%(log_color)s%(levelname)-8s</span><span class="se">\033</span><span class="s2">[0m "</span>
-        <span class="s2">"</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(className)s%(funcName)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">"</span>
-    <span class="p">)</span>
-    <span class="n">basic_format</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\x1b\[[0-9;,]*m"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">colorlog_format</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-        <span class="s2">"</span><span class="si">%(log_color)s</span><span class="s2">"</span><span class="p">,</span> <span class="s2">""</span>
-    <span class="p">)</span>
-    <span class="n">datefmt</span> <span class="o">=</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span>
-
-    <span class="c1"># Formatters</span>
-    <span class="n">colored_formatter</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">ColoredFormatter</span><span class="p">(</span>
-        <span class="n">colorlog_format</span><span class="p">,</span>
-        <span class="n">datefmt</span><span class="o">=</span><span class="n">datefmt</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">basic_formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-        <span class="n">basic_format</span><span class="p">,</span>
-        <span class="n">datefmt</span><span class="o">=</span><span class="n">datefmt</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">basic_formatter</span><span class="p">,</span> <span class="n">colored_formatter</span></div>
-
-
-<div class="viewcode-block" id="warn_once"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.warn_once">[docs]</a><span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">warn_once</span><span class="p">(</span><span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Print `message` as warning exactly once."""</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+<span class="n">WARNINGS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="RepeatFilter"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.RepeatFilter">[docs]</a><span class="k">class</span> <span class="nc">RepeatFilter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Filter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Filter out repeat messages."""</span>
 
+    <span class="c1"># Class variable(s)</span>
+    <span class="n">nb_repeats_allowed</span> <span class="o">=</span> <span class="mi">20</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Construct `RepeatFilter`."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Counter</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span> <span class="o">=</span> <span class="mi">20</span>
 
 <div class="viewcode-block" id="RepeatFilter.filter"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.RepeatFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Filter messages printed more than `nb_repeats_allowed` times."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span><span class="p">:</span>
-            <span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="n">record</span><span class="o">.</span><span class="n">levelno</span><span class="p">,</span>
                 <span class="s2">"Will not print the below message again "</span>
-                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span><span class="si">}</span><span class="s2"> repeats reached)."</span>
+                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span><span class="si">}</span><span class="s2"> repeats reached)."</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_repeats_allowed</span></div></div>
 
 
-<div class="viewcode-block" id="get_logger"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.get_logger">[docs]</a><span class="k">def</span> <span class="nf">get_logger</span><span class="p">(</span>
-    <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">log_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">LOG_FOLDER</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Get `logger` instance, to be used in place of `print()`.</span>
+<div class="viewcode-block" id="Logger"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger">[docs]</a><span class="k">class</span> <span class="nc">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Class for handling logging across graphnet.</span>
 
-<span class="sd">    The logger will print the specified level of output to the terminal, and</span>
-<span class="sd">    will also save debug output to file.</span>
+<span class="sd">    This class ensures that all logging is clear and intuitive, is done to the</span>
+<span class="sd">    same file when using multiple workers, etc.</span>
+
+<span class="sd">    Composition, rather than inheritance from `logging.LoggerAdapter` is chosen</span>
+<span class="sd">    to avoid clashing names of member variables/properties with e.g.</span>
+<span class="sd">    `pytorch_lightning.LightningModule`.</span>
 <span class="sd">    """</span>
-    <span class="k">global</span> <span class="n">LOGGER</span>
-    <span class="k">if</span> <span class="n">LOGGER</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">set_logging_level</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LOGGER</span>
 
-    <span class="k">if</span> <span class="n">level</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_formatters</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">,</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">ColoredFormatter</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Get coloured and non-coloured logging formatters."""</span>
+        <span class="c1"># Common configuration</span>
+        <span class="n">colorlog_format</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\033</span><span class="s2">[1;34m</span><span class="si">{</span><span class="n">LOGGER_NAME</span><span class="si">}</span><span class="se">\033</span><span class="s2">[0m [%(processName)s] "</span>
+            <span class="s2">"</span><span class="si">%(log_color)s%(levelname)-8s</span><span class="se">\033</span><span class="s2">[0m "</span>
+            <span class="s2">"</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(className)s%(funcName)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="n">basic_format</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\x1b\[[0-9;,]*m"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">colorlog_format</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s2">"</span><span class="si">%(log_color)s</span><span class="s2">"</span><span class="p">,</span> <span class="s2">""</span>
+        <span class="p">)</span>
+        <span class="n">datefmt</span> <span class="o">=</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span>
 
-    <span class="n">_</span><span class="p">,</span> <span class="n">colored_formatter</span> <span class="o">=</span> <span class="n">get_formatters</span><span class="p">()</span>
+        <span class="c1"># Formatters</span>
+        <span class="n">colored_formatter</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">ColoredFormatter</span><span class="p">(</span>
+            <span class="n">colorlog_format</span><span class="p">,</span>
+            <span class="n">datefmt</span><span class="o">=</span><span class="n">datefmt</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">basic_formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+            <span class="n">basic_format</span><span class="p">,</span>
+            <span class="n">datefmt</span><span class="o">=</span><span class="n">datefmt</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">basic_formatter</span><span class="p">,</span> <span class="n">colored_formatter</span>
 
-    <span class="c1"># Create logger</span>
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_root_logger</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
 
-    <span class="c1"># Add duplicate filter</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">RepeatFilter</span><span class="p">())</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_configure_root_logger</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">log_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Get logging formatters</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">colored_formatter</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_formatters</span><span class="p">()</span>
 
-    <span class="c1"># Add stream handler</span>
-    <span class="n">stream_handler</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-    <span class="n">stream_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
-    <span class="n">stream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">colored_formatter</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">stream_handler</span><span class="p">)</span>
+        <span class="c1"># Create logger</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_root_logger</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="ow">or</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
-    <span class="c1"># Add file handler</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">log_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">timestamp</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
-        <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="n">log_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">LOGGER_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.log"</span><span class="p">)</span>
+        <span class="c1"># Add duplicate filter if none has been added.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">RepeatFilter</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">filters</span><span class="p">]):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">RepeatFilter</span><span class="p">())</span>
 
-    <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
-    <span class="n">stream_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">colored_formatter</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+        <span class="c1"># Add stream handler if none has been added.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">stream_handler</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="n">stream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">colored_formatter</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">stream_handler</span><span class="p">)</span>
 
-    <span class="c1"># Make className empty by default</span>
-    <span class="n">logger_adapter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">"className"</span><span class="p">:</span> <span class="s2">""</span><span class="p">})</span>
+        <span class="c1"># Add file handler if log folder is specified.</span>
+        <span class="k">if</span> <span class="n">log_folder</span><span class="p">:</span>
 
-    <span class="n">logger_adapter</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Writing log to </span><span class="se">\033</span><span class="s2">[1m</span><span class="si">{</span><span class="n">log_path</span><span class="si">}</span><span class="se">\033</span><span class="s2">[0m"</span><span class="p">)</span>
+            <span class="c1"># If a specific logfile name</span>
+            <span class="k">if</span> <span class="n">log_folder</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".log"</span><span class="p">):</span>
+                <span class="n">log_path</span><span class="p">,</span> <span class="n">log_folder</span> <span class="o">=</span> <span class="n">log_folder</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">log_folder</span><span class="p">)</span>
 
-    <span class="c1"># Have pytorch lightning write to same log file</span>
-    <span class="n">pl_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"pytorch_lightning"</span><span class="p">)</span>
-    <span class="n">pl_file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
-    <span class="n">pl_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">pl_file_handler</span><span class="p">)</span>
+            <span class="c1"># If a logfile directory</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
+                    <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">log_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">log_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"graphnet_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.log"</span>
+                <span class="p">)</span>
 
-    <span class="c1"># Store as global variable</span>
-    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logger_adapter</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">log_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">LOGGER</span></div>
+            <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+            <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+            <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">colored_formatter</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="LoggerMixin"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.LoggerMixin">[docs]</a><span class="k">class</span> <span class="nc">LoggerMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Class for enabling logging directly from inheriting classes."""</span>
-
-    <span class="k">def</span> <span class="nf">_get_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Construct Logger instance if not already done."""</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_logger"</span><span class="p">):</span>
-            <span class="n">logger_base</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
-            <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">(</span>
-                <span class="n">logger_base</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">"className"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">"."</span><span class="p">}</span>
+            <span class="n">stacklevel</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span><span class="s2">"stacklevel"</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Writing log to </span><span class="se">\033</span><span class="s2">[1m</span><span class="si">{</span><span class="n">log_path</span><span class="si">}</span><span class="se">\033</span><span class="s2">[0m"</span><span class="p">,</span>
+                <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">"className"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">"."</span><span class="p">},</span>
+                <span class="o">**</span><span class="n">stacklevel</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logger</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span>
 
-<div class="viewcode-block" id="LoggerMixin.critical"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.LoggerMixin.critical">[docs]</a>    <span class="k">def</span> <span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Have pytorch lightning write to same log file</span>
+            <span class="n">pl_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"pytorch_lightning"</span><span class="p">)</span>
+            <span class="n">pl_file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+            <span class="n">pl_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">pl_file_handler</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_make_sure_root_logger_is_configured</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">log_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">LOG_FOLDER</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_root_logger</span><span class="p">()</span>
+        <span class="c1"># Always configure if no handlers are found.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="o">.</span><span class="n">hasHandlers</span><span class="p">():</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_configure_root_logger</span><span class="p">(</span><span class="n">log_folder</span><span class="p">)</span>
+
+        <span class="c1"># Also configure if no FileHandler is found and/or but a new log folder</span>
+        <span class="c1"># is specified.</span>
+        <span class="k">elif</span> <span class="n">log_folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">file_handlers</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">handlers</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">logfiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">fh</span><span class="o">.</span><span class="n">baseFilename</span> <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">file_handlers</span><span class="p">]</span>
+
+            <span class="c1"># Check if any of the existing log files are located within the</span>
+            <span class="c1"># requested log folder. Otherwise re-configure with a new</span>
+            <span class="c1"># FileHandler.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">lf</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">log_folder</span><span class="p">))</span> <span class="k">for</span> <span class="n">lf</span> <span class="ow">in</span> <span class="n">logfiles</span><span class="p">]</span>
+            <span class="p">):</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_configure_root_logger</span><span class="p">(</span><span class="n">log_folder</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+        <span class="n">log_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">LOG_FOLDER</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `Logger`."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_sure_root_logger_is_configured</span><span class="p">(</span><span class="n">log_folder</span><span class="p">)</span>
+
+        <span class="c1"># Create logger</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">colorlog</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="n">LOGGER_NAME</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+            <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">"className"</span><span class="p">:</span> <span class="n">class_name</span> <span class="o">+</span> <span class="s2">"."</span> <span class="k">if</span> <span class="n">class_name</span> <span class="k">else</span> <span class="s2">""</span><span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Logger.setLevel"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.setLevel">[docs]</a>    <span class="k">def</span> <span class="nf">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Delegate `setLevel` call to member logger."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Logger.critical"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.critical">[docs]</a>    <span class="k">def</span> <span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Delegate a critical call to member logger."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stacklevel"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LoggerMixin.error"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.LoggerMixin.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Logger.error"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Delegate an error call to member logger."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stacklevel"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LoggerMixin.warning"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.LoggerMixin.warning">[docs]</a>    <span class="k">def</span> <span class="nf">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Logger.warning"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.warning">[docs]</a>    <span class="k">def</span> <span class="nf">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Delegate a warning call to member logger."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stacklevel"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LoggerMixin.info"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.LoggerMixin.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Logger.info"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Delegate an info call to member logger."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stacklevel"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LoggerMixin.debug"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.LoggerMixin.debug">[docs]</a>    <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Logger.debug"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.debug">[docs]</a>    <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Delegate a debug call to member logger."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stacklevel"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Logger.warning_once"><a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.warning_once">[docs]</a>    <span class="k">def</span> <span class="nf">warning_once</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Print `msg` as warning exactly once."""</span>
+        <span class="k">global</span> <span class="n">WARNINGS</span>
+        <span class="k">if</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">WARNINGS</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">WARNINGS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return list of handlers for base `Logger`."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">file_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return list of `FileHandler`s for base `Logger`."""</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">handlers</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stream_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return list of `StreamHandler`s for base `Logger`."""</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">handlers</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">)</span>
+        <span class="p">]</span></div>
 </pre></div>
 
           </article>

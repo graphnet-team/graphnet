@@ -329,21 +329,17 @@
     <span class="n">List</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
-    <span class="n">Sequence</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config.base_config</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseConfig</span><span class="p">,</span>
     <span class="n">get_all_argument_values</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
 
 <span class="n">BACKEND_LOOKUP</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"db"</span><span class="p">:</span> <span class="s2">"sqlite"</span><span class="p">,</span>
     <span class="s2">"parquet"</span><span class="p">:</span> <span class="s2">"parquet"</span><span class="p">,</span>
 <span class="p">}</span>
-
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="DatasetConfig"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.dataset_config.html#graphnet.utilities.config.dataset_config.DatasetConfig">[docs]</a><span class="k">class</span> <span class="nc">DatasetConfig</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>

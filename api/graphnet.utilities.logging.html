@@ -387,31 +387,35 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-utilities-logging--page-root" class="md-nav__link">logging</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.set_logging_level" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_logging_level()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.get_formatters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_formatters()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.warn_once" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warn_once()</span></code></a>
-        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.logging.RepeatFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RepeatFilter</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.RepeatFilter.nb_repeats_allowed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_repeats_allowed</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.logging.RepeatFilter.filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">filter()</span></code></a>
         </li></ul>
             </nav>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.get_logger" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_logger()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.critical" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">critical()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.setLevel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">setLevel()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.error" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">error()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.critical" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">critical()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.warning" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.error" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">error()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.warning" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.debug" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">debug()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.debug" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">debug()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.warning_once" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning_once()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">handlers</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.file_handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">file_handlers</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.stream_handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stream_handlers</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -423,29 +427,15 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.utilities.logging.set_logging_level" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_logging_level()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.utilities.logging.get_formatters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_formatters()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.utilities.logging.warn_once" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warn_once()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
       <a href="#graphnet.utilities.logging.RepeatFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RepeatFilter</span></code></a>
       <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.logging.RepeatFilter.nb_repeats_allowed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_repeats_allowed</span></code></a>
+      
+    
+    </li>
     <li class="md-nav__item">
     
     
@@ -458,47 +448,75 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.utilities.logging.get_logger" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_logger()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.utilities.logging.LoggerMixin" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a>
+      <a href="#graphnet.utilities.logging.Logger" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.utilities.logging.LoggerMixin.critical" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">critical()</span></code></a>
+      <a href="#graphnet.utilities.logging.Logger.setLevel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">setLevel()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.utilities.logging.LoggerMixin.error" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">error()</span></code></a>
+      <a href="#graphnet.utilities.logging.Logger.critical" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">critical()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.utilities.logging.LoggerMixin.warning" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning()</span></code></a>
+      <a href="#graphnet.utilities.logging.Logger.error" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">error()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.utilities.logging.LoggerMixin.info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a>
+      <a href="#graphnet.utilities.logging.Logger.warning" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.utilities.logging.LoggerMixin.debug" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">debug()</span></code></a>
+      <a href="#graphnet.utilities.logging.Logger.info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.logging.Logger.debug" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">debug()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.logging.Logger.warning_once" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning_once()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.logging.Logger.handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">handlers</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.logging.Logger.file_handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">file_handlers</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.logging.Logger.stream_handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stream_handlers</span></code></a>
       
     
     </li></ul>
@@ -540,31 +558,35 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-utilities-logging--page-root" class="md-nav__link">logging</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.set_logging_level" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_logging_level()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.get_formatters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_formatters()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.warn_once" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warn_once()</span></code></a>
-        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.logging.RepeatFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RepeatFilter</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.RepeatFilter.nb_repeats_allowed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_repeats_allowed</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.logging.RepeatFilter.filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">filter()</span></code></a>
         </li></ul>
             </nav>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.get_logger" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_logger()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LoggerMixin</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.critical" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">critical()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.setLevel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">setLevel()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.error" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">error()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.critical" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">critical()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.warning" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.error" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">error()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.warning" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.logging.LoggerMixin.debug" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">debug()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.debug" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">debug()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.warning_once" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">warning_once()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">handlers</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.file_handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">file_handlers</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.logging.Logger.stream_handlers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stream_handlers</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -582,45 +604,6 @@
   <section id="module-graphnet.utilities.logging">
 <span id="logging"></span><h1 id="api-graphnet-utilities-logging--page-root">logging<a class="headerlink" href="#api-graphnet-utilities-logging--page-root" title="Permalink to this heading">¶</a></h1>
 <p>Consistent and configurable logging across <cite>graphnet</cite>.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.set_logging_level">
-<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">set_logging_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#set_logging_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.set_logging_level" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the logging level for all loggers.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>level</strong> (<em>int</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.get_formatters">
-<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">get_formatters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#get_formatters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.get_formatters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get coloured and non-coloured logging formatters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Formatter</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ColoredFormatter</span></code>]</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.warn_once">
-<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">warn_once</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#warn_once"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.warn_once" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print <cite>message</cite> as warning exactly once.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>logger</strong> (<em>Logger</em>) – </p></li>
-<li><p><strong>message</strong> (<em>str</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.utilities.logging.RepeatFilter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">RepeatFilter</span></span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#RepeatFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.RepeatFilter" title="Permalink to this definition">¶</a></dt>
@@ -629,6 +612,10 @@
 <p>Construct <cite>RepeatFilter</cite>.</p>
 <dl class="field-list simple">
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.RepeatFilter.nb_repeats_allowed">
+<span class="sig-name descname"><span class="pre">nb_repeats_allowed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#graphnet.utilities.logging.RepeatFilter.nb_repeats_allowed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.utilities.logging.RepeatFilter.filter">
 <span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#RepeatFilter.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.RepeatFilter.filter" title="Permalink to this definition">¶</a></dt>
@@ -643,32 +630,44 @@
 </dl>
 </dd></dl>
 </dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.get_logger">
-<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">get_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_folder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#get_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.get_logger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get <cite>logger</cite> instance, to be used in place of <cite>print()</cite>.</p>
-<p>The logger will print the specified level of output to the terminal, and
-will also save debug output to file.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">Logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#Logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.Logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for handling logging across graphnet.</p>
+<p>This class ensures that all logging is clear and intuitive, is done to the
+same file when using multiple workers, etc.</p>
+<p>Composition, rather than inheritance from <cite>logging.LoggerAdapter</cite> is chosen
+to avoid clashing names of member variables/properties with e.g.
+<cite>pytorch_lightning.LightningModule</cite>.</p>
+<p>Construct <cite>Logger</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerAdapter</span></code></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>level</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – </p></li>
-<li><p><strong>log_folder</strong> (<em>str</em>) – </p></li>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>class_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>level</strong> (<em>int</em>) – </p></li>
+<li><p><strong>log_folder</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.logging.</span></span><span class="sig-name descname"><span class="pre">LoggerMixin</span></span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#LoggerMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class for enabling logging directly from inheriting classes.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.critical">
-<span class="sig-name descname"><span class="pre">critical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#LoggerMixin.critical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.critical" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.setLevel">
+<span class="sig-name descname"><span class="pre">setLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#Logger.setLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.Logger.setLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate <cite>setLevel</cite> call to member logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>level</strong> (<em>int</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.critical">
+<span class="sig-name descname"><span class="pre">critical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#Logger.critical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.Logger.critical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delegate a critical call to member logger.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -684,8 +683,8 @@ will also save debug output to file.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.error">
-<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#LoggerMixin.error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.error" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#Logger.error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.Logger.error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delegate an error call to member logger.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -701,8 +700,8 @@ will also save debug output to file.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.warning">
-<span class="sig-name descname"><span class="pre">warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#LoggerMixin.warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.warning" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.warning">
+<span class="sig-name descname"><span class="pre">warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#Logger.warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.Logger.warning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delegate a warning call to member logger.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -718,8 +717,8 @@ will also save debug output to file.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.info">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#LoggerMixin.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#Logger.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.Logger.info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delegate an info call to member logger.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -735,8 +734,8 @@ will also save debug output to file.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.utilities.logging.LoggerMixin.debug">
-<span class="sig-name descname"><span class="pre">debug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#LoggerMixin.debug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.LoggerMixin.debug" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.debug">
+<span class="sig-name descname"><span class="pre">debug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#Logger.debug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.Logger.debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delegate a debug call to member logger.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -750,6 +749,34 @@ will also save debug output to file.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.warning_once">
+<span class="sig-name descname"><span class="pre">warning_once</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/logging.html#Logger.warning_once"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.logging.Logger.warning_once" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print <cite>msg</cite> as warning exactly once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>msg</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.handlers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Handler</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.utilities.logging.Logger.handlers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of handlers for base <cite>Logger</cite>.</p>
+</dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.file_handlers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">FileHandler</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.utilities.logging.Logger.file_handlers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of <cite>FileHandler`s for base `Logger</cite>.</p>
+</dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.utilities.logging.Logger.stream_handlers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stream_handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">StreamHandler</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.utilities.logging.Logger.stream_handlers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of <cite>StreamHandler`s for base `Logger</cite>.</p>
 </dd></dl>
 </dd></dl>
 </section>

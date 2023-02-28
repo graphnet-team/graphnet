@@ -330,13 +330,13 @@
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">graphnet.data.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
 
 
-<div class="viewcode-block" id="StringSelectionResolver"><a class="viewcode-back" href="../../../../api/graphnet.data.utilities.string_selection_resolver.html#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver">[docs]</a><span class="k">class</span> <span class="nc">StringSelectionResolver</span><span class="p">(</span><span class="n">LoggerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="StringSelectionResolver"><a class="viewcode-back" href="../../../../api/graphnet.data.utilities.string_selection_resolver.html#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver">[docs]</a><span class="k">class</span> <span class="nc">StringSelectionResolver</span><span class="p">(</span><span class="n">Logger</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Resolve string-based selection to event indices.</span>
 
 <span class="sd">    String-based selection, using in `DatasetConfig`, is a very flexible way of</span>
@@ -380,6 +380,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span> <span class="o">=</span> <span class="n">index_column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_use_cache</span> <span class="o">=</span> <span class="n">use_cache</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
     <span class="c1"># Public method(s)</span>
 <div class="viewcode-block" id="StringSelectionResolver.resolve"><a class="viewcode-back" href="../../../../api/graphnet.data.utilities.string_selection_resolver.html#graphnet.data.utilities.string_selection_resolver.StringSelectionResolver.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>

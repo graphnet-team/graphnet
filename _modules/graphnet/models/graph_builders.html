@@ -333,9 +333,7 @@
 
 
 <div class="viewcode-block" id="GraphBuilder"><a class="viewcode-back" href="../../../api/graphnet.models.graph_builders.html#graphnet.models.graph_builders.GraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">GraphBuilder</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
-<span class="w">    </span><span class="sd">"""Base class for graph building."""</span>
-
-    <span class="k">pass</span></div>
+<span class="w">    </span><span class="sd">"""Base class for graph building."""</span></div>
 
 
 <div class="viewcode-block" id="KNNGraphBuilder"><a class="viewcode-back" href="../../../api/graphnet.models.graph_builders.html#graphnet.models.graph_builders.KNNGraphBuilder">[docs]</a><span class="k">class</span> <span class="nc">KNNGraphBuilder</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
@@ -349,7 +347,7 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `KNNGraphBuilder`."""</span>
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -389,7 +387,7 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `RadialGraphBuilder`."""</span>
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -435,7 +433,7 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `EuclideanGraphBuilder`."""</span>
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

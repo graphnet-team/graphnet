@@ -333,7 +333,6 @@
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">graphnet</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config.base_config</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseConfig</span><span class="p">,</span>
     <span class="n">get_all_argument_values</span><span class="p">,</span>
@@ -439,6 +438,10 @@
             <span class="n">exec</span><span class="p">(</span><span class="sa">f</span><span class="s2">"import </span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
 
         <span class="c1"># Get a lookup for all classes in `graphnet`</span>
+        <span class="kn">import</span> <span class="nn">graphnet.data</span>
+        <span class="kn">import</span> <span class="nn">graphnet.models</span>
+        <span class="kn">import</span> <span class="nn">graphnet.training</span>
+
         <span class="n">namespace_classes</span> <span class="o">=</span> <span class="n">get_all_grapnet_classes</span><span class="p">(</span>
             <span class="n">graphnet</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">graphnet</span><span class="o">.</span><span class="n">models</span><span class="p">,</span> <span class="n">graphnet</span><span class="o">.</span><span class="n">training</span>
         <span class="p">)</span>

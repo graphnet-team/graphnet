@@ -331,10 +331,10 @@
 <span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">trange</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_utilities</span> <span class="kn">import</span> <span class="n">create_table_and_save_to_sql</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">LoggerMixin</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 
 
-<div class="viewcode-block" id="ParquetToSQLiteConverter"><a class="viewcode-back" href="../../../../api/graphnet.data.utilities.parquet_to_sqlite.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter">[docs]</a><span class="k">class</span> <span class="nc">ParquetToSQLiteConverter</span><span class="p">(</span><span class="n">LoggerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="ParquetToSQLiteConverter"><a class="viewcode-back" href="../../../../api/graphnet.data.utilities.parquet_to_sqlite.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter">[docs]</a><span class="k">class</span> <span class="nc">ParquetToSQLiteConverter</span><span class="p">(</span><span class="n">Logger</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Convert Parquet files to a SQLite database.</span>
 
 <span class="sd">    Each event in the parquet file(s) are assigned a unique event id. By</span>
@@ -371,6 +371,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_excluded_fields</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mc_truth_table</span> <span class="o">=</span> <span class="n">mc_truth_table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_find_parquet_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
