@@ -116,12 +116,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.svg"/>
+    <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -153,8 +150,7 @@
         <a href="../index.html" title="graphnet  documentation"
            class="md-header-nav__button md-logo">
           
-              <img src="../_static/favicon-white.svg" height="26"
-                   alt="graphnet documentation logo">
+            &nbsp;
           
         </a>
       </div>
@@ -254,7 +250,7 @@
   <label class="md-nav__title md-nav__title--site" for="__drawer">
     <a href="../index.html" title="graphnet documentation" class="md-nav__button md-logo">
       
-        <img src="../_static/favicon-white.svg" alt=" logo" width="48" height="48">
+        <img src="../_static/" alt=" logo" width="48" height="48">
       
     </a>
     <a href="../index.html"
@@ -579,10 +575,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>class_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>class_name</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
 <li><p><strong>level</strong> (<em>int</em>) – </p></li>
-<li><p><strong>log_folder</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>log_folder</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
 </dd>
@@ -596,7 +592,7 @@
 <dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>]</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>x</strong> (<em>Union</em><em>[</em><em>Tensor</em><em>, </em><em>Data</em><em>]</em>) – </p>
+<dd class="field-even"><p><strong>x</strong> (<em>Tensor</em><em> | </em><em>Data</em>) – </p>
 </dd>
 </dl>
 </dd></dl>
@@ -611,15 +607,15 @@
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>train_dataloader</strong> (<em>DataLoader</em>) – </p></li>
-<li><p><strong>val_dataloader</strong> (<em>Optional</em><em>[</em><em>DataLoader</em><em>]</em>) – </p></li>
+<li><p><strong>val_dataloader</strong> (<em>DataLoader</em><em> | </em><em>None</em>) – </p></li>
 <li><p><strong>max_epochs</strong> (<em>int</em>) – </p></li>
-<li><p><strong>gpus</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>int</em><em>]</em><em>]</em>) – </p></li>
-<li><p><strong>callbacks</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Callback</em><em>]</em><em>]</em>) – </p></li>
-<li><p><strong>ckpt_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>logger</strong> (<em>Optional</em><em>[</em><em>Logger</em><em>]</em>) – </p></li>
+<li><p><strong>gpus</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>callbacks</strong> (<em>List</em><em>[</em><em>Callback</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+<li><p><strong>ckpt_path</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>logger</strong> (<em>Logger</em><em> | </em><em>None</em>) – </p></li>
 <li><p><strong>log_every_n_steps</strong> (<em>int</em>) – </p></li>
-<li><p><strong>gradient_clip_val</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – </p></li>
-<li><p><strong>distribution_strategy</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>gradient_clip_val</strong> (<em>float</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>distribution_strategy</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
 <li><p><strong>trainer_kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
 </dd>
@@ -637,8 +633,8 @@
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>dataloader</strong> (<em>DataLoader</em>) – </p></li>
-<li><p><strong>gpus</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>int</em><em>]</em><em>]</em>) – </p></li>
-<li><p><strong>distribution_strategy</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>gpus</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>distribution_strategy</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -658,10 +654,10 @@ DataFrame.</p>
 <li><p><strong>dataloader</strong> (<em>DataLoader</em>) – </p></li>
 <li><p><strong>prediction_columns</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
 <li><p><strong>node_level</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>additional_attributes</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>additional_attributes</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – </p></li>
 <li><p><strong>index_column</strong> (<em>str</em>) – </p></li>
-<li><p><strong>gpus</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>int</em><em>]</em><em>]</em>) – </p></li>
-<li><p><strong>distribution_strategy</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>gpus</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>distribution_strategy</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -714,7 +710,7 @@ DataFrame.</p>
 <dd class="field-odd"><p><a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>path</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Dict</em><em>]</em>) – </p>
+<dd class="field-even"><p><strong>path</strong> (<em>str</em><em> | </em><em>Dict</em>) – </p>
 </dd>
 </dl>
 </dd></dl>
@@ -730,7 +726,7 @@ any lambda function expressions contained.</p></li>
 <li><p><strong>load_modules</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – List of modules used in the definition of the model
 which, as a consequence, need to be loaded into the global
 namespace. Defaults to loading <cite>torch</cite>.</p></li>
-<li><p><strong>source</strong> (<em>Union</em><em>[</em><a class="reference internal" href="graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfig" title="graphnet.utilities.config.model_config.ModelConfig"><em>ModelConfig</em></a><em>, </em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>source</strong> (<a class="reference internal" href="graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfig" title="graphnet.utilities.config.model_config.ModelConfig"><em>ModelConfig</em></a><em> | </em><em>str</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -792,7 +788,7 @@ namespace. Defaults to loading <cite>torch</cite>.</p></li>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

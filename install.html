@@ -116,12 +116,9 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/material.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="_static/favicon.svg"/>
+    <link rel="icon" href="_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -153,8 +150,7 @@
         <a href="index.html" title="graphnet  documentation"
            class="md-header-nav__button md-logo">
           
-              <img src="_static/favicon-white.svg" height="26"
-                   alt="graphnet documentation logo">
+            &nbsp;
           
         </a>
       </div>
@@ -259,7 +255,7 @@
   <label class="md-nav__title md-nav__title--site" for="__drawer">
     <a href="index.html" title="graphnet documentation" class="md-nav__button md-logo">
       
-        <img src="_static/favicon-white.svg" alt=" logo" width="48" height="48">
+        <img src="_static/" alt=" logo" width="48" height="48">
       
     </a>
     <a href="index.html"
@@ -405,7 +401,7 @@ $<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </sp
 </pre></div>
 </div>
 </details>
-<p>This should allow you to run the I3 conversion scripts in <span class="xref myst">examples/</span> with your preferred I3 files.</p>
+<p>This should allow you to run the I3 conversion scripts in <a class="reference internal" href="#./examples/"><span class="xref myst">examples/</span></a> with your preferred I3 files.</p>
 </section>
 <section id="installing-stand-alone">
 <h2 id="installing-stand-alone">Installing stand-alone<a class="headerlink" href="#installing-stand-alone" title="Permalink to this heading">¶</a></h2>
@@ -419,7 +415,7 @@ $<span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> <
 <span class="o">(</span>graphnet<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements/torch_macos.txt<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>develop,torch<span class="o">]</span><span class="w">  </span><span class="c1"># On macOS</span>
 </pre></div>
 </div>
-<p>This should allow you to e.g. run the scripts in <span class="xref myst">examples/</span> out of the box.</p>
+<p>This should allow you to e.g. run the scripts in <a class="reference internal" href="#./examples/"><span class="xref myst">examples/</span></a> out of the box.</p>
 <p>A stand-alone installation requires specifying a supported Python version (see above), ensuring that the C++ compilers (gcc) are up to date, and possibly installing the CUDA Toolkit. Here, we have installed recent C++ compilers using conda (<code class="docutils literal notranslate"><span class="pre">gcc_linux-64</span> <span class="pre">gxx_linux-64</span> <span class="pre">libgcc</span></code>), but if your system already has a recent version (<code class="docutils literal notranslate"><span class="pre">$gcc</span> <span class="pre">--version</span></code> should be &gt; 5, at least) you should be able to omit these from the setup.
 If you install the CUDA Toolkit and/or newer compilers using the above command, you should add <strong>one of</strong>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span>:<span class="nv">$HOME</span>/anaconda3/lib/
@@ -502,7 +498,7 @@ graphnet:<span class="w"> </span>INFO<span class="w">     </span><span class="m"
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

@@ -115,12 +115,9 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/material.css" />
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../../../../_static/favicon.svg"/>
+    <link rel="icon" href="../../../../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../../../../about.html" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -150,8 +147,7 @@
         <a href="../../../../index.html" title="graphnet  documentation"
            class="md-header-nav__button md-logo">
           
-              <img src="../../../../_static/favicon-white.svg" height="26"
-                   alt="graphnet documentation logo">
+            &nbsp;
           
         </a>
       </div>
@@ -250,7 +246,7 @@
   <label class="md-nav__title md-nav__title--site" for="__drawer">
     <a href="../../../../index.html" title="graphnet documentation" class="md-nav__button md-logo">
       
-        <img src="../../../../_static/favicon-white.svg" alt=" logo" width="48" height="48">
+        <img src="../../../../_static/" alt=" logo" width="48" height="48">
       
     </a>
     <a href="../../../../index.html"
@@ -392,7 +388,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No data saved to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SQLiteDataConverter.merge_files"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.merge_files">[docs]</a>    <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">input_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">input_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_table_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""SQLite-specific method for merging output files/databases.</span>
 
@@ -401,10 +400,22 @@
 <span class="sd">            input_files: Intermediate files/databases to be merged, according</span>
 <span class="sd">                to the specific implementation. Default to None, meaning that</span>
 <span class="sd">                all files/databases output by the current instance are merged.</span>
+<span class="sd">            max_table_size: The maximum number of rows in any given table.</span>
+<span class="sd">                If any one table exceed this limit, a new database will be</span>
+<span class="sd">                created.</span>
 <span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">max_table_size</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Merging got max_table_size of </span><span class="si">{</span><span class="n">max_table_size</span><span class="si">}</span><span class="s2">. Will attempt to create databases with a maximum row count of this size."</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_table_size</span> <span class="o">=</span> <span class="n">max_table_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_partition_count</span> <span class="o">=</span> <span class="mi">1</span>
+
         <span class="k">if</span> <span class="n">input_files</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Merging files output by current instance."</span><span class="p">)</span>
-            <span class="n">input_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_input_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_input_files</span> <span class="o">=</span> <span class="n">input_files</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"."</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">):</span>
             <span class="n">output_file</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">])</span>
@@ -414,32 +425,73 @@
                 <span class="sa">f</span><span class="s2">"Target path for merged database, </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">, already exists."</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Merging </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> database files"</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Merging </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> database files"</span><span class="p">)</span>
             <span class="c1"># Create one empty database table for each extraction</span>
-            <span class="n">table_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_table_names</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">table_names</span><span class="p">:</span>
-                <span class="n">column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_column_names</span><span class="p">(</span>
-                    <span class="n">input_files</span><span class="p">,</span> <span class="n">table_name</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">create_table</span><span class="p">(</span>
-                        <span class="n">column_names</span><span class="p">,</span>
-                        <span class="n">table_name</span><span class="p">,</span>
-                        <span class="n">output_file</span><span class="p">,</span>
-                        <span class="n">default_type</span><span class="o">=</span><span class="s2">"FLOAT"</span><span class="p">,</span>
-                        <span class="n">integer_primary_key</span><span class="o">=</span><span class="ow">not</span> <span class="p">(</span>
-                            <span class="n">is_pulse_map</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_mc_tree</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
-                        <span class="p">),</span>
-                    <span class="p">)</span>
-
+            <span class="bp">self</span><span class="o">.</span><span class="n">_merged_table_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_table_names</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_files</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_table_size</span><span class="p">:</span>
+                <span class="n">output_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_output_file_name</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_empty_tables</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_row_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_row_counts</span><span class="p">()</span>
             <span class="c1"># Merge temporary databases into newly created one</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_merge_temporary_databases</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">input_files</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_merge_temporary_databases</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_files</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No temporary database files found!"</span><span class="p">)</span></div>
 
     <span class="c1"># Internal methods</span>
+    <span class="k">def</span> <span class="nf">_adjust_output_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"_part_"</span> <span class="ow">in</span> <span class="n">output_file</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">output_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_part_"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">output_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_part_"</span><span class="p">)[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">output_file</span>
+        <span class="n">str_list</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">".db"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">str_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"_part_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_partition_count</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">".db"</span>
+
+    <span class="k">def</span> <span class="nf">_update_row_counts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="s2">"OrderedDict[str, pd.DataFrame]"</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_row_counts</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_row_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Build dictionary with row counts. Initialized with 0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary where every field is a table name that contains</span>
+<span class="sd">            corresponding row counts.</span>
+<span class="sd">        """</span>
+        <span class="n">row_counts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged_table_names</span><span class="p">:</span>
+            <span class="n">row_counts</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">row_counts</span>
+
+    <span class="k">def</span> <span class="nf">_create_empty_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create tables for output database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_file: Path to database.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged_table_names</span><span class="p">:</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_column_names</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_files</span><span class="p">,</span> <span class="n">table_name</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">create_table</span><span class="p">(</span>
+                    <span class="n">column_names</span><span class="p">,</span>
+                    <span class="n">table_name</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="p">,</span>
+                    <span class="n">default_type</span><span class="o">=</span><span class="s2">"FLOAT"</span><span class="p">,</span>
+                    <span class="n">integer_primary_key</span><span class="o">=</span><span class="ow">not</span> <span class="p">(</span>
+                        <span class="n">is_pulse_map</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_mc_tree</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_get_tables_in_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">table_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
@@ -544,10 +596,29 @@
 <span class="sd">            output_file: path to the final database</span>
 <span class="sd">            input_files: list of names of temporary databases</span>
 <span class="sd">        """</span>
+        <span class="n">file_count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">input_file</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">input_files</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">"green"</span><span class="p">):</span>
             <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_everything</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_submit_to_database</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_submit_to_database</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">file_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_table_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
+                <span class="n">file_count</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_update_row_counts</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+                <span class="n">maximum_row_count_reached</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_counts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_table_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_counts</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_table_size</span><span class="p">:</span>
+                        <span class="n">maximum_row_count_reached</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="n">maximum_row_count_reached</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_partition_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">output_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_output_file_name</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Maximum row count reached. Creating new partition at </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_empty_tables</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_row_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_row_counts</span><span class="p">()</span></div>
 
 
 <span class="c1"># Implementation-specific utility function(s)</span>
@@ -602,7 +673,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>
