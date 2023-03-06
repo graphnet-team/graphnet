@@ -71,7 +71,10 @@ class SQLiteDataConverter(DataConverter):
             self.warning(f"No data saved to {output_file}")
 
     def merge_files(
-        self, output_file: str, input_files: Optional[List[str]] = None
+        self,
+        output_file: str,
+        input_files: Optional[List[str]] = None,
+        max_table_size: Optional[int] = None,
     ) -> None:
         """SQLite-specific method for merging output files/databases.
 
@@ -80,10 +83,22 @@ class SQLiteDataConverter(DataConverter):
             input_files: Intermediate files/databases to be merged, according
                 to the specific implementation. Default to None, meaning that
                 all files/databases output by the current instance are merged.
+            max_table_size: The maximum number of rows in any given table.
+                If any one table exceed this limit, a new database will be
+                created.
         """
+        if max_table_size:
+            self.warning(
+                f"Merging got max_table_size of {max_table_size}. Will attempt to create databases with a maximum row count of this size."
+            )
+        self.max_table_size = max_table_size
+        self._partition_count = 1
+
         if input_files is None:
             self.info("Merging files output by current instance.")
-            input_files = self._output_files
+            self._input_files = self._output_files
+        else:
+            self._input_files = input_files
 
         if not output_file.endswith("." + self.file_suffix):
             output_file = ".".join([output_file, self.file_suffix])
@@ -93,32 +108,73 @@ class SQLiteDataConverter(DataConverter):
                 f"Target path for merged database, {output_file}, already exists."
             )
 
-        if len(input_files) > 0:
-            self.info(f"Merging {len(input_files)} database files")
-
+        if len(self._input_files) > 0:
+            self.info(f"Merging {len(self._input_files)} database files")
             # Create one empty database table for each extraction
-            table_names = self._extract_table_names(input_files)
-            for table_name in table_names:
-                column_names = self._extract_column_names(
-                    input_files, table_name
-                )
-                if len(column_names) > 1:
-                    create_table(
-                        column_names,
-                        table_name,
-                        output_file,
-                        default_type="FLOAT",
-                        integer_primary_key=not (
-                            is_pulse_map(table_name) or is_mc_tree(table_name)
-                        ),
-                    )
-
+            self._merged_table_names = self._extract_table_names(
+                self._input_files
+            )
+            if self.max_table_size:
+                output_file = self._adjust_output_file_name(output_file)
+            self._create_empty_tables(output_file)
+            self._row_counts = self._initialize_row_counts()
             # Merge temporary databases into newly created one
-            self._merge_temporary_databases(output_file, input_files)
+            self._merge_temporary_databases(output_file, self._input_files)
         else:
             self.warning("No temporary database files found!")
 
     # Internal methods
+    def _adjust_output_file_name(self, output_file: str) -> str:
+        if "_part_" in output_file:
+            root = (
+                output_file.split("_part_")[0]
+                + output_file.split("_part_")[1][1:]
+            )
+        else:
+            root = output_file
+        str_list = root.split(".db")
+        return str_list[0] + f"_part_{self._partition_count}" + ".db"
+
+    def _update_row_counts(
+        self, results: "OrderedDict[str, pd.DataFrame]"
+    ) -> None:
+        for table_name, data in results.items():
+            self._row_counts[table_name] += len(data)
+        return
+
+    def _initialize_row_counts(self) -> Dict[str, int]:
+        """Build dictionary with row counts. Initialized with 0.
+
+        Returns:
+            Dictionary where every field is a table name that contains
+            corresponding row counts.
+        """
+        row_counts = {}
+        for table_name in self._merged_table_names:
+            row_counts[table_name] = 0
+        return row_counts
+
+    def _create_empty_tables(self, output_file: str) -> None:
+        """Create tables for output database.
+
+        Args:
+            output_file: Path to database.
+        """
+        for table_name in self._merged_table_names:
+            column_names = self._extract_column_names(
+                self._input_files, table_name
+            )
+            if len(column_names) > 1:
+                create_table(
+                    column_names,
+                    table_name,
+                    output_file,
+                    default_type="FLOAT",
+                    integer_primary_key=not (
+                        is_pulse_map(table_name) or is_mc_tree(table_name)
+                    ),
+                )
+
     def _get_tables_in_database(self, db: str) -> Tuple[str, ...]:
         with sqlite3.connect(db) as conn:
             table_names = tuple(
@@ -223,10 +279,29 @@ class SQLiteDataConverter(DataConverter):
             output_file: path to the final database
             input_files: list of names of temporary databases
         """
+        file_count = 0
         for input_file in tqdm(input_files, colour="green"):
             results = self._extract_everything(input_file)
             for table_name, data in results.items():
                 self._submit_to_database(output_file, table_name, data)
+            file_count += 1
+            if (self.max_table_size is not None) & (
+                file_count < len(input_files)
+            ):
+                self._update_row_counts(results)
+                maximum_row_count_reached = False
+                for table in self._row_counts.keys():
+                    assert self.max_table_size is not None
+                    if self._row_counts[table] >= self.max_table_size:
+                        maximum_row_count_reached = True
+                if maximum_row_count_reached:
+                    self._partition_count += 1
+                    output_file = self._adjust_output_file_name(output_file)
+                    self.info(
+                        f"Maximum row count reached. Creating new partition at {output_file}"
+                    )
+                    self._create_empty_tables(output_file)
+                    self._row_counts = self._initialize_row_counts()
 
 
 # Implementation-specific utility function(s)
