@@ -260,6 +260,7 @@ class I3PulseCleanerModule(I3InferenceModule):
         *,
         gcd_file: str,
         threshold: float = 0.7,
+        discard_empty_events: bool = False,
     ):
         """General class for inference on I3Frames (physics).
 
@@ -279,6 +280,11 @@ class I3PulseCleanerModule(I3InferenceModule):
             threshold: the threshold for being considered a positive case.
                         E.g., predictions >= threshold will be considered
                         to be signal, all else noise.
+            discard_empty_events: When true, this flag will eliminate events
+                            whose cleaned pulse series are empty. Can be used
+                            to speed up processing especially for noise
+                            simulation, since it will not do any writing or
+                            further calculations.
         """
         super().__init__(
             pulsemap=pulsemap,
@@ -292,6 +298,7 @@ class I3PulseCleanerModule(I3InferenceModule):
         self._threshold = threshold
         self._predictions_key = f"{pulsemap}_{model_name}_Predictions"
         self._total_pulsemap_name = f"{pulsemap}_{model_name}_Pulses"
+        self._discard_empty_events = discard_empty_events
 
     def __call__(self, frame: I3Frame) -> bool:
         """Add a cleaned pulsemap to frame."""
@@ -299,6 +306,10 @@ class I3PulseCleanerModule(I3InferenceModule):
         gcd_file = self._gcd_file
         graph = self._make_graph(frame)
         predictions = self._inference(graph)
+
+        if self._discard_empty_events:
+            if sum(predictions > self._threshold) == 0:
+                return False
 
         if len(predictions.shape) == 1:
             predictions = predictions.reshape(-1, 1)
