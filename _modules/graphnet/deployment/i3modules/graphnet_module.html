@@ -577,6 +577,7 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">gcd_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">discard_empty_events</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""General class for inference on I3Frames (physics).</span>
 
@@ -596,6 +597,11 @@
 <span class="sd">            threshold: the threshold for being considered a positive case.</span>
 <span class="sd">                        E.g., predictions &gt;= threshold will be considered</span>
 <span class="sd">                        to be signal, all else noise.</span>
+<span class="sd">            discard_empty_events: When true, this flag will eliminate events</span>
+<span class="sd">                            whose cleaned pulse series are empty. Can be used</span>
+<span class="sd">                            to speed up processing especially for noise</span>
+<span class="sd">                            simulation, since it will not do any writing or</span>
+<span class="sd">                            further calculations.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">pulsemap</span><span class="o">=</span><span class="n">pulsemap</span><span class="p">,</span>
@@ -609,6 +615,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span> <span class="o">=</span> <span class="n">threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pulsemap</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_Predictions"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pulsemap</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_Pulses"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discard_empty_events</span> <span class="o">=</span> <span class="n">discard_empty_events</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">I3Frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Add a cleaned pulsemap to frame."""</span>
@@ -616,6 +623,10 @@
         <span class="n">gcd_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_file</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_graph</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
         <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inference</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discard_empty_events</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">predictions</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
