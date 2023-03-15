@@ -246,14 +246,14 @@ class Model(Logger, Configurable, LightningModule, ABC):
         self.info(f"Model state_dict saved to {path}")
 
     def load_state_dict(
-        self, path: Union[str, Dict]
+        self, path: Union[str, Dict], **kargs: Optional[Any]
     ) -> "Model":  # pylint: disable=arguments-differ
         """Load model `state_dict` from `path`."""
         if isinstance(path, str):
             state_dict = torch.load(path)
         else:
             state_dict = path
-        return super().load_state_dict(state_dict)
+        return super().load_state_dict(state_dict, **kargs)
 
     @classmethod
     def from_config(  # type: ignore[override]
