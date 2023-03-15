@@ -563,14 +563,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model state_dict saved to </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.load_state_dict"><a class="viewcode-back" href="../../../api/graphnet.models.model.html#graphnet.models.model.Model.load_state_dict">[docs]</a>    <span class="k">def</span> <span class="nf">load_state_dict</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">],</span> <span class="o">**</span><span class="n">kargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Model"</span><span class="p">:</span>  <span class="c1"># pylint: disable=arguments-differ</span>
 <span class="w">        </span><span class="sd">"""Load model `state_dict` from `path`."""</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">state_dict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">state_dict</span> <span class="o">=</span> <span class="n">path</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.from_config"><a class="viewcode-back" href="../../../api/graphnet.models.model.html#graphnet.models.model.Model.from_config">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
