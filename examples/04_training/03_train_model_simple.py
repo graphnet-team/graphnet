@@ -3,18 +3,15 @@
 from typing import List, Optional
 import os
 
-from pytorch_lightning.callbacks import EarlyStopping
 from graphnet.constants import EXAMPLE_OUTPUT_DIR
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import Model
-from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.config import (
     DatasetConfig,
     ModelConfig,
     TrainingConfig,
 )
-from graphnet.utilities.logging import Logger
 
 
 def main(
@@ -25,19 +22,15 @@ def main(
     early_stopping_patience: int,
     batch_size: int,
     num_workers: int,
-    prediction_names: Optional[List[str]],
     suffix: Optional[str] = None,
 ) -> None:
     """Run example."""
-    # Construct Logger
-    logger = Logger()
-
     # Build model
     model_config = ModelConfig.load(model_config_path)
     model = Model.from_config(model_config, trust=True)
 
     # Configuration
-    config = TrainingConfig(
+    training_config = TrainingConfig(
         target=model.target,
         early_stopping_patience=early_stopping_patience,
         fit={
@@ -47,52 +40,33 @@ def main(
         dataloader={"batch_size": batch_size, "num_workers": num_workers},
     )
 
-    if suffix is not None:
-        archive = os.path.join(EXAMPLE_OUTPUT_DIR, f"train_model_{suffix}")
-    else:
-        archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model")
-    run_name = "dynedge_{}_example".format("_".join(config.target))
-
     # Construct dataloaders
     dataset_config = DatasetConfig.load(dataset_config_path)
     dataloaders = DataLoader.from_dataset_config(
         dataset_config,
-        **config.dataloader,
+        **training_config.dataloader,
     )
 
-    # Log configurations to W&B
-    # NB: Only log to W&B on the rank-zero process in case of multi-GPU
-    #     training.
     # Train model
-    callbacks = [
-        EarlyStopping(
-            monitor="val_loss",
-            patience=config.early_stopping_patience,
-        ),
-        ProgressBar(),
-    ]
-
     model.fit(
         dataloaders["train"],
         dataloaders["validation"],
-        callbacks=callbacks,
-        logger=logger,
-        **config.fit,
+        early_stopping_patience=training_config.early_stopping_patience,
+        **training_config.fit,
     )
-
-    logger.info(f"config.target: {config.target}")
-    logger.info(f"prediction_columns: {model.prediction_columns}")
 
     results = model.predict_as_dataframe(
         dataloaders["test"],
-        prediction_columns=model.prediction_columns,
         additional_attributes=model.target + ["event_no"],
     )
 
-    # Save predictions and model to file
+    # Path parsing
+    archive = os.path.join(EXAMPLE_OUTPUT_DIR, f"train_model_{suffix}")
+    run_name = "dynedge_{}_example".format("_".join(training_config.target))
     db_name = dataset_config.path.split("/")[-1].split(".")[0]
+
+    # Save predictions and model to file
     path = os.path.join(archive, db_name, run_name)
-    logger.info(f"Writing results to {path}")
     os.makedirs(path, exist_ok=True)
 
     results.to_csv(f"{path}/results.csv")
@@ -120,17 +94,10 @@ Train GNN model.
     )
 
     parser.add_argument(
-        "--prediction-names",
-        nargs="+",
-        help="Names of each prediction output feature (default: %(default)s)",
-        default=None,
-    )
-
-    parser.add_argument(
         "--suffix",
         type=str,
         help="Name addition to folder (default: %(default)s)",
-        default=None,
+        default="example",
     )
 
     args = parser.parse_args()
@@ -143,6 +110,5 @@ Train GNN model.
         args.early_stopping_patience,
         args.batch_size,
         args.num_workers,
-        args.prediction_names,
         args.suffix,
     )

@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from pytorch_lightning import Trainer, LightningModule
 from pytorch_lightning.callbacks.callback import Callback
+from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers.logger import Logger as LightningLogger
 import torch
 from torch import Tensor
@@ -18,6 +19,7 @@ from torch_geometric.data import Data
 
 from graphnet.utilities.logging import Logger
 from graphnet.utilities.config import Configurable, ModelConfig
+from graphnet.training.callbacks import ProgressBar
 
 
 class Model(Logger, Configurable, LightningModule, ABC):
@@ -79,15 +81,32 @@ class Model(Logger, Configurable, LightningModule, ABC):
         *,
         max_epochs: int = 10,
         gpus: Optional[Union[List[int], int]] = None,
-        callbacks: Optional[List[Callback]] = None,
+        callbacks: Optional[List[Callback]] = [ProgressBar()],
         ckpt_path: Optional[str] = None,
         logger: Optional[LightningLogger] = None,
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",
+        early_stopping_patience: int = 5,
         **trainer_kwargs: Any,
     ) -> None:
         """Fit `Model` using `pytorch_lightning.Trainer`."""
+        # Checks
+        if val_dataloader is not None:
+            has_es = False
+            assert isinstance(callbacks, list)
+            for callback in callbacks:
+                if isinstance(callback, EarlyStopping):
+                    has_es = True
+            if has_es is False:
+                callbacks.append(
+                    EarlyStopping(
+                        monitor="val_loss",
+                        patience=early_stopping_patience,
+                    )
+                )
+                self.info("EarlyStopping callback added automatically.")
+
         self.train(mode=True)
 
         self._construct_trainers(
@@ -181,6 +200,9 @@ class Model(Logger, Configurable, LightningModule, ABC):
                 "doesn't resample batches; or do not request "
                 "`additional_attributes`."
             )
+        self.info(
+            f"Column names for predictions are: \n {self.prediction_columns}"
+        )
         predictions_torch = self.predict(
             dataloader=dataloader,
             gpus=gpus,
