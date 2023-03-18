@@ -61,6 +61,15 @@ class StandardModel(Model):
         self._scheduler_class = scheduler_class
         self._scheduler_kwargs = scheduler_kwargs or dict()
         self._scheduler_config = scheduler_config or dict()
+        self._configure_model_constants()
+
+    def _configure_model_constants(self) -> None:
+        self.target = [
+            target for task in self._tasks for target in task._target_labels
+        ]
+        self.prediction_columns = [
+            column for task in self._tasks for column in task._output_names
+        ]
 
     def configure_optimizers(self) -> Dict[str, Any]:
         """Configure the model's optimizer(s)."""
