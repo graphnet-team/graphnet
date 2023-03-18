@@ -34,6 +34,7 @@ class Task(Model):
         hidden_size: int,
         target_labels: Union[str, List[str]],
         loss_function: "LossFunction",
+        output_labels: Optional[Union[str, List[str]]] = None,
         transform_prediction_and_target: Optional[Callable] = None,
         transform_target: Optional[Callable] = None,
         transform_inference: Optional[Callable] = None,
@@ -50,6 +51,9 @@ class Task(Model):
                 to extract the  target tensor(s) from the `Data` object in
                 `.compute_loss(...)`.
             loss_function: Loss function appropriate to the task.
+            output_labels: The name(s) of each column that is outputted by
+                the model during inference. If not given, the name will auto
+                matically be set to `target_label + _pred`.
             transform_prediction_and_target: Optional function to transform
                 both the predicted and target tensor before passing them to the
                 loss function. Useful e.g. for having the model predict
@@ -80,10 +84,16 @@ class Task(Model):
         # Check(s)
         if isinstance(target_labels, str):
             target_labels = [target_labels]
+        if output_labels is not None:
+            if isinstance(output_labels, str):
+                output_labels = [output_labels]
+        else:
+            output_labels = [target + "_pred" for target in target_labels]
 
         # Member variables
         self._regularisation_loss: Optional[float] = None
         self._target_labels = target_labels
+        self._output_labels = output_labels
         self._loss_function = loss_function
         self._inference = False
         self._loss_weight = loss_weight
