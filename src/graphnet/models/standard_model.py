@@ -68,7 +68,7 @@ class StandardModel(Model):
             target for task in self._tasks for target in task._target_labels
         ]
         self.prediction_columns = [
-            column for task in self._tasks for column in task._output_names
+            column for task in self._tasks for column in task._output_labels
         ]
 
     def configure_optimizers(self) -> Dict[str, Any]:
