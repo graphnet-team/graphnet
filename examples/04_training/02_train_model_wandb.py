@@ -48,6 +48,7 @@ def main(
     )
 
     # Build model
+    print(model_config_path)
     model_config = ModelConfig.load(model_config_path)
     model = Model.from_config(model_config, trust=True)
 
