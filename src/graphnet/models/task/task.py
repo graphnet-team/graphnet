@@ -27,13 +27,25 @@ class Task(Model):
     def nb_inputs(self) -> int:
         """Return number of inputs assumed by task."""
 
+    @property
+    @abstractmethod
+    def default_target_labels(self) -> List[str]:
+        """Return default target labels."""
+        return self._default_target_labels
+
+    @property
+    @abstractmethod
+    def default_output_labels(self) -> List[str]:
+        """Return default output labels."""
+        return self._default_output_labels
+
     @save_model_config
     def __init__(
         self,
         *,
         hidden_size: int,
-        target_labels: Union[str, List[str]],
         loss_function: "LossFunction",
+        target_labels: Union[str, List[str]] = None,
         output_labels: Optional[Union[str, List[str]]] = None,
         transform_prediction_and_target: Optional[Callable] = None,
         transform_target: Optional[Callable] = None,
@@ -47,10 +59,10 @@ class Task(Model):
             hidden_size: The number of nodes in the layer feeding into this
                 tasks, used to construct the affine transformation to the
                 predicted quantity.
+            loss_function: Loss function appropriate to the task.
             target_labels: Name(s) of the quantity/-ies being predicted, used
                 to extract the  target tensor(s) from the `Data` object in
                 `.compute_loss(...)`.
-            loss_function: Loss function appropriate to the task.
             output_labels: The name(s) of each column that is outputted by
                 the model during inference. If not given, the name will auto
                 matically be set to `target_label + _pred`.
@@ -80,8 +92,11 @@ class Task(Model):
         """
         # Base class constructor
         super().__init__()
-
         # Check(s)
+        assert isinstance(target_labels, List)  # mypy
+        assert isinstance(output_labels, List)  # mypy
+        if target_labels is None:
+            target_labels = self.default_target_labels
         if isinstance(target_labels, str):
             target_labels = [target_labels]
         if output_labels is not None:
