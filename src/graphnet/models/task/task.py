@@ -93,8 +93,6 @@ class Task(Model):
         # Base class constructor
         super().__init__()
         # Check(s)
-        assert isinstance(target_labels, List)  # mypy
-        assert isinstance(output_labels, List)  # mypy
         if target_labels is None:
             target_labels = self.default_target_labels
         if isinstance(target_labels, str):
@@ -104,7 +102,8 @@ class Task(Model):
                 output_labels = [output_labels]
         else:
             output_labels = [target + "_pred" for target in target_labels]
-
+        assert isinstance(target_labels, List)  # mypy
+        assert isinstance(output_labels, List)  # mypy
         # Member variables
         self._regularisation_loss: Optional[float] = None
         self._target_labels = target_labels
