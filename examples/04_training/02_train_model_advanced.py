@@ -142,12 +142,10 @@ def main(
     )
 
     # Get predictions
-    prediction_columns = [config["target"] + "_pred"]
-    additional_attributes = [config["target"]]
+    additional_attributes = [model.target_labels]
 
     results = model.predict_as_dataframe(
         validation_dataloader,
-        prediction_columns=prediction_columns,
         additional_attributes=additional_attributes + ["event_no"],
     )
 
