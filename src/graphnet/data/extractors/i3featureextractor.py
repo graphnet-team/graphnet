@@ -148,9 +148,15 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output["is_errata_dom"].append(is_errata_dom)
                 output["event_time"].append(event_time)
                 # Pulse flags
-                output["hlc"].append((pulse.flags >> 0) & 0x1)  # bit 0
-                output["awtd"].append((pulse.flags >> 1) & 0x1)  # bit 1
-                output["fadc"].append((pulse.flags >> 2) & 0x1)  # bit 2
+                flags = getattr(pulse, "flags", padding_value)
+                if flags == padding_value:
+                    output["hlc"].append(padding_value)  # bit 0
+                    output["awtd"].append(padding_value)  # bit 1
+                    output["fadc"].append(padding_value)  # bit 2
+                else:
+                    output["hlc"].append((pulse.flags >> 0) & 0x1)  # bit 0
+                    output["awtd"].append((pulse.flags >> 1) & 0x1)  # bit 1
+                    output["fadc"].append((pulse.flags >> 2) & 0x1)  # bit 2
 
         return output
 
