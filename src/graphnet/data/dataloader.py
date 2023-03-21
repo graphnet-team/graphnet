@@ -29,8 +29,8 @@ class DataLoader(torch.utils.data.DataLoader):
     def __init__(
         self,
         dataset: Dataset,
-        batch_size: int,
-        shuffle: bool,
+        batch_size: int = 1,
+        shuffle: bool = False,
         num_workers: int = 10,
         persistent_workers: bool = True,
         collate_fn: Callable = collate_fn,
@@ -53,7 +53,6 @@ class DataLoader(torch.utils.data.DataLoader):
     def from_dataset_config(
         cls,
         config: DatasetConfig,
-        batch_size: int,
         **kwargs: Any,
     ) -> Union["DataLoader", Dict[str, "DataLoader"]]:
         """Construct `DataLoader`s based on selections in `DatasetConfig`."""
@@ -69,7 +68,6 @@ class DataLoader(torch.utils.data.DataLoader):
             for name, dataset in datasets.items():
                 data_loaders[name] = cls(
                     dataset,
-                    batch_size=batch_size,
                     shuffle=do_shuffle(name),
                     **kwargs,
                 )
@@ -83,4 +81,4 @@ class DataLoader(torch.utils.data.DataLoader):
             )
             dataset = Dataset.from_config(config)
             assert isinstance(dataset, Dataset)
-            return cls(dataset, batch_size=batch_size, **kwargs)
+            return cls(dataset, **kwargs)
