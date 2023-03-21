@@ -462,7 +462,15 @@
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"!lambda"</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">trust</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="n">source</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+                <span class="c1"># Save a copy of the source code attached to the callable,</span>
+                <span class="c1"># since the `inspect` module is not able to get the source code</span>
+                <span class="c1"># for functions that are not defined on file.</span>
+                <span class="c1"># See `self._serialise`.</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">source</span>
+                <span class="k">return</span> <span class="n">f</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">"Constructing model containing a lambda function "</span>
@@ -512,7 +520,14 @@
             <span class="k">return</span> <span class="sa">f</span><span class="s2">"!class </span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>  <span class="c1"># type: ignore[arg-type]</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"&lt;lambda&gt;"</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">"!"</span> <span class="o">+</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2"> ,"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"_source"</span><span class="p">):</span>
+                    <span class="c1"># If source code is set manually during deserialisation.</span>
+                    <span class="c1"># See `self._deserialise`.</span>
+                    <span class="n">source</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">_source</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">source</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2"> ,"</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="s2">"!"</span> <span class="o">+</span> <span class="n">source</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">source</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
