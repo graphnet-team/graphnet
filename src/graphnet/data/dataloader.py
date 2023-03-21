@@ -29,8 +29,8 @@ class DataLoader(torch.utils.data.DataLoader):
     def __init__(
         self,
         dataset: Dataset,
-        batch_size: int,
-        shuffle: bool,
+        batch_size: int = 1,
+        shuffle: bool = False,
         num_workers: int = 10,
         persistent_workers: bool = True,
         collate_fn: Callable = collate_fn,
