@@ -2,6 +2,7 @@
 
 import os.path
 
+import pytest
 import torch
 from torch.optim.adam import Adam
 
@@ -143,4 +144,19 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
     assert repr(constructed_model) == repr(model)
 
 
-test_complete_model_config()
+@pytest.mark.run(after="test_complete_model_config")
+def test_loading_and_saving_model_config(
+    load_path: str = "/tmp/complete_model.yml",
+    save_path: str = "/tmp/complete_model_duplicate.yml",
+) -> None:
+    """Test loading and then saving model config."""
+    # Load and construct model
+    loaded_config = ModelConfig.load(load_path)
+    model = Model.from_config(loaded_config, trust=True)
+
+    # Save config to file
+    model.save_config(save_path)
+
+    # Check that the configs agree
+    saved_config = ModelConfig.load(save_path)
+    assert saved_config == loaded_config
