@@ -25,10 +25,6 @@ from graphnet.utilities.logging import Logger
 features = FEATURES.PROMETHEUS
 truth = TRUTH.PROMETHEUS
 
-# Make sure W&B output directory exists
-WANDB_DIR = "./wandb/"
-os.makedirs(WANDB_DIR, exist_ok=True)
-
 
 def main(
     path: str,
@@ -40,18 +36,23 @@ def main(
     early_stopping_patience: int,
     batch_size: int,
     num_workers: int,
+    wandb: Optional[bool] = False,
 ) -> None:
     """Run example."""
     # Construct Logger
     logger = Logger()
 
     # Initialise Weights & Biases (W&B) run
-    wandb_logger = WandbLogger(
-        project="example-script",
-        entity="graphnet-team",
-        save_dir=WANDB_DIR,
-        log_model=True,
-    )
+    if wandb:
+        # Make sure W&B output directory exists
+        WANDB_DIR = "./wandb/"
+        os.makedirs(WANDB_DIR, exist_ok=True)
+        wandb_logger = WandbLogger(
+            project="example-script",
+            entity="graphnet-team",
+            save_dir=WANDB_DIR,
+            log_model=True,
+        )
 
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
@@ -202,6 +203,13 @@ Train GNN model without the use of config files.
         "early-stopping-patience",
         ("batch-size", 16),
         "num-workers",
+    )
+
+    parser.add_argument(
+        "--wandb",
+        type=bool,
+        help="If True, Weights and Biases are used to track the experiment.",
+        default=False,
     )
 
     args = parser.parse_args()

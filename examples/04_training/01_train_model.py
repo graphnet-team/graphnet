@@ -19,11 +19,6 @@ from graphnet.utilities.config import (
 from graphnet.utilities.logging import Logger
 
 
-# Make sure W&B output directory exists
-WANDB_DIR = "./wandb/"
-os.makedirs(WANDB_DIR, exist_ok=True)
-
-
 def main(
     dataset_config_path: str,
     model_config_path: str,
@@ -34,18 +29,23 @@ def main(
     num_workers: int,
     prediction_names: Optional[List[str]],
     suffix: Optional[str] = None,
+    wandb: Optional[bool] = False,
 ) -> None:
     """Run example."""
     # Construct Logger
     logger = Logger()
 
     # Initialise Weights & Biases (W&B) run
-    wandb_logger = WandbLogger(
-        project="example-script",
-        entity="graphnet-team",
-        save_dir=WANDB_DIR,
-        log_model=True,
-    )
+    if wandb:
+        # Make sure W&B output directory exists
+        WANDB_DIR = "./wandb/"
+        os.makedirs(WANDB_DIR, exist_ok=True)
+        wandb_logger = WandbLogger(
+            project="example-script",
+            entity="graphnet-team",
+            save_dir=WANDB_DIR,
+            log_model=True,
+        )
 
     # Build model
     model_config = ModelConfig.load(model_config_path)
@@ -98,7 +98,7 @@ def main(
         dataloaders["train"],
         dataloaders["validation"],
         callbacks=callbacks,
-        logger=wandb_logger,
+        logger=wandb_logger if wandb else None,
         **config.fit,
     )
 
@@ -166,6 +166,13 @@ Train GNN model.
         default=None,
     )
 
+    parser.add_argument(
+        "--wandb",
+        type=bool,
+        help="If True, Weights and Biases are used to track the experiment.",
+        default=False,
+    )
+
     args = parser.parse_args()
 
     main(
@@ -178,4 +185,5 @@ Train GNN model.
         args.num_workers,
         args.prediction_names,
         args.suffix,
+        args.wandb,
     )
