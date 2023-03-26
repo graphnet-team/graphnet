@@ -32,8 +32,14 @@ class SQLiteDataConverter(DataConverter):
             )
 
         # Concatenate data
-        saved_any = False
-        if len(data):
+        if len(data) == 0:
+            self.warning(
+                "No data was extracted from the processed I3 file(s). "
+                f"No data saved to {output_file}"
+            )
+            return
+        else:
+            saved_any = False
             dataframe = OrderedDict([(key, pd.DataFrame()) for key in data[0]])
             for data_dict in data:
                 for key, data_values in data_dict.items():
@@ -68,10 +74,10 @@ class SQLiteDataConverter(DataConverter):
                     )
                     saved_any = True
 
-        if saved_any:
-            self.debug("- Done saving")
-        else:
-            self.warning(f"No data saved to {output_file}")
+            if saved_any:
+                self.debug("- Done saving")
+            else:
+                self.warning(f"No data saved to {output_file}")
 
     def merge_files(
         self,
