@@ -73,9 +73,9 @@ def main(
 
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model_without_configs")
     run_name = "dynedge_{}_example".format(config["target"])
-
-    # Log configuration to W&B
-    wandb_logger.experiment.config.update(config)
+    if wandb:
+        # Log configuration to W&B
+        wandb_logger.experiment.config.update(config)
 
     (
         training_dataloader,
@@ -138,7 +138,7 @@ def main(
         training_dataloader,
         validation_dataloader,
         callbacks=callbacks,
-        logger=wandb_logger,
+        logger=wandb_logger if wandb else None,
         **config["fit"],
     )
 
@@ -224,4 +224,5 @@ Train GNN model without the use of config files.
         args.early_stopping_patience,
         args.batch_size,
         args.num_workers,
+        args.wandb,
     )
