@@ -117,7 +117,7 @@ class EnergyReconstructionWithPower(Task):
 
     # Requires one feature: untransformed energy
     default_target_labels = ["energy"]
-    default_output_labels = ["energy_pred"]
+    default_prediction_labels = ["energy_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
