@@ -38,46 +38,43 @@ class SQLiteDataConverter(DataConverter):
                 f"No data saved to {output_file}"
             )
             return
-        
-            saved_any = False
-            dataframe = OrderedDict([(key, pd.DataFrame()) for key in data[0]])
-            for data_dict in data:
-                for key, data_values in data_dict.items():
-                    df = construct_dataframe(data_values)
 
-                    if (
-                        self.any_pulsemap_is_non_empty(data_dict)
-                        and len(df) > 0
-                    ):
-                        # only include data_dict in temp. databases if at least one pulsemap is non-empty,
-                        # and the current extractor (df) is also non-empty (also since truth is always non-empty)
-                        if len(dataframe[key]):
-                            assert isinstance(dataframe[key], pd.DataFrame)
-                            dataframe[key] = dataframe[key].append(
-                                df, ignore_index=True, sort=True
-                            )
-                        else:
-                            dataframe[key] = df
+        saved_any = False
+        dataframe = OrderedDict([(key, pd.DataFrame()) for key in data[0]])
+        for data_dict in data:
+            for key, data_values in data_dict.items():
+                df = construct_dataframe(data_values)
 
-            # Save each dataframe to SQLite database
-            self.debug(f"Saving to {output_file}")
-            for table, df in dataframe.items():
-                if len(df) > 0:
-                    create_table_and_save_to_sql(
-                        df,
-                        table,
-                        output_file,
-                        default_type="FLOAT",
-                        integer_primary_key=not (
-                            is_pulse_map(table) or is_mc_tree(table)
-                        ),
-                    )
-                    saved_any = True
+                if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
+                    # only include data_dict in temp. databases if at least one pulsemap is non-empty,
+                    # and the current extractor (df) is also non-empty (also since truth is always non-empty)
+                    if len(dataframe[key]):
+                        assert isinstance(dataframe[key], pd.DataFrame)
+                        dataframe[key] = dataframe[key].append(
+                            df, ignore_index=True, sort=True
+                        )
+                    else:
+                        dataframe[key] = df
 
-            if saved_any:
-                self.debug("- Done saving")
-            else:
-                self.warning(f"No data saved to {output_file}")
+        # Save each dataframe to SQLite database
+        self.debug(f"Saving to {output_file}")
+        for table, df in dataframe.items():
+            if len(df) > 0:
+                create_table_and_save_to_sql(
+                    df,
+                    table,
+                    output_file,
+                    default_type="FLOAT",
+                    integer_primary_key=not (
+                        is_pulse_map(table) or is_mc_tree(table)
+                    ),
+                )
+                saved_any = True
+
+        if saved_any:
+            self.debug("- Done saving")
+        else:
+            self.warning(f"No data saved to {output_file}")
 
     def merge_files(
         self,
