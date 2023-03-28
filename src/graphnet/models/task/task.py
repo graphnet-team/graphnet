@@ -63,7 +63,7 @@ class Task(Model):
             target_labels: Name(s) of the quantity/-ies being predicted, used
                 to extract the  target tensor(s) from the `Data` object in
                 `.compute_loss(...)`.
-            output_labels: The name(s) of each column that is outputted by
+            prediction_labels: The name(s) of each column that is predicted by
                 the model during inference. If not given, the name will auto
                 matically be set to `target_label + _pred`.
             transform_prediction_and_target: Optional function to transform
