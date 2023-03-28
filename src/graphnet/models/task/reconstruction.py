@@ -88,7 +88,7 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
 
     # Requires one feature in addition to `ZenithReconstruction`: kappa (unceratinty; 1/variance).
     default_target_labels = ["zenith"]
-    default_output_labels = ["zenith_pred", "zenith_kappa"]
+    default_prediction_labels = ["zenith_pred", "zenith_kappa"]
     nb_inputs = 2
 
     def _forward(self, x: Tensor) -> Tensor:
