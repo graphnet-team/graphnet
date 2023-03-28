@@ -191,7 +191,7 @@ class TimeReconstruction(Task):
 
     # Requires one feature, time.
     default_target_labels = ["interaction_time"]
-    default_output_labels = ["interaction_time_pred"]
+    default_prediction_labels = ["interaction_time_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
