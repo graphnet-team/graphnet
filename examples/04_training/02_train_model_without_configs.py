@@ -143,7 +143,7 @@ def main(
     )
 
     # Get predictions
-    additional_attributes = [model.target_labels]
+    additional_attributes = model.target_labels
     assert isinstance(additional_attributes, list)  # mypy
 
     results = model.predict_as_dataframe(
