@@ -165,7 +165,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
     def predict_as_dataframe(
         self,
         dataloader: DataLoader,
-        prediction_columns: List[str] = None,
+        prediction_columns: Optional[List[str]] = None,
         *,
         node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
