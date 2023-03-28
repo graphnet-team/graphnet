@@ -13,7 +13,7 @@ class AzimuthReconstructionWithKappa(Task):
 
     # Requires two features: untransformed points in (x,y)-space.
     default_target_labels = ["azimuth"]
-    default_output_labels = ["azimuth_pred", "azimuth_kappa"]
+    default_prediction_labels = ["azimuth_pred", "azimuth_kappa"]
     nb_inputs = 2
 
     def _forward(self, x: Tensor) -> Tensor:
