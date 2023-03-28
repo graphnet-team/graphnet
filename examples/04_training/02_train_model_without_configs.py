@@ -36,7 +36,7 @@ def main(
     early_stopping_patience: int,
     batch_size: int,
     num_workers: int,
-    wandb: Optional[bool] = False,
+    wandb: bool = False,
 ) -> None:
     """Run example."""
     # Construct Logger
