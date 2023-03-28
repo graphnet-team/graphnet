@@ -208,7 +208,7 @@ class InelasticityReconstruction(Task):
 
     # Requires one features: inelasticity itself
     default_target_labels = ["elasticity"]
-    default_output_labels = ["elasticity_pred"]
+    default_prediction_labels = ["elasticity_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
