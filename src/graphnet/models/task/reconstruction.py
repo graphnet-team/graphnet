@@ -31,7 +31,7 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
 
     # Requires two features: untransformed points in (x,y)-space.
     default_target_labels = ["azimuth"]
-    default_output_labels = ["azimuth_pred"]
+    default_prediction_labels = ["azimuth_pred"]
     nb_inputs = 2
 
     def _forward(self, x: Tensor) -> Tensor:
