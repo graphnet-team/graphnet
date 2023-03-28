@@ -45,12 +45,12 @@ def main(
     # Initialise Weights & Biases (W&B) run
     if wandb:
         # Make sure W&B output directory exists
-        WANDB_DIR = "./wandb/"
-        os.makedirs(WANDB_DIR, exist_ok=True)
+        wandb_dir = "./wandb/"
+        os.makedirs(wandb_dir, exist_ok=True)
         wandb_logger = WandbLogger(
             project="example-script",
             entity="graphnet-team",
-            save_dir=WANDB_DIR,
+            save_dir=wandb_dir,
             log_model=True,
         )
 
