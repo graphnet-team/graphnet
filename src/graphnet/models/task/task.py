@@ -97,13 +97,13 @@ class Task(Model):
             target_labels = self.default_target_labels
         if isinstance(target_labels, str):
             target_labels = [target_labels]
-        if output_labels is not None:
-            if isinstance(output_labels, str):
-                output_labels = [output_labels]
+        if prediction_labels is not None:
+            if isinstance(prediction_labels, str):
+                prediction_labels = [prediction_labels]
         else:
-            output_labels = [target + "_pred" for target in target_labels]
+            prediction_labels = [target + "_pred" for target in target_labels]
         assert isinstance(target_labels, List)  # mypy
-        assert isinstance(output_labels, List)  # mypy
+        assert isinstance(prediction_labels, List)  # mypy
         # Member variables
         self._regularisation_loss: Optional[float] = None
         self._target_labels = target_labels
