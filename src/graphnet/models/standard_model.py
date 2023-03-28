@@ -64,15 +64,13 @@ class StandardModel(Model):
 
     @property
     def target_labels(self) -> List[str]:
-        return [
-            label for task in self._tasks for label in task._target_labels
-        ]
-    
+        """Return target label."""
+        return [label for task in self._tasks for label in task._target_labels]
+
     @property
     def prediction_labels(self) -> List[str]:
-        return [
-            label for task in self._tasks for label in task._output_labels
-        ]
+        """Return prediction labels."""
+        return [label for task in self._tasks for label in task._output_labels]
 
     def configure_optimizers(self) -> Dict[str, Any]:
         """Configure the model's optimizer(s)."""
