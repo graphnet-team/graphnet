@@ -75,7 +75,7 @@ class ZenithReconstruction(Task):
 
     # Requires two features: zenith angle itself.
     default_target_labels = ["zenith"]
-    default_output_labels = ["zenith_pred"]
+    default_prediction_labels = ["zenith_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
