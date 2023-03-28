@@ -130,7 +130,7 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
 
     # Requires one feature in addition to `EnergyReconstruction`: log-variance (uncertainty).
     default_target_labels = ["energy"]
-    default_output_labels = ["energy_pred", "energy_sigma"]
+    default_prediction_labels = ["energy_pred", "energy_sigma"]
     nb_inputs = 2
 
     def _forward(self, x: Tensor) -> Tensor:
