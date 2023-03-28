@@ -195,8 +195,13 @@ class Model(Logger, Configurable, LightningModule, ABC):
         assert isinstance(additional_attributes, list)
 
         if prediction_columns is None:
-            prediction_columns = self.prediction_columns
-
+            try:
+                prediction_columns = self.prediction_columns
+            except AttributeError:
+                assert (
+                    1 == 2
+                ), "Could not infer prediction_columns from model. Please specify prediction_columns."
+        assert isinstance(prediction_columns, list)
         if (
             not isinstance(dataloader.sampler, SequentialSampler)
             and additional_attributes
@@ -211,9 +216,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
                 "doesn't resample batches; or do not request "
                 "`additional_attributes`."
             )
-        self.info(
-            f"Column names for predictions are: \n {self.prediction_columns}"
-        )
+        self.info(f"Column names for predictions are: \n {prediction_columns}")
         predictions_torch = self.predict(
             dataloader=dataloader,
             gpus=gpus,
