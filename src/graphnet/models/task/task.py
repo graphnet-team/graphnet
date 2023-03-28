@@ -107,7 +107,7 @@ class Task(Model):
         # Member variables
         self._regularisation_loss: Optional[float] = None
         self._target_labels = target_labels
-        self._output_labels = output_labels
+        self._prediction_labels = prediction_labels
         self._loss_function = loss_function
         self._inference = False
         self._loss_weight = loss_weight
