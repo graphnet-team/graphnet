@@ -17,7 +17,7 @@ from graphnet.data.sqlite.sqlite_utilities import (
 
 
 class SQLiteDataConverter(DataConverter):
-    """Class for converting I3-files to SQLite format."""
+    """Class for converting I3-file(s) to SQLite format."""
 
     # Class variables
     file_suffix = "db"
