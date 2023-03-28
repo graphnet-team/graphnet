@@ -169,7 +169,7 @@ class PositionReconstruction(Task):
 
     # Requires three features, x, y, and z.
     default_target_labels = ["position"]
-    default_output_labels = [
+    default_prediction_labels = [
         "position_x_pred",
         "position_y_pred",
         "position_z_pred",
