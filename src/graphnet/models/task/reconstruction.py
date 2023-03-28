@@ -146,7 +146,7 @@ class VertexReconstruction(Task):
 
     # Requires four features, x, y, z, and t.
     default_target_labels = ["vertex"]
-    default_output_labels = [
+    default_prediction_labels = [
         "position_x_pred",
         "position_y_pred",
         "position_z_pred",
