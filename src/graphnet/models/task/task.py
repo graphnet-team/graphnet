@@ -35,9 +35,9 @@ class Task(Model):
 
     @property
     @abstractmethod
-    def default_output_labels(self) -> List[str]:
-        """Return default output labels."""
-        return self._default_output_labels
+    def default_prediction_labels(self) -> List[str]:
+        """Return default prediction labels."""
+        return self._default_prediction_labels
 
     @save_model_config
     def __init__(
