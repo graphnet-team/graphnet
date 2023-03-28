@@ -17,3 +17,4 @@ from .i3hybridrecoextractor import I3GalacticPlaneHybridRecoExtractor
 from .i3genericextractor import I3GenericExtractor
 from .i3pisaextractor import I3PISAExtractor
 from .i3ntmuonlabelsextractor import I3NTMuonLabelExtractor
+from .i3quesoextractor import I3QUESOExtractor
