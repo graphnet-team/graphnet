@@ -207,9 +207,8 @@ Train GNN model without the use of config files.
 
     parser.add_argument(
         "--wandb",
-        type=bool,
-        help="If True, Weights and Biases are used to track the experiment.",
-        default=False,
+        action="store_true",
+        help="If True, Weights & Biases are used to track the experiment.",
     )
 
     args = parser.parse_args()
