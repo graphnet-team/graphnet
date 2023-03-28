@@ -53,7 +53,7 @@ class DirectionReconstructionWithKappa(Task):
     default_target_labels = [
         "direction"
     ]  # contains dir_x, dir_y, dir_z see https://github.com/graphnet-team/graphnet/blob/95309556cfd46a4046bc4bd7609888aab649e295/src/graphnet/training/labels.py#L29
-    default_output_labels = [
+    default_prediction_labels = [
         "dir_x_pred",
         "dir_y_pred",
         "dir_z_pred",
