@@ -29,7 +29,7 @@ def main(
     num_workers: int,
     prediction_names: Optional[List[str]],
     suffix: Optional[str] = None,
-    wandb: Optional[bool] = False,
+    wandb: bool = False,
 ) -> None:
     """Run example."""
     # Construct Logger
