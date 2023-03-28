@@ -38,7 +38,7 @@ class SQLiteDataConverter(DataConverter):
                 f"No data saved to {output_file}"
             )
             return
-        else:
+        
             saved_any = False
             dataframe = OrderedDict([(key, pd.DataFrame()) for key in data[0]])
             for data_dict in data:
