@@ -334,7 +334,7 @@
 
 
 <div class="viewcode-block" id="SQLiteDataConverter"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter">[docs]</a><span class="k">class</span> <span class="nc">SQLiteDataConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Class for converting I3-files to SQLite format."""</span>
+<span class="w">    </span><span class="sd">"""Class for converting I3-file(s) to SQLite format."""</span>
 
     <span class="c1"># Class variables</span>
     <span class="n">file_suffix</span> <span class="o">=</span> <span class="s2">"db"</span>
@@ -349,7 +349,14 @@
             <span class="p">)</span>
 
         <span class="c1"># Concatenate data</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"No data was extracted from the processed I3 file(s). "</span>
+                <span class="sa">f</span><span class="s2">"No data saved to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">saved_any</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">dataframe</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">key</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">())</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
         <span class="k">for</span> <span class="n">data_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data_values</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -368,7 +375,6 @@
 
         <span class="c1"># Save each dataframe to SQLite database</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Saving to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="n">saved_any</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">create_table_and_save_to_sql</span><span class="p">(</span>
