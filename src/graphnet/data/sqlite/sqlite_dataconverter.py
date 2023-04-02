@@ -17,7 +17,7 @@ from graphnet.data.sqlite.sqlite_utilities import (
 
 
 class SQLiteDataConverter(DataConverter):
-    """Class for converting I3-files to SQLite format."""
+    """Class for converting I3-file(s) to SQLite format."""
 
     # Class variables
     file_suffix = "db"
@@ -32,7 +32,14 @@ class SQLiteDataConverter(DataConverter):
             )
 
         # Concatenate data
-        assert len(data)
+        if len(data) == 0:
+            self.warning(
+                "No data was extracted from the processed I3 file(s). "
+                f"No data saved to {output_file}"
+            )
+            return
+
+        saved_any = False
         dataframe = OrderedDict([(key, pd.DataFrame()) for key in data[0]])
         for data_dict in data:
             for key, data_values in data_dict.items():
@@ -51,7 +58,6 @@ class SQLiteDataConverter(DataConverter):
 
         # Save each dataframe to SQLite database
         self.debug(f"Saving to {output_file}")
-        saved_any = False
         for table, df in dataframe.items():
             if len(df) > 0:
                 create_table_and_save_to_sql(
