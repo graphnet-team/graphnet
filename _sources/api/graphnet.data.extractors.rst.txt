@@ -29,6 +29,7 @@ extractors
    graphnet.data.extractors.i3ntmuonlabelsextractor
    graphnet.data.extractors.i3particleextractor
    graphnet.data.extractors.i3pisaextractor
+   graphnet.data.extractors.i3quesoextractor
    graphnet.data.extractors.i3retroextractor
    graphnet.data.extractors.i3splinempeextractor
    graphnet.data.extractors.i3truthextractor
