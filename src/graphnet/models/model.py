@@ -185,7 +185,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
     def predict_as_dataframe(
         self,
         dataloader: DataLoader,
-        prediction_columns: Optional[List[str]] = None,
+        prediction_columns: List[str],
         *,
         node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
@@ -203,14 +203,6 @@ class Model(Logger, Configurable, LightningModule, ABC):
             additional_attributes = []
         assert isinstance(additional_attributes, list)
 
-        if prediction_columns is None:
-            try:
-                prediction_columns = self.prediction_columns
-            except AttributeError:
-                assert (
-                    1 == 2
-                ), "Could not infer prediction_columns from model. Please specify prediction_columns."
-        assert isinstance(prediction_columns, list)
         if (
             not isinstance(dataloader.sampler, SequentialSampler)
             and additional_attributes
