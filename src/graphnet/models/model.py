@@ -87,7 +87,6 @@ class Model(Logger, Configurable, LightningModule, ABC):
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",
-        early_stopping_patience: int = 5,
         **trainer_kwargs: Any,
     ) -> None:
         """Fit `Model` using `pytorch_lightning.Trainer`."""
@@ -95,11 +94,13 @@ class Model(Logger, Configurable, LightningModule, ABC):
         if callbacks is None:
             callbacks = self._create_default_callbacks(
                 val_dataloader=val_dataloader,
-                early_stopping_patience=early_stopping_patience,
+            )
+        elif val_dataloader is not None:
+            callbacks = self._add_early_stopping(
+                val_dataloader=val_dataloader, callbacks=callbacks
             )
 
         self.train(mode=True)
-
         self._construct_trainers(
             max_epochs=max_epochs,
             gpus=gpus,
@@ -120,10 +121,16 @@ class Model(Logger, Configurable, LightningModule, ABC):
             self.warning("[ctrl+c] Exiting gracefully.")
             pass
 
-    def _create_default_callbacks(
-        self, val_dataloader: DataLoader, early_stopping_patience: int
-    ) -> List:
+    def _create_default_callbacks(self, val_dataloader: DataLoader) -> List:
         callbacks = [ProgressBar()]
+        callbacks = self._add_early_stopping(
+            val_dataloader=val_dataloader, callbacks=callbacks
+        )
+        return callbacks
+
+    def _add_early_stopping(
+        self, val_dataloader: DataLoader, callbacks: List
+    ) -> List:
         if val_dataloader is not None:
             has_es = False
             assert isinstance(callbacks, list)
@@ -134,10 +141,12 @@ class Model(Logger, Configurable, LightningModule, ABC):
                 callbacks.append(
                     EarlyStopping(
                         monitor="val_loss",
-                        patience=early_stopping_patience,
+                        patience=5,
                     )
                 )
-                self.info("EarlyStopping callback added automatically.")
+                self.warn_once(
+                    "Got validation dataloader but no EarlyStopping callback. An EarlyStopping callback has been added automatically with patience=5 and montior = 'val_loss'."
+                )
         return callbacks
 
     def predict(
