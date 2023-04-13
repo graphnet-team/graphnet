@@ -145,7 +145,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
                     )
                 )
                 self.warn_once(
-                    "Got validation dataloader but no EarlyStopping callback. An EarlyStopping callback has been added automatically with patience=5 and montior = 'val_loss'."
+                    "Got validation dataloader but no EarlyStopping callback. An EarlyStopping callback has been added automatically with patience=5 and monitor = 'val_loss'."
                 )
         return callbacks
 
