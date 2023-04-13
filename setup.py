@@ -16,7 +16,7 @@ INSTALL_REQUIRES = [
     "dill>=0.3",
     "matplotlib>=3.5",
     "numpy>=1.21",
-    "pandas>=1.3",
+    "pandas>=1.3, <2.0",
     "pyarrow",
     "pydantic",
     "ruamel.yaml",
