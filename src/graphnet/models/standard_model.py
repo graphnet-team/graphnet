@@ -205,11 +205,11 @@ class StandardModel(Model):
         Include `additional_attributes` as additional columns in the output
         DataFrame.
         """
+        if prediction_columns is None:
+            prediction_columns = self.prediction_labels
         return super().predict_as_dataframe(
             dataloader=dataloader,
-            prediction_columns=self.prediction_labels
-            if prediction_columns is None
-            else prediction_columns,
+            prediction_columns=prediction_columns,
             node_level=node_level,
             additional_attributes=additional_attributes,
             index_column=index_column,
