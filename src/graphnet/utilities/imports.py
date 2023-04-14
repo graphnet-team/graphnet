@@ -10,6 +10,7 @@ def has_icecube_package() -> bool:
     """Check whether the `icecube` package is available."""
     try:
         import icecube  # pyright: reportMissingImports=false
+        from icecube import icetray, dataio
 
         return True
     except ImportError:
