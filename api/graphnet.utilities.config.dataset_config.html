@@ -718,7 +718,7 @@ construction more transparent and reproducible.</p>
 </div></blockquote>
 <p>}
 &gt;&gt;&gt; dataset.config.dump(“dataset.yml”)
-&gt;&gt;&gt; datasets: Dict[str, ConcatDataset] = Dataset.from_config(</p>
+&gt;&gt;&gt; datasets: Dict[str, EnsembleDataset] = Dataset.from_config(</p>
 <blockquote>
 <div><p>“dataset.yml”</p>
 </div></blockquote>
@@ -726,7 +726,7 @@ construction more transparent and reproducible.</p>
 &gt;&gt;&gt; datasets
 {</p>
 <blockquote>
-<div><p>“train”: ConcatDataset(…),
+<div><p>“train”: EnsembleDataset(…),
 (…)</p>
 </div></blockquote>
 <p>}</p>
