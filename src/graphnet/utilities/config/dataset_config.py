@@ -95,12 +95,12 @@ class DatasetConfig(BaseConfig):
                 (...)
             }
             >>> dataset.config.dump("dataset.yml")
-            >>> datasets: Dict[str, ConcatDataset] = Dataset.from_config(
+            >>> datasets: Dict[str, EnsembleDataset] = Dataset.from_config(
                 "dataset.yml"
             )
             >>> datasets
             {
-                "train": ConcatDataset(...),
+                "train": EnsembleDataset(...),
                 (...)
             }
 

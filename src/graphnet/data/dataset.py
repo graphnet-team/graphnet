@@ -14,10 +14,8 @@ from typing import (
     Iterable,
 )
 
-from tqdm import tqdm
 import numpy as np
 import torch
-from torch.utils.data import ConcatDataset
 from torch_geometric.data import Data
 
 from graphnet.constants import GRAPHNET_ROOT_DIR
@@ -46,9 +44,9 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         source: Union[DatasetConfig, str],
     ) -> Union[
         "Dataset",
-        ConcatDataset,
+        "EnsembleDataset",
         Dict[str, "Dataset"],
-        Dict[str, ConcatDataset],
+        Dict[str, "EnsembleDataset"],
     ]:
         """Construct `Dataset` instance from `source` configuration."""
         if isinstance(source, str):
@@ -75,9 +73,9 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     def concatenate(
         cls,
         datasets: List["Dataset"],
-    ) -> ConcatDataset:
+    ) -> "EnsembleDataset":
         """Concatenate multiple `Dataset`s into one instance."""
-        return ConcatDataset(datasets)
+        return EnsembleDataset(datasets)
 
     @classmethod
     def _construct_datasets_from_dict(
@@ -90,7 +88,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         for key, selection in selections.items():
             config.selection = selection
             dataset = Dataset.from_config(config)
-            assert isinstance(dataset, (Dataset, ConcatDataset))
+            assert isinstance(dataset, (Dataset, EnsembleDataset))
             datasets[key] = dataset
 
         # Reset `selections`.
