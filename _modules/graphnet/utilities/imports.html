@@ -327,6 +327,7 @@
 <span class="w">    </span><span class="sd">"""Check whether the `icecube` package is available."""</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">icecube</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+        <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="n">icetray</span><span class="p">,</span> <span class="n">dataio</span>
 
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
