@@ -21,6 +21,11 @@ class Label(ABC, Logger):
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
+    @property
+    def key(self) -> str:
+        """Return value of `key`."""
+        return self._key
+
     @abstractmethod
     def __call__(self, graph: Data) -> torch.tensor:
         """Label-specific implementation."""
