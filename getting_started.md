@@ -91,10 +91,10 @@ from graphnet.data.sqlite import SQLiteDataset
 
 dataset = SQLiteDataset(
     path="data/examples/sqlite/prometheus/prometheus-events.db",
-	pulsemaps="total",
-	truth_table="mc_truth",
-	features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", ...],
-	truth=["injection_energy", "injection_zenith", ...],
+    pulsemaps="total",
+    truth_table="mc_truth",
+    features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", ...],
+    truth=["injection_energy", "injection_zenith", ...],
 )
 
 graph = dataset[0]  # torch_geometric.data.Data
