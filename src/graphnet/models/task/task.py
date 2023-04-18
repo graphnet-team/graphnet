@@ -102,7 +102,7 @@ class Task(Model):
             prediction_labels = self.default_prediction_labels
         if isinstance(prediction_labels, str):
             prediction_labels = [prediction_labels]
-        
+
         assert isinstance(target_labels, List)  # mypy
         assert isinstance(prediction_labels, List)  # mypy
         # Member variables
