@@ -133,13 +133,12 @@ class Model(Logger, Configurable, LightningModule, ABC):
     ) -> List:
         if val_dataloader is None:
             return callbacks
-            
         has_early_stopping = False
         assert isinstance(callbacks, list)
         for callback in callbacks:
             if isinstance(callback, EarlyStopping):
                 has_early_stopping = True
-                
+
         if not has_early_stopping:
             callbacks.append(
                 EarlyStopping(
