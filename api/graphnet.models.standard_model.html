@@ -378,6 +378,10 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.target_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">target_labels</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.prediction_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prediction_labels</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.configure_optimizers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">configure_optimizers()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
@@ -395,6 +399,8 @@
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.train" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.predict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">predict()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.predict_as_dataframe" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">predict_as_dataframe()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -408,6 +414,20 @@
     
       <a href="#graphnet.models.standard_model.StandardModel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a>
       <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.standard_model.StandardModel.target_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">target_labels</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.standard_model.StandardModel.prediction_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prediction_labels</span></code></a>
+      
+    
+    </li>
     <li class="md-nav__item">
     
     
@@ -468,6 +488,13 @@
     
     
       <a href="#graphnet.models.standard_model.StandardModel.predict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">predict()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.standard_model.StandardModel.predict_as_dataframe" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">predict_as_dataframe()</span></code></a>
       
     
     </li></ul>
@@ -532,6 +559,10 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.target_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">target_labels</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.prediction_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prediction_labels</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.configure_optimizers" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">configure_optimizers()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
@@ -549,6 +580,8 @@
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.train" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.predict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">predict()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.predict_as_dataframe" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">predict_as_dataframe()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -589,6 +622,16 @@ model (detector read-in, GNN architecture, and task-specific read-outs).</p>
 </ul>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.target_labels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.target_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return target label.</p>
+</dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.prediction_labels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.prediction_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return prediction labels.</p>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.configure_optimizers">
 <span class="sig-name descname"><span class="pre">configure_optimizers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/standard_model.html#StandardModel.configure_optimizers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.configure_optimizers" title="Permalink to this definition">¶</a></dt>
@@ -713,6 +756,29 @@ between the training and validation step.</p>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>dataloader</strong> (<em>DataLoader</em>) – </p></li>
+<li><p><strong>gpus</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>distribution_strategy</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.predict_as_dataframe">
+<span class="sig-name descname"><span class="pre">predict_as_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution_strategy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/standard_model.html#StandardModel.predict_as_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.predict_as_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return predictions for <cite>dataloader</cite> as a DataFrame.</p>
+<p>Include <cite>additional_attributes</cite> as additional columns in the output
+DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dataloader</strong> (<em>DataLoader</em>) – </p></li>
+<li><p><strong>prediction_columns</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+<li><p><strong>node_level</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>additional_attributes</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+<li><p><strong>index_column</strong> (<em>str</em>) – </p></li>
 <li><p><strong>gpus</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>) – </p></li>
 <li><p><strong>distribution_strategy</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
 </ul>
