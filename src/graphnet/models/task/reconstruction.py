@@ -12,6 +12,8 @@ class AzimuthReconstructionWithKappa(Task):
     """Reconstructs azimuthal angle and associated kappa (1/var)."""
 
     # Requires two features: untransformed points in (x,y)-space.
+    default_target_labels = ["azimuth"]
+    default_prediction_labels = ["azimuth_pred", "azimuth_kappa"]
     nb_inputs = 2
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -28,6 +30,8 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
     """Reconstructs azimuthal angle."""
 
     # Requires two features: untransformed points in (x,y)-space.
+    default_target_labels = ["azimuth"]
+    default_prediction_labels = ["azimuth_pred"]
     nb_inputs = 2
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -46,6 +50,15 @@ class DirectionReconstructionWithKappa(Task):
     """Reconstructs direction with kappa from the 3D-vMF distribution."""
 
     # Requires three features: untransformed points in (x,y,z)-space.
+    default_target_labels = [
+        "direction"
+    ]  # contains dir_x, dir_y, dir_z see https://github.com/graphnet-team/graphnet/blob/95309556cfd46a4046bc4bd7609888aab649e295/src/graphnet/training/labels.py#L29
+    default_prediction_labels = [
+        "dir_x_pred",
+        "dir_y_pred",
+        "dir_z_pred",
+        "direction_kappa",
+    ]
     nb_inputs = 3
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -61,6 +74,8 @@ class ZenithReconstruction(Task):
     """Reconstructs zenith angle."""
 
     # Requires two features: zenith angle itself.
+    default_target_labels = ["zenith"]
+    default_prediction_labels = ["zenith_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -72,6 +87,8 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
     """Reconstructs zenith angle and associated kappa (1/var)."""
 
     # Requires one feature in addition to `ZenithReconstruction`: kappa (unceratinty; 1/variance).
+    default_target_labels = ["zenith"]
+    default_prediction_labels = ["zenith_pred", "zenith_kappa"]
     nb_inputs = 2
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -85,6 +102,8 @@ class EnergyReconstruction(Task):
     """Reconstructs energy using stable method."""
 
     # Requires one feature: untransformed energy
+    default_target_labels = ["energy"]
+    default_prediction_labels = ["energy_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -97,6 +116,8 @@ class EnergyReconstructionWithPower(Task):
     """Reconstructs energy."""
 
     # Requires one feature: untransformed energy
+    default_target_labels = ["energy"]
+    default_prediction_labels = ["energy_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -108,6 +129,8 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
     """Reconstructs energy and associated uncertainty (log(var))."""
 
     # Requires one feature in addition to `EnergyReconstruction`: log-variance (uncertainty).
+    default_target_labels = ["energy"]
+    default_prediction_labels = ["energy_pred", "energy_sigma"]
     nb_inputs = 2
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -122,6 +145,13 @@ class VertexReconstruction(Task):
     """Reconstructs vertex position and time."""
 
     # Requires four features, x, y, z, and t.
+    default_target_labels = ["vertex"]
+    default_prediction_labels = [
+        "position_x_pred",
+        "position_y_pred",
+        "position_z_pred",
+        "interaction_time_pred",
+    ]
     nb_inputs = 4
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -138,6 +168,12 @@ class PositionReconstruction(Task):
     """Reconstructs vertex position."""
 
     # Requires three features, x, y, and z.
+    default_target_labels = ["position"]
+    default_prediction_labels = [
+        "position_x_pred",
+        "position_y_pred",
+        "position_z_pred",
+    ]
     nb_inputs = 3
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -154,6 +190,8 @@ class TimeReconstruction(Task):
     """Reconstructs time."""
 
     # Requires one feature, time.
+    default_target_labels = ["interaction_time"]
+    default_prediction_labels = ["interaction_time_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -169,6 +207,8 @@ class InelasticityReconstruction(Task):
     """
 
     # Requires one features: inelasticity itself
+    default_target_labels = ["elasticity"]
+    default_prediction_labels = ["elasticity_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:

@@ -28,7 +28,7 @@ from graphnet.utilities.config import save_model_config
 from torch_geometric.utils import degree
 
 # NOTE: From [https://github.com/pyg-team/pytorch_geometric/pull/4903]
-# TODO: Remove once bumping to torch_geometric>=2.1.0
+# TODO:  Remove once bumping to torch_geometric>=2.1.0
 #       See [https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md]
 
 

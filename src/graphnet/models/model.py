@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from pytorch_lightning import Trainer, LightningModule
 from pytorch_lightning.callbacks.callback import Callback
+from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers.logger import Logger as LightningLogger
 import torch
 from torch import Tensor
@@ -18,6 +19,7 @@ from torch_geometric.data import Data
 
 from graphnet.utilities.logging import Logger
 from graphnet.utilities.config import Configurable, ModelConfig
+from graphnet.training.callbacks import ProgressBar
 
 
 class Model(Logger, Configurable, LightningModule, ABC):
@@ -88,8 +90,17 @@ class Model(Logger, Configurable, LightningModule, ABC):
         **trainer_kwargs: Any,
     ) -> None:
         """Fit `Model` using `pytorch_lightning.Trainer`."""
-        self.train(mode=True)
+        # Checks
+        if callbacks is None:
+            callbacks = self._create_default_callbacks(
+                val_dataloader=val_dataloader,
+            )
+        elif val_dataloader is not None:
+            callbacks = self._add_early_stopping(
+                val_dataloader=val_dataloader, callbacks=callbacks
+            )
 
+        self.train(mode=True)
         self._construct_trainers(
             max_epochs=max_epochs,
             gpus=gpus,
@@ -109,6 +120,38 @@ class Model(Logger, Configurable, LightningModule, ABC):
         except KeyboardInterrupt:
             self.warning("[ctrl+c] Exiting gracefully.")
             pass
+
+    def _create_default_callbacks(self, val_dataloader: DataLoader) -> List:
+        callbacks = [ProgressBar()]
+        callbacks = self._add_early_stopping(
+            val_dataloader=val_dataloader, callbacks=callbacks
+        )
+        return callbacks
+
+    def _add_early_stopping(
+        self, val_dataloader: DataLoader, callbacks: List
+    ) -> List:
+        if val_dataloader is None:
+            return callbacks
+        has_early_stopping = False
+        assert isinstance(callbacks, list)
+        for callback in callbacks:
+            if isinstance(callback, EarlyStopping):
+                has_early_stopping = True
+
+        if not has_early_stopping:
+            callbacks.append(
+                EarlyStopping(
+                    monitor="val_loss",
+                    patience=5,
+                )
+            )
+            self.warning_once(
+                "Got validation dataloader but no EarlyStopping callback. An "
+                "EarlyStopping callback has been added automatically with "
+                "patience=5 and monitor = 'val_loss'."
+            )
+        return callbacks
 
     def predict(
         self,
@@ -178,6 +221,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
                 "doesn't resample batches; or do not request "
                 "`additional_attributes`."
             )
+        self.info(f"Column names for predictions are: \n {prediction_columns}")
         predictions_torch = self.predict(
             dataloader=dataloader,
             gpus=gpus,

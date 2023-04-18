@@ -8,6 +8,7 @@ from torch.nn import ModuleList
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch_geometric.data import Data
+import pandas as pd
 
 from graphnet.models.coarsening import Coarsening
 from graphnet.utilities.config import save_model_config
@@ -61,6 +62,18 @@ class StandardModel(Model):
         self._scheduler_class = scheduler_class
         self._scheduler_kwargs = scheduler_kwargs or dict()
         self._scheduler_config = scheduler_config or dict()
+
+    @property
+    def target_labels(self) -> List[str]:
+        """Return target label."""
+        return [label for task in self._tasks for label in task._target_labels]
+
+    @property
+    def prediction_labels(self) -> List[str]:
+        """Return prediction labels."""
+        return [
+            label for task in self._tasks for label in task._prediction_labels
+        ]
 
     def configure_optimizers(self) -> Dict[str, Any]:
         """Configure the model's optimizer(s)."""
@@ -172,6 +185,34 @@ class StandardModel(Model):
         self.inference()
         return super().predict(
             dataloader=dataloader,
+            gpus=gpus,
+            distribution_strategy=distribution_strategy,
+        )
+
+    def predict_as_dataframe(
+        self,
+        dataloader: DataLoader,
+        prediction_columns: Optional[List[str]] = None,
+        *,
+        node_level: bool = False,
+        additional_attributes: Optional[List[str]] = None,
+        index_column: str = "event_no",
+        gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
+    ) -> pd.DataFrame:
+        """Return predictions for `dataloader` as a DataFrame.
+
+        Include `additional_attributes` as additional columns in the output
+        DataFrame.
+        """
+        if prediction_columns is None:
+            prediction_columns = self.prediction_labels
+        return super().predict_as_dataframe(
+            dataloader=dataloader,
+            prediction_columns=prediction_columns,
+            node_level=node_level,
+            additional_attributes=additional_attributes,
+            index_column=index_column,
             gpus=gpus,
             distribution_strategy=distribution_strategy,
         )
