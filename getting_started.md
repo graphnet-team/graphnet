@@ -759,9 +759,9 @@ truth_table = "mc_truth"
 event_no = 120
 
 with sqlite3.connect(database) as conn:
-	query = f"SELECT * from {pulsemap} WHERE {index_column} == {event_no}"
-	detector_response = pd.read_sql(query, conn)
+    query = f"SELECT * from {pulsemap} WHERE {index_column} == {event_no}"
+    detector_response = pd.read_sql(query, conn)
 
-	query = f"SELECT * from {truth_table} WHERE {index_column} == {event_no}"
-	truth = pd.read_sql(query, conn)
+    query = f"SELECT * from {truth_table} WHERE {index_column} == {event_no}"
+    truth = pd.read_sql(query, conn)
 ```
