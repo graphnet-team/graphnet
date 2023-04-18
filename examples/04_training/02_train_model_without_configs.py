@@ -25,10 +25,6 @@ from graphnet.utilities.logging import Logger
 features = FEATURES.PROMETHEUS
 truth = TRUTH.PROMETHEUS
 
-# Make sure W&B output directory exists
-WANDB_DIR = "./wandb/"
-os.makedirs(WANDB_DIR, exist_ok=True)
-
 
 def main(
     path: str,
@@ -40,18 +36,23 @@ def main(
     early_stopping_patience: int,
     batch_size: int,
     num_workers: int,
+    wandb: bool = False,
 ) -> None:
     """Run example."""
     # Construct Logger
     logger = Logger()
 
     # Initialise Weights & Biases (W&B) run
-    wandb_logger = WandbLogger(
-        project="example-script",
-        entity="graphnet-team",
-        save_dir=WANDB_DIR,
-        log_model=True,
-    )
+    if wandb:
+        # Make sure W&B output directory exists
+        wandb_dir = "./wandb/"
+        os.makedirs(wandb_dir, exist_ok=True)
+        wandb_logger = WandbLogger(
+            project="example-script",
+            entity="graphnet-team",
+            save_dir=wandb_dir,
+            log_model=True,
+        )
 
     logger.info(f"features: {features}")
     logger.info(f"truth: {truth}")
@@ -72,9 +73,9 @@ def main(
 
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model_without_configs")
     run_name = "dynedge_{}_example".format(config["target"])
-
-    # Log configuration to W&B
-    wandb_logger.experiment.config.update(config)
+    if wandb:
+        # Log configuration to W&B
+        wandb_logger.experiment.config.update(config)
 
     (
         training_dataloader,
@@ -137,17 +138,16 @@ def main(
         training_dataloader,
         validation_dataloader,
         callbacks=callbacks,
-        logger=wandb_logger,
+        logger=wandb_logger if wandb else None,
         **config["fit"],
     )
 
     # Get predictions
-    prediction_columns = [config["target"] + "_pred"]
-    additional_attributes = [config["target"]]
+    additional_attributes = model.target_labels
+    assert isinstance(additional_attributes, list)  # mypy
 
     results = model.predict_as_dataframe(
         validation_dataloader,
-        prediction_columns=prediction_columns,
         additional_attributes=additional_attributes + ["event_no"],
     )
 
@@ -206,6 +206,12 @@ Train GNN model without the use of config files.
         "num-workers",
     )
 
+    parser.add_argument(
+        "--wandb",
+        action="store_true",
+        help="If True, Weights & Biases are used to track the experiment.",
+    )
+
     args = parser.parse_args()
 
     main(
@@ -218,4 +224,5 @@ Train GNN model without the use of config files.
         args.early_stopping_patience,
         args.batch_size,
         args.num_workers,
+        args.wandb,
     )
