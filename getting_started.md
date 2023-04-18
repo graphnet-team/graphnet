@@ -74,7 +74,7 @@ This class is responsible for reading data from file and preparing them as a gra
 The `Dataset` class currently comes in two flavours;
 
 - [ParquetDataset](https://graphnet-team.github.io/graphnet/api/graphnet.data.parquet.parquet_dataset.html): Lets you prepare raphs based on data read from Parquet files.
- - [SQLiteDataset](https://graphnet-team.github.io/graphnet/api/graphnet.data.sqlite.sqlite_dataset.html): Lets you prepare graphs based on data read from SQLite databases.
+- [SQLiteDataset](https://graphnet-team.github.io/graphnet/api/graphnet.data.sqlite.sqlite_dataset.html): Lets you prepare graphs based on data read from SQLite databases.
 
 Both are file format-specific implementations of the general [`Dataset`](https://graphnet-team.github.io/graphnet/api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset) which provides structure and some common functionality.
 To build a `Dataset` from your files, you must specify at least the following:
