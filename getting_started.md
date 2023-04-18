@@ -108,9 +108,9 @@ from graphnet.data.parquet import ParquetDataset
 dataset = ParquetDataset(
     path="data/examples/parquet/prometheus/prometheus-events.parquet",
     pulsemaps="total",
-	truth_table="mc_truth",
-	features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", ...],
-	truth=["injection_energy", "injection_zenith", ...],
+    truth_table="mc_truth",
+    features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", ...],
+    truth=["injection_energy", "injection_zenith", ...],
 )
 
 graph = dataset[0]  # torch_geometric.data.Data
