@@ -131,22 +131,27 @@ class Model(Logger, Configurable, LightningModule, ABC):
     def _add_early_stopping(
         self, val_dataloader: DataLoader, callbacks: List
     ) -> List:
-        if val_dataloader is not None:
-            has_es = False
-            assert isinstance(callbacks, list)
-            for callback in callbacks:
-                if isinstance(callback, EarlyStopping):
-                    has_es = True
-            if has_es is False:
-                callbacks.append(
-                    EarlyStopping(
-                        monitor="val_loss",
-                        patience=5,
-                    )
+        if val_dataloader is None:
+            return callbacks
+            
+        has_early_stopping = False
+        assert isinstance(callbacks, list)
+        for callback in callbacks:
+            if isinstance(callback, EarlyStopping):
+                has_early_stopping = True
+                
+        if not has_early_stopping:
+            callbacks.append(
+                EarlyStopping(
+                    monitor="val_loss",
+                    patience=5,
                 )
-                self.warn_once(
-                    "Got validation dataloader but no EarlyStopping callback. An EarlyStopping callback has been added automatically with patience=5 and monitor = 'val_loss'."
-                )
+            )
+            self.warning_once(
+                "Got validation dataloader but no EarlyStopping callback. An "
+                "EarlyStopping callback has been added automatically with "
+                "patience=5 and monitor = 'val_loss'."
+            )
         return callbacks
 
     def predict(
