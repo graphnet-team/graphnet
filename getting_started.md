@@ -390,8 +390,8 @@ gnn = DynEdge(
 )
 task = ZenithReconstructionWithKappa(
     hidden_size=gnn.nb_outputs,
-	target_labels="injection_zenith",
-	loss_function=VonMisesFisher2DLoss(),
+    target_labels="injection_zenith",
+    loss_function=VonMisesFisher2DLoss(),
 )
 
 # Construct the Model
