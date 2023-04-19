@@ -24,7 +24,7 @@ Appendix:
 ## 1. Introduction
 
 GraphNeT is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs).
-The framework builds on [PyTorch](https://pytorch.org/), [PyG](https://www.pyg.org/), and [PyTorch-Lightning](https://www.pytorchlightning.ai/index.html), but attempts at abstracting many of the lower-level implementation details and instead provide simple, high-level components that makes it easy and fast for physicists to use GNNs in their research.
+The framework builds on [PyTorch](https://pytorch.org/), [PyG](https://www.pyg.org/), and [PyTorch-Lightning](https://www.pytorchlightning.ai/index.html), but attempts to abstract away many of the lower-level implementation details and instead provide simple, high-level components that makes it easy and fast for physicists to use GNNs in their research.
 
 This tutorial aims to introduce the various elements of `GraphNeT` to new users.
 It will go through the main modules, explain some of the structure and design behind these, and show concrete code examples.
@@ -36,17 +36,17 @@ They are intended as simple starting point, showing just some of the things you 
 If you have any question, run into any problems, or just need help, consider first joining the [GraphNeT team's Slack group](https://join.slack.com/t/graphnet-team/signup) to talk to like-minded folks, or [open an issue](https://github.com/graphnet-team/graphnet/issues/new/choose) if you have a feature to suggest or are confident you have encountered a bug.
 
 If you want a quick lay of the land, you can start with [Section 2 - Overview of GraphNet](#2-overview-of-graphnet).
-If you want to get your hands dirty right a way, will free to skip to [Seciton 3 - Data](#3-data) and the subsequent sections.
+If you want to get your hands dirty right away, feel free to skip to [Section 3 - Data](#3-data) and the subsequent sections.
 
 ## 2. Overview of GraphNeT
 
 The main modules of GraphNeT are, in the order that you will likely use them:
 - [`graphnet.data`](src/graphnet/data): For converting domain-specific data (i.e., I3 in the case of IceCube) to generic, intermediate file formats (e.g., SQLite or Parquet) using [`DataConverter`](src/graphnet/data/dataconverter.py); and for reading data as graphs from these intermediate files when training GNNs using [`Dataset`](src/graphnet/data/dataset.py), and its format-specific subclasses and [`DataLoader`](src/graphnet/data/dataloader.py).
-- [`graphnet.models`](src/graphnet/models): For building GNNs to perform a variety of physics tasks. The base [`Model`](src/graphnet/models/model.py) class provides common interfaces for training and inference, as well as for model management (saving, loading, configs, etc.). This can be subclasses to build and train any GNN using GraphNeT functionality. The more specialised [`StandardModel`](src/graphnet/models/standard_model.py) provides a simple way to create a standard type of `Model` with a fixed structure. This type of model is componsed of the following components, in sequence:
+- [`graphnet.models`](src/graphnet/models): For building GNNs to perform a variety of physics tasks. The base [`Model`](src/graphnet/models/model.py) class provides common interfaces for training and inference, as well as for model management (saving, loading, configs, etc.). This can be subclassed to build and train any GNN using GraphNeT functionality. The more specialised [`StandardModel`](src/graphnet/models/standard_model.py) provides a simple way to create a standard type of `Model` with a fixed structure. This type of model is composed of the following components, in sequence:
   - [`Detector`](src/graphnet/models/detector/detector.py): For handling detector-specific preprocessing of data. For now, `Detector` instances also require a [`GraphBuilder`](src/graphnet/models/graph_builders.py) to specify how nodes in the input graph should be connected to form a graph. This could be connecting the _N_ nearest neighbours of each node or connecting all nodes within a radius of _R_ meters of each other.
   - [`Coarsening`](src/graphnet/models/coarsening.py): For pooling, or "coarsening", pulse-/hit-level data to, e.g., PMT- or DOM-level, thereby reducing the size and complexity of the graphs being passed to the GNN itself (see below). This component is optional.
-  - [`GNN`](src/graphnet/models/gnn/gnn.py): For implementing the actual, learnable GNN layers. These are the components of GraphNeT that are actually being trained, and the architecture and complexity of these are central to the performance and optimisation on the physics/learning task being performed. For now, we provide a few different example architectures, e.g., [`DynEdge`](src/graphnet/models/gnn/convnet.py) and [`ConvNet`](src/graphnet/models/gnn/convnet.py), but in principle any GNN architecture could be implemented here — and we encourage you to contribute their favourite!
-  - [`Task`](src/graphnet/models/task/task.py): For choosing a certain physics/learning task or tasks with respect to which the model should be trained. We provide a number of common [reconstruction](src/grapnet/models/task/reconstruction.py) (`DirectionReconstructionWithKappa` and `EnergyReconstructionWithUncertainty`) and [classification](src/grapnet/models/task/classification.py) (e.g., `BinaryClassificationTask` and `MulticlassClassificationTask`) tasks, but we encourage you to expand on these with new, more specialised tasks appropriate to their physics use case. For now, `Task` instances also require an appropriate [`LossFunction`](src/graphnet/training/loss_functions.py) to specify how the models should be trained (see below).
+  - [`GNN`](src/graphnet/models/gnn/gnn.py): For implementing the actual, learnable GNN layers. These are the components of GraphNeT that are actually being trained, and the architecture and complexity of these are central to the performance and optimisation on the physics/learning task being performed. For now, we provide a few different example architectures, e.g., [`DynEdge`](src/graphnet/models/gnn/convnet.py) and [`ConvNet`](src/graphnet/models/gnn/convnet.py), but in principle any GNN architecture could be implemented here — and we encourage you to contribute your favourite!
+  - [`Task`](src/graphnet/models/task/task.py): For choosing a certain physics/learning task or tasks with respect to which the model should be trained. We provide a number of common [reconstruction](src/grapnet/models/task/reconstruction.py) (`DirectionReconstructionWithKappa` and `EnergyReconstructionWithUncertainty`) and [classification](src/grapnet/models/task/classification.py) (e.g., `BinaryClassificationTask` and `MulticlassClassificationTask`) tasks, but we encourage you to expand on these with new, more specialised tasks appropriate to your physics use case. For now, `Task` instances also require an appropriate [`LossFunction`](src/graphnet/training/loss_functions.py) to specify how the models should be trained (see below).
 
   These components are packaged in a particularly simple way in `StandardModel`, but they are not specific to it.
   That is, they can be used in any combination, and alongside more specialised PyTorch/PyG code, as part of a more generic `Model`.
@@ -70,17 +70,17 @@ This dataset exists both as Parquet and SQLite and can be found in `graphnet/dat
 ## 4. The `Dataset` and `DataLoader` classes
 
 The `Dataset` class in GraphNeT is based on [`torch.utils.data.Dataset`](https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset)s.
-This class is responsible for reading data from file and preparing them as a graph-object, for which we use the  [`torch_geometric.data.Data`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data) class.
-The `Dataset` class currently comes in two flavours;
+This class is responsible for reading data from a file and preparing them as a graph-object, for which we use the  [`torch_geometric.data.Data`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data) class.
+The `Dataset` class currently comes in two flavours:
 
-- [ParquetDataset](https://graphnet-team.github.io/graphnet/api/graphnet.data.parquet.parquet_dataset.html): Lets you prepare raphs based on data read from Parquet files.
+- [ParquetDataset](https://graphnet-team.github.io/graphnet/api/graphnet.data.parquet.parquet_dataset.html): Lets you prepare graphs based on data read from Parquet files.
 - [SQLiteDataset](https://graphnet-team.github.io/graphnet/api/graphnet.data.sqlite.sqlite_dataset.html): Lets you prepare graphs based on data read from SQLite databases.
 
 Both are file format-specific implementations of the general [`Dataset`](https://graphnet-team.github.io/graphnet/api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset) which provides structure and some common functionality.
 To build a `Dataset` from your files, you must specify at least the following:
 
-- `pulsemaps`: These are named fields in your Parquet files, or tables in your SQLite databases, which store one or more pulse series from which you would like to create a dataset. A pulse series represents the detector response, in the form of a series of PMT hits or pulses, in some time window, usually triggered by a single neutrino or atmospheric muon interaction. This is the data that the will be served as input to the `Model`.
--  `truth_table`: The name of table/array that contains the truth-level information associated with the pulse series, and should contain the truth labels that you would like to reconstruct or classify. Often this table will contain the true physical attributes of the primary particle — such as its true direction, energy, PID, etc. — and is therefore graph- or event-level (as opposed to the pulse series tables, which are node- or hit-level) truth information.
+- `pulsemaps`: These are named fields in your Parquet files, or tables in your SQLite databases, which store one or more pulse series from which you would like to create a dataset. A pulse series represents the detector response, in the form of a series of PMT hits or pulses, in some time window, usually triggered by a single neutrino or atmospheric muon interaction. This is the data that will be served as input to the `Model`.
+-  `truth_table`: The name of a table/array that contains the truth-level information associated with the pulse series, and should contain the truth labels that you would like to reconstruct or classify. Often this table will contain the true physical attributes of the primary particle — such as its true direction, energy, PID, etc. — and is therefore graph- or event-level (as opposed to the pulse series tables, which are node- or hit-level) truth information.
 -  `features`: The names of the columns in your pulse series table(s) that you would like to include for training; they typically constitute the per-node/-hit features such as xyz-position of sensors, charge, and photon arrival times.
 -  `truth`: The columns in your truth table/array that you would like to include in the dataset.
 
@@ -131,7 +131,7 @@ for batch in dataloader:
     ...
 ```
 
-The `Dataset`s in GraphNeT use `torch_geometric.data.Data` objects to present data as graphs, and graphs in GraphNeT are therefore compatible with PyG and it's handling of graph objects.
+The `Dataset`s in GraphNeT use `torch_geometric.data.Data` objects to present data as graphs, and graphs in GraphNeT are therefore compatible with PyG and its handling of graph objects.
 By default, the following fields will be available in a graph built by `Dataset`:
 
  - `graph.x`: Node feature matrix with shape `[num_nodes, num_features]`
@@ -292,7 +292,7 @@ dataset.config.selection = {
 
 ### Example `DataConfig`
 
-GraphNeT comes with a pre-defined `DatasetConfig` file for the small open-source dataset which can be found here  `graphnet/configs/datasets/training_example_data_sqlite.yml`.
+GraphNeT comes with a pre-defined `DatasetConfig` file for the small open-source dataset which can be found at `graphnet/configs/datasets/training_example_data_sqlite.yml`.
 It looks like so:
 ```yml
 path: $GRAPHNET/data/examples/sqlite/prometheus/prometheus-events.db
@@ -354,12 +354,12 @@ That is, coneptually,
 > Data → `Model` → Predictions
 
 You can subclass the `Model` class to create any model implementation using GraphNeT components (such as instances of, e.g., the `Detector`, `Coarsening`, `GNN`, and `Task` classes) along with PyTorch and PyG functionality.
-All `Model`s that are applicable to the same detector configuration, regardless of hwo the `Model`s themselves are implemented, should be able to act on the same graph (`torch_geometric.data.Data`) objects, thereby making them interchangeable and directly comparable.
+All `Model`s that are applicable to the same detector configuration, regardless of how the `Model`s themselves are implemented, should be able to act on the same graph (`torch_geometric.data.Data`) objects, thereby making them interchangeable and directly comparable.
 
 ### The `StandardModel` class
 
 The simplest way to define a `Model` in GraphNeT is through the `StandardModel` subclass.
-This is uniquely defined based on one each of [`Coarsening`](https://graphnet-team.github.io/graphnet/api/graphnet.models.coarsening.html#module-graphnet.models.coarsening)`(optional),` [`GraphBuilder`](https://graphnet-team.github.io/graphnet/api/graphnet.models.graph_builders.html#graphnet.models.graph_builders.GraphBuilder)`,` [`Detector`](https://graphnet-team.github.io/graphnet/api/graphnet.models.detector.detector.html#module-graphnet.models.detector.detector)`,` [`GNN`](https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn)`,` and one or more [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task)`]`.
+This is uniquely defined based on one each of [`Coarsening`](https://graphnet-team.github.io/graphnet/api/graphnet.models.coarsening.html#module-graphnet.models.coarsening) (optional), [`GraphBuilder`](https://graphnet-team.github.io/graphnet/api/graphnet.models.graph_builders.html#graphnet.models.graph_builders.GraphBuilder), [`Detector`](https://graphnet-team.github.io/graphnet/api/graphnet.models.detector.detector.html#module-graphnet.models.detector.detector), [`GNN`](https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn), and one or more [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task)s.
 Each of these components will be a problem-specific instance of these parent classes.
 This structure guarantees modularity and reuseability.
 For example, the only adaptation needed to run a `Model` made for IceCube on a different experiment — say, KM3NeT — would be to switch out the `Detector` component representing IceCube with one that represents KM3NeT.
@@ -427,13 +427,13 @@ model = Model.from_config("model.yml", trust=True)
 ```
 
 **Please note**:  Models built from a `ModelConfig` are initialised with random weights.
-The `ModelConfig` class is only meant for defining model _definitions_ in a portable, humand-readable format.
+The `ModelConfig` class is only meant for defining model _definitions_ in a portable, human-readable format.
 To save also trained model weights, you need to save the entire model, see below.
 
 
 ### Example `ModelConfig`
 
-You can find several pre-defined `ModelConfig`'s under `graphnet/configs/models`. Below is the contents of `example_energy_reconstruction_model.yml`:
+You can find several pre-defined `ModelConfig`'s under `graphnet/configs/models`. Below are the contents of `example_energy_reconstruction_model.yml`:
 
 ```yml
 arguments:
@@ -721,7 +721,7 @@ In addition, GraphNeT expects your data to contain at least:
 
 - `pulsemap`: A per-hit table, conaining series of sensor measurements that represents the detector response to some interaction in some time window, as described in [Section 4 - The `Dataset` and `DataLoader` classes](#4-the-dataset-and-dataloader-classes).
 - `truth_table`: A per-event table, containing the global truth of each event, as described in, as described in [Section 4 - The `Dataset` and `DataLoader` classes](#4-the-dataset-and-dataloader-classes)
-- (Optional) `node_truth_table`: A per-hit truth array, containing contains truth labels for each node in your graph. ForThis could be labels indicating whether each reconstructed pulse/photon was a result of noise in the event, or a label indicating which particle in the simulation tree caused a specific pulse/photon. These are the node-level quantities that could be classifaction/reconstructing targets for certain physics/learning tasks.
+- (Optional) `node_truth_table`: A per-hit truth array, containing contains truth labels for each node in your graph. This could be labels indicating whether each reconstructed pulse/photon was a result of noise in the event, or a label indicating which particle in the simulation tree caused a specific pulse/photon. These are the node-level quantities that could be classifaction/reconstructing targets for certain physics/learning tasks.
 - `index_column`: A unique ID that maps each row in `pulsemap` with its corresponding row in `truth_table` and/or `node_truth_table`.
 
 Since `pulsemap`, `truth_table` and `node_truth_table` are named fields in your Parquet files (or tables in SQLite) you may name these fields however you like.
@@ -739,7 +739,7 @@ You can also freely name your `index_column`. For instance, the `truth_table` co
 
 ## C. Basics for SQLite databases in GraphNeT
 
-In SQLite databases, `pulsemap`, `truth_table`, and optionally `node_truth_table` exist as seperate tables.
+In SQLite databases, `pulsemap`, `truth_table`, and optionally `node_truth_table` exist as separate tables.
 Each table has a column `index_column` on which the tables are indexed, in addition to the data that it contains.
 The schemas are:
 
