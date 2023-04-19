@@ -338,6 +338,11 @@
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return value of `key`."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span>
+
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Label-specific implementation."""</span></div>
@@ -347,14 +352,28 @@
 <span class="w">    </span><span class="sd">"""Class for producing particle direction/pointing label."""</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">azimuth_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"azimuth"</span><span class="p">,</span> <span class="n">zenith_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"zenith"</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"direction"</span><span class="p">,</span>
+        <span class="n">azimuth_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"azimuth"</span><span class="p">,</span>
+        <span class="n">zenith_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"zenith"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct `Direction`."""</span>
+<span class="w">        </span><span class="sd">"""Construct `Direction`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: The name of the field in `Data` where the label will be</span>
+<span class="sd">                stored. That is, `graph[key] = label`.</span>
+<span class="sd">            azimuth_key: The name of the pre-existing key in `graph` that will</span>
+<span class="sd">                be used to access the azimiuth angle, used when calculating</span>
+<span class="sd">                the direction.</span>
+<span class="sd">            zenith_key: The name of the pre-existing key in `graph` that will</span>
+<span class="sd">                be used to access the zenith angle, used when calculating the</span>
+<span class="sd">                direction.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth_key</span> <span class="o">=</span> <span class="n">azimuth_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_zenith_key</span> <span class="o">=</span> <span class="n">zenith_key</span>
 
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">"_"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">azimuth_key</span><span class="p">,</span> <span class="n">zenith_key</span><span class="p">]))</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Compute label for `graph`."""</span>

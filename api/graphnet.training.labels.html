@@ -348,7 +348,11 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-training-labels--page-root" class="md-nav__link">labels</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.training.labels.Label" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.training.labels.Label" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.training.labels.Label.key" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">key</span></code></a>
+        </li></ul>
+            </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.labels.Direction" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a>
         </li></ul>
@@ -361,7 +365,14 @@
     
     
       <a href="#graphnet.training.labels.Label" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.labels.Label.key" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">key</span></code></a>
       
+    
+    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -428,7 +439,11 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-training-labels--page-root" class="md-nav__link">labels</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.training.labels.Label" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.training.labels.Label" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.training.labels.Label.key" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">key</span></code></a>
+        </li></ul>
+            </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.labels.Direction" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a>
         </li></ul>
@@ -458,18 +473,29 @@
 stored. That is, <cite>graph[key] = label</cite>.</p>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.training.labels.Label.key">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.training.labels.Label.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return value of <cite>key</cite>.</p>
+</dd></dl>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.labels.Direction">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.labels.</span></span><span class="sig-name descname"><span class="pre">Direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">azimuth_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/labels.html#Direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Direction" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.labels.</span></span><span class="sig-name descname"><span class="pre">Direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuth_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/labels.html#Direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Direction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.labels.Label" title="graphnet.training.labels.Label"><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></a></p>
 <p>Class for producing particle direction/pointing label.</p>
 <p>Construct <cite>Direction</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>azimuth_key</strong> (<em>str</em>) – </p></li>
-<li><p><strong>zenith_key</strong> (<em>str</em>) – </p></li>
+<li><p><strong>key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'direction'</span></code>) – The name of the field in <cite>Data</cite> where the label will be
+stored. That is, <cite>graph[key] = label</cite>.</p></li>
+<li><p><strong>azimuth_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'azimuth'</span></code>) – The name of the pre-existing key in <cite>graph</cite> that will
+be used to access the azimiuth angle, used when calculating
+the direction.</p></li>
+<li><p><strong>zenith_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'zenith'</span></code>) – The name of the pre-existing key in <cite>graph</cite> that will
+be used to access the zenith angle, used when calculating the
+direction.</p></li>
 </ul>
 </dd>
 </dl>
