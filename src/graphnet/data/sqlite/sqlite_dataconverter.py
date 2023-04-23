@@ -50,8 +50,10 @@ class SQLiteDataConverter(DataConverter):
                     # and the current extractor (df) is also non-empty (also since truth is always non-empty)
                     if len(dataframe[key]):
                         assert isinstance(dataframe[key], pd.DataFrame)
-                        dataframe[key] = dataframe[key].append(
-                            df, ignore_index=True, sort=True
+                        dataframe[key] = pd.concat(
+                            (dataframe[key], df),
+                            ignore_index=True,
+                            sort=True,
                         )
                     else:
                         dataframe[key] = df

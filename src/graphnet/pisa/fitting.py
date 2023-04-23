@@ -157,7 +157,9 @@ class WeightFitter:
         for container in model.data:
             data = pd.DataFrame(container["event_no"], columns=["event_no"])
             data[weight_name] = container["weights"]
-            results = results.append(data)
+            results = pd.concat(
+                (results, data),
+            )
 
         if add_to_database:
             create_table_and_save_to_sql(
@@ -416,10 +418,8 @@ class ContourFitter:
                 )
                 is_first = False
             else:
-                df = df.append(
-                    pd.read_csv(
-                        self._outdir + "/" + run_name + "/tmp/" + file
-                    ),
+                df = pd.concat(
+                    (df, pd.read_csv(self._outdir + "/" + run_name + "/tmp/" + file)),
                     ignore_index=True,
                 )
         df = df.reset_index(drop=True)
