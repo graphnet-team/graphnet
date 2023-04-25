@@ -419,7 +419,12 @@ class ContourFitter:
                 is_first = False
             else:
                 df = pd.concat(
-                    (df, pd.read_csv(self._outdir + "/" + run_name + "/tmp/" + file)),
+                    (
+                        df,
+                        pd.read_csv(
+                            self._outdir + "/" + run_name + "/tmp/" + file
+                        ),
+                    ),
                     ignore_index=True,
                 )
         df = df.reset_index(drop=True)
