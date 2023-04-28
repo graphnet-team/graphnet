@@ -65,24 +65,34 @@ class DynEdgeConv(EdgeConv, LightningModule):
         ).to(self.device)
 
         return x, edge_index
-    
-    
+
+
 class EdgeConv0(MessagePassing, LightningModule):
-    """Implementation of EdgeConv0 layer used in TITO solution for
+    """Implementation of EdgeConv0 layer used in TITO solution for.
+
     'IceCube - Neutrinos in Deep' kaggle competition.
     """
+
     def __init__(
         self,
         nn: Callable,
         aggr: str = "max",
         **kwargs,
     ):
+        """Construct `EdgeConv0`.
+
+        Args:
+            nn: The MLP/torch.Module to be used within the `EdgeConv0`.
+            aggr: Aggregation method to be used with `EdgeConv0`.
+            **kwargs: Additional features to be passed to `EdgeConv0`.
+        """
 
         super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
 
     def reset_parameters(self):
+        """"""
         reset(self.nn)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
@@ -97,11 +107,14 @@ class EdgeConv0(MessagePassing, LightningModule):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(nn={self.nn})"
-    
+
+
 class EdgeConv1(MessagePassing, LightningModule):
-    """Implementation of EdgeConv1 layer used in TITO solution for
+    """Implementation of EdgeConv1 layer used in TITO solution for.
+
     'IceCube - Neutrinos in Deep' kaggle competition.
     """
+
     def __init__(
         self,
         nn: Callable,
@@ -109,6 +122,14 @@ class EdgeConv1(MessagePassing, LightningModule):
         node_edge_feat_ratio: float = 0.7,
         **kwargs,
     ):
+        """Construct `EdgeConv1`.
+
+        Args:
+            nn: The MLP/torch.Module to be used within the `EdgeConv1`.
+            aggr: Aggregation method to be used with `EdgeConv1`.
+            node_edge_feat_ratio: Ratio of edge features used.
+            **kwargs: Additional features to be passed to `EdgeConv1`.
+        """
 
         super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
@@ -116,7 +137,9 @@ class EdgeConv1(MessagePassing, LightningModule):
         self.node_edge_feat_ratio = node_edge_feat_ratio
 
     def reset_parameters(self):
+        """"""
         reset(self.nn)
+        return None
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """Forward pass."""
@@ -131,16 +154,17 @@ class EdgeConv1(MessagePassing, LightningModule):
         if edge_cnt < 20:
             edge_cnt = 4
         edge_ij = torch.cat(
-            [(x_j - x_i)[:,:edge_cnt],x_j[:,edge_cnt:]], axis=-1
+            [(x_j - x_i)[:, :edge_cnt], x_j[:, edge_cnt:]], axis=-1
         )
-        return self.nn(torch.cat([x_i, edge_ij], dim=-1)) ## edgeConv1
+        return self.nn(torch.cat([x_i, edge_ij], dim=-1))  # edgeConv1
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(nn={self.nn})"
 
 
 class DynTrans(EdgeConv0, LightningModule):
-    """Implementation of dynTrans1 layer used in TITO solution for
+    """Implementation of dynTrans1 layer used in TITO solution for.
+
     'IceCube - Neutrinos in Deep' kaggle competition.
     """
 
@@ -155,17 +179,20 @@ class DynTrans(EdgeConv0, LightningModule):
         serial_connection: bool = True,
         **kwargs: Any,
     ):
-        """Construct `DynEdgeConv`.
+        """Construct `DynTrans`.
 
         Args:
-            nn: The MLP/torch.Module to be used within the `EdgeConv`.
-            aggr: Aggregation method to be used with `EdgeConv`.
+            nn: The MLP/torch.Module to be used within the `DynTrans`.
+            aggr: Aggregation method to be used with `DynTrans`.
             nb_neighbors: Number of neighbours to be clustered after the
                 `EdgeConv` operation.
             features_subset: Subset of features in `Data.x` that should be used
                 when dynamically performing the new graph clustering after the
                 `EdgeConv` operation. Defaults to all features.
-            **kwargs: Additional features to be passed to `EdgeConv`.
+            user_trans_in_dyn1: Use of the Transformer layer in 'DynTrans'.
+            dropout: Dropout rate to be used in `DynTrans`.
+            serial_connection: Use of serial connection in `DynTrans`.
+            **kwargs: Additional features to be passed to `DynTrans`.
         """
         # Check(s)
         if features_subset is None:
@@ -181,7 +208,7 @@ class DynTrans(EdgeConv0, LightningModule):
             layers.append(torch.nn.Linear(nb_in, nb_out))
             layers.append(torch.nn.LeakyReLU())
         d_model = nb_out
-        
+
         # Base class constructor
         super().__init__(nn=torch.nn.Sequential(*layers), aggr=aggr, **kwargs)
 
@@ -236,4 +263,3 @@ class DynTrans(EdgeConv0, LightningModule):
             x = x[mask]
 
         return x, edge_index
-

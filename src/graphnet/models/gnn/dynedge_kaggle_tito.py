@@ -1,9 +1,9 @@
-"""Implementation of DynEdge architecture used in 
+"""Implementation of DynEdge architecture used in.
 
                     IceCube - Neutrinos in Deep Ice
-Reconstruct the direction of neutrinos from the Universe to the South Pole 
+Reconstruct the direction of neutrinos from the Universe to the South Pole
 
-Kaggle competition. 
+Kaggle competition.
 
 Solution by TITO.
 """
@@ -83,6 +83,12 @@ class DynEdgeTITO(GNN):
                 after global pooling. The alternative is to  added (distribute)
                 them to the individual nodes before any convolutional
                 operations.
+            use_global_variables: Whether to use global variables in the GNN.
+            serial_connection: Whether to use a serial connection in the GNN.
+            use_postprocessing_layers: Whether to use post-processing layers.
+            use_tranformer_in_last: Whether to use a transformer convolution
+            after the DynEdge convolutional layers.
+            dropout: Dropout probability inside 'DynTrans' layer.
         """
         # Latent feature subset for computing nearest neighbours in DynEdge.
         if features_subset is None:
@@ -182,7 +188,7 @@ class DynEdgeTITO(GNN):
         self._use_global_variables = use_global_variables
         self._use_tranformer_in_last = use_tranformer_in_last
         self._dropout = dropout
-        
+
         self._construct_layers()
 
     def _construct_layers(self) -> None:
@@ -250,7 +256,7 @@ class DynEdgeTITO(GNN):
             readout_layers.append(self._activation)
 
         self._readout = torch.nn.Sequential(*readout_layers)
-        
+
         # Transformer layer(s)
         if self._use_tranformer_in_last:
             encoder_layer = TransformerEncoderLayer(
@@ -353,7 +359,7 @@ class DynEdgeTITO(GNN):
             x, mask = to_dense_batch(x, batch)
             x = self._transformer_encoder(x, src_key_padding_mask=mask)
             x = x[mask]
-        
+
         # Post-processing
         if self._use_postprocessing_layers:
             x = self._post_processing(x)
