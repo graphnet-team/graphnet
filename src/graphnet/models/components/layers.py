@@ -1,6 +1,6 @@
 """Class(es) implementing layers to be used in `graphnet` models."""
 
-from typing import Any, Callable, Optional, Sequence, Union
+from typing import Any, Callable, Optional, Sequence, Union, List, Tuple
 
 import torch
 from torch.functional import Tensor
@@ -77,7 +77,7 @@ class EdgeConv0(MessagePassing, LightningModule):
         self,
         nn: Callable,
         aggr: str = "max",
-        **kwargs,
+        **kwargs: Any,
     ):
         """Construct `EdgeConv0`.
 
@@ -86,26 +86,27 @@ class EdgeConv0(MessagePassing, LightningModule):
             aggr: Aggregation method to be used with `EdgeConv0`.
             **kwargs: Additional features to be passed to `EdgeConv0`.
         """
-
         super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
 
-    def reset_parameters(self):
-        """"""
+    def reset_parameters(self) -> None:
+        """Reset all learnable parameters of the module."""
         reset(self.nn)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """Forward pass."""
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
         # propagate_type: (x: PairTensor)
         return self.propagate(edge_index, x=x, size=None)
 
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
+        """EdgeConv0 message passing."""
         return self.nn(torch.cat([x_i, x_j - x_i, x_j], dim=-1))  # edgeConv0
 
     def __repr__(self) -> str:
+        """Print out module name."""
         return f"{self.__class__.__name__}(nn={self.nn})"
 
 
@@ -120,7 +121,7 @@ class EdgeConv1(MessagePassing, LightningModule):
         nn: Callable,
         aggr: str = "max",
         node_edge_feat_ratio: float = 0.7,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Construct `EdgeConv1`.
 
@@ -130,27 +131,29 @@ class EdgeConv1(MessagePassing, LightningModule):
             node_edge_feat_ratio: Ratio of edge features used.
             **kwargs: Additional features to be passed to `EdgeConv1`.
         """
-
         super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
         self.node_edge_feat_ratio = node_edge_feat_ratio
 
-    def reset_parameters(self):
-        """"""
+    def reset_parameters(self) -> None:
+        """Reset all learnable parameters of the module."""
         reset(self.nn)
-        return None
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """Forward pass."""
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
         # propagate_type: (x: PairTensor)
         return self.propagate(edge_index, x=x, size=None)
 
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
+        """EdgeConv1 message passing.
+
+        Usually, the number of edge features is 20 or more, and when it is less
+        than that, it is the first layer and has four attributes: XYZT.
+        """
         edge_cnt = round(x_i.shape[-1] * self.node_edge_feat_ratio)
-        # "Usually, the number of edge features is 20 or more, and when it is less than that, it is the first layer and has four attributes: XYZT." (ChatGPT)
         if edge_cnt < 20:
             edge_cnt = 4
         edge_ij = torch.cat(
@@ -159,6 +162,7 @@ class EdgeConv1(MessagePassing, LightningModule):
         return self.nn(torch.cat([x_i, edge_ij], dim=-1))  # edgeConv1
 
     def __repr__(self) -> str:
+        """Print out module name."""
         return f"{self.__class__.__name__}(nn={self.nn})"
 
 
@@ -170,11 +174,11 @@ class DynTrans(EdgeConv0, LightningModule):
 
     def __init__(
         self,
-        layer_sizes,
+        layer_sizes: Optional[List[int]] = None,
         aggr: str = "max",
         nb_neighbors: int = 8,
         features_subset: Optional[Union[Sequence[int], slice]] = None,
-        use_trans_in_dyn1: bool = True,
+        use_transformer: bool = True,
         dropout: float = 0.0,
         serial_connection: bool = True,
         **kwargs: Any,
@@ -183,13 +187,14 @@ class DynTrans(EdgeConv0, LightningModule):
 
         Args:
             nn: The MLP/torch.Module to be used within the `DynTrans`.
+            layer_sizes: List of layer sizes to be used in `DynTrans`.
             aggr: Aggregation method to be used with `DynTrans`.
             nb_neighbors: Number of neighbours to be clustered after the
                 `EdgeConv` operation.
             features_subset: Subset of features in `Data.x` that should be used
                 when dynamically performing the new graph clustering after the
                 `EdgeConv` operation. Defaults to all features.
-            user_trans_in_dyn1: Use of the Transformer layer in 'DynTrans'.
+            use_transformer: Use of the Transformer layer in 'DynTrans'.
             dropout: Dropout rate to be used in `DynTrans`.
             serial_connection: Use of serial connection in `DynTrans`.
             **kwargs: Additional features to be passed to `DynTrans`.
@@ -199,6 +204,8 @@ class DynTrans(EdgeConv0, LightningModule):
             features_subset = slice(None)  # Use all features
         assert isinstance(features_subset, (list, slice))
 
+        if layer_sizes is None:
+            layer_sizes = [256, 256, 256]
         layers = []
         for ix, (nb_in, nb_out) in enumerate(
             zip(layer_sizes[:-1], layer_sizes[1:])
@@ -216,14 +223,14 @@ class DynTrans(EdgeConv0, LightningModule):
         self.nb_neighbors = nb_neighbors
         self.features_subset = features_subset
         self.serial_connection = serial_connection
-        self.use_trans_in_dyn1 = use_trans_in_dyn1
+        self.use_trans_in_dyn1 = use_transformer
 
         self.norm_first = False
 
         self.norm1 = LayerNorm(d_model, eps=1e-5)  # lNorm
 
         # Transformer layer(s)
-        if use_trans_in_dyn1:
+        if use_transformer:
             encoder_layer = TransformerEncoderLayer(
                 d_model=d_model,
                 nhead=8,
@@ -239,7 +246,6 @@ class DynTrans(EdgeConv0, LightningModule):
         self, x: Tensor, edge_index: Adj, batch: Optional[Tensor] = None
     ) -> Tensor:
         """Forward pass."""
-
         if self.norm_first:
             x = self.norm1(x)  # lNorm
 
