@@ -61,6 +61,7 @@ class SQLiteDataConverter(DataConverter):
                 for key, dfs in dataframes.items()
             ]
         )
+        # Can delete dataframes here to free up memory.
 
         # Save each dataframe to SQLite database
         self.debug(f"Saving to {output_file}")
