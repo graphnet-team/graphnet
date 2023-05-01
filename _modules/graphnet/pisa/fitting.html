@@ -470,11 +470,13 @@
         <span class="n">model</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">apply_mode</span> <span class="o">=</span> <span class="s2">"events"</span>
         <span class="n">model</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">calc_mode</span> <span class="o">=</span> <span class="s2">"events"</span>
         <span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">container</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">container</span><span class="p">[</span><span class="s2">"event_no"</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"event_no"</span><span class="p">])</span>
             <span class="n">data</span><span class="p">[</span><span class="n">weight_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">container</span><span class="p">[</span><span class="s2">"weights"</span><span class="p">]</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">all_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">add_to_database</span><span class="p">:</span>
             <span class="n">create_table_and_save_to_sql</span><span class="p">(</span>
@@ -725,21 +727,13 @@
 
     <span class="k">def</span> <span class="nf">_merge_temporary_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">"/tmp"</span><span class="p">)</span>
-        <span class="n">is_first</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_first</span><span class="p">:</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">"/tmp/"</span> <span class="o">+</span> <span class="n">file</span>
-                <span class="p">)</span>
-                <span class="n">is_first</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">"/tmp/"</span> <span class="o">+</span> <span class="n">file</span>
-                    <span class="p">),</span>
-                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_outdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s2">/tmp/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span>
+            <span class="p">],</span>
+            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
     <span class="k">def</span> <span class="nf">_parallel_fit_2d_contour</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
