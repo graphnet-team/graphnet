@@ -153,11 +153,13 @@ class WeightFitter:
         model.stages[-1].apply_mode = "events"
         model.stages[-1].calc_mode = "events"
         model.run()
-        results = pd.DataFrame()
+
+        all_data = []
         for container in model.data:
             data = pd.DataFrame(container["event_no"], columns=["event_no"])
             data[weight_name] = container["weights"]
-            results = results.append(data)
+            all_data.append(data)
+        results = pd.concat(all_data)
 
         if add_to_database:
             create_table_and_save_to_sql(
@@ -408,21 +410,13 @@ class ContourFitter:
 
     def _merge_temporary_files(self, run_name: str) -> pd.DataFrame:
         files = os.listdir(self._outdir + "/" + run_name + "/tmp")
-        is_first = True
-        for file in files:
-            if is_first:
-                df = pd.read_csv(
-                    self._outdir + "/" + run_name + "/tmp/" + file
-                )
-                is_first = False
-            else:
-                df = df.append(
-                    pd.read_csv(
-                        self._outdir + "/" + run_name + "/tmp/" + file
-                    ),
-                    ignore_index=True,
-                )
-        df = df.reset_index(drop=True)
+        df = pd.concat(
+            [
+                pd.read_csv(f"{self._outdir}/{run_name}/tmp/{file}")
+                for file in files
+            ],
+            ignore_index=True,
+        )
         return df
 
     def _parallel_fit_2d_contour(self, settings: List[List[Any]]) -> None:

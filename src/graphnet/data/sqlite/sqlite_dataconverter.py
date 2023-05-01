@@ -40,7 +40,9 @@ class SQLiteDataConverter(DataConverter):
             return
 
         saved_any = False
-        dataframe = OrderedDict([(key, pd.DataFrame()) for key in data[0]])
+        dataframe_list: OrderedDict = OrderedDict(
+            [(key, []) for key in data[0]]
+        )
         for data_dict in data:
             for key, data_values in data_dict.items():
                 df = construct_dataframe(data_values)
@@ -48,13 +50,20 @@ class SQLiteDataConverter(DataConverter):
                 if self.any_pulsemap_is_non_empty(data_dict) and len(df) > 0:
                     # only include data_dict in temp. databases if at least one pulsemap is non-empty,
                     # and the current extractor (df) is also non-empty (also since truth is always non-empty)
-                    if len(dataframe[key]):
-                        assert isinstance(dataframe[key], pd.DataFrame)
-                        dataframe[key] = dataframe[key].append(
-                            df, ignore_index=True, sort=True
-                        )
-                    else:
-                        dataframe[key] = df
+                    dataframe_list[key].append(df)
+
+        dataframe = OrderedDict(
+            [
+                (
+                    key,
+                    pd.concat(dfs, ignore_index=True, sort=True)
+                    if dfs
+                    else pd.DataFrame(),
+                )
+                for key, dfs in dataframe_list.items()
+            ]
+        )
+        # Can delete dataframe_list here to free up memory.
 
         # Save each dataframe to SQLite database
         self.debug(f"Saving to {output_file}")
