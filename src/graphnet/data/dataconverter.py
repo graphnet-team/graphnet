@@ -38,7 +38,7 @@ from graphnet.data.extractors import (
 from graphnet.utilities.decorators import final
 from graphnet.utilities.filesys import find_i3_files
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 
 if has_icecube_package():
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
@@ -87,7 +87,7 @@ def cache_output_files(process_method: F) -> F:
     return cast(F, wrapper)
 
 
-class DataConverter(ABC, LoggerMixin):
+class DataConverter(ABC, Logger):
     """Base class for converting I3-files to intermediate file format."""
 
     @property
@@ -186,6 +186,9 @@ class DataConverter(ABC, LoggerMixin):
         # Set verbosity
         if icetray_verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
+
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     @final
     def __call__(self, directories: Union[str, List[str]]) -> None:
@@ -427,11 +430,15 @@ class DataConverter(ABC, LoggerMixin):
         while i3_file_io.more():
             try:
                 frame = i3_file_io.pop_physics()
-            except:  # noqa: E722
+            except Exception as e:
+                if "I3" in str(e):
+                    continue
+            if self._skip_frame(frame):
                 continue
 
-            # Extract data from I3Frame
+            # Try to extract data from I3Frame
             results = self._extractors(frame)
+
             data_dict = OrderedDict(zip(self._table_names, results))
 
             # If an I3GenericExtractor is used, we want each automatically
@@ -546,3 +553,16 @@ class DataConverter(ABC, LoggerMixin):
             re.sub(r"\.i3\..*", "", basename) + "." + self.file_suffix,
         )
         return output_file
+
+    def _skip_frame(self, frame: "icetray.I3Frame") -> bool:
+        """Check if frame should be skipped.
+
+        Args:
+            frame: I3Frame to check.
+
+        Returns:
+            True if frame is a null split frame, else False.
+        """
+        if frame["I3EventHeader"].sub_event_stream == "NullSplit":
+            return True
+        return False

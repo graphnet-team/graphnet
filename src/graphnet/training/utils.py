@@ -15,9 +15,7 @@ from graphnet.data.dataset import Dataset
 from graphnet.data.sqlite import SQLiteDataset
 from graphnet.data.parquet import ParquetDataset
 from graphnet.models import Model
-from graphnet.utilities.logging import get_logger
-
-logger = get_logger()
+from graphnet.utilities.logging import Logger
 
 
 def collate_fn(graphs: List[Data]) -> Batch:
@@ -274,4 +272,4 @@ def save_results(
     results.to_csv(path + "/results.csv")
     model.save_state_dict(path + "/" + tag + "_state_dict.pth")
     model.save(path + "/" + tag + "_model.pth")
-    logger.info("Results saved at: \n %s" % path)
+    Logger().info("Results saved at: \n %s" % path)

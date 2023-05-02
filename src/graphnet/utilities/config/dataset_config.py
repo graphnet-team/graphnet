@@ -8,21 +8,17 @@ from typing import (
     List,
     Optional,
     Union,
-    Sequence,
 )
 
 from graphnet.utilities.config.base_config import (
     BaseConfig,
     get_all_argument_values,
 )
-from graphnet.utilities.logging import get_logger
 
 BACKEND_LOOKUP = {
     "db": "sqlite",
     "parquet": "parquet",
 }
-
-logger = get_logger()
 
 
 class DatasetConfig(BaseConfig):
@@ -99,12 +95,12 @@ class DatasetConfig(BaseConfig):
                 (...)
             }
             >>> dataset.config.dump("dataset.yml")
-            >>> datasets: Dict[str, ConcatDataset] = Dataset.from_config(
+            >>> datasets: Dict[str, EnsembleDataset] = Dataset.from_config(
                 "dataset.yml"
             )
             >>> datasets
             {
-                "train": ConcatDataset(...),
+                "train": EnsembleDataset(...),
                 (...)
             }
 

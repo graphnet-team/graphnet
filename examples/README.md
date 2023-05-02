@@ -7,7 +7,7 @@ Examples are grouped into five numbered subfolders, roughly in order of how you 
 2. **Data.** Reading in data in intermediate formats, plotting feature distributions, and converting data between intermediate file formats. These examples are entirely self-contained and can be run by anyone.
 3. **Weights.** Fitting per-event weights.
 4. **Training.** Training GNN models on various physics tasks.
-5. **PISA.** Fitting and plotting oscillation analysis contours. These examples presuppose that GraphNeT has been installed with [PISA](https://github.com/icecube/pisa).
+5. **PISA.** Fitting and plotting oscillation analysis contours. These examples presuppose that GraphNeT has been installed with [PISA](https://github.com/icecube/pisa), and the examples are intentionally not self-contained due to their specialised nature.
 
 Each subfolder contains similarly numbered example scripts.
 Each example script comes with a simple command-line interface and help functionality, e.g.

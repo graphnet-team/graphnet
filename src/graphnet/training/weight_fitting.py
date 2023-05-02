@@ -8,10 +8,10 @@ import pandas as pd
 import sqlite3
 
 from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 
 
-class WeightFitter(ABC, LoggerMixin):
+class WeightFitter(ABC, Logger):
     """Produces per-event weights.
 
     Weights are returned by the public method `fit_weights()`, and the weights
@@ -28,6 +28,9 @@ class WeightFitter(ABC, LoggerMixin):
         self._database_path = database_path
         self._truth_table = truth_table
         self._index_column = index_column
+
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     def _get_truth(
         self, variable: str, selection: Optional[List[int]] = None
