@@ -22,14 +22,7 @@ from graphnet.utilities.config import (
     ModelConfig,
     TrainingConfig,
 )
-from graphnet.utilities.logging import get_logger
-
-
-# Make sure W&B output directory exists
-WANDB_DIR = "./wandb/"
-os.makedirs(WANDB_DIR, exist_ok=True)
-
-logger = get_logger()
+from graphnet.utilities.logging import Logger
 
 
 def main(
@@ -42,15 +35,23 @@ def main(
     num_workers: int,
     prediction_names: Optional[List[str]],
     suffix: Optional[str] = None,
+    wandb: bool = False,
 ) -> None:
     """Run example."""
+    # Construct Logger
+    logger = Logger()
+
     # Initialise Weights & Biases (W&B) run
-    wandb_logger = WandbLogger(
-        project="example-script",
-        entity="graphnet-team",
-        save_dir=WANDB_DIR,
-        log_model=True,
-    )
+    if wandb:
+        # Make sure W&B output directory exists
+        wandb_dir = "./wandb/"
+        os.makedirs(wandb_dir, exist_ok=True)
+        wandb_logger = WandbLogger(
+            project="example-script",
+            entity="graphnet-team",
+            save_dir=wandb_dir,
+            log_model=True,
+        )
 
     # Build model
     model_config = ModelConfig.load(model_config_path)
