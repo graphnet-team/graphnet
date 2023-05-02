@@ -1,12 +1,12 @@
 """Simplified example of multi-class classification training Model."""
 
 import os
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
-from torch.utils.data import ConcatDataset
+from graphnet.data.dataset import EnsembleDataset
 from graphnet.constants import (
     EXAMPLE_OUTPUT_DIR,
     DATASETS_CONFIG_DIR,
@@ -78,18 +78,18 @@ def main(
 
     # Construct dataloaders
     dataset_config = DatasetConfig.load(dataset_config_path)
-    datasets = Dataset.from_config(
+    datasets: Dict[str, Any] = Dataset.from_config(
         dataset_config,
     )
 
     # Construct datasets from multiple selections
-    train_dataset = ConcatDataset(
+    train_dataset = EnsembleDataset(
         [datasets[key] for key in datasets if key.startswith("train")]
     )
-    valid_dataset = ConcatDataset(
+    valid_dataset = EnsembleDataset(
         [datasets[key] for key in datasets if key.startswith("valid")]
     )
-    test_dataset = ConcatDataset(
+    test_dataset = EnsembleDataset(
         [datasets[key] for key in datasets if key.startswith("test")]
     )
 
