@@ -27,6 +27,51 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
 
+    def _construct_trainers(
+        self,
+        max_epochs: int = 10,
+        gpus: Optional[Union[List[int], int]] = None,
+        callbacks: Optional[List[Callback]] = None,
+        ckpt_path: Optional[str] = None,
+        logger: Optional[Logger] = None,
+        log_every_n_steps: int = 1,
+        gradient_clip_val: Optional[float] = None,
+        distribution_strategy: Optional[str] = "ddp",
+        **trainer_kwargs: Any,
+    ) -> None:
+
+        if gpus:
+            accelerator = "gpu"
+            devices = gpus
+        else:
+            accelerator = "cpu"
+            devices = None
+
+        self._trainer = Trainer(
+            accelerator=accelerator,
+            devices=devices,
+            max_epochs=max_epochs,
+            callbacks=callbacks,
+            log_every_n_steps=log_every_n_steps,
+            logger=logger,
+            gradient_clip_val=gradient_clip_val,
+            strategy=distribution_strategy,
+            **trainer_kwargs,
+        )
+
+        inference_devices = devices
+        if isinstance(inference_devices, list):
+            inference_devices = inference_devices[:1]
+
+        self._inference_trainer = Trainer(
+            accelerator=accelerator,
+            devices=inference_devices,
+            callbacks=callbacks,
+            logger=logger,
+            strategy=None,
+            **trainer_kwargs,
+        )
+
     def fit(
         self,
         train_dataloader: DataLoader,
@@ -39,45 +84,55 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         logger: Optional[Logger] = None,
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
+        distribution_strategy: Optional[str] = "ddp",
         **trainer_kwargs: Any,
     ) -> None:
         """Fit `Model` using `pytorch_lightning.Trainer`."""
         self.train(mode=True)
 
-        if gpus:
-            accelerator = "gpu"
-            devices = gpus
-        else:
-            accelerator = "cpu"
-            devices = None
-
-        trainer = Trainer(
-            accelerator=accelerator,
-            devices=devices,
+        self._construct_trainers(
             max_epochs=max_epochs,
+            gpus=gpus,
             callbacks=callbacks,
-            log_every_n_steps=log_every_n_steps,
+            ckpt_path=ckpt_path,
             logger=logger,
+            log_every_n_steps=log_every_n_steps,
             gradient_clip_val=gradient_clip_val,
-            strategy="ddp",
+            distribution_strategy=distribution_strategy,
             **trainer_kwargs,
         )
+
         try:
-            trainer.fit(
+            self._trainer.fit(
                 self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
             )
         except KeyboardInterrupt:
             self.warning("[ctrl+c] Exiting gracefully.")
             pass
 
-    def predict(self, dataloader: DataLoader) -> List[Tensor]:
+    def predict(
+        self,
+        dataloader: DataLoader,
+        gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
+    ) -> List[Tensor]:
         """Return predictions for `dataloader`.
 
         Returns a list of Tensors, one for each model output.
         """
         self.train(mode=False)
 
-        predictions_list = self.trainer.predict(self, dataloader)
+        if not hasattr(self, "_inference_trainer"):
+            self._construct_trainers(
+                gpus=gpus, distribution_strategy=distribution_strategy
+            )
+        elif gpus is not None:
+            self.warning(
+                "A `Trainer` instance has already been constructed, possibly "
+                "when the model was trained. Will use this to get predictions. "
+                f"Argument `gpus = {gpus}` will be ignored."
+            )
+        predictions_list = self._inference_trainer.predict(self, dataloader)
         assert len(predictions_list), "Got no predictions"
 
         nb_outputs = len(predictions_list[0])
@@ -96,6 +151,8 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
         node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
         index_column: str = "event_no",
+        gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
@@ -121,8 +178,11 @@ class Model(Configurable, LightningModule, LoggerMixin, ABC):
                 "doesn't resample batches; or do not request "
                 "`additional_attributes`."
             )
-
-        predictions_torch = self.predict(dataloader)
+        predictions_torch = self.predict(
+            dataloader=dataloader,
+            gpus=gpus,
+            distribution_strategy=distribution_strategy,
+        )
         predictions = (
             torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
         )

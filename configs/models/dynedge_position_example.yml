@@ -35,7 +35,7 @@ arguments:
             arguments: {}
             class_name: MSELoss
         loss_weight: null
-        target_labels: ["position_x", "position_y", "position_y"]
+        target_labels: ["position_x", "position_y", "position_z"]
         transform_inference: null
         transform_prediction_and_target: null
         transform_support: null

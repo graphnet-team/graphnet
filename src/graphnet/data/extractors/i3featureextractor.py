@@ -6,6 +6,7 @@ from graphnet.data.extractors.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
 from graphnet.utilities.imports import has_icecube_package
+from graphnet.utilities.logging import warn_once
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
@@ -60,14 +61,21 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "is_saturated_dom": [],
             "is_errata_dom": [],
             "event_time": [],
+            "hlc": [],
+            "awtd": [],
+            "fadc": [],
         }
 
         # Get OM data
-        om_keys, data = get_om_keys_and_pulseseries(
-            frame,
-            self._pulsemap,
-            self._calibration,
-        )
+        if self._pulsemap in frame:
+            om_keys, data = get_om_keys_and_pulseseries(
+                frame,
+                self._pulsemap,
+                self._calibration,
+            )
+        else:
+            warn_once(self, f"Pulsemap {self._pulsemap} not found in frame.")
+            return output
 
         # Added these :
         bright_doms = None
@@ -140,6 +148,10 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output["is_saturated_dom"].append(is_saturated_dom)
                 output["is_errata_dom"].append(is_errata_dom)
                 output["event_time"].append(event_time)
+                # Pulse flags
+                output["hlc"].append((pulse.flags >> 0) & 0x1)  # bit 0
+                output["awtd"].append((pulse.flags >> 1) & 0x1)  # bit 1
+                output["fadc"].append((pulse.flags >> 2) & 0x1)  # bit 2
 
         return output
 
@@ -192,11 +204,15 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
         output.update(output_icecube86)
 
         # Get OM data
-        om_keys, data = get_om_keys_and_pulseseries(
-            frame,
-            self._pulsemap,
-            self._calibration,
-        )
+        if self._pulsemap in frame:
+            om_keys, data = get_om_keys_and_pulseseries(
+                frame,
+                self._pulsemap,
+                self._calibration,
+            )
+        else:
+            warn_once(self, f"Pulsemap {self._pulsemap} not found in frame.")
+            return output
 
         for om_key in om_keys:
             # Common values for each OM
@@ -245,11 +261,15 @@ class I3PulseNoiseTruthFlagIceCubeUpgrade(I3FeatureExtractorIceCube86):
         output.update(output_icecube_upgrade)
 
         # Get OM data
-        om_keys, data = get_om_keys_and_pulseseries(
-            frame,
-            self._pulsemap,
-            self._calibration,
-        )
+        if self._pulsemap in frame:
+            om_keys, data = get_om_keys_and_pulseseries(
+                frame,
+                self._pulsemap,
+                self._calibration,
+            )
+        else:
+            warn_once(self, f"Pulsemap {self._pulsemap} not found in frame.")
+            return output
 
         for om_key in om_keys:
             # Loop over pulses for each OM

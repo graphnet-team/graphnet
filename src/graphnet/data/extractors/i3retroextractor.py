@@ -7,6 +7,7 @@ from graphnet.data.extractors.utilities.frames import (
     frame_is_montecarlo,
     frame_is_noise,
 )
+from graphnet.utilities.logging import warn_once
 
 if TYPE_CHECKING:
     from icecube import icetray  # pyright: reportMissingImports=false
@@ -74,6 +75,8 @@ class I3RetroExtractor(I3Extractor):
                     ].value,
                 }
             )
+        else:
+            warn_once(self, "RETRO variables not found in frame.")
 
         if self._frame_contains_classifiers(frame):
             classifiers = [
