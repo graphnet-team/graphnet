@@ -8,7 +8,7 @@ arguments:
             arguments: {columns: null, nb_nearest_neighbours: 8}
             class_name: KNNGraphBuilder
         scalers: null
-      class_name: IceCubeDeepCore
+      class_name: Prometheus
   gnn:
     ModelConfig:
       arguments:
@@ -16,7 +16,7 @@ arguments:
         dynedge_layer_sizes: null
         features_subset: null
         global_pooling_schemes: [min, max, mean, sum]
-        nb_inputs: 7
+        nb_inputs: 4
         nb_neighbours: 8
         post_processing_layer_sizes: null
         readout_layer_sizes: null
@@ -36,7 +36,7 @@ arguments:
             arguments: {options: {1: 0, -1: 0, 13: 1, -13: 1, 12: 2, -12: 2, 14: 2, -14: 2, 16: 2, -16: 2}}
             class_name: CrossEntropyLoss
         loss_weight: null
-        target_labels: pid
+        target_labels: dummy_pid
         transform_inference: '!lambda x: torch.nn.functional.softmax(x, dim=-1)'
         transform_prediction_and_target: null
         transform_support: null
