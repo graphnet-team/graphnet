@@ -1,9 +1,15 @@
+"""Functions for plotting contours from PISA fits."""
+
+from typing import Any, Dict, List, Tuple
+
 import matplotlib.pyplot as plt
-import pandas as pd
+from matplotlib.figure import Figure
 import numpy as np
+import pandas as pd
 
 
-def read_entry(entry):
+def read_entry(entry: Dict) -> Tuple[Any, ...]:
+    """Parse the contents of `entry`."""
     path = entry["path"]
     model_name = entry["model"]
     try:
@@ -24,25 +30,32 @@ def read_entry(entry):
 
 
 def plot_2D_contour(
-    contour_data,
-    xlim=(0.4, 0.6),
-    ylim=(2.38 * 1e-3, 2.55 * 1e-3),
-    chi2_critical_value=4.605,
-    width=3.176,
-    height=2.388,
-):
-    """Plots 2D contours from GraphNeT PISA fits.
+    contour_data: List[Dict],
+    xlim: Tuple[float, float] = (0.4, 0.6),
+    ylim: Tuple[float, float] = (2.38 * 1e-3, 2.55 * 1e-3),
+    chi2_critical_value: float = 4.605,
+    width: float = 3.176,
+    height: float = 2.388,
+) -> Figure:
+    """Plot 2D contours from GraphNeT PISA fits.
 
     Args:
-        contour_data (list): list of  dictionaries with plotting information. Format is for each dictionary is: {'path':path_to_pisa_fit_result, 'model': 'name_of_my_model_in_fit'}. One can specify optional fields in the dictionary: "label" - the legend label, "color" - the color of the contour, "linestyle" - the style of the contour line.
-        xlim (tuple): tuple containing lower and upper bound of xaxis. Defaults to (0.4, 0.6)
-        ylim (tuple): tuple containing lower and upper bound of xaxis. Defaults to (2.38*1e-3, 2.55*1e-3)
-        chi2_critical_value (float, optional): The critical value of the chi2 fits. Defaults to 4.605 (90% CL).
-        width (float, optional): width of figure in inches. Defaults to 3.176.
-        height (float, optional): height of figure in inches. Defaults to 2.388.
+        contour_data: List of dictionaries with plotting information. Format is
+            for each dictionary is:
+                {'path': path_to_pisa_fit_result,
+                 'model': 'name_of_my_model_in_fit'}.
+            One can specify optional fields in the dictionary: "label" - the
+            legend label, "color" - the color of the contour, "linestyle" - the
+            style of the contour line.
+        xlim: Lower and upper bound of x-axis.
+        ylim: Lower and upper bound of y-axis.
+        chi2_critical_value: The critical value of the chi2 fits. Defaults to
+            4.605 (90% CL). @NOTE: This, and the below, can't both be right.
+        width: width of figure in inches.
+        height: height of figure in inches.
 
     Returns:
-        matplotlib.pyplot.figure: the figure with contours
+        The figure with contours.
     """
     fig, ax = plt.subplots(figsize=(width, height), constrained_layout=True)
     proxy = []
@@ -97,18 +110,28 @@ def plot_2D_contour(
 
 
 def plot_1D_contour(
-    contour_data, chi2_critical_value=2.706, width=2 * 3.176, height=2.388
-):
-    """Plots 1D contours from GraphNeT PISA fits.
+    contour_data: List[Dict],
+    chi2_critical_value: float = 2.706,
+    width: float = 2 * 3.176,
+    height: float = 2.388,
+) -> Figure:
+    """Plot 1D contours from GraphNeT PISA fits.
 
     Args:
-        contour_data (list): list of  dictionaries with plotting information. Format is for each dictionary is: {'path':path_to_pisa_fit_result, 'model': 'name_of_my_model_in_fit'}. One can specify optional fields in the dictionary: "label" - the legend label, "color" - the color of the contour, "linestyle" - the style of the contour line.
-        chi2_critical_value (float, optional): The critical value of the chi2 fits. Defaults to 2.706 (90% CL).
-        width (float, optional): width of figure in inches. Defaults to 2*3.176.
-        height (float, optional): height of figure in inches. Defaults to 2.388.
+        contour_data: List of dictionaries with plotting information. Format is
+            for each dictionary is:
+                {'path': path_to_pisa_fit_result,
+                 'model': 'name_of_my_model_in_fit'}.
+            One can specify optional fields in the dictionary: "label" - the
+            legend label, "color" - the color of the contour, "linestyle" - the
+            style of the contour line.
+        chi2_critical_value: The critical value of the chi2 fits. Defaults to
+            2.706 (90% CL). @NOTE: This, and the above, can't both be right.
+        width: width of figure in inches.
+        height: height of figure in inches.
 
     Returns:
-        matplotlib.pyplot.figure: the figure with contours
+        The figure with contours.
     """
     variables = ["theta23_fixed", "dm31_fixed"]
     fig, ax = plt.subplots(

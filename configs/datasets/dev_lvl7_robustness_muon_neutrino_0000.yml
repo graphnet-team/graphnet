@@ -1,0 +1,29 @@
+path: /groups/icecube/asogaard/data/example/dev_lvl7_robustness_muon_neutrino_0000.db
+pulsemaps:
+  - SRTTWOfflinePulsesDC
+features:
+  - dom_x
+  - dom_y
+  - dom_z
+  - dom_time
+  - charge
+  - rde
+  - pmt_area
+truth:
+  - energy
+  - position_x
+  - position_y
+  - position_z
+  - azimuth
+  - zenith
+  - pid
+  - elasticity
+  - sim_type
+  - interaction_type
+index_column: event_no
+truth_table: truth
+seed: 21
+selection:
+  test: 10000 random events ~ event_no % 5 == 0
+  validation: 10000 random events ~ event_no % 5 == 1
+  train: 50000 random events ~ event_no % 5 > 1

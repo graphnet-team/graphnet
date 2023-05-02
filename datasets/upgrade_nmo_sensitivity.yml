@@ -1,6 +1,0 @@
-name: upgrade_nmo_sensitivity
-server: cobalt.icecube.wisc.edu
-sources: |
-  /data/user/jvmead/ug_sim/genie2/genie/step4/140021/
-  /data/user/jvmead/ug_sim/genie2/genie/step4/141021/
-date: 20220607

@@ -1,0 +1,30 @@
+# This is a simple workflow to check that all modified files satisfy code
+# quality requirements
+name: Code quality
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push and PRs
+  push:
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+  pre-commit:
+    name: Pre-commit - ${{ matrix.hook }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hook: ["black", "flake8", "docformatter", "pydocstyle", "mypy"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install package
+        uses: ./.github/actions/install
+      - name: Run ${{ matrix.hook }}
+        run: |
+          pre-commit run ${{ matrix.hook }} --all-files

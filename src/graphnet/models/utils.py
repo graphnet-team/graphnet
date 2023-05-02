@@ -1,22 +1,25 @@
-from abc import ABC, abstractmethod
-from typing import List
+"""Utility functions for `graphnet.models`."""
+
+from typing import List, Tuple
 from torch_geometric.nn import knn_graph
-from torch_geometric.data import Data, Batch
+from torch_geometric.data import Batch
 import torch
-from torch import Tensor
+from torch import Tensor, LongTensor
 
 from torch_geometric.utils.homophily import homophily
 
 
-def calculate_xyzt_homophily(x, edge_index, batch):
-    """Calculates xyzt homophily from a batch of graphs.
+def calculate_xyzt_homophily(
+    x: Tensor, edge_index: LongTensor, batch: Batch
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+    """Calculate xyzt-homophily from a batch of graphs.
 
-    Homophily is a graph scalar quantity that measures the likeness of variables
-    in nodes. Notice that this calculator assumes a special order of input
-    features in x.
+    Homophily is a graph scalar quantity that measures the likeness of
+    variables in nodes. Notice that this calculator assumes a special order of
+    input features in x.
 
     Returns:
-        tuple : tuple of torch.tensor each with shape [batch_size,1]
+        Tuple, each element with shape [batch_size,1].
     """
     hx = homophily(edge_index, x[:, 0], batch).reshape(-1, 1)
     hy = homophily(edge_index, x[:, 1], batch).reshape(-1, 1)
@@ -26,8 +29,7 @@ def calculate_xyzt_homophily(x, edge_index, batch):
 
 
 def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
-    """
-    Calculate the matrix of pairwise distances between pulses in (x,y,z)-coordinates.
+    """Calculate the matrix of pairwise distances between pulses.
 
     Args:
         xyz_coords: (x,y,z)-coordinates of pulses, of shape [nb_doms, 3].
@@ -39,16 +41,17 @@ def calculate_distance_matrix(xyz_coords: Tensor) -> Tensor:
     return torch.sqrt(torch.sum(diff**2, dim=1))
 
 
-def knn_graph_batch(batch: Batch, k: List[int], columns: List[int]):
-    """Calculates the k-nearest-neighbours with an individual k for each event in batch.
+def knn_graph_batch(batch: Batch, k: List[int], columns: List[int]) -> Batch:
+    """Calculate k-nearest-neighbours with individual k for each batch event.
 
     Args:
-        batch (Batch): A torch_geometric.data.Batch of events
-        k (List[int]): A list of k's
-        columns (List[int]): The columns of Data.x used for computing the distances. Eg. Data.x[:,[0,1,2]]
+        batch: Batch of events.
+        k: A list of k's.
+        columns: The columns of Data.x used for computing the distances. E.g.,
+            Data.x[:,[0,1,2]]
 
     Returns:
-        Batch: returns the same batch of events, but with updated edges.
+        Returns the same batch of events, but with updated edges.
     """
     data_list = batch.to_data_list()
     for i in range(len(data_list)):

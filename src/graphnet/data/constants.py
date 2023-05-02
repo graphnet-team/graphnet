@@ -1,7 +1,9 @@
-"""Global constants that are used across modules."""
+"""Global constants that are used with `graphnet.data`."""
 
 
 class FEATURES:
+    """Namespace for standard names working with `I3FeatureExtractor`."""
+
     ICECUBE86 = [
         "dom_x",
         "dom_y",
@@ -21,9 +23,18 @@ class FEATURES:
         "pmt_dir_z",
         "dom_type",
     ]
+    PROMETHEUS = [
+        "sensor_pos_x",
+        "sensor_pos_y",
+        "sensor_pos_z",
+        "t",
+    ]
+    KAGGLE = ["x", "y", "z", "time", "charge", "auxiliary"]
 
 
 class TRUTH:
+    """Namespace for standard names working with `I3TruthExtractor`."""
+
     ICECUBE86 = [
         "energy",
         "energy_track",
@@ -42,3 +53,32 @@ class TRUTH:
     ]
     DEEPCORE = ICECUBE86
     UPGRADE = DEEPCORE
+    PROMETHEUS = [
+        "injection_energy",
+        "injection_type",
+        "injection_interaction_type",
+        "injection_zenith",
+        "injection_azimuth",
+        "injection_bjorkenx",
+        "injection_bjorkeny",
+        "injection_position_x",
+        "injection_position_y",
+        "injection_position_z",
+        "injection_column_depth",
+        "primary_lepton_1_type",
+        "primary_hadron_1_type",
+        "primary_lepton_1_position_x",
+        "primary_lepton_1_position_y",
+        "primary_lepton_1_position_z",
+        "primary_hadron_1_position_x",
+        "primary_hadron_1_position_y",
+        "primary_hadron_1_position_z",
+        "primary_lepton_1_direction_theta",
+        "primary_lepton_1_direction_phi",
+        "primary_hadron_1_direction_theta",
+        "primary_hadron_1_direction_phi",
+        "primary_lepton_1_energy",
+        "primary_hadron_1_energy",
+        "total_energy",
+    ]
+    KAGGLE = ["zenith", "azimuth"]

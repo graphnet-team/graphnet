@@ -1,11 +1,25 @@
+exclude: '^(versioneer.py|src/graphnet/_version.py|docs/)'
 repos:
   - repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
     - id: black
-      language_version: python3.8
+      language_version: python3
       args: [--config=black.toml]
   - repo: https://github.com/pycqa/flake8
     rev: 4.0.1
     hooks:
     - id: flake8
+  - repo: https://github.com/pycqa/docformatter
+    rev: v1.5.0
+    hooks:
+    - id: docformatter
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.1.1
+    hooks:
+    - id: pydocstyle
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.982
+    hooks:
+    - id: mypy
+      args: [--follow-imports=silent, --disallow-untyped-defs, --disallow-incomplete-defs, --disallow-untyped-calls]

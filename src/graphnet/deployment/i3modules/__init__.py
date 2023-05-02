@@ -6,3 +6,4 @@ detector configurations.
 """
 
 from .graphnet_module import *
+from .deployer import *

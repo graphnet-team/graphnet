@@ -1,7 +1,9 @@
+"""IceCube-specific `Detector` class(es)."""
+
 import torch
 from torch_geometric.data import Data
 
-from graphnet.components.pool import (
+from graphnet.models.components.pool import (
     group_pulses_to_dom,
     group_pulses_to_pmt,
     sum_pool_and_distribute,
@@ -17,15 +19,73 @@ class IceCube86(Detector):
     features = FEATURES.ICECUBE86
 
     def _forward(self, data: Data) -> Data:
-        """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
+        """Ingest data, build graph, and preprocess features.
 
         Args:
-            data (Data): Input graph data.
+            data: Input graph data.
 
         Returns:
-            Data: Connected and preprocessed graph data.
+            Connected and preprocessed graph data.
         """
+        # Check(s)
+        self._validate_features(data)
 
+        # Preprocessing
+        data.x[:, 0] /= 500.0  # dom_x
+        data.x[:, 1] /= 500.0  # dom_y
+        data.x[:, 2] /= 500.0  # dom_z
+        data.x[:, 3] = (data.x[:, 3] - 1.0e04) / 3.0e4  # dom_time
+        data.x[:, 4] = torch.log10(data.x[:, 4]) / 3.0  # charge
+        data.x[:, 5] -= 1.25  # rde
+        data.x[:, 5] /= 0.25
+        data.x[:, 6] /= 0.05  # pmt_area
+
+        return data
+
+
+class IceCubeKaggle(Detector):
+    """`Detector` class for Kaggle Competition."""
+
+    # Implementing abstract class attribute
+    features = FEATURES.KAGGLE
+
+    def _forward(self, data: Data) -> Data:
+        """Ingest data, build graph, and preprocess features.
+
+        Args:
+            data: Input graph data.
+
+        Returns:
+            Connected and preprocessed graph data.
+        """
+        # Check(s)
+        self._validate_features(data)
+
+        # Preprocessing
+        data.x[:, 0] /= 500.0  # x
+        data.x[:, 1] /= 500.0  # y
+        data.x[:, 2] /= 500.0  # z
+        data.x[:, 3] = (data.x[:, 3] - 1.0e04) / 3.0e4  # time
+        data.x[:, 4] = torch.log10(data.x[:, 4]) / 3.0  # charge
+
+        return data
+
+
+class IceCubeDeepCore(IceCube86):
+    """`Detector` class for IceCube-DeepCore."""
+
+    # Implementing abstract class attribute
+    features = FEATURES.DEEPCORE
+
+    def _forward(self, data: Data) -> Data:
+        """Ingest data, build graph, and preprocess features.
+
+        Args:
+            data: Input graph data.
+
+        Returns:
+            Connected and preprocessed graph data.
+        """
         # Check(s)
         self._validate_features(data)
 
@@ -45,10 +105,6 @@ class IceCube86(Detector):
         return data
 
 
-class IceCubeDeepCore(IceCube86):
-    """`Detector` class for IceCube-DeepCore."""
-
-
 class IceCubeUpgrade(IceCubeDeepCore):
     """`Detector` class for IceCube-Upgrade."""
 
@@ -56,15 +112,14 @@ class IceCubeUpgrade(IceCubeDeepCore):
     features = FEATURES.UPGRADE
 
     def _forward(self, data: Data) -> Data:
-        """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
+        """Ingest data, build graph, and preprocess features.
 
         Args:
-            data (Data): Input graph data.
+            data: Input graph data.
 
         Returns:
-            Data: Connected and preprocessed graph data.
+            Connected and preprocessed graph data.
         """
-
         # Check(s)
         self._validate_features(data)
 
@@ -97,19 +152,19 @@ class IceCubeUpgrade_V2(IceCubeDeepCore):
     features = FEATURES.UPGRADE
 
     @property
-    def nb_outputs(self):
+    def nb_outputs(self) -> int:
+        """Return number of output features."""
         return self.nb_inputs + 3
 
     def _forward(self, data: Data) -> Data:
-        """Ingests data, builds graph (connectivity/adjacency), and preprocesses features.
+        """Ingest data, build graph, and preprocess features.
 
         Args:
-            data (Data): Input graph data.
+            data: Input graph data.
 
         Returns:
-            Data: Connected and preprocessed graph data.
+            Connected and preprocessed graph data.
         """
-
         # Check(s)
         self._validate_features(data)
 

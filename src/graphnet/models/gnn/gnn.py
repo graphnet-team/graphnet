@@ -1,13 +1,20 @@
+"""Base GNN-specific `Model` class(es)."""
+
 from abc import abstractmethod
-from pytorch_lightning.core.lightning import LightningModule
+
 from torch import Tensor
 from torch_geometric.data import Data
 
+from graphnet.models import Model
+from graphnet.utilities.config import save_model_config
 
-class GNN(LightningModule):
+
+class GNN(Model):
     """Base class for all core GNN models in graphnet."""
 
-    def __init__(self, nb_inputs, nb_outputs):
+    @save_model_config
+    def __init__(self, nb_inputs: int, nb_outputs: int) -> None:
+        """Construct `GNN`."""
         # Base class constructor
         super().__init__()
 
@@ -17,14 +24,14 @@ class GNN(LightningModule):
 
     @property
     def nb_inputs(self) -> int:
-        """Number of inputs to GNN model."""
+        """Return number of input features."""
         return self._nb_inputs
 
     @property
     def nb_outputs(self) -> int:
-        """Number of outputs from GNN model."""
+        """Return number of output features."""
         return self._nb_outputs
 
     @abstractmethod
     def forward(self, data: Data) -> Tensor:
-        """Learnable forward pass in model."""
+        """Apply learnable forward pass in model."""

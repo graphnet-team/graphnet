@@ -1,5 +1,6 @@
-import subprocess
-import sys
+# type: ignore[no-untyped-call]
+"""Setup script for the GraphNeT package."""
+
 from setuptools import setup, find_packages
 import versioneer
 
@@ -9,12 +10,16 @@ SETUP_REQUIRES = [
 ]
 
 INSTALL_REQUIRES = [
-    "awkward>=1.8",
+    "awkward>=1.8,<2.0",
+    "colorlog>=6.6",
+    "configupdater",
     "dill>=0.3",
     "matplotlib>=3.5",
     "numpy>=1.21",
     "pandas>=1.3",
     "pyarrow",
+    "pydantic",
+    "ruamel.yaml",
     "scikit_learn>=1.0",
     "scipy>=1.7",
     "sqlalchemy>=1.4",
@@ -26,16 +31,19 @@ INSTALL_REQUIRES = [
 EXTRAS_REQUIRE = {
     "develop": [
         "black",
-        "colorlog",
         "coverage",
+        "docformatter",
         "MarkupSafe<=2.1",
+        "mypy",
+        "myst-parser",
         "pre-commit",
         "pydocstyle",
         "pylint",
         "pytest",
         "pytest-order",
         "sphinx",
-        "sphinx_rtd_theme",
+        "sphinx-material",
+        "sphinx-autodoc-typehints",
         "versioneer",
     ],
     "torch": [
@@ -44,7 +52,7 @@ EXTRAS_REQUIRE = {
         "torch-scatter>=2.0",
         "torch-sparse>=0.6",
         "torch-geometric>=2.0",
-        "pytorch-lightning>=1.6",
+        "pytorch-lightning>=1.6, <2.0",
     ],
 }
 

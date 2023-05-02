@@ -131,14 +131,24 @@ dmypy.json
 # Documentation
 docs/build/html
 docs/**/*.rst
+docs/source/*.md
 
 # Badges
 assets/badges
+
+# Logs
 lightning_logs/
 logs/
 wandb/
-test_data/
+checkpoints/
+
+# Data and outputs
+data/tests/output/
+data/examples/output/
 **.png
 **.pth
-**.ipynb
 **.db
+**.parquet
+
+# Notebooks
+**.ipynb

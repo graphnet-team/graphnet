@@ -1,21 +1,29 @@
-import numpy as np
-from uncertainties import unumpy as unp
-import pisa
-from pisa.core.distribution_maker import DistributionMaker
-from pisa.core.pipeline import Pipeline
-from pisa.analysis.analysis import Analysis
-from pisa import FTYPE, ureg
-import pandas as pd
+"""Functions and classes for fitting contours using PISA."""
+
+import configparser
+from contextlib import contextmanager
+import io
 import multiprocessing
 import os
 import random
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
+
+from configupdater import ConfigUpdater
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import configparser
-import io
-from configupdater import ConfigUpdater
-from contextlib import contextmanager
-from graphnet.data.sqlite import run_sql_code, save_to_sql
+import numpy as np
+import pandas as pd
+
+from graphnet.utilities.imports import has_pisa_package
+
+if has_pisa_package() or TYPE_CHECKING:
+    import pisa  # pyright: reportMissingImports=false
+    from pisa.core.distribution_maker import DistributionMaker
+    from pisa.core.pipeline import Pipeline
+    from pisa.analysis.analysis import Analysis
+    from pisa import ureg
+
+from graphnet.data.sqlite import create_table_and_save_to_sql
 
 mpl.use("pdf")
 plt.rc("font", family="serif")
@@ -24,20 +32,19 @@ plt.rc("font", family="serif")
 @contextmanager
 def config_updater(
     config_path: str,
-    new_config_path: str = None,
+    new_config_path: Optional[str] = None,
     dummy_section: str = "temp",
 ) -> ConfigUpdater:
-    """Updates config files and saves them to file.
+    """Update config files and saves them to file.
 
     Args:
-        config_path (str): Path to original config file.
-        new_config_path (str, optional): Path to save updated config file.
-            Defaults to None.
-        dummy_section (str, optional): Dummy section name to use for config
-            files without section headers. Defaults to "temp".
+        config_path: Path to original config file.
+        new_config_path: Path to save updated config file.
+        dummy_section: Dummy section name to use for config files without
+            section headers.
 
     Yields:
-        ConfigUpdater: Instance for programatically updating config file.
+        ConfigUpdater instance for programatically updating config file.
     """
     # Modify original config file is no new config path is provided.
     if new_config_path is None:
@@ -76,13 +83,16 @@ def config_updater(
 
 
 class WeightFitter:
+    """Class for fitting weights using PISA."""
+
     def __init__(
         self,
         database_path: str,
         truth_table: str = "truth",
         index_column: str = "event_no",
         statistical_fit: bool = False,
-    ):
+    ) -> None:
+        """Construct `WeightFitter`."""
         self._database_path = database_path
         self._truth_table = truth_table
         self._index_column = index_column
@@ -91,34 +101,47 @@ class WeightFitter:
     def fit_weights(
         self,
         config_outdir: str,
-        weight_name: str = None,
-        pisa_config_dict: dict = None,
+        weight_name: str = "",
+        pisa_config_dict: Optional[Dict] = None,
         add_to_database: bool = False,
-    ):
-        """Fits flux weights to each neutrino event in self._database_path. If statistical_fit = True, only statistical effects are accounted for. If True, certain systematic effects are included, but not hypersurfaces.
+    ) -> pd.DataFrame:
+        """Fit flux weights to each neutrino event in `self._database_path`.
+
+        If `statistical_fit=True`, only statistical effects are accounted for.
+        If `True`, certain systematic effects are included, but not
+        hypersurfaces.
 
         Args:
-            config_outdir (str): The outdir to store the configuration in.
-            weight_name (str, optional): The name of the weight. If add_to_database = True, this will be the name of the table. Defaults to None.
-            pisa_config_dict (dict, optional): The dictionary of pisa configurations. Can be used to change assumptions regarding the fit. Defaults to None.
-            add_to_database (bool, optional): If True, a table will be added to the database called weight_name with two columns; index_column, weight_name. Defaults to False.
+            config_outdir: The output directory in which to store the
+                configuration.
+            weight_name: The name of the weight. If `add_to_database=True`,
+                this will be the name of the table.
+            pisa_config_dict: The dictionary of PISA configurations. Can be
+                used to change assumptions regarding the fit.
+            add_to_database: If `True`, a table will be added to the database
+                called `weight_name` with two columns:
+                `[index_column, weight_name]`
 
         Returns:
-            pandas.DataFrame: A dataframe with columns index_column, weight_name .
+            A dataframe with columns `[index_column, weight_name]`.
         """
-        # if its a standard weight
+        # If its a standard weight
         if pisa_config_dict is None:
-            if isinstance(weight_name, str) is False:
+            if not weight_name:
                 print(weight_name)
                 weight_name = "pisa_weight_graphnet_standard"
-        # if it is a custom weight without name
+
+        # If it is a custom weight without name
         elif pisa_config_dict is not None:
-            if isinstance(weight_name, str) is False:
+            if not weight_name:
                 weight_name = "pisa_custom_weight"
+
         pisa_config_path = self._make_config(
             config_outdir, weight_name, pisa_config_dict
         )
+
         model = Pipeline(pisa_config_path)
+
         if self._statistical_fit == "True":
             # Only free parameters will be [aeff_scale] - corresponding to a statistical fit
             free_params = model.params.free.names
@@ -130,46 +153,26 @@ class WeightFitter:
         model.stages[-1].apply_mode = "events"
         model.stages[-1].calc_mode = "events"
         model.run()
-        results = pd.DataFrame()
+
+        all_data = []
         for container in model.data:
             data = pd.DataFrame(container["event_no"], columns=["event_no"])
             data[weight_name] = container["weights"]
-            results = results.append(data)
+            all_data.append(data)
+        results = pd.concat(all_data)
 
         if add_to_database:
-            self._create_table(self._database_path, weight_name, results)
-            save_to_sql(results, weight_name, self._database_path)
+            create_table_and_save_to_sql(
+                results.columns, weight_name, self._database_path
+            )
         return results.sort_values("event_no").reset_index(drop=True)
-
-    def _create_table(self, database, table_name, df):
-        """Creates a table.
-        Args:
-            pipeline_database (str): path to the pipeline database
-            df (str): pandas.DataFrame of combined predictions
-        """
-        query_columns = list()
-        for column in df.columns:
-            if column == "event_no":
-                type_ = "INTEGER PRIMARY KEY NOT NULL"
-            else:
-                type_ = "FLOAT"
-            query_columns.append(f"{column} {type_}")
-        query_columns = ", ".join(query_columns)
-
-        code = (
-            "PRAGMA foreign_keys=off;\n"
-            f"CREATE TABLE {table_name} ({query_columns});\n"
-            "PRAGMA foreign_keys=on;"
-        )
-        run_sql_code(database, code)
-        return
 
     def _make_config(
         self,
-        config_outdir,
-        weight_name,
-        pisa_config_dict,
-    ):
+        config_outdir: str,
+        weight_name: str,
+        pisa_config_dict: Optional[Dict] = None,
+    ) -> str:
         os.makedirs(config_outdir + "/" + weight_name, exist_ok=True)
         if pisa_config_dict is None:
             # Run on standard settings
@@ -190,7 +193,7 @@ class WeightFitter:
         )
         return pipeline_cfg_path
 
-    def _create_configs(self, config_dict, path):
+    def _create_configs(self, config_dict: Dict, path: str) -> str:
         # Update binning config
         root = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
@@ -255,15 +258,18 @@ class WeightFitter:
 
 
 class ContourFitter:
+    """Class for fitting contours using PISA."""
+
     def __init__(
         self,
-        outdir,
-        pipeline_path,
-        post_fix="_pred",
-        model_name="gnn",
-        include_retro=True,
-        statistical_fit=False,
+        outdir: str,
+        pipeline_path: str,
+        post_fix: str = "_pred",
+        model_name: str = "gnn",
+        include_retro: bool = True,
+        statistical_fit: bool = False,
     ):
+        """Construct `ContourFitter`."""
         self._outdir = outdir
         self._pipeline_path = pipeline_path
         self._post_fix = post_fix
@@ -274,13 +280,14 @@ class ContourFitter:
 
     def fit_1d_contour(
         self,
-        run_name,
-        config_dict,
-        grid_size=30,
-        n_workers=1,
-        theta23_minmax=[36, 54],
-        dm31_minmax=[2.3, 2.7],
-    ):
+        run_name: str,
+        config_dict: Dict,
+        grid_size: int = 30,
+        n_workers: int = 1,
+        theta23_minmax: Tuple[float, float] = (36.0, 54.0),
+        dm31_minmax: Tuple[float, float] = (2.3, 2.7),
+    ) -> None:
+        """Fit 1D contours."""
         self._fit_contours(
             config_dict=config_dict,
             run_name=run_name,
@@ -290,17 +297,17 @@ class ContourFitter:
             dm31_minmax=dm31_minmax,
             contour_type="1d",
         )
-        return
 
     def fit_2d_contour(
         self,
-        run_name,
-        config_dict,
-        grid_size=30,
-        n_workers=1,
-        theta23_minmax=[36, 54],
-        dm31_minmax=[2.3, 2.7],
-    ):
+        run_name: str,
+        config_dict: Dict,
+        grid_size: int = 30,
+        n_workers: int = 1,
+        theta23_minmax: Tuple[float, float] = (36.0, 54.0),
+        dm31_minmax: Tuple[float, float] = (2.3, 2.7),
+    ) -> None:
+        """Fit 2D contours."""
         self._fit_contours(
             config_dict=config_dict,
             run_name=run_name,
@@ -310,11 +317,15 @@ class ContourFitter:
             dm31_minmax=dm31_minmax,
             contour_type="2d",
         )
-        return
 
     def _check_inputs(
-        self, contour_type, dm31_minmax, theta23_minmax, n_workers
-    ):
+        self,
+        contour_type: str,
+        dm31_minmax: Tuple[float, float],
+        theta23_minmax: Tuple[float, float],
+        n_workers: int,
+    ) -> bool:
+        """Check whether inputs are as expected."""
         if contour_type.lower() not in self._allowed_contour_types:
             print(
                 "%s not recognized as valid contour type. Only %s is recognized"
@@ -338,90 +349,84 @@ class ContourFitter:
 
     def _fit_contours(
         self,
-        run_name,
-        config_dict,
-        grid_size,
-        n_workers,
-        contour_type,
-        theta23_minmax,
-        dm31_minmax,
-    ):
+        run_name: str,
+        config_dict: Dict,
+        grid_size: int,
+        n_workers: int,
+        contour_type: str,
+        theta23_minmax: Tuple[float, float],
+        dm31_minmax: Tuple[float, float],
+    ) -> None:
+        """Fit contours."""
         inputs_ok = self._check_inputs(
             contour_type=contour_type,
             dm31_minmax=dm31_minmax,
             theta23_minmax=theta23_minmax,
             n_workers=n_workers,
         )
-        if inputs_ok:
-            minimizer_cfg = self._get_minimizer_path(config_dict)
-            cfgs = self._setup_config_files(run_name, config_dict)
-            theta23_range = np.linspace(
-                theta23_minmax[0], theta23_minmax[1], grid_size
-            )
-            dm31_range = (
-                np.linspace(dm31_minmax[0], dm31_minmax[1], grid_size) * 1e-3
-            )
-            if contour_type.lower() == "1d":
-                settings = self._make_1d_settings(
-                    cfgs=cfgs,
-                    grid_size=grid_size,
-                    run_name=run_name,
-                    minimizer_cfg=minimizer_cfg,
-                    theta23_range=theta23_range,
-                    dm31_range=dm31_range,
-                    n_workers=n_workers,
-                )
-                p = multiprocessing.Pool(processes=len(settings))
-                _ = p.map_async(self._parallel_fit_1d_contour, settings)
-                p.close()
-                p.join()
-                # self._parallel_fit_1d_contour(settings[0])
-            elif contour_type.lower() == "2d":
-                settings = self._make_2d_settings(
-                    cfgs=cfgs,
-                    grid_size=grid_size,
-                    run_name=run_name,
-                    minimizer_cfg=minimizer_cfg,
-                    theta23_range=theta23_range,
-                    dm31_range=dm31_range,
-                    n_workers=n_workers,
-                )
-                p = multiprocessing.Pool(processes=len(settings))
-                _ = p.map_async(self._parallel_fit_2d_contour, settings)
-                p.close()
-                p.join()
-                # self._parallel_fit_2d_contour(settings[0])
-            df = self._merge_temporary_files(run_name)
-            df.to_csv(self._outdir + "/" + run_name + "/merged_results.csv")
-        else:
+        if not inputs_ok:
             return
 
-    def _merge_temporary_files(self, run_name):
+        minimizer_cfg = self._get_minimizer_path(config_dict)
+        cfgs = self._setup_config_files(run_name, config_dict)
+        theta23_range = np.linspace(
+            theta23_minmax[0], theta23_minmax[1], grid_size
+        )
+        dm31_range = (
+            np.linspace(dm31_minmax[0], dm31_minmax[1], grid_size) * 1e-3
+        )
+        if contour_type.lower() == "1d":
+            settings = self._make_1d_settings(
+                cfgs=cfgs,
+                grid_size=grid_size,
+                run_name=run_name,
+                minimizer_cfg=minimizer_cfg,
+                theta23_range=theta23_range,
+                dm31_range=dm31_range,
+                n_workers=n_workers,
+            )
+            p = multiprocessing.Pool(processes=len(settings))
+            _ = p.map_async(self._parallel_fit_1d_contour, settings)
+            p.close()
+            p.join()
+            # self._parallel_fit_1d_contour(settings[0])
+        elif contour_type.lower() == "2d":
+            settings = self._make_2d_settings(
+                cfgs=cfgs,
+                grid_size=grid_size,
+                run_name=run_name,
+                minimizer_cfg=minimizer_cfg,
+                theta23_range=theta23_range,
+                dm31_range=dm31_range,
+                n_workers=n_workers,
+            )
+            p = multiprocessing.Pool(processes=len(settings))
+            _ = p.map_async(self._parallel_fit_2d_contour, settings)
+            p.close()
+            p.join()
+            # self._parallel_fit_2d_contour(settings[0])
+        df = self._merge_temporary_files(run_name)
+        df.to_csv(self._outdir + "/" + run_name + "/merged_results.csv")
+
+    def _merge_temporary_files(self, run_name: str) -> pd.DataFrame:
         files = os.listdir(self._outdir + "/" + run_name + "/tmp")
-        is_first = True
-        for file in files:
-            if is_first:
-                df = pd.read_csv(
-                    self._outdir + "/" + run_name + "/tmp/" + file
-                )
-                is_first = False
-            else:
-                df = df.append(
-                    pd.read_csv(
-                        self._outdir + "/" + run_name + "/tmp/" + file
-                    ),
-                    ignore_index=True,
-                )
-        df = df.reset_index(drop=True)
+        df = pd.concat(
+            [
+                pd.read_csv(f"{self._outdir}/{run_name}/tmp/{file}")
+                for file in files
+            ],
+            ignore_index=True,
+        )
         return df
 
-    def _parallel_fit_2d_contour(self, settings):
-        """fitting routine for 2D contours. Length of settings determines the amount of jobs this worker gets.
+    def _parallel_fit_2d_contour(self, settings: List[List[Any]]) -> None:
+        """Fit 2D contours in parallel.
 
-            Results are saved to temporary .csv-files that are later merged.
+        Length of settings determines the amount of jobs this worker gets.
+        Results are saved to temporary .csv-files that are later merged.
 
         Args:
-            settings (list): A list of fitting settings.
+            settings: A list of fitting settings.
         """
         results = []
         for i in range(len(settings)):
@@ -490,15 +495,15 @@ class ContourFitter:
         self._save_temporary_results(
             outdir=outdir, run_name=run_name, results=results, id=id
         )
-        return
 
-    def _parallel_fit_1d_contour(self, settings):
-        """fitting routine for 1D contours. Length of settings determines the amount of jobs this worker gets.
+    def _parallel_fit_1d_contour(self, settings: List[List[Any]]) -> None:
+        """Fit 1D contours in parallel.
 
-            Results are saved to temporary .csv-files that are later merged.
+        Length of settings determines the amount of jobs this worker gets.
+        Results are saved to temporary .csv-files that are later merged.
 
         Args:
-            settings (list): A list of fitting settings.
+            settings: A list of fitting settings.
         """
         results = []
         for i in range(len(settings)):
@@ -571,11 +576,12 @@ class ContourFitter:
         self._save_temporary_results(
             outdir=outdir, run_name=run_name, results=results, id=id
         )
-        return
 
-    def _save_temporary_results(self, outdir, run_name, results, id):
+    def _save_temporary_results(
+        self, outdir: str, run_name: str, results: List[List[Any]], id: int
+    ) -> None:
         os.makedirs(outdir + "/" + run_name + "/tmp", exist_ok=True)
-        results = pd.DataFrame(
+        results_df = pd.DataFrame(
             data=results,
             columns=[
                 "theta23_fixed",
@@ -588,19 +594,20 @@ class ContourFitter:
                 "converged",
             ],
         )
-        results.to_csv(outdir + "/" + run_name + "/tmp" + "/tmp_%s.csv" % id)
-        return
+        results_df.to_csv(
+            outdir + "/" + run_name + "/tmp" + "/tmp_%s.csv" % id
+        )
 
     def _make_2d_settings(
         self,
-        cfgs,
-        grid_size,
-        run_name,
-        minimizer_cfg,
-        theta23_range,
-        dm31_range,
-        n_workers,
-    ):
+        cfgs: Dict,
+        grid_size: int,
+        run_name: str,
+        minimizer_cfg: str,
+        theta23_range: Tuple[float, float],
+        dm31_range: Tuple[float, float],
+        n_workers: int,
+    ) -> List[np.ndarray]:
         settings = []
         count = 0
         for model_name in cfgs.keys():
@@ -625,14 +632,14 @@ class ContourFitter:
 
     def _make_1d_settings(
         self,
-        cfgs,
-        grid_size,
-        run_name,
-        minimizer_cfg,
-        theta23_range,
-        dm31_range,
-        n_workers,
-    ):
+        cfgs: Dict,
+        grid_size: int,
+        run_name: str,
+        minimizer_cfg: str,
+        theta23_range: Tuple[float, float],
+        dm31_range: Tuple[float, float],
+        n_workers: int,
+    ) -> List[np.ndarray]:
         settings = []
         count = 0
         for model_name in cfgs.keys():
@@ -671,7 +678,7 @@ class ContourFitter:
         random.shuffle(settings)
         return np.array_split(settings, n_workers)
 
-    def _setup_config_files(self, run_name, config_dict):
+    def _setup_config_files(self, run_name: str, config_dict: Dict) -> Dict:
         cfgs = {}
         cfgs[self._model_name] = self._make_configs(
             outdir=self._outdir,
@@ -692,7 +699,7 @@ class ContourFitter:
             )
         return cfgs
 
-    def _get_minimizer_path(self, config_dict):
+    def _get_minimizer_path(self, config_dict: Optional[Dict]) -> str:
         if config_dict is not None and "minimizer_cfg" in config_dict.keys():
             minimizer_cfg = config_dict["minimizer_cfg"]
         else:
@@ -704,7 +711,7 @@ class ContourFitter:
             )
         return minimizer_cfg
 
-    def _create_configs(self, config_dict, path):
+    def _create_configs(self, config_dict: Dict, path: str) -> str:
         # Update binning config
         root = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
@@ -768,13 +775,13 @@ class ContourFitter:
 
     def _make_configs(
         self,
-        outdir,
-        run_name,
-        is_retro,
-        pipeline_path,
-        post_fix="_pred",
-        config_dict=None,
-    ):
+        outdir: str,
+        run_name: str,
+        is_retro: bool,
+        pipeline_path: str,
+        post_fix: str = "_pred",
+        config_dict: Optional[Dict] = None,
+    ) -> str:
         os.makedirs(outdir + "/" + run_name, exist_ok=True)
         if config_dict is None:
             # Run on standard settings

@@ -1,188 +1,329 @@
-import os
-from typing import List, Optional, Union
+"""Base class(es) for building models."""
 
+from abc import ABC, abstractmethod
+from collections import OrderedDict
 import dill
-from pytorch_lightning import LightningModule
+import os.path
+from typing import Any, Dict, List, Optional, Union
+
+import numpy as np
+import pandas as pd
+from pytorch_lightning import Trainer, LightningModule
+from pytorch_lightning.callbacks.callback import Callback
+from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.loggers.logger import Logger as LightningLogger
 import torch
 from torch import Tensor
-from torch.nn import ModuleList
-from torch.optim import Adam
+from torch.utils.data import DataLoader, SequentialSampler
 from torch_geometric.data import Data
-from graphnet.models.coarsening import Coarsening
 
-from graphnet.models.detector.detector import Detector
-from graphnet.models.gnn.gnn import GNN
-from graphnet.models.task import Task
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import Logger
+from graphnet.utilities.config import Configurable, ModelConfig
+from graphnet.training.callbacks import ProgressBar
 
 
-logger = get_logger()
+class Model(Logger, Configurable, LightningModule, ABC):
+    """Base class for all models in graphnet."""
 
+    @abstractmethod
+    def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
+        """Forward pass."""
 
-class Model(LightningModule):
-    """Main class for all models in graphnet.
-
-    This class chains together the different elements of a complete GNN-based
-    model (detector read-in, GNN architecture, and task-specific read-outs).
-    """
-
-    def __init__(
+    def _construct_trainers(
         self,
+        max_epochs: int = 10,
+        gpus: Optional[Union[List[int], int]] = None,
+        callbacks: Optional[List[Callback]] = None,
+        ckpt_path: Optional[str] = None,
+        logger: Optional[LightningLogger] = None,
+        log_every_n_steps: int = 1,
+        gradient_clip_val: Optional[float] = None,
+        distribution_strategy: Optional[str] = "ddp",
+        **trainer_kwargs: Any,
+    ) -> None:
+
+        if gpus:
+            accelerator = "gpu"
+            devices = gpus
+        else:
+            accelerator = "cpu"
+            devices = None
+
+        self._trainer = Trainer(
+            accelerator=accelerator,
+            devices=devices,
+            max_epochs=max_epochs,
+            callbacks=callbacks,
+            log_every_n_steps=log_every_n_steps,
+            logger=logger,
+            gradient_clip_val=gradient_clip_val,
+            strategy=distribution_strategy,
+            **trainer_kwargs,
+        )
+
+        inference_devices = devices
+        if isinstance(inference_devices, list):
+            inference_devices = inference_devices[:1]
+
+        self._inference_trainer = Trainer(
+            accelerator=accelerator,
+            devices=inference_devices,
+            callbacks=callbacks,
+            logger=logger,
+            strategy=None,
+            **trainer_kwargs,
+        )
+
+    def fit(
+        self,
+        train_dataloader: DataLoader,
+        val_dataloader: Optional[DataLoader] = None,
         *,
-        detector: Detector,
-        gnn: GNN,
-        tasks: Union[Task, List[Task]],
-        coarsening: Optional[Coarsening] = None,
-        optimizer_class=Adam,
-        optimizer_kwargs=None,
-        scheduler_class=None,
-        scheduler_kwargs=None,
-        scheduler_config=None,
-    ):
-
-        # Base class constructor
-        super().__init__()
-
-        # Check(s)
-        if isinstance(tasks, Task):
-            tasks = [tasks]
-        assert isinstance(tasks, (list, tuple))
-        assert all(isinstance(task, Task) for task in tasks)
-        assert isinstance(detector, Detector)
-        assert isinstance(gnn, GNN)
-        assert coarsening is None or isinstance(coarsening, Coarsening)
-
-        # Member variable(s)
-        self._detector = detector
-        self._gnn = gnn
-        self._tasks = ModuleList(tasks)
-        self._coarsening = coarsening
-        self._optimizer_class = optimizer_class
-        self._optimizer_kwargs = optimizer_kwargs or dict()
-        self._scheduler_class = scheduler_class
-        self._scheduler_kwargs = scheduler_kwargs or dict()
-        self._scheduler_config = scheduler_config or dict()
-
-    def configure_optimizers(self):
-        optimizer = self._optimizer_class(
-            self.parameters(), **self._optimizer_kwargs
-        )
-        config = {
-            "optimizer": optimizer,
-        }
-        if self._scheduler_class is not None:
-            scheduler = self._scheduler_class(
-                optimizer, **self._scheduler_kwargs
+        max_epochs: int = 10,
+        gpus: Optional[Union[List[int], int]] = None,
+        callbacks: Optional[List[Callback]] = None,
+        ckpt_path: Optional[str] = None,
+        logger: Optional[LightningLogger] = None,
+        log_every_n_steps: int = 1,
+        gradient_clip_val: Optional[float] = None,
+        distribution_strategy: Optional[str] = "ddp",
+        **trainer_kwargs: Any,
+    ) -> None:
+        """Fit `Model` using `pytorch_lightning.Trainer`."""
+        # Checks
+        if callbacks is None:
+            callbacks = self._create_default_callbacks(
+                val_dataloader=val_dataloader,
             )
-            config.update(
-                {
-                    "lr_scheduler": {
-                        "scheduler": scheduler,
-                        **self._scheduler_config,
-                    },
-                }
+        elif val_dataloader is not None:
+            callbacks = self._add_early_stopping(
+                val_dataloader=val_dataloader, callbacks=callbacks
             )
-        return config
 
-    def forward(self, data: Data) -> List[Union[Tensor, Data]]:
-        """Common forward pass, chaining model components."""
-        if self._coarsening:
-            data = self._coarsening(data)
-        data = self._detector(data)
-        x = self._gnn(data)
-        preds = [task(x) for task in self._tasks]
-        return preds
-
-    def shared_step(self, batch, batch_idx):
-        preds = self(batch)
-        loss = self.compute_loss(preds, batch)
-        return loss
-
-    def training_step(self, train_batch, batch_idx):
-        loss = self.shared_step(train_batch, batch_idx)
-        self.log(
-            "train_loss",
-            loss,
-            batch_size=self._get_batch_size(train_batch),
-            prog_bar=True,
-            on_epoch=True,
-            on_step=False,
+        self.train(mode=True)
+        self._construct_trainers(
+            max_epochs=max_epochs,
+            gpus=gpus,
+            callbacks=callbacks,
+            ckpt_path=ckpt_path,
+            logger=logger,
+            log_every_n_steps=log_every_n_steps,
+            gradient_clip_val=gradient_clip_val,
+            distribution_strategy=distribution_strategy,
+            **trainer_kwargs,
         )
-        return loss
 
-    def validation_step(self, val_batch, batch_idx):
-        loss = self.shared_step(val_batch, batch_idx)
-        self.log(
-            "val_loss",
-            loss,
-            batch_size=self._get_batch_size(val_batch),
-            prog_bar=True,
-            on_epoch=True,
-            on_step=False,
+        try:
+            self._trainer.fit(
+                self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
+            )
+        except KeyboardInterrupt:
+            self.warning("[ctrl+c] Exiting gracefully.")
+            pass
+
+    def _create_default_callbacks(self, val_dataloader: DataLoader) -> List:
+        callbacks = [ProgressBar()]
+        callbacks = self._add_early_stopping(
+            val_dataloader=val_dataloader, callbacks=callbacks
         )
-        return loss
+        return callbacks
 
-    def compute_loss(self, preds: Tensor, data: Data, verbose=False) -> Tensor:
-        """Computes and sums losses across tasks."""
-        losses = [
-            task.compute_loss(pred, data)
-            for task, pred in zip(self._tasks, preds)
+    def _add_early_stopping(
+        self, val_dataloader: DataLoader, callbacks: List
+    ) -> List:
+        if val_dataloader is None:
+            return callbacks
+        has_early_stopping = False
+        assert isinstance(callbacks, list)
+        for callback in callbacks:
+            if isinstance(callback, EarlyStopping):
+                has_early_stopping = True
+
+        if not has_early_stopping:
+            callbacks.append(
+                EarlyStopping(
+                    monitor="val_loss",
+                    patience=5,
+                )
+            )
+            self.warning_once(
+                "Got validation dataloader but no EarlyStopping callback. An "
+                "EarlyStopping callback has been added automatically with "
+                "patience=5 and monitor = 'val_loss'."
+            )
+        return callbacks
+
+    def predict(
+        self,
+        dataloader: DataLoader,
+        gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
+    ) -> List[Tensor]:
+        """Return predictions for `dataloader`.
+
+        Returns a list of Tensors, one for each model output.
+        """
+        self.train(mode=False)
+
+        if not hasattr(self, "_inference_trainer"):
+            self._construct_trainers(
+                gpus=gpus, distribution_strategy=distribution_strategy
+            )
+        elif gpus is not None:
+            self.warning(
+                "A `Trainer` instance has already been constructed, possibly "
+                "when the model was trained. Will use this to get predictions. "
+                f"Argument `gpus = {gpus}` will be ignored."
+            )
+        predictions_list = self._inference_trainer.predict(self, dataloader)
+        assert len(predictions_list), "Got no predictions"
+
+        nb_outputs = len(predictions_list[0])
+        predictions: List[Tensor] = [
+            torch.cat([preds[ix] for preds in predictions_list], dim=0)
+            for ix in range(nb_outputs)
         ]
-        if verbose:
-            logger.info(losses)
-        assert all(
-            loss.dim() == 0 for loss in losses
-        ), "Please reduce loss for each task separately"
-        return torch.sum(torch.stack(losses))
 
-    def save(self, path: str):
-        """Saves entire model to `path`."""
+        return predictions
+
+    def predict_as_dataframe(
+        self,
+        dataloader: DataLoader,
+        prediction_columns: List[str],
+        *,
+        node_level: bool = False,
+        additional_attributes: Optional[List[str]] = None,
+        index_column: str = "event_no",
+        gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
+    ) -> pd.DataFrame:
+        """Return predictions for `dataloader` as a DataFrame.
+
+        Include `additional_attributes` as additional columns in the output
+        DataFrame.
+        """
+        # Check(s)
+        if additional_attributes is None:
+            additional_attributes = []
+        assert isinstance(additional_attributes, list)
+
+        if (
+            not isinstance(dataloader.sampler, SequentialSampler)
+            and additional_attributes
+        ):
+            print(dataloader.sampler)
+            raise UserWarning(
+                "DataLoader has a `sampler` that is not `SequentialSampler`, "
+                "indicating that shuffling is enabled. Using "
+                "`predict_as_dataframe` with `additional_attributes` assumes "
+                "that the sequence of batches in `dataloader` are "
+                "deterministic. Either call this method a `dataloader` which "
+                "doesn't resample batches; or do not request "
+                "`additional_attributes`."
+            )
+        self.info(f"Column names for predictions are: \n {prediction_columns}")
+        predictions_torch = self.predict(
+            dataloader=dataloader,
+            gpus=gpus,
+            distribution_strategy=distribution_strategy,
+        )
+        predictions = (
+            torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
+        )
+        assert len(prediction_columns) == predictions.shape[1], (
+            f"Number of provided column names ({len(prediction_columns)}) and "
+            f"number of output columns ({predictions.shape[1]}) don't match."
+        )
+
+        # Get additional attributes
+        attributes: Dict[str, List[np.ndarray]] = OrderedDict(
+            [(attr, []) for attr in additional_attributes]
+        )
+        for batch in dataloader:
+            for attr in attributes:
+                attribute = batch[attr].detach().cpu().numpy()
+                if node_level:
+                    if attr == index_column:
+                        attribute = np.repeat(
+                            attribute, batch.n_pulses.detach().cpu().numpy()
+                        )
+                attributes[attr].extend(attribute)
+
+        data = np.concatenate(
+            [predictions]
+            + [
+                np.asarray(values)[:, np.newaxis]
+                for values in attributes.values()
+            ],
+            axis=1,
+        )
+
+        results = pd.DataFrame(
+            data, columns=prediction_columns + additional_attributes
+        )
+        return results
+
+    def save(self, path: str) -> None:
+        """Save entire model to `path`."""
         if not path.endswith(".pth"):
-            logger.info(
+            self.info(
                 "It is recommended to use the .pth suffix for model files."
             )
         dirname = os.path.dirname(path)
         if dirname:
             os.makedirs(dirname, exist_ok=True)
         torch.save(self.cpu(), path, pickle_module=dill)
-        logger.info(f"Model saved to {path}")
+        self.info(f"Model saved to {path}")
 
     @classmethod
     def load(cls, path: str) -> "Model":
-        """Loads entire model from `path`."""
+        """Load entire model from `path`."""
         return torch.load(path, pickle_module=dill)
 
-    def save_state_dict(self, path: str):
-        """Saves model `state_dict` to `path`."""
+    def save_state_dict(self, path: str) -> None:
+        """Save model `state_dict` to `path`."""
         if not path.endswith(".pth"):
-            logger.info(
+            self.info(
                 "It is recommended to use the .pth suffix for state_dict files."
             )
         torch.save(self.cpu().state_dict(), path)
-        logger.info(f"Model state_dict saved to {path}")
+        self.info(f"Model state_dict saved to {path}")
 
     def load_state_dict(
-        self, path: str
+        self, path: Union[str, Dict], **kargs: Optional[Any]
     ) -> "Model":  # pylint: disable=arguments-differ
-        """Loads model `state_dict` from `path`, either file or loaded object."""
+        """Load model `state_dict` from `path`."""
         if isinstance(path, str):
             state_dict = torch.load(path)
         else:
             state_dict = path
-        return super().load_state_dict(state_dict)
+        return super().load_state_dict(state_dict, **kargs)
 
-    def _get_batch_size(self, data: Data) -> int:
-        return torch.numel(torch.unique(data.batch))
+    @classmethod
+    def from_config(  # type: ignore[override]
+        cls,
+        source: Union[ModelConfig, str],
+        trust: bool = False,
+        load_modules: Optional[List[str]] = None,
+    ) -> "Model":
+        """Construct `Model` instance from `source` configuration.
 
-    def inference(self):
-        """Sets model to inference mode."""
-        for task in self._tasks:
-            task.inference()
+        Arguments:
+            trust: Whether to trust the ModelConfig file enough to `eval(...)`
+                any lambda function expressions contained.
+            load_modules: List of modules used in the definition of the model
+                which, as a consequence, need to be loaded into the global
+                namespace. Defaults to loading `torch`.
 
-    def train(self, mode=True):
-        super().train(mode)
-        """Deactivates inference mode."""
-        if mode:
-            for task in self._tasks:
-                task.train_eval()
-        return self
+        Raises:
+            ValueError: If the ModelConfig contains lambda functions but
+                `trust = False`.
+        """
+        if isinstance(source, str):
+            source = ModelConfig.load(source)
+
+        assert isinstance(
+            source, ModelConfig
+        ), f"Argument `source` of type ({type(source)}) is not a `ModelConfig"
+
+        return source._construct_model(trust, load_modules)
