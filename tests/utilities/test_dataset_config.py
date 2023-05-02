@@ -1,10 +1,13 @@
 """Unit tests for `DatasetConfig` class."""
 
+import json
 import os.path
 from typing import Dict
 
+import pandas as pd
 import pytest
 import torch
+from torch.utils.data import ConcatDataset
 
 import graphnet
 import graphnet.constants
@@ -14,13 +17,18 @@ from graphnet.data.parquet import ParquetDataset
 from graphnet.data.sqlite import SQLiteDataset
 from graphnet.utilities.config import DatasetConfig
 
+CONFIG_PATHS = {
+    "parquet": "/tmp/test_dataset_parquet.yml",
+    "sqlite": "/tmp/test_dataset_sqlite.yml",
+}
 
+
+@pytest.mark.order(1)
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-def test_dataset_config(
-    backend: str, config_path: str = "/tmp/simple_dataset.yml"
-) -> None:
-    """Test saving, loading, and reconstructing simple model."""
+def test_dataset_config_save_load_reconstruct(backend: str) -> None:
+    """Test saving, loading, and reconstructing dataset."""
     # Arrange
+    config_path = CONFIG_PATHS[backend]
     dataset_name = "oscNext_genie_level7_v02"
     file_name = "oscNext_genie_level7_v02_first_5_frames"
     suffix = {
@@ -55,13 +63,14 @@ def test_dataset_config(
     dataset.save_config(config_path.replace(".yml", ""))
     assert os.path.exists(config_path)
     dataset.save_config(config_path)
+    assert os.path.exists(config_path)
 
     # Load config from file
     loaded_config = DatasetConfig.load(config_path)
     assert isinstance(loaded_config, DatasetConfig)
     assert loaded_config == dataset.config
 
-    # Construct dataset
+    # Reconstruct dataset
     constructed_dataset = Dataset.from_config(loaded_config)
     assert isinstance(constructed_dataset, Dataset)
     assert constructed_dataset.config == dataset.config
@@ -70,14 +79,22 @@ def test_dataset_config(
     for ix in range(nb_test_events):
         assert torch.all(constructed_dataset[ix].x == dataset[ix].x)
 
+
+@pytest.mark.order(2)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+def test_dataset_config_dict_selection(backend: str) -> None:
+    """Test constructing Dataset with dictionary of selections."""
+    # Arrange
+    config_path = CONFIG_PATHS[backend]
+
     # Construct multiple datasets
-    dataset.config.selection = {
+    config = DatasetConfig.load(config_path)
+    config.selection = {
         "train": "event_no % 5 > 0",
         "test": "event_no % 5 == 0",
     }
-    dataset.save_config(config_path)
 
-    datasets: Dict[str, Dataset] = Dataset.from_config(config_path)
+    datasets: Dict[str, Dataset] = Dataset.from_config(config)
     assert isinstance(datasets, dict)
     assert len(datasets) == 2
     assert "train" in datasets and "test" in datasets
@@ -94,5 +111,147 @@ def test_dataset_config(
     )
 
 
+@pytest.mark.order(3)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+def test_dataset_config_list_selection(backend: str) -> None:
+    """Test constructing Dataset with list of selections."""
+    # Arrange
+    config_path = CONFIG_PATHS[backend]
+
+    # Construct multiple datasets
+    config = DatasetConfig.load(config_path)
+    config.selection = ["event_no % 5 == 0", "event_no % 5 >= 3"]
+
+    dataset: ConcatDataset = Dataset.from_config(config)
+    assert isinstance(dataset, ConcatDataset)
+    assert len(dataset) == 3
+    for event in dataset:
+        assert (event["event_no"] % 5) not in (1, 2)
+
+
+@pytest.mark.order(3)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+def test_dataset_config_dict_of_list_selection(backend: str) -> None:
+    """Test constructing Dataset with dictionary of lists of selections."""
+    # Arrange
+    config_path = CONFIG_PATHS[backend]
+
+    # Construct multiple datasets
+    config = DatasetConfig.load(config_path)
+    config.selection = {
+        "train": ["event_no % 5 == 0"],
+        "test": ["event_no % 5 == 1", "event_no % 5 == 2"],
+    }
+
+    datasets: Dict[str, ConcatDataset] = Dataset.from_config(config)
+    assert isinstance(datasets, dict)
+    for dataset in datasets.values():
+        assert isinstance(dataset, ConcatDataset)
+
+    # Check that event counts match expectation
+    assert len(datasets) == 2
+    assert len(datasets["train"]) == 1
+    assert len(datasets["test"]) == 2
+
+
+@pytest.mark.order(4)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+def test_dataset_config_functions(backend: str) -> None:
+    """Test constructing Dataset with selections containing functions."""
+    # Arrange
+    config_path = CONFIG_PATHS[backend]
+
+    # Construct multiple datasets
+    config = DatasetConfig.load(config_path)
+    config.selection = {
+        "nu_mu": "pid == 14 and 10**(energy) > 100",
+        "nuhat_mu": "pid == -14 and 10**(energy) > 100",
+        "nu_nuhat_mu": "abs(pid) == 14 and 10**(energy) > 100",
+        "inverse": "abs(pid) == 14 and 10**(energy) <= 100",
+    }
+
+    datasets: Dict[str, Dataset] = Dataset.from_config(config)
+
+    # Check that event counts match expectation
+    assert len(datasets["nu_mu"]) == 1
+    assert len(datasets["nuhat_mu"]) == 2
+    assert len(datasets["nu_nuhat_mu"]) == 3
+    assert len(datasets["inverse"]) == 2
+
+    # Check that selections work by making sure there is no overlap between
+    # event_nos
+    assert (
+        len(
+            set(datasets["nu_mu"]._indices).intersection(
+                set(datasets["nuhat_mu"]._indices)
+            )
+        )
+        == 0
+    )
+    assert set(datasets["nu_mu"]._indices).union(
+        set(datasets["nuhat_mu"]._indices)
+    ) == set(datasets["nu_nuhat_mu"]._indices)
+    assert (
+        len(
+            set(datasets["nu_nuhat_mu"]._indices).intersection(
+                set(datasets["inverse"]._indices)
+            )
+        )
+        == 0
+    )
+    assert (
+        len(
+            set(datasets["nu_nuhat_mu"]._indices).union(
+                set(datasets["inverse"]._indices)
+            )
+        )
+        == 5
+    )
+
+
+@pytest.mark.order(5)
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+def test_dataset_config_files(backend: str) -> None:
+    """Test constructing Dataset with selections containing functions."""
+    # Arrange
+    config_path = CONFIG_PATHS[backend]
+
+    selection_file_csv = "/tmp/test_selection.csv"
+    selection_file_json = "/tmp/test_selection.json"
+
+    # Save selection(s) to file(s)
+    indices_csv = [1, 2, 4]
+    indices_json = [0, 3]
+    df_selection = pd.DataFrame(data=indices_csv, columns=["event_no"])
+    df_selection.to_csv(selection_file_csv)
+    with open(selection_file_json, "w") as f:
+        json.dump(indices_json, f)
+
+    # Construct multiple datasets
+    config = DatasetConfig.load(config_path)
+    config.seed = 2
+    config.selection = {
+        "CSV": f"2 random events ~ {selection_file_csv}",
+        "JSON": selection_file_json,
+    }
+
+    datasets: Dict[str, Dataset] = Dataset.from_config(config)
+
+    # Check that event counts match expectation
+    assert len(datasets["CSV"]) == 2
+    assert len(datasets["JSON"]) == 2
+
+    # Check that selections work by making sure there is no overlap between
+    # event_nos
+    assert (
+        len(
+            set(datasets["CSV"]._indices).intersection(
+                set(datasets["JSON"]._indices)
+            )
+        )
+        == 0
+    )
+
+
 if __name__ == "__main__":
-    test_dataset_config("sqlite")
+    test_dataset_config_files("sqlite")

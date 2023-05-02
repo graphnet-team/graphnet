@@ -162,7 +162,16 @@ class StandardModel(Model):
                 task.train_eval()
         return self
 
-    def predict(self, dataloader: DataLoader) -> List[Tensor]:
+    def predict(
+        self,
+        dataloader: DataLoader,
+        gpus: Optional[Union[List[int], int]] = None,
+        distribution_strategy: Optional[str] = None,
+    ) -> List[Tensor]:
         """Return predictions for `dataloader`."""
         self.inference()
-        return super().predict(dataloader)
+        return super().predict(
+            dataloader=dataloader,
+            gpus=gpus,
+            distribution_strategy=distribution_strategy,
+        )

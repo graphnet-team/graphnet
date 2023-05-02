@@ -1,22 +1,24 @@
 """Base `Dataset` class(es) used in GraphNeT."""
 
+from copy import deepcopy
 from abc import ABC, abstractmethod
-import json
-import os.path
-import re
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import cast, Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
-import pandas as pd
 import torch
+from torch.utils.data import ConcatDataset
 from torch_geometric.data import Data
 
+from graphnet.constants import GRAPHNET_ROOT_DIR
 from graphnet.utilities.config import (
     Configurable,
     DatasetConfig,
     save_dataset_config,
 )
 from graphnet.utilities.logging import LoggerMixin
+from graphnet.data.utilities.string_selection_resolver import (
+    StringSelectionResolver,
+)
 
 
 class ColumnMissingException(Exception):
@@ -25,6 +27,99 @@ class ColumnMissingException(Exception):
 
 class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
     """Base Dataset class for reading from any intermediate file format."""
+
+    # Class method(s)
+    @classmethod
+    def from_config(  # type: ignore[override]
+        cls,
+        source: Union[DatasetConfig, str],
+    ) -> Union[
+        "Dataset",
+        ConcatDataset,
+        Dict[str, "Dataset"],
+        Dict[str, ConcatDataset],
+    ]:
+        """Construct `Dataset` instance from `source` configuration."""
+        if isinstance(source, str):
+            source = DatasetConfig.load(source)
+
+        assert isinstance(source, DatasetConfig), (
+            f"Argument `source` of type ({type(source)}) is not a "
+            "`DatasetConfig"
+        )
+
+        # Parse set of `selection``.
+        if isinstance(source.selection, dict):
+            return cls._construct_datasets_from_dict(source)
+        elif (
+            isinstance(source.selection, list)
+            and len(source.selection)
+            and isinstance(source.selection[0], str)
+        ):
+            return cls._construct_dataset_from_list_of_strings(source)
+
+        return source._dataset_class(**source.dict())
+
+    @classmethod
+    def concatenate(
+        cls,
+        datasets: List["Dataset"],
+    ) -> ConcatDataset:
+        """Concatenate multiple `Dataset`s into one instance."""
+        return ConcatDataset(datasets)
+
+    @classmethod
+    def _construct_datasets_from_dict(
+        cls, config: DatasetConfig
+    ) -> Dict[str, "Dataset"]:
+        """Construct `Dataset` for each entry in dict `self.selection`."""
+        assert isinstance(config.selection, dict)
+        datasets: Dict[str, "Dataset"] = {}
+        selections: Dict[str, Union[str, List]] = deepcopy(config.selection)
+        for key, selection in selections.items():
+            config.selection = selection
+            dataset = Dataset.from_config(config)
+            assert isinstance(dataset, (Dataset, ConcatDataset))
+            datasets[key] = dataset
+
+        # Reset `selections`.
+        config.selection = selections
+
+        return datasets
+
+    @classmethod
+    def _construct_dataset_from_list_of_strings(
+        cls, config: DatasetConfig
+    ) -> "Dataset":
+        """Construct `Dataset` for each entry in list `self.selection`."""
+        assert isinstance(config.selection, list)
+        datasets: List["Dataset"] = []
+        selections: List[str] = deepcopy(cast(List[str], config.selection))
+        for selection in selections:
+            config.selection = selection
+            dataset = Dataset.from_config(config)
+            assert isinstance(dataset, Dataset)
+            datasets.append(dataset)
+
+        # Reset `selections`.
+        config.selection = selections
+
+        return cls.concatenate(datasets)
+
+    @classmethod
+    def _resolve_graphnet_paths(
+        cls, path: Union[str, List[str]]
+    ) -> Union[str, List[str]]:
+        if isinstance(path, list):
+            return [cast(str, cls._resolve_graphnet_paths(p)) for p in path]
+
+        assert isinstance(path, str)
+        return (
+            path.replace("$graphnet", GRAPHNET_ROOT_DIR)
+            .replace("$GRAPHNET", GRAPHNET_ROOT_DIR)
+            .replace("${graphnet}", GRAPHNET_ROOT_DIR)
+            .replace("${GRAPHNET}", GRAPHNET_ROOT_DIR)
+        )
 
     @save_dataset_config
     def __init__(
@@ -39,7 +134,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         truth_table: str = "truth",
         node_truth_table: Optional[str] = None,
         string_selection: Optional[List[int]] = None,
-        selection: Optional[Union[List[int], List[List[int]]]] = None,
+        selection: Optional[Union[str, List[int], List[List[int]]]] = None,
         dtype: torch.dtype = torch.float32,
         loss_weight_table: Optional[str] = None,
         loss_weight_column: Optional[str] = None,
@@ -69,9 +164,11 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             string_selection: Subset of strings for which data should be read
                 and used to construct graph objects. Defaults to None, meaning
                 all strings for which data exists are used.
-            selection: List of indicies (in `index_column`) of the events in
-                the input files that should be read. Defaults to None, meaning
-                that all events in the input files are read.
+            selection: The events that should be read. This can be given either
+                as list of indicies (in `index_column`); or a string-based
+                selection used to query the `Dataset` for events passing the
+                selection. Defaults to None, meaning that all events in the
+                input files are read.
             dtype: Type of the feature tensor on the graph objects returned.
             loss_weight_table: Name of the table containing per-event loss
                 weights.
@@ -95,6 +192,9 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         assert isinstance(features, (list, tuple))
         assert isinstance(truth, (list, tuple))
+
+        # Resolve reference to `$GRAPHNET` in path(s)
+        path = self._resolve_graphnet_paths(path)
 
         # Member variable(s)
         self._path = path
@@ -147,7 +247,12 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         self._dtype = dtype
 
         self._label_fns: Dict[str, Callable[[Data], Any]] = {}
-        self._seed = seed
+
+        self._string_selection_resolver = StringSelectionResolver(
+            self,
+            index_column=index_column,
+            seed=seed,
+        )
 
         # Implementation-specific initialisation.
         self._init()
@@ -173,44 +278,16 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         # Base class constructor
         super().__init__()
 
-    @classmethod
-    def from_config(  # type: ignore[override]
-        cls,
-        source: Union[DatasetConfig, str],
-    ) -> Union["Dataset", Dict[str, "Dataset"]]:
-        """Construct `Dataset` instance from `source` configuration."""
-        if isinstance(source, str):
-            source = DatasetConfig.load(source)
+    # Properties
+    @property
+    def path(self) -> Union[str, List[str]]:
+        """Path to the file(s) from which this `Dataset` reads."""
+        return self._path
 
-        assert isinstance(source, DatasetConfig), (
-            f"Argument `source` of type ({type(source)}) is not a "
-            "`DatasetConfig"
-        )
-
-        # Parse set of `selection``.
-        if isinstance(source.selection, dict):
-            return cls._construct_datasets(source)
-
-        return source._dataset_class(**source.dict())
-
-    @classmethod
-    def _construct_datasets(
-        cls, config: DatasetConfig
-    ) -> Dict[str, "Dataset"]:
-        """Construct `Dataset` for each entry in `self.selection`."""
-        assert isinstance(config.selection, dict)
-        datasets: Dict[str, "Dataset"] = {}
-        selections: Dict[str, Union[str, Sequence]] = dict(**config.selection)
-        for key, selection in selections.items():
-            config.selection = selection
-            dataset = Dataset.from_config(config)
-            assert isinstance(dataset, Dataset)
-            datasets[key] = dataset
-
-        # Reset `selections`.
-        config.selection = selections
-
-        return datasets
+    @property
+    def truth_table(self) -> str:
+        """Name of the table containing event-level truth information."""
+        return self._truth_table
 
     # Abstract method(s)
     @abstractmethod
@@ -225,7 +302,13 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """Return a list of all available values in `self._index_column`."""
 
     @abstractmethod
-    def _query_table(
+    def _get_event_index(
+        self, sequential_index: Optional[int]
+    ) -> Optional[int]:
+        """Return a the event index corresponding to a `sequential_index`."""
+
+    @abstractmethod
+    def query_table(
         self,
         table: str,
         columns: Union[List[str], str],
@@ -289,113 +372,18 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         fixed number of events to randomly sample, e.g., ``` "10000 random
         events ~ event_no % 5 > 0" "20% random events ~ event_no % 5 > 0" ```
         """
-        self.debug(f"Resolving selection: {selection}")
-
-        import hashlib
-
-        path_string = (
-            self._path if isinstance(self._path, str) else "-".join(self._path)
-        )
-        unique_string = f"{path_string}-{self._truth_table}-{selection}"
-        hex = hashlib.sha256(unique_string.encode("utf-8")).hexdigest()
-        cache = f"/tmp/selection-{hex}.json"
-
-        if os.path.exists(cache):
-            self.debug(f"> Reading from {cache}")
-            with open(cache, "r") as f:
-                indices = json.load(f)
-            return indices
-
-        # Check whether to do random sampling
-        (
-            nb_events,
-            frac_events,
-            selection,
-        ) = self._get_random_events_from_selection(selection)
-
-        # Parse selection variables
-        pattern = "(^| )([_a-zA-Z]+[_a-zA-Z0-9]*)"
-        variables = set(
-            [groups[1] for groups in re.findall(pattern, selection, re.DOTALL)]
-        )
-        self.debug(f"> Found variables: {variables}")
-        variables.add(self._index_column)
-
-        # Perform selection using pd.DataFrame.query
-        df_values = pd.DataFrame(
-            data=self._query_table(self._truth_table, list(variables)),
-            columns=list(variables),
-        )
-        df_values_selection = df_values.query(selection)
-
-        # Get random subset, if necessary.
-        if nb_events or frac_events:
-            random_state: Optional[int] = None
-            if self._seed is not None:
-                # Make sure that a dataset config with a single `seed` yields
-                # different random samples for potentially different selection
-                # (i.e., train, test, val).
-                selection_hex = hashlib.sha256(
-                    selection.encode("utf-8")
-                ).hexdigest()
-                random_state = (self._seed + int(selection_hex, 16)) % 2**32
-
-            df_values_selection = df_values_selection.sample(
-                n=nb_events,
-                frac=frac_events,
-                replace=False,
-                random_state=random_state,
-            )
-
-        indices = df_values_selection[self._index_column].values.tolist()
-
-        self.debug(f"> Saving to {cache}")
-        with open(cache, "w") as f:
-            json.dump(indices, f)
-
-        return indices
-
-    def _get_random_events_from_selection(
-        self, selection: str
-    ) -> Tuple[Optional[int], Optional[float], str]:
-        """Parse the `selection` to extract num/frac of random events."""
-        random_events_pattern = (
-            r" *([0-9]+[eE0-9\.-]*[%]?) +random events ~ *(.*)$"
-        )
-        nb_events: Optional[int] = None
-        frac_events: Optional[float] = None
-        m = re.search(random_events_pattern, selection)
-        if m:
-            nb_events_str, selection = m.group(1), m.group(2)
-            if "%" in nb_events_str:
-                frac_events = float(nb_events_str.split("%")[0]) / 100.0
-                assert (
-                    frac_events > 0
-                ), "Got a non-positive fraction of random events."
-                assert (
-                    frac_events <= 1
-                ), "Got a fraction of random events greater than 100%."
-            else:
-                nb_events_float = float(nb_events_str)
-                assert (
-                    nb_events_float > 0
-                ), "Got a non-positive number of random events."
-                if nb_events_float < 1:
-                    self.warning(
-                        "Got a number of random events between 0 and 1. "
-                        "Interpreting this as a fraction of random events."
-                    )
-                    frac_events = nb_events_float
-                else:
-                    nb_events = int(nb_events_float)
-
-        return nb_events, frac_events, selection
+        return self._string_selection_resolver.resolve(selection)
 
     def _remove_missing_columns(self) -> None:
         """Remove columns that are not present in the input file.
 
         Columns are removed from `self._features` and `self._truth`.
         """
+        # Check if table is completely empty
+        if len(self) == 0:
+            self.warning("Dataset is empty.")
+            return
+
         # Find missing features
         missing_features_set = set(self._features)
         for pulsemap in self._pulsemaps:
@@ -437,13 +425,13 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """Return a list missing columns in `table`."""
         for column in columns:
             try:
-                self._query_table(table, [column], 0)
+                self.query_table(table, [column], 0)
             except ColumnMissingException:
                 if table not in self._missing_variables:
                     self._missing_variables[table] = []
                 self._missing_variables[table].append(column)
             except IndexError:
-                self.warning("Dataset contains no entries")
+                self.warning(f"Dataset contains no entries for {column}")
 
         return self._missing_variables.get(table, [])
 
@@ -473,17 +461,17 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         """
         features = []
         for pulsemap in self._pulsemaps:
-            features_pulsemap = self._query_table(
+            features_pulsemap = self.query_table(
                 pulsemap, self._features, sequential_index, self._selection
             )
             features.extend(features_pulsemap)
 
-        truth: Tuple[Any, ...] = self._query_table(
+        truth: Tuple[Any, ...] = self.query_table(
             self._truth_table, self._truth, sequential_index
         )[0]
         if self._node_truth:
             assert self._node_truth_table is not None
-            node_truth = self._query_table(
+            node_truth = self.query_table(
                 self._node_truth_table,
                 self._node_truth,
                 sequential_index,
@@ -495,7 +483,7 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
         loss_weight: Optional[float] = None  # Default
         if self._loss_weight_column is not None:
             assert self._loss_weight_table is not None
-            loss_weight_list = self._query_table(
+            loss_weight_list = self.query_table(
                 self._loss_weight_table,
                 self._loss_weight_column,
                 sequential_index,
@@ -524,7 +512,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
             features: List of tuples, containing event features.
             truth: List of tuples, containing truth information.
             node_truth: List of tuples, containing node-level truth.
-            loss_weight: A weight associated with the event for weighing the loss.
+            loss_weight: A weight associated with the event for weighing the
+                loss.
 
         Returns:
             Graph object.
@@ -561,7 +550,8 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         # Add loss weight to graph.
         if loss_weight is not None and self._loss_weight_column is not None:
-            # No loss weight was retrieved, i.e., it is missing for the current event
+            # No loss weight was retrieved, i.e., it is missing for the current
+            # event.
             if loss_weight < 0:
                 if self._loss_weight_default_value is None:
                     raise ValueError(
@@ -598,36 +588,51 @@ class Dataset(torch.utils.data.Dataset, Configurable, LoggerMixin, ABC):
 
         # Additionally add original features as (static) attributes
         for index, feature in enumerate(graph.features):
-            graph[feature] = graph.x[:, index].detach()
+            if feature not in ["x"]:
+                graph[feature] = graph.x[:, index].detach()
 
         # Add custom labels to the graph
         for key, fn in self._label_fns.items():
             graph[key] = fn(graph)
-
         return graph
 
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
         """Return dictionary of  labels, to be added as graph attributes."""
-        abs_pid = abs(truth_dict["pid"])
-        sim_type = truth_dict["sim_type"]
+        if "pid" in truth_dict.keys():
+            abs_pid = abs(truth_dict["pid"])
+            sim_type = truth_dict["sim_type"]
 
-        labels_dict = {
-            "event_no": truth_dict["event_no"],
-            "muon": int(abs_pid == 13),
-            "muon_stopped": int(truth_dict.get("stopped_muon") == 1),
-            "noise": int((abs_pid == 1) & (sim_type != "data")),
-            "neutrino": int(
-                (abs_pid != 13) & (abs_pid != 1)
-            ),  # @TODO: `abs_pid in [12,14,16]`?
-            "v_e": int(abs_pid == 12),
-            "v_u": int(abs_pid == 14),
-            "v_t": int(abs_pid == 16),
-            "track": int(
-                (abs_pid == 14) & (truth_dict["interaction_type"] == 1)
-            ),
-            "dbang": self._get_dbang_label(truth_dict),
-            "corsika": int(abs_pid > 20),
-        }
+            labels_dict = {
+                self._index_column: truth_dict[self._index_column],
+                "muon": int(abs_pid == 13),
+                "muon_stopped": int(truth_dict.get("stopped_muon") == 1),
+                "noise": int((abs_pid == 1) & (sim_type != "data")),
+                "neutrino": int(
+                    (abs_pid != 13) & (abs_pid != 1)
+                ),  # @TODO: `abs_pid in [12,14,16]`?
+                "v_e": int(abs_pid == 12),
+                "v_u": int(abs_pid == 14),
+                "v_t": int(abs_pid == 16),
+                "track": int(
+                    (abs_pid == 14) & (truth_dict["interaction_type"] == 1)
+                ),
+                "dbang": self._get_dbang_label(truth_dict),
+                "corsika": int(abs_pid > 20),
+            }
+        else:
+            labels_dict = {
+                self._index_column: truth_dict[self._index_column],
+                "muon": -1,
+                "muon_stopped": -1,
+                "noise": -1,
+                "neutrino": -1,
+                "v_e": -1,
+                "v_u": -1,
+                "v_t": -1,
+                "track": -1,
+                "dbang": -1,
+                "corsika": -1,
+            }
         return labels_dict
 
     def _get_dbang_label(self, truth_dict: Dict[str, Any]) -> int:

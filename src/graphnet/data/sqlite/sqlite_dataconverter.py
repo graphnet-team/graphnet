@@ -119,16 +119,7 @@ class SQLiteDataConverter(DataConverter):
             self.warning("No temporary database files found!")
 
     # Internal methods
-    def _extract_table_names(
-        self, db: Union[str, List[str]]
-    ) -> Tuple[str, ...]:
-        """Get the names of all tables in database `db`."""
-        if isinstance(db, list):
-            results = [self._extract_table_names(path) for path in db]
-            # @TODO: Check...
-            assert all([results[0] == r for r in results])
-            return results[0]
-
+    def _get_tables_in_database(self, db: str) -> Tuple[str, ...]:
         with sqlite3.connect(db) as conn:
             table_names = tuple(
                 [
@@ -140,18 +131,37 @@ class SQLiteDataConverter(DataConverter):
                     )
                 ]
             )
-
         return table_names
+
+    def _extract_table_names(
+        self, db: Union[str, List[str]]
+    ) -> Tuple[str, ...]:
+        """Get the names of all tables in database `db`."""
+        if isinstance(db, str):
+            db = [db]
+        results = [self._get_tables_in_database(path) for path in db]
+        # @TODO: Check...
+        if all([results[0] == r for r in results]):
+            return results[0]
+        else:
+            unique_tables = []
+            for tables in results:
+                for table in tables:
+                    if table not in unique_tables:
+                        unique_tables.append(table)
+            return tuple(unique_tables)
 
     def _extract_column_names(
         self, db_paths: List[str], table_name: str
     ) -> List[str]:
         for db_path in db_paths:
-            with sqlite3.connect(db_path) as con:
-                query = f"select * from {table_name} limit 1"
-                columns = pd.read_sql(query, con).columns
-            if len(columns):
-                return columns
+            tables_in_database = self._get_tables_in_database(db_path)
+            if table_name in tables_in_database:
+                with sqlite3.connect(db_path) as con:
+                    query = f"select * from {table_name} limit 1"
+                    columns = pd.read_sql(query, con).columns
+                if len(columns):
+                    return columns
         return []
 
     def any_pulsemap_is_non_empty(self, data_dict: Dict[str, Dict]) -> bool:

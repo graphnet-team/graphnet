@@ -1,5 +1,6 @@
 """Script for applying GraphNeTModule in IceTray chain."""
 
+
 import argparse
 from glob import glob
 from os import makedirs
@@ -8,16 +9,22 @@ from typing import List
 
 from I3Tray import I3Tray  # pyright: reportMissingImports=false
 
-from graphnet.deployment.i3modules import GraphNeTModuleIceCube86
+from graphnet.deployment.i3modules import I3InferenceModule
+from graphnet.data.extractors.i3featureextractor import (
+    I3FeatureExtractorIceCubeDeepCore,
+)
+from graphnet.data.constants import FEATURES
 
 
 # Constants (from Dockerfile)
 MODEL_PATH = "model.pth"
 
 
-# Main function definition
 def main(
-    input_files: List[str], output_file: str, key: str, events_max: int
+    input_files: List[str],
+    output_file: str,
+    pulsemap: str,
+    events_max: int,
 ) -> None:
     """Apply GraphNeTModule in I3Tray."""
     # Make sure output directory exists
@@ -34,15 +41,26 @@ def main(
     # Get all input I3-files
     input_files = [p for p in input_files if gcd_pattern not in p]
 
+    # Construct I3InferenceModule(s)
+    extractor = I3FeatureExtractorIceCubeDeepCore(pulsemap=pulsemap)
+
+    deployment_modules = [
+        I3InferenceModule(
+            pulsemap=pulsemap,
+            features=FEATURES.DEEPCORE,
+            pulsemap_extractor=extractor,
+            model=MODEL_PATH,
+            gcd_file=gcd_file,
+            prediction_columns=["energy_pred"],
+            model_name="graphnet_dynedge_energy_reconstruction",
+        ),
+    ]
+
     # Run GNN module in tray
     tray = I3Tray()
     tray.Add("I3Reader", filenamelist=input_files)
-    tray.Add(
-        GraphNeTModuleIceCube86,
-        key=key,
-        model_path=MODEL_PATH,
-        gcd_file=gcd_file,
-    )
+    for deployment_module in deployment_modules:
+        tray.AddModule(deployment_module)
     tray.Add("I3Writer", filename=output_file)
     if events_max > 0:
         tray.Execute(events_max)
@@ -62,7 +80,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input_folder")
     parser.add_argument("output_folder")
-    parser.add_argument("key", nargs="?", default="gnn_zenith")
+    parser.add_argument("pulsemap", nargs="?", default="SplitInIcePulses")
     parser.add_argument("events_max", nargs="?", type=int, default=0)
 
     args = parser.parse_args()
