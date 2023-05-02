@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from graphnet.utilities.imports import has_icecube_package
-from graphnet.utilities.logging import LoggerMixin
+from graphnet.utilities.logging import Logger
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 
 
-class I3Extractor(ABC, LoggerMixin):
+class I3Extractor(ABC, Logger):
     """Base class for extracting information from physics I3-frames.
 
     All classes inheriting from `I3Extractor` should implement the `__call__`
@@ -32,6 +32,9 @@ class I3Extractor(ABC, LoggerMixin):
         self._gcd_dict: Dict[int, Any] = {}
         self._calibration: Optional["icetray.I3Frame.Calibration"] = None
         self._name: str = name
+
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     def set_files(self, i3_file: str, gcd_file: str) -> None:
         """Store references to the I3- and GCD-files being processed."""

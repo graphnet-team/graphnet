@@ -3,21 +3,18 @@
 from functools import wraps
 from typing import Any, Callable
 
-from graphnet.utilities.logging import get_logger, warn_once
-
-
-logger = get_logger()
+from graphnet.utilities.logging import Logger
 
 
 def has_icecube_package() -> bool:
     """Check whether the `icecube` package is available."""
     try:
         import icecube  # pyright: reportMissingImports=false
+        from icecube import icetray, dataio
 
         return True
     except ImportError:
-        warn_once(
-            logger,
+        Logger(log_folder=None).warning_once(
             "`icecube` not available. Some functionality may be missing.",
         )
         return False
@@ -30,8 +27,8 @@ def has_torch_package() -> bool:
 
         return True
     except ImportError:
-        warn_once(
-            logger, "`torch` not available. Some functionality may be missing."
+        Logger(log_folder=None).warning_once(
+            "`torch` not available. Some functionality may be missing."
         )
         return False
 
@@ -43,8 +40,7 @@ def has_pisa_package() -> bool:
 
         return True
     except ImportError:
-        warn_once(
-            logger,
+        Logger(log_folder=None).warning_once(
             "`pisa` not available. Some functionality may be missing.",
         )
         return False
@@ -58,7 +54,7 @@ def requires_icecube(test_function: Callable) -> Callable:
         if has_icecube_package():
             return test_function(*args, **kwargs)
         else:
-            logger.info(
+            Logger(log_folder=None).info(
                 f"Function `{test_function.__name__}` not used since `icecube` isn't available."
             )
             return

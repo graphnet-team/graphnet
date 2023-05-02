@@ -16,13 +16,10 @@ from torch.utils.data import DataLoader
 from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
 from graphnet.training.utils import get_predictions, make_dataloader
 
-from graphnet.utilities.logging import get_logger
+from graphnet.utilities.logging import Logger
 
 
-logger = get_logger()
-
-
-class InSQLitePipeline(ABC):
+class InSQLitePipeline(ABC, Logger):
     """Create a SQLite database for PISA analysis.
 
     The database will contain truth and GNN predictions and, if available,
@@ -67,6 +64,9 @@ class InSQLitePipeline(ABC):
         self._module_dict = module_dict
         self._retro_table_name = retro_table_name
 
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
+
     def __call__(
         self, database: str, pulsemap: str, chunk_size: int = 1000000
     ) -> None:
@@ -93,15 +93,15 @@ class InSQLitePipeline(ABC):
             )
             i = 0
             for dataloader in dataloaders:
-                logger.info("CHUNK %s / %s" % (i, len(dataloaders)))
+                self.info("CHUNK %s / %s" % (i, len(dataloaders)))
                 df = self._inference(device, dataloader)
                 truth = self._get_truth(database, event_batches[i].tolist())
                 retro = self._get_retro(database, event_batches[i].tolist())
                 self._append_to_pipeline(outdir, truth, retro, df)
                 i += 1
         else:
-            logger.info(outdir)
-            logger.info(
+            self.info(outdir)
+            self.info(
                 "WARNING - Pipeline named %s already exists! \n Please rename pipeline!"
                 % self._pipeline_name
             )
@@ -202,7 +202,7 @@ class InSQLitePipeline(ABC):
                 retro = pd.read_sql(query, con)
             return retro
         except:  # noqa: E722
-            logger.info("%s table does not exist" % self._retro_table_name)
+            self.info("%s table does not exist" % self._retro_table_name)
 
     def _append_to_pipeline(
         self,

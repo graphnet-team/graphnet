@@ -12,7 +12,6 @@ from typing import (
     Union,
 )
 
-import graphnet
 from graphnet.utilities.config.base_config import (
     BaseConfig,
     get_all_argument_values,
@@ -118,6 +117,10 @@ class ModelConfig(BaseConfig):
             exec(f"import {module}", globals())
 
         # Get a lookup for all classes in `graphnet`
+        import graphnet.data
+        import graphnet.models
+        import graphnet.training
+
         namespace_classes = get_all_grapnet_classes(
             graphnet.data, graphnet.models, graphnet.training
         )
@@ -142,7 +145,15 @@ class ModelConfig(BaseConfig):
 
         elif isinstance(obj, str) and obj.startswith("!lambda"):
             if trust:
-                return eval(obj[1:])
+                source = obj[1:]
+                f = eval(source)
+
+                # Save a copy of the source code attached to the callable,
+                # since the `inspect` module is not able to get the source code
+                # for functions that are not defined on file.
+                # See `self._serialise`.
+                f._source = source
+                return f
             else:
                 raise ValueError(
                     "Constructing model containing a lambda function "
@@ -192,7 +203,14 @@ class ModelConfig(BaseConfig):
             return f"!class {obj.__module__} {obj.__name__}"
         elif isinstance(obj, Callable):  # type: ignore[arg-type]
             if hasattr(obj, "__name__") and obj.__name__ == "<lambda>":
-                return "!" + inspect.getsource(obj).split("=")[1].strip("\n ,")
+                if hasattr(obj, "_source"):
+                    # If source code is set manually during deserialisation.
+                    # See `self._deserialise`.
+                    source = obj._source
+                else:
+                    source = inspect.getsource(obj).split("=")[1].strip("\n ,")
+
+                return "!" + source
             else:
                 try:
                     source = inspect.getsource(obj)

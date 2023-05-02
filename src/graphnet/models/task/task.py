@@ -27,13 +27,26 @@ class Task(Model):
     def nb_inputs(self) -> int:
         """Return number of inputs assumed by task."""
 
+    @property
+    @abstractmethod
+    def default_target_labels(self) -> List[str]:
+        """Return default target labels."""
+        return self._default_target_labels
+
+    @property
+    @abstractmethod
+    def default_prediction_labels(self) -> List[str]:
+        """Return default prediction labels."""
+        return self._default_prediction_labels
+
     @save_model_config
     def __init__(
         self,
         *,
         hidden_size: int,
-        target_labels: Union[str, List[str]],
         loss_function: "LossFunction",
+        target_labels: Optional[Union[str, List[str]]] = None,
+        prediction_labels: Optional[Union[str, List[str]]] = None,
         transform_prediction_and_target: Optional[Callable] = None,
         transform_target: Optional[Callable] = None,
         transform_inference: Optional[Callable] = None,
@@ -46,10 +59,13 @@ class Task(Model):
             hidden_size: The number of nodes in the layer feeding into this
                 tasks, used to construct the affine transformation to the
                 predicted quantity.
+            loss_function: Loss function appropriate to the task.
             target_labels: Name(s) of the quantity/-ies being predicted, used
                 to extract the  target tensor(s) from the `Data` object in
                 `.compute_loss(...)`.
-            loss_function: Loss function appropriate to the task.
+            prediction_labels: The name(s) of each column that is predicted by
+                the model during inference. If not given, the name will auto
+                matically be set to `target_label + _pred`.
             transform_prediction_and_target: Optional function to transform
                 both the predicted and target tensor before passing them to the
                 loss function. Useful e.g. for having the model predict
@@ -76,14 +92,23 @@ class Task(Model):
         """
         # Base class constructor
         super().__init__()
-
         # Check(s)
+        if target_labels is None:
+            target_labels = self.default_target_labels
         if isinstance(target_labels, str):
             target_labels = [target_labels]
 
+        if prediction_labels is None:
+            prediction_labels = self.default_prediction_labels
+        if isinstance(prediction_labels, str):
+            prediction_labels = [prediction_labels]
+
+        assert isinstance(target_labels, List)  # mypy
+        assert isinstance(prediction_labels, List)  # mypy
         # Member variables
         self._regularisation_loss: Optional[float] = None
         self._target_labels = target_labels
+        self._prediction_labels = prediction_labels
         self._loss_function = loss_function
         self._inference = False
         self._loss_weight = loss_weight

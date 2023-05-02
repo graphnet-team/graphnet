@@ -1,179 +1,254 @@
 """Consistent and configurable logging across `graphnet`."""
 
 from collections import Counter
-from functools import lru_cache
-import re
-from typing import Any, Optional
-import typing
 import colorlog
 import datetime
 import logging
 import os
+import re
 import sys
-from typing import Tuple
-
+import typing
+from typing import Any, List, Optional, Set, Tuple
 
 # Constants
 LOGGER_NAME = "graphnet"
-LOGGER = None
 LOG_FOLDER = "logs"
-
-
-# Utility method(s)
-def set_logging_level(level: int = logging.INFO) -> None:
-    """Set the logging level for all loggers."""
-    global LOGGER
-    if LOGGER is None:
-        get_logger(level)
-    else:
-        LOGGER.setLevel(level)
-
-
-def get_formatters() -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
-    """Get coloured and non-coloured logging formatters."""
-    # Common configuration
-    colorlog_format = (
-        "\033[1;34m%(name)s\033[0m: "
-        "%(log_color)s%(levelname)-8s\033[0m "
-        "%(asctime)s - %(className)s%(funcName)s - %(message)s"
-    )
-    basic_format = re.sub(r"\x1b\[[0-9;,]*m", "", colorlog_format).replace(
-        "%(log_color)s", ""
-    )
-    datefmt = "%Y-%m-%d %H:%M:%S"
-
-    # Formatters
-    colored_formatter = colorlog.ColoredFormatter(
-        colorlog_format,
-        datefmt=datefmt,
-    )
-    basic_formatter = logging.Formatter(
-        basic_format,
-        datefmt=datefmt,
-    )
-    return basic_formatter, colored_formatter
-
-
-@lru_cache(1)
-def warn_once(logger: logging.Logger, message: str) -> None:
-    """Print `message` as warning exactly once."""
-    logger.warning(message)
+WARNINGS: Set[str] = set()
 
 
 class RepeatFilter(logging.Filter):
     """Filter out repeat messages."""
 
+    # Class variable(s)
+    nb_repeats_allowed = 20
+
     def __init__(self) -> None:
         """Construct `RepeatFilter`."""
         self._messages: typing.Counter[str] = Counter()
-        self.nb_repeats_allowed = 20
 
     def filter(self, record: logging.LogRecord) -> bool:
         """Filter messages printed more than `nb_repeats_allowed` times."""
         self._messages[record.msg] += 1
         count = self._messages[record.msg]
         if count == self.nb_repeats_allowed:
-            get_logger().debug(
+            logger = Logger()
+            logger._logger.log(
+                record.levelno,
                 "Will not print the below message again "
-                f"({self.nb_repeats_allowed} repeats reached)."
+                f"({self.nb_repeats_allowed} repeats reached).",
             )
 
         return count <= self.nb_repeats_allowed
 
 
-def get_logger(
-    level: Optional[int] = None, log_folder: str = LOG_FOLDER
-) -> logging.LoggerAdapter:
-    """Get `logger` instance, to be used in place of `print()`.
+class Logger:
+    """Class for handling logging across graphnet.
 
-    The logger will print the specified level of output to the terminal, and
-    will also save debug output to file.
+    This class ensures that all logging is clear and intuitive, is done to the
+    same file when using multiple workers, etc.
+
+    Composition, rather than inheritance from `logging.LoggerAdapter` is chosen
+    to avoid clashing names of member variables/properties with e.g.
+    `pytorch_lightning.LightningModule`.
     """
-    global LOGGER
-    if LOGGER:
-        if level is not None:
-            set_logging_level(level)
-        return LOGGER
 
-    if level is None:
-        level = logging.INFO
+    @classmethod
+    def _get_formatters(
+        cls,
+    ) -> Tuple[logging.Formatter, colorlog.ColoredFormatter]:
+        """Get coloured and non-coloured logging formatters."""
+        # Common configuration
+        colorlog_format = (
+            f"\033[1;34m{LOGGER_NAME}\033[0m [%(processName)s] "
+            "%(log_color)s%(levelname)-8s\033[0m "
+            "%(asctime)s - %(className)s%(funcName)s - %(message)s"
+        )
+        basic_format = re.sub(r"\x1b\[[0-9;,]*m", "", colorlog_format).replace(
+            "%(log_color)s", ""
+        )
+        datefmt = "%Y-%m-%d %H:%M:%S"
 
-    _, colored_formatter = get_formatters()
+        # Formatters
+        colored_formatter = colorlog.ColoredFormatter(
+            colorlog_format,
+            datefmt=datefmt,
+        )
+        basic_formatter = logging.Formatter(
+            basic_format,
+            datefmt=datefmt,
+        )
+        return basic_formatter, colored_formatter
 
-    # Create logger
-    logger = colorlog.getLogger(LOGGER_NAME)
-    logger.setLevel(level)
+    @classmethod
+    def _get_root_logger(cls) -> logging.Logger:
+        return logging.getLogger(LOGGER_NAME)
 
-    # Add duplicate filter
-    logger.addFilter(RepeatFilter())
+    @classmethod
+    def _configure_root_logger(cls, log_folder: Optional[str]) -> None:
+        # Get logging formatters
+        _, colored_formatter = cls._get_formatters()
 
-    # Add stream handler
-    stream_handler = colorlog.StreamHandler(stream=sys.stdout)
-    stream_handler.setLevel(level)
-    stream_handler.setFormatter(colored_formatter)
-    logger.addHandler(stream_handler)
+        # Create logger
+        logger = cls._get_root_logger()
+        logger.setLevel(logger.level or logging.INFO)
 
-    # Add file handler
-    os.makedirs(log_folder, exist_ok=True)
-    timestamp = (
-        str(datetime.datetime.today())
-        .split(".")[0]
-        .replace("-", "")
-        .replace(":", "")
-        .replace(" ", "-")
-    )
-    log_path = os.path.join(log_folder, f"{LOGGER_NAME}_{timestamp}.log")
+        # Add duplicate filter if none has been added.
+        if not any([isinstance(f, RepeatFilter) for f in logger.filters]):
+            logger.addFilter(RepeatFilter())
 
-    file_handler = logging.FileHandler(log_path)
-    stream_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(colored_formatter)
-    logger.addHandler(file_handler)
+        # Add stream handler if none has been added.
+        if not any(
+            [isinstance(h, colorlog.StreamHandler) for h in logger.handlers]
+        ):
+            stream_handler = colorlog.StreamHandler(stream=sys.stdout)
+            stream_handler.setFormatter(colored_formatter)
+            logger.addHandler(stream_handler)
 
-    # Make className empty by default
-    logger_adapter = logging.LoggerAdapter(logger, extra={"className": ""})
+        # Add file handler if log folder is specified.
+        if log_folder:
 
-    logger_adapter.info(f"Writing log to \033[1m{log_path}\033[0m")
+            # If a specific logfile name
+            if log_folder.endswith(".log"):
+                log_path, log_folder = log_folder, os.path.dirname(log_folder)
 
-    # Have pytorch lightning write to same log file
-    pl_logger = logging.getLogger("pytorch_lightning")
-    pl_file_handler = logging.FileHandler(log_path)
-    pl_logger.addHandler(pl_file_handler)
+            # If a logfile directory
+            else:
+                timestamp = (
+                    str(datetime.datetime.today())
+                    .split(".")[0]
+                    .replace("-", "")
+                    .replace(":", "")
+                    .replace(" ", "-")
+                )
+                log_path = os.path.join(
+                    log_folder, f"graphnet_{timestamp}.log"
+                )
 
-    # Store as global variable
-    LOGGER = logger_adapter
+            os.makedirs(log_folder, exist_ok=True)
 
-    return LOGGER
+            file_handler = logging.FileHandler(log_path)
+            file_handler.setLevel(logging.DEBUG)
+            file_handler.setFormatter(colored_formatter)
+            logger.addHandler(file_handler)
 
-
-class LoggerMixin(object):
-    """Class for enabling logging directly from inheriting classes."""
-
-    def _get_logger(self) -> logging.LoggerAdapter:
-        """Construct Logger instance if not already done."""
-        if not hasattr(self, "_logger"):
-            logger_base = colorlog.getLogger(LOGGER_NAME)
-            logger = logging.LoggerAdapter(
-                logger_base, extra={"className": self.__class__.__name__ + "."}
+            stacklevel = {} if sys.version_info < (3, 8) else {"stacklevel": 3}
+            logger.info(
+                f"Writing log to \033[1m{log_path}\033[0m",
+                extra={"className": cls.__name__ + "."},
+                **stacklevel,  # type: ignore[arg-type]
             )
-            self._logger = logger
-        return self._logger
+
+            # Have pytorch lightning write to same log file
+            pl_logger = logging.getLogger("pytorch_lightning")
+            pl_file_handler = logging.FileHandler(log_path)
+            pl_logger.addHandler(pl_file_handler)
+
+    @classmethod
+    def _make_sure_root_logger_is_configured(
+        cls, log_folder: Optional[str] = LOG_FOLDER
+    ) -> None:
+        root = cls._get_root_logger()
+        # Always configure if no handlers are found.
+        if not root.hasHandlers():
+            cls._configure_root_logger(log_folder)
+
+        # Also configure if no FileHandler is found and/or but a new log folder
+        # is specified.
+        elif log_folder is not None:
+            file_handlers = [
+                h for h in root.handlers if isinstance(h, logging.FileHandler)
+            ]
+            logfiles = [fh.baseFilename for fh in file_handlers]
+
+            # Check if any of the existing log files are located within the
+            # requested log folder. Otherwise re-configure with a new
+            # FileHandler.
+            if not any(
+                [lf.startswith(os.path.abspath(log_folder)) for lf in logfiles]
+            ):
+                cls._configure_root_logger(log_folder)
+
+    def __init__(
+        self,
+        name: Optional[str] = None,
+        class_name: Optional[str] = None,
+        level: int = logging.INFO,
+        log_folder: Optional[str] = LOG_FOLDER,
+        **kwargs: Any,
+    ):
+        """Construct `Logger`."""
+        self._make_sure_root_logger_is_configured(log_folder)
+
+        # Create logger
+        logger = colorlog.getLogger(name or LOGGER_NAME)
+        logger.setLevel(level)
+        self._logger = logging.LoggerAdapter(
+            logger=logger,
+            extra={"className": class_name + "." if class_name else ""},
+        )
+
+        # Base class constructor
+        super().__init__(**kwargs)
+
+    def setLevel(self, level: int) -> None:
+        """Delegate `setLevel` call to member logger."""
+        self._logger.setLevel(level)
 
     def critical(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate a critical call to member logger."""
-        return self._get_logger().critical(msg, *args, **kwargs)
+        if sys.version_info >= (3, 8):
+            kwargs["stacklevel"] = kwargs.get("stacklevel", 3) + 1
+        return self._logger.critical(msg, *args, **kwargs)
 
     def error(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate an error call to member logger."""
-        return self._get_logger().error(msg, *args, **kwargs)
+        if sys.version_info >= (3, 8):
+            kwargs["stacklevel"] = kwargs.get("stacklevel", 3) + 1
+        return self._logger.error(msg, *args, **kwargs)
 
     def warning(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate a warning call to member logger."""
-        return self._get_logger().warning(msg, *args, **kwargs)
+        if sys.version_info >= (3, 8):
+            kwargs["stacklevel"] = kwargs.get("stacklevel", 3) + 1
+        return self._logger.warning(msg, *args, **kwargs)
 
     def info(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate an info call to member logger."""
-        return self._get_logger().info(msg, *args, **kwargs)
+        if sys.version_info >= (3, 8):
+            kwargs["stacklevel"] = kwargs.get("stacklevel", 3) + 1
+        return self._logger.info(msg, *args, **kwargs)
 
     def debug(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Delegate a debug call to member logger."""
-        return self._get_logger().debug(msg, *args, **kwargs)
+        if sys.version_info >= (3, 8):
+            kwargs["stacklevel"] = kwargs.get("stacklevel", 3) + 1
+        return self._logger.debug(msg, *args, **kwargs)
+
+    def warning_once(self, msg: str) -> None:
+        """Print `msg` as warning exactly once."""
+        global WARNINGS
+        if msg in WARNINGS:
+            return
+
+        if sys.version_info < (3, 8):
+            self.warning(msg)
+        else:
+            self.warning(msg, stacklevel=4)
+        WARNINGS.add(msg)
+
+    @property
+    def handlers(self) -> List[logging.Handler]:
+        """Return list of handlers for base `Logger`."""
+        return self._logger.logger.handlers
+
+    @property
+    def file_handlers(self) -> List[logging.FileHandler]:
+        """Return list of `FileHandler`s for base `Logger`."""
+        return [h for h in self.handlers if isinstance(h, logging.FileHandler)]
+
+    @property
+    def stream_handlers(self) -> List[logging.StreamHandler]:
+        """Return list of `StreamHandler`s for base `Logger`."""
+        return [
+            h for h in self.handlers if isinstance(h, logging.StreamHandler)
+        ]
