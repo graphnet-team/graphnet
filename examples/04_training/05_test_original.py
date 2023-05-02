@@ -7,25 +7,24 @@ from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR, TEST_OUTPUT_DIR
+from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
-from graphnet.models.detector.icecube import IceCubeDeepCore
-from graphnet.models.gnn import DynEdge, DynEdgeTITO
+from graphnet.models.gnn import DynEdge
 from graphnet.models.graph_builders import KNNGraphBuilder
-from graphnet.models.task.reconstruction import EnergyReconstruction, DirectionReconstructionWithKappa, ZenithReconstructionWithKappa, AzimuthReconstructionWithKappa, TimeReconstruction, PositionReconstruction
+from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
-from graphnet.training.loss_functions import LogCoshLoss, VonMisesFisher3DLoss, VonMisesFisher2DLoss, MSELoss
+from graphnet.training.loss_functions import LogCoshLoss
 from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
 
 # Constants
-features = FEATURES.DEEPCORE
-truth = TRUTH.DEEPCORE
+features = FEATURES.PROMETHEUS
+truth = TRUTH.PROMETHEUS
+
 
 def main(
     path: str,
@@ -72,7 +71,7 @@ def main(
         },
     }
 
-    archive = os.path.join(EXAMPLE_DATA_DIR, "train_model_without_configs")
+    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model_without_configs")
     run_name = "dynedge_{}_example".format(config["target"])
     if wandb:
         # Log configuration to W&B
@@ -93,18 +92,18 @@ def main(
     )
 
     # Building model
-    detector = IceCubeDeepCore(
+    detector = Prometheus(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
-    gnn = DynEdgeTITO(
+    gnn = DynEdge(
         nb_inputs=detector.nb_outputs,
-        global_pooling_schemes=["min"],#, "max", "mean", "sum"],
+        global_pooling_schemes=["min", "max", "mean", "sum"],
     )
-    task = DirectionReconstructionWithKappa(
+    task = EnergyReconstruction(
         hidden_size=gnn.nb_outputs,
-        target_labels=["position_x", "position_y", "position_z"],
-        loss_function=VonMisesFisher3DLoss(),
-        transform_prediction_and_target=torch.nn.Identity(),
+        target_labels=config["target"],
+        loss_function=LogCoshLoss(),
+        transform_prediction_and_target=torch.log10,
     )
     model = StandardModel(
         detector=detector,
@@ -116,11 +115,10 @@ def main(
         scheduler_kwargs={
             "milestones": [
                 0,
-                len(training_dataloader) * 2,
-                len(training_dataloader) * config["fit"]["max_epochs"]/2,
+                len(training_dataloader) / 2,
                 len(training_dataloader) * config["fit"]["max_epochs"],
             ],
-            "factors": [0.001, 1, 1, 0.001]
+            "factors": [1e-3, 1, 1e-03],
         },
         scheduler_config={
             "interval": "step",
@@ -176,13 +174,13 @@ Train GNN model without the use of config files.
     parser.add_argument(
         "--path",
         help="Path to dataset file (default: %(default)s)",
-        default="/root/graphnet/data/tests/sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db",
+        default=f"{EXAMPLE_DATA_DIR}/sqlite/prometheus/prometheus-events.db",
     )
 
     parser.add_argument(
         "--pulsemap",
         help="Name of pulsemap to use (default: %(default)s)",
-        default="SRTInIcePulses",
+        default="total",
     )
 
     parser.add_argument(
@@ -191,19 +189,19 @@ Train GNN model without the use of config files.
             "Name of feature to use as regression target (default: "
             "%(default)s)"
         ),
-        default=["position_x", "position_y", "position_z"]
+        default="total_energy",
     )
 
     parser.add_argument(
         "--truth-table",
         help="Name of truth table to be used (default: %(default)s)",
-        default="truth",
+        default="mc_truth",
     )
 
     parser.with_standard_arguments(
         "gpus",
-        ("max-epochs", 100),
-        ("early-stopping-patience", 15),
+        ("max-epochs", 5),
+        "early-stopping-patience",
         ("batch-size", 16),
         ("num-workers", 8),
     )

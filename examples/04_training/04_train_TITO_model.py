@@ -5,27 +5,29 @@ from typing import Any, Dict, List, Optional
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 import torch
 from torch.optim.adam import Adam
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR, TEST_OUTPUT_DIR
+from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
-from graphnet.models.detector.icecube import IceCubeDeepCore
-from graphnet.models.gnn import DynEdge, DynEdgeTITO
+from graphnet.models.detector.icecube import IceCubeKaggle
+from graphnet.models.gnn import DynEdgeTITO
 from graphnet.models.graph_builders import KNNGraphBuilder
-from graphnet.models.task.reconstruction import EnergyReconstruction, DirectionReconstructionWithKappa, ZenithReconstructionWithKappa, AzimuthReconstructionWithKappa, TimeReconstruction, PositionReconstruction
+from graphnet.models.task.reconstruction import EnergyReconstruction, DirectionReconstructionWithKappa
 from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
-from graphnet.training.loss_functions import LogCoshLoss, VonMisesFisher3DLoss, VonMisesFisher2DLoss, MSELoss
+from graphnet.training.loss_functions import LogCoshLoss, VonMisesFisher3DLoss
 from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
 
 # Constants
-features = FEATURES.DEEPCORE
-truth = TRUTH.DEEPCORE
+features = FEATURES.KAGGLE
+truth = TRUTH.KAGGLE
+
+dynedge_layer_size = [(256, 256), (256, 256), (256, 256), (256, 256)]
 
 def main(
     path: str,
@@ -72,7 +74,7 @@ def main(
         },
     }
 
-    archive = os.path.join(EXAMPLE_DATA_DIR, "train_model_without_configs")
+    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model_without_configs")
     run_name = "dynedge_{}_example".format(config["target"])
     if wandb:
         # Log configuration to W&B
@@ -93,19 +95,22 @@ def main(
     )
 
     # Building model
-    detector = IceCubeDeepCore(
+    detector = IceCubeKaggle(
         graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
     )
     gnn = DynEdgeTITO(
         nb_inputs=detector.nb_outputs,
-        global_pooling_schemes=["min"],#, "max", "mean", "sum"],
+        global_pooling_schemes=["max"],#["min", "max", "mean", "sum"],
+        dynedge_layer_sizes=dynedge_layer_size,
+        add_global_variables_after_pooling=True,
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=gnn.nb_outputs,
-        target_labels=["position_x", "position_y", "position_z"],
+        target_labels=config["target"],
         loss_function=VonMisesFisher3DLoss(),
-        transform_prediction_and_target=torch.nn.Identity(),
+        transform_prediction_and_target=torch.log10,
     )
+    
     model = StandardModel(
         detector=detector,
         gnn=gnn,
@@ -113,19 +118,20 @@ def main(
         optimizer_class=Adam,
         optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
         scheduler_class=PiecewiseLinearLR,
-        scheduler_kwargs={
+        scheduler_kwargs={ 
             "milestones": [
                 0,
-                len(training_dataloader) * 2,
-                len(training_dataloader) * config["fit"]["max_epochs"]/2,
+                len(training_dataloader) / 2,
+                len(training_dataloader) * config["fit"]["max_epochs"] / 2,
                 len(training_dataloader) * config["fit"]["max_epochs"],
             ],
-            "factors": [0.001, 1, 1, 0.001]
+            "factors": [1e-02, 1, 1, 1e-02],
         },
         scheduler_config={
             "interval": "step",
         },
     )
+    model.additional_attributes = ['zenith', 'azimuth', 'event_id']
 
     # Training model
     callbacks = [
@@ -135,7 +141,6 @@ def main(
         ),
         ProgressBar(),
     ]
-
     model.fit(
         training_dataloader,
         validation_dataloader,
@@ -143,7 +148,6 @@ def main(
         logger=wandb_logger if wandb else None,
         **config["fit"],
     )
-
     # Get predictions
     additional_attributes = model.target_labels
     assert isinstance(additional_attributes, list)  # mypy
@@ -176,13 +180,13 @@ Train GNN model without the use of config files.
     parser.add_argument(
         "--path",
         help="Path to dataset file (default: %(default)s)",
-        default="/root/graphnet/data/tests/sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db",
+        default=f"{EXAMPLE_DATA_DIR}/sqlite/prometheus/prometheus-events.db",
     )
 
     parser.add_argument(
         "--pulsemap",
         help="Name of pulsemap to use (default: %(default)s)",
-        default="SRTInIcePulses",
+        default="total",
     )
 
     parser.add_argument(
@@ -191,19 +195,19 @@ Train GNN model without the use of config files.
             "Name of feature to use as regression target (default: "
             "%(default)s)"
         ),
-        default=["position_x", "position_y", "position_z"]
+        default=["position_x", "position_y", "position_z"]#['injection_position_x', 'injection_position_y', 'injection_position_z']
     )
 
     parser.add_argument(
         "--truth-table",
         help="Name of truth table to be used (default: %(default)s)",
-        default="truth",
+        default="mc_truth",
     )
 
     parser.with_standard_arguments(
         "gpus",
-        ("max-epochs", 100),
-        ("early-stopping-patience", 15),
+        ("max-epochs", 10),
+        "early-stopping-patience",
         ("batch-size", 16),
         ("num-workers", 8),
     )

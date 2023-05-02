@@ -188,7 +188,6 @@ class DynEdgeTITO(GNN):
         self._use_global_variables = use_global_variables
         self._use_tranformer_in_last = use_tranformer_in_last
         self._dropout = dropout
-
         self._construct_layers()
 
     def _construct_layers(self) -> None:
