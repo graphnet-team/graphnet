@@ -122,9 +122,6 @@ class DynTrans(EdgeConv0, LightningModule):
         aggr: str = "max",
         nb_neighbors: int = 8,
         features_subset: Optional[Union[Sequence[int], slice]] = None,
-        use_transformer: bool = True,
-        dropout: float = 0.0,
-        serial_connection: bool = True,
         **kwargs: Any,
     ):
         """Construct `DynTrans`.
@@ -138,9 +135,6 @@ class DynTrans(EdgeConv0, LightningModule):
             features_subset: Subset of features in `Data.x` that should be used
                 when dynamically performing the new graph clustering after the
                 `EdgeConv` operation. Defaults to all features.
-            use_transformer: Use of the Transformer layer in 'DynTrans'.
-            dropout: Dropout rate to be used in `DynTrans`.
-            serial_connection: Use of serial connection in `DynTrans`.
             **kwargs: Additional features to be passed to `DynTrans`.
         """
         # Check(s)
@@ -166,25 +160,21 @@ class DynTrans(EdgeConv0, LightningModule):
         # Additional member variables
         self.nb_neighbors = nb_neighbors
         self.features_subset = features_subset
-        self.serial_connection = serial_connection
-        self.use_trans_in_dyn1 = use_transformer
 
         self.norm_first = False
 
         self.norm1 = LayerNorm(d_model, eps=1e-5)  # lNorm
 
         # Transformer layer(s)
-        if use_transformer:
-            encoder_layer = TransformerEncoderLayer(
-                d_model=d_model,
-                nhead=8,
-                batch_first=True,
-                dropout=dropout,
-                norm_first=self.norm_first,
-            )
-            self._transformer_encoder = TransformerEncoder(
-                encoder_layer, num_layers=1
-            )
+        encoder_layer = TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=8,
+            batch_first=True,
+            norm_first=self.norm_first,
+        )
+        self._transformer_encoder = TransformerEncoder(
+            encoder_layer, num_layers=1
+        )
 
     def forward(
         self, x: Tensor, edge_index: Adj, batch: Optional[Tensor] = None
@@ -195,7 +185,7 @@ class DynTrans(EdgeConv0, LightningModule):
 
         x_out = super().forward(x, edge_index)
 
-        if x_out.shape[-1] == x.shape[-1] and self.serial_connection:
+        if x_out.shape[-1] == x.shape[-1]:
             x = x + x_out
         else:
             x = x_out
@@ -207,9 +197,8 @@ class DynTrans(EdgeConv0, LightningModule):
         edge_index = None
 
         # Transformer layer
-        if self.use_trans_in_dyn1:
-            x, mask = to_dense_batch(x, batch)
-            x = self._transformer_encoder(x, src_key_padding_mask=~mask)
-            x = x[mask]
+        x, mask = to_dense_batch(x, batch)
+        x = self._transformer_encoder(x, src_key_padding_mask=~mask)
+        x = x[mask]
 
         return x, edge_index
