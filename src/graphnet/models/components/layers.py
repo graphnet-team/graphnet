@@ -110,62 +110,6 @@ class EdgeConv0(MessagePassing, LightningModule):
         return f"{self.__class__.__name__}(nn={self.nn})"
 
 
-class EdgeConv1(MessagePassing, LightningModule):
-    """Implementation of EdgeConv1 layer used in TITO solution for.
-
-    'IceCube - Neutrinos in Deep' kaggle competition.
-    """
-
-    def __init__(
-        self,
-        nn: Callable,
-        aggr: str = "max",
-        node_edge_feat_ratio: float = 0.7,
-        **kwargs: Any,
-    ):
-        """Construct `EdgeConv1`.
-
-        Args:
-            nn: The MLP/torch.Module to be used within the `EdgeConv1`.
-            aggr: Aggregation method to be used with `EdgeConv1`.
-            node_edge_feat_ratio: Ratio of edge features used.
-            **kwargs: Additional features to be passed to `EdgeConv1`.
-        """
-        super().__init__(aggr=aggr, **kwargs)
-        self.nn = nn
-        self.reset_parameters()
-        self.node_edge_feat_ratio = node_edge_feat_ratio
-
-    def reset_parameters(self) -> None:
-        """Reset all learnable parameters of the module."""
-        reset(self.nn)
-
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """Forward pass."""
-        if isinstance(x, Tensor):
-            x = (x, x)
-        # propagate_type: (x: PairTensor)
-        return self.propagate(edge_index, x=x, size=None)
-
-    def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
-        """EdgeConv1 message passing.
-
-        Usually, the number of edge features is 20 or more, and when it is less
-        than that, it is the first layer and has four attributes: XYZT.
-        """
-        edge_cnt = round(x_i.shape[-1] * self.node_edge_feat_ratio)
-        if edge_cnt < 20:
-            edge_cnt = 4
-        edge_ij = torch.cat(
-            [(x_j - x_i)[:, :edge_cnt], x_j[:, edge_cnt:]], axis=-1
-        )
-        return self.nn(torch.cat([x_i, edge_ij], dim=-1))  # edgeConv1
-
-    def __repr__(self) -> str:
-        """Print out module name."""
-        return f"{self.__class__.__name__}(nn={self.nn})"
-
-
 class DynTrans(EdgeConv0, LightningModule):
     """Implementation of dynTrans1 layer used in TITO solution for.
 
