@@ -38,53 +38,27 @@ class DynEdgeTITO(GNN):
         self,
         nb_inputs: int,
         *,
-        nb_neighbours: int = 8,
         features_subset: Optional[Union[List[int], slice]] = None,
-        dynedge_layer_sizes: Optional[List[Tuple[int, ...]]] = None,
-        post_processing_layer_sizes: Optional[List[int]] = None,
-        readout_layer_sizes: Optional[List[int]] = None,
+        layer_size_scale: Optional[int] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
-        add_global_variables_after_pooling: bool = False,
     ):
         """Construct `DynEdge`.
 
         Args:
             nb_inputs: Number of input features on each node.
-            nb_neighbours: Number of neighbours to used in the k-nearest
-                neighbour clustering which is performed after each (dynamical)
-                edge convolution.
             features_subset: The subset of latent features on each node that
                 are used as metric dimensions when performing the k-nearest
                 neighbours clustering. Defaults to [0,1,2].
-            dynedge_layer_sizes: The layer sizes, or latent feature dimenions,
-                used in the `DynEdgeConv` layer. Each entry in
-                `dynedge_layer_sizes` corresponds to a single `DynEdgeConv`
-                layer; the integers in the corresponding tuple corresponds to
-                the layer sizes in the multi-layer perceptron (MLP) that is
-                applied within each `DynEdgeConv` layer. That is, a list of
-                size-two tuples means that all `DynEdgeConv` layers contain a
-                two-layer MLP.
-                Defaults to [(128, 256), (336, 256), (336, 256), (336, 256)].
-            post_processing_layer_sizes: Hidden layer sizes in the MLP
-                following the skip-concatenation of the outputs of each
-                `DynEdgeConv` layer. Defaults to [336, 256].
-            readout_layer_sizes: Hidden layer sizes in the MLP following the
-                post-processing _and_ optional global pooling. As this is the
-                last layer(s) in the model, the last layer in the read-out
-                yields the output of the `DynEdge` model. Defaults to [128,].
+            layer_size_scale: Integer that scales the size of hidden layers.
             global_pooling_schemes: The list global pooling schemes to use.
                 Options are: "min", "max", "mean", and "sum".
-            add_global_variables_after_pooling: Whether to add global variables
-                after global pooling. The alternative is to  added (distribute)
-                them to the individual nodes before any convolutional
-                operations.
         """
         # Latent feature subset for computing nearest neighbours in DynEdge.
         if features_subset is None:
             features_subset = slice(0, 4)
 
         # DynEdge layer sizes
-        if dynedge_layer_sizes is None:
+        if layer_size_scale is None:
             dynedge_layer_sizes = [
                 (
                     256,
@@ -103,6 +77,8 @@ class DynEdgeTITO(GNN):
                     256,
                 ),
             ]
+        else:
+            dynedge_layer_sizes =  [(256, 256) for layer in range(layer_size_scale)]
 
         assert isinstance(dynedge_layer_sizes, list)
         assert len(dynedge_layer_sizes)
@@ -115,28 +91,19 @@ class DynEdgeTITO(GNN):
         self._dynedge_layer_sizes = dynedge_layer_sizes
 
         # Post-processing layer sizes
-        if post_processing_layer_sizes is None:
-            post_processing_layer_sizes = [
-                336,
-                256,
-            ]
-
-        assert isinstance(post_processing_layer_sizes, list)
-        assert len(post_processing_layer_sizes)
-        assert all(size > 0 for size in post_processing_layer_sizes)
+        post_processing_layer_sizes = [
+            336,
+            256,
+        ]
 
         self._post_processing_layer_sizes = post_processing_layer_sizes
 
         # Read-out layer sizes
-        if readout_layer_sizes is None:
-            readout_layer_sizes = [
-                256,
-                128,
-            ]
+        readout_layer_sizes = [
+            256,
+            128,
+        ]
 
-        assert isinstance(readout_layer_sizes, list)
-        assert len(readout_layer_sizes)
-        assert all(size > 0 for size in readout_layer_sizes)
 
         self._readout_layer_sizes = readout_layer_sizes
 
@@ -154,13 +121,9 @@ class DynEdgeTITO(GNN):
 
         self._global_pooling_schemes = global_pooling_schemes
 
-        if add_global_variables_after_pooling:
-            assert self._global_pooling_schemes, (
-                "No global pooling schemes were request, so cannot add global"
-                " variables after pooling."
-            )
-        self._add_global_variables_after_pooling = (
-            add_global_variables_after_pooling
+        assert self._global_pooling_schemes, (
+            "No global pooling schemes were request, so cannot add global"
+            " variables after pooling."
         )
 
         # Base class constructor
@@ -170,7 +133,6 @@ class DynEdgeTITO(GNN):
         self._activation = torch.nn.LeakyReLU()
         self._nb_inputs = nb_inputs
         self._nb_global_variables = 5 + nb_inputs
-        self._nb_neighbours = nb_neighbours
         self._features_subset = features_subset
         self._construct_layers()
 
@@ -178,8 +140,6 @@ class DynEdgeTITO(GNN):
         """Construct layers (torch.nn.Modules)."""
         # Convolutional operations
         nb_input_features = self._nb_inputs
-        if not self._add_global_variables_after_pooling:
-            nb_input_features += self._nb_global_variables
 
         self._conv_layers = torch.nn.ModuleList()
         nb_latent_features = nb_input_features
@@ -187,7 +147,7 @@ class DynEdgeTITO(GNN):
             conv_layer = DynTrans(
                 [nb_latent_features] + list(sizes),
                 aggr="max",
-                nb_neighbors=self._nb_neighbours,
+                nb_neighbors=6,
                 features_subset=self._features_subset,
             )
             self._conv_layers.append(conv_layer)
@@ -214,8 +174,7 @@ class DynEdgeTITO(GNN):
             else 1
         )
         nb_latent_features = last_posting_layer_output_dim * nb_poolings
-        if self._add_global_variables_after_pooling:
-            nb_latent_features += self._nb_global_variables
+        nb_latent_features += self._nb_global_variables
 
         readout_layers = []
         layer_sizes = [nb_latent_features] + list(self._readout_layer_sizes)
@@ -292,20 +251,6 @@ class DynEdgeTITO(GNN):
             torch.log10(data.n_pulses),
         )
 
-        # Distribute global variables out to each node
-        if not self._add_global_variables_after_pooling:
-            distribute = (
-                batch.unsqueeze(dim=1) == torch.unique(batch).unsqueeze(dim=0)
-            ).type(torch.float)
-
-            global_variables_distributed = torch.sum(
-                distribute.unsqueeze(dim=2)
-                * global_variables.unsqueeze(dim=0),
-                dim=1,
-            )
-
-            x = torch.cat((x, global_variables_distributed), dim=1)
-
         # DynEdge-convolutions
         for conv_layer in self._conv_layers:
             x, _edge_index = conv_layer(x, data.edge_index, batch)
@@ -320,14 +265,13 @@ class DynEdgeTITO(GNN):
 
         # (Optional) Global pooling
         x = self._global_pooling(x, batch=batch)
-        if self._add_global_variables_after_pooling:
-            x = torch.cat(
-                [
-                    x,
-                    global_variables,
-                ],
-                dim=1,
-            )
+        x = torch.cat(
+            [
+                x,
+                global_variables,
+            ],
+            dim=1,
+        )
 
         # Read-out
         x = self._readout(x)
