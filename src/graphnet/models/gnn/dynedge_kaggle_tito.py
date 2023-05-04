@@ -78,7 +78,9 @@ class DynEdgeTITO(GNN):
                 ),
             ]
         else:
-            dynedge_layer_sizes =  [(256, 256) for layer in range(layer_size_scale)]
+            dynedge_layer_sizes = [
+                (256, 256) for layer in range(layer_size_scale)
+            ]
 
         assert isinstance(dynedge_layer_sizes, list)
         assert len(dynedge_layer_sizes)
@@ -103,7 +105,6 @@ class DynEdgeTITO(GNN):
             256,
             128,
         ]
-
 
         self._readout_layer_sizes = readout_layer_sizes
 
