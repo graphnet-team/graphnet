@@ -37,7 +37,7 @@ class DynEdgeTITO(GNN):
     def __init__(
         self,
         nb_inputs: int,
-        features_subset: Optional[slice] = None,
+        features_subset: slice = slice(0, 4),
         layer_size_scale: int = 4,
         global_pooling_schemes: List[str] = ["max"],
     ):
@@ -52,10 +52,6 @@ class DynEdgeTITO(GNN):
             global_pooling_schemes: The list global pooling schemes to use.
                 Options are: "min", "max", "mean", and "sum".
         """
-        # Latent feature subset for computing nearest neighbours in DynEdge.
-        if features_subset is None:
-            features_subset = slice(0, 4)
-
         # DynEdge layer sizes
         dynedge_layer_sizes = [(256, 256) for layer in range(layer_size_scale)]
 
