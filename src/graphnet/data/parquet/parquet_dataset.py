@@ -36,7 +36,9 @@ class ParquetDataset(Dataset):
         if not isinstance(self._path, list):
             self._parquet_hook = ak.from_parquet(self._path, lazy=False)
         else:
-            self._parquet_hook = ak.concatenate(ak.from_parquet(file) for file in self._path)
+            self._parquet_hook = ak.concatenate(
+                ak.from_parquet(file) for file in self._path
+            )
 
     def _get_all_indices(self) -> List[int]:
         return np.arange(
