@@ -14,13 +14,13 @@ class ParquetDataset(Dataset):
     # Implementing abstract method(s)
     def _init(self) -> None:
         # Check(s)
-        if isinstance(self._path, list):
-            self.error("Multiple files not supported")
-        assert isinstance(self._path, str)
+        if not isinstance(self._path, list):
 
-        assert self._path.endswith(
-            ".parquet"
-        ), f"Format of input file `{self._path}` is not supported"
+            assert isinstance(self._path, str)
+
+            assert self._path.endswith(
+                ".parquet"
+            ), f"Format of input file `{self._path}` is not supported"
 
         assert (
             self._node_truth is None
@@ -33,7 +33,12 @@ class ParquetDataset(Dataset):
         ), "Argument `string_selection` is currently not supported"
 
         # Set custom member variable(s)
-        self._parquet_hook = ak.from_parquet(self._path, lazy=False)
+        if not isinstance(self._path, list):
+            self._parquet_hook = ak.from_parquet(self._path, lazy=False)
+        else:
+            self._parquet_hook = ak.concatenate(
+                ak.from_parquet(file) for file in self._path
+            )
 
     def _get_all_indices(self) -> List[int]:
         return np.arange(
