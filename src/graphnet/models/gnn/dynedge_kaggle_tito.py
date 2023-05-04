@@ -37,8 +37,7 @@ class DynEdgeTITO(GNN):
     def __init__(
         self,
         nb_inputs: int,
-        *,
-        features_subset: Optional[Union[List[int], slice]] = None,
+        features_subset: Optional[slice] = None,
         layer_size_scale: Optional[int] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
     ):
