@@ -8,7 +8,7 @@ Kaggle competition.
 Solution by TITO.
 """
 
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional
 
 import torch
 from torch import Tensor, LongTensor
@@ -38,8 +38,8 @@ class DynEdgeTITO(GNN):
         self,
         nb_inputs: int,
         features_subset: Optional[slice] = None,
-        layer_size_scale: Optional[int] = None,
-        global_pooling_schemes: Optional[Union[str, List[str]]] = None,
+        layer_size_scale: int = 4,
+        global_pooling_schemes: List[str] = ["max"],
     ):
         """Construct `DynEdge`.
 
@@ -57,29 +57,7 @@ class DynEdgeTITO(GNN):
             features_subset = slice(0, 4)
 
         # DynEdge layer sizes
-        if layer_size_scale is None:
-            dynedge_layer_sizes = [
-                (
-                    256,
-                    256,
-                ),
-                (
-                    256,
-                    256,
-                ),
-                (
-                    256,
-                    256,
-                ),
-                (
-                    256,
-                    256,
-                ),
-            ]
-        else:
-            dynedge_layer_sizes = [
-                (256, 256) for layer in range(layer_size_scale)
-            ]
+        dynedge_layer_sizes = [(256, 256) for layer in range(layer_size_scale)]
 
         assert isinstance(dynedge_layer_sizes, list)
         assert len(dynedge_layer_sizes)
