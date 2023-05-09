@@ -449,7 +449,10 @@
 <div class="viewcode-block" id="ArgumentParser.with_standard_arguments"><a class="viewcode-back" href="../../../api/graphnet.utilities.argparse.html#graphnet.utilities.argparse.ArgumentParser.with_standard_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">with_standard_arguments</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ArgumentParser"</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Add standard, named arguments to the `ArgumentParser`."""</span>
+<span class="w">        </span><span class="sd">"""Add standard, named arguments to the `ArgumentParser`.</span>
+
+<span class="sd">        Standard argument is given, but can be overwritten as a tuple.</span>
+<span class="sd">        """</span>
         <span class="n">remaining</span> <span class="o">=</span> <span class="n">Options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">argument</span><span class="p">,</span> <span class="n">options</span> <span class="ow">in</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
