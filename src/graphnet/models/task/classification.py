@@ -24,6 +24,7 @@ class BinaryClassificationTask(Task):
     nb_inputs = 1
     default_target_labels = ["target"]
     default_prediction_labels = ["target_pred"]
+    
     def _forward(self, x: Tensor) -> Tensor:
         # transform probability of being muon
         return torch.sigmoid(x)
@@ -34,6 +35,8 @@ class BinaryClassificationTaskLogits(Task):
 
     # Requires one feature, logit for being signal class.
     nb_inputs = 1
+    default_target_labels = ["target"]
+    default_prediction_labels = ["target_pred"]
 
     def _forward(self, x: Tensor) -> Tensor:
         return x
