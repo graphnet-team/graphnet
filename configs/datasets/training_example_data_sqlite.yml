@@ -33,6 +33,7 @@ truth:
   - primary_lepton_1_energy
   - primary_hadron_1_energy
   - total_energy
+  - dummy_pid
 index_column: event_no
 truth_table: mc_truth
 seed: 21

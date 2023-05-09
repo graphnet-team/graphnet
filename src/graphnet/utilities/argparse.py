@@ -132,7 +132,10 @@ class ArgumentParser(argparse.ArgumentParser):
     def with_standard_arguments(
         self, *args: Union[str, Tuple[str, Any]]
     ) -> "ArgumentParser":
-        """Add standard, named arguments to the `ArgumentParser`."""
+        """Add standard, named arguments to the `ArgumentParser`.
+
+        Standard argument is given, but can be overwritten as a tuple.
+        """
         remaining = Options(*args)
 
         for argument, options in copy.deepcopy(
