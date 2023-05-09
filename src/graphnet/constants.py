@@ -31,3 +31,5 @@ EXAMPLE_OUTPUT_DIR = os.path.join(EXAMPLE_DATA_DIR, "output")
 
 # Configuration files
 CONFIG_DIR = os.path.join(GRAPHNET_ROOT_DIR, "configs")
+DATASETS_CONFIG_DIR = os.path.join(CONFIG_DIR, "datasets")
+MODEL_CONFIG_DIR = os.path.join(CONFIG_DIR, "models")
