@@ -12,38 +12,67 @@ tags:
   - neutrinos
 
 authors:
-  - name: Andreas Søgaard
-    orcid: 0000-0002-0823-056X
-    affiliation: 1  # "1, 2" (Multiple affiliations must be quoted)
-    corresponding: true
-  - name: Rasmus F. Ørsøe
-    orcid: 0000-0001-8890-4124
-    affiliation: 2
-  - name: Leon Bozianu
-    affiliation: 1
-  - name: Morten Holm
-    affiliation: 1
-  - name: Kaare Endrup Iversen
-    affiliation: 1
-  - name: Tim Guggenmos
-    affiliation: 2
-  - name: Martin Ha Minh
-    orcid: 0000-0001-7776-4875
-    affiliation: 2
-  - name: Philipp Eller
-    orcid: 0000-0001-6354-5209
-    affiliation: 2
-  - name: Troels C. Petersen
-    orcid: 0000-0003-0221-3037
-    affiliation: 1
+- name: Andreas Søgaard
+  affiliation: 1
+  orcid: 0000-0002-0823-056X
+  corresponding: true
+- name: Rasmus F. Ørsøe
+  affiliation: "1, 2"
+  orcid: 0000-0001-8890-4124
+- name: Morten Holm
+  affiliation: 1
+  orcid: 0000-0003-1383-2810
+- name: Leon Bozianu
+  affiliation: 1
+  orcid: 0000-0002-1243-9980
+- name: Aske Rosted
+  affiliation: 3
+  orcid: 0000-0003-2410-400X
+- name: Troels C. Petersen
+  affiliation: 1
+  orcid: 0000-0003-0221-3037
+- name: Kaare Endrup Iversen
+  affiliation: 1
+  orcid: 0000-0001-6533-4085
+- name: Andreas Hermansen
+  affiliation: 1
+  orcid: 0009-0006-1162-9770
+- name: Tim Guggenmos
+  affiliation: 2
+- name: Peter Andresen
+  affiliation: 1
+  orcid: 0009-0008-5759-0490
+- name: Martin Ha Minh
+  affiliation: 2
+  orcid: 0000-0001-7776-4875
+- name: Ludwig Neste
+  affiliation: 4
+  orcid: ####
+- name: Axel Pontén
+  affiliation: 5
+  orcid: ####
+- name: Kayla Leonard DeHolton
+  affiliation: 6
+  orcid: 0000-0002-8795-0601
+- name: Philipp Eller
+  affiliation: 2
+  orcid: 0000-0001-6354-5209
 
 affiliations:
- - name: Niels Bohr Institute, University of Copenhagen, Denmark
-   index: 1
- - name: Technical University of Munich, Germany
-   index: 2
+  - name: Niels Bohr Institute, University of Copenhagen, Denmark
+    index: 1
+  - name: Technical University of Munich, Germany
+    index: 2
+  - name: Chiba University, Japan
+    index: 3
+  - name: Technical University of Dortmund, Germany
+    index: 4
+  - name: Uppsala University, Sweden
+    index: 5
+  - name: Pennsylvania State University, USA
+    index: 6
 
-date: 16 September 2022
+date: 9 May 2023
 
 bibliography: paper.bib
 
