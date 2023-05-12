@@ -50,3 +50,22 @@ From "Software Best Practices Effective Version Control", Alex Olivas, IceCube B
 
 Others:
 * Keep backward compatibility in mind when you change code.
+
+## Experiment tracking
+
+We're using [Weights & Biases](https://wandb.ai/) (W&B) to track the results — i.e. losses, metrics, and model artifacts — of training runs as a means to track model experimentation and streamline optimisation. To authenticate with W&B, sign up on the website and run the following in your terminal after having installed this package:
+```bash
+$ wandb login
+```
+You can use your own, personal projects on W&B, but for projects of common interest you are encouraged to join the `graphnet-team` team on W&B [here](https://wandb.ai/graphnet-team), create new projects for your specific use cases, and log your runs there. Just ask [@asogaard](https://github.com/asogaard) for an invite to the team!
+
+If you don't want to use W&B and/or only want to log run data locally, you can run:
+```bash
+$ wandb offline
+```
+If you change you mind, it's as simple as:
+```bash
+$ wandb online
+```
+
+The [examples/04_training/01_train_model.py](examples/04_training/01_train_model.py) script shows how to train a model and log the results to W&B.
