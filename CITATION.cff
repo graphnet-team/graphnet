@@ -38,7 +38,10 @@ authors:
 - family-names: "Neste"
   given-names: "Ludwig"
   orcid: "https://orcid.org/0000-0002-4829-3469"
-- family-names: Pontén"
+- family-names: "Holmes"
+  given-names: "Moust"
+  orcid: "https://orcid.org/####"
+- family-names: "Pontén"
   given-names: "Axel"
   orcid: "https://orcid.org/####"
 - family-names: "Leonard DeHolton"
@@ -48,7 +51,7 @@ authors:
   given-names: "Philipp"
   orcid: "https://orcid.org/0000-0001-6354-5209"
 version: 1.0.0
-date-released: 2023-05-09
+date-released: 2023-05-12
 url: "https://github.com/graphnet-team/graphnet"
 license: Apache-2.0
 type: software
