@@ -155,7 +155,6 @@ class VertexReconstruction(Task):
     nb_inputs = 4
 
     def _forward(self, x: Tensor) -> Tensor:
-
         # Scale xyz to roughly the right order of magnitude, leave time
         x[:, 0] = x[:, 0] * 1e2
         x[:, 1] = x[:, 1] * 1e2
@@ -177,7 +176,6 @@ class PositionReconstruction(Task):
     nb_inputs = 3
 
     def _forward(self, x: Tensor) -> Tensor:
-
         # Scale to roughly the right order of magnitude
         x[:, 0] = x[:, 0] * 1e2
         x[:, 1] = x[:, 1] * 1e2
@@ -195,7 +193,6 @@ class TimeReconstruction(Task):
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
-
         # Leave as it is
         return x
 
@@ -203,12 +200,12 @@ class TimeReconstruction(Task):
 class InelasticityReconstruction(Task):
     """Reconstructs interaction inelasticity.
 
-    That is, tracks vs. hadronic energy.
+    That is, 1-(track energy / hadronic energy).
     """
 
     # Requires one features: inelasticity itself
-    default_target_labels = ["elasticity"]
-    default_prediction_labels = ["elasticity_pred"]
+    default_target_labels = ["inelasticity"]
+    default_prediction_labels = ["inelasticity_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
