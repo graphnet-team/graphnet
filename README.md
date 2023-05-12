@@ -1,16 +1,29 @@
+<center>
+
 ![logo](./assets/identity/graphnet-logo-and-wordmark.png)
 
 | Usage | Development |
 | --- | --- |
-| [![Slack](https://img.shields.io/badge/slack-4A154B.svg?logo=slack)](https://join.slack.com/t/graphnet-team/signup) | ![build](https://github.com/graphnet-team/graphnet/actions/workflows/build.yml/badge.svg) |
+| [![status](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf/status.svg)](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf) | ![build](https://github.com/graphnet-team/graphnet/actions/workflows/build.yml/badge.svg) |
 | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6720188.svg)](https://doi.org/10.5281/zenodo.6720188) | ![code-quality](https://github.com/graphnet-team/graphnet/actions/workflows/code-quality.yml/badge.svg) |
 | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
 | ![Supported python versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue) | [![Maintainability](https://api.codeclimate.com/v1/badges/b273a774112e32643162/maintainability)](https://codeclimate.com/github/graphnet-team/graphnet/maintainability) |
 | [![Docker image](https://img.shields.io/docker/v/asogaard/graphnet?color=blue&logo=docker&sort=semver)](https://hub.docker.com/repository/docker/asogaard/graphnet) | [![Test Coverage](https://api.codeclimate.com/v1/badges/b273a774112e32643162/test_coverage)](https://codeclimate.com/github/graphnet-team/graphnet/test_coverage) |
 
+</center>
+
 ## :rocket: About
 
 **GraphNeT** is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). GraphNeT makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques.
+
+Feel free to join the [GraphNeT Slack group](https://join.slack.com/t/graphnet-team/signup)!
+
+### Publications using GraphNeT
+
+| Type | Title | DOI |
+| --- | --- | --- |
+| Paper | GraphNeT: Graph neural networks for neutrino telescope event reconstruction | [![status](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf/status.svg)](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf) |
+| Paper | Graph Neural Networks for low-energy event classification & reconstruction in IceCube | [![JINST](https://img.shields.io/badge/JINST-10.1088%2F1748--0221%2F17%2F11%2FP11003-blue)](https://doi.org/10.1088/1748-0221/17/11/P11003) |
 
 ## :gear:  Install
 
@@ -168,25 +181,6 @@ To make sure that the process of contributing is as smooth and effective as poss
 
 In short, everyone who wants to contribute to this project is more than welcome to do so! Contributions are handled through pull requests, that should be linked to a [GitHub issue](https://github.com/graphnet-team/graphnet/issues) describing the feature to be added or bug to be fixed. Pull requests will be reviewed by the project maintainers and merged into the main branch when accepted.
 
-
-## :test_tube:  Experiment tracking
-
-We're using [Weights & Biases](https://wandb.ai/) (W&B) to track the results — i.e. losses, metrics, and model artifacts — of training runs as a means to track model experimentation and streamline optimisation. To authenticate with W&B, sign up on the website and run the following in your terminal after having installed this package:
-```bash
-$ wandb login
-```
-You can use your own, personal projects on W&B, but for projects of common interest you are encouraged to join the `graphnet-team` team on W&B [here](https://wandb.ai/graphnet-team), create new projects for your specific use cases, and log your runs there. Just ask [@asogaard](https://github.com/asogaard) for an invite to the team!
-
-If you don't want to use W&B and/or only want to log run data locally, you can run:
-```bash
-$ wandb offline
-```
-If you change you mind, it's as simple as:
-```bash
-$ wandb online
-```
-
-The [examples/04_training/01_train_model.py](examples/04_training/01_train_model.py) script shows how to train a model and log the results to W&B.
 
 ## :memo: License
 
