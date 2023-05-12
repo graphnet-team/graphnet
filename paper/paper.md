@@ -12,38 +12,70 @@ tags:
   - neutrinos
 
 authors:
-  - name: Andreas Søgaard
-    orcid: 0000-0002-0823-056X
-    affiliation: 1  # "1, 2" (Multiple affiliations must be quoted)
-    corresponding: true
-  - name: Rasmus F. Ørsøe
-    orcid: 0000-0001-8890-4124
-    affiliation: 2
-  - name: Leon Bozianu
-    affiliation: 1
-  - name: Morten Holm
-    affiliation: 1
-  - name: Kaare Endrup Iversen
-    affiliation: 1
-  - name: Tim Guggenmos
-    affiliation: 2
-  - name: Martin Ha Minh
-    orcid: 0000-0001-7776-4875
-    affiliation: 2
-  - name: Philipp Eller
-    orcid: 0000-0001-6354-5209
-    affiliation: 2
-  - name: Troels C. Petersen
-    orcid: 0000-0003-0221-3037
-    affiliation: 1
+- name: Andreas Søgaard
+  affiliation: 1
+  orcid: 0000-0002-0823-056X
+  corresponding: true
+- name: Rasmus F. Ørsøe
+  affiliation: "1, 2"
+  orcid: 0000-0001-8890-4124
+- name: Morten Holm
+  affiliation: 1
+  orcid: 0000-0003-1383-2810
+- name: Leon Bozianu
+  affiliation: 1
+  orcid: 0000-0002-1243-9980
+- name: Aske Rosted
+  affiliation: 3
+  orcid: 0000-0003-2410-400X
+- name: Troels C. Petersen
+  affiliation: 1
+  orcid: 0000-0003-0221-3037
+- name: Kaare Endrup Iversen
+  affiliation: 1
+  orcid: 0000-0001-6533-4085
+- name: Andreas Hermansen
+  affiliation: 1
+  orcid: 0009-0006-1162-9770
+- name: Tim Guggenmos
+  affiliation: 2
+- name: Peter Andresen
+  affiliation: 1
+  orcid: 0009-0008-5759-0490
+- name: Martin Ha Minh
+  affiliation: 2
+  orcid: 0000-0001-7776-4875
+- name: Ludwig Neste
+  affiliation: 4
+  orcid: 0000-0002-4829-3469
+- name: Moust Holmes
+  affiliation: 1
+  orcid: 0009-0000-8530-7041
+- name: Axel Pontén
+  affiliation: 5
+  orcid: 0009-0008-2463-2930
+- name: Kayla Leonard DeHolton
+  affiliation: 6
+  orcid: 0000-0002-8795-0601
+- name: Philipp Eller
+  affiliation: 2
+  orcid: 0000-0001-6354-5209
 
 affiliations:
- - name: Niels Bohr Institute, University of Copenhagen, Denmark
-   index: 1
- - name: Technical University of Munich, Germany
-   index: 2
+  - name: Niels Bohr Institute, University of Copenhagen, Denmark
+    index: 1
+  - name: Technical University of Munich, Germany
+    index: 2
+  - name: Chiba University, Japan
+    index: 3
+  - name: Technical University of Dortmund, Germany
+    index: 4
+  - name: Uppsala University, Sweden
+    index: 5
+  - name: Pennsylvania State University, USA
+    index: 6
 
-date: 16 September 2022
+date: 12 May 2023
 
 bibliography: paper.bib
 
@@ -53,7 +85,7 @@ bibliography: paper.bib
 
 Neutrino telescopes, such as ANTARES [@ANTARES:2011hfw], IceCube [@Aartsen:2016nxy; @DeepCore], KM3NeT [@KM3Net:2016zxf], and Baikal-GVD [@Baikal-GVD:2018isr] have the science goal of detecting neutrinos and measuring their properties and origins. Reconstruction at these experiments is concerned with classifying the type of event or estimating properties of the interaction.
 
-`GraphNeT` [@graphnet_zenodo:2022] is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). `GraphNeT` makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques [@gnn_icecube].
+`GraphNeT` [@Sogaard_GraphNeT_2023] is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). `GraphNeT` makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques [@gnn_icecube].
 
 GNNs from `GraphNeT` are flexible enough to be applied to data from all neutrino telescopes, including future projects such as IceCube extensions [@IceCube-PINGU:2014okk; @IceCube:2016xxt; @IceCube-Gen2:2020qha] or P-ONE [@P-ONE:2020ljt]. This means that GNN-based reconstruction can be used to provide state-of-the-art performance on most reconstruction tasks in neutrino telescopes, at real-time event rates, across experiments and physics analyses, with vast potential impact for neutrino and astro-particle physics.
 
