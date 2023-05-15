@@ -24,6 +24,13 @@ def is_i3_file(filename: str) -> bool:
     return False
 
 
+def is_root_file(filename: str) -> bool:
+    """Check whether `filename` is a root file."""
+    if has_extension(filename, ["root"]):
+        return True
+    return False
+
+
 def has_extension(filename: str, extensions: List[str]) -> bool:
     """Check whether `filename` has one of the desired extensions."""
     # @TODO: Remove method, as it is not used?
@@ -87,3 +94,41 @@ def find_i3_files(
             i3_files.extend(folder_i3_files)
 
     return i3_files, gcd_files
+
+
+def find_root_files(directories: Union[str, List[str]]) -> List[str]:
+    """Find root files in `directories`.
+
+    Args:
+        directories: Directories to search recursively for I3 files.
+
+    Returns:
+        root_list: Paths to root files in `directories`
+    """
+    if isinstance(directories, str):
+        directories = [directories]
+
+    # Output containers
+    root_files = []
+
+    for directory in directories:
+
+        # Recursively find all I3-like files in `directory`.
+        paths = []
+        root_patterns = ["*.root"]
+        for root_pattern in root_patterns:
+            paths.extend(list(Path(directory).rglob(root_pattern)))
+
+        # Loop over all folders containing such I3-like files.
+        folders = sorted(set([path.parent for path in paths]))
+        for folder in folders:
+
+            # List all I3 and GCD files, respectively, in the current folder.
+            folder_files = [
+                str(path) for path in paths if path.parent == folder
+            ]
+            folder_root_files = list(filter(is_root_file, folder_files))
+
+            root_files.extend(folder_root_files)
+
+    return root_files
