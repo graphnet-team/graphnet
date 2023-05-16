@@ -67,8 +67,8 @@ class DynEdgeConv(EdgeConv, LightningModule):
         return x, edge_index
 
 
-class EdgeConv0(MessagePassing, LightningModule):
-    """Implementation of EdgeConv0 layer used in TITO solution for.
+class EdgeConvTito(MessagePassing, LightningModule):
+    """Implementation of EdgeConvTito layer used in TITO solution for.
 
     'IceCube - Neutrinos in Deep' kaggle competition.
     """
@@ -79,12 +79,12 @@ class EdgeConv0(MessagePassing, LightningModule):
         aggr: str = "max",
         **kwargs: Any,
     ):
-        """Construct `EdgeConv0`.
+        """Construct `EdgeConvTito`.
 
         Args:
-            nn: The MLP/torch.Module to be used within the `EdgeConv0`.
-            aggr: Aggregation method to be used with `EdgeConv0`.
-            **kwargs: Additional features to be passed to `EdgeConv0`.
+            nn: The MLP/torch.Module to be used within the `EdgeConvTito`.
+            aggr: Aggregation method to be used with `EdgeConvTito`.
+            **kwargs: Additional features to be passed to `EdgeConvTito`.
         """
         super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
@@ -102,15 +102,17 @@ class EdgeConv0(MessagePassing, LightningModule):
         return self.propagate(edge_index, x=x, size=None)
 
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
-        """EdgeConv0 message passing."""
-        return self.nn(torch.cat([x_i, x_j - x_i, x_j], dim=-1))  # edgeConv0
+        """Edgeconvtito message passing."""
+        return self.nn(
+            torch.cat([x_i, x_j - x_i, x_j], dim=-1)
+        )  # EdgeConvTito
 
     def __repr__(self) -> str:
         """Print out module name."""
         return f"{self.__class__.__name__}(nn={self.nn})"
 
 
-class DynTrans(EdgeConv0, LightningModule):
+class DynTrans(EdgeConvTito, LightningModule):
     """Implementation of dynTrans1 layer used in TITO solution for.
 
     'IceCube - Neutrinos in Deep' kaggle competition.
@@ -120,8 +122,8 @@ class DynTrans(EdgeConv0, LightningModule):
         self,
         layer_sizes: Optional[List[int]] = None,
         aggr: str = "max",
-        nb_neighbors: int = 8,
         features_subset: Optional[Union[Sequence[int], slice]] = None,
+        n_head: int = 8,
         **kwargs: Any,
     ):
         """Construct `DynTrans`.
@@ -130,11 +132,10 @@ class DynTrans(EdgeConv0, LightningModule):
             nn: The MLP/torch.Module to be used within the `DynTrans`.
             layer_sizes: List of layer sizes to be used in `DynTrans`.
             aggr: Aggregation method to be used with `DynTrans`.
-            nb_neighbors: Number of neighbours to be clustered after the
-                `EdgeConv` operation.
             features_subset: Subset of features in `Data.x` that should be used
                 when dynamically performing the new graph clustering after the
                 `EdgeConv` operation. Defaults to all features.
+            n_head: Number of heads to be used in the multiheadattention models.
             **kwargs: Additional features to be passed to `DynTrans`.
         """
         # Check(s)
@@ -158,19 +159,16 @@ class DynTrans(EdgeConv0, LightningModule):
         super().__init__(nn=torch.nn.Sequential(*layers), aggr=aggr, **kwargs)
 
         # Additional member variables
-        self.nb_neighbors = nb_neighbors
         self.features_subset = features_subset
-
-        self.norm_first = False
 
         self.norm1 = LayerNorm(d_model, eps=1e-5)  # lNorm
 
         # Transformer layer(s)
         encoder_layer = TransformerEncoderLayer(
             d_model=d_model,
-            nhead=8,
+            nhead=n_head,
             batch_first=True,
-            norm_first=self.norm_first,
+            norm_first=False,
         )
         self._transformer_encoder = TransformerEncoder(
             encoder_layer, num_layers=1
@@ -180,9 +178,6 @@ class DynTrans(EdgeConv0, LightningModule):
         self, x: Tensor, edge_index: Adj, batch: Optional[Tensor] = None
     ) -> Tensor:
         """Forward pass."""
-        if self.norm_first:
-            x = self.norm1(x)  # lNorm
-
         x_out = super().forward(x, edge_index)
 
         if x_out.shape[-1] == x.shape[-1]:
@@ -190,15 +185,11 @@ class DynTrans(EdgeConv0, LightningModule):
         else:
             x = x_out
 
-        if not self.norm_first:
-            x = self.norm1(x)  # lNorm
-
-        # Recompute adjacency
-        edge_index = None
+        x = self.norm1(x)  # lNorm
 
         # Transformer layer
         x, mask = to_dense_batch(x, batch)
         x = self._transformer_encoder(x, src_key_padding_mask=~mask)
         x = x[mask]
 
-        return x, edge_index
+        return x

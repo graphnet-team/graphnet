@@ -12,7 +12,7 @@ from typing import List, Optional
 
 import torch
 from torch import Tensor, LongTensor
-from torch.nn.modules import TransformerEncoder, TransformerEncoderLayer
+
 from torch_geometric.data import Data
 from torch_geometric.utils import to_dense_batch
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
@@ -38,7 +38,7 @@ class DynEdgeTITO(GNN):
         self,
         nb_inputs: int,
         features_subset: slice = slice(0, 4),
-        layer_size_scale: int = 4,
+        layer_size_scale: int = 3,
         global_pooling_schemes: List[str] = ["max"],
     ):
         """Construct `DynEdge`.
@@ -47,23 +47,25 @@ class DynEdgeTITO(GNN):
             nb_inputs: Number of input features on each node.
             features_subset: The subset of latent features on each node that
                 are used as metric dimensions when performing the k-nearest
-                neighbours clustering. Defaults to [0,1,2].
+                neighbours clustering. Defaults to [0,1,2,3].
             layer_size_scale: Integer that scales the size of hidden layers.
             global_pooling_schemes: The list global pooling schemes to use.
                 Options are: "min", "max", "mean", and "sum".
         """
         # DynEdge layer sizes
-        dynedge_layer_sizes = [(256, 256) for layer in range(layer_size_scale)]
+        dyntrans_layer_sizes = [
+            (256, 256) for layer in range(layer_size_scale)
+        ]
 
-        assert isinstance(dynedge_layer_sizes, list)
-        assert len(dynedge_layer_sizes)
-        assert all(isinstance(sizes, tuple) for sizes in dynedge_layer_sizes)
-        assert all(len(sizes) > 0 for sizes in dynedge_layer_sizes)
+        assert isinstance(dyntrans_layer_sizes, list)
+        assert len(dyntrans_layer_sizes)
+        assert all(isinstance(sizes, tuple) for sizes in dyntrans_layer_sizes)
+        assert all(len(sizes) > 0 for sizes in dyntrans_layer_sizes)
         assert all(
-            all(size > 0 for size in sizes) for sizes in dynedge_layer_sizes
+            all(size > 0 for size in sizes) for sizes in dyntrans_layer_sizes
         )
 
-        self._dynedge_layer_sizes = dynedge_layer_sizes
+        self._dyntrans_layer_sizes = dyntrans_layer_sizes
 
         # Post-processing layer sizes
         post_processing_layer_sizes = [
@@ -117,18 +119,15 @@ class DynEdgeTITO(GNN):
 
         self._conv_layers = torch.nn.ModuleList()
         nb_latent_features = nb_input_features
-        for sizes in self._dynedge_layer_sizes:
+        for sizes in self._dyntrans_layer_sizes:
             conv_layer = DynTrans(
                 [nb_latent_features] + list(sizes),
                 aggr="max",
-                nb_neighbors=6,
                 features_subset=self._features_subset,
+                n_head=8,
             )
             self._conv_layers.append(conv_layer)
             nb_latent_features = sizes[-1]
-
-        # Post-processing operations
-        nb_latent_features = self._dynedge_layer_sizes[-1][-1]
 
         post_processing_layers = []
         layer_sizes = [nb_latent_features] + list(
@@ -157,17 +156,6 @@ class DynEdgeTITO(GNN):
             readout_layers.append(self._activation)
 
         self._readout = torch.nn.Sequential(*readout_layers)
-
-        # Transformer layer(s)
-        encoder_layer = TransformerEncoderLayer(
-            d_model=last_posting_layer_output_dim,
-            nhead=8,
-            batch_first=True,
-            norm_first=False,
-        )
-        self._transformer_encoder = TransformerEncoder(
-            encoder_layer, num_layers=0
-        )
 
     def _global_pooling(self, x: Tensor, batch: LongTensor) -> Tensor:
         """Perform global pooling."""
@@ -227,11 +215,9 @@ class DynEdgeTITO(GNN):
 
         # DynEdge-convolutions
         for conv_layer in self._conv_layers:
-            x, _edge_index = conv_layer(x, data.edge_index, batch)
+            x = conv_layer(x, edge_index, batch)
 
-        # Transformer convolutions
         x, mask = to_dense_batch(x, batch)
-        x = self._transformer_encoder(x, src_key_padding_mask=mask)
         x = x[mask]
 
         # Post-processing
