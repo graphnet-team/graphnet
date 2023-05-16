@@ -6,6 +6,7 @@ from collections import OrderedDict
 from typing import List, Union, Optional
 
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 import uproot
 
@@ -33,6 +34,7 @@ class rootSQLiteDataConverter(ABC, Logger):
         nb_files_to_batch: Optional[int] = None,
         main_key: Optional[str] = None,
         index_column: Optional[str] = "event_no",
+        remove_empty_events: Optional[bool] = False,
     ):
 
         if not isinstance(extractors, (list, tuple)):
@@ -53,6 +55,7 @@ class rootSQLiteDataConverter(ABC, Logger):
         self._outdir = outdir
         self._outname = outname
         self._main_key = main_key
+        self._remove_empty_events = remove_empty_events
 
         # Set save strategy
         if nb_files_to_batch is not None:
@@ -136,10 +139,6 @@ class rootSQLiteDataConverter(ABC, Logger):
             else:
                 assert False, "Shouldn't reach here."
 
-        # # Iterate over batches of files.
-        # try:
-        #     self._iterate_over_all_files(files)
-
         except KeyboardInterrupt:
             self.warning("[ctrl+c] Exciting gracefully.")
 
@@ -211,6 +210,9 @@ class rootSQLiteDataConverter(ABC, Logger):
         saved_any = False
 
         for file in tqdm(data):
+            if self._remove_empty_events:
+                file = self.remove_empty_events(file)
+
             for table, df in file.items():
                 if len(df) > 0:
                     create_table_and_save_to_sql(
@@ -240,3 +242,19 @@ class rootSQLiteDataConverter(ABC, Logger):
 
         return len(events[branch_key][feature_key].array(library='ak'))
 
+    def remove_empty_events(self, file: OrderedDict) -> OrderedDict:
+        
+        cleaned_file: OrderedDict = OrderedDict(
+            [(key, []) for key in file]
+        )
+
+        for table, df in file.items():
+
+            masks = [(
+                df[self._index_column].isin(other_df[self._index_column])
+            ) for other_df in file.values()]
+
+            combined_mask = pd.concat(masks, axis=1).all(axis=1)
+            cleaned_file[table] = df[combined_mask]
+
+        return cleaned_file
