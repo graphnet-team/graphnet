@@ -173,6 +173,7 @@ class I3TruthExtractor(I3Extractor):
             ) = self._get_primary_particle_interaction_type_and_elasticity(
                 frame, sim_type
             )
+
             try:
                 (
                     energy_track,
@@ -416,18 +417,16 @@ class I3TruthExtractor(I3Extractor):
         # @TODO: Rewrite to automatically infer `mc` from `input_file`?
         if not mc:
             sim_type = "data"
+        elif "muon" in input_file:
+            sim_type = "muongun"
+        elif "corsika" in input_file:
+            sim_type = "corsika"
+        elif "genie" in input_file or "nu" in input_file.lower():
+            sim_type = "genie"
+        elif "noise" in input_file:
+            sim_type = "noise"
+        elif "L2" in input_file:  # not robust
+            sim_type = "dbang"
         else:
             sim_type = "NuGen"
-        if "muon" in input_file:
-            sim_type = "muongun"
-        if "corsika" in input_file:
-            sim_type = "corsika"
-        if "genie" in input_file or "nu" in input_file.lower():
-            sim_type = "genie"
-        if "noise" in input_file:
-            sim_type = "noise"
-        if "L2" in input_file:  # not robust
-            sim_type = "dbang"
-        if sim_type == "lol":
-            self.info("SIM TYPE NOT FOUND!")
         return sim_type
