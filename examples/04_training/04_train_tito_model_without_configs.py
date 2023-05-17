@@ -27,6 +27,7 @@ from graphnet.utilities.logging import Logger
 # Constants
 features = FEATURES.PROMETHEUS
 truth = TRUTH.PROMETHEUS
+DYNTRANS_LAYER_SIZES = [(256, 256), (256, 256), (256, 256)]
 
 
 def main(
@@ -107,7 +108,7 @@ def main(
     gnn = DynEdgeTITO(
         nb_inputs=detector.nb_outputs,
         global_pooling_schemes=["max"],
-        layer_size_scale=3,  # 3x the default layer size [256, 256]
+        dyntrans_layer_sizes=DYNTRANS_LAYER_SIZES,
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=gnn.nb_outputs,

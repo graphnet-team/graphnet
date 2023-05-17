@@ -8,7 +8,7 @@ Kaggle competition.
 Solution by TITO.
 """
 
-from typing import List, Optional
+from typing import List, Tuple, Optional
 
 import torch
 from torch import Tensor, LongTensor
@@ -38,7 +38,7 @@ class DynEdgeTITO(GNN):
         self,
         nb_inputs: int,
         features_subset: slice = slice(0, 4),
-        layer_size_scale: int = 3,
+        dyntrans_layer_sizes: Optional[List[Tuple[int, ...]]] = None,
         global_pooling_schemes: List[str] = ["max"],
     ):
         """Construct `DynEdge`.
@@ -48,14 +48,27 @@ class DynEdgeTITO(GNN):
             features_subset: The subset of latent features on each node that
                 are used as metric dimensions when performing the k-nearest
                 neighbours clustering. Defaults to [0,1,2,3].
-            layer_size_scale: Integer that scales the size of hidden layers.
+            dyntrans_layer_sizes: The layer sizes, or latent feature dimenions,
+                used in the `DynTrans` layer.
             global_pooling_schemes: The list global pooling schemes to use.
                 Options are: "min", "max", "mean", and "sum".
         """
         # DynEdge layer sizes
-        dyntrans_layer_sizes = [
-            (256, 256) for layer in range(layer_size_scale)
-        ]
+        if dyntrans_layer_sizes is None:
+            dyntrans_layer_sizes = [
+                (
+                    256,
+                    256,
+                ),
+                (
+                    256,
+                    256,
+                ),
+                (
+                    256,
+                    256,
+                )
+            ]
 
         assert isinstance(dyntrans_layer_sizes, list)
         assert len(dyntrans_layer_sizes)
