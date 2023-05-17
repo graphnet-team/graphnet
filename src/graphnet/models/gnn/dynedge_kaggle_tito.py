@@ -67,7 +67,7 @@ class DynEdgeTITO(GNN):
                 (
                     256,
                     256,
-                )
+                ),
             ]
 
         assert isinstance(dyntrans_layer_sizes, list)
