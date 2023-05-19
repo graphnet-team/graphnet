@@ -3,3 +3,4 @@
 from .convnet import ConvNet
 from .dynedge import DynEdge
 from .dynedge_jinst import DynEdgeJINST
+from .node_rnn import Node_RNN
