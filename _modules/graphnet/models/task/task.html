@@ -582,16 +582,40 @@
 <span class="w">    </span><span class="sd">"""Identity, or trivial, task."""</span>
 
     <span class="nd">@save_model_config</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_outputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nb_outputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">target_labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct IdentityTask.</span>
 
 <span class="sd">        Return the `nb_outputs` as a direct, affine transformation of the last</span>
 <span class="sd">        hidden layer.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span> <span class="o">=</span> <span class="n">nb_outputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_target_labels</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">target_labels</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_labels</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="k">else</span> <span class="p">[</span><span class="n">target_labels</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">"target_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_pred"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_target_labels</span><span class="p">))</span>
+        <span class="p">]</span>
 
-        <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Base class constructor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">default_target_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return default target labels."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_target_labels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">default_prediction_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return default prediction labels."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_prediction_labels</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>

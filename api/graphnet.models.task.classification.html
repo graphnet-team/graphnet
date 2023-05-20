@@ -583,7 +583,7 @@
 <p>Classification-specific <cite>Model</cite> class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.MulticlassClassificationTask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">MulticlassClassificationTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_outputs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#MulticlassClassificationTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.MulticlassClassificationTask" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">MulticlassClassificationTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_labels</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#MulticlassClassificationTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.MulticlassClassificationTask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.IdentityTask" title="graphnet.models.task.task.IdentityTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdentityTask</span></code></a></p>
 <p>General task for classifying any number of classes.</p>
 <p>Requires the same number of input features as the number of classes being
@@ -596,6 +596,7 @@ hidden layer.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nb_outputs</strong> (<em>int</em>) – </p></li>
+<li><p><strong>target_labels</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>Any</em>) – </p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
