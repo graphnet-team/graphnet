@@ -129,7 +129,7 @@ def main(
         train_dataloaders,
         valid_dataloaders,
         callbacks=callbacks,
-        logger=wandb_logger,
+        logger=wandb_logger if wandb else None,
         **config.fit,
     )
 
