@@ -380,8 +380,11 @@
             <span class="s2">"hlc"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"awtd"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"fadc"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"string"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"pmt_number"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"dom_number"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"dom_type"</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
-
         <span class="c1"># Get OM data</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
             <span class="n">om_keys</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_om_keys_and_pulseseries</span><span class="p">(</span>
@@ -422,6 +425,11 @@
                 <span class="n">frame</span><span class="p">,</span> <span class="n">om_key</span><span class="p">,</span> <span class="n">padding_value</span>
             <span class="p">)</span>
 
+            <span class="n">string</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dom_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pmt_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">dom_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">omtype</span>
+
             <span class="c1"># DOM flags</span>
             <span class="k">if</span> <span class="n">bright_doms</span><span class="p">:</span>
                 <span class="n">is_bright_dom</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">om_key</span> <span class="ow">in</span> <span class="n">bright_doms</span> <span class="k">else</span> <span class="mi">0</span>
@@ -458,6 +466,11 @@
                 <span class="n">output</span><span class="p">[</span><span class="s2">"dom_x"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"dom_y"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"dom_z"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+                <span class="c1"># ID's</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">"string"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">"pmt_number"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_number</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">"dom_number"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_number</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">"dom_type"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_type</span><span class="p">)</span>
                 <span class="c1"># DOM flags</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"is_bright_dom"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_bright_dom</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"is_bad_dom"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_bad_dom</span><span class="p">)</span>
@@ -512,13 +525,9 @@
 <span class="sd">                in pure-python format.</span>
 <span class="sd">        """</span>
         <span class="n">output</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">"string"</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">"pmt_number"</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">"dom_number"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"pmt_dir_x"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"pmt_dir_y"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"pmt_dir_z"</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">"dom_type"</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
 
         <span class="c1"># Add features from IceCube86</span>
@@ -541,21 +550,13 @@
             <span class="n">pmt_dir_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">x</span>
             <span class="n">pmt_dir_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">y</span>
             <span class="n">pmt_dir_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">z</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">dom_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">pmt_number</span> <span class="o">=</span> <span class="n">om_key</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">dom_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">omtype</span>
 
             <span class="c1"># Loop over pulses for each OM</span>
             <span class="n">pulses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pulses</span><span class="p">:</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">"string"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">"pmt_number"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_number</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">"dom_number"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_number</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"pmt_dir_x"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_x</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"pmt_dir_y"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_y</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"pmt_dir_z"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmt_dir_z</span><span class="p">)</span>
-                <span class="n">output</span><span class="p">[</span><span class="s2">"dom_type"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dom_type</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">output</span></div>
 
