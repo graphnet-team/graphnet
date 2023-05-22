@@ -196,6 +196,9 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
                 `"10000 random events ~ event_no % 5 > 0"` or `"20% random
                 events ~ event_no % 5 > 0"`).
         """
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
+
         # Check(s)
         if isinstance(pulsemaps, str):
             pulsemaps = [pulsemaps]
@@ -263,9 +266,6 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
             index_column=index_column,
             seed=seed,
         )
-
-        # Base class constructor
-        super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Implementation-specific initialisation.
         self._init()
