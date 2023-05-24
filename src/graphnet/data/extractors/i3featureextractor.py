@@ -63,8 +63,11 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "hlc": [],
             "awtd": [],
             "fadc": [],
+            "string": [],
+            "pmt_number": [],
+            "dom_number": [],
+            "dom_type": [],
         }
-
         # Get OM data
         if self._pulsemap in frame:
             om_keys, data = get_om_keys_and_pulseseries(
@@ -105,6 +108,11 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 frame, om_key, padding_value
             )
 
+            string = om_key[0]
+            dom_number = om_key[1]
+            pmt_number = om_key[2]
+            dom_type = self._gcd_dict[om_key].omtype
+
             # DOM flags
             if bright_doms:
                 is_bright_dom = 1 if om_key in bright_doms else 0
@@ -141,6 +149,11 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output["dom_x"].append(x)
                 output["dom_y"].append(y)
                 output["dom_z"].append(z)
+                # ID's
+                output["string"].append(string)
+                output["pmt_number"].append(pmt_number)
+                output["dom_number"].append(dom_number)
+                output["dom_type"].append(dom_type)
                 # DOM flags
                 output["is_bright_dom"].append(is_bright_dom)
                 output["is_bad_dom"].append(is_bad_dom)
@@ -195,13 +208,9 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
                 in pure-python format.
         """
         output: Dict[str, List[Any]] = {
-            "string": [],
-            "pmt_number": [],
-            "dom_number": [],
             "pmt_dir_x": [],
             "pmt_dir_y": [],
             "pmt_dir_z": [],
-            "dom_type": [],
         }
 
         # Add features from IceCube86
@@ -224,21 +233,13 @@ class I3FeatureExtractorIceCubeUpgrade(I3FeatureExtractorIceCube86):
             pmt_dir_x = self._gcd_dict[om_key].orientation.x
             pmt_dir_y = self._gcd_dict[om_key].orientation.y
             pmt_dir_z = self._gcd_dict[om_key].orientation.z
-            string = om_key[0]
-            dom_number = om_key[1]
-            pmt_number = om_key[2]
-            dom_type = self._gcd_dict[om_key].omtype
 
             # Loop over pulses for each OM
             pulses = data[om_key]
             for _ in pulses:
-                output["string"].append(string)
-                output["pmt_number"].append(pmt_number)
-                output["dom_number"].append(dom_number)
                 output["pmt_dir_x"].append(pmt_dir_x)
                 output["pmt_dir_y"].append(pmt_dir_y)
                 output["pmt_dir_z"].append(pmt_dir_z)
-                output["dom_type"].append(dom_type)
 
         return output
 
