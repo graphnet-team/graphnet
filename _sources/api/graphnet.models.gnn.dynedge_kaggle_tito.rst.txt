@@ -1,0 +1,8 @@
+
+dynedge\_kaggle\_tito
+=====================
+
+.. automodule:: graphnet.models.gnn.dynedge_kaggle_tito
+   :members:
+   :undoc-members:
+   :show-inheritance:

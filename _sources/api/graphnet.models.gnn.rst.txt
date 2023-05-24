@@ -18,6 +18,7 @@ gnn
    graphnet.models.gnn.convnet
    graphnet.models.gnn.dynedge
    graphnet.models.gnn.dynedge_jinst
+   graphnet.models.gnn.dynedge_kaggle_tito
    graphnet.models.gnn.gnn
 
 
