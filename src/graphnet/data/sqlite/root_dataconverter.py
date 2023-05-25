@@ -157,7 +157,7 @@ class rootSQLiteDataConverter(ABC, Logger):
 
         # Process individual files
         data = list(
-            map(self._extract_data, tqdm(files))
+            map(self._extract_data, files)
         )
 
         # Save batched data
@@ -209,7 +209,7 @@ class rootSQLiteDataConverter(ABC, Logger):
 
         saved_any = False
 
-        for file in tqdm(data):
+        for file in data:
             if self._remove_empty_events:
                 file = self.remove_empty_events(file)
 
