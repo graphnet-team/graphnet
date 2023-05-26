@@ -490,6 +490,7 @@
             <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_particle_interaction_type_and_elasticity</span><span class="p">(</span>
                 <span class="n">frame</span><span class="p">,</span> <span class="n">sim_type</span>
             <span class="p">)</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="p">(</span>
                     <span class="n">energy_track</span><span class="p">,</span>
@@ -733,20 +734,18 @@
         <span class="c1"># @TODO: Rewrite to automatically infer `mc` from `input_file`?</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mc</span><span class="p">:</span>
             <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"data"</span>
+        <span class="k">elif</span> <span class="s2">"muon"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"muongun"</span>
+        <span class="k">elif</span> <span class="s2">"corsika"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"corsika"</span>
+        <span class="k">elif</span> <span class="s2">"genie"</span> <span class="ow">in</span> <span class="n">input_file</span> <span class="ow">or</span> <span class="s2">"nu"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"genie"</span>
+        <span class="k">elif</span> <span class="s2">"noise"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"noise"</span>
+        <span class="k">elif</span> <span class="s2">"L2"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>  <span class="c1"># not robust</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"dbang"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"NuGen"</span>
-        <span class="k">if</span> <span class="s2">"muon"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"muongun"</span>
-        <span class="k">if</span> <span class="s2">"corsika"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"corsika"</span>
-        <span class="k">if</span> <span class="s2">"genie"</span> <span class="ow">in</span> <span class="n">input_file</span> <span class="ow">or</span> <span class="s2">"nu"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"genie"</span>
-        <span class="k">if</span> <span class="s2">"noise"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"noise"</span>
-        <span class="k">if</span> <span class="s2">"L2"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>  <span class="c1"># not robust</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"dbang"</span>
-        <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">"lol"</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"SIM TYPE NOT FOUND!"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sim_type</span></div>
 </pre></div>
 
