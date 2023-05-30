@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, List, Union, Dict, Tuple
 import dill
 import numpy as np
 import torch
-from torch_geometric.data import Data
+from torch_geometric.data import Data, Batch
 
 from graphnet.data.extractors import (
     I3FeatureExtractor,
@@ -89,11 +89,15 @@ class GraphNeTI3Module:
             ),  # @TODO: Necessary?
             features=self._features,
         )
+        # Additionally add original features as (static) attributes
+        for index, feature in enumerate(data.features):
+            if feature not in ["x"]:
+                data[feature] = data.x[:, index].detach()
         # @TODO: This sort of hard-coding is not ideal; all features should be
         #        captured by `FEATURES` and included in the output of
         #        `I3FeatureExtractor`.
         data.n_pulses = n_pulses
-        return data
+        return Batch.from_data_list([data])
 
     def _extract_feature_array_from_frame(self, frame: I3Frame) -> np.array:
         """Apply the I3FeatureExtractors to the I3Frame.
