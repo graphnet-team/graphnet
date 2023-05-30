@@ -107,6 +107,7 @@ class DataConverter(ABC, Logger):
         workers: int = 1,
         index_column: str = "event_no",
         icetray_verbose: int = 0,
+        I3filters: List[str] = [],
     ):
         """Construct DataConverter.
 
@@ -166,6 +167,7 @@ class DataConverter(ABC, Logger):
         self._sequential_batch_pattern = sequential_batch_pattern
         self._input_file_batch_pattern = input_file_batch_pattern
         self._workers = workers
+        self._I3filters = I3filters
 
         # Create I3Extractors
         self._extractors = I3ExtractorCollection(*extractors)
@@ -435,6 +437,8 @@ class DataConverter(ABC, Logger):
                     continue
             if self._skip_frame(frame):
                 continue
+            if self._filter_mask(frame, self._I3filters):
+                continue
 
             # Try to extract data from I3Frame
             results = self._extractors(frame)
@@ -565,4 +569,18 @@ class DataConverter(ABC, Logger):
         """
         if frame["I3EventHeader"].sub_event_stream == "NullSplit":
             return True
+        return False
+
+    def _filter_mask(
+        self, frame: "icetray.I3Frame", I3filters: List[str]
+    ) -> bool:
+        """Check if specified condition(s) are met.
+
+        Args:
+            frame: I3Frame to check.
+            I3filters: List of I3Filters to check for pass.
+        """
+        for filter in I3filters:
+            if frame["FilterMask"][filter].condition_passed is False:
+                return True
         return False
