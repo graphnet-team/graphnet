@@ -39,6 +39,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",
+        inference_strategy: Optional[str] = "auto",
         **trainer_kwargs: Any,
     ) -> None:
 
@@ -70,7 +71,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
             devices=inference_devices,
             callbacks=callbacks,
             logger=logger,
-            strategy=None,
+            strategy=inference_strategy,
             **trainer_kwargs,
         )
 
@@ -157,7 +158,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
         self,
         dataloader: DataLoader,
         gpus: Optional[Union[List[int], int]] = None,
-        distribution_strategy: Optional[str] = None,
+        distribution_strategy: Optional[str] = "auto",
     ) -> List[Tensor]:
         """Return predictions for `dataloader`.
 
@@ -195,7 +196,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
         additional_attributes: Optional[List[str]] = None,
         index_column: str = "event_no",
         gpus: Optional[Union[List[int], int]] = None,
-        distribution_strategy: Optional[str] = None,
+        distribution_strategy: Optional[str] = "auto",
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
