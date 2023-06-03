@@ -47,12 +47,12 @@ EXTRAS_REQUIRE = {
         "versioneer",
     ],
     "torch": [
-        "torch>=1.11",
+        "torch>=2.0",
         "torch-cluster>=1.6",
         "torch-scatter>=2.0",
         "torch-sparse>=0.6",
         "torch-geometric>=2.0",
-        "pytorch-lightning>=1.6, <2.0",
+        "pytorch-lightning>=2.0",
     ],
 }
 
