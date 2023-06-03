@@ -48,7 +48,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
             devices = gpus
         else:
             accelerator = "cpu"
-            devices = None
+            devices = 1
 
         self._trainer = Trainer(
             accelerator=accelerator,
