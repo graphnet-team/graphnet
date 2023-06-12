@@ -47,6 +47,7 @@ class DatasetConfig(BaseConfig):
     loss_weight_default_value: Optional[float] = None
 
     seed: Optional[int] = None
+    timeseries: Optional[bool] = None
 
     def __init__(self, **data: Any) -> None:
         """Construct `DataConfig`.

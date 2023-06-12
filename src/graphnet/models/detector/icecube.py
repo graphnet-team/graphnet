@@ -71,6 +71,72 @@ class IceCubeKaggle(Detector):
         return data
 
 
+class IceCube86RNN(Detector):
+    """`Detector` class for IceCube-86 with a time-series data input."""
+
+    features = FEATURES.ICECUBE86[:5]
+
+    def _forward(self, data: Data) -> Data:
+        """Ingest data, build graph, and preprocess features.
+
+        Args:
+            data: Input graph data.
+
+        Returns:
+            Connected and preprocessed time-series graph data.
+        """
+        self._validate_features(data)
+
+        data.x[:, 0] /= 500.0  # dom_x
+        data.x[:, 1] /= 500.0  # dom_y
+        data.x[:, 2] /= 500.0  # dom_z
+        data.x[:, 3] = (data.x[:, 3] - 1.0e04) / 3.0e4  # dom_time
+        data.x[:, 4] = torch.log10(data.x[:, 4]) / 3.0  # charge
+
+        data.time_series[0] /= torch.tensor(
+            [500.0, 500.0, 500.0, 1.0, 1.0], device=data.x.device
+        )
+        data.time_series[0][:, 3] = (
+            data.time_series[0][:, 3] - 1.0e04
+        ) / 3.0e4
+        data.time_series[0][:, 4] = (
+            torch.log10(data.time_series[0][:, 4]) / 3.0
+        )
+
+        data.time_series[0] = torch.tensor_split(
+            data.time_series[0], (data.n_pulses.cumsum(0)[:-1]).cpu()
+        )
+
+        data.time_series[1] = torch.tensor_split(
+            data.time_series[1],
+            (
+                torch.argwhere(
+                    torch.gt(data.time_series[1][1:], data.time_series[1][:-1])
+                ).flatten()
+                + 1
+            ).cpu(),
+        )
+
+        time_series = []
+        for sequence, batch_sizes, sorted_indices, unsorted_indices in zip(
+            data.time_series[0],
+            data.time_series[1],
+            data.time_series[2],
+            data.time_series[3],
+        ):
+            time_series.append(
+                torch.nn.utils.rnn.PackedSequence(
+                    data=sequence,
+                    batch_sizes=batch_sizes.cpu(),
+                    sorted_indices=sorted_indices,
+                    unsorted_indices=unsorted_indices,
+                )
+            )
+
+        data.time_series = time_series
+        return data
+
+
 class IceCubeDeepCore(IceCube86):
     """`Detector` class for IceCube-DeepCore."""
 
