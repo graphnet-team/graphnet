@@ -59,7 +59,7 @@ class RNN_DynEdge(GNN):
         )
         if readout_layer_sizes is None:
             readout_layer_sizes = [
-                128,
+                512,
             ]
         self._readout_layer_sizes = readout_layer_sizes
 

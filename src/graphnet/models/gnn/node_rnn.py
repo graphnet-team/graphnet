@@ -54,28 +54,15 @@ class Node_RNN(GNN):
 
     def forward(self, data: Data) -> torch.Tensor:
         """Apply learnable forward pass to the GNN."""
-        x, batch = data.x, data.batch
+        rnn_out = []
+        for b_uniq in data.batch.unique():
+            rnn_out.append(
+                self._rnn(data.time_series[b_uniq])[-1][0]
+            )  # apply rnn layer
+        # x = self._rnn(x)[-1][0]  # apply rnn layer
+        rnn_out = torch.cat(rnn_out)
 
-        x = append_dom_id(x, batch, device=self.device)  # add dom id to data
-        x, batch = DOM_to_time_series(
-            x, batch
-        )  # create time series for each dom
-        x, xyztt = DOM_time_series_to_pack_sequence(
-            x, device=self.device
-        )  # pack time series into pack sequence
-        x = self._rnn(x)[-1][0]  # apply rnn layer
-
-        x = torch.hstack(
-            [xyztt, x]
+        data.x = torch.hstack(
+            [data.x, rnn_out]
         )  # reintroduce x/y/z-coordinates and time of first/mean activation for each DOM
-
-        batch, sort_index = batch.sort()
-        data.x = x[sort_index]
-        data.batch = batch
-        edge_index = knn_graph_ignore(
-            x=data.x,
-            k=self._nb_neighbours,
-            batch=data.batch,
-        ).to(self.device)
-        data.edge_index = edge_index
         return data
