@@ -29,8 +29,8 @@ class Model(Logger, Configurable, LightningModule, ABC):
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
 
-    def _construct_trainers(
-        self,
+    @staticmethod
+    def _construct_trainer(
         max_epochs: int = 10,
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
@@ -39,9 +39,8 @@ class Model(Logger, Configurable, LightningModule, ABC):
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",
-        inference_strategy: Optional[str] = "auto",
         **trainer_kwargs: Any,
-    ) -> None:
+    ) -> Trainer:
 
         if gpus:
             accelerator = "gpu"
@@ -50,7 +49,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
             accelerator = "cpu"
             devices = 1
 
-        self._trainer = Trainer(
+        trainer = Trainer(
             accelerator=accelerator,
             devices=devices,
             max_epochs=max_epochs,
@@ -59,21 +58,11 @@ class Model(Logger, Configurable, LightningModule, ABC):
             logger=logger,
             gradient_clip_val=gradient_clip_val,
             strategy=distribution_strategy,
+            default_root_dir=ckpt_path,
             **trainer_kwargs,
         )
 
-        inference_devices = devices
-        if isinstance(inference_devices, list):
-            inference_devices = inference_devices[:1]
-
-        self._inference_trainer = Trainer(
-            accelerator=accelerator,
-            devices=inference_devices,
-            callbacks=callbacks,
-            logger=logger,
-            strategy=inference_strategy,
-            **trainer_kwargs,
-        )
+        return trainer
 
     def fit(
         self,
@@ -102,7 +91,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
             )
 
         self.train(mode=True)
-        self._construct_trainers(
+        trainer = self._construct_trainer(
             max_epochs=max_epochs,
             gpus=gpus,
             callbacks=callbacks,
@@ -115,7 +104,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
         )
 
         try:
-            self._trainer.fit(
+            trainer.fit(
                 self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
             )
         except KeyboardInterrupt:
@@ -166,17 +155,17 @@ class Model(Logger, Configurable, LightningModule, ABC):
         """
         self.train(mode=False)
 
-        if not hasattr(self, "_inference_trainer"):
-            self._construct_trainers(
-                gpus=gpus, distribution_strategy=distribution_strategy
-            )
-        elif gpus is not None:
-            self.warning(
-                "A `Trainer` instance has already been constructed, possibly "
-                "when the model was trained. Will use this to get predictions. "
-                f"Argument `gpus = {gpus}` will be ignored."
-            )
-        predictions_list = self._inference_trainer.predict(self, dataloader)
+        callbacks = self._create_default_callbacks(
+            val_dataloader=None,
+        )
+
+        inference_trainer = self._construct_trainer(
+            gpus=gpus,
+            distribution_strategy=distribution_strategy,
+            callbacks=callbacks,
+        )
+
+        predictions_list = inference_trainer.predict(self, dataloader)
         assert len(predictions_list), "Got no predictions"
 
         nb_outputs = len(predictions_list[0])
