@@ -591,12 +591,6 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
             add_these_to_graph.append(node_truth_dict)
         for write_dict in add_these_to_graph:
             for key, value in write_dict.items():
-                if value is None:
-                    self.debug(
-                        f"Could not assign `{key}` with type 'None' "
-                        f"as attribute to graph."
-                    )
-                    continue
                 try:
                     graph[key] = torch.tensor(value)
                 except TypeError:
