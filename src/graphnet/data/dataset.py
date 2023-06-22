@@ -593,16 +593,19 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
             for key, value in write_dict.items():
                 try:
                     graph[key] = torch.tensor(value)
-                except TypeError:
-                    # Cannot convert `value` to Tensor due to its data type,
-                    # e.g. `str`.
-                    self.debug(
-                        (
-                            f"Could not assign `{key}` with type "
-                            f"'{type(value).__name__}' as attribute to graph."
+                except (TypeError, RuntimeError) as error:
+                    if isinstance(error, TypeError) or (value is None):
+                        # Cannot convert `value` to Tensor due to its data type,
+                        # e.g. `str`.
+                        self.warning(
+                            (
+                                f"Could not assign `{key}` with type "
+                                f"'{type(value).__name__ if value is not None else 'NoneType'}' as attribute to graph of "
+                                f"event with {self._index_column} == {labels_dict[self._index_column]}"
+                            )
                         )
-                    )
-
+                    else:
+                        raise error
         # Additionally add original features as (static) attributes
         for index, feature in enumerate(graph.features):
             if feature not in ["x"]:
