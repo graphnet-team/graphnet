@@ -80,7 +80,7 @@ setup(
     name="graphnet",
     version=versioneer.get_version(),
     description=(
-        "A common library for using graph neural networks (GNNs) in netrino "
+        "A common library for using graph neural networks (GNNs) in neutrino "
         "telescope experiments."
     ),
     license="Apache 2.0",
