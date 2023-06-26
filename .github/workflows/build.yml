@@ -46,8 +46,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Upgrade packages already installed on icecube/icetray
         run: |
+          python --version
           pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
           pip install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
+          pip install --upgrade psutil # lets see..
       - name: Install package
         uses: ./.github/actions/install
         with:
