@@ -439,12 +439,12 @@
 <span class="sd">        lightning is to overwrite the progress bar from previous epochs.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_progress_bar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_epoch_start</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_progress_bar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">"Epoch </span><span class="si">{</span><span class="n">trainer</span><span class="o">.</span><span class="n">current_epoch</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
@@ -466,7 +466,7 @@
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">)</span>
             <span class="n">level</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">level</span>
             <span class="n">h</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">main_progress_bar</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">train_progress_bar</span><span class="p">))</span>
             <span class="n">h</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></div></div>
 </pre></div>
 
