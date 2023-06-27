@@ -228,3 +228,24 @@ class GraphDefinition(Model):
         for key, fn in custom_label_functions.items():
             graph[key] = fn(graph)
         return graph
+
+
+class KNNGraph(GraphDefinition):
+    """A graph with K-NN Edges."""
+
+    def __init__(
+        self, columns: List[int] = [0, 1, 2], nb_nearest_neighbours: int = 8
+    ):
+        """Construct ´KNNGraph´.
+
+        Args:
+            columns: Node feature dimensions used for K-NN computation.
+            Defaults to [0, 1, 2].
+            nb_nearest_neighbours: Number of neighbours for each node.
+            Defaults to 8.
+        """
+        super().__init__(
+            edge_definition=KNNEdges(
+                nb_nearest_neighbours=nb_nearest_neighbours, columns=columns
+            )
+        )
