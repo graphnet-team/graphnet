@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch_geometric.data import Data
 
-from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
+from .sqlite_dataset import SQLiteDataset
 
 
 class SQLiteDatasetPerturbed(SQLiteDataset):
