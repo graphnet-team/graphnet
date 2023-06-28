@@ -1,6 +1,7 @@
 """Prometheus-specific `Detector` class(es)."""
 
-from torch_geometric.data import Data
+from typing import Dict, Callable
+import torch
 
 from graphnet.models.detector.detector import Detector
 
@@ -10,25 +11,21 @@ class Prometheus(Detector):
 
     features = ["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t"]
 
-    def _forward(self, data: Data) -> Data:
-        """Ingest data, build graph, and preprocess features.
+    def feature_map(self) -> Dict[str, Callable]:
+        """Map standardization functions to each dimension."""
+        feature_map = {
+            "sensor_pos_x": self._sensor_pos_xy,
+            "sensor_pos_y": self._sensor_pos_xy,
+            "sensor_pos_z": self._sensor_pos_z,
+            "t": self._t,
+        }
+        return feature_map
 
-        Args:
-            data: Input graph data.
+    def _sensor_pos_xy(self, x: torch.tensor) -> torch.tensor:
+        return x / 100
 
-        Returns:
-            Connected and preprocessed graph data.
-        """
-        # Check(s)
-        self._validate_features(data)
+    def _sensor_pos_z(self, x: torch.tensor) -> torch.tensor:
+        return (x + 350) / 100
 
-        # Preprocessing
-        data.x[:, 0] /= 100.0  # dom_x
-        data.x[:, 1] /= 100.0  # dom_y
-        data.x[:, 2] += 350.0  # dom_z
-        data.x[:, 2] /= 100.0
-        data.x[:, 3] /= 1.05e04  # dom_time
-        data.x[:, 3] -= 1.0
-        data.x[:, 3] *= 20.0
-
-        return data
+    def _t(self, x: torch.tensor) -> torch.tensor:
+        return ((x / 1.05e04) - 1.0) * 20.0
