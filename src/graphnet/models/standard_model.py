@@ -102,10 +102,6 @@ class StandardModel(Model):
         if self._coarsening:
             data = self._coarsening(data)
         assert isinstance(data, Data)
-        if data.graph_definition != self._graph_definition.__class__.__name__:
-            self.warn(
-                f"Model expects {self._graph_definition.__class__.__name__} but is given {data.graph_definition}"
-            )
         x = self._gnn(data)
         preds = [task(x) for task in self._tasks]
         return preds

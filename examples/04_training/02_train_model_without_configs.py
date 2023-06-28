@@ -13,7 +13,8 @@ from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdge
-from graphnet.models.graph_builders import KNNGraphBuilder
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
 from graphnet.training.loss_functions import LogCoshLoss
@@ -77,11 +78,19 @@ def main(
         # Log configuration to W&B
         wandb_logger.experiment.config.update(config)
 
+    # Define graph representation
+    graph_definition = KNNGraph(
+        detector=Prometheus(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+    )
+
     (
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
         config["path"],
+        graph_definition,
         None,
         config["pulsemap"],
         features,
@@ -92,11 +101,9 @@ def main(
     )
 
     # Building model
-    detector = Prometheus(
-        graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
-    )
+
     gnn = DynEdge(
-        nb_inputs=detector.nb_outputs,
+        nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = EnergyReconstruction(
@@ -106,7 +113,7 @@ def main(
         transform_prediction_and_target=torch.log10,
     )
     model = StandardModel(
-        detector=detector,
+        graph_definition=graph_definition,
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,

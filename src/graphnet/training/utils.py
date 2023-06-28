@@ -16,6 +16,7 @@ from graphnet.data.dataset import SQLiteDataset
 from graphnet.data.dataset import ParquetDataset
 from graphnet.models import Model
 from graphnet.utilities.logging import Logger
+from graphnet.models.graphs import GraphDefinition
 
 
 def collate_fn(graphs: List[Data]) -> Batch:
@@ -31,6 +32,7 @@ def collate_fn(graphs: List[Data]) -> Batch:
 def make_dataloader(
     db: str,
     pulsemaps: Union[str, List[str]],
+    graph_definition: Optional[GraphDefinition],
     features: List[str],
     truth: List[str],
     *,
@@ -66,6 +68,7 @@ def make_dataloader(
         loss_weight_table=loss_weight_table,
         loss_weight_column=loss_weight_column,
         index_column=index_column,
+        graph_definition=graph_definition,
     )
 
     # adds custom labels to dataset
@@ -89,6 +92,7 @@ def make_dataloader(
 # @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_train_validation_dataloader(
     db: str,
+    graph_definition: Optional[GraphDefinition],
     selection: Optional[List[int]],
     pulsemaps: Union[str, List[str]],
     features: List[str],
@@ -179,6 +183,7 @@ def make_train_validation_dataloader(
         loss_weight_table=loss_weight_table,
         index_column=index_column,
         labels=labels,
+        graph_definition=graph_definition,
     )
 
     training_dataloader = make_dataloader(
