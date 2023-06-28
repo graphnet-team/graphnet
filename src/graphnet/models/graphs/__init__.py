@@ -6,4 +6,4 @@ and their features.
 """
 
 
-from .graph import GraphDefinition
+from .graph_definition import GraphDefinition

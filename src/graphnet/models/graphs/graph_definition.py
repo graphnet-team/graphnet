@@ -6,19 +6,15 @@ passed to dataloaders during training and deployment.
 """
 
 
-from typing import Tuple, Any, List, Optional, Union, Dict, Callable
-from abc import abstractmethod, ABC
+from typing import Any, List, Optional, Dict, Callable
 import torch
 from torch_geometric.data import Data
 import numpy as np
 
-from graphnet.utilities.config import Configurable
-from graphnet.utilities.config import (
-    save_model_config,
-)  # .graph_config import save_graph_config, GraphConfig
-from graphnet.utilities.logging import Logger
+from graphnet.utilities.config import save_model_config
+
 from graphnet.models.detector import Detector
-from .edges import EdgeDefinition, KNNEdges
+from .edges import EdgeDefinition
 from .nodes import NodeDefinition
 from graphnet.models import Model
 
