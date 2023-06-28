@@ -33,7 +33,7 @@ class GraphDefinition(Model):
         node_definition: NodeDefinition,
         edge_definition: Optional[EdgeDefinition] = None,
         node_feature_names: Optional[List[str]] = None,
-        dtype: torch.dtype = None,  # torch.float,
+        dtype: Optional[torch.dtype] = None,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -62,6 +62,8 @@ class GraphDefinition(Model):
             # Assume all features in Detector is used.
             node_feature_names = list(self._detector.feature_map().keys())  # type: ignore
         self._node_feature_names = node_feature_names
+        if dtype is None:
+            dtype = torch.float
         self._dtype = dtype
 
         # Set Input / Output dimensions
