@@ -11,7 +11,6 @@ from graphnet.models.components.pool import (
 )
 from graphnet.data.constants import FEATURES
 from graphnet.models.detector.detector import Detector
-from graphnet.utilities.config import save_model_config
 
 
 class IceCube86(Detector):
