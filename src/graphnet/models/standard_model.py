@@ -12,7 +12,7 @@ import pandas as pd
 
 from graphnet.models.coarsening import Coarsening
 from graphnet.utilities.config import save_model_config
-from graphnet.models.detector.detector import Detector
+from graphnet.models.graphs import GraphDefinition
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.model import Model
 from graphnet.models.task import Task
@@ -29,7 +29,7 @@ class StandardModel(Model):
     def __init__(
         self,
         *,
-        detector: Detector,
+        graph_definition: GraphDefinition,
         gnn: GNN,
         tasks: Union[Task, List[Task]],
         coarsening: Optional[Coarsening] = None,
@@ -48,12 +48,12 @@ class StandardModel(Model):
             tasks = [tasks]
         assert isinstance(tasks, (list, tuple))
         assert all(isinstance(task, Task) for task in tasks)
-        assert isinstance(detector, Detector)
+        assert isinstance(graph_definition, GraphDefinition)
         assert isinstance(gnn, GNN)
         assert coarsening is None or isinstance(coarsening, Coarsening)
 
         # Member variable(s)
-        self._detector = detector
+        self._graph_definition = graph_definition
         self._gnn = gnn
         self._tasks = ModuleList(tasks)
         self._coarsening = coarsening
@@ -101,7 +101,11 @@ class StandardModel(Model):
         """Forward pass, chaining model components."""
         if self._coarsening:
             data = self._coarsening(data)
-        data = self._detector(data)
+        assert isinstance(data, Data)
+        if data.graph_definition != self._graph_definition.__class__.__name__:
+            self.warn(
+                f"Model expects {self._graph_definition.__class__.__name__} but is given {data.graph_definition}"
+            )
         x = self._gnn(data)
         preds = [task(x) for task in self._tasks]
         return preds
