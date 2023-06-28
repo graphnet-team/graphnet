@@ -1,7 +1,7 @@
 """Class(es) for building/connecting graphs."""
 
 from typing import List
-from ABC import abstractmethod
+from abc import abstractmethod, ABC
 
 import torch
 from torch_geometric.nn import knn_graph, radius_graph
