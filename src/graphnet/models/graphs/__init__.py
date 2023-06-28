@@ -7,3 +7,4 @@ and their features.
 
 
 from .graph_definition import GraphDefinition
+from .graphs import KNNGraph
