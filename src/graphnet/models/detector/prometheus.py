@@ -9,8 +9,6 @@ from graphnet.models.detector.detector import Detector
 class Prometheus(Detector):
     """`Detector` class for Prometheus prototype."""
 
-    features = ["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t"]
-
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
         feature_map = {
