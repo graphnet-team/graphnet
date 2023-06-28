@@ -12,8 +12,8 @@ from torch.utils.data import DataLoader
 from torch_geometric.data import Batch, Data
 
 from graphnet.data.dataset import Dataset
-from graphnet.data.dataset.sqlite import SQLiteDataset
-from graphnet.data.dataset.parquet import ParquetDataset
+from graphnet.data.dataset import SQLiteDataset
+from graphnet.data.dataset import ParquetDataset
 from graphnet.models import Model
 from graphnet.utilities.logging import Logger
 
