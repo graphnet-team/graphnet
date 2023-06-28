@@ -7,15 +7,20 @@ passed to dataloaders during training and deployment.
 
 
 from typing import Tuple, Any, List, Optional, Union, Dict, Callable
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 import torch
 from torch_geometric.data import Data
 import numpy as np
 
-from graphnet.utilities.config import save_model_config
+from graphnet.utilities.config import Configurable
+from graphnet.utilities.config import (
+    save_model_config,
+)  # .graph_config import save_graph_config, GraphConfig
+from graphnet.utilities.logging import Logger
 from graphnet.models.detector import Detector
+from .edges import EdgeDefinition, KNNEdges
+from .nodes import NodeDefinition
 from graphnet.models import Model
-from graphnet.models.graphs import EdgeDefinition, KNNEdges
 
 
 class GraphDefinition(Model):
@@ -25,46 +30,53 @@ class GraphDefinition(Model):
     def __init__(
         self,
         detector: Detector,
-        edge_definition: EdgeDefinition,
+        node_definition: NodeDefinition,
+        edge_definition: Optional[EdgeDefinition] = None,
+        node_feature_names: Optional[List[str]] = None,
+        dtype: torch.dtype = None,  # torch.float,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
         ´Detector´-specific code. E.g. scaling/standardization and geometry
         tables.
 
-        ´edge_definition´ defines the connectivity of the graph.
+        ´node_definition´ defines the nodes in the graph.
+
+        ´edge_definition´ defines the connectivity of the nodes in the graph.
 
         Args:
             detector: The corresponding ´Detector´ representing the data.
-            Defaults to None.
-            edge_definition: Your choice in edges. Defaults to None.
+            node_definition: Definition of nodes.
+            edge_definition: Definition of edges. Defaults to None.
+            node_feature_names: Names of node feature columns. Defaults to None
+            dtype: data type used for node features. e.g. ´torch.float´
         """
-        # Member Variables
-        self._detector = detector
-        self._edge_definiton = edge_definition
-
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
-    @abstractmethod
-    def _create_graph(self, x: np.array) -> Data:
-        """Problem/model specific graph definition.
+        # Member Variables
+        self._detector = detector
+        self._edge_definiton = edge_definition
+        self._node_definition = node_definition
+        if node_feature_names is None:
+            # Assume all features in Detector is used.
+            node_feature_names = list(self._detector.feature_map().keys())  # type: ignore
+        self._node_feature_names = node_feature_names
+        self._dtype = dtype
 
-        Should not standardize/scale data. May assign edges.
+        # Set Input / Output dimensions
+        self._node_definition.set_number_of_inputs(
+            node_feature_names=node_feature_names
+        )
+        self.nb_inputs = len(self._node_feature_names)
+        self.nb_outputs = self._node_definition.nb_outputs
 
-        Args:
-            x: node features for a single event
-
-        Returns:
-            Data object (a single graph)
-        """
-
-    def __call__(
+    def forward(  # type: ignore
         self,
-        node_features: List[Tuple[float, ...]],
+        node_features: np.array,
         node_feature_names: List[str],
-        truth_dicts: List[Dict[str, Any]],
-        custom_label_functions: Dict[str, Callable[..., Any]],
+        truth_dicts: Optional[List[Dict[str, Any]]] = None,
+        custom_label_functions: Optional[Dict[str, Callable[..., Any]]] = None,
         loss_weight_column: Optional[str] = None,
         loss_weight: Optional[float] = None,
         loss_weight_default_value: Optional[float] = None,
@@ -85,11 +97,19 @@ class GraphDefinition(Model):
         Returns:
             graph
         """
+        # Checks
+        self._validate_input(
+            node_features=node_features, node_feature_names=node_feature_names
+        )
+
+        # Transform to pytorch tensor
+        node_features = torch.tensor(node_features, dtype=self._dtype)
+
         # Standardize / Scale  node features
         node_features = self._detector(node_features, node_feature_names)
 
         # Create graph
-        graph = self._create_graph(node_features)
+        graph = self._node_definition(node_features)
 
         # Attach number of pulses as static attribute.
         graph.n_pulses = torch.tensor(len(node_features), dtype=torch.int32)
@@ -115,12 +135,14 @@ class GraphDefinition(Model):
         )
 
         # Attach default truth labels and node truths
-        graph = self._add_truth(graph=graph, truth_dicts=truth_dicts)
+        if truth_dicts is not None:
+            graph = self._add_truth(graph=graph, truth_dicts=truth_dicts)
 
         # Attach custom truth labels
-        graph = self._add_custom_labels(
-            graph=graph, custom_label_functions=custom_label_functions
-        )
+        if custom_label_functions is not None:
+            graph = self._add_custom_labels(
+                graph=graph, custom_label_functions=custom_label_functions
+            )
 
         # Attach node features as seperate fields. MAY NOT CONTAIN 'x'
         graph = self._add_features_individually(
@@ -128,6 +150,23 @@ class GraphDefinition(Model):
         )
 
         return graph
+
+    def _validate_input(
+        self, node_features: np.array, node_feature_names: List[str]
+    ) -> None:
+
+        # node feature matrix dimension check
+        assert node_features.shape[1] == len(node_feature_names)
+
+        # check that provided features for input is the same that the ´Graph´
+        # was instantiated with.
+        assert len(node_feature_names) == len(
+            self._node_feature_names
+        ), f"""Input features ({node_feature_names}) is not what {self.__class__.__name__} was instatiated with ({self._node_feature_names})"""
+        for idx in range(len(node_feature_names)):
+            assert (
+                node_feature_names[idx] == self._node_feature_names[idx]
+            ), """ Order of node features are not the same."""
 
     def _add_loss_weights(
         self,
@@ -228,24 +267,3 @@ class GraphDefinition(Model):
         for key, fn in custom_label_functions.items():
             graph[key] = fn(graph)
         return graph
-
-
-class KNNGraph(GraphDefinition):
-    """A graph with K-NN Edges."""
-
-    def __init__(
-        self, columns: List[int] = [0, 1, 2], nb_nearest_neighbours: int = 8
-    ):
-        """Construct ´KNNGraph´.
-
-        Args:
-            columns: Node feature dimensions used for K-NN computation.
-            Defaults to [0, 1, 2].
-            nb_nearest_neighbours: Number of neighbours for each node.
-            Defaults to 8.
-        """
-        super().__init__(
-            edge_definition=KNNEdges(
-                nb_nearest_neighbours=nb_nearest_neighbours, columns=columns
-            )
-        )

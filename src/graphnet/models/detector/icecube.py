@@ -1,5 +1,6 @@
 """IceCube-specific `Detector` class(es)."""
 
+from typing import Dict, Callable
 import torch
 from torch_geometric.data import Data
 
@@ -10,13 +11,14 @@ from graphnet.models.components.pool import (
 )
 from graphnet.data.constants import FEATURES
 from graphnet.models.detector.detector import Detector
+from graphnet.utilities.config import save_model_config
 
 
 class IceCube86(Detector):
     """`Detector` class for IceCube-86."""
 
-    def __init__(self) -> None:
-        """Construct `Detector`."""
+    def feature_map(self) -> Dict[str, Callable]:
+        """Map standardization functions to each dimension."""
         feature_map = {
             "dom_x": self._dom_xyz,
             "dom_y": self._dom_xyz,
@@ -26,10 +28,7 @@ class IceCube86(Detector):
             "rde": self._rde,
             "pmt_area": self._pmt_area,
         }
-        # Base class constructor
-        super().__init__(
-            feature_map=feature_map,
-        )
+        return feature_map
 
     def _dom_xyz(self, x: torch.tensor) -> torch.tensor:
         return x / 500.0
