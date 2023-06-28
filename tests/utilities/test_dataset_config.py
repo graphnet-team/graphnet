@@ -13,8 +13,8 @@ import graphnet
 import graphnet.constants
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.dataset import Dataset
-from graphnet.data.parquet import ParquetDataset
-from graphnet.data.sqlite import SQLiteDataset
+from graphnet.data.dataset import ParquetDataset
+from graphnet.data.dataset import SQLiteDataset
 from graphnet.utilities.config import DatasetConfig
 
 CONFIG_PATHS = {
