@@ -305,7 +305,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         """Set internal representation needed to read data from input file."""
 
     def _post_init(self) -> None:
-        """Implemenation-specific code to be run after the main constructor."""
+        """Implementation-specific code to be run after the main constructor."""
 
     @abstractmethod
     def _get_all_indices(self) -> List[int]:
@@ -315,7 +315,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     def _get_event_index(
         self, sequential_index: Optional[int]
     ) -> Optional[int]:
-        """Return a the event index corresponding to a `sequential_index`."""
+        """Return the event index corresponding to a `sequential_index`."""
 
     @abstractmethod
     def query_table(
