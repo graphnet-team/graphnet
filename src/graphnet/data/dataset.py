@@ -305,7 +305,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         """Set internal representation needed to read data from input file."""
 
     def _post_init(self) -> None:
-        """Implemenation-specific code to be run after the main constructor."""
+        """Implementation-specific code executed after the main constructor."""
 
     @abstractmethod
     def _get_all_indices(self) -> List[int]:
@@ -315,7 +315,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     def _get_event_index(
         self, sequential_index: Optional[int]
     ) -> Optional[int]:
-        """Return a the event index corresponding to a `sequential_index`."""
+        """Return the event index corresponding to a `sequential_index`."""
 
     @abstractmethod
     def query_table(
@@ -382,7 +382,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     def _resolve_string_selection_to_indices(
         self, selection: str
     ) -> List[int]:
-        """Resolve selection as string to list of indicies.
+        """Resolve selection as string to list of indices.
 
         Selections are expected to have pandas.DataFrame.query-compatible
         syntax, e.g., ``` "event_no % 5 > 0" ``` Selections may also specify a
@@ -462,7 +462,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     ]:
         """Query file for event features and truth information.
 
-        The returned lists have lengths correspondings to the number of pulses
+        The returned lists have lengths corresponding to the number of pulses
         in the event. Their constituent tuples have lengths corresponding to
         the number of features/attributes in each output
 
@@ -521,7 +521,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     ) -> Data:
         """Create Pytorch Data (i.e. graph) object.
 
-        No preprocessing is performed at this stage, just as no node adjancency
+        No preprocessing is performed at this stage, just as no node adjacency
         is imposed. This means that the `edge_attr` and `edge_weight`
         attributes are not set.
 
