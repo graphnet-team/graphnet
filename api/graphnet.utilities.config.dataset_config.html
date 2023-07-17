@@ -396,6 +396,10 @@
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.loss_weight_default_value" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">loss_weight_default_value</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.seed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">seed</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_config</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_fields</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -506,6 +510,20 @@
     
     
       <a href="#graphnet.utilities.config.dataset_config.DatasetConfig.seed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">seed</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_config</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_fields</span></code></a>
       
     
     </li></ul>
@@ -641,6 +659,10 @@
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.loss_weight_default_value" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">loss_weight_default_value</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.seed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">seed</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_config</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_fields</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -812,6 +834,14 @@ construction more transparent and reproducible.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.seed">
 <span class="sig-name descname"><span class="pre">seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.seed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'features':</span> <span class="pre">FieldInfo(annotation=List[str],</span> <span class="pre">required=True),</span> <span class="pre">'index_column':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='event_no'),</span> <span class="pre">'loss_weight_column':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'loss_weight_default_value':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'loss_weight_table':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'node_truth':</span> <span class="pre">FieldInfo(annotation=Union[List[str],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'node_truth_table':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'path':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">List[str]],</span> <span class="pre">required=True),</span> <span class="pre">'pulsemaps':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">List[str]],</span> <span class="pre">required=True),</span> <span class="pre">'seed':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'selection':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">List[str],</span> <span class="pre">List[Union[int,</span> <span class="pre">List[int]]],</span> <span class="pre">Dict[str,</span> <span class="pre">Union[str,</span> <span class="pre">List[str]]],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'string_selection':</span> <span class="pre">FieldInfo(annotation=Union[List[int],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'truth':</span> <span class="pre">FieldInfo(annotation=List[str],</span> <span class="pre">required=True),</span> <span class="pre">'truth_table':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='truth')}</span></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 </dd></dl>
 <dl class="py function">

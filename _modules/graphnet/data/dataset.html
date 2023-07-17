@@ -621,7 +621,7 @@
 <span class="w">        </span><span class="sd">"""Set internal representation needed to read data from input file."""</span>
 
     <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Implemenation-specific code to be run after the main constructor."""</span>
+<span class="w">        </span><span class="sd">"""Implementation-specific code executed after the main constructor."""</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_get_all_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
@@ -631,7 +631,7 @@
     <span class="k">def</span> <span class="nf">_get_event_index</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Return a the event index corresponding to a `sequential_index`."""</span>
+<span class="w">        </span><span class="sd">"""Return the event index corresponding to a `sequential_index`."""</span>
 
 <div class="viewcode-block" id="Dataset.query_table"><a class="viewcode-back" href="../../../api/graphnet.data.dataset.html#graphnet.data.dataset.Dataset.query_table">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">query_table</span><span class="p">(</span>
@@ -698,7 +698,7 @@
     <span class="k">def</span> <span class="nf">_resolve_string_selection_to_indices</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Resolve selection as string to list of indicies.</span>
+<span class="w">        </span><span class="sd">"""Resolve selection as string to list of indices.</span>
 
 <span class="sd">        Selections are expected to have pandas.DataFrame.query-compatible</span>
 <span class="sd">        syntax, e.g., ``` "event_no % 5 &gt; 0" ``` Selections may also specify a</span>
@@ -778,7 +778,7 @@
     <span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Query file for event features and truth information.</span>
 
-<span class="sd">        The returned lists have lengths correspondings to the number of pulses</span>
+<span class="sd">        The returned lists have lengths corresponding to the number of pulses</span>
 <span class="sd">        in the event. Their constituent tuples have lengths corresponding to</span>
 <span class="sd">        the number of features/attributes in each output</span>
 
@@ -837,7 +837,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Create Pytorch Data (i.e. graph) object.</span>
 
-<span class="sd">        No preprocessing is performed at this stage, just as no node adjancency</span>
+<span class="sd">        No preprocessing is performed at this stage, just as no node adjacency</span>
 <span class="sd">        is imposed. This means that the `edge_attr` and `edge_weight`</span>
 <span class="sd">        attributes are not set.</span>
 
