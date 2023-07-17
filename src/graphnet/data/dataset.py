@@ -305,7 +305,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         """Set internal representation needed to read data from input file."""
 
     def _post_init(self) -> None:
-        """Implementation-specific code to be run after the main constructor."""
+        """Implementation-specific code executed after the main constructor."""
 
     @abstractmethod
     def _get_all_indices(self) -> List[int]:
