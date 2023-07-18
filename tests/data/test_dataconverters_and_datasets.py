@@ -154,6 +154,7 @@ def test_dataset(backend: str) -> None:
         assert event.x.size(dim=0) == expected_number_of_pulses
         assert event.x.size(dim=0) == event.n_pulses
         assert event.x.size(dim=1) == len(event.features)
+        assert isinstance(opt["features"], list), print(opt["features"])
         assert len(event.features) == len(opt["features"])
 
 
@@ -188,6 +189,7 @@ def test_datasetquery_table(backend: str) -> None:
 
     # Compare to expectations
     nb_events_to_test = 5
+    assert isinstance(opt["features"], list), print(opt["features"])
     results_all = dataset.query_table(
         pulsemap,
         columns=["event_no", opt["features"][0]],
