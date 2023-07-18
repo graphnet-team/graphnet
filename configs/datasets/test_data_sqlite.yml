@@ -1,26 +1,34 @@
-path: $GRAPHNET/data/tests/sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db
-pulsemaps:
-  - SRTInIcePulses
-features:
-  - dom_x
-  - dom_y
-  - dom_z
-  - dom_time
-  - charge
-  - rde
-  - pmt_area
-truth:
-  - energy
-  - position_x
-  - position_y
-  - position_z
-  - azimuth
-  - zenith
-  - pid
-  - elasticity
-  - sim_type
-  - interaction_type
+features: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+graph_definition:
+  arguments:
+    columns: [0, 1, 2]
+    detector:
+      arguments: {}
+      class_name: Prometheus
+    dtype: null
+    nb_nearest_neighbours: 8
+    node_definition:
+      arguments: {}
+      class_name: NodesAsPulses
+    node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+  class_name: KNNGraph
 index_column: event_no
-truth_table: truth
-seed: 21
+loss_weight_column: null
+loss_weight_default_value: null
+loss_weight_table: null
+node_truth: null
+node_truth_table: null
+path: /home/iwsatlas1/oersoe/github/graphnet/data/examples/sqlite/prometheus/prometheus-events.db
+pulsemaps: total
+seed: null
 selection: null
+string_selection: null
+truth: [injection_energy, injection_type, injection_interaction_type, injection_zenith,
+  injection_azimuth, injection_bjorkenx, injection_bjorkeny, injection_position_x,
+  injection_position_y, injection_position_z, injection_column_depth, primary_lepton_1_type,
+  primary_hadron_1_type, primary_lepton_1_position_x, primary_lepton_1_position_y,
+  primary_lepton_1_position_z, primary_hadron_1_position_x, primary_hadron_1_position_y,
+  primary_hadron_1_position_z, primary_lepton_1_direction_theta, primary_lepton_1_direction_phi,
+  primary_hadron_1_direction_theta, primary_hadron_1_direction_phi, primary_lepton_1_energy,
+  primary_hadron_1_energy, total_energy]
+truth_table: mc_truth

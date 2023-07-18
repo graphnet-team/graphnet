@@ -133,7 +133,7 @@ class ModelConfig(BaseConfig):
             fn_kwargs={"trust": trust},
         )
 
-        # Construct model based on arguments
+        # Construct model based on
         return namespace_classes[self.class_name](**arguments)
 
     @classmethod

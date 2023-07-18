@@ -1,14 +1,4 @@
 arguments:
-  coarsening: null
-  detector:
-    ModelConfig:
-      arguments:
-        graph_builder:
-          ModelConfig:
-            arguments: {columns: null, nb_nearest_neighbours: 8}
-            class_name: KNNGraphBuilder
-        scalers: null
-      class_name: Prometheus
   gnn:
     ModelConfig:
       arguments:
@@ -21,11 +11,29 @@ arguments:
         post_processing_layer_sizes: null
         readout_layer_sizes: null
       class_name: DynEdge
+  graph_definition:
+    ModelConfig:
+      arguments:
+        columns: [0, 1, 2]
+        detector:
+          ModelConfig:
+            arguments: {}
+            class_name: Prometheus
+        dtype: null
+        nb_nearest_neighbours: 8
+        node_definition:
+          ModelConfig:
+            arguments: {}
+            class_name: NodesAsPulses
+        node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+      class_name: KNNGraph
   optimizer_class: '!class torch.optim.adam Adam'
-  optimizer_kwargs: {eps: 0.001, lr: 1e-05}
-  scheduler_class: '!class torch.optim.lr_scheduler ReduceLROnPlateau'
-  scheduler_config: {frequency: 1, monitor: val_loss}
-  scheduler_kwargs: {patience: 5}
+  optimizer_kwargs: {eps: 0.001, lr: 0.001}
+  scheduler_class: '!class graphnet.training.callbacks PiecewiseLinearLR'
+  scheduler_config: {interval: step}
+  scheduler_kwargs:
+    factors: [0.01, 1, 0.01]
+    milestones: [0, 20.0, 80]
   tasks:
   - ModelConfig:
       arguments:
@@ -35,8 +43,9 @@ arguments:
             arguments: {}
             class_name: LogCoshLoss
         loss_weight: null
+        prediction_labels: null
         target_labels: total_energy
-        transform_inference: null
+        transform_inference: '!lambda x: torch.pow(10,x)'
         transform_prediction_and_target: '!lambda x: torch.log10(x)'
         transform_support: null
         transform_target: null
