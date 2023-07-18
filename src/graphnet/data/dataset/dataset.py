@@ -12,6 +12,7 @@ from typing import (
     Tuple,
     Union,
     Iterable,
+    Type,
 )
 
 import numpy as np
@@ -29,10 +30,55 @@ from graphnet.utilities.config import (
     save_dataset_config,
 )
 from graphnet.utilities.logging import Logger
+from graphnet.models.graphs import GraphDefinition
+
+from graphnet.utilities.config.parsing import (
+    get_all_grapnet_classes,
+)
 
 
 class ColumnMissingException(Exception):
     """Exception to indicate a missing column in a dataset."""
+
+
+def load_module(class_name: str) -> Type:
+    """Load graphnet module from string name.
+
+    Args:
+        class_name: name of class
+
+    Returns:
+        graphnet module.
+    """
+    # Get a lookup for all classes in `graphnet`
+    import graphnet.data
+    import graphnet.models
+    import graphnet.training
+
+    namespace_classes = get_all_grapnet_classes(
+        graphnet.data, graphnet.models, graphnet.training
+    )
+    return namespace_classes[class_name]
+
+
+def parse_graph_definition(cfg: dict) -> GraphDefinition:
+    """Construct GraphDefinition from DatasetConfig."""
+    assert cfg["graph_definition"] is not None
+
+    args = cfg["graph_definition"]["arguments"]
+    classes = {}
+    for arg in args.keys():
+        if isinstance(args[arg], dict):
+            if "class_name" in args[arg].keys():
+                classes[arg] = load_module(args[arg]["class_name"])(
+                    **args[arg]["arguments"]
+                )
+    new_cfg = deepcopy(args)
+    new_cfg.update(classes)
+    graph_definition = load_module(cfg["graph_definition"]["class_name"])(
+        **new_cfg
+    )
+    return graph_definition
 
 
 class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
@@ -55,8 +101,12 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
 
         assert isinstance(source, DatasetConfig), (
             f"Argument `source` of type ({type(source)}) is not a "
-            "`DatasetConfig"
+            "`DatasetConfig`"
         )
+
+        assert (
+            "graph_definition" in source.dict().keys()
+        ), "`DatasetConfig` incompatible with current GraphNeT version."
 
         # Parse set of `selection``.
         if isinstance(source.selection, dict):
@@ -68,7 +118,10 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         ):
             return cls._construct_dataset_from_list_of_strings(source)
 
-        return source._dataset_class(**source.dict())
+        cfg = source.dict()
+        if cfg["graph_definition"] is not None:
+            cfg["graph_definition"] = parse_graph_definition(cfg)
+        return source._dataset_class(**cfg)
 
     @classmethod
     def concatenate(
@@ -135,6 +188,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     def __init__(
         self,
         path: Union[str, List[str]],
+        graph_definition: GraphDefinition,
         pulsemaps: Union[str, List[str]],
         features: List[str],
         truth: List[str],
@@ -195,6 +249,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
                 subset of events when resolving a string-based selection (e.g.,
                 `"10000 random events ~ event_no % 5 > 0"` or `"20% random
                 events ~ event_no % 5 > 0"`).
+            graph_definition: Method that defines the graph representation.
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -218,6 +273,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         self._index_column = index_column
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
+        self._graph_definition = graph_definition
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
@@ -521,10 +577,6 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     ) -> Data:
         """Create Pytorch Data (i.e. graph) object.
 
-        No preprocessing is performed at this stage, just as no node adjancency
-        is imposed. This means that the `edge_attr` and `edge_weight`
-        attributes are not set.
-
         Args:
             features: List of tuples, containing event features.
             truth: List of tuples, containing truth information.
@@ -552,71 +604,33 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
                 for index, key in enumerate(self._node_truth)
             }
 
+        # Create list of truth dicts with labels
+        truth_dicts = [labels_dict, truth_dict]
+        if node_truth is not None:
+            truth_dicts.append(node_truth_dict)
+
         # Catch cases with no reconstructed pulses
         if len(features):
-            data = np.asarray(features)[:, 1:]
+            node_features = np.asarray(features)[
+                :, 1:
+            ]  # first entry is index column
         else:
-            data = np.array([]).reshape((0, len(self._features) - 1))
+            node_features = np.array([]).reshape((0, len(self._features) - 1))
 
         # Construct graph data object
-        x = torch.tensor(data, dtype=self._dtype)  # pylint: disable=C0103
-        n_pulses = torch.tensor(len(x), dtype=torch.int32)
-        graph = Data(x=x, edge_index=None)
-        graph.n_pulses = n_pulses
-        graph.features = self._features[1:]
-
-        # Add loss weight to graph.
-        if loss_weight is not None and self._loss_weight_column is not None:
-            # No loss weight was retrieved, i.e., it is missing for the current
-            # event.
-            if loss_weight < 0:
-                if self._loss_weight_default_value is None:
-                    raise ValueError(
-                        "At least one event is missing an entry in "
-                        f"{self._loss_weight_column} "
-                        "but loss_weight_default_value is None."
-                    )
-                graph[self._loss_weight_column] = torch.tensor(
-                    self._loss_weight_default_value, dtype=self._dtype
-                ).reshape(-1, 1)
-            else:
-                graph[self._loss_weight_column] = torch.tensor(
-                    loss_weight, dtype=self._dtype
-                ).reshape(-1, 1)
-
-        # Write attributes, either target labels, truth info or original
-        # features.
-        add_these_to_graph = [labels_dict, truth_dict]
-        if node_truth is not None:
-            add_these_to_graph.append(node_truth_dict)
-        for write_dict in add_these_to_graph:
-            for key, value in write_dict.items():
-                try:
-                    graph[key] = torch.tensor(value)
-                except (TypeError, RuntimeError) as error:
-                    if isinstance(error, TypeError) or (value is None):
-                        # Cannot convert `value` to Tensor due to its data type,
-                        # e.g. `str`.
-                        self.warning(
-                            (
-                                f"Could not assign `{key}` with type "
-                                f"'{type(value).__name__ if value is not None else 'NoneType'}' as attribute to graph of "
-                                f"event with {self._index_column} == {labels_dict[self._index_column]}"
-                            )
-                        )
-                    else:
-                        raise error
-        # Additionally add original features as (static) attributes
-        for index, feature in enumerate(graph.features):
-            if feature not in ["x"]:
-                graph[feature] = graph.x[:, index].detach()
-
-        # Add custom labels to the graph
-        for key, fn in self._label_fns.items():
-            graph[key] = fn(graph)
-
-        # Add Dataset Path. Useful if multiple datasets are concatenated.
-        graph["dataset_path"] = self._path
+        assert self._graph_definition is not None
+        graph = self._graph_definition(
+            node_features=node_features,
+            node_feature_names=self._features[
+                1:
+            ],  # first entry is index column
+            truth_dicts=truth_dicts,
+            custom_label_functions=self._label_fns,
+            loss_weight_column=self._loss_weight_column,
+            loss_weight=loss_weight,
+            loss_weight_default_value=self._loss_weight_default_value,
+            data_path=self._path,
+        )
         return graph
 
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
