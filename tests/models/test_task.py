@@ -3,20 +3,25 @@
 import pytest
 import torch
 
+from graphnet.data.constants import FEATURES
 from graphnet.models.detector.icecube import IceCube86
-from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.gnn import DynEdge
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.loss_functions import LogCoshLoss
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.graphs.nodes import NodesAsPulses
 
 
 def test_transform_prediction_and_target() -> None:
     """Test implementation of `transform_*` arguments to `Task`."""
-    detector = IceCube86(
-        graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
+    graph_definition = KNNGraph(
+        detector=IceCube86(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=FEATURES.DEEPCORE,
     )
     gnn = DynEdge(
-        nb_inputs=detector.nb_outputs,
+        nb_inputs=graph_definition.nb_outputs,
     )
 
     # Test not inverse functions
