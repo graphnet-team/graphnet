@@ -126,7 +126,6 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
         "scheduler_class",
         "scheduler_kwargs",
         "scheduler_config",
-        "detector",
         "gnn",
     ]:
         assert (
