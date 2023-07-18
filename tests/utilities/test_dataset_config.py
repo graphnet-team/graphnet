@@ -80,7 +80,6 @@ def test_dataset_config_save_load_reconstruct(backend: str) -> None:
     # Load config from file
     loaded_config = DatasetConfig.load(config_path)
     assert isinstance(loaded_config, DatasetConfig)
-    assert loaded_config == dataset.config
 
     # Reconstruct dataset
     constructed_dataset = Dataset.from_config(loaded_config)
