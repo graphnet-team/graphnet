@@ -16,8 +16,9 @@ from graphnet.data.extractors import (
     I3TruthExtractor,
     I3RetroExtractor,
 )
-from graphnet.data.parquet import ParquetDataset, ParquetDataConverter
-from graphnet.data.sqlite import SQLiteDataset, SQLiteDataConverter
+from graphnet.data.parquet import ParquetDataConverter
+from graphnet.data.dataset import ParquetDataset, SQLiteDataset
+from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.data.sqlite.sqlite_dataconverter import is_pulse_map
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
 from graphnet.utilities.imports import has_icecube_package
