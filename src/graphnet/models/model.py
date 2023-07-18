@@ -26,7 +26,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
     """Base class for all models in graphnet."""
 
     @abstractmethod
-    def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:  # type: ignore
+    def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
 
     @staticmethod

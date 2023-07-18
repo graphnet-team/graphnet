@@ -26,7 +26,7 @@ class Detector(Model):
         """List of features used/assumed by inheriting `Detector` objects."""
 
     @final
-    def forward(
+    def forward(  # type: ignore
         self, node_features: torch.tensor, node_feature_names: List[str]
     ) -> Data:
         """Pre-process graph `Data` features and build graph adjacency."""
