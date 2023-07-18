@@ -1,14 +1,20 @@
 arguments:
-  coarsening: null
-  detector:
+  graph_definition:
     ModelConfig:
       arguments:
-        graph_builder:
+        columns: [0, 1, 2]
+        detector:
           ModelConfig:
-            arguments: {columns: null, nb_nearest_neighbours: 8}
-            class_name: KNNGraphBuilder
-        scalers: null
-      class_name: Prometheus
+            arguments: {}
+            class_name: Prometheus
+        dtype: null
+        nb_nearest_neighbours: 8
+        node_definition:
+          ModelConfig:
+            arguments: {}
+            class_name: NodesAsPulses
+        node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+      class_name: KNNGraph
   gnn:
     ModelConfig:
       arguments:
