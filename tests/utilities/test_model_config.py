@@ -10,9 +10,11 @@ from graphnet.models import StandardModel, Model
 from graphnet.utilities.config import ModelConfig
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.gnn import DynEdge
-from graphnet.models.graph_builders import KNNGraphBuilder
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.loss_functions import LogCoshLoss
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.graphs.nodes import NodesAsPulses
+from graphnet.data.constants import FEATURES
 
 
 def test_simple_model_config(path: str = "/tmp/simple_model.yml") -> None:
@@ -43,10 +45,12 @@ def test_simple_model_config(path: str = "/tmp/simple_model.yml") -> None:
 def test_nested_model_config(path: str = "/tmp/nested_model.yml") -> None:
     """Test saving, loading, and reconstructing nested model."""
     # Construct nested Model
-    model = IceCubeDeepCore(
-        graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
+    model = KNNGraph(
+        detector=IceCubeDeepCore(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=FEATURES.DEEPCORE,
     )
-
     # Save config to file
     model.save_config(path)
     assert os.path.exists(path)
@@ -65,11 +69,14 @@ def test_nested_model_config(path: str = "/tmp/nested_model.yml") -> None:
 def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
     """Test saving, loading, and reconstructing nested model."""
     # Construct StandardModel
-    detector = IceCubeDeepCore(
-        graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
+    graph_definition = KNNGraph(
+        detector=IceCubeDeepCore(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=FEATURES.DEEPCORE,
     )
     gnn = DynEdge(
-        nb_inputs=detector.nb_outputs,
+        nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = EnergyReconstruction(
@@ -79,7 +86,7 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
         transform_prediction_and_target=lambda x: torch.log10(x),
     )
     model = StandardModel(
-        detector=detector,
+        graph_definition=graph_definition,
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,
