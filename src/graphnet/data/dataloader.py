@@ -34,6 +34,7 @@ class DataLoader(torch.utils.data.DataLoader):
         num_workers: int = 10,
         persistent_workers: bool = True,
         collate_fn: Callable = collate_fn,
+        prefetch_factor: int = 2,
         **kwargs: Any,
     ) -> None:
         """Construct `DataLoader`."""
@@ -45,7 +46,7 @@ class DataLoader(torch.utils.data.DataLoader):
             num_workers=num_workers,
             collate_fn=collate_fn,
             persistent_workers=persistent_workers,
-            prefetch_factor=2,
+            prefetch_factor=prefetch_factor,
             **kwargs,
         )
 

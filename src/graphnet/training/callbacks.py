@@ -123,12 +123,12 @@ class ProgressBar(TQDMProgressBar):
         lightning is to overwrite the progress bar from previous epochs.
         """
         if trainer.current_epoch > 0:
-            self.main_progress_bar.set_postfix(
+            self.train_progress_bar.set_postfix(
                 self.get_metrics(trainer, model)
             )
             print("")
         super().on_train_epoch_start(trainer, model)
-        self.main_progress_bar.set_description(
+        self.train_progress_bar.set_description(
             f"Epoch {trainer.current_epoch:2d}"
         )
 
@@ -150,5 +150,5 @@ class ProgressBar(TQDMProgressBar):
             assert isinstance(h, logging.StreamHandler)
             level = h.level
             h.setLevel(logging.ERROR)
-            logger.info(str(super().main_progress_bar))
+            logger.info(str(super().train_progress_bar))
             h.setLevel(level)
