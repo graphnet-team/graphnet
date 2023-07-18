@@ -1,5 +1,6 @@
 """IceCube-specific `Detector` class(es)."""
 
+from typing import Dict, Callable
 import torch
 from torch_geometric.data import Data
 
@@ -15,32 +16,33 @@ from graphnet.models.detector.detector import Detector
 class IceCube86(Detector):
     """`Detector` class for IceCube-86."""
 
-    # Implementing abstract class attribute
-    features = FEATURES.ICECUBE86
+    def feature_map(self) -> Dict[str, Callable]:
+        """Map standardization functions to each dimension."""
+        feature_map = {
+            "dom_x": self._dom_xyz,
+            "dom_y": self._dom_xyz,
+            "dom_z": self._dom_xyz,
+            "dom_time": self._dom_time,
+            "charge": self._charge,
+            "rde": self._rde,
+            "pmt_area": self._pmt_area,
+        }
+        return feature_map
 
-    def _forward(self, data: Data) -> Data:
-        """Ingest data, build graph, and preprocess features.
+    def _dom_xyz(self, x: torch.tensor) -> torch.tensor:
+        return x / 500.0
 
-        Args:
-            data: Input graph data.
+    def _dom_time(self, x: torch.tensor) -> torch.tensor:
+        return x - 1.0e04 / 3.0e4
 
-        Returns:
-            Connected and preprocessed graph data.
-        """
-        # Check(s)
-        self._validate_features(data)
+    def _charge(self, x: torch.tensor) -> torch.tensor:
+        return torch.log10(x)
 
-        # Preprocessing
-        data.x[:, 0] /= 500.0  # dom_x
-        data.x[:, 1] /= 500.0  # dom_y
-        data.x[:, 2] /= 500.0  # dom_z
-        data.x[:, 3] = (data.x[:, 3] - 1.0e04) / 3.0e4  # dom_time
-        data.x[:, 4] = torch.log10(data.x[:, 4]) / 3.0  # charge
-        data.x[:, 5] -= 1.25  # rde
-        data.x[:, 5] /= 0.25
-        data.x[:, 6] /= 0.05  # pmt_area
+    def _rde(self, x: torch.tensor) -> torch.tensor:
+        return (x - 1.25) / 0.25
 
-        return data
+    def _pmt_area(self, x: torch.tensor) -> torch.tensor:
+        return x / 0.05
 
 
 class IceCubeKaggle(Detector):
