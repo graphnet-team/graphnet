@@ -16,11 +16,22 @@ from graphnet.data.dataset import Dataset
 from graphnet.data.dataset import ParquetDataset
 from graphnet.data.dataset import SQLiteDataset
 from graphnet.utilities.config import DatasetConfig
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.detector.icecube import IceCubeDeepCore
+from graphnet.models.graphs.nodes import NodesAsPulses
+
 
 CONFIG_PATHS = {
     "parquet": "/tmp/test_dataset_parquet.yml",
     "sqlite": "/tmp/test_dataset_sqlite.yml",
 }
+
+graph_definition = KNNGraph(
+    detector=IceCubeDeepCore(),
+    node_definition=NodesAsPulses(),
+    nb_nearest_neighbours=8,
+    node_feature_names=FEATURES.DEEPCORE,
+)
 
 
 @pytest.mark.order(1)
@@ -50,6 +61,7 @@ def test_dataset_config_save_load_reconstruct(backend: str) -> None:
         features=FEATURES.DEEPCORE,
         truth=TRUTH.DEEPCORE,
         selection="event_no % 5 > 0",
+        graph_definition=graph_definition,
     )
 
     if backend == "sqlite":
