@@ -83,21 +83,22 @@ def main(
         detector=Prometheus(),
         node_definition=NodesAsPulses(),
         nb_nearest_neighbours=8,
+        node_feature_names=features,
     )
 
     (
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
-        config["path"],
-        graph_definition,
-        None,
-        config["pulsemap"],
-        features,
-        truth,
+        db=config["path"],
+        graph_definition=graph_definition,
+        pulsemaps=config["pulsemap"],
+        features=features,
+        truth=truth,
         batch_size=config["batch_size"],
         num_workers=config["num_workers"],
         truth_table=truth_table,
+        selection=None,
     )
 
     # Building model
@@ -110,7 +111,8 @@ def main(
         hidden_size=gnn.nb_outputs,
         target_labels=config["target"],
         loss_function=LogCoshLoss(),
-        transform_prediction_and_target=torch.log10,
+        transform_prediction_and_target=lambda x: torch.log10(x),
+        transform_inference=lambda x: torch.pow(10, x),
     )
     model = StandardModel(
         graph_definition=graph_definition,

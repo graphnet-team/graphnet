@@ -2,6 +2,7 @@
 
 from functools import wraps
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -14,6 +15,12 @@ from graphnet.utilities.config.base_config import (
     BaseConfig,
     get_all_argument_values,
 )
+from graphnet.utilities.config.parsing import traverse_and_apply
+from .model_config import ModelConfig
+
+if TYPE_CHECKING:
+    from graphnet.models import Model
+
 
 BACKEND_LOOKUP = {
     "db": "sqlite",
@@ -45,8 +52,8 @@ class DatasetConfig(BaseConfig):
     loss_weight_table: Optional[str] = None
     loss_weight_column: Optional[str] = None
     loss_weight_default_value: Optional[float] = None
-
     seed: Optional[int] = None
+    graph_definition: Any = None
 
     def __init__(self, **data: Any) -> None:
         """Construct `DataConfig`.
@@ -139,8 +146,8 @@ class DatasetConfig(BaseConfig):
     @property
     def _dataset_class(self) -> type:
         """Return the `Dataset` class implementation for this configuration."""
-        from graphnet.data.sqlite import SQLiteDataset
-        from graphnet.data.parquet import ParquetDataset
+        from graphnet.data.dataset.sqlite import SQLiteDataset
+        from graphnet.data.dataset.parquet import ParquetDataset
 
         dataset_class = {
             "sqlite": SQLiteDataset,
@@ -153,6 +160,17 @@ class DatasetConfig(BaseConfig):
 def save_dataset_config(init_fn: Callable) -> Callable:
     """Save the arguments to `__init__` functions as member `DatasetConfig`."""
 
+    def _replace_model_instance_with_config(
+        obj: Union["Model", Any]
+    ) -> Union[ModelConfig, Any]:
+        """Replace `Model` instances in `obj` with their `ModelConfig`."""
+        from graphnet.models import Model
+
+        if isinstance(obj, Model):
+            return obj.config
+        else:
+            return obj
+
     @wraps(init_fn)
     def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
         """Set `DatasetConfig` after calling `init_fn`."""
@@ -161,6 +179,9 @@ def save_dataset_config(init_fn: Callable) -> Callable:
 
         # Get all argument values, including defaults
         cfg = get_all_argument_values(init_fn, *args, **kwargs)
+
+        # Handle nested `Model`s, etc.
+        cfg = traverse_and_apply(cfg, _replace_model_instance_with_config)
 
         # Add `DatasetConfig` as member variables
         self._config = DatasetConfig(**cfg)
