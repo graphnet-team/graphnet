@@ -13,7 +13,8 @@ from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdge
-from graphnet.models.graph_builders import KNNGraphBuilder
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
 from graphnet.training.loss_functions import LogCoshLoss
@@ -77,36 +78,44 @@ def main(
         # Log configuration to W&B
         wandb_logger.experiment.config.update(config)
 
+    # Define graph representation
+    graph_definition = KNNGraph(
+        detector=Prometheus(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=features,
+    )
+
     (
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
-        config["path"],
-        None,
-        config["pulsemap"],
-        features,
-        truth,
+        db=config["path"],
+        graph_definition=graph_definition,
+        pulsemaps=config["pulsemap"],
+        features=features,
+        truth=truth,
         batch_size=config["batch_size"],
         num_workers=config["num_workers"],
         truth_table=truth_table,
+        selection=None,
     )
 
     # Building model
-    detector = Prometheus(
-        graph_builder=KNNGraphBuilder(nb_nearest_neighbours=8),
-    )
+
     gnn = DynEdge(
-        nb_inputs=detector.nb_outputs,
+        nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = EnergyReconstruction(
         hidden_size=gnn.nb_outputs,
         target_labels=config["target"],
         loss_function=LogCoshLoss(),
-        transform_prediction_and_target=torch.log10,
+        transform_prediction_and_target=lambda x: torch.log10(x),
+        transform_inference=lambda x: torch.pow(10, x),
     )
     model = StandardModel(
-        detector=detector,
+        graph_definition=graph_definition,
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,

@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 import numpy as np
 import awkward as ak
 
-from graphnet.data.dataset import Dataset, ColumnMissingException
+from graphnet.data.dataset.dataset import Dataset, ColumnMissingException
 
 
 class ParquetDataset(Dataset):
