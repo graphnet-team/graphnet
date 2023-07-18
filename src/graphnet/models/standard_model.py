@@ -179,7 +179,7 @@ class StandardModel(Model):
         self,
         dataloader: DataLoader,
         gpus: Optional[Union[List[int], int]] = None,
-        distribution_strategy: Optional[str] = None,
+        distribution_strategy: Optional[str] = "auto",
     ) -> List[Tensor]:
         """Return predictions for `dataloader`."""
         self.inference()
@@ -198,7 +198,7 @@ class StandardModel(Model):
         additional_attributes: Optional[List[str]] = None,
         index_column: str = "event_no",
         gpus: Optional[Union[List[int], int]] = None,
-        distribution_strategy: Optional[str] = None,
+        distribution_strategy: Optional[str] = "auto",
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
