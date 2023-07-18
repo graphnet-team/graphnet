@@ -4,11 +4,9 @@ import os
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.sqlite import (
-    SQLiteDataConverter,
-    SQLiteDataset,
-)
-from graphnet.data.parquet import ParquetDataConverter, ParquetDataset
+from graphnet.data.sqlite import SQLiteDataConverter
+from graphnet.data.parquet import ParquetDataConverter
+from graphnet.data.dataset import SQLiteDataset, ParquetDataset
 from graphnet.data.extractors import (
     I3FeatureExtractorIceCube86,
     I3TruthExtractor,
