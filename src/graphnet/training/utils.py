@@ -126,19 +126,21 @@ def make_train_validation_dataloader(
         dataset: Dataset
         if db.endswith(".db"):
             dataset = SQLiteDataset(
-                db,
-                pulsemaps,
-                features,
-                truth,
+                path=db,
+                graph_definition=graph_definition,
+                pulsemaps=pulsemaps,
+                features=features,
+                truth=truth,
                 truth_table=truth_table,
                 index_column=index_column,
             )
         elif db.endswith(".parquet"):
             dataset = ParquetDataset(
-                db,
-                pulsemaps,
-                features,
-                truth,
+                path=db,
+                graph_definition=graph_definition,
+                pulsemaps=pulsemaps,
+                features=features,
+                truth=truth,
                 truth_table=truth_table,
                 index_column=index_column,
             )

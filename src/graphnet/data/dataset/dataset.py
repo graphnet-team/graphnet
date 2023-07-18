@@ -12,6 +12,7 @@ from typing import (
     Tuple,
     Union,
     Iterable,
+    Type,
 )
 
 import numpy as np
@@ -31,9 +32,53 @@ from graphnet.utilities.config import (
 from graphnet.utilities.logging import Logger
 from graphnet.models.graphs import GraphDefinition
 
+from graphnet.utilities.config.parsing import (
+    get_all_grapnet_classes,
+)
+
 
 class ColumnMissingException(Exception):
     """Exception to indicate a missing column in a dataset."""
+
+
+def load_module(class_name: str) -> Type:
+    """Load graphnet module from string name.
+
+    Args:
+        class_name: name of class
+
+    Returns:
+        graphnet module.
+    """
+    # Get a lookup for all classes in `graphnet`
+    import graphnet.data
+    import graphnet.models
+    import graphnet.training
+
+    namespace_classes = get_all_grapnet_classes(
+        graphnet.data, graphnet.models, graphnet.training
+    )
+    return namespace_classes[class_name]
+
+
+def parse_graph_definition(cfg: dict) -> GraphDefinition:
+    """Construct GraphDefinition from DatasetConfig."""
+    assert cfg["graph_definition"] is not None
+
+    args = cfg["graph_definition"]["arguments"]
+    classes = {}
+    for arg in args.keys():
+        if isinstance(args[arg], dict):
+            if "class_name" in args[arg].keys():
+                classes[arg] = load_module(args[arg]["class_name"])(
+                    **args[arg]["arguments"]
+                )
+    new_cfg = deepcopy(args)
+    new_cfg.update(classes)
+    graph_definition = load_module(cfg["graph_definition"]["class_name"])(
+        **new_cfg
+    )
+    return graph_definition
 
 
 class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
@@ -56,8 +101,12 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
 
         assert isinstance(source, DatasetConfig), (
             f"Argument `source` of type ({type(source)}) is not a "
-            "`DatasetConfig"
+            "`DatasetConfig`"
         )
+
+        assert (
+            "graph_definition" in source.dict().keys()
+        ), "`DatasetConfig` incompatible with current GraphNeT version."
 
         # Parse set of `selection``.
         if isinstance(source.selection, dict):
@@ -69,7 +118,10 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         ):
             return cls._construct_dataset_from_list_of_strings(source)
 
-        return source._dataset_class(**source.dict())
+        cfg = source.dict()
+        if cfg["graph_definition"] is not None:
+            cfg["graph_definition"] = parse_graph_definition(cfg)
+        return source._dataset_class(**cfg)
 
     @classmethod
     def concatenate(
@@ -136,6 +188,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
     def __init__(
         self,
         path: Union[str, List[str]],
+        graph_definition: GraphDefinition,
         pulsemaps: Union[str, List[str]],
         features: List[str],
         truth: List[str],
@@ -151,7 +204,6 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         loss_weight_column: Optional[str] = None,
         loss_weight_default_value: Optional[float] = None,
         seed: Optional[int] = None,
-        graph_definition: GraphDefinition = None,
     ):
         """Construct Dataset.
 
@@ -221,9 +273,6 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         self._index_column = index_column
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
-        # self.info(
-        #    f"No GraphDefinition recieved. Defaulting to KNNGraph(nb_neighbours = 8)"
-        # )
         self._graph_definition = graph_definition
 
         if node_truth is not None:
