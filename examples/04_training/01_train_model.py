@@ -72,7 +72,6 @@ def main(
 
     # Construct dataloaders
     dataset_config = DatasetConfig.load(dataset_config_path)
-    print(dataset_config_path)
     dataloaders = DataLoader.from_dataset_config(
         dataset_config,
         **config.dataloader,
