@@ -57,7 +57,6 @@ class GraphDefinition(Model):
         if node_feature_names is None:
             # Assume all features in Detector is used.
             node_feature_names = list(self._detector.feature_map().keys())  # type: ignore
-        print(node_feature_names)
         self._node_feature_names = node_feature_names
         if dtype is None:
             dtype = torch.float
