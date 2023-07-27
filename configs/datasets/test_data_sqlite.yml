@@ -18,7 +18,7 @@ loss_weight_default_value: null
 loss_weight_table: null
 node_truth: null
 node_truth_table: null
-path: $GRAPHNET/data/tests/sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db
+path: $GRAPHNET/data/examples/sqlite/prometheus/prometheus-events.db
 pulsemaps: total
 seed: null
 selection: null
