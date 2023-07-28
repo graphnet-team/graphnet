@@ -12,6 +12,7 @@ from graphnet.data.extractors import (
     I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.models import Model, StandardModel
+from graphnet.models.graphs import GraphDefinition
 from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package() or TYPE_CHECKING:
@@ -35,6 +36,7 @@ class GraphNeTI3Module:
 
     def __init__(
         self,
+        graph_definition: GraphDefinition,
         pulsemap: str,
         features: List[str],
         pulsemap_extractor: Union[
@@ -45,6 +47,7 @@ class GraphNeTI3Module:
         """I3Module Constructor.
 
         Arguments:
+            graph_definition: An instance of GraphDefinition.  E.g. KNNGraph.
             pulsemap: the pulse map on which the module functions
             features: the features that is used from the pulse map.
                       E.g. [dom_x, dom_y, dom_z, charge]
@@ -52,6 +55,8 @@ class GraphNeTI3Module:
                                 pulsemap from the I3Frames
             gcd_file: Path to the associated gcd-file.
         """
+        assert isinstance(graph_definition, GraphDefinition)
+        self._graph_definition = graph_definition
         self._pulsemap = pulsemap
         self._features = features
         assert isinstance(gcd_file, str), "gcd_file must be string"
@@ -78,25 +83,13 @@ class GraphNeTI3Module:
     ) -> Data:  # py-l-i-n-t-:- -d-i-s-able=invalid-name
         """Process Physics I3Frame into graph."""
         # Extract features
-        features = self._extract_feature_array_from_frame(frame)
+        node_features = self._extract_feature_array_from_frame(frame)
 
         # Prepare graph data
-        n_pulses = torch.tensor([features.shape[0]], dtype=torch.int32)
-        data = Data(
-            x=torch.tensor(features, dtype=torch.float32),
-            batch=torch.zeros(
-                features.shape[0], dtype=torch.int64
-            ),  # @TODO: Necessary?
-            features=self._features,
+        data = self._graph_definition(
+            node_features=node_features,
+            node_feature_names=self._features,
         )
-        # Additionally add original features as (static) attributes
-        for index, feature in enumerate(data.features):
-            if feature not in ["x"]:
-                data[feature] = data.x[:, index].detach()
-        # @TODO: This sort of hard-coding is not ideal; all features should be
-        #        captured by `FEATURES` and included in the output of
-        #        `I3FeatureExtractor`.
-        data.n_pulses = n_pulses
         return Batch.from_data_list([data])
 
     def _extract_feature_array_from_frame(self, frame: I3Frame) -> np.array:
@@ -171,19 +164,20 @@ class I3InferenceModule(GraphNeTI3Module):
                                 E.g. ['energy_reco'].
             gcd_file: path to associated gcd file.
         """
-        super().__init__(
-            pulsemap=pulsemap,
-            features=features,
-            pulsemap_extractor=pulsemap_extractor,
-            gcd_file=gcd_file,
-        )
-
         if isinstance(model, str):
             self.model = torch.load(
                 model, pickle_module=dill, map_location="cpu"
             )
         else:
             self.model = model
+
+        super().__init__(
+            pulsemap=pulsemap,
+            features=features,
+            pulsemap_extractor=pulsemap_extractor,
+            gcd_file=gcd_file,
+            graph_definition=self.model._graph_definition,
+        )
         self.model.inference()
 
         self.model.to("cpu")
