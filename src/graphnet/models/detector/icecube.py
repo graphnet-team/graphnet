@@ -2,14 +2,7 @@
 
 from typing import Dict, Callable
 import torch
-from torch_geometric.data import Data
 
-from graphnet.models.components.pool import (
-    group_pulses_to_dom,
-    group_pulses_to_pmt,
-    sum_pool_and_distribute,
-)
-from graphnet.data.constants import FEATURES
 from graphnet.models.detector.detector import Detector
 
 
