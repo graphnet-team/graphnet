@@ -70,7 +70,7 @@ class IceCubeKaggle(Detector):
         return torch.log10(x) / 3.0
 
 
-class IceCubeDeepCore(IceCube86):
+class IceCubeDeepCore(Detector):
     """`Detector` class for IceCube-DeepCore."""
 
     def feature_map(self) -> Dict[str, Callable]:
@@ -80,7 +80,7 @@ class IceCubeDeepCore(IceCube86):
             "dom_y": self._dom_xy,
             "dom_z": self._dom_z,
             "dom_time": self._dom_time,
-            "charge": self._charge,
+            "charge": self._identity,
             "rde": self._rde,
             "pmt_area": self._pmt_area,
         }
@@ -95,11 +95,14 @@ class IceCubeDeepCore(IceCube86):
     def _dom_time(self, x: torch.tensor) -> torch.tensor:
         return ((x / 1.05e04) - 1.0) * 20.0
 
-    def _charge(self, x: torch.tensor) -> torch.tensor:
-        return x / 1.0
+    def _rde(self, x: torch.tensor) -> torch.tensor:
+        return (x - 1.25) / 0.25
+
+    def _pmt_area(self, x: torch.tensor) -> torch.tensor:
+        return x / 0.05
 
 
-class IceCubeUpgrade(IceCube86):
+class IceCubeUpgrade(Detector):
     """`Detector` class for IceCube-Upgrade."""
 
     def feature_map(self) -> Dict[str, Callable]:
@@ -118,6 +121,7 @@ class IceCubeUpgrade(IceCube86):
             "pmt_dir_y": self._identity,
             "pmt_dir_z": self._identity,
             "dom_type": self._dom_type,
+            "rde": self._identity,
         }
 
         return feature_map
@@ -139,3 +143,9 @@ class IceCubeUpgrade(IceCube86):
 
     def _dom_type(self, x: torch.tensor) -> torch.tensor:
         return x / 130.0
+
+    def _dom_xyz(self, x: torch.tensor) -> torch.tensor:
+        return x / 500.0
+
+    def _pmt_area(self, x: torch.tensor) -> torch.tensor:
+        return x / 0.05
