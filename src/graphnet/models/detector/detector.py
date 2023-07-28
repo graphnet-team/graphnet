@@ -47,3 +47,7 @@ class Detector(Model):
                 )
                 raise e
         return node_features
+
+    def _identity(self, x: torch.tensor) -> torch.tensor:
+        """Apply no standardization to input."""
+        return x

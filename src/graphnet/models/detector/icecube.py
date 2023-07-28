@@ -56,7 +56,7 @@ class IceCubeKaggle(Detector):
             "z": self._xyz,
             "time": self._time,
             "charge": self._charge,
-            "auxiliary": self._auxiliary,
+            "auxiliary": self._identity,
         }
         return feature_map
 
@@ -68,9 +68,6 @@ class IceCubeKaggle(Detector):
 
     def _charge(self, x: torch.tensor) -> torch.tensor:
         return torch.log10(x) / 3.0
-
-    def _auxiliary(self, x: torch.tensor) -> torch.tensor:
-        return x
 
 
 class IceCubeDeepCore(IceCube86):
@@ -102,44 +99,46 @@ class IceCubeDeepCore(IceCube86):
         return x / 1.0
 
 
-class IceCubeUpgrade(IceCubeDeepCore):
+class IceCubeUpgrade(IceCube86):
     """`Detector` class for IceCube-Upgrade."""
 
-    # Implementing abstract class attribute
-    features = FEATURES.UPGRADE
+    def feature_map(self) -> Dict[str, Callable]:
+        """Map standardization functions to each dimension of input data."""
+        feature_map = {
+            "dom_x": self._dom_xyz,
+            "dom_y": self._dom_xyz,
+            "dom_z": self._dom_xyz,
+            "dom_time": self._dom_time,
+            "charge": self._charge,
+            "pmt_area": self._pmt_area,
+            "string": self._string,
+            "pmt_number": self._pmt_number,
+            "dom_number": self._dom_number,
+            "pmt_dir_x": self._identity,
+            "pmt_dir_y": self._identity,
+            "pmt_dir_z": self._identity,
+            "dom_type": self._dom_type,
+        }
 
-    def _forward(self, data: Data) -> Data:
-        """Ingest data, build graph, and preprocess features.
+        return feature_map
 
-        Args:
-            data: Input graph data.
+    def _dom_time(self, x: torch.tensor) -> torch.tensor:
+        return (x / 2e04) - 1.0
 
-        Returns:
-            Connected and preprocessed graph data.
-        """
-        # Check(s)
-        self._validate_features(data)
+    def _charge(self, x: torch.tensor) -> torch.tensor:
+        return torch.log10(x) / 2.0
 
-        # Preprocessing
-        data.x[:, 0] /= 500.0  # dom_x
-        data.x[:, 1] /= 500.0  # dom_y
-        data.x[:, 2] /= 500.0  # dom_z
-        data.x[:, 3] /= 2e04  # dom_time
-        data.x[:, 3] -= 1.0
-        data.x[:, 4] = torch.log10(data.x[:, 4]) / 2.0  # charge
-        # data.x[:,5] /= 1.  # rde
-        data.x[:, 6] /= 0.05  # pmt_area
-        data.x[:, 7] -= 50.0  # string
-        data.x[:, 7] /= 50.0
-        data.x[:, 8] /= 20.0  # pmt_number
-        data.x[:, 9] -= 60.0  # dom_number
-        data.x[:, 9] /= 60.0
-        # data.x[:,10] /= 1.  # pmt_dir_x
-        # data.x[:,11] /= 1.  # pmt_dir_y
-        # data.x[:,12] /= 1.  # pmt_dir_z
-        data.x[:, 13] /= 130.0  # dom_type
+    def _string(self, x: torch.tensor) -> torch.tensor:
+        return (x - 50.0) / 50.0
 
-        return data
+    def _pmt_number(self, x: torch.tensor) -> torch.tensor:
+        return x / 20.0
+
+    def _dom_number(self, x: torch.tensor) -> torch.tensor:
+        return (x - 60.0) / 60.0
+
+    def _dom_type(self, x: torch.tensor) -> torch.tensor:
+        return x / 130.0
 
 
 class IceCubeUpgrade_V2(IceCubeDeepCore):
