@@ -76,35 +76,30 @@ class IceCubeKaggle(Detector):
 class IceCubeDeepCore(IceCube86):
     """`Detector` class for IceCube-DeepCore."""
 
-    # Implementing abstract class attribute
-    features = FEATURES.DEEPCORE
+    def feature_map(self) -> Dict[str, Callable]:
+        """Map standardization functions to each dimension of input data."""
+        feature_map = {
+            "dom_x": self._dom_xy,
+            "dom_y": self._dom_xy,
+            "dom_z": self._dom_z,
+            "dom_time": self._dom_time,
+            "charge": self._charge,
+            "rde": self._rde,
+            "pmt_area": self._pmt_area,
+        }
+        return feature_map
 
-    def _forward(self, data: Data) -> Data:
-        """Ingest data, build graph, and preprocess features.
+    def _dom_xy(self, x: torch.tensor) -> torch.tensor:
+        return x / 100.0
 
-        Args:
-            data: Input graph data.
+    def _dom_z(self, x: torch.tensor) -> torch.tensor:
+        return (x + 350.0) / 100.0
 
-        Returns:
-            Connected and preprocessed graph data.
-        """
-        # Check(s)
-        self._validate_features(data)
+    def _dom_time(self, x: torch.tensor) -> torch.tensor:
+        return ((x / 1.05e04) - 1.0) * 20.0
 
-        # Preprocessing
-        data.x[:, 0] /= 100.0  # dom_x
-        data.x[:, 1] /= 100.0  # dom_y
-        data.x[:, 2] += 350.0  # dom_z
-        data.x[:, 2] /= 100.0
-        data.x[:, 3] /= 1.05e04  # dom_time
-        data.x[:, 3] -= 1.0
-        data.x[:, 3] *= 20.0
-        data.x[:, 4] /= 1.0  # charge
-        data.x[:, 5] -= 1.25  # rde
-        data.x[:, 5] /= 0.25
-        data.x[:, 6] /= 0.05  # pmt_area
-
-        return data
+    def _charge(self, x: torch.tensor) -> torch.tensor:
+        return x / 1.0
 
 
 class IceCubeUpgrade(IceCubeDeepCore):
