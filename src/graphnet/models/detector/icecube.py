@@ -33,7 +33,7 @@ class IceCube86(Detector):
         return x / 500.0
 
     def _dom_time(self, x: torch.tensor) -> torch.tensor:
-        return x - 1.0e04 / 3.0e4
+        return (x - 1.0e04) / 3.0e4
 
     def _charge(self, x: torch.tensor) -> torch.tensor:
         return torch.log10(x)
