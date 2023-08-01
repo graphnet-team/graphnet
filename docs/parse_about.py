@@ -39,6 +39,7 @@ def main(input_file: str, output_file: str) -> None:
         + corpus["Usage"][2:]
         + [
             "## Acknowledgements",
+            "### EU EMBLEM ###",
         ]
         + corpus["Acknowledgements"]
     )
@@ -70,6 +71,21 @@ def main(input_file: str, output_file: str) -> None:
     # Update figure reference
     content = content.replace(
         "\\autoref{fig:flowchart}", "[the Figure](flowchart)"
+    )
+
+    # Update acknowledgements to include EU emblem.
+    content = content.replace(
+        "Andreas Søgaard has received", "This project has received"
+    )
+    content = content.replace(
+        "### EU EMBLEM ###",
+        f"""
+:::{{figure-md}} eu-emblem
+
+<img src="../../assets/images/eu-emblem.jpg" alt="eu-emblem" width="10 ex">
+
+&nbsp;
+:::"""
     )
 
     # Write parsed results to output file
