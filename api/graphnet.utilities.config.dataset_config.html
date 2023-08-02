@@ -111,12 +111,20 @@
     background: rgba(0,0,0,0.03);
   }
 
+  #eu-emblem {
+    margin: 0;
+  }
+
+  #eu-emblem figcaption {
+    display: none;
+  }
+
 </style>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/material.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e7352e39" />
+    <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -838,11 +846,15 @@ construction more transparent and reproducible.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_config" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.model_fields">
 <span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'features':</span> <span class="pre">FieldInfo(annotation=List[str],</span> <span class="pre">required=True),</span> <span class="pre">'index_column':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='event_no'),</span> <span class="pre">'loss_weight_column':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'loss_weight_default_value':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'loss_weight_table':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'node_truth':</span> <span class="pre">FieldInfo(annotation=Union[List[str],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'node_truth_table':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'path':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">List[str]],</span> <span class="pre">required=True),</span> <span class="pre">'pulsemaps':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">List[str]],</span> <span class="pre">required=True),</span> <span class="pre">'seed':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'selection':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">List[str],</span> <span class="pre">List[Union[int,</span> <span class="pre">List[int]]],</span> <span class="pre">Dict[str,</span> <span class="pre">Union[str,</span> <span class="pre">List[str]]],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'string_selection':</span> <span class="pre">FieldInfo(annotation=Union[List[int],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'truth':</span> <span class="pre">FieldInfo(annotation=List[str],</span> <span class="pre">required=True),</span> <span class="pre">'truth_table':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='truth')}</span></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_fields" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.save_dataset_config">
@@ -906,7 +918,7 @@ construction more transparent and reproducible.</p>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

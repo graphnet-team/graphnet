@@ -35,6 +35,14 @@ By splitting up the GNN development as in [the Figure](flowchart), `GraphNeT` al
 
 ## Acknowledgements
 
-Andreas Søgaard has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
+
+:::{figure-md} eu-emblem
+
+<img src="../../assets/images/eu-emblem.jpg" alt="eu-emblem" width="10 ex">
+
+&nbsp;
+:::
+
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
 
 The work of Rasmus Ørsøe was partly performed in the framework of the PUNCH4NFDI consortium supported by DFG fund "NFDI 39/1", Germany.
