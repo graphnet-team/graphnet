@@ -320,47 +320,61 @@ GraphNeT comes with a pre-defined `DatasetConfig` file for the small open-source
 It looks like so:
 ```yml
 path: $GRAPHNET/data/examples/sqlite/prometheus/prometheus-events.db
+graph_definition:
+  arguments:
+    columns: [0, 1, 2]
+    detector:
+      arguments: {}
+      class_name: Prometheus
+    dtype: null
+    nb_nearest_neighbours: 8
+    node_definition:
+      arguments: {}
+      class_name: NodesAsPulses
+    node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+  class_name: KNNGraph
 pulsemaps:
-	- total
+  - total
 features:
-	- sensor_pos_x
-	- sensor_pos_y
-	- sensor_pos_z
-	- t
+  - sensor_pos_x
+  - sensor_pos_y
+  - sensor_pos_z
+  - t
 truth:
-	- injection_energy
-	- injection_type
-	- injection_interaction_type
-	- injection_zenith
-	- injection_azimuth
-	- injection_bjorkenx
-	- injection_bjorkeny
-	- injection_position_x
-	- injection_position_y
-	- injection_position_z
-	- injection_column_depth
-	- primary_lepton_1_type
-	- primary_hadron_1_type
-	- primary_lepton_1_position_x
-	- primary_lepton_1_position_y
-	- primary_lepton_1_position_z
-	- primary_hadron_1_position_x
-	- primary_hadron_1_position_y
-	- primary_hadron_1_position_z
-	- primary_lepton_1_direction_theta
-	- primary_lepton_1_direction_phi
-	- primary_hadron_1_direction_theta
-	- primary_hadron_1_direction_phi
-	- primary_lepton_1_energy
-	- primary_hadron_1_energy
-	- total_energy
+  - injection_energy
+  - injection_type
+  - injection_interaction_type
+  - injection_zenith
+  - injection_azimuth
+  - injection_bjorkenx
+  - injection_bjorkeny
+  - injection_position_x
+  - injection_position_y
+  - injection_position_z
+  - injection_column_depth
+  - primary_lepton_1_type
+  - primary_hadron_1_type
+  - primary_lepton_1_position_x
+  - primary_lepton_1_position_y
+  - primary_lepton_1_position_z
+  - primary_hadron_1_position_x
+  - primary_hadron_1_position_y
+  - primary_hadron_1_position_z
+  - primary_lepton_1_direction_theta
+  - primary_lepton_1_direction_phi
+  - primary_hadron_1_direction_theta
+  - primary_hadron_1_direction_phi
+  - primary_lepton_1_energy
+  - primary_hadron_1_energy
+  - total_energy
+  - dummy_pid
 index_column: event_no
 truth_table: mc_truth
 seed: 21
 selection:
-	test: event_no % 5 == 0
-	validation: event_no % 5 == 1
-	train: event_no % 5 > 1
+  test: event_no % 5 == 0
+  validation: event_no % 5 == 1
+  train: event_no % 5 > 1
 ```
 
 
