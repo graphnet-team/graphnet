@@ -22,6 +22,8 @@ Feel free to join the [GraphNeT Slack group](https://join.slack.com/t/graphnet-t
 
 | Type | Title | DOI |
 | --- | --- | --- |
+| Proceeding | Extending the IceCube search for neutrino point sources in the Northern sky with additional years of data | [![PoS](https://img.shields.io/badge/PoS-ICRC2023.1060-blue)]([https://doi.org/10.1088/1748-0221/17/11/P11003]([https://pos.sissa.it/444/1036/pdf](https://pos.sissa.it/444/1060/pdf))) |
+| Proceeding | Sensitivity of the IceCube Upgrade to Atmospheric Neutrino Oscillations | [![PoS](https://img.shields.io/badge/PoS-ICRC2023.1036-blue)]([https://doi.org/10.1088/1748-0221/17/11/P11003](https://pos.sissa.it/444/1036/pdf)) |
 | Paper | GraphNeT: Graph neural networks for neutrino telescope event reconstruction | [![status](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf/status.svg)](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf) |
 | Paper | Graph Neural Networks for low-energy event classification & reconstruction in IceCube | [![JINST](https://img.shields.io/badge/JINST-10.1088%2F1748--0221%2F17%2F11%2FP11003-blue)](https://doi.org/10.1088/1748-0221/17/11/P11003) |
 
