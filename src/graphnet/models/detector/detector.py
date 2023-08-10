@@ -20,7 +20,6 @@ class Detector(Model):
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
-    @property
     @abstractmethod
     def feature_map(self) -> Dict[str, Callable]:
         """List of features used/assumed by inheriting `Detector` objects."""
