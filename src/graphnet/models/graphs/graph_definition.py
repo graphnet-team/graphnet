@@ -59,8 +59,6 @@ class GraphDefinition(Model):
             node_feature_names = list(self._detector.feature_map().keys())  # type: ignore
         self._node_feature_names = node_feature_names
 
-        if dtype is None:
-            dtype = torch.float
         self._dtype = dtype
 
         # Set Input / Output dimensions
