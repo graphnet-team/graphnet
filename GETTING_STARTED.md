@@ -387,7 +387,7 @@ selection:
 
 One important part of the philosophy for [`Model`](https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html)s in GraphNeT is that they are self-contained.
 Functionality that a specific model requires (data pre-processing, transformation and other auxiliary calculations) should exist within the `Model` itself such that it is portable and deployable as a single package that only depends on data.
-That is, coneptually,
+That is, conceptually,
 
 > Data → `Model` → Predictions
 
@@ -397,20 +397,18 @@ All `Model`s that are applicable to the same detector configuration, regardless 
 ### The `StandardModel` class
 
 The simplest way to define a `Model` in GraphNeT is through the `StandardModel` subclass.
-This is uniquely defined based on one each of [`Coarsening`](https://graphnet-team.github.io/graphnet/api/graphnet.models.coarsening.html#module-graphnet.models.coarsening) (optional), [`GraphBuilder`](https://graphnet-team.github.io/graphnet/api/graphnet.models.graph_builders.html#graphnet.models.graph_builders.GraphBuilder), [`Detector`](https://graphnet-team.github.io/graphnet/api/graphnet.models.detector.detector.html#module-graphnet.models.detector.detector), [`GNN`](https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn), and one or more [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task)s.
-Each of these components will be a problem-specific instance of these parent classes.
-This structure guarantees modularity and reuseability.
-For example, the only adaptation needed to run a `Model` made for IceCube on a different experiment — say, KM3NeT — would be to switch out the `Detector` component representing IceCube with one that represents KM3NeT.
-Similarly, a `Model` developed for [`EnergyReconstruction`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction) can be put to work on a different problem, e.g., [`DirectionReconstructionWithKappa`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa), by switching out just the [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task) component.
+This is uniquely defined based on one each of[`GraphDefinition`](),  [`GNN`](https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn), and one or more [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task)s.Each of these components will be a problem-specific instance of these parent classes.This structure guarantees modularity and reuseability. For example, the only adaptation needed to run a `Model` made for IceCube on a different experiment — say, KM3NeT — would be to switch out the `Detector` component in `GraphDefinition` representing IceCube with one that represents KM3NeT. Similarly, a `Model` developed for [`EnergyReconstruction`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction) can be put to work on a different problem, e.g., [`DirectionReconstructionWithKappa`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa), by switching out just the [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task) component.
 
+  
 GraphNeT comes with many pre-defined components that you can simply import and use out-of-the-box.
 So to get started, all you need to do is to import your choices in these components and build the model.
 Below is a snippet that defines a `Model` that reconstructs the zenith angle with uncertainties using the [GNN published by IceCube](https://iopscience.iop.org/article/10.1088/1748-0221/17/11/P11003) for the IceCube Upgrade detector:
 
 ```python
-# Choice of detector, graph builder, GNN architecture, and physics task
+# Choice of graph representation, GNN architecture, and physics task
 from graphnet.models.detector.prometheus import Prometheus
-from graphnet.models.graph_builders import KNNGraphBuilder
+from graphnet.models.graphs  import  KNNGraph
+from graphnet.models.graphs.nodes  import  NodesAsPulses
 from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.task.reconstruction import ZenithReconstructionWithKappa
 
@@ -419,9 +417,16 @@ from graphnet.training.loss_functions import VonMisesFisher2DLoss
 from graphnet.models import StandardModel
 
 # Configuring the components
-coarsening = None
-graph_builder = KNNGraphBuilder(nb_nearest_neighbours=8)
-detector = Prometheus(graph_builder=graph_builder)
+
+# Represents the data as a point-cloud graph where each
+# node represents a pulse of Cherenkov radiation
+# edges drawn to the 8 nearest neighbours 
+
+graph_definition = KNNGraph(
+	detector=Prometheus(),
+	node_definition=NodesAsPulses(),
+	nb_nearest_neighbours=8,
+)
 gnn = DynEdge(
     nb_inputs=detector.nb_outputs,
     global_pooling_schemes=["min", "max", "mean"],
@@ -434,10 +439,9 @@ task = ZenithReconstructionWithKappa(
 
 # Construct the Model
 model = StandardModel(
-    detector=detector,
+    graph_definition=graph_definition,
     gnn=gnn,
     tasks=[task],
-    coarsening=coarsening,
 )
 ```
 
@@ -475,49 +479,58 @@ You can find several pre-defined `ModelConfig`'s under `graphnet/configs/models`
 
 ```yml
 arguments:
-	coarsening: null
-	detector:
-		ModelConfig:
-			arguments:
-				graph_builder:
-					ModelConfig:
-						arguments: {columns: null, nb_nearest_neighbours: 8}
-						class_name: KNNGraphBuilder
-				scalers: null
-			class_name: Prometheus
-	gnn:
-		ModelConfig:
-			arguments:
-				add_global_variables_after_pooling: false
-				dynedge_layer_sizes: null
-				features_subset: null
-				global_pooling_schemes: [min, max, mean, sum]
-				nb_inputs: 4
-				nb_neighbours: 8
-				post_processing_layer_sizes: null
-				readout_layer_sizes: null
-				class_name: DynEdge
-	optimizer_class: '!class torch.optim.adam Adam'
-	optimizer_kwargs: {eps: 0.001, lr: 1e-05}
-	scheduler_class: '!class torch.optim.lr_scheduler ReduceLROnPlateau'
-	scheduler_config: {frequency: 1, monitor: val_loss}
-	scheduler_kwargs: {patience: 5}
-	tasks:
-		- ModelConfig:
-			arguments:
-				hidden_size: 128
-				loss_function:
-					ModelConfig:
-						arguments: {}
-						class_name: LogCoshLoss
-				loss_weight: null
-				target_labels: total_energy
-				transform_inference: null
-				transform_prediction_and_target: '!lambda x: torch.log10(x)'
-				transform_support: null
-				transform_target: null
-		class_name: EnergyReconstruction
-	class_name: StandardModel
+  gnn:
+    ModelConfig:
+      arguments:
+        add_global_variables_after_pooling: false
+        dynedge_layer_sizes: null
+        features_subset: null
+        global_pooling_schemes: [min, max, mean, sum]
+        nb_inputs: 4
+        nb_neighbours: 8
+        post_processing_layer_sizes: null
+        readout_layer_sizes: null
+      class_name: DynEdge
+  graph_definition:
+    ModelConfig:
+      arguments:
+        columns: [0, 1, 2]
+        detector:
+          ModelConfig:
+            arguments: {}
+            class_name: Prometheus
+        dtype: null
+        nb_nearest_neighbours: 8
+        node_definition:
+          ModelConfig:
+            arguments: {}
+            class_name: NodesAsPulses
+        node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+      class_name: KNNGraph
+  optimizer_class: '!class torch.optim.adam Adam'
+  optimizer_kwargs: {eps: 0.001, lr: 0.001}
+  scheduler_class: '!class graphnet.training.callbacks PiecewiseLinearLR'
+  scheduler_config: {interval: step}
+  scheduler_kwargs:
+    factors: [0.01, 1, 0.01]
+    milestones: [0, 20.0, 80]
+  tasks:
+  - ModelConfig:
+      arguments:
+        hidden_size: 128
+        loss_function:
+          ModelConfig:
+            arguments: {}
+            class_name: LogCoshLoss
+        loss_weight: null
+        prediction_labels: null
+        target_labels: total_energy
+        transform_inference: '!lambda x: torch.pow(10,x)'
+        transform_prediction_and_target: '!lambda x: torch.log10(x)'
+        transform_support: null
+        transform_target: null
+      class_name: EnergyReconstruction
+class_name: StandardModel
 ```
 
 ### Building your own `Model` class
