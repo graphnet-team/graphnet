@@ -391,7 +391,7 @@ That is, conceptually,
 
 > Data → `Model` → Predictions
 
-You can subclass the `Model` class to create any model implementation using GraphNeT components (such as instances of, e.g., the `Detector`, `Coarsening`, `GNN`, and `Task` classes) along with PyTorch and PyG functionality.
+You can subclass the `Model` class to create any model implementation using GraphNeT components (such as instances of, e.g., the  `GraphDefinition`, `GNN`, and `Task` classes) along with PyTorch and PyG functionality.
 All `Model`s that are applicable to the same detector configuration, regardless of how the `Model`s themselves are implemented, should be able to act on the same graph (`torch_geometric.data.Data`) objects, thereby making them interchangeable and directly comparable.
 
 ### The `StandardModel` class
