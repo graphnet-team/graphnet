@@ -85,18 +85,29 @@ To build a `Dataset` from your files, you must specify at least the following:
 -  `truth_table`: The name of a table/array that contains the truth-level information associated with the pulse series, and should contain the truth labels that you would like to reconstruct or classify. Often this table will contain the true physical attributes of the primary particle — such as its true direction, energy, PID, etc. — and is therefore graph- or event-level (as opposed to the pulse series tables, which are node- or hit-level) truth information.
 -  `features`: The names of the columns in your pulse series table(s) that you would like to include for training; they typically constitute the per-node/-hit features such as xyz-position of sensors, charge, and photon arrival times.
 -  `truth`: The columns in your truth table/array that you would like to include in the dataset.
+-  `graph_definition`: A `GraphDefinition`that prepares the raw data from the `Dataset` into your choice in data representation. 
 
 After that, you can construct your `Dataset` from a SQLite database with just a few lines of code:
 
 ```python
 from graphnet.data.sqlite import SQLiteDataset
+from graphnet.models.detector.prometheus  import  Prometheus
+from graphnet.models.graphs  import  KNNGraph
+from graphnet.models.graphs.nodes  import  NodesAsPulses
+  
+graph_definition = KNNGraph(
+	detector=Prometheus(),
+	node_definition=NodesAsPulses(),
+	nb_nearest_neighbours=8,
+)
 
 dataset = SQLiteDataset(
-    path="data/examples/sqlite/prometheus/prometheus-events.db",
-    pulsemaps="total",
-    truth_table="mc_truth",
-    features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", ...],
-    truth=["injection_energy", "injection_zenith", ...],
+	path="data/examples/sqlite/prometheus/prometheus-events.db",
+	pulsemaps="total",
+	truth_table="mc_truth",
+	features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", ...],
+	truth=["injection_energy", "injection_zenith", ...],
+	graph_definiton = graph_definition,
 )
 
 graph = dataset[0]  # torch_geometric.data.Data
@@ -106,6 +117,16 @@ Or similarly for Parquet files:
 
 ```python
 from graphnet.data.parquet import ParquetDataset
+from graphnet.models.detector.prometheus  import  Prometheus
+from graphnet.models.graphs  import  KNNGraph
+from graphnet.models.graphs.nodes  import  NodesAsPulses
+  
+graph_definition = KNNGraph(
+	detector=Prometheus(),
+	node_definition=NodesAsPulses(),
+	nb_nearest_neighbours=8,
+)
+
 
 dataset = ParquetDataset(
     path="data/examples/parquet/prometheus/prometheus-events.parquet",
@@ -113,6 +134,7 @@ dataset = ParquetDataset(
     truth_table="mc_truth",
     features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", ...],
     truth=["injection_energy", "injection_zenith", ...],
+	graph_definiton = graph_definition,
 )
 
 graph = dataset[0]  # torch_geometric.data.Data
