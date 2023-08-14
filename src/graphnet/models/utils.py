@@ -1,6 +1,6 @@
 """Utility functions for `graphnet.models`."""
 
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from torch_geometric.nn import knn_graph
 from torch_geometric.data import Batch
 import torch
