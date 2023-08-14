@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader
 
 from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
 from graphnet.training.utils import get_predictions, make_dataloader
+from graphnet.models.graphs import GraphDefinition
 
 from graphnet.utilities.logging import Logger
 
@@ -68,13 +69,18 @@ class InSQLitePipeline(ABC, Logger):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     def __call__(
-        self, database: str, pulsemap: str, chunk_size: int = 1000000
+        self,
+        database: str,
+        pulsemap: str,
+        graph_definition: GraphDefinition,
+        chunk_size: int = 1000000,
     ) -> None:
         """Run inference of each field in self._module_dict[target][''].
 
         Args:
             database: Path to database with pulsemap and truth.
             pulsemap: Name of pulsemaps.
+            graph_definition: GraphDefinition for Dataset
             chunk_size: database will be sliced in chunks of size `chunk_size`.
                 Use this parameter to control memory usage.
         """
@@ -85,6 +91,7 @@ class InSQLitePipeline(ABC, Logger):
             device = int(self._device[-1])
         if not os.path.isdir(outdir):
             dataloaders, event_batches = self._setup_dataloaders(
+                graph_definition=graph_definition,
                 chunk_size=chunk_size,
                 db=database,
                 pulsemap=pulsemap,
@@ -111,6 +118,7 @@ class InSQLitePipeline(ABC, Logger):
         chunk_size: int,
         db: str,
         pulsemap: str,
+        graph_definition: GraphDefinition,
         selection: Optional[List[int]] = None,
         persistent_workers: bool = False,
     ) -> Tuple[List[DataLoader], List[np.ndarray]]:
@@ -123,6 +131,7 @@ class InSQLitePipeline(ABC, Logger):
             dataloaders.append(
                 make_dataloader(
                     db=db,
+                    graph_definition=graph_definition,
                     pulsemaps=pulsemap,
                     features=self._features,
                     truth=self._truth,

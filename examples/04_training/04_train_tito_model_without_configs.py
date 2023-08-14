@@ -13,7 +13,8 @@ from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdgeTITO
-from graphnet.models.graph_builders import KNNGraphBuilder
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.task.reconstruction import (
     DirectionReconstructionWithKappa,
 )
@@ -75,6 +76,12 @@ def main(
         },
     }
 
+    graph_definition = KNNGraph(
+        detector=Prometheus(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=features,
+    )
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_tito_model")
     run_name = "dynedgeTITO_{}_example".format(config["target"])
     if wandb:
@@ -85,11 +92,14 @@ def main(
         training_dataloader,
         validation_dataloader,
     ) = make_train_validation_dataloader(
-        config["path"],
-        list(range(0, 100)),  # subset of events for speeding up training
-        config["pulsemap"],
-        features,
-        truth,
+        db=config["path"],
+        graph_definition=graph_definition,
+        selection=list(
+            range(0, 100)
+        ),  # subset of events for speeding up training
+        pulsemaps=config["pulsemap"],
+        features=features,
+        truth=truth,
         batch_size=config["batch_size"],
         num_workers=config["num_workers"],
         truth_table=truth_table,
@@ -102,11 +112,8 @@ def main(
     )
 
     # Building model
-    detector = Prometheus(
-        graph_builder=KNNGraphBuilder(nb_nearest_neighbours=6),
-    )
     gnn = DynEdgeTITO(
-        nb_inputs=detector.nb_outputs,
+        nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["max"],
         dyntrans_layer_sizes=DYNTRANS_LAYER_SIZES,
     )
@@ -116,7 +123,7 @@ def main(
         loss_function=VonMisesFisher3DLoss(),
     )
     model = StandardModel(
-        detector=detector,
+        graph_definition=graph_definition,
         gnn=gnn,
         tasks=[task],
         optimizer_class=Adam,
