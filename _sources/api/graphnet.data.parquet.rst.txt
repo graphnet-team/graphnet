@@ -16,7 +16,6 @@ parquet
    :maxdepth: 2
 
    graphnet.data.parquet.parquet_dataconverter
-   graphnet.data.parquet.parquet_dataset
 
 
 

@@ -324,7 +324,8 @@
   <h1 id="modules-graphnet-models-detector-prometheus--page-root">Source code for graphnet.models.detector.prometheus</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Prometheus-specific `Detector` class(es)."""</span>
 
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.detector.detector</span> <span class="kn">import</span> <span class="n">Detector</span>
 
@@ -332,30 +333,24 @@
 <div class="viewcode-block" id="Prometheus"><a class="viewcode-back" href="../../../../api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.Prometheus">[docs]</a><span class="k">class</span> <span class="nc">Prometheus</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""`Detector` class for Prometheus prototype."""</span>
 
-    <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"sensor_pos_x"</span><span class="p">,</span> <span class="s2">"sensor_pos_y"</span><span class="p">,</span> <span class="s2">"sensor_pos_z"</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">]</span>
+<div class="viewcode-block" id="Prometheus.feature_map"><a class="viewcode-back" href="../../../../api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.Prometheus.feature_map">[docs]</a>    <span class="k">def</span> <span class="nf">feature_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Map standardization functions to each dimension."""</span>
+        <span class="n">feature_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"sensor_pos_x"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_pos_xy</span><span class="p">,</span>
+            <span class="s2">"sensor_pos_y"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_pos_xy</span><span class="p">,</span>
+            <span class="s2">"sensor_pos_z"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_pos_z</span><span class="p">,</span>
+            <span class="s2">"t"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">feature_map</span></div>
 
-    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Ingest data, build graph, and preprocess features.</span>
+    <span class="k">def</span> <span class="nf">_sensor_pos_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="mi">100</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            data: Input graph data.</span>
+    <span class="k">def</span> <span class="nf">_sensor_pos_z</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">350</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            Connected and preprocessed graph data.</span>
-<span class="sd">        """</span>
-        <span class="c1"># Check(s)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_features</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-        <span class="c1"># Preprocessing</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.0</span>  <span class="c1"># dom_x</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.0</span>  <span class="c1"># dom_y</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">350.0</span>  <span class="c1"># dom_z</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">100.0</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">1.05e04</span>  <span class="c1"># dom_time</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1.0</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">20.0</span>
-
-        <span class="k">return</span> <span class="n">data</span></div>
+    <span class="k">def</span> <span class="nf">_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">((</span><span class="n">x</span> <span class="o">/</span> <span class="mf">1.05e04</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">20.0</span></div>
 </pre></div>
 
           </article>

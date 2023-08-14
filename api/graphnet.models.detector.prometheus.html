@@ -363,7 +363,7 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.detector.prometheus.Prometheus" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Prometheus</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.detector.prometheus.Prometheus.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.detector.prometheus.Prometheus.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -380,7 +380,7 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.detector.prometheus.Prometheus.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+      <a href="#graphnet.models.detector.prometheus.Prometheus.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
       
     
     </li></ul>
@@ -400,6 +400,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.models.graphs.html" class="md-nav__link">graphs</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.task.html" class="md-nav__link">task</a>
       
     
@@ -408,13 +415,6 @@
     
     
       <a href="graphnet.models.coarsening.html" class="md-nav__link">coarsening</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graph_builders.html" class="md-nav__link">graph_builders</a>
       
     
     </li>
@@ -489,7 +489,7 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.detector.prometheus.Prometheus" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Prometheus</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.detector.prometheus.Prometheus.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.detector.prometheus.Prometheus.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -509,22 +509,22 @@
 <p>Prometheus-specific <cite>Detector</cite> class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.detector.prometheus.Prometheus">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.prometheus.</span></span><span class="sig-name descname"><span class="pre">Prometheus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_builder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/prometheus.html#Prometheus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.prometheus.Prometheus" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.prometheus.</span></span><span class="sig-name descname"><span class="pre">Prometheus</span></span><a class="reference internal" href="../_modules/graphnet/models/detector/prometheus.html#Prometheus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.prometheus.Prometheus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detector</span></code></a></p>
 <p><cite>Detector</cite> class for Prometheus prototype.</p>
 <p>Construct <cite>Detector</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>graph_builder</strong> (<a class="reference internal" href="graphnet.models.graph_builders.html#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><em>GraphBuilder</em></a>) – </p></li>
-<li><p><strong>scalers</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – </p></li>
-</ul>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.detector.prometheus.Prometheus.feature_map">
+<span class="sig-name descname"><span class="pre">feature_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/prometheus.html#Prometheus.feature_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.prometheus.Prometheus.feature_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map standardization functions to each dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</p>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.models.detector.prometheus.Prometheus.features">
-<span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['sensor_pos_x',</span> <span class="pre">'sensor_pos_y',</span> <span class="pre">'sensor_pos_z',</span> <span class="pre">'t']</span></em><a class="headerlink" href="#graphnet.models.detector.prometheus.Prometheus.features" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+</dd></dl>
 </dd></dl>
 </section>
 

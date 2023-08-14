@@ -129,7 +129,7 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="extractors" href="graphnet.data.extractors.html" />
+    <link rel="next" title="dataset" href="graphnet.data.dataset.html" />
     <link rel="prev" title="API" href="graphnet.html" />
   
    
@@ -317,6 +317,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.dataset.html" class="md-nav__link">dataset</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.extractors.html" class="md-nav__link">extractors</a>
       
     
@@ -360,13 +367,6 @@
     
     
       <a href="graphnet.data.dataloader.html" class="md-nav__link">dataloader</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.data.dataset.html" class="md-nav__link">dataset</a>
       
     
     </li>
@@ -453,6 +453,12 @@ intermediate file formats  and reading this data.</p>
 <p><h2> Subpackages </h2></p>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.dataset.html">dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.parquet.html">parquet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.sqlite.html">sqlite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.dataset.html">dataset</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.extractors.html">extractors</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.utilities.html">utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.extractors.i3extractor.html">i3extractor</a></li>
@@ -471,13 +477,10 @@ intermediate file formats  and reading this data.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.parquet.html">parquet</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.parquet_dataconverter.html">parquet_dataconverter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.parquet.parquet_dataset.html">parquet_dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.sqlite.html">sqlite</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_dataconverter.html">sqlite_dataconverter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_dataset.html">sqlite_dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_dataset_perturbed.html">sqlite_dataset_perturbed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html">sqlite_utilities</a></li>
 </ul>
 </li>
@@ -508,12 +511,6 @@ intermediate file formats  and reading this data.</p>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataloader.html#graphnet.data.dataloader.collate_fn"><code class="docutils literal notranslate"><span class="pre">collate_fn()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataloader.html#graphnet.data.dataloader.do_shuffle"><code class="docutils literal notranslate"><span class="pre">do_shuffle()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataloader.html#graphnet.data.dataloader.DataLoader"><code class="docutils literal notranslate"><span class="pre">DataLoader</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.data.dataset.html">dataset</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.html#graphnet.data.dataset.ColumnMissingException"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.html#graphnet.data.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.html#graphnet.data.dataset.EnsembleDataset"><code class="docutils literal notranslate"><span class="pre">EnsembleDataset</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.pipeline.html">pipeline</a><ul>
@@ -548,12 +545,12 @@ intermediate file formats  and reading this data.</p>
             </a>
           
           
-            <a href="graphnet.data.extractors.html" title="extractors"
+            <a href="graphnet.data.dataset.html" title="dataset"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> Next </span> extractors </span>
+                class="md-footer-nav__direction"> Next </span> dataset </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

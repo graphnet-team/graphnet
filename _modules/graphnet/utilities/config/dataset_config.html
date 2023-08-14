@@ -326,6 +326,7 @@
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Dict</span><span class="p">,</span>
@@ -338,6 +339,12 @@
     <span class="n">BaseConfig</span><span class="p">,</span>
     <span class="n">get_all_argument_values</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.config.parsing</span> <span class="kn">import</span> <span class="n">traverse_and_apply</span>
+<span class="kn">from</span> <span class="nn">.model_config</span> <span class="kn">import</span> <span class="n">ModelConfig</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
 
 <span class="n">BACKEND_LOOKUP</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"db"</span><span class="p">:</span> <span class="s2">"sqlite"</span><span class="p">,</span>
@@ -369,8 +376,8 @@
     <span class="n">loss_weight_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">loss_weight_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">loss_weight_default_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">graph_definition</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Construct `DataConfig`.</span>
@@ -463,8 +470,8 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_dataset_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the `Dataset` class implementation for this configuration."""</span>
-        <span class="kn">from</span> <span class="nn">graphnet.data.sqlite</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
-        <span class="kn">from</span> <span class="nn">graphnet.data.parquet</span> <span class="kn">import</span> <span class="n">ParquetDataset</span>
+        <span class="kn">from</span> <span class="nn">graphnet.data.dataset.sqlite</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
+        <span class="kn">from</span> <span class="nn">graphnet.data.dataset.parquet</span> <span class="kn">import</span> <span class="n">ParquetDataset</span>
 
         <span class="n">dataset_class</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">"sqlite"</span><span class="p">:</span> <span class="n">SQLiteDataset</span><span class="p">,</span>
@@ -477,6 +484,17 @@
 <div class="viewcode-block" id="save_dataset_config"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.dataset_config.html#graphnet.utilities.config.dataset_config.save_dataset_config">[docs]</a><span class="k">def</span> <span class="nf">save_dataset_config</span><span class="p">(</span><span class="n">init_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Save the arguments to `__init__` functions as member `DatasetConfig`."""</span>
 
+    <span class="k">def</span> <span class="nf">_replace_model_instance_with_config</span><span class="p">(</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">"Model"</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelConfig</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Replace `Model` instances in `obj` with their `ModelConfig`."""</span>
+        <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">config</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span>
+
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">init_fn</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Set `DatasetConfig` after calling `init_fn`."""</span>
@@ -485,6 +503,9 @@
 
         <span class="c1"># Get all argument values, including defaults</span>
         <span class="n">cfg</span> <span class="o">=</span> <span class="n">get_all_argument_values</span><span class="p">(</span><span class="n">init_fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Handle nested `Model`s, etc.</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">traverse_and_apply</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">_replace_model_instance_with_config</span><span class="p">)</span>
 
         <span class="c1"># Add `DatasetConfig` as member variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">DatasetConfig</span><span class="p">(</span><span class="o">**</span><span class="n">cfg</span><span class="p">)</span>

@@ -349,13 +349,9 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Detector</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.nb_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_inputs</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -372,7 +368,7 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.detector.detector.Detector.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+      <a href="#graphnet.models.detector.detector.Detector.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
       
     
     </li>
@@ -380,20 +376,6 @@
     
     
       <a href="#graphnet.models.detector.detector.Detector.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.detector.detector.Detector.nb_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_inputs</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.detector.detector.Detector.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
       
     
     </li></ul>
@@ -427,6 +409,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.models.graphs.html" class="md-nav__link">graphs</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.task.html" class="md-nav__link">task</a>
       
     
@@ -435,13 +424,6 @@
     
     
       <a href="graphnet.models.coarsening.html" class="md-nav__link">coarsening</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graph_builders.html" class="md-nav__link">graph_builders</a>
       
     
     </li>
@@ -516,13 +498,9 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Detector</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.nb_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_inputs</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.detector.detector.Detector.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -542,46 +520,37 @@
 <p>Base detector-specific <cite>Model</cite> class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.detector.</span></span><span class="sig-name descname"><span class="pre">Detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_builder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/detector.html#Detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.detector.Detector" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.detector.</span></span><span class="sig-name descname"><span class="pre">Detector</span></span><a class="reference internal" href="../_modules/graphnet/models/detector/detector.html#Detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.detector.Detector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
 <p>Base class for all detector-specific read-ins in graphnet.</p>
 <p>Construct <cite>Detector</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>graph_builder</strong> (<a class="reference internal" href="graphnet.models.graph_builders.html#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><em>GraphBuilder</em></a>) – </p></li>
-<li><p><strong>scalers</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – </p></li>
-</ul>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.feature_map">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/detector.html#Detector.feature_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.detector.Detector.feature_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of features used/assumed by inheriting <cite>Detector</cite> objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</p>
 </dd>
 </dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.features">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.detector.detector.Detector.features" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of features used/assumed by inheriting <cite>Detector</cite> objects.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/detector.html#Detector.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.detector.Detector.forward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/detector.html#Detector.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.detector.Detector.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pre-process graph <cite>Data</cite> features and build graph adjacency.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> (<em>Data</em>) – </p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>node_features</strong> (<em>tensor</em>) – </p></li>
+<li><p><strong>node_feature_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.nb_inputs">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.detector.detector.Detector.nb_inputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return number of input features.</p>
-</dd></dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.models.detector.detector.Detector.nb_outputs">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_outputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.detector.detector.Detector.nb_outputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return number of output features.</p>
-<p>This the default, but may be overridden by specific inheriting classes.</p>
 </dd></dl>
 </dd></dl>
 </section>

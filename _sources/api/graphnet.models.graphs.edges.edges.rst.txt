@@ -1,0 +1,8 @@
+
+edges
+=====
+
+.. automodule:: graphnet.models.graphs.edges.edges
+   :members:
+   :undoc-members:
+   :show-inheritance:

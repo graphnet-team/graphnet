@@ -129,8 +129,8 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pipeline" href="graphnet.data.pipeline.html" />
-    <link rel="prev" title="dataloader" href="graphnet.data.dataloader.html" />
+    <link rel="next" title="parquet" href="graphnet.data.dataset.parquet.html" />
+    <link rel="prev" title="data" href="graphnet.data.html" />
   
    
 
@@ -309,6 +309,43 @@
     <li class="md-nav__item">
     
     
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> dataset </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">dataset</a>
+      
+        
+<nav class="md-nav md-nav--secondary">
+  <ul class="md-nav__list" data-md-scrollfix="">
+  </ul>
+</nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.dataset.parquet.html" class="md-nav__link">parquet</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.dataset.sqlite.html" class="md-nav__link">sqlite</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.dataset.dataset.html" class="md-nav__link">dataset</a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.extractors.html" class="md-nav__link">extractors</a>
       
     
@@ -353,110 +390,6 @@
     
       <a href="graphnet.data.dataloader.html" class="md-nav__link">dataloader</a>
       
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> dataset </label>
-    
-      <a href="#" class="md-nav__link md-nav__link--active">dataset</a>
-      
-        
-<nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
-  <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-data-dataset--page-root" class="md-nav__link">dataset</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.ColumnMissingException" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.concatenate" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">concatenate()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.path" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">path</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.truth_table" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">truth_table</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.query_table" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">query_table()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.add_label" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_label()</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.EnsembleDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EnsembleDataset</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-  </ul>
-</nav>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.ColumnMissingException" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.Dataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.Dataset.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.Dataset.concatenate" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">concatenate()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.Dataset.path" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">path</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.Dataset.truth_table" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">truth_table</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.Dataset.query_table" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">query_table()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.Dataset.add_label" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_label()</span></code></a>
-      
-    
-    </li></ul>
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataset.EnsembleDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EnsembleDataset</span></code></a>
-      
-    
-    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -524,32 +457,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-data-dataset--page-root" class="md-nav__link">dataset</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.ColumnMissingException" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.concatenate" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">concatenate()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.path" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">path</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.truth_table" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">truth_table</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.query_table" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">query_table()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.Dataset.add_label" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_label()</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.EnsembleDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EnsembleDataset</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
   </ul>
 </nav>
               </div>
@@ -561,165 +469,34 @@
             
   <section id="module-graphnet.data.dataset">
 <span id="dataset"></span><h1 id="api-graphnet-data-dataset--page-root">dataset<a class="headerlink" href="#api-graphnet-data-dataset--page-root" title="Permalink to this heading">¶</a></h1>
-<p>Base <a class="reference internal" href="#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> class(es) used in GraphNeT.</p>
-<dl class="py exception">
-<dt class="sig sig-object py" id="graphnet.data.dataset.ColumnMissingException">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.</span></span><span class="sig-name descname"><span class="pre">ColumnMissingException</span></span><a class="reference internal" href="../_modules/graphnet/data/dataset.html#ColumnMissingException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.ColumnMissingException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Exception to indicate a missing column in a dataset.</p>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string_selection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_default_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset.html#Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a>, <a class="reference internal" href="graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable" title="graphnet.utilities.config.configurable.Configurable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configurable</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Base Dataset class for reading from any intermediate file format.</p>
-<p>Construct Dataset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Path to the file(s) from which this <cite>Dataset</cite> should read.</p></li>
-<li><p><strong>pulsemaps</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Name(s) of the pulse map series that should be used to
-construct the nodes on the individual graph objects, and their
-features. Multiple pulse series maps can be used, e.g., when
-different DOM types are stored in different maps.</p></li>
-<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of columns in the input files that should be used as
-node features on the graph objects.</p></li>
-<li><p><strong>truth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of event-level columns in the input files that should
-be used added as attributes on the  graph objects.</p></li>
-<li><p><strong>node_truth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – List of node-level columns in the input files that
-should be used added as attributes on the graph objects.</p></li>
-<li><p><strong>index_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – Name of the column in the input files that contains
-unique indicies to identify and map events across tables.</p></li>
-<li><p><strong>truth_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – Name of the table containing event-level truth
-information.</p></li>
-<li><p><strong>node_truth_table</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the table containing node-level truth
-information.</p></li>
-<li><p><strong>string_selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Subset of strings for which data should be read
-and used to construct graph objects. Defaults to None, meaning
-all strings for which data exists are used.</p></li>
-<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The events that should be read. This can be given either
-as list of indicies (in <cite>index_column</cite>); or a string-based
-selection used to query the <cite>Dataset</cite> for events passing the
-selection. Defaults to None, meaning that all events in the
-input files are read.</p></li>
-<li><p><strong>dtype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – Type of the feature tensor on the graph objects returned.</p></li>
-<li><p><strong>loss_weight_table</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the table containing per-event loss
-weights.</p></li>
-<li><p><strong>loss_weight_column</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the column in <cite>loss_weight_table</cite>
-containing per-event loss weights. This is also the name of the
-corresponding attribute assigned to the graph object.</p></li>
-<li><p><strong>loss_weight_default_value</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Default per-event loss weight.
-NOTE: This default value is only applied when
-<cite>loss_weight_table</cite> and <cite>loss_weight_column</cite> are specified, and
-in this case to events with no value in the corresponding
-table/column. That is, if no per-event loss weight table/column
-is provided, this value is ignored. Defaults to None.</p></li>
-<li><p><strong>seed</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Random number generator seed, used for selecting a random
-subset of events when resolving a string-based selection (e.g.,
-<cite>“10000 random events ~ event_no % 5 &gt; 0”</cite> or <cite>“20% random
-events ~ event_no % 5 &gt; 0”</cite>).</p></li>
+<p>Dataset classes for training in GraphNeT.</p>
+<p><h2> Subpackages </h2></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.dataset.parquet.html">parquet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.parquet.parquet_dataset.html">parquet_dataset</a></li>
 </ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.from_config">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset.html#Dataset.from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.from_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Construct <cite>Dataset</cite> instance from <cite>source</cite> configuration.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>, <a class="reference internal" href="#graphnet.data.dataset.EnsembleDataset" title="graphnet.data.dataset.EnsembleDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleDataset</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#graphnet.data.dataset.EnsembleDataset" title="graphnet.data.dataset.EnsembleDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleDataset</span></code></a>]]</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>source</strong> (<a class="reference internal" href="graphnet.utilities.config.dataset_config.html#graphnet.utilities.config.dataset_config.DatasetConfig" title="graphnet.utilities.config.dataset_config.DatasetConfig"><em>DatasetConfig</em></a><em> | </em><em>str</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.concatenate">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset.html#Dataset.concatenate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.concatenate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Concatenate multiple <a href="#id1"><span class="problematic" id="id2">`</span></a>Dataset`s into one instance.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#graphnet.data.dataset.EnsembleDataset" title="graphnet.data.dataset.EnsembleDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleDataset</span></code></a></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>datasets</strong> (<em>List</em><em>[</em><a class="reference internal" href="#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><em>Dataset</em></a><em>]</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.path">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.data.dataset.Dataset.path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Path to the file(s) from which this <cite>Dataset</cite> reads.</p>
-</dd></dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.truth_table">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truth_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.data.dataset.Dataset.truth_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Name of the table containing event-level truth information.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.query_table">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset.html#Dataset.query_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.query_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Query a table at a specific index, optionally with some selection.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Table to be queried.</p></li>
-<li><p><strong>columns</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Columns to read out.</p></li>
-<li><p><strong>sequential_index</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Sequentially numbered index
-(i.e. in [0,len(self))) of the event to query. This _may_
-differ from the indexation used in <cite>self._indices</cite>. If no value
-is provided, the entire column is returned.</p></li>
-<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Selection to be imposed before reading out data.
-Defaults to None.</p></li>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.dataset.sqlite.html">sqlite</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.sqlite.sqlite_dataset.html">sqlite_dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.sqlite.sqlite_dataset_perturbed.html">sqlite_dataset_perturbed</a></li>
 </ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>List of tuples containing the values in <cite>columns</cite>. If the <cite>table</cite></dt><dd><p>contains only scalar data for <cite>columns</cite>, a list of length 1 is
-returned</p>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#graphnet.data.dataset.ColumnMissingException" title="graphnet.data.dataset.ColumnMissingException"><strong>ColumnMissingException</strong></a> – If one or more element in <cite>columns</cite> is not
-    present in <cite>table</cite>.</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.dataset.Dataset.add_label">
-<span class="sig-name descname"><span class="pre">add_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset.html#Dataset.add_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.Dataset.add_label" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add custom graph label define using function <cite>fn</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>fn</strong> (<em>Callable</em><em>[</em><em>[</em><em>Data</em><em>]</em><em>, </em><em>Any</em><em>]</em>) – </p></li>
-<li><p><strong>key</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
+</li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.data.dataset.EnsembleDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.</span></span><span class="sig-name descname"><span class="pre">EnsembleDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset.html#EnsembleDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.EnsembleDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ConcatDataset</span></code></p>
-<p>Construct a single dataset from a collection of datasets.</p>
-<p>Construct a single dataset from a collection of datasets.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>datasets</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="#graphnet.data.dataset.Dataset" title="graphnet.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]) – A collection of Datasets</p>
-</dd>
-</dl>
-</dd></dl>
+</div>
+<p><h2> Submodules </h2></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.dataset.dataset.html">dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.ColumnMissingException"><code class="docutils literal notranslate"><span class="pre">ColumnMissingException</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.load_module"><code class="docutils literal notranslate"><span class="pre">load_module()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.parse_graph_definition"><code class="docutils literal notranslate"><span class="pre">parse_graph_definition()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.EnsembleDataset"><code class="docutils literal notranslate"><span class="pre">EnsembleDataset</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 
 
@@ -732,7 +509,7 @@ returned</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.data.dataloader.html" title="dataloader"
+            <a href="graphnet.data.html" title="data"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -741,17 +518,17 @@ returned</p>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> Previous </span> dataloader </span>
+                      class="md-footer-nav__direction"> Previous </span> data </span>
               </div>
             </a>
           
           
-            <a href="graphnet.data.pipeline.html" title="pipeline"
+            <a href="graphnet.data.dataset.parquet.html" title="parquet"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> Next </span> pipeline </span>
+                class="md-footer-nav__direction"> Next </span> parquet </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

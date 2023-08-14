@@ -1,8 +1,0 @@
-
-graph\_builders
-===============
-
-.. automodule:: graphnet.models.graph_builders
-   :members:
-   :undoc-members:
-   :show-inheritance:

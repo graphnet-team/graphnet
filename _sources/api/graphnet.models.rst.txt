@@ -17,6 +17,7 @@ models
    graphnet.models.components
    graphnet.models.detector
    graphnet.models.gnn
+   graphnet.models.graphs
    graphnet.models.task
 
 |start-h2| Submodules |end-h2|
@@ -26,7 +27,6 @@ models
    :maxdepth: 2
 
    graphnet.models.coarsening
-   graphnet.models.graph_builders
    graphnet.models.model
    graphnet.models.standard_model
    graphnet.models.utils

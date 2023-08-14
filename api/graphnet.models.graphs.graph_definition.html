@@ -61,7 +61,7 @@
 </script>
   
   
-    <title>graph_builders &#8212; graphnet  documentation</title>
+    <title>graph_definition &#8212; graphnet  documentation</title>
 
 <style>
   dt:target {
@@ -129,8 +129,8 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="model" href="graphnet.models.model.html" />
-    <link rel="prev" title="coarsening" href="graphnet.models.coarsening.html" />
+    <link rel="next" title="graphs" href="graphnet.models.graphs.graphs.html" />
+    <link rel="prev" title="nodes" href="graphnet.models.graphs.nodes.nodes.html" />
   
    
 
@@ -149,7 +149,7 @@
   <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
   <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
   <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-  <a href="#api/graphnet.models.graph_builders" tabindex="1" class="md-skip"> Skip to content </a>
+  <a href="#api/graphnet.models.graphs.graph_definition" tabindex="1" class="md-skip"> Skip to content </a>
   <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
@@ -167,7 +167,7 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           <span class="md-header-nav__topic">GraphNeT</span>
-          <span class="md-header-nav__topic"> graph_builders </span>
+          <span class="md-header-nav__topic"> graph_definition </span>
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -244,6 +244,7 @@
             <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
           <li class="md-tabs__item"><a href="graphnet.html" class="md-tabs__link">API</a></li>
           <li class="md-tabs__item"><a href="graphnet.models.html" class="md-tabs__link">models</a></li>
+          <li class="md-tabs__item"><a href="graphnet.models.graphs.html" class="md-tabs__link">graphs</a></li>
       </ul>
     </div>
   </nav>
@@ -344,14 +345,19 @@
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.task.html" class="md-nav__link">task</a>
+      <a href="graphnet.models.graphs.html" class="md-nav__link">graphs</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.graphs.edges.html" class="md-nav__link">edges</a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.coarsening.html" class="md-nav__link">coarsening</a>
+      <a href="graphnet.models.graphs.nodes.html" class="md-nav__link">nodes</a>
       
     
     </li>
@@ -359,33 +365,19 @@
     
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> graph_builders </label>
+    <label class="md-nav__link md-nav__link--active" for="__toc"> graph_definition </label>
     
-      <a href="#" class="md-nav__link md-nav__link--active">graph_builders</a>
+      <a href="#" class="md-nav__link md-nav__link--active">graph_definition</a>
       
         
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">Contents</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-graph-builders--page-root" class="md-nav__link">graph_builders</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-models-graphs-graph-definition--page-root" class="md-nav__link">graph_definition</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.GraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.KNNGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.graph_definition.GraphDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.KNNGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.RadialGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.RadialGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.EuclideanGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.EuclideanGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.graph_definition.GraphDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -397,20 +389,15 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graph_builders.GraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graph_builders.KNNGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder</span></code></a>
+      <a href="#graphnet.models.graphs.graph_definition.GraphDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graph_builders.KNNGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      <a href="#graphnet.models.graphs.graph_definition.GraphDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
       
+    
+    </li></ul>
     
     </li></ul>
     
@@ -418,12 +405,7 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graph_builders.RadialGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder</span></code></a>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graph_builders.RadialGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      <a href="graphnet.models.graphs.graphs.html" class="md-nav__link">graphs</a>
       
     
     </li></ul>
@@ -432,17 +414,15 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graph_builders.EuclideanGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder</span></code></a>
-      <ul class="md-nav__list"> 
+      <a href="graphnet.models.task.html" class="md-nav__link">task</a>
+      
+    
+    </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graph_builders.EuclideanGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      <a href="graphnet.models.coarsening.html" class="md-nav__link">coarsening</a>
       
-    
-    </li></ul>
-    
-    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -512,25 +492,11 @@
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">Contents</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-graph-builders--page-root" class="md-nav__link">graph_builders</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-models-graphs-graph-definition--page-root" class="md-nav__link">graph_definition</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.GraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.KNNGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNGraphBuilder</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.graph_definition.GraphDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.KNNGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.RadialGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RadialGraphBuilder</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.RadialGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.EuclideanGraphBuilder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EuclideanGraphBuilder</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graph_builders.EuclideanGraphBuilder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.graph_definition.GraphDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -545,109 +511,55 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.models.graph_builders">
-<span id="graph-builders"></span><h1 id="api-graphnet-models-graph-builders--page-root">graph_builders<a class="headerlink" href="#api-graphnet-models-graph-builders--page-root" title="Permalink to this heading">¶</a></h1>
-<p>Class(es) for building/connecting graphs.</p>
+  <section id="module-graphnet.models.graphs.graph_definition">
+<span id="graph-definition"></span><h1 id="api-graphnet-models-graphs-graph-definition--page-root">graph_definition<a class="headerlink" href="#api-graphnet-models-graphs-graph-definition--page-root" title="Permalink to this heading">¶</a></h1>
+<p>Modules for defining graphs.</p>
+<p>These are self-contained graph definitions that hold all the graph-altering
+code in graphnet. These modules define what the GNNs sees as input and can be
+passed to dataloaders during training and deployment.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graph_builders.GraphBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">GraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graph_builders.html#GraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.GraphBuilder" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.graphs.graph_definition.GraphDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.graph_definition.</span></span><span class="sig-name descname"><span class="pre">GraphDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_feature_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/graph_definition.html#GraphDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.graph_definition.GraphDefinition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
-<p>Base class for graph building.</p>
-<p>Construct <cite>Logger</cite>.</p>
+<p>An Abstract class to create graph definitions from.</p>
+<p>Construct ´GraphDefinition´. The ´detector´ holds.</p>
+<p>´Detector´-specific code. E.g. scaling/standardization and geometry
+tables.</p>
+<p>´node_definition´ defines the nodes in the graph.</p>
+<p>´edge_definition´ defines the connectivity of the nodes in the graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>class_name</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>level</strong> (<em>int</em>) – </p></li>
-<li><p><strong>log_folder</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graph_builders.KNNGraphBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">KNNGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_nearest_neighbours</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graph_builders.html#KNNGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a></p>
-<p>Builds graph from the k-nearest neighbours.</p>
-<p>Construct <cite>KNNGraphBuilder</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nb_nearest_neighbours</strong> (<em>int</em>) – </p></li>
-<li><p><strong>columns</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – </p></li>
+<li><p><strong>detector</strong> (<a class="reference internal" href="graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detector</span></code></a>) – The corresponding ´Detector´ representing the data.</p></li>
+<li><p><strong>node_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.nodes.nodes.html#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a>) – Definition of nodes.</p></li>
+<li><p><strong>edge_definition</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.graphs.edges.edges.html#graphnet.models.graphs.edges.edges.EdgeDefinition" title="graphnet.models.graphs.edges.edges.EdgeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">EdgeDefinition</span></code></a>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Definition of edges. Defaults to None.</p></li>
+<li><p><strong>node_feature_names</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Names of node feature columns. Defaults to None</p></li>
+<li><p><strong>dtype</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>], default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – data type used for node features. e.g. ´torch.float´</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graph_builders.KNNGraphBuilder.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graph_builders.html#KNNGraphBuilder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.KNNGraphBuilder.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forward pass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> (<em>Data</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graph_builders.RadialGraphBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">RadialGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graph_builders.html#RadialGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a></p>
-<p>Builds graph from a sphere of chosen radius centred at each node.</p>
-<p>Construct <cite>RadialGraphBuilder</cite>.</p>
+<dt class="sig sig-object py" id="graphnet.models.graphs.graph_definition.GraphDefinition.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_feature_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_dicts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_label_functions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_default_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/graph_definition.html#GraphDefinition.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.graph_definition.GraphDefinition.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct graph as ´Data´ object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>radius</strong> (<em>float</em>) – </p></li>
-<li><p><strong>columns</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – </p></li>
+<li><p><strong>node_features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – node features for graph. Shape ´[num_nodes, d]´</p></li>
+<li><p><strong>node_feature_names</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – name of each column. Shape ´[,d]´.</p></li>
+<li><p><strong>truth_dicts</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Dictionary containing truth labels.</p></li>
+<li><p><strong>custom_label_functions</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Custom label functions. See <a class="reference external" href="https://github.com/graphnet-team/graphnet/blob/main/GETTING_STARTED.md#adding-custom-truth-labels">https://github.com/graphnet-team/graphnet/blob/main/GETTING_STARTED.md#adding-custom-truth-labels</a>.</p></li>
+<li><p><strong>loss_weight_column</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of column that holds loss weight. Defaults to None.</p></li>
+<li><p><strong>loss_weight</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Loss weight associated with event. Defaults to None.</p></li>
+<li><p><strong>loss_weight_default_value</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – default value for loss weight. Used in instances where some events have no pre-defined loss weight. Defaults to None.</p></li>
+<li><p><strong>data_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Path to dataset data files. Defaults to None.</p></li>
 </ul>
 </dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graph_builders.RadialGraphBuilder.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graph_builders.html#RadialGraphBuilder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.RadialGraphBuilder.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forward pass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
 </dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> (<em>Data</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graph_builders.EuclideanGraphBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graph_builders.</span></span><span class="sig-name descname"><span class="pre">EuclideanGraphBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graph_builders.html#EuclideanGraphBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.EuclideanGraphBuilder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graph_builders.GraphBuilder" title="graphnet.models.graph_builders.GraphBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphBuilder</span></code></a></p>
-<p>Builds graph according to Euclidean distance between nodes.</p>
-<p>See <a class="reference external" href="https://arxiv.org/pdf/1809.06166.pdf">https://arxiv.org/pdf/1809.06166.pdf</a>.</p>
-<p>Construct <cite>EuclideanGraphBuilder</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sigma</strong> (<em>float</em>) – </p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – </p></li>
-<li><p><strong>columns</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graph_builders.EuclideanGraphBuilder.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graph_builders.html#EuclideanGraphBuilder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graph_builders.EuclideanGraphBuilder.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forward pass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> (<em>Data</em>) – </p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>graph</p>
 </dd>
 </dl>
 </dd></dl>
@@ -664,7 +576,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.models.coarsening.html" title="coarsening"
+            <a href="graphnet.models.graphs.nodes.nodes.html" title="nodes"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -673,17 +585,17 @@
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> Previous </span> coarsening </span>
+                      class="md-footer-nav__direction"> Previous </span> nodes </span>
               </div>
             </a>
           
           
-            <a href="graphnet.models.model.html" title="model"
+            <a href="graphnet.models.graphs.graphs.html" title="graphs"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> Next </span> model </span>
+                class="md-footer-nav__direction"> Next </span> graphs </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

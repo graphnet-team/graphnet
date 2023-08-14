@@ -336,10 +336,11 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Batch</span><span class="p">,</span> <span class="n">Data</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.sqlite</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.parquet</span> <span class="kn">import</span> <span class="n">ParquetDataset</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.dataset</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.dataset</span> <span class="kn">import</span> <span class="n">ParquetDataset</span>
 <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.graphs</span> <span class="kn">import</span> <span class="n">GraphDefinition</span>
 
 
 <div class="viewcode-block" id="collate_fn"><a class="viewcode-back" href="../../../api/graphnet.training.utils.html#graphnet.training.utils.collate_fn">[docs]</a><span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">graphs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Batch</span><span class="p">:</span>
@@ -355,6 +356,7 @@
 <div class="viewcode-block" id="make_dataloader"><a class="viewcode-back" href="../../../api/graphnet.training.utils.html#graphnet.training.utils.make_dataloader">[docs]</a><span class="k">def</span> <span class="nf">make_dataloader</span><span class="p">(</span>
     <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">graph_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GraphDefinition</span><span class="p">],</span>
     <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
@@ -390,6 +392,7 @@
         <span class="n">loss_weight_table</span><span class="o">=</span><span class="n">loss_weight_table</span><span class="p">,</span>
         <span class="n">loss_weight_column</span><span class="o">=</span><span class="n">loss_weight_column</span><span class="p">,</span>
         <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
+        <span class="n">graph_definition</span><span class="o">=</span><span class="n">graph_definition</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># adds custom labels to dataset</span>
@@ -413,6 +416,7 @@
 <span class="c1"># @TODO: Remove in favour of DataLoader{,.from_dataset_config}</span>
 <div class="viewcode-block" id="make_train_validation_dataloader"><a class="viewcode-back" href="../../../api/graphnet.training.utils.html#graphnet.training.utils.make_train_validation_dataloader">[docs]</a><span class="k">def</span> <span class="nf">make_train_validation_dataloader</span><span class="p">(</span>
     <span class="n">db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">graph_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GraphDefinition</span><span class="p">],</span>
     <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
     <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -446,19 +450,21 @@
         <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span>
         <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".db"</span><span class="p">):</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span>
-                <span class="n">db</span><span class="p">,</span>
-                <span class="n">pulsemaps</span><span class="p">,</span>
-                <span class="n">features</span><span class="p">,</span>
-                <span class="n">truth</span><span class="p">,</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
+                <span class="n">graph_definition</span><span class="o">=</span><span class="n">graph_definition</span><span class="p">,</span>
+                <span class="n">pulsemaps</span><span class="o">=</span><span class="n">pulsemaps</span><span class="p">,</span>
+                <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
+                <span class="n">truth</span><span class="o">=</span><span class="n">truth</span><span class="p">,</span>
                 <span class="n">truth_table</span><span class="o">=</span><span class="n">truth_table</span><span class="p">,</span>
                 <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">db</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".parquet"</span><span class="p">):</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">ParquetDataset</span><span class="p">(</span>
-                <span class="n">db</span><span class="p">,</span>
-                <span class="n">pulsemaps</span><span class="p">,</span>
-                <span class="n">features</span><span class="p">,</span>
-                <span class="n">truth</span><span class="p">,</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
+                <span class="n">graph_definition</span><span class="o">=</span><span class="n">graph_definition</span><span class="p">,</span>
+                <span class="n">pulsemaps</span><span class="o">=</span><span class="n">pulsemaps</span><span class="p">,</span>
+                <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
+                <span class="n">truth</span><span class="o">=</span><span class="n">truth</span><span class="p">,</span>
                 <span class="n">truth_table</span><span class="o">=</span><span class="n">truth_table</span><span class="p">,</span>
                 <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
             <span class="p">)</span>
@@ -503,6 +509,7 @@
         <span class="n">loss_weight_table</span><span class="o">=</span><span class="n">loss_weight_table</span><span class="p">,</span>
         <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
         <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+        <span class="n">graph_definition</span><span class="o">=</span><span class="n">graph_definition</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">training_dataloader</span> <span class="o">=</span> <span class="n">make_dataloader</span><span class="p">(</span>
