@@ -63,6 +63,9 @@ class StandardModel(Model):
         self._scheduler_kwargs = scheduler_kwargs or dict()
         self._scheduler_config = scheduler_config or dict()
 
+        # set dtype of GNN from graph_definition
+        self._gnn.type(self._graph_definition._dtype)
+
     @property
     def target_labels(self) -> List[str]:
         """Return target label."""
