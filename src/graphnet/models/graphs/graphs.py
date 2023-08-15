@@ -19,7 +19,7 @@ class KNNGraph(GraphDefinition):
         detector: Detector,
         node_definition: NodeDefinition,
         node_feature_names: Optional[List[str]] = None,
-        dtype: Optional[torch.dtype] = None,
+        dtype: Optional[torch.dtype] = torch.float,
         nb_nearest_neighbours: int = 8,
         columns: List[int] = [0, 1, 2],
     ) -> None:
