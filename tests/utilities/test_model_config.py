@@ -120,7 +120,7 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
         assert True
 
     for key in [
-        "coarsening",
+        "graph_definition",
         "optimizer_class",
         "optimizer_kwargs",
         "scheduler_class",
