@@ -42,30 +42,6 @@ def test_simple_model_config(path: str = "/tmp/simple_model.yml") -> None:
     assert repr(constructed_model) == repr(model)
 
 
-def test_nested_model_config(path: str = "/tmp/nested_model.yml") -> None:
-    """Test saving, loading, and reconstructing nested model."""
-    # Construct nested Model
-    model = KNNGraph(
-        detector=IceCubeDeepCore(),
-        node_definition=NodesAsPulses(),
-        nb_nearest_neighbours=8,
-        node_feature_names=FEATURES.DEEPCORE,
-    )
-    # Save config to file
-    model.save_config(path)
-    assert os.path.exists(path)
-
-    # Load config from file
-    loaded_config = ModelConfig.load(path)
-    assert isinstance(loaded_config, ModelConfig)
-    assert loaded_config == model.config
-
-    # Construct model
-    constructed_model = Model.from_config(loaded_config)
-    assert constructed_model.config == model.config
-    assert repr(constructed_model) == repr(model)
-
-
 def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
     """Test saving, loading, and reconstructing nested model."""
     # Construct StandardModel
@@ -120,7 +96,7 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
         assert True
 
     for key in [
-        "coarsening",
+        "graph_definition",
         "optimizer_class",
         "optimizer_kwargs",
         "scheduler_class",
