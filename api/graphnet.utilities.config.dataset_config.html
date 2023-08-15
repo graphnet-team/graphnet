@@ -407,6 +407,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">graph_definition</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.as_dict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">as_dict()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_config</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_fields</span></code></a>
@@ -527,6 +529,13 @@
     
     
       <a href="#graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">graph_definition</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.dataset_config.DatasetConfig.as_dict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">as_dict()</span></code></a>
       
     
     </li>
@@ -678,6 +687,8 @@
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.seed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">seed</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">graph_definition</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.as_dict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">as_dict()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_config</span></code></a>
         </li>
@@ -859,6 +870,19 @@ construction more transparent and reproducible.</p>
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition">
 <span class="sig-name descname"><span class="pre">graph_definition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/dataset_config.html#DatasetConfig.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent ModelConfig as a dict.</p>
+<p>This builds on <cite>BaseModel.dict()</cite> but wraps the output in a single-key
+dictionary to make it unambiguous to identify model arguments that are
+themselves models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</p>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.model_config" title="Permalink to this definition">¶</a></dt>

@@ -478,7 +478,28 @@
             <span class="s2">"parquet"</span><span class="p">:</span> <span class="n">ParquetDataset</span><span class="p">,</span>
         <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">dataset_class</span></div>
+        <span class="k">return</span> <span class="n">dataset_class</span>
+
+<div class="viewcode-block" id="DatasetConfig.as_dict"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.dataset_config.html#graphnet.utilities.config.dataset_config.DatasetConfig.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Represent ModelConfig as a dict.</span>
+
+<span class="sd">        This builds on `BaseModel.dict()` but wraps the output in a single-key</span>
+<span class="sd">        dictionary to make it unambiguous to identify model arguments that are</span>
+<span class="sd">        themselves models.</span>
+<span class="sd">        """</span>
+        <span class="n">config_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+        <span class="n">config_dict</span> <span class="o">=</span> <span class="n">traverse_and_apply</span><span class="p">(</span>
+            <span class="n">obj</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">config_dict</span><span class="p">),</span> <span class="n">fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_torch</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">}</span></div>
+
+    <span class="k">def</span> <span class="nf">_parse_torch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">torch</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span></div>
 
 
 <div class="viewcode-block" id="save_dataset_config"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.dataset_config.html#graphnet.utilities.config.dataset_config.save_dataset_config">[docs]</a><span class="k">def</span> <span class="nf">save_dataset_config</span><span class="p">(</span><span class="n">init_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
@@ -489,9 +510,14 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelConfig</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Replace `Model` instances in `obj` with their `ModelConfig`."""</span>
         <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+        <span class="kn">import</span> <span class="nn">torch</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">config</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">obj</span>
 
@@ -506,7 +532,6 @@
 
         <span class="c1"># Handle nested `Model`s, etc.</span>
         <span class="n">cfg</span> <span class="o">=</span> <span class="n">traverse_and_apply</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">_replace_model_instance_with_config</span><span class="p">)</span>
-
         <span class="c1"># Add `DatasetConfig` as member variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">DatasetConfig</span><span class="p">(</span><span class="o">**</span><span class="n">cfg</span><span class="p">)</span>
 
