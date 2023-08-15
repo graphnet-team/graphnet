@@ -73,7 +73,10 @@ class ModelConfig(BaseConfig):
                 data["arguments"][arg] = self._parse_if_model_config_entry(
                     value
                 )
-
+            if arg == "graph_definition":
+                data["arguments"][arg]["dtype"] = eval(
+                    data["arguments"][arg]["dtype"]
+                )
         # Base class constructor
         super().__init__(**data)
 
