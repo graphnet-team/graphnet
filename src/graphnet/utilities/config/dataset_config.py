@@ -165,6 +165,7 @@ def save_dataset_config(init_fn: Callable) -> Callable:
     ) -> Union[ModelConfig, Any]:
         """Replace `Model` instances in `obj` with their `ModelConfig`."""
         from graphnet.models import Model
+        import torch
 
         if isinstance(obj, Model):
             return obj.config
