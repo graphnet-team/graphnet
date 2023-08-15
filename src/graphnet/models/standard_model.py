@@ -10,7 +10,6 @@ from torch.utils.data import DataLoader
 from torch_geometric.data import Data
 import pandas as pd
 
-from graphnet.models.coarsening import Coarsening
 from graphnet.utilities.config import save_model_config
 from graphnet.models.graphs import GraphDefinition
 from graphnet.models.gnn.gnn import GNN
@@ -32,7 +31,6 @@ class StandardModel(Model):
         graph_definition: GraphDefinition,
         gnn: GNN,
         tasks: Union[Task, List[Task]],
-        coarsening: Optional[Coarsening] = None,
         optimizer_class: type = Adam,
         optimizer_kwargs: Optional[Dict] = None,
         scheduler_class: Optional[type] = None,
@@ -50,13 +48,11 @@ class StandardModel(Model):
         assert all(isinstance(task, Task) for task in tasks)
         assert isinstance(graph_definition, GraphDefinition)
         assert isinstance(gnn, GNN)
-        assert coarsening is None or isinstance(coarsening, Coarsening)
 
         # Member variable(s)
         self._graph_definition = graph_definition
         self._gnn = gnn
         self._tasks = ModuleList(tasks)
-        self._coarsening = coarsening
         self._optimizer_class = optimizer_class
         self._optimizer_kwargs = optimizer_kwargs or dict()
         self._scheduler_class = scheduler_class
@@ -102,8 +98,6 @@ class StandardModel(Model):
 
     def forward(self, data: Data) -> List[Union[Tensor, Data]]:
         """Forward pass, chaining model components."""
-        if self._coarsening:
-            data = self._coarsening(data)
         assert isinstance(data, Data)
         x = self._gnn(data)
         preds = [task(x) for task in self._tasks]
