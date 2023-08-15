@@ -29,7 +29,7 @@ class GraphDefinition(Model):
         node_definition: NodeDefinition,
         edge_definition: Optional[EdgeDefinition] = None,
         node_feature_names: Optional[List[str]] = None,
-        dtype: Optional[torch.dtype] = torch.float,  # None,
+        dtype: Optional[torch.dtype] = torch.float,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -59,7 +59,8 @@ class GraphDefinition(Model):
             node_feature_names = list(self._detector.feature_map().keys())  # type: ignore
         self._node_feature_names = node_feature_names
 
-        self._dtype = dtype
+        # Set data type
+        self.to(dtype)
 
         # Set Input / Output dimensions
         self._node_definition.set_number_of_inputs(
@@ -100,7 +101,7 @@ class GraphDefinition(Model):
         )
 
         # Transform to pytorch tensor
-        node_features = torch.tensor(node_features, dtype=self._dtype)
+        node_features = torch.tensor(node_features, dtype=self.dtype)
 
         # Standardize / Scale  node features
         node_features = self._detector(node_features, node_feature_names)
@@ -201,11 +202,11 @@ class GraphDefinition(Model):
                         "but loss_weight_default_value is None."
                     )
                 graph[loss_weight_column] = torch.tensor(
-                    self._loss_weight_default_value, dtype=self._dtype
+                    self._loss_weight_default_value, dtype=self.dtype
                 ).reshape(-1, 1)
             else:
                 graph[loss_weight_column] = torch.tensor(
-                    loss_weight, dtype=self._dtype
+                    loss_weight, dtype=self.dtype
                 ).reshape(-1, 1)
         return graph
 

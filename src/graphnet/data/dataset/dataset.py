@@ -29,6 +29,7 @@ from graphnet.utilities.config import (
     DatasetConfig,
     save_dataset_config,
 )
+from graphnet.utilities.config.parsing import traverse_and_apply
 from graphnet.utilities.logging import Logger
 from graphnet.models.graphs import GraphDefinition
 
@@ -73,6 +74,9 @@ def parse_graph_definition(cfg: dict) -> GraphDefinition:
                 classes[arg] = load_module(args[arg]["class_name"])(
                     **args[arg]["arguments"]
                 )
+        if arg == "dtype":
+            args[arg] = eval(args[arg])  # converts string to class
+
     new_cfg = deepcopy(args)
     new_cfg.update(classes)
     graph_definition = load_module(cfg["graph_definition"]["class_name"])(

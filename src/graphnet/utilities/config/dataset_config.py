@@ -156,6 +156,27 @@ class DatasetConfig(BaseConfig):
 
         return dataset_class
 
+    def as_dict(self) -> Dict[str, Dict[str, Any]]:
+        """Represent ModelConfig as a dict.
+
+        This builds on `BaseModel.dict()` but wraps the output in a single-key
+        dictionary to make it unambiguous to identify model arguments that are
+        themselves models.
+        """
+        config_dict = self.dict()
+        config_dict = traverse_and_apply(
+            obj=dict(**config_dict), fn=self._parse_torch
+        )
+        return {self.__class__.__name__: config_dict}
+
+    def _parse_torch(self, obj: Any) -> Any:
+        import torch
+
+        if isinstance(obj, torch.dtype):
+            return obj.__str__()
+        else:
+            return obj
+
 
 def save_dataset_config(init_fn: Callable) -> Callable:
     """Save the arguments to `__init__` functions as member `DatasetConfig`."""
@@ -165,9 +186,14 @@ def save_dataset_config(init_fn: Callable) -> Callable:
     ) -> Union[ModelConfig, Any]:
         """Replace `Model` instances in `obj` with their `ModelConfig`."""
         from graphnet.models import Model
+        import torch
 
         if isinstance(obj, Model):
             return obj.config
+
+        if isinstance(obj, torch.dtype):
+            return obj.__str__()
+
         else:
             return obj
 
@@ -182,7 +208,6 @@ def save_dataset_config(init_fn: Callable) -> Callable:
 
         # Handle nested `Model`s, etc.
         cfg = traverse_and_apply(cfg, _replace_model_instance_with_config)
-
         # Add `DatasetConfig` as member variables
         self._config = DatasetConfig(**cfg)
 
