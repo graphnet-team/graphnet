@@ -14,6 +14,7 @@ from graphnet.data.extractors import (
 from graphnet.models import Model, StandardModel
 from graphnet.models.graphs import GraphDefinition
 from graphnet.utilities.imports import has_icecube_package
+from graphnet.utilities.config import ModelConfig
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube.icetray import (
@@ -144,7 +145,8 @@ class I3InferenceModule(GraphNeTI3Module):
         pulsemap_extractor: Union[
             List[I3FeatureExtractor], I3FeatureExtractor
         ],
-        model: Union[Model, StandardModel, str],
+        model_config: Union[ModelConfig, str],
+        state_dict: str,
         model_name: str,
         prediction_columns: Union[List[str], str],
         gcd_file: str,
@@ -155,8 +157,9 @@ class I3InferenceModule(GraphNeTI3Module):
             pulsemap: the pulsmap that the model is expecting as input.
             features: the features of the pulsemap that the model is expecting.
             pulsemap_extractor: The extractor used to extract the pulsemap.
-            model: The model (or path to pickled model) that will be
-                    used for inference.
+            model_config: The ModelConfig (or path to it) that summarizes the
+                            model used for inference.
+            state_dict: Path to state_dict containing the learned weights.
             model_name: The name used for the model. Will help define the
                         named entry in the I3Frame. E.g. "dynedge".
             prediction_columns: column names for the predictions of the model.
@@ -164,12 +167,9 @@ class I3InferenceModule(GraphNeTI3Module):
                                 E.g. ['energy_reco'].
             gcd_file: path to associated gcd file.
         """
-        if isinstance(model, str):
-            self.model = torch.load(
-                model, pickle_module=dill, map_location="cpu"
-            )
-        else:
-            self.model = model
+        # Construct model & load weights
+        self.model = Model.from_config(model_config)
+        self.model.load_state_dict(state_dict)
 
         super().__init__(
             pulsemap=pulsemap,
@@ -252,7 +252,8 @@ class I3PulseCleanerModule(I3InferenceModule):
         pulsemap_extractor: Union[
             List[I3FeatureExtractor], I3FeatureExtractor
         ],
-        model: Union[Model, StandardModel, str],
+        model_config: str,
+        state_dict: str,
         model_name: str,
         prediction_columns: Union[List[str], str] = "",
         *,
@@ -267,8 +268,9 @@ class I3PulseCleanerModule(I3InferenceModule):
                      (the one that is being cleaned).
             features: the features of the pulsemap that the model is expecting.
             pulsemap_extractor: The extractor used to extract the pulsemap.
-            model: The model (or path to pickled model) that will be
-                    used for inference.
+            model_config: The ModelConfig (or path to it) that summarizes the
+                            model used for inference.
+            state_dict: Path to state_dict containing the learned weights.
             model_name: The name used for the model. Will help define the named
                         entry in the I3Frame. E.g. "dynedge".
             prediction_columns: column names for the predictions of the model.
@@ -288,7 +290,8 @@ class I3PulseCleanerModule(I3InferenceModule):
             pulsemap=pulsemap,
             features=features,
             pulsemap_extractor=pulsemap_extractor,
-            model=model,
+            model_config=model_config,
+            state_dict=state_dict,
             model_name=model_name,
             prediction_columns=prediction_columns,
             gcd_file=gcd_file,
