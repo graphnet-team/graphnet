@@ -27,6 +27,26 @@ def collate_fn(graphs: List[Data]) -> Batch:
     return Batch.from_data_list(graphs)
 
 
+def collator_sequence_buckleting(graphs: List[Data]) -> List[Batch]:
+    """Remove graphs with less than two DOM hits.
+
+    Should not occur in "production.
+    """
+    graphs = [g for g in graphs if g.n_pulses > 1]
+    graphs.sort(key=lambda x: x.n_pulses)
+    batch_list = []
+
+    splits_end = [0.8, 1]
+    for minp, maxp in zip([0] + splits_end[:-1], splits_end):
+        min_idx = int(minp * len(graphs))
+        max_idx = int(maxp * len(graphs))
+        this_graphs = graphs[min_idx:max_idx]
+        if len(this_graphs) > 0:
+            this_batch = Batch.from_data_list(this_graphs)
+            batch_list.append(this_batch)
+    return batch_list
+
+
 # @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_dataloader(
     db: str,

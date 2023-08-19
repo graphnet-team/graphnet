@@ -99,10 +99,17 @@ class StandardModel(Model):
 
     def forward(self, data: Data) -> List[Union[Tensor, Data]]:
         """Forward pass, chaining model components."""
+        if isinstance(data, Data):
+            data = [data]
         if self._coarsening:
             data = self._coarsening(data)
-        data = self._detector(data)
-        x = self._gnn(data)
+        x_list = []
+        for d in data:
+            d = self._detector(d)
+            x = self._gnn(d)
+            x_list.append(x)
+        x = torch.cat(x_list, dim=0)
+
         preds = [task(x) for task in self._tasks]
         return preds
 
