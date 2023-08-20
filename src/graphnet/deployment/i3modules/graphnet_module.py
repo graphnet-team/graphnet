@@ -85,13 +85,16 @@ class GraphNeTI3Module:
         """Process Physics I3Frame into graph."""
         # Extract features
         node_features = self._extract_feature_array_from_frame(frame)
-
+        print(node_features.shape)
         # Prepare graph data
-        data = self._graph_definition(
-            node_features=node_features,
-            node_feature_names=self._features,
-        )
-        return Batch.from_data_list([data])
+        if len(node_features) > 0:
+            data = self._graph_definition(
+                node_features=node_features,
+                node_feature_names=self._features,
+            )
+            return Batch.from_data_list([data])
+        else:
+            return None
 
     def _extract_feature_array_from_frame(self, frame: I3Frame) -> np.array:
         """Apply the I3FeatureExtractors to the I3Frame.
@@ -148,8 +151,8 @@ class I3InferenceModule(GraphNeTI3Module):
         model_config: Union[ModelConfig, str],
         state_dict: str,
         model_name: str,
-        prediction_columns: Optional[Union[List[str], str]],
         gcd_file: str,
+        prediction_columns: Optional[Union[List[str], str]] = None,
     ):
         """General class for inference on I3Frames (physics).
 
@@ -162,10 +165,10 @@ class I3InferenceModule(GraphNeTI3Module):
             state_dict: Path to state_dict containing the learned weights.
             model_name: The name used for the model. Will help define the
                         named entry in the I3Frame. E.g. "dynedge".
+            gcd_file: path to associated gcd file.
             prediction_columns: column names for the predictions of the model.
                                Will help define the named entry in the I3Frame.
                                 E.g. ['energy_reco']. Optional.
-            gcd_file: path to associated gcd file.
         """
         # Construct model & load weights
         self.model = Model.from_config(model_config, trust=True)
@@ -187,7 +190,7 @@ class I3InferenceModule(GraphNeTI3Module):
             else:
                 self.prediction_columns = prediction_columns
         else:
-            self.prediction_columns = self.model.prediction_columns
+            self.prediction_columns = self.model.prediction_labels
 
         self.model_name = model_name
 
@@ -195,13 +198,12 @@ class I3InferenceModule(GraphNeTI3Module):
         """Write predictions from model to frame."""
         # inference
         graph = self._make_graph(frame)
-        if len(graph.x) > 0:
+        if graph is not None:
             predictions = self._inference(graph)
         else:
             predictions = np.repeat(
                 [np.nan], len(self.prediction_columns)
             ).reshape(-1, len(self.prediction_columns))
-
         # Check dimensions of predictions and prediction columns
         if len(predictions.shape) > 1:
             dim = predictions.shape[1]
@@ -216,7 +218,6 @@ class I3InferenceModule(GraphNeTI3Module):
         data = {}
         assert predictions.shape[0] == 1
         for i in range(dim if isinstance(dim, int) else len(dim)):
-            # print(predictions)
             try:
                 assert len(predictions[:, i]) == 1
                 data[
@@ -257,11 +258,11 @@ class I3PulseCleanerModule(I3InferenceModule):
         model_config: str,
         state_dict: str,
         model_name: str,
-        prediction_columns: Optional[Union[List[str], str]],
         *,
         gcd_file: str,
         threshold: float = 0.7,
         discard_empty_events: bool = False,
+        prediction_columns: Optional[Union[List[str], str]] = None,
     ):
         """General class for inference on I3Frames (physics).
 
@@ -275,9 +276,6 @@ class I3PulseCleanerModule(I3InferenceModule):
             state_dict: Path to state_dict containing the learned weights.
             model_name: The name used for the model. Will help define the named
                         entry in the I3Frame. E.g. "dynedge".
-            prediction_columns: column names for the predictions of the model.
-                            Will help define the named entry in the I3Frame.
-                            E.g. ['energy_reco']. Optional.
             gcd_file: path to associated gcd file.
             threshold: the threshold for being considered a positive case.
                         E.g., predictions >= threshold will be considered
@@ -287,6 +285,9 @@ class I3PulseCleanerModule(I3InferenceModule):
                             to speed up processing especially for noise
                             simulation, since it will not do any writing or
                             further calculations.
+            prediction_columns: column names for the predictions of the model.
+                            Will help define the named entry in the I3Frame.
+                            E.g. ['energy_reco']. Optional.
         """
         super().__init__(
             pulsemap=pulsemap,
@@ -308,6 +309,8 @@ class I3PulseCleanerModule(I3InferenceModule):
         # inference
         gcd_file = self._gcd_file
         graph = self._make_graph(frame)
+        if graph is None:  # If there is no pulses to clean
+            return False
         predictions = self._inference(graph)
         if self._discard_empty_events:
             if sum(predictions > self._threshold) == 0:
