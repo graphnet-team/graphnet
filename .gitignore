@@ -149,6 +149,6 @@ data/examples/output/
 **.pth
 **.db
 **.parquet
-
+!models/pretrained/**/**.pth
 # Notebooks
 **.ipynb
