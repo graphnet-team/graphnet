@@ -85,7 +85,6 @@ class GraphNeTI3Module:
         """Process Physics I3Frame into graph."""
         # Extract features
         node_features = self._extract_feature_array_from_frame(frame)
-        print(node_features.shape)
         # Prepare graph data
         if len(node_features) > 0:
             data = self._graph_definition(
