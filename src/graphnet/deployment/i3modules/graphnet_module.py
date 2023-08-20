@@ -1,6 +1,6 @@
 """Class(es) for deploying GraphNeT models in icetray as I3Modules."""
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, List, Union, Dict, Tuple
+from typing import TYPE_CHECKING, Any, List, Union, Dict, Tuple, Optional
 
 import dill
 import numpy as np
@@ -148,7 +148,7 @@ class I3InferenceModule(GraphNeTI3Module):
         model_config: Union[ModelConfig, str],
         state_dict: str,
         model_name: str,
-        prediction_columns: Union[List[str], str],
+        prediction_columns: Optional[Union[List[str], str]],
         gcd_file: str,
     ):
         """General class for inference on I3Frames (physics).
@@ -164,7 +164,7 @@ class I3InferenceModule(GraphNeTI3Module):
                         named entry in the I3Frame. E.g. "dynedge".
             prediction_columns: column names for the predictions of the model.
                                Will help define the named entry in the I3Frame.
-                                E.g. ['energy_reco'].
+                                E.g. ['energy_reco']. Optional.
             gcd_file: path to associated gcd file.
         """
         # Construct model & load weights
@@ -181,11 +181,13 @@ class I3InferenceModule(GraphNeTI3Module):
         self.model.inference()
 
         self.model.to("cpu")
-
-        if isinstance(prediction_columns, str):
-            self.prediction_columns = [prediction_columns]
+        if prediction_columns is not None:
+            if isinstance(prediction_columns, str):
+                self.prediction_columns = [prediction_columns]
+            else:
+                self.prediction_columns = prediction_columns
         else:
-            self.prediction_columns = prediction_columns
+            self.prediction_columns = self.model.prediction_columns
 
         self.model_name = model_name
 
@@ -255,7 +257,7 @@ class I3PulseCleanerModule(I3InferenceModule):
         model_config: str,
         state_dict: str,
         model_name: str,
-        prediction_columns: Union[List[str], str] = "",
+        prediction_columns: Optional[Union[List[str], str]],
         *,
         gcd_file: str,
         threshold: float = 0.7,
@@ -275,7 +277,7 @@ class I3PulseCleanerModule(I3InferenceModule):
                         entry in the I3Frame. E.g. "dynedge".
             prediction_columns: column names for the predictions of the model.
                             Will help define the named entry in the I3Frame.
-                            E.g. ['energy_reco'].
+                            E.g. ['energy_reco']. Optional.
             gcd_file: path to associated gcd file.
             threshold: the threshold for being considered a positive case.
                         E.g., predictions >= threshold will be considered
@@ -307,7 +309,6 @@ class I3PulseCleanerModule(I3InferenceModule):
         gcd_file = self._gcd_file
         graph = self._make_graph(frame)
         predictions = self._inference(graph)
-
         if self._discard_empty_events:
             if sum(predictions > self._threshold) == 0:
                 return False
