@@ -168,7 +168,7 @@ class I3InferenceModule(GraphNeTI3Module):
             gcd_file: path to associated gcd file.
         """
         # Construct model & load weights
-        self.model = Model.from_config(model_config)
+        self.model = Model.from_config(model_config, trust=True)
         self.model.load_state_dict(state_dict)
 
         super().__init__(
