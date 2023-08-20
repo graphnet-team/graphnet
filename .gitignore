@@ -150,6 +150,5 @@ data/examples/output/
 **.db
 **.parquet
 !/graphnet/src/graphnet/models/pretrained/**/**/**/**/**.pth
-#!/graphnet/src/graphnet/models/pretrained/icecube/upgrade/QUESO/neutrino_directio
 # Notebooks
 **.ipynb
