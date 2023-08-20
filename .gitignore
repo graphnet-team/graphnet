@@ -149,6 +149,7 @@ data/examples/output/
 **.pth
 **.db
 **.parquet
+# Exception to pre-trained folders; here we want all .pth files 
 !/graphnet/src/graphnet/models/pretrained/**/**/**/**/**.pth
 # Notebooks
 **.ipynb
