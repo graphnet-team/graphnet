@@ -11,6 +11,7 @@ from graphnet.data.extractors.i3featureextractor import (
 from graphnet.constants import (
     TEST_DATA_DIR,
     EXAMPLE_OUTPUT_DIR,
+    GRAPHNET_ROOT_DIR,
 )
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_icecube_package
@@ -71,7 +72,10 @@ def main() -> None:
     # Constants
     features = FEATURES.UPGRADE
     input_folders = [f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998"]
-    mock_model_path = f"{TEST_DATA_DIR}/models/mock_energy_model.pth"
+    base_path = f"{GRAPHNET_ROOT_DIR}/src/graphnet/models/pretrained/icecube/upgrade/QUESO"
+    model_name = "total_neutrino_energy"
+    model_config = f"{base_path}/{model_name}/{model_name}_config.yml"
+    state_dict = f"{base_path}/{model_name}/{model_name}_state_dict.yml"
     output_folder = f"{EXAMPLE_OUTPUT_DIR}/i3_deployment/upgrade"
     gcd_file = f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/GeoCalibDetectorStatus_ICUpgrade.v58.mixed.V0.i3.bz2"
     features = FEATURES.UPGRADE
@@ -84,7 +88,8 @@ def main() -> None:
         pulsemap=pulsemap,
         features=features,
         pulsemap_extractor=I3FeatureExtractorIceCubeUpgrade(pulsemap=pulsemap),
-        model=mock_model_path,
+        model_config=model_config,
+        state_dict=state_dict,
         gcd_file=gcd_file,
         prediction_columns=["energy"],
         model_name="graphnet_deployment_example",
