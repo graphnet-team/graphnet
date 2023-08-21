@@ -17,6 +17,5 @@ WORKDIR /root
 
 ADD module.py ./module.py
 ADD apply.py ./apply.py
-ADD test_model.pth ./model.pth
 
 CMD [ "/bin/bash" ]
