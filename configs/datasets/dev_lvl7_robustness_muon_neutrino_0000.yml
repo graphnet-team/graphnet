@@ -5,7 +5,7 @@ graph_definition:
     detector:
       arguments: {}
       class_name: IceCube86
-    dtype: null
+    dtype: torch.float32
     nb_nearest_neighbours: 8
     node_definition:
       arguments: {}
