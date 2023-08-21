@@ -13,11 +13,16 @@ from graphnet.deployment.i3modules import I3InferenceModule
 from graphnet.data.extractors.i3featureextractor import (
     I3FeatureExtractorIceCubeDeepCore,
 )
-from graphnet.data.constants import FEATURES
+from graphnet.data.constants import FEATURES, GRAPHNET_ROOT_DIR
 
 
-# Constants (from Dockerfile)
-MODEL_PATH = "model.pth"
+# Constants
+MODEL_NAME = "total_neutrino_energy"
+BASE_PATH = (
+    f"{GRAPHNET_ROOT_DIR}/src/graphnet/models/pretrained/icecube/upgrade/QUESO"
+)
+MODEL_CONFIG = f"{BASE_PATH}/{MODEL_NAME}/{MODEL_NAME}_config.yml"
+STATE_DICT = f"{BASE_PATH}/{MODEL_NAME}/{MODEL_NAME}_state_dict.yml"
 
 
 def main(
@@ -49,7 +54,8 @@ def main(
             pulsemap=pulsemap,
             features=FEATURES.DEEPCORE,
             pulsemap_extractor=extractor,
-            model=MODEL_PATH,
+            model_config=MODEL_CONFIG,
+            state_dict=STATE_DICT,
             gcd_file=gcd_file,
             prediction_columns=["energy_pred"],
             model_name="graphnet_dynedge_energy_reconstruction",
