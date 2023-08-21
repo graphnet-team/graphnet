@@ -181,7 +181,7 @@ def test_deployment() -> None:
         i3_files=input_files,
         gcd_file=gcd_file,
         output_folder=output_folder,
-        modules=[cleaning_module] + inference_modules,
+        modules=[cleaning_module] + inference_modules,  # type: ignore
     )
     return
 
