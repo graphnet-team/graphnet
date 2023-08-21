@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -122,9 +122,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="_static/material.css?v=79c92029" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -177,7 +177,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -304,7 +304,7 @@
       
         
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#contribute--page-root" class="md-nav__link">Contribute</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -370,7 +370,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#contribute--page-root" class="md-nav__link">Contribute</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -394,14 +394,14 @@
           <article class="md-content__inner md-typeset" role="main">
             
   <section id="contribute">
-<h1 id="contribute--page-root">Contribute<a class="headerlink" href="#contribute--page-root" title="Permalink to this heading">¶</a></h1>
+<h1 id="contribute--page-root">Contribute<a class="headerlink" href="#contribute--page-root" title="Link to this heading">¶</a></h1>
 <p>To make sure that the process of contributing is as smooth and effective as possible, we provide a few guidelines in this contributing guide that we encourage contributors to follow.</p>
 <section id="github-issues">
-<h2 id="github-issues">GitHub issues<a class="headerlink" href="#github-issues" title="Permalink to this heading">¶</a></h2>
+<h2 id="github-issues">GitHub issues<a class="headerlink" href="#github-issues" title="Link to this heading">¶</a></h2>
 <p>Use <a class="reference external" href="https://github.com/graphnet-team/graphnet/issues">GitHub issues</a> for tracking and discussing requests and bugs. If there is anything you’d wish to contribute, the best place to start is to create a new issues and describe what you would like to work on. Alternatively you can assign open issues to yourself, to indicate that you would like to take ownership of a particular task. Using issues actively in this way ensures transparency and agreement on priorities. This helps avoid situations with a lot of development effort going into a feature that e.g. turns out to be outside of scope for the project; or a specific solution to a problem that could have been better solved differently.</p>
 </section>
 <section id="pull-requests">
-<h2 id="pull-requests">Pull requests<a class="headerlink" href="#pull-requests" title="Permalink to this heading">¶</a></h2>
+<h2 id="pull-requests">Pull requests<a class="headerlink" href="#pull-requests" title="Link to this heading">¶</a></h2>
 <p>Develop code in a forks of the <a class="reference external" href="https://github.com/graphnet-team/graphnet">main repo</a>. Make contributions in dedicated development/feature branches on your forked repositories, e.g. if you are implementing a specific <code class="docutils literal notranslate"><span class="pre">GraphBuiler</span></code> class you could create a branch named <code class="docutils literal notranslate"><span class="pre">add-euclidean-graph-builder</span></code> on your own fork.</p>
 <p>Create pull requests from your development branch into <code class="docutils literal notranslate"><span class="pre">graphnet-team/graphnet:main</span></code> to contribute to the project. <strong>To be accepted,</strong> pull requests must:</p>
 <ul class="simple">
@@ -417,7 +417,7 @@
 </ul>
 </section>
 <section id="conventions">
-<h2 id="conventions">Conventions<a class="headerlink" href="#conventions" title="Permalink to this heading">¶</a></h2>
+<h2 id="conventions">Conventions<a class="headerlink" href="#conventions" title="Link to this heading">¶</a></h2>
 <p>This repository aims to support python 3 version that are actively supported (currently <code class="docutils literal notranslate"><span class="pre">&gt;=3.6</span></code>). Standard python coding conventions should be followed:</p>
 <ul class="simple">
 <li><p>Adhere to <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a></p></li>
@@ -426,7 +426,7 @@
 </ul>
 </section>
 <section id="code-quality">
-<h2 id="code-quality">Code quality<a class="headerlink" href="#code-quality" title="Permalink to this heading">¶</a></h2>
+<h2 id="code-quality">Code quality<a class="headerlink" href="#code-quality" title="Link to this heading">¶</a></h2>
 <p>To ensure consistency in code style and adherence to select best practices, we recommend that all developers use <code class="docutils literal notranslate"><span class="pre">black</span></code>, <code class="docutils literal notranslate"><span class="pre">flake8</span></code>, <code class="docutils literal notranslate"><span class="pre">mypy</span></code>, <code class="docutils literal notranslate"><span class="pre">pydocstyle</span></code>, and <code class="docutils literal notranslate"><span class="pre">docformatter</span></code> for automatically formatting and checking their code. This can conveniently be done using pre-commit hooks. To set this up, first make sure that you have installed the <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> python package. It comes with included when installing <code class="docutils literal notranslate"><span class="pre">graphnet</span></code> with the <code class="docutils literal notranslate"><span class="pre">develop</span></code> tag, i.e., <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.[develop]</span></code>. Then, do</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pre-commit<span class="w"> </span>install
 </pre></div>
@@ -456,7 +456,7 @@ Image source: https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-usi
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> Previous </span> Install </span>
+                      class="md-footer-nav__direction"> "Previous" </span> Install </span>
               </div>
             </a>
           
@@ -466,7 +466,7 @@ Image source: https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-usi
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> Next </span> API </span>
+                class="md-footer-nav__direction"> "Next" </span> API </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
@@ -484,7 +484,7 @@ Image source: https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-usi
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

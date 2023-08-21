@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -122,9 +122,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="_static/material.css?v=79c92029" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -177,7 +177,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -297,7 +297,7 @@
       
         
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#install--page-root" class="md-nav__link">Install</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -361,7 +361,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#install--page-root" class="md-nav__link">Install</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -383,10 +383,10 @@
           <article class="md-content__inner md-typeset" role="main">
             
   <section id="install">
-<h1 id="install--page-root">Install<a class="headerlink" href="#install--page-root" title="Permalink to this heading">¶</a></h1>
+<h1 id="install--page-root">Install<a class="headerlink" href="#install--page-root" title="Link to this heading">¶</a></h1>
 <p>We recommend installing <code class="docutils literal notranslate"><span class="pre">graphnet</span></code> in a separate environment, e.g. using a Python virtual environment or Anaconda (see details on installation <a class="reference external" href="https://www.anaconda.com/products/individual">here</a>). Below we prove installation instructions for different setups.</p>
 <section id="installing-with-icetray">
-<h2 id="installing-with-icetray">Installing with IceTray<a class="headerlink" href="#installing-with-icetray" title="Permalink to this heading">¶</a></h2>
+<h2 id="installing-with-icetray">Installing with IceTray<a class="headerlink" href="#installing-with-icetray" title="Link to this heading">¶</a></h2>
 <p>You may want <code class="docutils literal notranslate"><span class="pre">graphnet</span></code> to be able to interface with IceTray, e.g., when converting I3 files to an intermediate file format for training GNN models (e.g., SQLite or parquet),[^1] or when running GNN inference as part of an IceTray chain. In these cases, you need to install <code class="docutils literal notranslate"><span class="pre">graphnet</span></code> in a Python runtime that has IceTray installed.</p>
 <p>To achieve this, we recommend running the following commands in a clean bash shell:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">eval</span><span class="w"> </span><span class="sb">`</span>/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/setup.sh<span class="sb">`</span>
@@ -411,7 +411,7 @@ $<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </sp
 <p>This should allow you to run the I3 conversion scripts in <a class="reference internal" href="#./examples/"><span class="xref myst">examples/</span></a> with your preferred I3 files.</p>
 </section>
 <section id="installing-stand-alone">
-<h2 id="installing-stand-alone">Installing stand-alone<a class="headerlink" href="#installing-stand-alone" title="Permalink to this heading">¶</a></h2>
+<h2 id="installing-stand-alone">Installing stand-alone<a class="headerlink" href="#installing-stand-alone" title="Link to this heading">¶</a></h2>
 <p>If you don’t need to interface with <a class="reference external" href="https://github.com/icecube/icetray/">IceTray</a> (e.g., for reading data from I3 files or running inference on these), the following commands should provide a fast way to get up and running on most UNIX systems:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:&lt;your-username&gt;/graphnet.git
 $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>graphnet
@@ -434,7 +434,7 @@ $<span class="w"> </span><span class="nb">export</span><span class="w"> </span><
 <p>depending on your setup to your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> script or similar to make sure that the corresponding library files are accessible. Check which one of the above paths contains the <code class="docutils literal notranslate"><span class="pre">.so</span></code>-files you’re looking to use, and add that path.</p>
 </section>
 <section id="running-in-docker">
-<h2 id="running-in-docker">Running in Docker<a class="headerlink" href="#running-in-docker" title="Permalink to this heading">¶</a></h2>
+<h2 id="running-in-docker">Running in Docker<a class="headerlink" href="#running-in-docker" title="Link to this heading">¶</a></h2>
 <p>If you want to run GraphNeT (with IceTray), and don’t intend to contribute to the package, consider using the provided <a class="reference external" href="https://hub.docker.com/repository/docker/asogaard/graphnet">Docker image</a>. With Docker, you can then run GraphNeT as:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>asogaard/graphnet:latest
 🐳<span class="w"> </span>graphnet@dc423315742c<span class="w"> </span>❯<span class="w"> </span>~/graphnet<span class="w"> </span>$<span class="w"> </span>python<span class="w"> </span>examples/01_icetray/01_convert_i3_files.py<span class="w"> </span>sqlite<span class="w"> </span>icecube-upgrade
@@ -477,7 +477,7 @@ graphnet:<span class="w"> </span>INFO<span class="w">     </span><span class="m"
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> Previous </span> About </span>
+                      class="md-footer-nav__direction"> "Previous" </span> About </span>
               </div>
             </a>
           
@@ -487,7 +487,7 @@ graphnet:<span class="w"> </span>INFO<span class="w">     </span><span class="m"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> Next </span> Contribute </span>
+                class="md-footer-nav__direction"> "Next" </span> Contribute </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
@@ -505,7 +505,7 @@ graphnet:<span class="w"> </span>INFO<span class="w">     </span><span class="m"
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

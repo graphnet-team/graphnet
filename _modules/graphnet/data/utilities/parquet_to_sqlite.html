@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -121,9 +121,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/material.css?v=79c92029" />
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../../../../about.html" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -174,7 +174,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="../../../../search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -337,7 +337,9 @@
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 
 
-<div class="viewcode-block" id="ParquetToSQLiteConverter"><a class="viewcode-back" href="../../../../api/graphnet.data.utilities.parquet_to_sqlite.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter">[docs]</a><span class="k">class</span> <span class="nc">ParquetToSQLiteConverter</span><span class="p">(</span><span class="n">Logger</span><span class="p">):</span>
+<div class="viewcode-block" id="ParquetToSQLiteConverter">
+<a class="viewcode-back" href="../../../../api/graphnet.data.utilities.parquet_to_sqlite.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter">[docs]</a>
+<span class="k">class</span> <span class="nc">ParquetToSQLiteConverter</span><span class="p">(</span><span class="n">Logger</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Convert Parquet files to a SQLite database.</span>
 
 <span class="sd">    Each event in the parquet file(s) are assigned a unique event id. By</span>
@@ -391,7 +393,9 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"No files found in </span><span class="si">{</span><span class="n">paths</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">files</span>
 
-<div class="viewcode-block" id="ParquetToSQLiteConverter.run"><a class="viewcode-back" href="../../../../api/graphnet.data.utilities.parquet_to_sqlite.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ParquetToSQLiteConverter.run">
+<a class="viewcode-back" href="../../../../api/graphnet.data.utilities.parquet_to_sqlite.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Run Parquet to SQLite conversion.</span>
 
 <span class="sd">        Args:</span>
@@ -431,6 +435,7 @@
             <span class="s2">"Database saved at: </span><span class="se">\n</span><span class="s2">"</span>
             <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">outdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">database_name</span><span class="si">}</span><span class="s2">/data/</span><span class="si">{</span><span class="n">database_name</span><span class="si">}</span><span class="s2">.db"</span>
         <span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_count_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">open_parquet_file</span><span class="p">:</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">open_parquet_file</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mc_truth_table</span><span class="p">])</span>
@@ -503,6 +508,7 @@
 <span class="w">        </span><span class="sd">"""Save the list of converted Parquet files to a CSV file."""</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parquet_files</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"files"</span><span class="p">])</span>
         <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outdir</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">database_name</span> <span class="o">+</span> <span class="s2">"/config/files.csv"</span><span class="p">)</span></div>
+
 </pre></div>
 
           </article>
@@ -527,7 +533,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

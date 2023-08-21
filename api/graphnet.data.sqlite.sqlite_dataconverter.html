@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -122,9 +122,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -177,7 +177,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="../search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -343,7 +343,7 @@
       
         
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-data-sqlite-sqlite-dataconverter--page-root" class="md-nav__link">sqlite_dataconverter</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -530,7 +530,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-data-sqlite-sqlite-dataconverter--page-root" class="md-nav__link">sqlite_dataconverter</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -563,12 +563,12 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.data.sqlite.sqlite_dataconverter">
-<span id="sqlite-dataconverter"></span><h1 id="api-graphnet-data-sqlite-sqlite-dataconverter--page-root">sqlite_dataconverter<a class="headerlink" href="#api-graphnet-data-sqlite-sqlite-dataconverter--page-root" title="Permalink to this heading">¶</a></h1>
-<p>DataConverter for the SQLite backend.</p>
+  <section id="sqlite-dataconverter">
+<h1 id="api-graphnet-data-sqlite-sqlite-dataconverter--page-root">sqlite_dataconverter<a class="headerlink" href="#api-graphnet-data-sqlite-sqlite-dataconverter--page-root" title="Link to this heading">¶</a></h1>
+<p id="module-graphnet.data.sqlite.sqlite_dataconverter">DataConverter for the SQLite backend.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">SQLiteDataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">SQLiteDataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.dataconverter.html#graphnet.data.dataconverter.DataConverter" title="graphnet.data.dataconverter.DataConverter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataConverter</span></code></a></p>
 <p>Class for converting I3-file(s) to SQLite format.</p>
 <p>Construct DataConverter.</p>
@@ -626,11 +626,11 @@ files whose names contain:</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.file_suffix">
-<span class="sig-name descname"><span class="pre">file_suffix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db'</span></em><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.file_suffix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">file_suffix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db'</span></em><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.file_suffix" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.save_data">
-<span class="sig-name descname"><span class="pre">save_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter.save_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.save_data" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">save_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter.save_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.save_data" title="Link to this definition">¶</a></dt>
 <dd><p>Save data to SQLite database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -646,7 +646,7 @@ files whose names contain:</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.merge_files">
-<span class="sig-name descname"><span class="pre">merge_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_table_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter.merge_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.merge_files" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">merge_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_table_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter.merge_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.merge_files" title="Link to this definition">¶</a></dt>
 <dd><p>SQLite-specific method for merging output files/databases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -667,7 +667,7 @@ created.</p></li>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty">
-<span class="sig-name descname"><span class="pre">any_pulsemap_is_non_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter.any_pulsemap_is_non_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">any_pulsemap_is_non_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#SQLiteDataConverter.any_pulsemap_is_non_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty" title="Link to this definition">¶</a></dt>
 <dd><p>Check whether there are non-empty pulsemaps extracted from P frame.</p>
 <p>Takes in the data extracted from the P frame, then retrieves the
 values, if there are any, from the pulsemap key(s) (e.g
@@ -687,7 +687,7 @@ True.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">construct_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extraction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#construct_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">construct_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extraction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#construct_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe" title="Link to this definition">¶</a></dt>
 <dd><p>Convert extraction to pandas.DataFrame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -703,7 +703,7 @@ True.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_pulse_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#is_pulse_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_pulse_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#is_pulse_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map" title="Link to this definition">¶</a></dt>
 <dd><p>Check whether <cite>table_name</cite> corresponds to a pulse map.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -716,7 +716,7 @@ True.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_mc_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#is_mc_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.sqlite.sqlite_dataconverter.</span></span><span class="sig-name descname"><span class="pre">is_mc_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/sqlite/sqlite_dataconverter.html#is_mc_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree" title="Link to this definition">¶</a></dt>
 <dd><p>Check whether <cite>table_name</cite> corresponds to an MC tree.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -748,7 +748,7 @@ True.</p>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> Previous </span> sqlite </span>
+                      class="md-footer-nav__direction"> "Previous" </span> sqlite </span>
               </div>
             </a>
           
@@ -758,7 +758,7 @@ True.</p>
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> Next </span> sqlite_utilities </span>
+                class="md-footer-nav__direction"> "Next" </span> sqlite_utilities </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
@@ -776,7 +776,7 @@ True.</p>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

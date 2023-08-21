@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -122,9 +122,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -177,7 +177,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="../search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -467,38 +467,14 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.models.task">
-<span id="task"></span><h1 id="api-graphnet-models-task--page-root">task<a class="headerlink" href="#api-graphnet-models-task--page-root" title="Permalink to this heading">¶</a></h1>
-<p>Physics task-specific modules to be used as model “read-outs”.</p>
+  <section id="task">
+<h1 id="api-graphnet-models-task--page-root">task<a class="headerlink" href="#api-graphnet-models-task--page-root" title="Link to this heading">¶</a></h1>
 <p><h2> Submodules </h2></p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.task.classification.html">classification</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.classification.html#graphnet.models.task.classification.MulticlassClassificationTask"><code class="docutils literal notranslate"><span class="pre">MulticlassClassificationTask</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.classification.html#graphnet.models.task.classification.BinaryClassificationTask"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.classification.html#graphnet.models.task.classification.BinaryClassificationTaskLogits"><code class="docutils literal notranslate"><span class="pre">BinaryClassificationTaskLogits</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.task.reconstruction.html">reconstruction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstructionWithKappa</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.AzimuthReconstruction"><code class="docutils literal notranslate"><span class="pre">AzimuthReconstruction</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa"><code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.ZenithReconstruction"><code class="docutils literal notranslate"><span class="pre">ZenithReconstruction</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.ZenithReconstructionWithKappa"><code class="docutils literal notranslate"><span class="pre">ZenithReconstructionWithKappa</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction"><code class="docutils literal notranslate"><span class="pre">EnergyReconstruction</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstructionWithPower"><code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithPower</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty"><code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithUncertainty</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.VertexReconstruction"><code class="docutils literal notranslate"><span class="pre">VertexReconstruction</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.PositionReconstruction"><code class="docutils literal notranslate"><span class="pre">PositionReconstruction</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.TimeReconstruction"><code class="docutils literal notranslate"><span class="pre">TimeReconstruction</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.InelasticityReconstruction"><code class="docutils literal notranslate"><span class="pre">InelasticityReconstruction</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.task.task.html">task</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.Task"><code class="docutils literal notranslate"><span class="pre">Task</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.IdentityTask"><code class="docutils literal notranslate"><span class="pre">IdentityTask</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.task.classification.html">classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.task.reconstruction.html">reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.task.task.html">task</a></li>
 </ul>
 </div>
 </section>
@@ -522,7 +498,7 @@
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> Previous </span> graphs </span>
+                      class="md-footer-nav__direction"> "Previous" </span> graphs </span>
               </div>
             </a>
           
@@ -532,7 +508,7 @@
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> Next </span> classification </span>
+                class="md-footer-nav__direction"> "Next" </span> classification </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
@@ -550,7 +526,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

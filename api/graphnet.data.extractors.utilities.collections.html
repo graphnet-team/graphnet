@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -122,9 +122,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -177,7 +177,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="../search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -335,7 +335,7 @@
       
         
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-data-extractors-utilities-collections--page-root" class="md-nav__link">collections</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -582,7 +582,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-data-extractors-utilities-collections--page-root" class="md-nav__link">collections</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -603,12 +603,12 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.data.extractors.utilities.collections">
-<span id="collections"></span><h1 id="api-graphnet-data-extractors-utilities-collections--page-root">collections<a class="headerlink" href="#api-graphnet-data-extractors-utilities-collections--page-root" title="Permalink to this heading">¶</a></h1>
-<p>Utility methods for manipulating python-type collections of data.</p>
+  <section id="collections">
+<h1 id="api-graphnet-data-extractors-utilities-collections--page-root">collections<a class="headerlink" href="#api-graphnet-data-extractors-utilities-collections--page-root" title="Link to this heading">¶</a></h1>
+<p id="module-graphnet.data.extractors.utilities.collections">Utility methods for manipulating python-type collections of data.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.flatten_nested_dictionary">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/utilities/collections.html#flatten_nested_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/utilities/collections.html#flatten_nested_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary" title="Link to this definition">¶</a></dt>
 <dd><p>Flatten a nested dictionary to a dictionary with non-dict values.</p>
 <p class="rubric">Example</p>
 <p>d = {“a”: {“b”: 1}, “c”: 2}
@@ -629,7 +629,7 @@ flatten_nested_dictionary(d)
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.serialise">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">serialise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/utilities/collections.html#serialise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.serialise" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">serialise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/utilities/collections.html#serialise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.serialise" title="Link to this definition">¶</a></dt>
 <dd><p>Serialise the necessary keys in <cite>obj</cite> to JSON for saving to file.</p>
 <p>It is typically not possible to save nested collections (lists, dicts) to
 file. Therefore, if <cite>obj</cite> is, e.g., a list of lists, we need to serialise
@@ -648,7 +648,7 @@ file.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.utilities.collections.transpose_list_of_dicts">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">transpose_list_of_dicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/utilities/collections.html#transpose_list_of_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.utilities.collections.</span></span><span class="sig-name descname"><span class="pre">transpose_list_of_dicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/utilities/collections.html#transpose_list_of_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.utilities.collections.transpose_list_of_dicts" title="Link to this definition">¶</a></dt>
 <dd><p>Transpose a list of dicts to a dict of lists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -680,7 +680,7 @@ file.</p>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> Previous </span> utilities </span>
+                      class="md-footer-nav__direction"> "Previous" </span> utilities </span>
               </div>
             </a>
           
@@ -690,7 +690,7 @@ file.</p>
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> Next </span> frames </span>
+                class="md-footer-nav__direction"> "Next" </span> frames </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
@@ -708,7 +708,7 @@ file.</p>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

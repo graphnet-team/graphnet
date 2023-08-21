@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -122,9 +122,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="_static/material.css?v=79c92029" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="#" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -175,7 +175,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -311,7 +311,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">Contents</label>
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#about--page-root" class="md-nav__link">About</a><nav class="md-nav">
               <ul class="md-nav__list">
@@ -333,22 +333,22 @@
           <article class="md-content__inner md-typeset" role="main">
             
   <section id="about">
-<h1 id="about--page-root">About<a class="headerlink" href="#about--page-root" title="Permalink to this heading">¶</a></h1>
+<h1 id="about--page-root">About<a class="headerlink" href="#about--page-root" title="Link to this heading">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). <code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques.</p>
 <section id="impact">
-<h2 id="impact">Impact<a class="headerlink" href="#impact" title="Permalink to this heading">¶</a></h2>
+<h2 id="impact">Impact<a class="headerlink" href="#impact" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> provides a common framework for ML developers and physicists that wish to use the state-of-the-art GNN tools in their research. By uniting both user groups, <code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> aims to increase the longevity and usability of individual code contributions from ML developers by building a general, reusable software package based on software engineering best practices, and lowers the technical threshold for physicists that wish to use the most performant tools for their scientific problems.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> models can improve event classification and yield very accurate reconstruction, e.g., for low energy neutrinos observed in IceCube. Here, a GNN implemented in <code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> was applied to the problem of neutrino oscillations in IceCube, leading to significant improvements in both energy and angular reconstruction in the energy range relevant to oscillation studies. Furthermore, it was shown that the GNN could improve muon vs. neutrino classification and thereby the efficiency and purity of a neutrino sample for such an analysis.</p>
 <p>Similarly, improved angular reconstruction has a great impact on, e.g., neutrino point source analyses.</p>
 <p>Finally, the fast (order millisecond) reconstruction allows for a whole new type of cosmic alerts at lower energies, which were previously unfeasible. GNN-based reconstruction makes it possible to identify low energy (&lt; 10 TeV) neutrinos and monitor their rate, direction, and energy in real-time. This will enable cosmic neutrino alerts based on such neutrinos for the first time ever, despite a large background of neutrinos that are not of cosmic origin.</p>
 </section>
 <section id="usage">
-<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> comprises a number of modules providing the necessary tools to build workflows from ingesting raw training data in domain-specific formats to deploying trained models in domain-specific reconstruction chains, as illustrated in <a class="reference internal" href="#flowchart"><span class="std std-ref">the Figure</span></a>.</p>
 <figure class="figclass align-default" id="flowchart">
 <a class="reference internal image-reference" href="_images/flowchart.png"><img alt="flowchart" src="_images/flowchart.png" style="width: 100%;"/></a>
 <figcaption>
-<p><span class="caption-text">High-level overview of a typical workflow using <code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code>: <code class="docutils literal notranslate"><span class="pre">graphnet.data</span></code> enables converting domain-specific data to industry-standard, intermediate file formats and reading this data; <code class="docutils literal notranslate"><span class="pre">graphnet.models</span></code> allows for configuring and building complex GNN models using simple, physics-oriented components; <code class="docutils literal notranslate"><span class="pre">graphnet.training</span></code> manages model training and experiment logging; and finally, <code class="docutils literal notranslate"><span class="pre">graphnet.deployment</span></code> allows for using trained models for inference in domain-specific reconstruction chains.</span><a class="headerlink" href="#flowchart" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">High-level overview of a typical workflow using <code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code>: <code class="docutils literal notranslate"><span class="pre">graphnet.data</span></code> enables converting domain-specific data to industry-standard, intermediate file formats and reading this data; <code class="docutils literal notranslate"><span class="pre">graphnet.models</span></code> allows for configuring and building complex GNN models using simple, physics-oriented components; <code class="docutils literal notranslate"><span class="pre">graphnet.training</span></code> manages model training and experiment logging; and finally, <code class="docutils literal notranslate"><span class="pre">graphnet.deployment</span></code> allows for using trained models for inference in domain-specific reconstruction chains.</span><a class="headerlink" href="#flowchart" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p><code class="docutils literal notranslate"><span class="pre">graphnet.models</span></code> provides modular components subclassing <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>, meaning that users only need to import a few existing, purpose-built components and chain them together to form a complete GNN. ML developers can contribute to <code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> by extending this suite of model components — through new layer types, physics tasks, graph connectivities, etc. — and experiment with optimising these for different reconstruction tasks using experiment tracking.</p>
@@ -357,11 +357,11 @@
 <p>By splitting up the GNN development as in <a class="reference internal" href="#flowchart"><span class="std std-ref">the Figure</span></a>, <code class="docutils literal notranslate"><span class="pre">GraphNeT</span></code> allows physics users to interface only with high-level building blocks or pre-trained models that can be used directly in their reconstruction chains, while allowing ML developers to continuously improve and expand the framework’s capabilities.</p>
 </section>
 <section id="acknowledgements">
-<h2 id="acknowledgements">Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this heading">¶</a></h2>
+<h2 id="acknowledgements">Acknowledgements<a class="headerlink" href="#acknowledgements" title="Link to this heading">¶</a></h2>
 <figure class="align-default" id="eu-emblem">
 <a class="reference internal image-reference" href="_images/eu-emblem.jpg"><img alt="eu-emblem" src="_images/eu-emblem.jpg" style="width: 10ex;"/></a>
 <figcaption>
-<p><span class="caption-text"> </span><a class="headerlink" href="#eu-emblem" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text"> </span><a class="headerlink" href="#eu-emblem" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.</p>
@@ -392,7 +392,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

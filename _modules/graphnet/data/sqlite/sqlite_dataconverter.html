@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -121,9 +121,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/material.css?v=79c92029" />
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../../../../about.html" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -174,7 +174,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="../../../../search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -340,14 +340,18 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="SQLiteDataConverter"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter">[docs]</a><span class="k">class</span> <span class="nc">SQLiteDataConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteDataConverter">
+<a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter">[docs]</a>
+<span class="k">class</span> <span class="nc">SQLiteDataConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Class for converting I3-file(s) to SQLite format."""</span>
 
     <span class="c1"># Class variables</span>
     <span class="n">file_suffix</span> <span class="o">=</span> <span class="s2">"db"</span>
 
     <span class="c1"># Abstract method implementation(s)</span>
-<div class="viewcode-block" id="SQLiteDataConverter.save_data"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.save_data">[docs]</a>    <span class="k">def</span> <span class="nf">save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">],</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="SQLiteDataConverter.save_data">
+<a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.save_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">],</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Save data to SQLite database."""</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
@@ -409,7 +413,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No data saved to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SQLiteDataConverter.merge_files"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.merge_files">[docs]</a>    <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
+
+<div class="viewcode-block" id="SQLiteDataConverter.merge_files">
+<a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.merge_files">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">input_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -461,6 +468,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_merge_temporary_databases</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_files</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No temporary database files found!"</span><span class="p">)</span></div>
+
 
     <span class="c1"># Internal methods</span>
     <span class="k">def</span> <span class="nf">_adjust_output_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -559,7 +567,9 @@
                     <span class="k">return</span> <span class="n">columns</span>
         <span class="k">return</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="SQLiteDataConverter.any_pulsemap_is_non_empty"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty">[docs]</a>    <span class="k">def</span> <span class="nf">any_pulsemap_is_non_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="SQLiteDataConverter.any_pulsemap_is_non_empty">
+<a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter.any_pulsemap_is_non_empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">any_pulsemap_is_non_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Check whether there are non-empty pulsemaps extracted from P frame.</span>
 
 <span class="sd">        Takes in the data extracted from the P frame, then retrieves the</span>
@@ -574,6 +584,7 @@
 
         <span class="n">pulsemap_dicts</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_dict</span><span class="p">[</span><span class="n">pulsemap</span><span class="p">]</span> <span class="k">for</span> <span class="n">pulsemap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"dom_x"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pulsemap_dicts</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_submit_to_database</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
@@ -643,8 +654,11 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_row_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_row_counts</span><span class="p">()</span></div>
 
 
+
 <span class="c1"># Implementation-specific utility function(s)</span>
-<div class="viewcode-block" id="construct_dataframe"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe">[docs]</a><span class="k">def</span> <span class="nf">construct_dataframe</span><span class="p">(</span><span class="n">extraction</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="construct_dataframe">
+<a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe">[docs]</a>
+<span class="k">def</span> <span class="nf">construct_dataframe</span><span class="p">(</span><span class="n">extraction</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Convert extraction to pandas.DataFrame.</span>
 
 <span class="sd">    Args:</span>
@@ -663,14 +677,21 @@
     <span class="k">return</span> <span class="n">out</span></div>
 
 
-<div class="viewcode-block" id="is_pulse_map"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map">[docs]</a><span class="k">def</span> <span class="nf">is_pulse_map</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="is_pulse_map">
+<a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map">[docs]</a>
+<span class="k">def</span> <span class="nf">is_pulse_map</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `table_name` corresponds to a pulse map."""</span>
     <span class="k">return</span> <span class="s2">"pulse"</span> <span class="ow">in</span> <span class="n">table_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"series"</span> <span class="ow">in</span> <span class="n">table_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="is_mc_tree"><a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree">[docs]</a><span class="k">def</span> <span class="nf">is_mc_tree</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="is_mc_tree">
+<a class="viewcode-back" href="../../../../api/graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree">[docs]</a>
+<span class="k">def</span> <span class="nf">is_mc_tree</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `table_name` corresponds to an MC tree."""</span>
     <span class="k">return</span> <span class="s2">"I3MCTree"</span> <span class="ow">in</span> <span class="n">table_name</span></div>
+
 </pre></div>
 
           </article>
@@ -695,7 +716,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

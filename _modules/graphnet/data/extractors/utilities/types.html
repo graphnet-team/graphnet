@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -121,9 +121,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/material.css?v=79c92029" />
-    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../../../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../../../../../about.html" />
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -174,7 +174,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="../../../../../search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -345,7 +345,9 @@
     <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 
 
-<div class="viewcode-block" id="is_boost_enum"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_boost_enum">[docs]</a><span class="k">def</span> <span class="nf">is_boost_enum</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_boost_enum">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_boost_enum">[docs]</a>
+<span class="k">def</span> <span class="nf">is_boost_enum</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `obj` inherits from Boost.Python.enum."""</span>
     <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">:</span>
         <span class="k">if</span> <span class="s2">"Boost.Python.enum"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -353,31 +355,46 @@
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="is_boost_class"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_boost_class">[docs]</a><span class="k">def</span> <span class="nf">is_boost_class</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="is_boost_class">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_boost_class">[docs]</a>
+<span class="k">def</span> <span class="nf">is_boost_class</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `obj` is instance of Boost.Python.enum."""</span>
     <span class="k">return</span> <span class="s2">"Boost.Python.class"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="is_icecube_class"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_icecube_class">[docs]</a><span class="k">def</span> <span class="nf">is_icecube_class</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="is_icecube_class">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_icecube_class">[docs]</a>
+<span class="k">def</span> <span class="nf">is_icecube_class</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `obj` is an IceCube-specific class."""</span>
     <span class="n">classname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
     <span class="k">return</span> <span class="s2">"icecube."</span> <span class="ow">in</span> <span class="n">classname</span></div>
 
 
-<div class="viewcode-block" id="is_type"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_type">[docs]</a><span class="k">def</span> <span class="nf">is_type</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="is_type">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_type">[docs]</a>
+<span class="k">def</span> <span class="nf">is_type</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `obj` is a type, and not an instance."""</span>
     <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"type"</span></div>
 
 
-<div class="viewcode-block" id="is_method"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_method">[docs]</a><span class="k">def</span> <span class="nf">is_method</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="is_method">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.is_method">[docs]</a>
+<span class="k">def</span> <span class="nf">is_method</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `obj` is a method."""</span>
     <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"Boost.Python.function"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span></div>
+
 
 
 <span class="n">BEING_EVALUATED</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="break_cyclic_recursion"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.break_cyclic_recursion">[docs]</a><span class="k">def</span> <span class="nf">break_cyclic_recursion</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="break_cyclic_recursion">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.break_cyclic_recursion">[docs]</a>
+<span class="k">def</span> <span class="nf">break_cyclic_recursion</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Ensure that method isn't called recursively on the same object."""</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
@@ -401,7 +418,10 @@
     <span class="k">return</span> <span class="n">wrapper</span></div>
 
 
-<div class="viewcode-block" id="get_member_variables"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.get_member_variables">[docs]</a><span class="k">def</span> <span class="nf">get_member_variables</span><span class="p">(</span>
+
+<div class="viewcode-block" id="get_member_variables">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.get_member_variables">[docs]</a>
+<span class="k">def</span> <span class="nf">get_member_variables</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">return_discarded</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]:</span>
 <span class="w">    </span><span class="sd">"""Return list of valid member variables.</span>
@@ -445,7 +465,10 @@
     <span class="k">return</span> <span class="n">valid_member_variables</span></div>
 
 
-<div class="viewcode-block" id="cast_object_to_pure_python"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.cast_object_to_pure_python">[docs]</a><span class="nd">@break_cyclic_recursion</span>
+
+<div class="viewcode-block" id="cast_object_to_pure_python">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.cast_object_to_pure_python">[docs]</a>
+<span class="nd">@break_cyclic_recursion</span>
 <span class="k">def</span> <span class="nf">cast_object_to_pure_python</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Cast `obj`, and any members/elements, to pure-python classes.</span>
 
@@ -532,7 +555,10 @@
     <span class="k">return</span> <span class="n">results</span></div>
 
 
-<div class="viewcode-block" id="cast_pulse_series_to_pure_python"><a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python">[docs]</a><span class="k">def</span> <span class="nf">cast_pulse_series_to_pure_python</span><span class="p">(</span>
+
+<div class="viewcode-block" id="cast_pulse_series_to_pure_python">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.utilities.types.html#graphnet.data.extractors.utilities.types.cast_pulse_series_to_pure_python">[docs]</a>
+<span class="k">def</span> <span class="nf">cast_pulse_series_to_pure_python</span><span class="p">(</span>
     <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">calibration</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -609,6 +635,7 @@
         <span class="k">return</span> <span class="n">result_combined</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span></div>
+
 </pre></div>
 
           </article>
@@ -633,7 +660,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

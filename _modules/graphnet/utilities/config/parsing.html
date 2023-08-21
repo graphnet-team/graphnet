@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -121,9 +121,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/material.css?v=79c92029" />
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../../../../about.html" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -174,7 +174,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="../../../../search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -338,7 +338,9 @@
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 
 
-<div class="viewcode-block" id="traverse_and_apply"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.traverse_and_apply">[docs]</a><span class="k">def</span> <span class="nf">traverse_and_apply</span><span class="p">(</span>
+<div class="viewcode-block" id="traverse_and_apply">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.traverse_and_apply">[docs]</a>
+<span class="k">def</span> <span class="nf">traverse_and_apply</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">fn_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Apply `fn` to all elements in `obj`, resulting in same structure."""</span>
@@ -355,7 +357,10 @@
         <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">**</span><span class="n">fn_kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="list_all_submodules"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.list_all_submodules">[docs]</a><span class="k">def</span> <span class="nf">list_all_submodules</span><span class="p">(</span><span class="o">*</span><span class="n">packages</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="list_all_submodules">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.list_all_submodules">[docs]</a>
+<span class="k">def</span> <span class="nf">list_all_submodules</span><span class="p">(</span><span class="o">*</span><span class="n">packages</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""List all submodules in `packages` recursively."""</span>
     <span class="c1"># Resolve one or more packages</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -378,7 +383,10 @@
     <span class="k">return</span> <span class="n">submodules</span></div>
 
 
-<div class="viewcode-block" id="get_all_grapnet_classes"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.get_all_grapnet_classes">[docs]</a><span class="k">def</span> <span class="nf">get_all_grapnet_classes</span><span class="p">(</span><span class="o">*</span><span class="n">packages</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="get_all_grapnet_classes">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.get_all_grapnet_classes">[docs]</a>
+<span class="k">def</span> <span class="nf">get_all_grapnet_classes</span><span class="p">(</span><span class="o">*</span><span class="n">packages</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""List all grapnet classes in `packages`."""</span>
     <span class="n">submodules</span> <span class="o">=</span> <span class="n">list_all_submodules</span><span class="p">(</span><span class="o">*</span><span class="n">packages</span><span class="p">)</span>
     <span class="n">classes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -396,19 +404,28 @@
     <span class="k">return</span> <span class="n">classes</span></div>
 
 
-<div class="viewcode-block" id="is_graphnet_module"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.is_graphnet_module">[docs]</a><span class="k">def</span> <span class="nf">is_graphnet_module</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="is_graphnet_module">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.is_graphnet_module">[docs]</a>
+<span class="k">def</span> <span class="nf">is_graphnet_module</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return whether `obj` is a module in graphnet."""</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
         <span class="s2">"graphnet."</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="is_graphnet_class"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.is_graphnet_class">[docs]</a><span class="k">def</span> <span class="nf">is_graphnet_class</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="is_graphnet_class">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.is_graphnet_class">[docs]</a>
+<span class="k">def</span> <span class="nf">is_graphnet_class</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return whether `obj` is a class in graphnet."""</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"graphnet."</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_graphnet_classes"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.get_graphnet_classes">[docs]</a><span class="k">def</span> <span class="nf">get_graphnet_classes</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="get_graphnet_classes">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.get_graphnet_classes">[docs]</a>
+<span class="k">def</span> <span class="nf">get_graphnet_classes</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return a lookup of all graphnet class names in `module`."""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_graphnet_module</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
         <span class="n">Logger</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2"> is not a graphnet module"</span><span class="p">)</span>
@@ -419,6 +436,7 @@
         <span class="k">if</span> <span class="n">is_graphnet_class</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">classes</span></div>
+
 </pre></div>
 
           </article>
@@ -443,7 +461,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

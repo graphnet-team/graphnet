@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -121,9 +121,9 @@
 </style>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/material.css?v=79c92029" />
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../../../../about.html" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -174,7 +174,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" action="../../../../search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search"
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
              autocapitalize="off" autocomplete="off" spellcheck="false"
              data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
@@ -331,7 +331,9 @@
 <span class="kn">from</span> <span class="nn">graphnet.utilities.decorators</span> <span class="kn">import</span> <span class="n">final</span>
 
 
-<div class="viewcode-block" id="Configurable"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable">[docs]</a><span class="k">class</span> <span class="nc">Configurable</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="Configurable">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable">[docs]</a>
+<span class="k">class</span> <span class="nc">Configurable</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Base class for all configurable classes in graphnet."""</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -353,14 +355,21 @@
                 <span class="s2">"Did you wrap the class constructor with `save_config`?"</span>
             <span class="p">)</span>
 
-<div class="viewcode-block" id="Configurable.save_config"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable.save_config">[docs]</a>    <span class="nd">@final</span>
+<div class="viewcode-block" id="Configurable.save_config">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable.save_config">[docs]</a>
+    <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Save Config to `path` as YAML file."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Configurable.from_config"><a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable.from_config">[docs]</a>    <span class="nd">@abstractclassmethod</span>
+
+<div class="viewcode-block" id="Configurable.from_config">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable.from_config">[docs]</a>
+    <span class="nd">@abstractclassmethod</span>
     <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BaseConfig</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Construct instance from `source` configuration."""</span></div></div>
+<span class="w">        </span><span class="sd">"""Construct instance from `source` configuration."""</span></div>
+</div>
+
 </pre></div>
 
           </article>
@@ -385,7 +394,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>
