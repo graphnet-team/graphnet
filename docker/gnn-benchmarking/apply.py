@@ -13,7 +13,8 @@ from graphnet.deployment.i3modules import I3InferenceModule
 from graphnet.data.extractors.i3featureextractor import (
     I3FeatureExtractorIceCubeDeepCore,
 )
-from graphnet.data.constants import FEATURES, GRAPHNET_ROOT_DIR
+from graphnet.data.constants import FEATURES
+from graphnet.constants import GRAPHNET_ROOT_DIR
 
 
 # Constants
