@@ -14,16 +14,14 @@ from graphnet.data.extractors.i3featureextractor import (
     I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.data.constants import FEATURES
-from graphnet.constants import GRAPHNET_ROOT_DIR
+from graphnet.constants import PRETRAINED_MODEL_DIR
 
 
 # Constants
 MODEL_NAME = "total_neutrino_energy"
-BASE_PATH = (
-    f"{GRAPHNET_ROOT_DIR}/src/graphnet/models/pretrained/icecube/upgrade/QUESO"
-)
+BASE_PATH = f"{PRETRAINED_MODEL_DIR}/icecube/upgrade/QUESO"
 MODEL_CONFIG = f"{BASE_PATH}/{MODEL_NAME}/{MODEL_NAME}_config.yml"
-STATE_DICT = f"{BASE_PATH}/{MODEL_NAME}/{MODEL_NAME}_state_dict.yml"
+STATE_DICT = f"{BASE_PATH}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
 
 
 def main(
