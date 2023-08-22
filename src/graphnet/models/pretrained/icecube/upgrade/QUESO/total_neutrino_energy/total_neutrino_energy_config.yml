@@ -1,0 +1,49 @@
+arguments:
+  gnn:
+    ModelConfig:
+      arguments:
+        add_global_variables_after_pooling: false
+        dynedge_layer_sizes: null
+        features_subset: null
+        global_pooling_schemes: [min, max, mean]
+        nb_inputs: 14
+        nb_neighbours: 8
+        post_processing_layer_sizes: null
+        readout_layer_sizes: null
+      class_name: DynEdge
+  graph_definition:
+    ModelConfig:
+      arguments:
+        columns: [0, 1, 2]
+        detector:
+          ModelConfig:
+            arguments: {}
+            class_name: IceCubeUpgrade
+        dtype: torch.float32
+        nb_nearest_neighbours: 8
+        node_definition:
+          ModelConfig:
+            arguments: {}
+            class_name: NodesAsPulses
+        node_feature_names: null
+      class_name: KNNGraph
+  optimizer_class: '!class torch.optim.adam Adam'
+  optimizer_kwargs: null
+  scheduler_class: null
+  scheduler_config: null
+  scheduler_kwargs: null
+  tasks:
+  - ModelConfig:
+      arguments:
+        hidden_size: 128
+        loss_function:
+          ModelConfig:
+            arguments: {}
+            class_name: LogCoshLoss
+        loss_weight: null
+        nb_outputs: 1
+        target_labels: energy
+        transform_inference: '!lambda x: torch.pow(10,x)'
+        transform_target: '!lambda x: torch.log10(x)'
+      class_name: IdentityTask
+class_name: StandardModel
