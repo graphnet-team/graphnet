@@ -12,7 +12,7 @@ from graphnet.data.extractors.i3featureextractor import (
 )
 from graphnet.constants import (
     TEST_DATA_DIR,
-    GRAPHNET_ROOT_DIR,
+    PRETRAINED_MODEL_DIR,
 )
 from graphnet.utilities.imports import has_icecube_package
 
@@ -83,7 +83,7 @@ def create_QUESO_modules(
     Returns:
         List of deployment modules.
     """
-    base_path = f"{GRAPHNET_ROOT_DIR}/src/graphnet/models/pretrained/icecube/upgrade/QUESO/"
+    base_path = f"{PRETRAINED_MODEL_DIR}/icecube/upgrade/QUESO"
     model_configs = glob(base_path + "/*/*_config.yml")
     state_dicts = glob(base_path + "/*/*_state_dict.pth")
     model_configs.sort()
@@ -193,7 +193,7 @@ def test_deployment() -> None:
 @pytest.mark.order(2)
 def verify_QUESO_integrity() -> None:
     """Test new and original i3 files contain same predictions."""
-    base_path = f"{GRAPHNET_ROOT_DIR}/src/graphnet/models/pretrained/icecube/upgrade/QUESO/"
+    base_path = f"{PRETRAINED_MODEL_DIR}/icecube/upgrade/QUESO/"
     queso_original_file = glob(
         f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/*.i3.gz"
     )[0]
