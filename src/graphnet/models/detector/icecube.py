@@ -106,6 +106,7 @@ class IceCubeUpgrade(Detector):
             "dom_z": self._dom_xyz,
             "dom_time": self._dom_time,
             "charge": self._charge,
+            "rde": self._identity,
             "pmt_area": self._pmt_area,
             "string": self._string,
             "pmt_number": self._pmt_number,
@@ -114,7 +115,6 @@ class IceCubeUpgrade(Detector):
             "pmt_dir_y": self._identity,
             "pmt_dir_z": self._identity,
             "dom_type": self._dom_type,
-            "rde": self._identity,
         }
 
         return feature_map

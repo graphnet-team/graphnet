@@ -166,7 +166,7 @@ class GraphDefinition(Model):
         for idx in range(len(node_feature_names)):
             assert (
                 node_feature_names[idx] == self._node_feature_names[idx]
-            ), """ Order of node features are not the same."""
+            ), f""" Order of node features in data are not the same as expected. Got {node_feature_names} vs. {self._node_feature_names}"""
 
     def _add_loss_weights(
         self,
