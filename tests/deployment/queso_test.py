@@ -86,6 +86,10 @@ def create_QUESO_modules(
     base_path = f"{GRAPHNET_ROOT_DIR}/src/graphnet/models/pretrained/icecube/upgrade/QUESO/"
     model_configs = glob(base_path + "/*/*_config.yml")
     state_dicts = glob(base_path + "/*/*_state_dict.pth")
+    model_configs.sort()
+    state_dicts.sort()
+
+    assert len(state_dicts) == len(model_configs)
 
     # Construct modules
     inference_modules = []
