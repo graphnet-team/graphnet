@@ -1,4 +1,4 @@
-"""An example of how to apply GraphNetI3Modules in Icetray."""
+"""Unit Tests for IceCube Upgrade QUESO event selection."""
 
 from glob import glob
 from os.path import join
