@@ -11,7 +11,7 @@ from I3Tray import I3Tray  # pyright: reportMissingImports=false
 
 from graphnet.deployment.i3modules import I3InferenceModule
 from graphnet.data.extractors.i3featureextractor import (
-    I3FeatureExtractorIceCubeDeepCore,
+    I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.data.constants import FEATURES
 from graphnet.constants import GRAPHNET_ROOT_DIR
@@ -48,7 +48,7 @@ def main(
     input_files = [p for p in input_files if gcd_pattern not in p]
 
     # Construct I3InferenceModule(s)
-    extractor = I3FeatureExtractorIceCubeDeepCore(pulsemap=pulsemap)
+    extractor = I3FeatureExtractorIceCubeUpgrade(pulsemap=pulsemap)
 
     deployment_modules = [
         I3InferenceModule(
