@@ -11,7 +11,7 @@ from graphnet.data.extractors.i3featureextractor import (
 from graphnet.constants import (
     TEST_DATA_DIR,
     EXAMPLE_OUTPUT_DIR,
-    GRAPHNET_ROOT_DIR,
+    PRETRAINED_MODEL_DIR,
 )
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_icecube_package
@@ -72,7 +72,7 @@ def main() -> None:
     # Constants
     features = FEATURES.UPGRADE
     input_folders = [f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998"]
-    base_path = f"{GRAPHNET_ROOT_DIR}/src/graphnet/models/pretrained/icecube/upgrade/QUESO"
+    base_path = f"{PRETRAINED_MODEL_DIR}/icecube/upgrade/QUESO"
     model_name = "total_neutrino_energy"
     model_config = f"{base_path}/{model_name}/{model_name}_config.yml"
     state_dict = f"{base_path}/{model_name}/{model_name}_state_dict.yml"
