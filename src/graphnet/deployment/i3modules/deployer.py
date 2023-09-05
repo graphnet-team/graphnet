@@ -58,8 +58,11 @@ class GraphNeTI3Deployer:
         """
         # This makes sure that one worker cannot access more
         # than 1 core's worth of compute.
-        torch.set_num_threads(1)
-        torch.set_num_interop_threads(1)
+
+        if torch.get_num_interop_threads() > 1:
+            torch.set_num_interop_threads(1)
+        if torch.get_num_threads() > 1:
+            torch.set_num_threads(1)
         # Check
         if isinstance(graphnet_modules, list):
             self._modules = graphnet_modules
