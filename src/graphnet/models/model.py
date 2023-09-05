@@ -328,7 +328,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
     ) -> List[str]:
         """Make prediction_columns have the correct length to create dataframe.
 
-        Args:
+        Arguments:
             prediction_columns: Prediction_columns from _predict_as_dataframe.
             out_shape: Number of output predictions at final layer.
             placeholder: Name of additional columns used to fill up prediction_columns.
