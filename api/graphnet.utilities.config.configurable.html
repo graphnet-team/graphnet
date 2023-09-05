@@ -364,53 +364,10 @@
       
         
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-utilities-config-configurable--page-root" class="md-nav__link">configurable</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.utilities.config.configurable.Configurable" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Configurable</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.utilities.config.configurable.Configurable.config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">config</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.config.configurable.Configurable.save_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_config()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.config.configurable.Configurable.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
-        </li></ul>
-            </nav>
-        </li></ul>
-            </nav>
-        </li>
   </ul>
 </nav>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.utilities.config.configurable.Configurable" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Configurable</span></code></a>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.utilities.config.configurable.Configurable.config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">config</span></code></a>
       
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.utilities.config.configurable.Configurable.save_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_config()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.utilities.config.configurable.Configurable.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
-      
-    
-    </li></ul>
-    
-    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -508,22 +465,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-utilities-config-configurable--page-root" class="md-nav__link">configurable</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.utilities.config.configurable.Configurable" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Configurable</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.utilities.config.configurable.Configurable.config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">config</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.config.configurable.Configurable.save_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_config()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.utilities.config.configurable.Configurable.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
-        </li></ul>
-            </nav>
-        </li></ul>
-            </nav>
-        </li>
   </ul>
 </nav>
               </div>
@@ -535,47 +477,6 @@
             
   <section id="configurable">
 <h1 id="api-graphnet-utilities-config-configurable--page-root">configurable<a class="headerlink" href="#api-graphnet-utilities-config-configurable--page-root" title="Link to this heading">¶</a></h1>
-<p id="module-graphnet.utilities.config.configurable">Bases for all configurable classes in  <cite>graphnet</cite>.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.utilities.config.configurable.Configurable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.configurable.</span></span><span class="sig-name descname"><span class="pre">Configurable</span></span><a class="reference internal" href="../_modules/graphnet/utilities/config/configurable.html#Configurable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.configurable.Configurable" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Base class for all configurable classes in graphnet.</p>
-<p>Construct <cite>Configurable</cite>.</p>
-<dl class="field-list simple">
-</dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.utilities.config.configurable.Configurable.config">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="graphnet.utilities.config.base_config.html#graphnet.utilities.config.base_config.BaseConfig" title="graphnet.utilities.config.base_config.BaseConfig"><span class="pre">BaseConfig</span></a></em><a class="headerlink" href="#graphnet.utilities.config.configurable.Configurable.config" title="Link to this definition">¶</a></dt>
-<dd><p>Return configuration to re-create the instance.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.utilities.config.configurable.Configurable.save_config">
-<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/configurable.html#Configurable.save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.configurable.Configurable.save_config" title="Link to this definition">¶</a></dt>
-<dd><p>Save Config to <cite>path</cite> as YAML file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>path</strong> (<em>str</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.utilities.config.configurable.Configurable.from_config">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/configurable.html#Configurable.from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.configurable.Configurable.from_config" title="Link to this definition">¶</a></dt>
-<dd><p>Construct instance from <cite>source</cite> configuration.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>source</strong> (<a class="reference internal" href="graphnet.utilities.config.base_config.html#graphnet.utilities.config.base_config.BaseConfig" title="graphnet.utilities.config.base_config.BaseConfig"><em>BaseConfig</em></a><em> | </em><em>str</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
 </section>
 
 
@@ -625,7 +526,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.2.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>
