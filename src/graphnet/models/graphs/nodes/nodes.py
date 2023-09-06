@@ -4,9 +4,7 @@ from typing import List
 from abc import abstractmethod
 
 import torch
-from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
-import numpy as np
 
 from graphnet.utilities.decorators import final
 from graphnet.utilities.config import save_model_config
