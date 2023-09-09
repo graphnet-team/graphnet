@@ -71,7 +71,7 @@ class GraphDefinition(Model):
 
     def forward(  # type: ignore
         self,
-        node_features: np.array,
+        node_features: np.ndarray,
         node_feature_names: List[str],
         truth_dicts: Optional[List[Dict[str, Any]]] = None,
         custom_label_functions: Optional[Dict[str, Callable[..., Any]]] = None,
