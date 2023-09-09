@@ -3,6 +3,7 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
+from numpy.random import default_rng, Generator
 import torch
 from torch_geometric.data import Data
 
@@ -36,6 +37,7 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
         loss_weight_table: Optional[str] = None,
         loss_weight_column: Optional[str] = None,
         loss_weight_default_value: Optional[float] = None,
+        seed: Optional[Union[int, Generator]] = None, 
     ):
         """Construct SQLiteDatasetPerturbed.
 
@@ -78,6 +80,10 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
                 in this case to events with no value in the corresponding
                 table/column. That is, if no per-event loss weight table/column
                 is provided, this value is ignored. Defaults to None.
+            seed: Optional seed for random number generation (int or numpy Generator). 
+                If provided, it will be used to initialize the random number generator 
+                for data perturbation. Defaults to None.
+ 
         """
         # Base class constructor
         super().__init__(
@@ -108,6 +114,16 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
             self._features.index(key) for key in self._perturbation_dict.keys()
         ]
 
+        if seed is not None:
+            if isinstance(seed, int):
+                self.rng = default_rng(seed)
+            elif isinstance(seed, Generator):
+                self.rng = seed
+            else:
+                raise ValueError("Invalid seed. Must be an int or a numpy Generator.")
+        else:
+            self.rng = default_rng()
+
     def __getitem__(self, sequential_index: int) -> Data:
         """Return graph `Data` object at `index`."""
         if not (0 <= sequential_index < len(self)):
@@ -127,7 +143,7 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
         self, features: List[Tuple[float, ...]]
     ) -> List[Tuple[float, ...]]:
         features_array = np.array(features)
-        perturbed_features = np.random.normal(
+        perturbed_features = self.rng.normal(
             loc=features_array[:, self._perturbation_cols],
             scale=np.array(
                 list(self._perturbation_dict.values()), dtype=np.float
