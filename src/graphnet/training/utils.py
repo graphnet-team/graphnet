@@ -115,7 +115,7 @@ def make_train_validation_dataloader(
 ) -> Tuple[DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
     # Reproducibility
-    rng = np.random.RandomState(seed=seed)
+    rng = np.random.default_rng(seed=seed)
 
     # Checks(s)
     if isinstance(pulsemaps, str):
