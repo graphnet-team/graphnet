@@ -115,7 +115,7 @@ def make_train_validation_dataloader(
 ) -> Tuple[DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
     # Reproducibility
-
+    rng = np.random.default_rng(seed=seed)
     # Checks(s)
     if isinstance(pulsemaps, str):
         pulsemaps = [pulsemaps]
@@ -155,7 +155,7 @@ def make_train_validation_dataloader(
             {"event_no": selection, "db": database_indices}
         )
         shuffled_df = df_for_shuffle.sample(
-            frac=1, replace=False, random_state=seed
+            frac=1, replace=False, random_state=rng
         )
         training_df, validation_df = train_test_split(
             shuffled_df, test_size=test_size, random_state=seed
