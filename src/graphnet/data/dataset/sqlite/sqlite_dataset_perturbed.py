@@ -37,7 +37,7 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
         loss_weight_table: Optional[str] = None,
         loss_weight_column: Optional[str] = None,
         loss_weight_default_value: Optional[float] = None,
-        seed: Optional[Union[int, Generator]] = None, 
+        seed: Optional[Union[int, Generator]] = None,
     ):
         """Construct SQLiteDatasetPerturbed.
 
@@ -80,10 +80,7 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
                 in this case to events with no value in the corresponding
                 table/column. That is, if no per-event loss weight table/column
                 is provided, this value is ignored. Defaults to None.
-            seed: Optional seed for random number generation (int or numpy Generator). 
-                If provided, it will be used to initialize the random number generator 
-                for data perturbation. Defaults to None.
- 
+            seed: Optional seed for random number generation. Defaults to None.
         """
         # Base class constructor
         super().__init__(
@@ -120,7 +117,9 @@ class SQLiteDatasetPerturbed(SQLiteDataset):
             elif isinstance(seed, Generator):
                 self.rng = seed
             else:
-                raise ValueError("Invalid seed. Must be an int or a numpy Generator.")
+                raise ValueError(
+                    "Invalid seed. Must be an int or a numpy Generator."
+                )
         else:
             self.rng = default_rng()
 
