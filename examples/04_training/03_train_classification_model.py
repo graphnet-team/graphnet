@@ -14,7 +14,7 @@ from graphnet.constants import (
 )
 from graphnet.data.dataloader import DataLoader
 from graphnet.data.dataset import Dataset
-from graphnet.models import Model
+from graphnet.models import StandardModel
 from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.config import (
@@ -54,7 +54,7 @@ def main(
 
     # Build model
     model_config = ModelConfig.load(model_config_path)
-    model = Model.from_config(model_config, trust=True)
+    model = StandardModel.from_config(model_config, trust=True)
 
     # Configuration
     config = TrainingConfig(
@@ -110,10 +110,6 @@ def main(
         wandb_logger.experiment.config.update(config)
         wandb_logger.experiment.config.update(model_config.as_dict())
         wandb_logger.experiment.config.update(dataset_config.as_dict())
-
-    # Build model
-    model_config = ModelConfig.load(model_config_path)
-    model = Model.from_config(model_config, trust=True)
 
     # Training model
     callbacks = [

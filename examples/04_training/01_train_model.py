@@ -8,7 +8,7 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
 from graphnet.constants import EXAMPLE_OUTPUT_DIR
 from graphnet.data.dataloader import DataLoader
-from graphnet.models import Model
+from graphnet.models import StandardModel
 from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.config import (
@@ -48,7 +48,7 @@ def main(
 
     # Build model
     model_config = ModelConfig.load(model_config_path)
-    model = Model.from_config(model_config, trust=True)
+    model = StandardModel.from_config(model_config, trust=True)
 
     # Configuration
     config = TrainingConfig(
