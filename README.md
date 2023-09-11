@@ -40,7 +40,7 @@ You may want `graphnet` to be able to interface with IceTray, e.g., when convert
 To achieve this, we recommend running the following commands in a clean bash shell:
 ```bash
 $ eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/setup.sh`
-$ /cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/Ubuntu_20.04_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
+$ /cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/RHEL_7_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
 ```
 Optionally, you can alias these commands or save them as a bash script for convenience, as you will have to run these commands every time you want to use IceTray (with `graphnet`) in a clean shell.
 
