@@ -106,7 +106,7 @@ def main(
     # Log configurations to W&B
     # NB: Only log to W&B on the rank-zero process in case of multi-GPU
     #     training.
-    if rank_zero_only == 0:
+    if wandb and rank_zero_only == 0:
         wandb_logger.experiment.config.update(config)
         wandb_logger.experiment.config.update(model_config.as_dict())
         wandb_logger.experiment.config.update(dataset_config.as_dict())
