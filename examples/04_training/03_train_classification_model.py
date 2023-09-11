@@ -14,7 +14,7 @@ from graphnet.constants import (
 )
 from graphnet.data.dataloader import DataLoader
 from graphnet.data.dataset import Dataset
-from graphnet.models import Model
+from graphnet.models import StandardModel
 from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.config import (
@@ -33,7 +33,6 @@ def main(
     early_stopping_patience: int,
     batch_size: int,
     num_workers: int,
-    prediction_names: Optional[List[str]],
     suffix: Optional[str] = None,
     wandb: bool = False,
 ) -> None:
@@ -55,7 +54,7 @@ def main(
 
     # Build model
     model_config = ModelConfig.load(model_config_path)
-    model = Model.from_config(model_config, trust=True)
+    model: StandardModel = StandardModel.from_config(model_config, trust=True)
 
     # Configuration
     config = TrainingConfig(
@@ -107,14 +106,10 @@ def main(
     # Log configurations to W&B
     # NB: Only log to W&B on the rank-zero process in case of multi-GPU
     #     training.
-    if rank_zero_only == 0:
+    if wandb and rank_zero_only == 0:
         wandb_logger.experiment.config.update(config)
         wandb_logger.experiment.config.update(model_config.as_dict())
         wandb_logger.experiment.config.update(dataset_config.as_dict())
-
-    # Build model
-    model_config = ModelConfig.load(model_config_path)
-    model = Model.from_config(model_config, trust=True)
 
     # Training model
     callbacks = [
@@ -133,36 +128,28 @@ def main(
         **config.fit,
     )
 
+    # Save model to file
+    db_name = dataset_config.path.split("/")[-1].split(".")[0]
+    path = os.path.join(archive, db_name, run_name)
+    os.makedirs(path, exist_ok=True)
+    logger.info(f"Writing results to {path}")
+    model.save_state_dict(f"{path}/state_dict.pth")
+    model.save(f"{path}/model.pth")
+
     # Get predictions
     if isinstance(config.target, str):
-        prediction_columns = [
-            config.target + "_noise_pred",
-            config.target + "_muon_pred",
-            config.target + "_neutrino_pred",
-        ]
         additional_attributes = [config.target]
     else:
-        prediction_columns = [target + "_pred" for target in config.target]
         additional_attributes = config.target
 
-    if prediction_names:
-        prediction_columns = prediction_names
+    logger.info(f"config.target: {config.target}")
+    logger.info(f"prediction_columns: {model.prediction_labels}")
 
     results = model.predict_as_dataframe(
         test_dataloaders,
-        prediction_columns=prediction_columns,
         additional_attributes=additional_attributes + ["event_no"],
     )
-
-    # Save predictions and model to file
-    db_name = dataset_config.path.split("/")[-1].split(".")[0]
-    path = os.path.join(archive, db_name, run_name)
-    logger.info(f"Writing results to {path}")
-    os.makedirs(path, exist_ok=True)
-
     results.to_csv(f"{path}/results.csv")
-    model.save_state_dict(f"{path}/state_dict.pth")
-    model.save(f"{path}/model.pth")
 
 
 if __name__ == "__main__":
@@ -195,13 +182,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--prediction-names",
-        nargs="+",
-        help="Names of each prediction output feature (default: %(default)s)",
-        default=["noise", "muon", "neutrino"],
-    )
-
-    parser.add_argument(
         "--suffix",
         type=str,
         help="Name addition to folder (default: %(default)s)",
@@ -218,6 +198,5 @@ if __name__ == "__main__":
         args.early_stopping_patience,
         args.batch_size,
         args.num_workers,
-        args.prediction_names,
         args.suffix,
     )
