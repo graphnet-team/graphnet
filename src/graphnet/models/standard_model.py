@@ -10,9 +10,8 @@ from torch.utils.data import DataLoader
 from torch_geometric.data import Data
 import pandas as pd
 
-from graphnet.models.coarsening import Coarsening
 from graphnet.utilities.config import save_model_config
-from graphnet.models.detector.detector import Detector
+from graphnet.models.graphs import GraphDefinition
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.model import Model
 from graphnet.models.task import Task
@@ -29,10 +28,9 @@ class StandardModel(Model):
     def __init__(
         self,
         *,
-        detector: Detector,
+        graph_definition: GraphDefinition,
         gnn: GNN,
         tasks: Union[Task, List[Task]],
-        coarsening: Optional[Coarsening] = None,
         optimizer_class: type = Adam,
         optimizer_kwargs: Optional[Dict] = None,
         scheduler_class: Optional[type] = None,
@@ -48,20 +46,21 @@ class StandardModel(Model):
             tasks = [tasks]
         assert isinstance(tasks, (list, tuple))
         assert all(isinstance(task, Task) for task in tasks)
-        assert isinstance(detector, Detector)
+        assert isinstance(graph_definition, GraphDefinition)
         assert isinstance(gnn, GNN)
-        assert coarsening is None or isinstance(coarsening, Coarsening)
 
         # Member variable(s)
-        self._detector = detector
+        self._graph_definition = graph_definition
         self._gnn = gnn
         self._tasks = ModuleList(tasks)
-        self._coarsening = coarsening
         self._optimizer_class = optimizer_class
         self._optimizer_kwargs = optimizer_kwargs or dict()
         self._scheduler_class = scheduler_class
         self._scheduler_kwargs = scheduler_kwargs or dict()
         self._scheduler_config = scheduler_config or dict()
+
+        # set dtype of GNN from graph_definition
+        self._gnn.type(self._graph_definition._dtype)
 
     @property
     def target_labels(self) -> List[str]:
@@ -101,8 +100,6 @@ class StandardModel(Model):
         """Forward pass, chaining model components."""
         if isinstance(data, Data):
             data = [data]
-        if self._coarsening:
-            data = self._coarsening(data)
         x_list = []
         for d in data:
             d = self._detector(d)

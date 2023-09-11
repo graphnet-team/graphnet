@@ -1,4 +1,17 @@
 path: /groups/icecube/asogaard/data/example/dev_lvl7_robustness_muon_neutrino_0000.db
+graph_definition:
+  arguments:
+    columns: [0, 1, 2]
+    detector:
+      arguments: {}
+      class_name: IceCube86
+    dtype: torch.float32
+    nb_nearest_neighbours: 8
+    node_definition:
+      arguments: {}
+      class_name: NodesAsPulses
+    node_feature_names: [dom_x, dom_y, dom_z, dom_time, charge, rde, pmt_area]
+  class_name: KNNGraph
 pulsemaps:
   - SRTTWOfflinePulsesDC
 features:

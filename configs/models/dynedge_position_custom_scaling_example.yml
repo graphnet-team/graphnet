@@ -1,14 +1,24 @@
 arguments:
-  coarsening: null
-  detector:
+  graph_definition:
     ModelConfig:
       arguments:
-        graph_builder:
+        detector:
           ModelConfig:
-            arguments: {columns: null, nb_nearest_neighbours: 8}
-            class_name: KNNGraphBuilder
-        scalers: null
-      class_name: IceCubeDeepCore
+            arguments: {}
+            class_name: Prometheus
+        dtype: null
+        edge_definition:
+          ModelConfig:
+            arguments:
+              columns: [0, 1, 2]
+              nb_nearest_neighbours: 8
+            class_name: KNNEdges
+        node_definition:
+          ModelConfig:
+            arguments: {}
+            class_name: NodesAsPulses
+        node_feature_names: null
+      class_name: KNNGraph
   gnn:
     ModelConfig:
       arguments:

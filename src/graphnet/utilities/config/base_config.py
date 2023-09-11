@@ -31,7 +31,6 @@ class BaseConfig(BaseModel):
     def dump(self, path: Optional[str] = None) -> Optional[str]:
         """Save BaseConfig to `path` as YAML file, or return as string."""
         config_dict = self.as_dict()[self.__class__.__name__]
-
         yaml_ = yaml.YAML(typ="safe", pure=True)
         if path:
             if not path.endswith(CONFIG_FILES_SUFFIXES):
