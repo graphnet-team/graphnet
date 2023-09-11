@@ -68,5 +68,5 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
 class NodesAsPulses(NodeDefinition):
     """Represent each measured pulse of Cherenkov Radiation as a node."""
 
-    def _construct_nodes(self, x: torch.tensor) -> Data:
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
         return Data(x=x)
