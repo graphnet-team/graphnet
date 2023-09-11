@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from graphnet.constants import (
     TEST_DATA_DIR,
     EXAMPLE_OUTPUT_DIR,
+    PRETRAINED_MODEL_DIR,
 )
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.extractors.i3featureextractor import (
@@ -34,7 +35,10 @@ def main() -> None:
     # configure input files, output folders and pulsemap
     pulsemap = "SplitInIcePulses"
     input_folders = [f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998"]
-    mock_model_path = f"{TEST_DATA_DIR}/models/mock_energy_model.pth"
+    base_path = f"{PRETRAINED_MODEL_DIR}/icecube/upgrade/QUESO"
+    model_name = "total_neutrino_energy"
+    model_config = f"{base_path}/{model_name}/{model_name}_config.yml"
+    state_dict = f"{base_path}/{model_name}/{model_name}_state_dict.pth"
     output_folder = f"{EXAMPLE_OUTPUT_DIR}/i3_deployment/upgrade_03_04"
     gcd_file = f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/GeoCalibDetectorStatus_ICUpgrade.v58.mixed.V0.i3.bz2"
     input_files = []
@@ -46,7 +50,8 @@ def main() -> None:
         pulsemap=pulsemap,
         features=features,
         pulsemap_extractor=I3FeatureExtractorIceCubeUpgrade(pulsemap=pulsemap),
-        model=mock_model_path,
+        model_config=model_config,
+        state_dict=state_dict,
         gcd_file=gcd_file,
         prediction_columns=["energy"],
         model_name="graphnet_deployment_example",

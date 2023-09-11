@@ -7,6 +7,9 @@ from graphnet.data.constants import TRUTH, FEATURES
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_pisa_package
 from graphnet.utilities.logging import Logger
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.detector.icecube import IceCubeDeepCore
+from graphnet.models.graphs.nodes import NodesAsPulses
 
 from _common_pisa import ERROR_MESSAGE_MISSING_PISA
 
@@ -58,6 +61,13 @@ def main() -> None:
         "dev_lvl7_robustness_muon_neutrino_0000.db"
     )
 
+    graph_definition = KNNGraph(
+        detector=IceCubeDeepCore(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=FEATURES.DEEPCORE,
+    )
+
     # Remove `interaction_time` if it exists
     try:
         del truth[truth.index("interaction_time")]
@@ -77,7 +87,9 @@ def main() -> None:
     )
 
     # Run Pipeline
-    pipeline(database, pulsemap)
+    pipeline(
+        database=database, pulsemap=pulsemap, graph_definition=graph_definition
+    )
 
 
 if __name__ == "__main__":

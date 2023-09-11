@@ -11,6 +11,7 @@ from typing import (
     Optional,
     Union,
 )
+import torch
 
 from graphnet.utilities.config.base_config import (
     BaseConfig,
@@ -72,7 +73,6 @@ class ModelConfig(BaseConfig):
                 data["arguments"][arg] = self._parse_if_model_config_entry(
                     value
                 )
-
         # Base class constructor
         super().__init__(**data)
 
@@ -190,6 +190,8 @@ class ModelConfig(BaseConfig):
                     "this ModelConfig, set `trust=True` and reconstruct the "
                     "model again."
                 )
+        elif isinstance(obj, str) and obj.startswith("torch"):
+            return eval(obj)
 
         else:
             return obj
@@ -201,6 +203,8 @@ class ModelConfig(BaseConfig):
             return obj.as_dict()
         elif isinstance(obj, type):
             return f"!class {obj.__module__} {obj.__name__}"
+        elif isinstance(obj, torch.dtype):
+            return obj.__str__()
         elif isinstance(obj, Callable):  # type: ignore[arg-type]
             if hasattr(obj, "__name__") and obj.__name__ == "<lambda>":
                 if hasattr(obj, "_source"):

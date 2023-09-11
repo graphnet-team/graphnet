@@ -6,7 +6,7 @@ from typing import List, Optional, Dict, Any
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
-from graphnet.data.dataset import EnsembleDataset
+from graphnet.data.dataset.dataset import EnsembleDataset
 from graphnet.constants import (
     EXAMPLE_OUTPUT_DIR,
     DATASETS_CONFIG_DIR,
