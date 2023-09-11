@@ -48,7 +48,7 @@ def main(
 
     # Build model
     model_config = ModelConfig.load(model_config_path)
-    model = StandardModel.from_config(model_config, trust=True)
+    model: StandardModel = StandardModel.from_config(model_config, trust=True)
 
     # Configuration
     config = TrainingConfig(
