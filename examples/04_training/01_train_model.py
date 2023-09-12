@@ -8,7 +8,7 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
 from graphnet.constants import EXAMPLE_OUTPUT_DIR
 from graphnet.data.dataloader import DataLoader
-from graphnet.models import Model
+from graphnet.models import StandardModel
 from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.config import (
@@ -27,7 +27,6 @@ def main(
     early_stopping_patience: int,
     batch_size: int,
     num_workers: int,
-    prediction_names: Optional[List[str]],
     suffix: Optional[str] = None,
     wandb: bool = False,
 ) -> None:
@@ -49,7 +48,7 @@ def main(
 
     # Build model
     model_config = ModelConfig.load(model_config_path)
-    model = Model.from_config(model_config, trust=True)
+    model: StandardModel = StandardModel.from_config(model_config, trust=True)
 
     # Configuration
     config = TrainingConfig(
@@ -102,39 +101,31 @@ def main(
         **config.fit,
     )
 
-    # Get predictions
-    if isinstance(config.target, str):
-        prediction_columns = [config.target + "_pred"]
-        additional_attributes = [config.target]
-    else:
-        prediction_columns = [target + "_pred" for target in config.target]
-        additional_attributes = config.target
-
-    if prediction_names:
-        prediction_columns = prediction_names
-
-    logger.info(f"config.target: {config.target}")
-    logger.info(f"prediction_columns: {prediction_columns}")
-
-    results = model.predict_as_dataframe(
-        dataloaders["test"],
-        prediction_columns=prediction_columns,
-        additional_attributes=additional_attributes + ["event_no"],
-    )
-
-    # Save predictions and model to file
+    # Save model to file
     db_name = dataset_config.path.split("/")[-1].split(".")[0]
     path = os.path.join(archive, db_name, run_name)
-    logger.info(f"Writing results to {path}")
     os.makedirs(path, exist_ok=True)
-
-    results.to_csv(f"{path}/results.csv")
+    logger.info(f"Writing results to {path}")
     model.save_state_dict(f"{path}/state_dict.pth")
     model.save(f"{path}/model.pth")
 
+    # Get predictions
+    if isinstance(config.target, str):
+        additional_attributes = [config.target]
+    else:
+        additional_attributes = config.target
+
+    logger.info(f"config.target: {config.target}")
+    logger.info(f"prediction_columns: {model.prediction_labels}")
+
+    results = model.predict_as_dataframe(
+        dataloaders["test"],
+        additional_attributes=additional_attributes + ["event_no"],
+    )
+    results.to_csv(f"{path}/results.csv")
+
 
 if __name__ == "__main__":
-
     # Parse command-line arguments
     parser = ArgumentParser(
         description="""
@@ -150,13 +141,6 @@ Train GNN model.
         "early-stopping-patience",
         ("batch-size", 16),
         "num-workers",
-    )
-
-    parser.add_argument(
-        "--prediction-names",
-        nargs="+",
-        help="Names of each prediction output feature (default: %(default)s)",
-        default=None,
     )
 
     parser.add_argument(
@@ -182,7 +166,6 @@ Train GNN model.
         args.early_stopping_patience,
         args.batch_size,
         args.num_workers,
-        args.prediction_names,
         args.suffix,
         args.wandb,
     )
