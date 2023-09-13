@@ -285,9 +285,3 @@ class ModelConfigSaverABC(ModelConfigSaverMeta, ABCMeta):
     """Common interface between ModelConfigSaver and ABC Metaclasses."""
 
     pass
-
-
-class ModelConfigSaver(metaclass=ModelConfigSaverMeta):
-    """Base class for ModelConfig saving."""
-
-    pass

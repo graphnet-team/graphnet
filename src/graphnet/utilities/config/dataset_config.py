@@ -189,9 +189,13 @@ class DatasetConfigSaverMeta(type):
         ) -> Union[ModelConfig, Any]:
             """Replace `Model` instances in `obj` with their `ModelConfig`."""
             from graphnet.models import Model
+            import torch
 
             if isinstance(obj, Model):
                 return obj.config
+
+            if isinstance(obj, torch.dtype):
+                return obj.__str__()
             else:
                 return obj
 
@@ -203,20 +207,11 @@ class DatasetConfigSaverMeta(type):
         cfg = traverse_and_apply(cfg, _replace_model_instance_with_config)
 
         # Store config in
-        created_obj._config = DatasetConfig(
-            class_name=str(created_obj.__class__.__name__),
-            arguments=dict(**cfg),
-        )
+        created_obj._config = DatasetConfig(**cfg)
         return created_obj
 
 
 class DatasetConfigSaverABCMeta(DatasetConfigSaverMeta, ABCMeta):
     """Common interface between DatasetConfigSaver and ABC Metaclasses."""
-
-    pass
-
-
-class DatasetConfigSaver(metaclass=DatasetConfigSaverMeta):
-    """Baseclass for DatasetConfig saving."""
 
     pass
