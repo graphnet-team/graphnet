@@ -1,5 +1,5 @@
 """Config classes for the `graphnet.data.dataset` module."""
-
+from abc import ABCMeta
 from functools import wraps
 from typing import (
     TYPE_CHECKING,
@@ -208,3 +208,15 @@ class DatasetConfigSaverMeta(type):
             arguments=dict(**cfg),
         )
         return created_obj
+
+
+class DatasetConfigSaverABCMeta(DatasetConfigSaverMeta, ABCMeta):
+    """Common interface between DatasetConfigSaver and ABC Metaclasses."""
+
+    pass
+
+
+class DatasetConfigSaver(metaclass=DatasetConfigSaverMeta):
+    """Baseclass for DatasetConfig saving."""
+
+    pass

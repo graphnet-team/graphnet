@@ -8,13 +8,11 @@ import torch
 
 from graphnet.models import Model
 from graphnet.utilities.decorators import final
-from graphnet.utilities.config import save_model_config
 
 
 class Detector(Model):
     """Base class for all detector-specific read-ins in graphnet."""
 
-    @save_model_config
     def __init__(self) -> None:
         """Construct `Detector`."""
         # Base class constructor

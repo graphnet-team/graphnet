@@ -11,8 +11,6 @@ import torch
 from torch_geometric.data import Data
 import numpy as np
 
-from graphnet.utilities.config import save_model_config
-
 from graphnet.models.detector import Detector
 from .edges import EdgeDefinition
 from .nodes import NodeDefinition
@@ -22,7 +20,6 @@ from graphnet.models import Model
 class GraphDefinition(Model):
     """An Abstract class to create graph definitions from."""
 
-    @save_model_config
     def __init__(
         self,
         detector: Detector,
