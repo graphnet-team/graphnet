@@ -248,38 +248,33 @@ class ModelConfig(BaseConfig):
         return {self.__class__.__name__: config_dict}
 
 
-def save_model_config(init_fn: Callable) -> Callable:
-    """Save the arguments to `__init__` functions as a member `ModelConfig`."""
+class ModelConfigSaverMeta(type):
+    """Metaclass for saving `ModelConfig` to `Model` instances."""
 
-    def _replace_model_instance_with_config(
-        obj: Union["Model", Any]
-    ) -> Union[ModelConfig, Any]:
-        """Replace `Model` instances in `obj` with their `ModelConfig`."""
-        from graphnet.models import Model
+    def __call__(cls: Any, *args: Any, **kwargs: Any) -> object:
+        """Catch object construction and save config after `__init__`."""
 
-        if isinstance(obj, Model):
-            return obj.config
-        else:
-            return obj
+        def _replace_model_instance_with_config(
+            obj: Union["Model", Any]
+        ) -> Union[ModelConfig, Any]:
+            """Replace `Model` instances in `obj` with their `ModelConfig`."""
+            from graphnet.models import Model
 
-    @wraps(init_fn)
-    def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
-        """Set `ModelConfig` after calling `init_fn`."""
-        # Call wrapped method
-        ret = init_fn(self, *args, **kwargs)
+            if isinstance(obj, Model):
+                return obj.config
+            else:
+                return obj
+
+        # Create object
+        created_obj = super().__call__(*args, **kwargs)
 
         # Get all argument values, including defaults
-        cfg = get_all_argument_values(init_fn, *args, **kwargs)
-
-        # Handle nested `Model`s, etc.
+        cfg = get_all_argument_values(created_obj.__init__, *args, **kwargs)
         cfg = traverse_and_apply(cfg, _replace_model_instance_with_config)
 
-        # Add `ModelConfig` as member variables
-        self._config = ModelConfig(
-            class_name=str(self.__class__.__name__),
+        # Store config in
+        created_obj._config = ModelConfig(
+            class_name=str(created_obj.__class__.__name__),
             arguments=dict(**cfg),
         )
-
-        return ret
-
-    return wrapper
+        return created_obj
