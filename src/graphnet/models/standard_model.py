@@ -198,9 +198,7 @@ class StandardModel(Model):
         dataloader: DataLoader,
         prediction_columns: Optional[List[str]] = None,
         *,
-        node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
-        index_column: str = "event_no",
         gpus: Optional[Union[List[int], int]] = None,
         distribution_strategy: Optional[str] = "auto",
     ) -> pd.DataFrame:
@@ -214,9 +212,7 @@ class StandardModel(Model):
         return super().predict_as_dataframe(
             dataloader=dataloader,
             prediction_columns=prediction_columns,
-            node_level=node_level,
             additional_attributes=additional_attributes,
-            index_column=index_column,
             gpus=gpus,
             distribution_strategy=distribution_strategy,
         )
