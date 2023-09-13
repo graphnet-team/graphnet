@@ -1,4 +1,5 @@
 """Config classes for the `graphnet.models` module."""
+from abc import ABCMeta
 from functools import wraps
 import inspect
 import re
@@ -278,3 +279,15 @@ class ModelConfigSaverMeta(type):
             arguments=dict(**cfg),
         )
         return created_obj
+
+
+class ModelConfigSaverABC(ModelConfigSaverMeta, ABCMeta):
+    """Common interface between ModelConfigSaver and ABC Metaclasses."""
+
+    pass
+
+
+class ModelConfigSaver(metaclass=ModelConfigSaverMeta):
+    """Base class for ModelConfig saving."""
+
+    pass

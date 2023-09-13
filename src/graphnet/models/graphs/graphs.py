@@ -3,7 +3,6 @@
 from typing import List, Optional
 import torch
 
-from graphnet.utilities.config import save_model_config
 from .graph_definition import GraphDefinition
 from graphnet.models.detector import Detector
 from graphnet.models.graphs.edges import EdgeDefinition, KNNEdges
@@ -13,7 +12,6 @@ from graphnet.models.graphs.nodes import NodeDefinition
 class KNNGraph(GraphDefinition):
     """A Graph representation where Edges are drawn to nearest neighbours."""
 
-    @save_model_config
     def __init__(
         self,
         detector: Detector,
