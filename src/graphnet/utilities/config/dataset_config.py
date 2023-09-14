@@ -1,4 +1,5 @@
 """Config classes for the `graphnet.data.dataset` module."""
+import warnings
 from abc import ABCMeta
 from functools import wraps
 from typing import (
@@ -178,11 +179,54 @@ class DatasetConfig(BaseConfig):
             return obj
 
 
+def save_dataset_config(init_fn: Callable) -> Callable:
+    """Save the arguments to `__init__` functions as member `DatasetConfig`."""
+    warnings.warn(
+        "Warning: `save_dataset_config` is deprecated. Config saving "
+        "is now done automatically, for all classes inheriting from Dataset",
+        DeprecationWarning,
+    )
+
+    def _replace_model_instance_with_config(
+        obj: Union["Model", Any]
+    ) -> Union[ModelConfig, Any]:
+        """Replace `Model` instances in `obj` with their `ModelConfig`."""
+        from graphnet.models import Model
+        import torch
+
+        if isinstance(obj, Model):
+            return obj.config
+
+        if isinstance(obj, torch.dtype):
+            return obj.__str__()
+
+        else:
+            return obj
+
+    @wraps(init_fn)
+    def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
+        """Set `DatasetConfig` after calling `init_fn`."""
+        # Call wrapped method
+        ret = init_fn(self, *args, **kwargs)
+
+        # Get all argument values, including defaults
+        cfg = get_all_argument_values(init_fn, *args, **kwargs)
+
+        # Handle nested `Model`s, etc.
+        cfg = traverse_and_apply(cfg, _replace_model_instance_with_config)
+        # Add `DatasetConfig` as member variables
+        self._config = DatasetConfig(**cfg)
+
+        return ret
+
+    return wrapper
+
+
 class DatasetConfigSaverMeta(type):
     """Metaclass for `DatasetConfig` that saves the config after `__init__`."""
 
     def __call__(cls: Any, *args: Any, **kwargs: Any) -> object:
-        """Catch object construction and save config after `__init__`."""
+        """Catch object after construction and save config."""
 
         def _replace_model_instance_with_config(
             obj: Union["Model", Any]

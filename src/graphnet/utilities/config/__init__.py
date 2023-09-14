@@ -5,10 +5,12 @@ from .dataset_config import (
     DatasetConfig,
     DatasetConfigSaverMeta,
     DatasetConfigSaverABCMeta,
+    save_dataset_config,
 )
 from .model_config import (
     ModelConfig,
     ModelConfigSaverMeta,
     ModelConfigSaverABC,
+    save_model_config,
 )
 from .training_config import TrainingConfig
