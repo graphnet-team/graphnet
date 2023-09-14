@@ -445,8 +445,14 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="models">
-<h1 id="api-graphnet-models--page-root">models<a class="headerlink" href="#api-graphnet-models--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.models">
+<span id="models"></span><h1 id="api-graphnet-models--page-root">models<a class="headerlink" href="#api-graphnet-models--page-root" title="Link to this heading">¶</a></h1>
+<p>Modules for configuring and building models.</p>
+<p><cite>graphnet.models</cite> allows for configuring and building complex GNN models using
+simple, physics-oriented components. This module provides modular components
+subclassing <cite>torch.nn.Module</cite>, meaning that users only need to import a few,
+existing, purpose-built components and chain them together to form a complete
+GNN</p>
 <p><h2> Subpackages </h2></p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -487,10 +493,29 @@
 <p><h2> Submodules </h2></p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.coarsening.html">coarsening</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.model.html">model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.standard_model.html">standard_model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.coarsening.html">coarsening</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.coarsening.html#graphnet.models.coarsening.unbatch_edge_index"><code class="docutils literal notranslate"><span class="pre">unbatch_edge_index()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening"><code class="docutils literal notranslate"><span class="pre">Coarsening</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.coarsening.html#graphnet.models.coarsening.AttributeCoarsening"><code class="docutils literal notranslate"><span class="pre">AttributeCoarsening</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.coarsening.html#graphnet.models.coarsening.DOMCoarsening"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.coarsening.html#graphnet.models.coarsening.CustomDOMCoarsening"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.coarsening.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.model.html">model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.standard_model.html">standard_model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.utils.html">utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.utils.html#graphnet.models.utils.calculate_xyzt_homophily"><code class="docutils literal notranslate"><span class="pre">calculate_xyzt_homophily()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.utils.html#graphnet.models.utils.calculate_distance_matrix"><code class="docutils literal notranslate"><span class="pre">calculate_distance_matrix()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.utils.html#graphnet.models.utils.knn_graph_batch"><code class="docutils literal notranslate"><span class="pre">knn_graph_batch()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -542,7 +567,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

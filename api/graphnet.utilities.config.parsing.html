@@ -385,10 +385,69 @@
       
         
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-utilities-config-parsing--page-root" class="md-nav__link">parsing</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.traverse_and_apply" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">traverse_and_apply()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.list_all_submodules" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">list_all_submodules()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.get_all_grapnet_classes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_all_grapnet_classes()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.is_graphnet_module" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_graphnet_module()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.is_graphnet_class" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_graphnet_class()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.get_graphnet_classes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_graphnet_classes()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.parsing.traverse_and_apply" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">traverse_and_apply()</span></code></a>
       
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.parsing.list_all_submodules" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">list_all_submodules()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.parsing.get_all_grapnet_classes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_all_grapnet_classes()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.parsing.is_graphnet_module" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_graphnet_module()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.parsing.is_graphnet_class" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_graphnet_class()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.parsing.get_graphnet_classes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_graphnet_classes()</span></code></a>
+      
+    
+    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -465,7 +524,24 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-utilities-config-parsing--page-root" class="md-nav__link">parsing</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.traverse_and_apply" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">traverse_and_apply()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.list_all_submodules" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">list_all_submodules()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.get_all_grapnet_classes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_all_grapnet_classes()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.is_graphnet_module" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_graphnet_module()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.is_graphnet_class" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_graphnet_class()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.parsing.get_graphnet_classes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_graphnet_classes()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
               </div>
@@ -475,8 +551,91 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="parsing">
-<h1 id="api-graphnet-utilities-config-parsing--page-root">parsing<a class="headerlink" href="#api-graphnet-utilities-config-parsing--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.utilities.config.parsing">
+<span id="parsing"></span><h1 id="api-graphnet-utilities-config-parsing--page-root">parsing<a class="headerlink" href="#api-graphnet-utilities-config-parsing--page-root" title="Link to this heading">¶</a></h1>
+<p>Utility functions for parsing for using with Config-classes.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.config.parsing.traverse_and_apply">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.parsing.</span></span><span class="sig-name descname"><span class="pre">traverse_and_apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/parsing.html#traverse_and_apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.parsing.traverse_and_apply" title="Link to this definition">¶</a></dt>
+<dd><p>Apply <cite>fn</cite> to all elements in <cite>obj</cite>, resulting in same structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>obj</strong> (<em>Any</em>) – </p></li>
+<li><p><strong>fn</strong> (<em>Callable</em>) – </p></li>
+<li><p><strong>fn_kwargs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.config.parsing.list_all_submodules">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.parsing.</span></span><span class="sig-name descname"><span class="pre">list_all_submodules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">packages</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/parsing.html#list_all_submodules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.parsing.list_all_submodules" title="Link to this definition">¶</a></dt>
+<dd><p>List all submodules in <cite>packages</cite> recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleType</span></code>]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>packages</strong> (<em>module</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.config.parsing.get_all_grapnet_classes">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.parsing.</span></span><span class="sig-name descname"><span class="pre">get_all_grapnet_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">packages</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/parsing.html#get_all_grapnet_classes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.parsing.get_all_grapnet_classes" title="Link to this definition">¶</a></dt>
+<dd><p>List all grapnet classes in <cite>packages</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code>]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>packages</strong> (<em>module</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.config.parsing.is_graphnet_module">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.parsing.</span></span><span class="sig-name descname"><span class="pre">is_graphnet_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/parsing.html#is_graphnet_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.parsing.is_graphnet_module" title="Link to this definition">¶</a></dt>
+<dd><p>Return whether <cite>obj</cite> is a module in graphnet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>obj</strong> (<em>module</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.config.parsing.is_graphnet_class">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.parsing.</span></span><span class="sig-name descname"><span class="pre">is_graphnet_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/parsing.html#is_graphnet_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.parsing.is_graphnet_class" title="Link to this definition">¶</a></dt>
+<dd><p>Return whether <cite>obj</cite> is a class in graphnet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>obj</strong> (<em>type</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.utilities.config.parsing.get_graphnet_classes">
+<span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.parsing.</span></span><span class="sig-name descname"><span class="pre">get_graphnet_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/parsing.html#get_graphnet_classes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.parsing.get_graphnet_classes" title="Link to this definition">¶</a></dt>
+<dd><p>Return a lookup of all graphnet class names in <cite>module</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code>]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>module</strong> (<em>module</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
 </section>
 
 
@@ -526,7 +685,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

@@ -372,10 +372,24 @@
       
         
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-data-pipeline--page-root" class="md-nav__link">pipeline</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.pipeline.InSQLitePipeline" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.pipeline.InSQLitePipeline" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline</span></code></a>
       
+    
+    </li></ul>
     
     </li></ul>
     
@@ -436,7 +450,14 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-data-pipeline--page-root" class="md-nav__link">pipeline</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.pipeline.InSQLitePipeline" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">InSQLitePipeline</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
               </div>
@@ -446,8 +467,36 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="pipeline">
-<h1 id="api-graphnet-data-pipeline--page-root">pipeline<a class="headerlink" href="#api-graphnet-data-pipeline--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.data.pipeline">
+<span id="pipeline"></span><h1 id="api-graphnet-data-pipeline--page-root">pipeline<a class="headerlink" href="#api-graphnet-data-pipeline--page-root" title="Link to this heading">¶</a></h1>
+<p>Class(es) used for analysis in PISA.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.pipeline.InSQLitePipeline">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.pipeline.</span></span><span class="sig-name descname"><span class="pre">InSQLitePipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retro_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/pipeline.html#InSQLitePipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pipeline.InSQLitePipeline" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
+<p>Create a SQLite database for PISA analysis.</p>
+<p>The database will contain truth and GNN predictions and, if available,
+RETRO reconstructions.</p>
+<p>Initialise the pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>) – A dictionary with GNN modules from GraphNet. E.g.
+{‘energy’: gnn_module_for_energy_regression}</p></li>
+<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of input features for the GNN modules.</p></li>
+<li><p><strong>truth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of truth for the GNN ModuleList.</p></li>
+<li><p><strong>device</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">device</span></code>) – The device used for computation.</p></li>
+<li><p><strong>retro_table_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'retro'</span></code>) – Name of the retro table for.</p></li>
+<li><p><strong>outdir</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – the directory in which the pipeline database will be
+stored.</p></li>
+<li><p><strong>batch_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">100</span></code>) – Batch size for inference.</p></li>
+<li><p><strong>n_workers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) – Number of workers used in dataloading.</p></li>
+<li><p><strong>pipeline_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'pipeline'</span></code>) – Name of the pipeline. If such a pipeline already
+exists, an error will be prompted to avoid overwriting.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 </section>
 
 
@@ -497,7 +546,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

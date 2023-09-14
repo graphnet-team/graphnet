@@ -125,6 +125,7 @@
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -365,10 +366,89 @@
       
         
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-models-coarsening--page-root" class="md-nav__link">coarsening</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.unbatch_edge_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">unbatch_edge_index()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.Coarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Coarsening</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.Coarsening.reduce_options" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">reduce_options</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.Coarsening.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.AttributeCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">AttributeCoarsening</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.DOMCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.CustomDOMCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.coarsening.unbatch_edge_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">unbatch_edge_index()</span></code></a>
       
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.coarsening.Coarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Coarsening</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.coarsening.Coarsening.reduce_options" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">reduce_options</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.coarsening.Coarsening.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.coarsening.AttributeCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">AttributeCoarsening</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.coarsening.DOMCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.coarsening.CustomDOMCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening</span></code></a>
+      
+    
+    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -436,7 +516,30 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-models-coarsening--page-root" class="md-nav__link">coarsening</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.unbatch_edge_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">unbatch_edge_index()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.Coarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Coarsening</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.Coarsening.reduce_options" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">reduce_options</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.Coarsening.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.AttributeCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">AttributeCoarsening</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.DOMCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DOMCoarsening</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.CustomDOMCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">CustomDOMCoarsening</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DOMAndTimeWindowCoarsening</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
               </div>
@@ -446,8 +549,125 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="coarsening">
-<h1 id="api-graphnet-models-coarsening--page-root">coarsening<a class="headerlink" href="#api-graphnet-models-coarsening--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.models.coarsening">
+<span id="coarsening"></span><h1 id="api-graphnet-models-coarsening--page-root">coarsening<a class="headerlink" href="#api-graphnet-models-coarsening--page-root" title="Link to this heading">¶</a></h1>
+<p>Class(es) for coarsening operations (i.e., clustering, or local pooling).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.unbatch_edge_index">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">unbatch_edge_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/coarsening.html#unbatch_edge_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.unbatch_edge_index" title="Link to this definition">¶</a></dt>
+<dd><p>Splits the <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_index</span></code> according to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">batch</span></code> vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edge_index</strong> (<em>Tensor</em>) – The edge_index tensor. Must be ordered.</p></li>
+<li><p><strong>batch</strong> (<em>LongTensor</em>) – The batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
+node to a specific example. Must be ordered.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List[Tensor]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">Coarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduce</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/coarsening.html#Coarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.Coarsening" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>Base class for coarsening operations.</p>
+<p>Construct <cite>Coarsening</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reduce</strong> (<em>str</em>) – </p></li>
+<li><p><strong>transfer_attributes</strong> (<em>bool</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening.reduce_options">
+<span class="sig-name descname"><span class="pre">reduce_options</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'avg':</span> <span class="pre">(&lt;function</span> <span class="pre">avg_pool&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">avg_pool_x&gt;),</span> <span class="pre">'max':</span> <span class="pre">(&lt;function</span> <span class="pre">max_pool&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">max_pool_x&gt;),</span> <span class="pre">'min':</span> <span class="pre">(&lt;function</span> <span class="pre">min_pool&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">min_pool_x&gt;),</span> <span class="pre">'sum':</span> <span class="pre">(&lt;function</span> <span class="pre">sum_pool&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">sum_pool_x&gt;)}</span></em><a class="headerlink" href="#graphnet.models.coarsening.Coarsening.reduce_options" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.Coarsening.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/coarsening.html#Coarsening.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.Coarsening.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Perform coarsening operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code>]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em><em> | </em><em>Batch</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.AttributeCoarsening">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">AttributeCoarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/coarsening.html#AttributeCoarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.AttributeCoarsening" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.coarsening.Coarsening" title="graphnet.models.coarsening.Coarsening"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coarsening</span></code></a></p>
+<p>Coarsen pulses based on specified attributes.</p>
+<p>Construct <cite>SimpleCoarsening</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attributes</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>reduce</strong> (<em>str</em>) – </p></li>
+<li><p><strong>transfer_attributes</strong> (<em>bool</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMCoarsening">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">DOMCoarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduce</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/coarsening.html#DOMCoarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.DOMCoarsening" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.coarsening.Coarsening" title="graphnet.models.coarsening.Coarsening"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coarsening</span></code></a></p>
+<p>Coarsen pulses to DOM-level.</p>
+<p>Cluster pulses on the same DOM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reduce</strong> (<em>str</em>) – </p></li>
+<li><p><strong>transfer_attributes</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.CustomDOMCoarsening">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">CustomDOMCoarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduce</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/coarsening.html#CustomDOMCoarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.CustomDOMCoarsening" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.coarsening.DOMCoarsening" title="graphnet.models.coarsening.DOMCoarsening"><code class="xref py py-class docutils literal notranslate"><span class="pre">DOMCoarsening</span></code></a></p>
+<p>Coarsen pulses to DOM-level with additional attributes.</p>
+<p>Cluster pulses on the same DOM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reduce</strong> (<em>str</em>) – </p></li>
+<li><p><strong>transfer_attributes</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.coarsening.DOMAndTimeWindowCoarsening">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.coarsening.</span></span><span class="sig-name descname"><span class="pre">DOMAndTimeWindowCoarsening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">time_window,</span> <span class="pre">reduce,</span> <span class="pre">transfer_attributes,</span> <span class="pre">keys=['dom_x',</span> <span class="pre">'dom_y',</span> <span class="pre">'dom_z',</span> <span class="pre">'rde',</span> <span class="pre">'pmt_area'],</span> <span class="pre">time_key</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/coarsening.html#DOMAndTimeWindowCoarsening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.coarsening.DOMAndTimeWindowCoarsening" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.coarsening.Coarsening" title="graphnet.models.coarsening.Coarsening"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coarsening</span></code></a></p>
+<p>Coarsen pulses to DOM-level, with additional time-window clustering.</p>
+<p>Cluster pulses on the same DOM within <cite>time_window</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_window</strong> (<em>float</em>) – </p></li>
+<li><p><strong>reduce</strong> (<em>str</em>) – </p></li>
+<li><p><strong>transfer_attributes</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>time_key</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 </section>
 
 
@@ -497,7 +717,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

@@ -336,10 +336,42 @@
       
         
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-deployment-i3modules-graphnet-module--page-root" class="md-nav__link">graphnet_module</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.deployment.i3modules.graphnet_module.GraphNeTI3Module" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphNeTI3Module</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.deployment.i3modules.graphnet_module.I3InferenceModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.deployment.i3modules.graphnet_module.I3PulseCleanerModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3PulseCleanerModule</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.deployment.i3modules.graphnet_module.GraphNeTI3Module" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphNeTI3Module</span></code></a>
       
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.deployment.i3modules.graphnet_module.I3InferenceModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.deployment.i3modules.graphnet_module.I3PulseCleanerModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3PulseCleanerModule</span></code></a>
+      
+    
+    </li></ul>
     
     </li></ul>
     
@@ -395,7 +427,18 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-deployment-i3modules-graphnet-module--page-root" class="md-nav__link">graphnet_module</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.deployment.i3modules.graphnet_module.GraphNeTI3Module" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphNeTI3Module</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.deployment.i3modules.graphnet_module.I3InferenceModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.deployment.i3modules.graphnet_module.I3PulseCleanerModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3PulseCleanerModule</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
               </div>
@@ -405,8 +448,94 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="graphnet-module">
-<h1 id="api-graphnet-deployment-i3modules-graphnet-module--page-root">graphnet_module<a class="headerlink" href="#api-graphnet-deployment-i3modules-graphnet-module--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.deployment.i3modules.graphnet_module">
+<span id="graphnet-module"></span><h1 id="api-graphnet-deployment-i3modules-graphnet-module--page-root">graphnet_module<a class="headerlink" href="#api-graphnet-deployment-i3modules-graphnet-module--page-root" title="Link to this heading">¶</a></h1>
+<p>Class(es) for deploying GraphNeT models in icetray as I3Modules.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.deployment.i3modules.graphnet_module.GraphNeTI3Module">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.deployment.i3modules.graphnet_module.</span></span><span class="sig-name descname"><span class="pre">GraphNeTI3Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/deployment/i3modules/graphnet_module.html#GraphNeTI3Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.deployment.i3modules.graphnet_module.GraphNeTI3Module" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base I3 Module for GraphNeT.</p>
+<p>Contains methods for extracting pulsemaps, producing graphs and writing to
+frames.</p>
+<p>I3Module Constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a>) – An instance of GraphDefinition.  E.g. KNNGraph.</p></li>
+<li><p><strong>pulsemap</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – the pulse map on which the module functions</p></li>
+<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – the features that is used from the pulse map.
+E.g. [dom_x, dom_y, dom_z, charge]</p></li>
+<li><p><strong>pulsemap_extractor</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.i3featureextractor.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a>], <a class="reference internal" href="graphnet.data.extractors.i3featureextractor.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a>]) – The I3FeatureExtractor used to extract the
+pulsemap from the I3Frames</p></li>
+<li><p><strong>gcd_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to the associated gcd-file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.deployment.i3modules.graphnet_module.I3InferenceModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.deployment.i3modules.graphnet_module.</span></span><span class="sig-name descname"><span class="pre">I3InferenceModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/deployment/i3modules/graphnet_module.html#I3InferenceModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.deployment.i3modules.graphnet_module.I3InferenceModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.deployment.i3modules.graphnet_module.GraphNeTI3Module" title="graphnet.deployment.i3modules.graphnet_module.GraphNeTI3Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphNeTI3Module</span></code></a></p>
+<p>General class for inference on i3 frames.</p>
+<p>General class for inference on I3Frames (physics).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pulsemap</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – the pulsmap that the model is expecting as input.</p></li>
+<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – the features of the pulsemap that the model is expecting.</p></li>
+<li><p><strong>pulsemap_extractor</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.i3featureextractor.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a>], <a class="reference internal" href="graphnet.data.extractors.i3featureextractor.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a>]) – The extractor used to extract the pulsemap.</p></li>
+<li><p><strong>model_config</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfig" title="graphnet.utilities.config.model_config.ModelConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The ModelConfig (or path to it) that summarizes the
+model used for inference.</p></li>
+<li><p><strong>state_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to state_dict containing the learned weights.</p></li>
+<li><p><strong>model_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name used for the model. Will help define the
+named entry in the I3Frame. E.g. “dynedge”.</p></li>
+<li><p><strong>gcd_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – path to associated gcd file.</p></li>
+<li><p><strong>prediction_columns</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – <p>column names for the predictions of the model.
+Will help define the named entry in the I3Frame.</p>
+<blockquote>
+<div><p>E.g. [‘energy_reco’]. Optional.</p>
+</div></blockquote>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.deployment.i3modules.graphnet_module.I3PulseCleanerModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.deployment.i3modules.graphnet_module.</span></span><span class="sig-name descname"><span class="pre">I3PulseCleanerModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard_empty_events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/deployment/i3modules/graphnet_module.html#I3PulseCleanerModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.deployment.i3modules.graphnet_module.I3PulseCleanerModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.deployment.i3modules.graphnet_module.I3InferenceModule" title="graphnet.deployment.i3modules.graphnet_module.I3InferenceModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a></p>
+<p>A specialized module for pulse cleaning.</p>
+<p>It is assumed that the model provided has been trained for this.</p>
+<p>General class for inference on I3Frames (physics).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pulsemap</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – the pulsmap that the model is expecting as input
+(the one that is being cleaned).</p></li>
+<li><p><strong>features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – the features of the pulsemap that the model is expecting.</p></li>
+<li><p><strong>pulsemap_extractor</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.i3featureextractor.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a>], <a class="reference internal" href="graphnet.data.extractors.i3featureextractor.html#graphnet.data.extractors.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a>]) – The extractor used to extract the pulsemap.</p></li>
+<li><p><strong>model_config</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The ModelConfig (or path to it) that summarizes the
+model used for inference.</p></li>
+<li><p><strong>state_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to state_dict containing the learned weights.</p></li>
+<li><p><strong>model_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name used for the model. Will help define the named
+entry in the I3Frame. E.g. “dynedge”.</p></li>
+<li><p><strong>gcd_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – path to associated gcd file.</p></li>
+<li><p><strong>threshold</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, default: <code class="docutils literal notranslate"><span class="pre">0.7</span></code>) – the threshold for being considered a positive case.
+E.g., predictions &gt;= threshold will be considered
+to be signal, all else noise.</p></li>
+<li><p><strong>discard_empty_events</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – When true, this flag will eliminate events
+whose cleaned pulse series are empty. Can be used
+to speed up processing especially for noise
+simulation, since it will not do any writing or
+further calculations.</p></li>
+<li><p><strong>prediction_columns</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – column names for the predictions of the model.
+Will help define the named entry in the I3Frame.
+E.g. [‘energy_reco’]. Optional.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 </section>
 
 
@@ -456,7 +585,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>
