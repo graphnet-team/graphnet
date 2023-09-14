@@ -3,6 +3,7 @@ from abc import ABCMeta
 from functools import wraps
 import inspect
 import re
+import warnings
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -249,6 +250,48 @@ class ModelConfig(BaseConfig):
         return {self.__class__.__name__: config_dict}
 
 
+def save_model_config(init_fn: Callable) -> Callable:
+    """Save the arguments to `__init__` functions as a member `ModelConfig`."""
+    warnings.warn(
+        "Warning: `save_model_config` is deprecated. Config saving is"
+        "now done automatically for all classes inheriting from Model",
+        DeprecationWarning,
+    )
+
+    def _replace_model_instance_with_config(
+        obj: Union["Model", Any]
+    ) -> Union[ModelConfig, Any]:
+        """Replace `Model` instances in `obj` with their `ModelConfig`."""
+        from graphnet.models import Model
+
+        if isinstance(obj, Model):
+            return obj.config
+        else:
+            return obj
+
+    @wraps(init_fn)
+    def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
+        """Set `ModelConfig` after calling `init_fn`."""
+        # Call wrapped method
+        ret = init_fn(self, *args, **kwargs)
+
+        # Get all argument values, including defaults
+        cfg = get_all_argument_values(init_fn, *args, **kwargs)
+
+        # Handle nested `Model`s, etc.
+        cfg = traverse_and_apply(cfg, _replace_model_instance_with_config)
+
+        # Add `ModelConfig` as member variables
+        self._config = ModelConfig(
+            class_name=str(self.__class__.__name__),
+            arguments=dict(**cfg),
+        )
+
+        return ret
+
+    return wrapper
+
+
 class ModelConfigSaverMeta(type):
     """Metaclass for saving `ModelConfig` to `Model` instances."""
 
@@ -275,7 +318,7 @@ class ModelConfigSaverMeta(type):
 
         # Store config in
         created_obj._config = ModelConfig(
-            class_name=str(created_obj.__class__.__name__),
+            class_name=str(cls.__name__),
             arguments=dict(**cfg),
         )
         return created_obj
