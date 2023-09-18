@@ -181,9 +181,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
         dataloader: DataLoader,
         prediction_columns: List[str],
         *,
-        node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
-        index_column: str = "event_no",
         gpus: Optional[Union[List[int], int]] = None,
         distribution_strategy: Optional[str] = "auto",
     ) -> pd.DataFrame:
@@ -229,14 +227,33 @@ class Model(Logger, Configurable, LightningModule, ABC):
         attributes: Dict[str, List[np.ndarray]] = OrderedDict(
             [(attr, []) for attr in additional_attributes]
         )
+
         for batch in dataloader:
             for attr in attributes:
-                attribute = batch[attr].detach().cpu().numpy()
-                if node_level:
-                    if attr == index_column:
+                attribute = batch[attr]
+                if isinstance(attribute, torch.Tensor):
+                    attribute = attribute.detach().cpu().numpy()
+
+                # Check if node level predictions
+                # If true, additional attributes are repeated
+                # to make dimensions fit
+                if len(predictions) != len(dataloader.dataset):
+                    if len(attribute) < np.sum(
+                        batch.n_pulses.detach().cpu().numpy()
+                    ):
                         attribute = np.repeat(
                             attribute, batch.n_pulses.detach().cpu().numpy()
                         )
+                        try:
+                            assert len(attribute) == len(batch.x)
+                        except AssertionError:
+                            self.warning_once(
+                                "Could not automatically adjust length"
+                                f"of additional attribute {attr} to match length of"
+                                f"predictions. Make sure {attr} is a graph-level or"
+                                "node-level attribute. Attribute skipped."
+                            )
+                            pass
                 attributes[attr].extend(attribute)
 
         data = np.concatenate(

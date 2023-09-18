@@ -4,9 +4,7 @@ from typing import List
 from abc import abstractmethod
 
 import torch
-from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
-import numpy as np
 
 from graphnet.utilities.decorators import final
 from graphnet.utilities.config import save_model_config
@@ -70,5 +68,5 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
 class NodesAsPulses(NodeDefinition):
     """Represent each measured pulse of Cherenkov Radiation as a node."""
 
-    def _construct_nodes(self, x: torch.tensor) -> Data:
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
         return Data(x=x)

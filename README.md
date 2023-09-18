@@ -2,12 +2,12 @@
 
 ![logo](./assets/identity/graphnet-logo-and-wordmark.png)
 
-| Usage | Development |
-| --- | --- |
-| [![status](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf/status.svg)](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf) | ![build](https://github.com/graphnet-team/graphnet/actions/workflows/build.yml/badge.svg) |
-| [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6720188.svg)](https://doi.org/10.5281/zenodo.6720188) | ![code-quality](https://github.com/graphnet-team/graphnet/actions/workflows/code-quality.yml/badge.svg) |
-| [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
-| ![Supported python versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) | [![Maintainability](https://api.codeclimate.com/v1/badges/b273a774112e32643162/maintainability)](https://codeclimate.com/github/graphnet-team/graphnet/maintainability) |
+| Usage                                                                                                                                                              | Development |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- |
+| [![status](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf/status.svg)](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf)             | ![build](https://github.com/graphnet-team/graphnet/actions/workflows/build.yml/badge.svg) |
+| [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6720188.svg)](https://doi.org/10.5281/zenodo.6720188)                                                          | ![code-quality](https://github.com/graphnet-team/graphnet/actions/workflows/code-quality.yml/badge.svg) |
+| [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)                                               | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
+| ![Supported python versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue)                                                   | [![Maintainability](https://api.codeclimate.com/v1/badges/b273a774112e32643162/maintainability)](https://codeclimate.com/github/graphnet-team/graphnet/maintainability) |
 | [![Docker image](https://img.shields.io/docker/v/asogaard/graphnet?color=blue&logo=docker&sort=semver)](https://hub.docker.com/repository/docker/asogaard/graphnet) | [![Test Coverage](https://api.codeclimate.com/v1/badges/b273a774112e32643162/test_coverage)](https://codeclimate.com/github/graphnet-team/graphnet/test_coverage) |
 
 </center>
@@ -40,7 +40,7 @@ You may want `graphnet` to be able to interface with IceTray, e.g., when convert
 To achieve this, we recommend running the following commands in a clean bash shell:
 ```bash
 $ eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/setup.sh`
-$ /cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/Ubuntu_20.04_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
+$ /cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/RHEL_7_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
 ```
 Optionally, you can alias these commands or save them as a bash script for convenience, as you will have to run these commands every time you want to use IceTray (with `graphnet`) in a clean shell.
 
