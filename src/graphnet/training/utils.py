@@ -32,7 +32,7 @@ def collate_fn(graphs: List[Data]) -> Batch:
 def make_dataloader(
     db: str,
     pulsemaps: Union[str, List[str]],
-    graph_definition: Optional[GraphDefinition],
+    graph_definition: GraphDefinition,
     features: List[str],
     truth: List[str],
     *,
@@ -92,7 +92,7 @@ def make_dataloader(
 # @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_train_validation_dataloader(
     db: str,
-    graph_definition: Optional[GraphDefinition],
+    graph_definition: GraphDefinition,
     selection: Optional[List[int]],
     pulsemaps: Union[str, List[str]],
     features: List[str],
