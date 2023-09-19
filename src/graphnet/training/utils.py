@@ -22,7 +22,7 @@ from graphnet.models.graphs import GraphDefinition
 def collate_fn(graphs: List[Data]) -> Batch:
     """Remove graphs with less than two DOM hits.
 
-    Should not occur in "productio"n.
+    Should not occur in "production".
     """
     graphs = [g for g in graphs if g.n_pulses > 1]
     return Batch.from_data_list(graphs)
