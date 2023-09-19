@@ -369,7 +369,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
 
     @abstractmethod
     def _get_all_indices(self) -> List[int]:
-        """Return a list of all available values in `self._index_column`."""
+        """Return a list of all unique values in `self._index_column`."""
 
     @abstractmethod
     def _get_event_index(
