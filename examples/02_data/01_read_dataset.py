@@ -13,8 +13,8 @@ from tqdm import tqdm
 from graphnet.constants import TEST_PARQUET_DATA, TEST_SQLITE_DATA
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.dataset import Dataset
-from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
-from graphnet.data.parquet.parquet_dataset import ParquetDataset
+from graphnet.data.dataset import SQLiteDataset
+from graphnet.data.dataset import ParquetDataset
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
 

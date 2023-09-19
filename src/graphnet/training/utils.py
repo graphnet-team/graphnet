@@ -12,10 +12,11 @@ from torch.utils.data import DataLoader
 from torch_geometric.data import Batch, Data
 
 from graphnet.data.dataset import Dataset
-from graphnet.data.sqlite import SQLiteDataset
-from graphnet.data.parquet import ParquetDataset
+from graphnet.data.dataset import SQLiteDataset
+from graphnet.data.dataset import ParquetDataset
 from graphnet.models import Model
 from graphnet.utilities.logging import Logger
+from graphnet.models.graphs import GraphDefinition
 
 
 def collate_fn(graphs: List[Data]) -> Batch:
@@ -31,6 +32,7 @@ def collate_fn(graphs: List[Data]) -> Batch:
 def make_dataloader(
     db: str,
     pulsemaps: Union[str, List[str]],
+    graph_definition: Optional[GraphDefinition],
     features: List[str],
     truth: List[str],
     *,
@@ -66,6 +68,7 @@ def make_dataloader(
         loss_weight_table=loss_weight_table,
         loss_weight_column=loss_weight_column,
         index_column=index_column,
+        graph_definition=graph_definition,
     )
 
     # adds custom labels to dataset
@@ -89,6 +92,7 @@ def make_dataloader(
 # @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_train_validation_dataloader(
     db: str,
+    graph_definition: Optional[GraphDefinition],
     selection: Optional[List[int]],
     pulsemaps: Union[str, List[str]],
     features: List[str],
@@ -111,8 +115,7 @@ def make_train_validation_dataloader(
 ) -> Tuple[DataLoader, DataLoader]:
     """Construct train and test `DataLoader` instances."""
     # Reproducibility
-    rng = np.random.RandomState(seed=seed)
-
+    rng = np.random.default_rng(seed=seed)
     # Checks(s)
     if isinstance(pulsemaps, str):
         pulsemaps = [pulsemaps]
@@ -122,19 +125,21 @@ def make_train_validation_dataloader(
         dataset: Dataset
         if db.endswith(".db"):
             dataset = SQLiteDataset(
-                db,
-                pulsemaps,
-                features,
-                truth,
+                path=db,
+                graph_definition=graph_definition,
+                pulsemaps=pulsemaps,
+                features=features,
+                truth=truth,
                 truth_table=truth_table,
                 index_column=index_column,
             )
         elif db.endswith(".parquet"):
             dataset = ParquetDataset(
-                db,
-                pulsemaps,
-                features,
-                truth,
+                path=db,
+                graph_definition=graph_definition,
+                pulsemaps=pulsemaps,
+                features=features,
+                truth=truth,
                 truth_table=truth_table,
                 index_column=index_column,
             )
@@ -153,13 +158,13 @@ def make_train_validation_dataloader(
             frac=1, replace=False, random_state=rng
         )
         training_df, validation_df = train_test_split(
-            shuffled_df, test_size=test_size, random_state=rng
+            shuffled_df, test_size=test_size, random_state=seed
         )
         training_selection = training_df.values.tolist()
         validation_selection = validation_df.values.tolist()
     else:
         training_selection, validation_selection = train_test_split(
-            selection, test_size=test_size, random_state=rng
+            selection, test_size=test_size, random_state=seed
         )
 
     # Create DataLoaders
@@ -179,6 +184,7 @@ def make_train_validation_dataloader(
         loss_weight_table=loss_weight_table,
         index_column=index_column,
         labels=labels,
+        graph_definition=graph_definition,
     )
 
     training_dataloader = make_dataloader(

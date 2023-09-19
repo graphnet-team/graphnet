@@ -47,12 +47,12 @@ EXTRAS_REQUIRE = {
         "versioneer",
     ],
     "torch": [
-        "torch>=1.11",
+        "torch>=2.0",
         "torch-cluster>=1.6",
         "torch-scatter>=2.0",
         "torch-sparse>=0.6",
-        "torch-geometric>=2.0",
-        "pytorch-lightning>=1.6, <2.0",
+        "torch-geometric>=2.1",
+        "pytorch-lightning>=2.0",
     ],
 }
 
@@ -61,10 +61,10 @@ CLASSIFIERS = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Environment :: CPU",
     "Environment :: GPU",
     "License :: OSI Approved :: Apache Software License",
@@ -81,7 +81,7 @@ setup(
     name="graphnet",
     version=versioneer.get_version(),
     description=(
-        "A common library for using graph neural networks (GNNs) in netrino "
+        "A common library for using graph neural networks (GNNs) in neutrino "
         "telescope experiments."
     ),
     license="Apache 2.0",

@@ -1,18 +1,20 @@
 """Class(es) for deploying GraphNeT models in icetray as I3Modules."""
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, List, Union, Dict, Tuple
+from typing import TYPE_CHECKING, Any, List, Union, Dict, Tuple, Optional
 
 import dill
 import numpy as np
 import torch
-from torch_geometric.data import Data
+from torch_geometric.data import Data, Batch
 
 from graphnet.data.extractors import (
     I3FeatureExtractor,
     I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.models import Model, StandardModel
+from graphnet.models.graphs import GraphDefinition
 from graphnet.utilities.imports import has_icecube_package
+from graphnet.utilities.config import ModelConfig
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube.icetray import (
@@ -35,6 +37,7 @@ class GraphNeTI3Module:
 
     def __init__(
         self,
+        graph_definition: GraphDefinition,
         pulsemap: str,
         features: List[str],
         pulsemap_extractor: Union[
@@ -45,6 +48,7 @@ class GraphNeTI3Module:
         """I3Module Constructor.
 
         Arguments:
+            graph_definition: An instance of GraphDefinition.  E.g. KNNGraph.
             pulsemap: the pulse map on which the module functions
             features: the features that is used from the pulse map.
                       E.g. [dom_x, dom_y, dom_z, charge]
@@ -52,6 +56,8 @@ class GraphNeTI3Module:
                                 pulsemap from the I3Frames
             gcd_file: Path to the associated gcd-file.
         """
+        assert isinstance(graph_definition, GraphDefinition)
+        self._graph_definition = graph_definition
         self._pulsemap = pulsemap
         self._features = features
         assert isinstance(gcd_file, str), "gcd_file must be string"
@@ -78,22 +84,16 @@ class GraphNeTI3Module:
     ) -> Data:  # py-l-i-n-t-:- -d-i-s-able=invalid-name
         """Process Physics I3Frame into graph."""
         # Extract features
-        features = self._extract_feature_array_from_frame(frame)
-
+        node_features = self._extract_feature_array_from_frame(frame)
         # Prepare graph data
-        n_pulses = torch.tensor([features.shape[0]], dtype=torch.int32)
-        data = Data(
-            x=torch.tensor(features, dtype=torch.float32),
-            batch=torch.zeros(
-                features.shape[0], dtype=torch.int64
-            ),  # @TODO: Necessary?
-            features=self._features,
-        )
-        # @TODO: This sort of hard-coding is not ideal; all features should be
-        #        captured by `FEATURES` and included in the output of
-        #        `I3FeatureExtractor`.
-        data.n_pulses = n_pulses
-        return data
+        if len(node_features) > 0:
+            data = self._graph_definition(
+                node_features=node_features,
+                node_feature_names=self._features,
+            )
+            return Batch.from_data_list([data])
+        else:
+            return None
 
     def _extract_feature_array_from_frame(self, frame: I3Frame) -> np.array:
         """Apply the I3FeatureExtractors to the I3Frame.
@@ -147,10 +147,11 @@ class I3InferenceModule(GraphNeTI3Module):
         pulsemap_extractor: Union[
             List[I3FeatureExtractor], I3FeatureExtractor
         ],
-        model: Union[Model, StandardModel, str],
+        model_config: Union[ModelConfig, str],
+        state_dict: str,
         model_name: str,
-        prediction_columns: Union[List[str], str],
         gcd_file: str,
+        prediction_columns: Optional[Union[List[str], str]] = None,
     ):
         """General class for inference on I3Frames (physics).
 
@@ -158,36 +159,37 @@ class I3InferenceModule(GraphNeTI3Module):
             pulsemap: the pulsmap that the model is expecting as input.
             features: the features of the pulsemap that the model is expecting.
             pulsemap_extractor: The extractor used to extract the pulsemap.
-            model: The model (or path to pickled model) that will be
-                    used for inference.
+            model_config: The ModelConfig (or path to it) that summarizes the
+                            model used for inference.
+            state_dict: Path to state_dict containing the learned weights.
             model_name: The name used for the model. Will help define the
                         named entry in the I3Frame. E.g. "dynedge".
+            gcd_file: path to associated gcd file.
             prediction_columns: column names for the predictions of the model.
                                Will help define the named entry in the I3Frame.
-                                E.g. ['energy_reco'].
-            gcd_file: path to associated gcd file.
+                                E.g. ['energy_reco']. Optional.
         """
+        # Construct model & load weights
+        self.model = Model.from_config(model_config, trust=True)
+        self.model.load_state_dict(state_dict)
+
         super().__init__(
             pulsemap=pulsemap,
             features=features,
             pulsemap_extractor=pulsemap_extractor,
             gcd_file=gcd_file,
+            graph_definition=self.model._graph_definition,
         )
-
-        if isinstance(model, str):
-            self.model = torch.load(
-                model, pickle_module=dill, map_location="cpu"
-            )
-        else:
-            self.model = model
         self.model.inference()
 
         self.model.to("cpu")
-
-        if isinstance(prediction_columns, str):
-            self.prediction_columns = [prediction_columns]
+        if prediction_columns is not None:
+            if isinstance(prediction_columns, str):
+                self.prediction_columns = [prediction_columns]
+            else:
+                self.prediction_columns = prediction_columns
         else:
-            self.prediction_columns = prediction_columns
+            self.prediction_columns = self.model.prediction_labels
 
         self.model_name = model_name
 
@@ -195,13 +197,12 @@ class I3InferenceModule(GraphNeTI3Module):
         """Write predictions from model to frame."""
         # inference
         graph = self._make_graph(frame)
-        if len(graph.x) > 0:
+        if graph is not None:
             predictions = self._inference(graph)
         else:
             predictions = np.repeat(
                 [np.nan], len(self.prediction_columns)
             ).reshape(-1, len(self.prediction_columns))
-
         # Check dimensions of predictions and prediction columns
         if len(predictions.shape) > 1:
             dim = predictions.shape[1]
@@ -216,7 +217,6 @@ class I3InferenceModule(GraphNeTI3Module):
         data = {}
         assert predictions.shape[0] == 1
         for i in range(dim if isinstance(dim, int) else len(dim)):
-            # print(predictions)
             try:
                 assert len(predictions[:, i]) == 1
                 data[
@@ -254,13 +254,14 @@ class I3PulseCleanerModule(I3InferenceModule):
         pulsemap_extractor: Union[
             List[I3FeatureExtractor], I3FeatureExtractor
         ],
-        model: Union[Model, StandardModel, str],
+        model_config: str,
+        state_dict: str,
         model_name: str,
-        prediction_columns: Union[List[str], str] = "",
         *,
         gcd_file: str,
         threshold: float = 0.7,
         discard_empty_events: bool = False,
+        prediction_columns: Optional[Union[List[str], str]] = None,
     ):
         """General class for inference on I3Frames (physics).
 
@@ -269,13 +270,11 @@ class I3PulseCleanerModule(I3InferenceModule):
                      (the one that is being cleaned).
             features: the features of the pulsemap that the model is expecting.
             pulsemap_extractor: The extractor used to extract the pulsemap.
-            model: The model (or path to pickled model) that will be
-                    used for inference.
+            model_config: The ModelConfig (or path to it) that summarizes the
+                            model used for inference.
+            state_dict: Path to state_dict containing the learned weights.
             model_name: The name used for the model. Will help define the named
                         entry in the I3Frame. E.g. "dynedge".
-            prediction_columns: column names for the predictions of the model.
-                            Will help define the named entry in the I3Frame.
-                            E.g. ['energy_reco'].
             gcd_file: path to associated gcd file.
             threshold: the threshold for being considered a positive case.
                         E.g., predictions >= threshold will be considered
@@ -285,12 +284,16 @@ class I3PulseCleanerModule(I3InferenceModule):
                             to speed up processing especially for noise
                             simulation, since it will not do any writing or
                             further calculations.
+            prediction_columns: column names for the predictions of the model.
+                            Will help define the named entry in the I3Frame.
+                            E.g. ['energy_reco']. Optional.
         """
         super().__init__(
             pulsemap=pulsemap,
             features=features,
             pulsemap_extractor=pulsemap_extractor,
-            model=model,
+            model_config=model_config,
+            state_dict=state_dict,
             model_name=model_name,
             prediction_columns=prediction_columns,
             gcd_file=gcd_file,
@@ -305,8 +308,9 @@ class I3PulseCleanerModule(I3InferenceModule):
         # inference
         gcd_file = self._gcd_file
         graph = self._make_graph(frame)
+        if graph is None:  # If there is no pulses to clean
+            return False
         predictions = self._inference(graph)
-
         if self._discard_empty_events:
             if sum(predictions > self._threshold) == 0:
                 return False
