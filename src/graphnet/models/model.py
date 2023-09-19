@@ -29,8 +29,8 @@ class Model(Logger, Configurable, LightningModule, ABC):
     def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
 
-    def _construct_trainers(
-        self,
+    @staticmethod
+    def _construct_trainer(
         max_epochs: int = 10,
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
@@ -40,16 +40,16 @@ class Model(Logger, Configurable, LightningModule, ABC):
         gradient_clip_val: Optional[float] = None,
         distribution_strategy: Optional[str] = "ddp",
         **trainer_kwargs: Any,
-    ) -> None:
+    ) -> Trainer:
 
         if gpus:
             accelerator = "gpu"
             devices = gpus
         else:
             accelerator = "cpu"
-            devices = None
+            devices = 1
 
-        self._trainer = Trainer(
+        trainer = Trainer(
             accelerator=accelerator,
             devices=devices,
             max_epochs=max_epochs,
@@ -58,21 +58,11 @@ class Model(Logger, Configurable, LightningModule, ABC):
             logger=logger,
             gradient_clip_val=gradient_clip_val,
             strategy=distribution_strategy,
+            default_root_dir=ckpt_path,
             **trainer_kwargs,
         )
 
-        inference_devices = devices
-        if isinstance(inference_devices, list):
-            inference_devices = inference_devices[:1]
-
-        self._inference_trainer = Trainer(
-            accelerator=accelerator,
-            devices=inference_devices,
-            callbacks=callbacks,
-            logger=logger,
-            strategy=None,
-            **trainer_kwargs,
-        )
+        return trainer
 
     def fit(
         self,
@@ -101,7 +91,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
             )
 
         self.train(mode=True)
-        self._construct_trainers(
+        trainer = self._construct_trainer(
             max_epochs=max_epochs,
             gpus=gpus,
             callbacks=callbacks,
@@ -114,7 +104,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
         )
 
         try:
-            self._trainer.fit(
+            trainer.fit(
                 self, train_dataloader, val_dataloader, ckpt_path=ckpt_path
             )
         except KeyboardInterrupt:
@@ -157,7 +147,7 @@ class Model(Logger, Configurable, LightningModule, ABC):
         self,
         dataloader: DataLoader,
         gpus: Optional[Union[List[int], int]] = None,
-        distribution_strategy: Optional[str] = None,
+        distribution_strategy: Optional[str] = "auto",
     ) -> List[Tensor]:
         """Return predictions for `dataloader`.
 
@@ -165,17 +155,17 @@ class Model(Logger, Configurable, LightningModule, ABC):
         """
         self.train(mode=False)
 
-        if not hasattr(self, "_inference_trainer"):
-            self._construct_trainers(
-                gpus=gpus, distribution_strategy=distribution_strategy
-            )
-        elif gpus is not None:
-            self.warning(
-                "A `Trainer` instance has already been constructed, possibly "
-                "when the model was trained. Will use this to get predictions. "
-                f"Argument `gpus = {gpus}` will be ignored."
-            )
-        predictions_list = self._inference_trainer.predict(self, dataloader)
+        callbacks = self._create_default_callbacks(
+            val_dataloader=None,
+        )
+
+        inference_trainer = self._construct_trainer(
+            gpus=gpus,
+            distribution_strategy=distribution_strategy,
+            callbacks=callbacks,
+        )
+
+        predictions_list = inference_trainer.predict(self, dataloader)
         assert len(predictions_list), "Got no predictions"
 
         nb_outputs = len(predictions_list[0])
@@ -191,11 +181,9 @@ class Model(Logger, Configurable, LightningModule, ABC):
         dataloader: DataLoader,
         prediction_columns: List[str],
         *,
-        node_level: bool = False,
         additional_attributes: Optional[List[str]] = None,
-        index_column: str = "event_no",
         gpus: Optional[Union[List[int], int]] = None,
-        distribution_strategy: Optional[str] = None,
+        distribution_strategy: Optional[str] = "auto",
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
@@ -239,14 +227,33 @@ class Model(Logger, Configurable, LightningModule, ABC):
         attributes: Dict[str, List[np.ndarray]] = OrderedDict(
             [(attr, []) for attr in additional_attributes]
         )
+
         for batch in dataloader:
             for attr in attributes:
-                attribute = batch[attr].detach().cpu().numpy()
-                if node_level:
-                    if attr == index_column:
+                attribute = batch[attr]
+                if isinstance(attribute, torch.Tensor):
+                    attribute = attribute.detach().cpu().numpy()
+
+                # Check if node level predictions
+                # If true, additional attributes are repeated
+                # to make dimensions fit
+                if len(predictions) != len(dataloader.dataset):
+                    if len(attribute) < np.sum(
+                        batch.n_pulses.detach().cpu().numpy()
+                    ):
                         attribute = np.repeat(
                             attribute, batch.n_pulses.detach().cpu().numpy()
                         )
+                        try:
+                            assert len(attribute) == len(batch.x)
+                        except AssertionError:
+                            self.warning_once(
+                                "Could not automatically adjust length"
+                                f"of additional attribute {attr} to match length of"
+                                f"predictions. Make sure {attr} is a graph-level or"
+                                "node-level attribute. Attribute skipped."
+                            )
+                            pass
                 attributes[attr].extend(attribute)
 
         data = np.concatenate(

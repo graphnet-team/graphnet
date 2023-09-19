@@ -8,15 +8,24 @@ from torch_geometric.data.batch import Batch
 from tqdm import tqdm
 
 from graphnet.constants import TEST_SQLITE_DATA
-from graphnet.data import EnsembleDataset
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.sqlite.sqlite_dataset import SQLiteDataset
+from graphnet.data.dataset import SQLiteDataset, EnsembleDataset
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.detector.icecube import IceCubeDeepCore
+from graphnet.models.graphs.nodes import NodesAsPulses
 
 # Constants
 features = FEATURES.DEEPCORE
 truth = TRUTH.DEEPCORE
+
+graph_definition = KNNGraph(
+    detector=IceCubeDeepCore(),
+    node_definition=NodesAsPulses(),
+    nb_nearest_neighbours=8,
+    node_feature_names=features,
+)
 
 
 def main() -> None:
@@ -33,18 +42,20 @@ def main() -> None:
 
     # Common variables
     dataset_1 = SQLiteDataset(
-        TEST_SQLITE_DATA,
-        pulsemap,
-        features,
-        truth,
+        path=TEST_SQLITE_DATA,
+        graph_definition=graph_definition,
+        pulsemaps=pulsemap,
+        features=features,
+        truth=truth,
         truth_table=truth_table,
     )
 
     dataset_2 = SQLiteDataset(
-        TEST_SQLITE_DATA,
-        pulsemap,
-        features,
-        truth,
+        graph_definition=graph_definition,
+        path=TEST_SQLITE_DATA,
+        pulsemaps=pulsemap,
+        features=features,
+        truth=truth,
         truth_table=truth_table,
     )
 

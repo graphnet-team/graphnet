@@ -16,11 +16,15 @@ from graphnet.data.extractors import (
     I3TruthExtractor,
     I3RetroExtractor,
 )
-from graphnet.data.parquet import ParquetDataset, ParquetDataConverter
-from graphnet.data.sqlite import SQLiteDataset, SQLiteDataConverter
+from graphnet.data.parquet import ParquetDataConverter
+from graphnet.data.dataset import ParquetDataset, SQLiteDataset
+from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.data.sqlite.sqlite_dataconverter import is_pulse_map
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
 from graphnet.utilities.imports import has_icecube_package
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.graphs.nodes import NodesAsPulses
+from graphnet.models.detector import IceCubeDeepCore
 
 if has_icecube_package():
     from icecube import dataio  # pyright: reportMissingImports=false
@@ -107,6 +111,12 @@ def test_dataset(backend: str) -> None:
     """Test the implementation of `Dataset` for `backend`."""
     path = get_file_path(backend)
     assert os.path.exists(path)
+    graph_definition = KNNGraph(
+        detector=IceCubeDeepCore(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=FEATURES.DEEPCORE,
+    )
 
     # Constructor DataConverter instance
     opt = dict(
@@ -114,6 +124,7 @@ def test_dataset(backend: str) -> None:
         pulsemaps="SRTInIcePulses",
         features=FEATURES.DEEPCORE,
         truth=TRUTH.DEEPCORE,
+        graph_definition=graph_definition,
     )
 
     if backend == "sqlite":
@@ -143,6 +154,7 @@ def test_dataset(backend: str) -> None:
         assert event.x.size(dim=0) == expected_number_of_pulses
         assert event.x.size(dim=0) == event.n_pulses
         assert event.x.size(dim=1) == len(event.features)
+        assert isinstance(opt["features"], list), print(opt["features"])
         assert len(event.features) == len(opt["features"])
 
 
@@ -152,7 +164,12 @@ def test_datasetquery_table(backend: str) -> None:
     """Test the implementation of `Dataset.query_table` for `backend`."""
     path = get_file_path(backend)
     assert os.path.exists(path)
-
+    graph_definition = KNNGraph(
+        detector=IceCubeDeepCore(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=FEATURES.DEEPCORE,
+    )
     # Constructor DataConverter instance
     pulsemap = "SRTInIcePulses"
     opt = dict(
@@ -160,6 +177,7 @@ def test_datasetquery_table(backend: str) -> None:
         pulsemaps=pulsemap,
         features=FEATURES.DEEPCORE,
         truth=TRUTH.DEEPCORE,
+        graph_definition=graph_definition,
     )
 
     if backend == "sqlite":
@@ -171,6 +189,7 @@ def test_datasetquery_table(backend: str) -> None:
 
     # Compare to expectations
     nb_events_to_test = 5
+    assert isinstance(opt["features"], list), print(opt["features"])
     results_all = dataset.query_table(
         pulsemap,
         columns=["event_no", opt["features"][0]],
@@ -197,7 +216,12 @@ def test_parquet_to_sqlite_converter() -> None:
         parquet_path=get_file_path("parquet"),
         mc_truth_table="truth",
     )
-
+    graph_definition = KNNGraph(
+        detector=IceCubeDeepCore(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        node_feature_names=FEATURES.DEEPCORE,
+    )
     # Perform conversion from I3 to `backend`
     database_name = FILE_NAME + "_from_parquet"
     converter.run(TEST_OUTPUT_DIR, database_name)
@@ -211,6 +235,7 @@ def test_parquet_to_sqlite_converter() -> None:
         pulsemaps="SRTInIcePulses",
         features=FEATURES.DEEPCORE,
         truth=TRUTH.DEEPCORE,
+        graph_definition=graph_definition,
     )
 
     dataset_from_parquet = SQLiteDataset(path, **opt)  # type: ignore[arg-type]

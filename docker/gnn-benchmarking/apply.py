@@ -11,13 +11,17 @@ from I3Tray import I3Tray  # pyright: reportMissingImports=false
 
 from graphnet.deployment.i3modules import I3InferenceModule
 from graphnet.data.extractors.i3featureextractor import (
-    I3FeatureExtractorIceCubeDeepCore,
+    I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.data.constants import FEATURES
+from graphnet.constants import PRETRAINED_MODEL_DIR
 
 
-# Constants (from Dockerfile)
-MODEL_PATH = "model.pth"
+# Constants
+MODEL_NAME = "total_neutrino_energy"
+BASE_PATH = f"{PRETRAINED_MODEL_DIR}/icecube/upgrade/QUESO"
+MODEL_CONFIG = f"{BASE_PATH}/{MODEL_NAME}/{MODEL_NAME}_config.yml"
+STATE_DICT = f"{BASE_PATH}/{MODEL_NAME}/{MODEL_NAME}_state_dict.pth"
 
 
 def main(
@@ -42,14 +46,15 @@ def main(
     input_files = [p for p in input_files if gcd_pattern not in p]
 
     # Construct I3InferenceModule(s)
-    extractor = I3FeatureExtractorIceCubeDeepCore(pulsemap=pulsemap)
+    extractor = I3FeatureExtractorIceCubeUpgrade(pulsemap=pulsemap)
 
     deployment_modules = [
         I3InferenceModule(
             pulsemap=pulsemap,
             features=FEATURES.DEEPCORE,
             pulsemap_extractor=extractor,
-            model=MODEL_PATH,
+            model_config=MODEL_CONFIG,
+            state_dict=STATE_DICT,
             gcd_file=gcd_file,
             prediction_columns=["energy_pred"],
             model_name="graphnet_dynedge_energy_reconstruction",
