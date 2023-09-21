@@ -28,24 +28,30 @@ def collate_fn(graphs: List[Data]) -> Batch:
     return Batch.from_data_list(graphs)
 
 
-def collator_sequence_buckleting(graphs: List[Data]) -> List[Batch]:
-    """Remove graphs with less than two DOM hits.
+class collator_sequence_buckleting():
+    """Perform the sequence bucketing for the graphs in the batch.
 
-    Should not occur in "production.
+    batch_splits: list of floats, each element is the fraction of the total 
+    number of graphs. only the cutting points should be provided, the first
+    element will be 0 and the last element should be 1.
+
     """
-    graphs = [g for g in graphs if g.n_pulses > 1]
-    graphs.sort(key=lambda x: x.n_pulses)
-    batch_list = []
+    def __init__(self, batch_splits: List[float] = [0.8]):
+        self.batch_splits = batch_splits
 
-    splits_end = [0.8, 1]
-    for minp, maxp in zip([0] + splits_end[:-1], splits_end):
-        min_idx = int(minp * len(graphs))
-        max_idx = int(maxp * len(graphs))
-        this_graphs = graphs[min_idx:max_idx]
-        if len(this_graphs) > 0:
-            this_batch = Batch.from_data_list(this_graphs)
-            batch_list.append(this_batch)
-    return batch_list
+    def __call__(self, graphs: List[Data]):
+        graphs = [g for g in graphs if g.n_pulses > 1]
+        graphs.sort(key=lambda x: x.n_pulses)
+        batch_list = []
+
+        for minp, maxp in zip([0] + self.batch_splits, self.batch_splits + [1]):
+            min_idx = int(minp * len(graphs))
+            max_idx = int(maxp * len(graphs))
+            this_graphs = graphs[min_idx:max_idx]
+            if len(this_graphs) > 0:
+                this_batch = Batch.from_data_list(this_graphs)
+                batch_list.append(this_batch)
+        return batch_list
 
 
 # @TODO: Remove in favour of DataLoader{,.from_dataset_config}
