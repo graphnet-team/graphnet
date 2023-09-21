@@ -98,7 +98,6 @@ class StandardModel(Model):
 
     def forward(self, data: List[Data]) -> List[Union[Tensor, Data]]:
         """Forward pass, chaining model components."""
-        
         x_list = []
         for d in data:
             x = self._gnn(d)
@@ -118,7 +117,9 @@ class StandardModel(Model):
         loss = self.compute_loss(preds, batch)
         return loss
 
-    def training_step(self, train_batch: Union[Data,List[Data]], batch_idx: int) -> Tensor:
+    def training_step(
+        self, train_batch: Union[Data, List[Data]], batch_idx: int
+    ) -> Tensor:
         """Perform training step."""
         if isinstance(train_batch, Data):
             train_batch = [train_batch]
@@ -134,7 +135,9 @@ class StandardModel(Model):
         )
         return loss
 
-    def validation_step(self, val_batch: Union[Data,List[Data]], batch_idx: int) -> Tensor:
+    def validation_step(
+        self, val_batch: Union[Data, List[Data]], batch_idx: int
+    ) -> Tensor:
         """Perform validation step."""
         if isinstance(val_batch, Data):
             val_batch = [val_batch]
@@ -154,19 +157,16 @@ class StandardModel(Model):
         self, preds: Tensor, data: List[Data], verbose: bool = False
     ) -> Tensor:
         """Compute and sum losses across tasks."""
-
         data_merged = {}
         target_labels_merged = list(set(self.target_labels))
         for label in target_labels_merged:
-            data_merged[label] = torch.cat(
-                [d[label] for d in data], dim=0
-            )
+            data_merged[label] = torch.cat([d[label] for d in data], dim=0)
         for task in self._tasks:
             if task._loss_weight is not None:
                 data_merged[task._loss_weight] = torch.cat(
                     [d[task._loss_weight] for d in data], dim=0
                 )
-            
+
         losses = [
             task.compute_loss(pred, data_merged)
             for task, pred in zip(self._tasks, preds)
