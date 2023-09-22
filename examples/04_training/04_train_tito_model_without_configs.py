@@ -14,7 +14,6 @@ from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdgeTITO
 from graphnet.models.graphs import KNNGraph
-from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.task.reconstruction import (
     DirectionReconstructionWithKappa,
 )
