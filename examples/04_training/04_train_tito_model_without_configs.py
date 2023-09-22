@@ -28,7 +28,6 @@ from graphnet.utilities.logging import Logger
 # Constants
 features = FEATURES.PROMETHEUS
 truth = TRUTH.PROMETHEUS
-DYNTRANS_LAYER_SIZES = [(256, 256), (256, 256), (256, 256)]
 
 
 def main(
@@ -76,12 +75,7 @@ def main(
         },
     }
 
-    graph_definition = KNNGraph(
-        detector=Prometheus(),
-        node_definition=NodesAsPulses(),
-        nb_nearest_neighbours=8,
-        node_feature_names=features,
-    )
+    graph_definition = KNNGraph(detector=Prometheus())
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_tito_model")
     run_name = "dynedgeTITO_{}_example".format(config["target"])
     if wandb:
@@ -115,7 +109,6 @@ def main(
     gnn = DynEdgeTITO(
         nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["max"],
-        dyntrans_layer_sizes=DYNTRANS_LAYER_SIZES,
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=gnn.nb_outputs,
