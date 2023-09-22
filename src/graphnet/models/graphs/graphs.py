@@ -6,7 +6,7 @@ import torch
 from .graph_definition import GraphDefinition
 from graphnet.models.detector import Detector
 from graphnet.models.graphs.edges import EdgeDefinition, KNNEdges
-from graphnet.models.graphs.nodes import NodeDefinition
+from graphnet.models.graphs.nodes import NodeDefinition, NodesAsPulses
 
 
 class KNNGraph(GraphDefinition):
@@ -15,7 +15,7 @@ class KNNGraph(GraphDefinition):
     def __init__(
         self,
         detector: Detector,
-        node_definition: NodeDefinition,
+        node_definition: NodeDefinition = NodesAsPulses(),
         node_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
         nb_nearest_neighbours: int = 8,
