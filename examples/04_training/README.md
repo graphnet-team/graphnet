@@ -34,7 +34,7 @@ This subfolder contains two main training scripts:
     --prediction-names zenith_pred zenith_kappa_pred azimuth_pred azimuth_kappa_pred
 ```
 
-**`02_train_model_dynedge_from_config.py** Shows how to train a GNN on neutrino telescope data **using configuration files** to construct the dataset that loads the data and the model that is trained. This is the recommended way to configure standard dataset and models, as it is easier to ready and share than doing so in pure code. This example can be run using a few different models targeting different physics use cases. For instance, you can try running:
+**`03_train_model_dynedge_from_config.py** Shows how to train a GNN on neutrino telescope data **using configuration files** to construct the dataset that loads the data and the model that is trained. This is the recommended way to configure standard dataset and models, as it is easier to ready and share than doing so in pure code. This example can be run using a few different models targeting different physics use cases. For instance, you can try running:
 
 ```bash
 # Show the CLI
