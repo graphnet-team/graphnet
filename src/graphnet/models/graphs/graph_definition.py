@@ -6,10 +6,11 @@ passed to dataloaders during training and deployment.
 """
 
 
-from typing import Any, List, Optional, Dict, Callable
+from typing import Any, List, Optional, Dict, Callable, Union
 import torch
 from torch_geometric.data import Data
 import numpy as np
+from numpy.random import default_rng, Generator
 
 from graphnet.models.detector import Detector
 from .edges import EdgeDefinition
@@ -27,6 +28,8 @@ class GraphDefinition(Model):
         edge_definition: Optional[EdgeDefinition] = None,
         node_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
+        perturbation_dict: Optional[Dict[str, float]] = None,
+        seed: Optional[Union[int, Generator]] = None,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -43,6 +46,12 @@ class GraphDefinition(Model):
             edge_definition: Definition of edges. Defaults to None.
             node_feature_names: Names of node feature columns. Defaults to None
             dtype: data type used for node features. e.g. ´torch.float´
+            perturbation_dict: Dictionary mapping a feature name to a standard
+                               deviation according to which the values for this
+                               feature should be randomly perturbed. Defaults
+                               to None.
+            seed: seed or Generator used to randomly sample perturbations.
+                  Defaults to None.
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -51,6 +60,8 @@ class GraphDefinition(Model):
         self._detector = detector
         self._edge_definition = edge_definition
         self._node_definition = node_definition
+        self._perturbation_dict = perturbation_dict
+
         if node_feature_names is None:
             # Assume all features in Detector is used.
             node_feature_names = list(self._detector.feature_map().keys())  # type: ignore
@@ -65,6 +76,24 @@ class GraphDefinition(Model):
         )
         self.nb_inputs = len(self._node_feature_names)
         self.nb_outputs = self._node_definition.nb_outputs
+
+        # Set perturbation_cols if needed
+        if isinstance(self._perturbation_dict, dict):
+            self._perturbation_cols = [
+                self._node_feature_names.index(key)
+                for key in self._perturbation_dict.keys()
+            ]
+        if seed is not None:
+            if isinstance(seed, int):
+                self.rng = default_rng(seed)
+            elif isinstance(seed, Generator):
+                self.rng = seed
+            else:
+                raise ValueError(
+                    "Invalid seed. Must be an int or a numpy Generator."
+                )
+        else:
+            self.rng = default_rng()
 
     def forward(  # type: ignore
         self,
@@ -96,6 +125,9 @@ class GraphDefinition(Model):
         self._validate_input(
             node_features=node_features, node_feature_names=node_feature_names
         )
+
+        # Gaussian perturbation of each column if perturbation dict is given
+        node_features = self._perturb_input(node_features)
 
         # Transform to pytorch tensor
         node_features = torch.tensor(node_features, dtype=self.dtype)
@@ -163,6 +195,20 @@ class GraphDefinition(Model):
             assert (
                 node_feature_names[idx] == self._node_feature_names[idx]
             ), f""" Order of node features in data are not the same as expected. Got {node_feature_names} vs. {self._node_feature_names}"""
+
+    def _perturb_input(self, node_features: np.ndarray) -> np.ndarray:
+        if isinstance(self._perturbation_dict, dict):
+            self.warning_once(
+                f"""Will randomly perturb {list(self._perturbation_dict.keys())} using standard diviations {self._perturbation_dict.values}"""
+            )
+            perturbed_features = self.rng.normal(
+                loc=node_features[:, self._perturbation_cols],
+                scale=np.array(
+                    list(self._perturbation_dict.values()), dtype=np.float
+                ),
+            )
+            node_features[:, self._perturbation_cols] = perturbed_features
+        return node_features
 
     def _add_loss_weights(
         self,
