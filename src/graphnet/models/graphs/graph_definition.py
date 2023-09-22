@@ -13,7 +13,7 @@ import numpy as np
 
 from graphnet.models.detector import Detector
 from .edges import EdgeDefinition
-from .nodes import NodeDefinition
+from .nodes import NodeDefinition, NodesAsPulses
 from graphnet.models import Model
 
 
@@ -23,7 +23,7 @@ class GraphDefinition(Model):
     def __init__(
         self,
         detector: Detector,
-        node_definition: NodeDefinition,
+        node_definition: NodeDefinition = NodesAsPulses(),
         edge_definition: Optional[EdgeDefinition] = None,
         node_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
@@ -39,7 +39,7 @@ class GraphDefinition(Model):
 
         Args:
             detector: The corresponding ´Detector´ representing the data.
-            node_definition: Definition of nodes.
+            node_definition: Definition of nodes. Defaults to NodesAsPulses.
             edge_definition: Definition of edges. Defaults to None.
             node_feature_names: Names of node feature columns. Defaults to None
             dtype: data type used for node features. e.g. ´torch.float´
