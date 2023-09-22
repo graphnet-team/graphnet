@@ -204,7 +204,7 @@ class GraphDefinition(Model):
             perturbed_features = self.rng.normal(
                 loc=node_features[:, self._perturbation_cols],
                 scale=np.array(
-                    list(self._perturbation_dict.values()), dtype=np.float
+                    list(self._perturbation_dict.values()), dtype=float
                 ),
             )
             node_features[:, self._perturbation_cols] = perturbed_features
