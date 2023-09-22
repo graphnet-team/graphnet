@@ -175,9 +175,15 @@ def main(
     logger.info(f"Writing results to {path}")
     os.makedirs(path, exist_ok=True)
 
+    # Save results as .csv
     results.to_csv(f"{path}/results.csv")
-    model.save_state_dict(f"{path}/state_dict.pth")
+
+    # Save full model (including weights) to .pth file - Not version proof
     model.save(f"{path}/model.pth")
+
+    # Save model config and state dict - Version safe save method.
+    model.save_state_dict(f"{path}/state_dict.pth")
+    model.save_config(f"{path}/model_config.yml")
 
 
 if __name__ == "__main__":
