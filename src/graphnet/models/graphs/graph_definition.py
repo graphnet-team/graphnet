@@ -116,7 +116,7 @@ class GraphDefinition(Model):
         if self._edge_definition is not None:
             graph = self._edge_definition(graph)
         else:
-            self.warnonce(
+            self.warning_once(
                 "No EdgeDefinition provided. Graphs will not have edges defined!"
             )
 
@@ -252,7 +252,7 @@ class GraphDefinition(Model):
             if feature not in ["x"]:  # reserved for node features.
                 graph[feature] = graph.x[:, index].detach()
             else:
-                self.warnonce(
+                self.warning_once(
                     """Cannot assign graph['x']. This field is reserved for node features. Please rename your input feature."""
                 )
         return graph
