@@ -22,7 +22,6 @@ from graphnet.models.components.pool import (
     std_pool_x,
 )
 from graphnet.models import Model
-from graphnet.utilities.config import save_model_config
 
 # Utility method(s)
 from torch_geometric.utils import degree
@@ -63,7 +62,6 @@ class Coarsening(Model):
         "sum": (sum_pool, sum_pool_x),
     }
 
-    @save_model_config
     def __init__(
         self,
         reduce: str = "avg",
@@ -198,7 +196,6 @@ class Coarsening(Model):
 class AttributeCoarsening(Coarsening):
     """Coarsen pulses based on specified attributes."""
 
-    @save_model_config
     def __init__(
         self,
         attributes: List[str],
