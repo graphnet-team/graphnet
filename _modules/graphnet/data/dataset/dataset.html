@@ -351,7 +351,7 @@
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Configurable</span><span class="p">,</span>
     <span class="n">DatasetConfig</span><span class="p">,</span>
-    <span class="n">save_dataset_config</span><span class="p">,</span>
+    <span class="n">DatasetConfigSaverABCMeta</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config.parsing</span> <span class="kn">import</span> <span class="n">traverse_and_apply</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
@@ -420,7 +420,13 @@
 
 <div class="viewcode-block" id="Dataset">
 <a class="viewcode-back" href="../../../../api/graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.Dataset">[docs]</a>
-<span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">Logger</span><span class="p">,</span> <span class="n">Configurable</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span>
+    <span class="n">Logger</span><span class="p">,</span>
+    <span class="n">Configurable</span><span class="p">,</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">ABC</span><span class="p">,</span>
+    <span class="n">metaclass</span><span class="o">=</span><span class="n">DatasetConfigSaverABCMeta</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Base Dataset class for reading from any intermediate file format."""</span>
 
     <span class="c1"># Class method(s)</span>
@@ -529,7 +535,6 @@
             <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"$</span><span class="si">{GRAPHNET}</span><span class="s2">"</span><span class="p">,</span> <span class="n">GRAPHNET_ROOT_DIR</span><span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="nd">@save_dataset_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>

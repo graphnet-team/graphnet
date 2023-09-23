@@ -397,6 +397,10 @@
             </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.model_config.save_model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_model_config()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.model_config.ModelConfigSaverMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ModelConfigSaverMeta</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.model_config.ModelConfigSaverABC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ModelConfigSaverABC</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -449,6 +453,20 @@
     
     
       <a href="#graphnet.utilities.config.model_config.save_model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_model_config()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.model_config.ModelConfigSaverMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ModelConfigSaverMeta</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.model_config.ModelConfigSaverABC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ModelConfigSaverABC</span></code></a>
       
     
     </li></ul>
@@ -554,6 +572,10 @@
             </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.model_config.save_model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_model_config()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.model_config.ModelConfigSaverMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ModelConfigSaverMeta</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.model_config.ModelConfigSaverABC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ModelConfigSaverABC</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -647,6 +669,18 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dd class="field-even"><p><strong>init_fn</strong> (<em>Callable</em>) – </p>
 </dd>
 </dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.utilities.config.model_config.ModelConfigSaverMeta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.model_config.</span></span><span class="sig-name descname"><span class="pre">ModelConfigSaverMeta</span></span><a class="reference internal" href="../_modules/graphnet/utilities/config/model_config.html#ModelConfigSaverMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.model_config.ModelConfigSaverMeta" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></p>
+<p>Metaclass for saving <cite>ModelConfig</cite> to <cite>Model</cite> instances.</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.utilities.config.model_config.ModelConfigSaverABC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.model_config.</span></span><span class="sig-name descname"><span class="pre">ModelConfigSaverABC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/model_config.html#ModelConfigSaverABC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.model_config.ModelConfigSaverABC" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.utilities.config.model_config.ModelConfigSaverMeta" title="graphnet.utilities.config.model_config.ModelConfigSaverMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelConfigSaverMeta</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABCMeta</span></code></p>
+<p>Common interface between ModelConfigSaver and ABC Metaclasses.</p>
 </dd></dl>
 </section>
 

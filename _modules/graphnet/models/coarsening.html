@@ -346,7 +346,6 @@
     <span class="n">std_pool_x</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">save_model_config</span>
 
 <span class="c1"># Utility method(s)</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">degree</span>
@@ -392,7 +391,6 @@
         <span class="s2">"sum"</span><span class="p">:</span> <span class="p">(</span><span class="n">sum_pool</span><span class="p">,</span> <span class="n">sum_pool_x</span><span class="p">),</span>
     <span class="p">}</span>
 
-    <span class="nd">@save_model_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"avg"</span><span class="p">,</span>
@@ -533,7 +531,6 @@
 <span class="k">class</span> <span class="nc">AttributeCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Coarsen pulses based on specified attributes."""</span>
 
-    <span class="nd">@save_model_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>

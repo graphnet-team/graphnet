@@ -608,7 +608,7 @@
 <p>Standard model class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.standard_model.</span></span><span class="sig-name descname"><span class="pre">StandardModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gnn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_class=&lt;class</span> <span class="pre">'torch.optim.adam.Adam'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/standard_model.html#StandardModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.standard_model.</span></span><span class="sig-name descname"><span class="pre">StandardModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/standard_model.html#StandardModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
 <p>Main class for standard models in graphnet.</p>
 <p>This class chains together the different elements of a complete GNN-based
@@ -617,15 +617,12 @@ model (detector read-in, GNN architecture, and task-specific read-outs).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a>) – </p></li>
-<li><p><strong>gnn</strong> (<a class="reference internal" href="graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><em>GNN</em></a>) – </p></li>
-<li><p><strong>tasks</strong> (<a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><em>Task</em></a><em> | </em><em>List</em><em>[</em><a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><em>Task</em></a><em>]</em>) – </p></li>
-<li><p><strong>optimizer_class</strong> (<em>type</em>) – </p></li>
-<li><p><strong>optimizer_kwargs</strong> (<em>Dict</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>scheduler_class</strong> (<em>type</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>scheduler_kwargs</strong> (<em>Dict</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>scheduler_config</strong> (<em>Dict</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>args</strong> (<em>Any</em>) – </p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
 </dd>
 </dl>
 <dl class="py property">

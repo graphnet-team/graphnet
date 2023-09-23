@@ -416,6 +416,10 @@
             </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.save_dataset_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_dataset_config()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DatasetConfigSaverMeta</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverABCMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DatasetConfigSaverABCMeta</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -561,6 +565,20 @@
       <a href="#graphnet.utilities.config.dataset_config.save_dataset_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_dataset_config()</span></code></a>
       
     
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DatasetConfigSaverMeta</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverABCMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DatasetConfigSaverABCMeta</span></code></a>
+      
+    
     </li></ul>
     
     </li>
@@ -697,6 +715,10 @@
             </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.save_dataset_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_dataset_config()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DatasetConfigSaverMeta</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverABCMeta" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DatasetConfigSaverABCMeta</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -908,6 +930,18 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dd class="field-even"><p><strong>init_fn</strong> (<em>Callable</em>) – </p>
 </dd>
 </dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfigSaverMeta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.dataset_config.</span></span><span class="sig-name descname"><span class="pre">DatasetConfigSaverMeta</span></span><a class="reference internal" href="../_modules/graphnet/utilities/config/dataset_config.html#DatasetConfigSaverMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverMeta" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></p>
+<p>Metaclass for <cite>DatasetConfig</cite> that saves the config after <cite>__init__</cite>.</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfigSaverABCMeta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.dataset_config.</span></span><span class="sig-name descname"><span class="pre">DatasetConfigSaverABCMeta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/dataset_config.html#DatasetConfigSaverABCMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverABCMeta" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.utilities.config.dataset_config.DatasetConfigSaverMeta" title="graphnet.utilities.config.dataset_config.DatasetConfigSaverMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatasetConfigSaverMeta</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABCMeta</span></code></p>
+<p>Common interface between DatasetConfigSaver and ABC Metaclasses.</p>
 </dd></dl>
 </section>
 

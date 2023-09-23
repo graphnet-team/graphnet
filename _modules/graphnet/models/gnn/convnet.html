@@ -334,7 +334,6 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="kn">import</span> <span class="n">TAGConv</span><span class="p">,</span> <span class="n">global_add_pool</span><span class="p">,</span> <span class="n">global_max_pool</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">save_model_config</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="kn">import</span> <span class="n">GNN</span>
 
 
@@ -343,7 +342,6 @@
 <span class="k">class</span> <span class="nc">ConvNet</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""ConvNet (convolutional network) model."""</span>
 
-    <span class="nd">@save_model_config</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nb_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>

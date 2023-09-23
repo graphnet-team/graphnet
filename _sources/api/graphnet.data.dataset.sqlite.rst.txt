@@ -16,7 +16,6 @@ sqlite
    :maxdepth: 2
 
    graphnet.data.dataset.sqlite.sqlite_dataset
-   graphnet.data.dataset.sqlite.sqlite_dataset_perturbed
 
 
 

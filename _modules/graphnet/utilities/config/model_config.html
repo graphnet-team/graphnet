@@ -323,9 +323,11 @@
             
   <h1 id="modules-graphnet-utilities-config-model-config--page-root">Source code for graphnet.utilities.config.model_config</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Config classes for the `graphnet.models` module."""</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
@@ -582,6 +584,11 @@
 <a class="viewcode-back" href="../../../../api/graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.save_model_config">[docs]</a>
 <span class="k">def</span> <span class="nf">save_model_config</span><span class="p">(</span><span class="n">init_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Save the arguments to `__init__` functions as a member `ModelConfig`."""</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">"Warning: `save_model_config` is deprecated. Config saving is"</span>
+        <span class="s2">"now done automatically for all classes inheriting from Model"</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_replace_model_instance_with_config</span><span class="p">(</span>
         <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">"Model"</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
@@ -615,6 +622,50 @@
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="ModelConfigSaverMeta">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfigSaverMeta">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelConfigSaverMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Metaclass for saving `ModelConfig` to `Model` instances."""</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Catch object construction and save config after `__init__`."""</span>
+
+        <span class="k">def</span> <span class="nf">_replace_model_instance_with_config</span><span class="p">(</span>
+            <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">"Model"</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelConfig</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">            </span><span class="sd">"""Replace `Model` instances in `obj` with their `ModelConfig`."""</span>
+            <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">config</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">obj</span>
+
+        <span class="c1"># Create object</span>
+        <span class="n">created_obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Get all argument values, including defaults</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">get_all_argument_values</span><span class="p">(</span><span class="n">created_obj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">traverse_and_apply</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">_replace_model_instance_with_config</span><span class="p">)</span>
+
+        <span class="c1"># Store config in</span>
+        <span class="n">created_obj</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="p">(</span>
+            <span class="n">class_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">cfg</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">created_obj</span></div>
+
+
+
+<div class="viewcode-block" id="ModelConfigSaverABC">
+<a class="viewcode-back" href="../../../../api/graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfigSaverABC">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelConfigSaverABC</span><span class="p">(</span><span class="n">ModelConfigSaverMeta</span><span class="p">,</span> <span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Common interface between ModelConfigSaver and ABC Metaclasses."""</span>
+
+    <span class="k">pass</span></div>
 
 </pre></div>
 

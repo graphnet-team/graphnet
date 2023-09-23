@@ -490,7 +490,7 @@
 <dt class="sig sig-object py" id="graphnet.training.utils.collate_fn">
 <span class="sig-prename descclassname"><span class="pre">graphnet.training.utils.</span></span><span class="sig-name descname"><span class="pre">collate_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/utils.html#collate_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.utils.collate_fn" title="Link to this definition">¶</a></dt>
 <dd><p>Remove graphs with less than two DOM hits.</p>
-<p>Should not occur in “production.</p>
+<p>Should not occur in “production”.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code></p>
@@ -512,7 +512,7 @@
 <dd class="field-even"><ul class="simple">
 <li><p><strong>db</strong> (<em>str</em>) – </p></li>
 <li><p><strong>pulsemaps</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a>) – </p></li>
 <li><p><strong>features</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
 <li><p><strong>truth</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
 <li><p><strong>batch_size</strong> (<em>int</em>) – </p></li>
@@ -543,7 +543,7 @@
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>db</strong> (<em>str</em>) – </p></li>
-<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a>) – </p></li>
 <li><p><strong>selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>) – </p></li>
 <li><p><strong>pulsemaps</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
 <li><p><strong>features</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
