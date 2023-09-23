@@ -7,14 +7,12 @@ import torch
 from torch_geometric.data import Data
 
 from graphnet.utilities.decorators import final
-from graphnet.utilities.config import save_model_config
 from graphnet.models import Model
 
 
 class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
     """Base class for graph building."""
 
-    @save_model_config
     def __init__(self) -> None:
         """Construct `Detector`."""
         # Base class constructor

@@ -14,7 +14,6 @@ from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdgeTITO
 from graphnet.models.graphs import KNNGraph
-from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.task.reconstruction import (
     DirectionReconstructionWithKappa,
 )
@@ -28,7 +27,6 @@ from graphnet.utilities.logging import Logger
 # Constants
 features = FEATURES.PROMETHEUS
 truth = TRUTH.PROMETHEUS
-DYNTRANS_LAYER_SIZES = [(256, 256), (256, 256), (256, 256)]
 
 
 def main(
@@ -76,12 +74,7 @@ def main(
         },
     }
 
-    graph_definition = KNNGraph(
-        detector=Prometheus(),
-        node_definition=NodesAsPulses(),
-        nb_nearest_neighbours=8,
-        node_feature_names=features,
-    )
+    graph_definition = KNNGraph(detector=Prometheus())
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_tito_model")
     run_name = "dynedgeTITO_{}_example".format(config["target"])
     if wandb:
@@ -115,7 +108,6 @@ def main(
     gnn = DynEdgeTITO(
         nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["max"],
-        dyntrans_layer_sizes=DYNTRANS_LAYER_SIZES,
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=gnn.nb_outputs,
@@ -182,9 +174,15 @@ def main(
     logger.info(f"Writing results to {path}")
     os.makedirs(path, exist_ok=True)
 
+    # Save results as .csv
     results.to_csv(f"{path}/results.csv")
-    model.save_state_dict(f"{path}/state_dict.pth")
+
+    # Save full model (including weights) to .pth file - Not version proof
     model.save(f"{path}/model.pth")
+
+    # Save model config and state dict - Version safe save method.
+    model.save_state_dict(f"{path}/state_dict.pth")
+    model.save_config(f"{path}/model_config.yml")
 
 
 if __name__ == "__main__":

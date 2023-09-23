@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     from graphnet.training.loss_functions import LossFunction  # type: ignore[attr-defined]
 
 from graphnet.models import Model
-from graphnet.utilities.config import save_model_config
 from graphnet.utilities.decorators import final
 
 
@@ -39,7 +38,6 @@ class Task(Model):
         """Return default prediction labels."""
         return self._default_prediction_labels
 
-    @save_model_config
     def __init__(
         self,
         *,
@@ -264,7 +262,6 @@ class Task(Model):
 class IdentityTask(Task):
     """Identity, or trivial, task."""
 
-    @save_model_config
     def __init__(
         self,
         nb_outputs: int,
