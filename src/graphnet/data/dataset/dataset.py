@@ -27,7 +27,7 @@ from graphnet.training.labels import Label
 from graphnet.utilities.config import (
     Configurable,
     DatasetConfig,
-    save_dataset_config,
+    DatasetConfigSaverABCMeta,
 )
 from graphnet.utilities.config.parsing import traverse_and_apply
 from graphnet.utilities.logging import Logger
@@ -85,7 +85,13 @@ def parse_graph_definition(cfg: dict) -> GraphDefinition:
     return graph_definition
 
 
-class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
+class Dataset(
+    Logger,
+    Configurable,
+    torch.utils.data.Dataset,
+    ABC,
+    metaclass=DatasetConfigSaverABCMeta,
+):
     """Base Dataset class for reading from any intermediate file format."""
 
     # Class method(s)
@@ -188,7 +194,6 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
             .replace("${GRAPHNET}", GRAPHNET_ROOT_DIR)
         )
 
-    @save_dataset_config
     def __init__(
         self,
         path: Union[str, List[str]],
