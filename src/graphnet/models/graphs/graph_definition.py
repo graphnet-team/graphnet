@@ -306,7 +306,9 @@ class GraphDefinition(Model):
                 graph[feature] = graph.x[:, index].detach()
             else:
                 self.warning_once(
-                    """Cannot assign graph['x']. This field is reserved for node features. Please rename your input feature."""
+                    """Cannot assign graph['x']. This field is reserved for
+                      node features. Please rename your input feature."""
+                )  # noqa
 
         return graph
 
