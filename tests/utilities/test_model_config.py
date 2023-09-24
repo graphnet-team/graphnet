@@ -18,7 +18,7 @@ from graphnet.data.constants import FEATURES
 
 
 def test_simple_model_config(path: str = "/tmp/simple_model.yml") -> None:
-    """Test saving, loading, and reconstructing simple model."""
+    """Test saving, loading, and reconstructing using a simple model."""
     # Construct single Model
     model = DynEdge(
         nb_inputs=9,
