@@ -6,30 +6,30 @@ passed to dataloaders during training and deployment.
 """
 
 
-from typing import Any, List, Optional, Dict, Callable
+from typing import Any, List, Optional, Dict, Callable, Union
 import torch
 from torch_geometric.data import Data
 import numpy as np
-
-from graphnet.utilities.config import save_model_config
+from numpy.random import default_rng, Generator
 
 from graphnet.models.detector import Detector
 from .edges import EdgeDefinition
-from .nodes import NodeDefinition
+from .nodes import NodeDefinition, NodesAsPulses
 from graphnet.models import Model
 
 
 class GraphDefinition(Model):
     """An Abstract class to create graph definitions from."""
 
-    @save_model_config
     def __init__(
         self,
         detector: Detector,
-        node_definition: NodeDefinition,
+        node_definition: NodeDefinition = NodesAsPulses(),
         edge_definition: Optional[EdgeDefinition] = None,
         node_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
+        perturbation_dict: Optional[Dict[str, float]] = None,
+        seed: Optional[Union[int, Generator]] = None,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -42,10 +42,16 @@ class GraphDefinition(Model):
 
         Args:
             detector: The corresponding ´Detector´ representing the data.
-            node_definition: Definition of nodes.
+            node_definition: Definition of nodes. Defaults to NodesAsPulses.
             edge_definition: Definition of edges. Defaults to None.
             node_feature_names: Names of node feature columns. Defaults to None
             dtype: data type used for node features. e.g. ´torch.float´
+            perturbation_dict: Dictionary mapping a feature name to a standard
+                               deviation according to which the values for this
+                               feature should be randomly perturbed. Defaults
+                               to None.
+            seed: seed or Generator used to randomly sample perturbations.
+                  Defaults to None.
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -54,6 +60,8 @@ class GraphDefinition(Model):
         self._detector = detector
         self._edge_definition = edge_definition
         self._node_definition = node_definition
+        self._perturbation_dict = perturbation_dict
+
         if node_feature_names is None:
             # Assume all features in Detector is used.
             node_feature_names = list(self._detector.feature_map().keys())  # type: ignore
@@ -68,6 +76,24 @@ class GraphDefinition(Model):
         )
         self.nb_inputs = len(self._node_feature_names)
         self.nb_outputs = self._node_definition.nb_outputs
+
+        # Set perturbation_cols if needed
+        if isinstance(self._perturbation_dict, dict):
+            self._perturbation_cols = [
+                self._node_feature_names.index(key)
+                for key in self._perturbation_dict.keys()
+            ]
+        if seed is not None:
+            if isinstance(seed, int):
+                self.rng = default_rng(seed)
+            elif isinstance(seed, Generator):
+                self.rng = seed
+            else:
+                raise ValueError(
+                    "Invalid seed. Must be an int or a numpy Generator."
+                )
+        else:
+            self.rng = default_rng()
 
     def forward(  # type: ignore
         self,
@@ -87,9 +113,12 @@ class GraphDefinition(Model):
             node_feature_names: name of each column. Shape ´[,d]´.
             truth_dicts: Dictionary containing truth labels.
             custom_label_functions: Custom label functions. See https://github.com/graphnet-team/graphnet/blob/main/GETTING_STARTED.md#adding-custom-truth-labels.
-            loss_weight_column: Name of column that holds loss weight. Defaults to None.
+            loss_weight_column: Name of column that holds loss weight.
+                                Defaults to None.
             loss_weight: Loss weight associated with event. Defaults to None.
-            loss_weight_default_value: default value for loss weight. Used in instances where some events have no pre-defined loss weight. Defaults to None.
+            loss_weight_default_value: default value for loss weight.
+                    Used in instances where some events have
+                    no pre-defined loss weight. Defaults to None.
             data_path: Path to dataset data files. Defaults to None.
 
         Returns:
@@ -99,6 +128,9 @@ class GraphDefinition(Model):
         self._validate_input(
             node_features=node_features, node_feature_names=node_feature_names
         )
+
+        # Gaussian perturbation of each column if perturbation dict is given
+        node_features = self._perturb_input(node_features)
 
         # Transform to pytorch tensor
         node_features = torch.tensor(node_features, dtype=self.dtype)
@@ -116,6 +148,7 @@ class GraphDefinition(Model):
         if self._edge_definition is not None:
             graph = self._edge_definition(graph)
         else:
+
             self.warning_once(
                 "No EdgeDefinition provided. Graphs will not have edges defined!"
             )
@@ -161,11 +194,31 @@ class GraphDefinition(Model):
         # was instantiated with.
         assert len(node_feature_names) == len(
             self._node_feature_names
-        ), f"""Input features ({node_feature_names}) is not what {self.__class__.__name__} was instatiated with ({self._node_feature_names})"""
+        ), f"""Input features ({node_feature_names}) is not what 
+               {self.__class__.__name__} was instatiated
+               with ({self._node_feature_names})"""  # noqa
         for idx in range(len(node_feature_names)):
             assert (
                 node_feature_names[idx] == self._node_feature_names[idx]
-            ), f""" Order of node features in data are not the same as expected. Got {node_feature_names} vs. {self._node_feature_names}"""
+            ), f""" Order of node features in data
+                    are not the same as expected. Got {node_feature_names} 
+                    vs. {self._node_feature_names}"""  # noqa
+
+    def _perturb_input(self, node_features: np.ndarray) -> np.ndarray:
+        if isinstance(self._perturbation_dict, dict):
+            self.warning_once(
+                f"""Will randomly perturb
+                {list(self._perturbation_dict.keys())}
+                using stds {self._perturbation_dict.values()}"""  # noqa
+            )
+            perturbed_features = self.rng.normal(
+                loc=node_features[:, self._perturbation_cols],
+                scale=np.array(
+                    list(self._perturbation_dict.values()), dtype=float
+                ),
+            )
+            node_features[:, self._perturbation_cols] = perturbed_features
+        return node_features
 
     def _add_loss_weights(
         self,
@@ -254,7 +307,7 @@ class GraphDefinition(Model):
             else:
                 self.warning_once(
                     """Cannot assign graph['x']. This field is reserved for node features. Please rename your input feature."""
-                )
+
         return graph
 
     def _add_custom_labels(

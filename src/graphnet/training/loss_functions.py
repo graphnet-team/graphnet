@@ -19,7 +19,6 @@ from torch.nn.functional import (
     softplus,
 )
 
-from graphnet.utilities.config import save_model_config
 from graphnet.models.model import Model
 from graphnet.utilities.decorators import final
 
@@ -27,7 +26,6 @@ from graphnet.utilities.decorators import final
 class LossFunction(Model):
     """Base class for loss functions in `graphnet`."""
 
-    @save_model_config
     def __init__(self, **kwargs: Any) -> None:
         """Construct `LossFunction`, saving model config."""
         super().__init__(**kwargs)
@@ -120,7 +118,6 @@ class CrossEntropyLoss(LossFunction):
     (0, num_classes - 1).
     """
 
-    @save_model_config
     def __init__(
         self,
         options: Union[int, List[Any], Dict[Any, int]],
