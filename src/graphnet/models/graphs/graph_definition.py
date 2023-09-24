@@ -150,7 +150,8 @@ class GraphDefinition(Model):
         else:
 
             self.warning_once(
-                "No EdgeDefinition provided. Graphs will not have edges defined!"
+                """No EdgeDefinition provided. 
+                Graphs will not have edges defined!"""  # noqa
             )
 
         # Attach data path - useful for Ensemble datasets.
