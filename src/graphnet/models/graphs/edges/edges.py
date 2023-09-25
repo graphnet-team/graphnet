@@ -26,7 +26,7 @@ class EdgeDefinition(Model):  # pylint: disable=too-few-public-methods
             graph: a graph with edges
         """
         if graph.edge_index is not None:
-            self.warnonce(
+            self.warning_once(
                 "GraphBuilder received graph with pre-existing "
                 "structure. Will overwrite."
             )
