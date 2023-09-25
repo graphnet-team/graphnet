@@ -1,13 +1,19 @@
-"""Simplified example of training Model."""
+"""Multi-class classification using DynEdge from pre-defined config files."""
 
-from typing import List, Optional
 import os
+from typing import List, Optional, Dict, Any
 
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
-from graphnet.constants import EXAMPLE_OUTPUT_DIR
+from graphnet.data.dataset.dataset import EnsembleDataset
+from graphnet.constants import (
+    EXAMPLE_OUTPUT_DIR,
+    DATASETS_CONFIG_DIR,
+    MODEL_CONFIG_DIR,
+)
 from graphnet.data.dataloader import DataLoader
+from graphnet.data.dataset import Dataset
 from graphnet.models import StandardModel
 from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.argparse import ArgumentParser
@@ -71,20 +77,41 @@ def main(
 
     # Construct dataloaders
     dataset_config = DatasetConfig.load(dataset_config_path)
-    dataloaders = DataLoader.from_dataset_config(
+    datasets: Dict[str, Any] = Dataset.from_config(
         dataset_config,
-        **config.dataloader,
+    )
+
+    # Construct datasets from multiple selections
+    train_dataset = EnsembleDataset(
+        [datasets[key] for key in datasets if key.startswith("train")]
+    )
+    valid_dataset = EnsembleDataset(
+        [datasets[key] for key in datasets if key.startswith("valid")]
+    )
+    test_dataset = EnsembleDataset(
+        [datasets[key] for key in datasets if key.startswith("test")]
+    )
+
+    # Construct dataloaders
+    train_dataloaders = DataLoader(
+        train_dataset, shuffle=True, **config.dataloader
+    )
+    valid_dataloaders = DataLoader(
+        valid_dataset, shuffle=False, **config.dataloader
+    )
+    test_dataloaders = DataLoader(
+        test_dataset, shuffle=False, **config.dataloader
     )
 
     # Log configurations to W&B
     # NB: Only log to W&B on the rank-zero process in case of multi-GPU
     #     training.
-    if wandb and rank_zero_only.rank == 0:
+    if wandb and rank_zero_only == 0:
         wandb_logger.experiment.config.update(config)
         wandb_logger.experiment.config.update(model_config.as_dict())
         wandb_logger.experiment.config.update(dataset_config.as_dict())
 
-    # Train model
+    # Training model
     callbacks = [
         EarlyStopping(
             monitor="val_loss",
@@ -94,8 +121,8 @@ def main(
     ]
 
     model.fit(
-        dataloaders["train"],
-        dataloaders["validation"],
+        train_dataloaders,
+        valid_dataloaders,
         callbacks=callbacks,
         logger=wandb_logger if wandb else None,
         **config.fit,
@@ -119,7 +146,7 @@ def main(
     logger.info(f"prediction_columns: {model.prediction_labels}")
 
     results = model.predict_as_dataframe(
-        dataloaders["test"],
+        test_dataloaders,
         additional_attributes=additional_attributes + ["event_no"],
     )
     results.to_csv(f"{path}/results.csv")
@@ -129,13 +156,24 @@ if __name__ == "__main__":
     # Parse command-line arguments
     parser = ArgumentParser(
         description="""
-Train GNN model.
-"""
+            Train GNN classification model.
+            """
     )
 
     parser.with_standard_arguments(
-        "dataset-config",
-        "model-config",
+        (
+            "dataset-config",
+            os.path.join(
+                DATASETS_CONFIG_DIR,
+                "training_classification_example_data_sqlite.yml",
+            ),
+        ),
+        (
+            "model-config",
+            os.path.join(
+                MODEL_CONFIG_DIR, "dynedge_PID_classification_example.yml"
+            ),
+        ),
         "gpus",
         ("max-epochs", 5),
         "early-stopping-patience",
@@ -150,12 +188,6 @@ Train GNN model.
         default=None,
     )
 
-    parser.add_argument(
-        "--wandb",
-        action="store_true",
-        help="If True, Weights & Biases are used to track the experiment.",
-    )
-
     args = parser.parse_args()
 
     main(
@@ -167,5 +199,4 @@ Train GNN model.
         args.batch_size,
         args.num_workers,
         args.suffix,
-        args.wandb,
     )

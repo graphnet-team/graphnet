@@ -5,6 +5,7 @@ import os
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
 from graphnet.data.extractors import (
     I3FeatureExtractorIceCubeUpgrade,
+    I3FeatureExtractorIceCube86,
     I3RetroExtractor,
     I3TruthExtractor,
     I3GenericExtractor,
@@ -34,12 +35,7 @@ def main_icecube86(backend: str) -> None:
 
     converter: DataConverter = CONVERTER_CLASS[backend](
         [
-            I3GenericExtractor(
-                keys=[
-                    "SRTInIcePulses",
-                    "I3MCTree",
-                ]
-            ),
+            I3FeatureExtractorIceCube86("SRTInIcePulses"),
             I3TruthExtractor(),
         ],
         outdir,
