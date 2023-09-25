@@ -34,7 +34,7 @@ def convert_data() -> None:
             I3FeatureExtractorIceCube86(PULSEMAP),
         ],
         outdir=OUTPUT_DIR,
-        workers=10,
+        workers=1,
     )
 
     # Run data converters.
