@@ -175,7 +175,7 @@ if __name__ == "__main__":
             ),
         ),
         "gpus",
-        ("max-epochs", 5),
+        ("max-epochs", 1),
         "early-stopping-patience",
         ("batch-size", 16),
         "num-workers",

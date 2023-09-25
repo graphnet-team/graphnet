@@ -223,7 +223,7 @@ Train GNN model without the use of config files.
 
     parser.with_standard_arguments(
         "gpus",
-        ("max-epochs", 5),
+        ("max-epochs", 1),
         ("early-stopping-patience", 2),
         ("batch-size", 16),
         "num-workers",
