@@ -8,7 +8,6 @@ from graphnet.data.extractors import (
     I3FeatureExtractorIceCube86,
     I3RetroExtractor,
     I3TruthExtractor,
-    I3GenericExtractor,
 )
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.parquet import ParquetDataConverter
