@@ -580,7 +580,17 @@ class DataConverter(ABC, Logger):
             frame: I3Frame to check.
             I3filters: List of I3Filters to check for pass.
         """
+        if "FilterMask" not in frame:
+            self.warning_once(
+                "FilterMask not found in frame. Skipping filter checks."
+            )
+            return False
         for filter in I3filters:
+            if filter not in frame["FilterMask"]:
+                self.warning_once(
+                    f"Filter {filter} not found in frame. Skipping."
+                )
+                continue
             if frame["FilterMask"][filter].condition_passed is False:
                 return True
         return False
