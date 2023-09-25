@@ -55,7 +55,7 @@ jobs:
           editable: true
       - name: Run unit tests and generate coverage report
         run: |
-          coverage run --source=graphnet -m pytest tests/ examples/ --ignore=05_pisa
+          coverage run --source=graphnet -m pytest tests/ examples/ --ignore=examples/05_pisa/
           coverage xml -o coverage.xml
       - name: Work around permission issue
         run: |
@@ -88,7 +88,7 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/ examples/ --ignore=tests/data/ --ignore=tests/deployment/ --ignore=examples/01_icetray --ignore=examples/05_pisa
+          coverage run --source=graphnet -m pytest tests/ examples/ --ignore=tests/data/ --ignore=tests/deployment/ --ignore=examples/01_icetray/ --ignore=examples/05_pisa/
           coverage report -m
 
   build-macos:
@@ -108,5 +108,5 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/ examples/ --ignore=tests/data/ --ignore=tests/deployment/ --ignore=examples/01_icetray --ignore=examples/05_pisa
+          coverage run --source=graphnet -m pytest tests/ examples/ --ignore=tests/data/ --ignore=tests/deployment/ --ignore=examples/01_icetray/ --ignore=examples/05_pisa/
           coverage report -m
