@@ -476,7 +476,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edge_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edge_definition</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warnonce</span><span class="p">(</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
 <span class="w">                </span><span class="sd">"""No EdgeDefinition provided. </span>
 <span class="sd">                Graphs will not have edges defined!"""</span>  <span class="c1"># noqa</span>
             <span class="p">)</span>
@@ -634,10 +635,11 @@
             <span class="k">if</span> <span class="n">feature</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"x"</span><span class="p">]:</span>  <span class="c1"># reserved for node features.</span>
                 <span class="n">graph</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">warnonce</span><span class="p">(</span>
-<span class="w">                    </span><span class="sd">"""Cannot assign graph['x']. This field is reserved </span>
-<span class="sd">                    for node features. Please rename your input feature."""</span>  <span class="c1"># noqa</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">"""Cannot assign graph['x']. This field is reserved for</span>
+<span class="sd">                      node features. Please rename your input feature."""</span>
+                <span class="p">)</span>  <span class="c1"># noqa</span>
+
         <span class="k">return</span> <span class="n">graph</span>
 
     <span class="k">def</span> <span class="nf">_add_custom_labels</span><span class="p">(</span>
