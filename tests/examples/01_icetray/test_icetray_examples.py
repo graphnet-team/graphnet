@@ -26,7 +26,5 @@ def test_03_i3_deployer_example() -> None:
 def test_04_i3_module_in_native_icetray_example() -> None:
     """Test for 04_i3_module_in_native_icetray_example."""
     runpy.run_path(
-        os.path.join(
-            EXAMPLE_PATH, "04_i3_module_in_naticve_icetray_example.py"
-        )
+        os.path.join(EXAMPLE_PATH, "04_i3_module_in_native_icetray_example.py")
     )
