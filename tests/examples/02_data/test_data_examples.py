@@ -14,7 +14,7 @@ def test_01_read_dataset() -> None:
 def test_02_plot_feature_distribution() -> None:
     """Test for 02_plot_feature_distribution."""
     runpy.run_path(
-        os.path.join(EXAMPLE_PATH, "02_plot_feature_distribution.py")
+        os.path.join(EXAMPLE_PATH, "02_plot_feature_distributions.py")
     )
 
 
