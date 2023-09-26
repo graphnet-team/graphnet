@@ -95,7 +95,7 @@ agree.
 """
         )
 
-        args = parser.parse_args()
+        args, unknown = parser.parse_known_args()
 
         # Run example script(s)
         convert_data()

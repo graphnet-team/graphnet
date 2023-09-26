@@ -121,6 +121,6 @@ Read a few events from data in an intermediate format.
         nargs="?",
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(args.backend)

@@ -88,4 +88,5 @@ if __name__ == "__main__":
 Combine multiple Datasets using EnsembleDataset.
 """
     )
+    args, unknown = parser.parse_known_args()
     main()

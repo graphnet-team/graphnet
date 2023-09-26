@@ -188,7 +188,7 @@ if __name__ == "__main__":
         default=None,
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(
         args.dataset_config,

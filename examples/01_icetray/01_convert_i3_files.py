@@ -99,7 +99,7 @@ Convert I3 files to an intermediate format.
             "detector", choices=["icecube-86", "icecube-upgrade"]
         )
 
-        args = parser.parse_args()
+        args, unknown = parser.parse_known_args()
 
         # Run example script
         if args.detector == "icecube-86":
