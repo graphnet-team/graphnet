@@ -66,6 +66,6 @@ Plot feature distributions in dataset.
 """
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main()

@@ -57,6 +57,6 @@ Convert Parquet files to SQLite database.
         default="truth",
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(args.parquet_path, args.mc_truth_table)

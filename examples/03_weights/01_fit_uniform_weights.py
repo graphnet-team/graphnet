@@ -37,6 +37,6 @@ Fit per-event weights to make the truth-level zenith distribution uniform.
 """
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main()

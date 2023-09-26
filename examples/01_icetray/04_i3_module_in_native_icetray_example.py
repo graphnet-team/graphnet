@@ -126,7 +126,7 @@ Use GraphNeTI3Modules to deploy trained model in native IceTray.
 """
         )
 
-        args = parser.parse_args()
+        args, unknown = parser.parse_known_args()
 
         # Run example script
         main()
