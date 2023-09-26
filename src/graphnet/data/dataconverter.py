@@ -21,6 +21,7 @@ from typing import (
     TypeVar,
     Union,
     cast,
+    Sequence,
 )
 
 import numpy as np
@@ -39,6 +40,7 @@ from graphnet.utilities.decorators import final
 from graphnet.utilities.filesys import find_i3_files
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
+from graphnet.data.filters import I3Filter, NullSplitI3Filter
 
 if has_icecube_package():
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
@@ -107,7 +109,7 @@ class DataConverter(ABC, Logger):
         workers: int = 1,
         index_column: str = "event_no",
         icetray_verbose: int = 0,
-        I3filters: List[str] = [],
+        i3_Filters: Union[I3Filter, List[Callable]] = [NullSplitI3Filter],
     ):
         """Construct DataConverter.
 
@@ -167,7 +169,13 @@ class DataConverter(ABC, Logger):
         self._sequential_batch_pattern = sequential_batch_pattern
         self._input_file_batch_pattern = input_file_batch_pattern
         self._workers = workers
-        self._I3filters = I3filters
+        if isinstance(i3_Filters, I3Filter):
+            I3_Filters = [i3_Filters]
+        self._I3filters = I3_Filters
+        for filter in self._I3filters:
+            assert isinstance(
+                filter, I3Filter
+            ), f"{type(filter)} is not a subclass of I3Filter"
 
         # Create I3Extractors
         self._extractors = I3ExtractorCollection(*extractors)
@@ -435,9 +443,8 @@ class DataConverter(ABC, Logger):
             except Exception as e:
                 if "I3" in str(e):
                     continue
+            # check if frame should be skipped
             if self._skip_frame(frame):
-                continue
-            if self._filter_mask(frame):
                 continue
 
             # Try to extract data from I3Frame
@@ -559,38 +566,15 @@ class DataConverter(ABC, Logger):
         return output_file
 
     def _skip_frame(self, frame: "icetray.I3Frame") -> bool:
-        """Check if frame should be skipped.
-
-        Args:
-            frame: I3Frame to check.
+        """Check the user defined filters.
 
         Returns:
-            True if frame is a null split frame, else False.
+            bool: True if frame should be skipped, False otherwise.
         """
-        if frame["I3EventHeader"].sub_event_stream == "NullSplit":
-            return True
-        return False
+        if self._I3filters is None:
+            return False  # No filters defined, so we keep the frame
 
-    def _filter_mask(self, frame: "icetray.I3Frame") -> bool:
-        """Check if specified condition(s) are met.
-
-        A 'True' return will skip the frame.
-
-        Args:
-            frame: I3Frame to check.
-            I3filters: List of I3Filters to check for pass.
-        """
-        if "FilterMask" not in frame:
-            self.warning_once(
-                "FilterMask not found in frame. Skipping filter checks."
-            )
-            return False
         for filter in self._I3filters:
-            if filter not in frame["FilterMask"]:
-                self.warning_once(
-                    f"Filter {filter} not found in frame. Skipping."
-                )
-                continue
-            if frame["FilterMask"][filter].condition_passed is False:
-                return True
-        return False
+            if not filter(frame):
+                return True  # A filter keep_frame call has returned false, so we skip the frame
+        return False  # All filter keep_frame calls have returned true, so we keep the frame
