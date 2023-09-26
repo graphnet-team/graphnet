@@ -2,26 +2,15 @@
 import runpy
 import os
 from graphnet.constants import GRAPHNET_ROOT_DIR
+from glob import glob
+import pytest
 
 EXAMPLE_PATH = os.path.join(GRAPHNET_ROOT_DIR, "examples/03_weights")
 
-
-def test_01_fit_uniform_weights() -> None:
-    """Test for 01_fit_uniform_weights."""
-    runpy.run_path(
-        os.path.join(EXAMPLE_PATH, "01_fit_uniform_weights.py"),
-        run_name="__main__",
-    )
+examples = glob(EXAMPLE_PATH + "/*.py")
 
 
-def test_02_fit_bjoern_low_weights() -> None:
-    """Test for 02_fit_bjoern_low_weights."""
-    runpy.run_path(
-        os.path.join(EXAMPLE_PATH, "02_fit_bjoern_low_weights.py"),
-        run_name="__main__",
-    )
-
-
-if __name__ == "__main__":
-    test_01_fit_uniform_weights()
-    test_02_fit_bjoern_low_weights()
+@pytest.mark.parametrize("example", examples)
+def test_script_execution(example: str) -> None:
+    """Test function that executes example."""
+    runpy.run_path(os.path.join(EXAMPLE_PATH, example))
