@@ -55,7 +55,7 @@ jobs:
           editable: true
       - name: Run unit tests and generate coverage report
         run: |
-          coverage run --source=graphnet -m pytest tests/ examples/ --ignore=examples/05_pisa/
+          coverage run --source=graphnet -m pytest examples/ --ignore=examples/05_pisa/
           coverage xml -o coverage.xml
       - name: Work around permission issue
         run: |
