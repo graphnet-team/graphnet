@@ -576,5 +576,5 @@ class DataConverter(ABC, Logger):
 
         for filter in self._I3filters:
             if not filter(frame):
-                return True  # A filter keep_frame call has returned false, so we skip the frame
-        return False  # All filter keep_frame calls have returned true, so we keep the frame
+                return True  # keep_frame call false, skip the frame.
+        return False  # All filter keep_frame calls true, keep the frame.
