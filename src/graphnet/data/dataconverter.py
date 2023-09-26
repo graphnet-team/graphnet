@@ -437,7 +437,7 @@ class DataConverter(ABC, Logger):
                     continue
             if self._skip_frame(frame):
                 continue
-            if self._filter_mask(frame, self._I3filters):
+            if self._filter_mask(frame):
                 continue
 
             # Try to extract data from I3Frame
@@ -571,10 +571,10 @@ class DataConverter(ABC, Logger):
             return True
         return False
 
-    def _filter_mask(
-        self, frame: "icetray.I3Frame", I3filters: List[str]
-    ) -> bool:
+    def _filter_mask(self, frame: "icetray.I3Frame") -> bool:
         """Check if specified condition(s) are met.
+
+        A 'True' return will skip the frame.
 
         Args:
             frame: I3Frame to check.
@@ -585,7 +585,7 @@ class DataConverter(ABC, Logger):
                 "FilterMask not found in frame. Skipping filter checks."
             )
             return False
-        for filter in I3filters:
+        for filter in self._I3filters:
             if filter not in frame["FilterMask"]:
                 self.warning_once(
                     f"Filter {filter} not found in frame. Skipping."
