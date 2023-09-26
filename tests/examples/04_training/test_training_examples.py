@@ -28,3 +28,10 @@ def test_04_train_multiclassifier_from_configs() -> None:
     runpy.run_path(
         os.path.join(EXAMPLE_PATH, "04_train_multiclassifier_from_configs.py")
     )
+
+
+if __name__ == "__main__":
+    test_01_train_dynedge()
+    test_02_train_tito_model()
+    test_03_train_dynedge_from_config()
+    test_04_train_multiclassifier_from_configs()
