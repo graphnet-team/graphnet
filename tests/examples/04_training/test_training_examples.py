@@ -3,7 +3,7 @@ import runpy
 import os
 from graphnet.constants import GRAPHNET_ROOT_DIR
 
-EXAMPLE_PATH = os.path.join(GRAPHNET_ROOT_DIR, "examples/04_data")
+EXAMPLE_PATH = os.path.join(GRAPHNET_ROOT_DIR, "examples/04_training")
 
 
 def test_01_train_dynedge() -> None:
