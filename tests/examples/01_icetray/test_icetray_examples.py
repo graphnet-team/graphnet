@@ -28,3 +28,10 @@ def test_04_i3_module_in_native_icetray_example() -> None:
     runpy.run_path(
         os.path.join(EXAMPLE_PATH, "04_i3_module_in_native_icetray_example.py")
     )
+
+
+if __name__ == "__main__":
+    test_01_convert_i3_files()
+    test_02_compare_sqlite_and_parquet()
+    test_03_i3_deployer_example()
+    test_04_i3_module_in_native_icetray_example()

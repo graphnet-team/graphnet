@@ -28,3 +28,10 @@ def test_03_convert_parquet_to_sqlite() -> None:
 def test_04_ensemble_dataset() -> None:
     """Test for 04_ensemble_dataset."""
     runpy.run_path(os.path.join(EXAMPLE_PATH, "04_ensemble_dataset.py"))
+
+
+if __name__ == "__main__":
+    test_01_read_dataset()
+    test_02_plot_feature_distribution()
+    test_03_convert_parquet_to_sqlite()
+    test_04_ensemble_dataset()

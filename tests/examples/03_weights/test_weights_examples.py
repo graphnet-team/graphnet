@@ -14,3 +14,8 @@ def test_01_fit_uniform_weights() -> None:
 def test_02_fit_bjoern_low_weights() -> None:
     """Test for 02_fit_bjoern_low_weights."""
     runpy.run_path(os.path.join(EXAMPLE_PATH, "02_fit_bjoern_low_weights.py"))
+
+
+if __name__ == "__main__":
+    test_01_fit_uniform_weights()
+    test_02_fit_bjoern_low_weights()
