@@ -28,23 +28,36 @@ def collate_fn(graphs: List[Data]) -> Batch:
     return Batch.from_data_list(graphs)
 
 
-class collator_sequence_buckleting():
-    """Perform the sequence bucketing for the graphs in the batch.
+class collator_sequence_buckleting:
+    """Perform the sequence bucketing for the graphs in the batch."""
 
-    batch_splits: list of floats, each element is the fraction of the total 
-    number of graphs. only the cutting points should be provided, the first
-    element will be 0 and the last element should be 1.
-
-    """
     def __init__(self, batch_splits: List[float] = [0.8]):
+        """Set cutting points of the different mini-batches.
+
+        batch_splits: list of floats, each element is the fraction of the total
+        number of graphs. This list should not explicitly define the first and
+        last elements, which will always be 0 and 1 respectively.
+        """
         self.batch_splits = batch_splits
 
-    def __call__(self, graphs: List[Data]):
+    def __call__(self, graphs: List[Data]) -> Batch:
+        """Execute sequence bucketing on the input list of graphs and sort them
+        by the number of pulses for each mini-batch.
+
+        Args:
+            graphs: A list of Data objects representing the input graphs.
+
+        Returns:
+            A list of Batch objects, each containing a mini-batch of the input graphs
+            sorted by their number of pulses.
+        """
         graphs = [g for g in graphs if g.n_pulses > 1]
         graphs.sort(key=lambda x: x.n_pulses)
         batch_list = []
 
-        for minp, maxp in zip([0] + self.batch_splits, self.batch_splits + [1]):
+        for minp, maxp in zip(
+            [0] + self.batch_splits, self.batch_splits + [1]
+        ):
             min_idx = int(minp * len(graphs))
             max_idx = int(maxp * len(graphs))
             this_graphs = graphs[min_idx:max_idx]
