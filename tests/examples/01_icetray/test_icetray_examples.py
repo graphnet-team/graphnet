@@ -8,25 +8,35 @@ EXAMPLE_PATH = os.path.join(GRAPHNET_ROOT_DIR, "examples/01_icetray")
 
 def test_01_convert_i3_files() -> None:
     """Test for 01_convert_i3_files."""
-    runpy.run_path(os.path.join(EXAMPLE_PATH, "01_convert_i3_files.py"))
+    runpy.run_path(
+        os.path.join(EXAMPLE_PATH, "01_convert_i3_files.py"),
+        run_name="__main__",
+    )
 
 
 def test_02_compare_sqlite_and_parquet() -> None:
     """Test for 02_compare_sqlite_and_parquet."""
     runpy.run_path(
-        os.path.join(EXAMPLE_PATH, "02_compare_sqlite_and_parquet.py")
+        os.path.join(EXAMPLE_PATH, "02_compare_sqlite_and_parquet.py"),
+        run_name="__main__",
     )
 
 
 def test_03_i3_deployer_example() -> None:
     """Test for 03_i3_deployer_example."""
-    runpy.run_path(os.path.join(EXAMPLE_PATH, "03_i3_deployer_example.py"))
+    runpy.run_path(
+        os.path.join(EXAMPLE_PATH, "03_i3_deployer_example.py"),
+        run_name="__main__",
+    )
 
 
 def test_04_i3_module_in_native_icetray_example() -> None:
     """Test for 04_i3_module_in_native_icetray_example."""
     runpy.run_path(
-        os.path.join(EXAMPLE_PATH, "04_i3_module_in_native_icetray_example.py")
+        os.path.join(
+            EXAMPLE_PATH, "04_i3_module_in_native_icetray_example.py"
+        ),
+        run_name="__main__",
     )
 
 
