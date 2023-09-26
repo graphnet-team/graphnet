@@ -36,7 +36,7 @@ class I3Filter(Logger):
             assert isinstance(pass_flag, bool)
         except AssertionError:
             raise TypeError(
-                f"Expected _pass_frame to return a bool, got {type(pass_flag)}."
+                f"Expected _pass_frame to return bool, got {type(pass_flag)}."
             )
         return pass_flag
 
@@ -91,7 +91,7 @@ class I3FilterMask(I3Filter):
                 for filter_name in self._filter_names:
                     if filter_name not in frame["FilterMask"]:
                         self.warning_once(
-                            f"FilterMask {filter_name} not found in frame.skipping filter."
+                            f"FilterMask {filter_name} not found in frame. skipping filter."
                         )
                         continue
                     elif frame["FilterMask"][filter].condition_passed is True:
@@ -111,7 +111,7 @@ class I3FilterMask(I3Filter):
                         )
                         continue
                     elif frame["FilterMask"][filter].condition_passed is True:
-                        continue  # current filter is passed, continue to next filter
+                        continue  # current filter passed, continue to next filter
                     else:
                         return (
                             False  # current filter failed so frame is skipped.
