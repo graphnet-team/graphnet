@@ -2,14 +2,18 @@
 from abc import abstractmethod
 from graphnet.utilities.logging import Logger
 from typing import List
-from icecube import icetray
+
+from graphnet.utilities.imports import has_icecube_package
+
+if has_icecube_package():
+    from icecube import icetray
 
 
 class I3Filter(Logger):
     """A generic filter for I3-frames."""
 
     @abstractmethod
-    def _pass_frame(self, frame: icetray.I3Frame) -> bool:
+    def _pass_frame(self, frame: "icetray.I3Frame") -> bool:
         """Return True if the frame passes the filter, False otherwise.
 
         Args:
@@ -21,7 +25,7 @@ class I3Filter(Logger):
         """
         raise NotImplementedError
 
-    def __call__(self, frame: icetray.I3Frame) -> bool:
+    def __call__(self, frame: "icetray.I3Frame") -> bool:
         """Return True if the frame passes the filter, False otherwise.
 
         Args:
@@ -44,7 +48,7 @@ class I3Filter(Logger):
 class NullSplitI3Filter(I3Filter):
     """A filter that skips all null-split frames."""
 
-    def _keep_frame(self, frame: icetray.I3Frame) -> bool:
+    def _keep_frame(self, frame: "icetray.I3Frame") -> bool:
         """Check that frame is not a null-split frame.
 
         returns False if the frame is a null-split frame, True otherwise.
@@ -76,7 +80,7 @@ class I3FilterMask(I3Filter):
         self._filter_names = filter_names
         self._filter_any = filter_any
 
-    def _keep_frame(self, frame: icetray.I3Frame) -> bool:
+    def _keep_frame(self, frame: "icetray.I3Frame") -> bool:
         """Check if current frame should be kept.
 
         Args:
