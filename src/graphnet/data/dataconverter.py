@@ -109,7 +109,7 @@ class DataConverter(ABC, Logger):
         workers: int = 1,
         index_column: str = "event_no",
         icetray_verbose: int = 0,
-        i3_Filters: Union[I3Filter, List[Callable]] = [NullSplitI3Filter],
+        I3_Filters: Union[I3Filter, List[Callable]] = [NullSplitI3Filter],
     ):
         """Construct DataConverter.
 
@@ -169,10 +169,10 @@ class DataConverter(ABC, Logger):
         self._sequential_batch_pattern = sequential_batch_pattern
         self._input_file_batch_pattern = input_file_batch_pattern
         self._workers = workers
-        if isinstance(i3_Filters, I3Filter):
-            I3_Filters = [i3_Filters]
-        self._I3filters = I3_Filters
-        for filter in self._I3filters:
+        if isinstance(I3_Filters, I3Filter):
+            I3_Filters = [I3_Filters]
+        self._I3Filters = I3_Filters
+        for filter in self._I3Filters:
             assert isinstance(
                 filter, I3Filter
             ), f"{type(filter)} is not a subclass of I3Filter"
@@ -571,10 +571,10 @@ class DataConverter(ABC, Logger):
         Returns:
             bool: True if frame should be skipped, False otherwise.
         """
-        if self._I3filters is None:
+        if self._I3Filters is None:
             return False  # No filters defined, so we keep the frame
 
-        for filter in self._I3filters:
+        for filter in self._I3Filters:
             if not filter(frame):
                 return True  # keep_frame call false, skip the frame.
         return False  # All filter keep_frame calls true, keep the frame.
