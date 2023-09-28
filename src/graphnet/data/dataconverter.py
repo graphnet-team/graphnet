@@ -21,7 +21,6 @@ from typing import (
     TypeVar,
     Union,
     cast,
-    Sequence,
 )
 
 import numpy as np
@@ -109,7 +108,7 @@ class DataConverter(ABC, Logger):
         workers: int = 1,
         index_column: str = "event_no",
         icetray_verbose: int = 0,
-        I3_Filters: Union[I3Filter, List[Callable]] = [NullSplitI3Filter],
+        I3_Filters: List[I3Filter] = [],
     ):
         """Construct DataConverter.
 
@@ -169,9 +168,10 @@ class DataConverter(ABC, Logger):
         self._sequential_batch_pattern = sequential_batch_pattern
         self._input_file_batch_pattern = input_file_batch_pattern
         self._workers = workers
-        if isinstance(I3_Filters, I3Filter):
-            I3_Filters = [I3_Filters]
-        self._I3Filters = I3_Filters
+
+        # I3Filters (NullSplitI3Filter is always included)
+        self._I3Filters = [NullSplitI3Filter()] + I3_Filters
+
         for filter in self._I3Filters:
             assert isinstance(
                 filter, I3Filter
