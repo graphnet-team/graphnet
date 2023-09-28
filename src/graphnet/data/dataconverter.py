@@ -108,7 +108,7 @@ class DataConverter(ABC, Logger):
         workers: int = 1,
         index_column: str = "event_no",
         icetray_verbose: int = 0,
-        I3_Filters: List[I3Filter] = [],
+        i3_filters: List[I3Filter] = [],
     ):
         """Construct DataConverter.
 
@@ -170,9 +170,9 @@ class DataConverter(ABC, Logger):
         self._workers = workers
 
         # I3Filters (NullSplitI3Filter is always included)
-        self._I3Filters = [NullSplitI3Filter()] + I3_Filters
+        self._i3filters = [NullSplitI3Filter()] + i3_filters
 
-        for filter in self._I3Filters:
+        for filter in self._i3filters:
             assert isinstance(
                 filter, I3Filter
             ), f"{type(filter)} is not a subclass of I3Filter"
@@ -571,10 +571,10 @@ class DataConverter(ABC, Logger):
         Returns:
             bool: True if frame should be skipped, False otherwise.
         """
-        if self._I3Filters is None:
+        if self._i3filters is None:
             return False  # No filters defined, so we keep the frame
 
-        for filter in self._I3Filters:
+        for filter in self._i3filters:
             if not filter(frame):
                 return True  # keep_frame call false, skip the frame.
         return False  # All filter keep_frame calls true, keep the frame.
