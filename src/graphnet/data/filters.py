@@ -13,15 +13,15 @@ class I3Filter(Logger):
     """A generic filter for I3-frames."""
 
     @abstractmethod
-    def _pass_frame(self, frame: "icetray.I3Frame") -> bool:
-        """Return True if the frame passes the filter, False otherwise.
+    def _keep_frame(self, frame: "icetray.I3Frame") -> bool:
+        """Return True if the frame is kept, False otherwise.
 
         Args:
             frame: I3-frame
                 The I3-frame to check.
 
         Returns:
-            bool: True if the frame passes the filter, False otherwise.
+            bool: True if the frame is kept, False otherwise.
         """
         raise NotImplementedError
 
@@ -35,7 +35,7 @@ class I3Filter(Logger):
         Returns:
             bool: True if the frame passes the filter, False otherwise.
         """
-        pass_flag = self._pass_frame(frame)
+        pass_flag = self._keep_frame(frame)
         try:
             assert isinstance(pass_flag, bool)
         except AssertionError:
