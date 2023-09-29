@@ -36,7 +36,7 @@ jobs:
     name: Unit tests - IceTray
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-latest
-    container: icecube/icetray:stable-slim
+    container: icecube/icetray:combo-stable-slim
     steps:
       - name: Set environment variables
         run: |
