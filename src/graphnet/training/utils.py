@@ -22,7 +22,7 @@ from graphnet.models.graphs import GraphDefinition
 def collate_fn(graphs: List[Data]) -> Batch:
     """Remove graphs with less than two DOM hits.
 
-    Should not occur in "production.
+    Should not occur in "production".
     """
     graphs = [g for g in graphs if g.n_pulses > 1]
     return Batch.from_data_list(graphs)
@@ -71,7 +71,7 @@ class collator_sequence_buckleting:
 def make_dataloader(
     db: str,
     pulsemaps: Union[str, List[str]],
-    graph_definition: Optional[GraphDefinition],
+    graph_definition: GraphDefinition,
     features: List[str],
     truth: List[str],
     *,
@@ -131,7 +131,7 @@ def make_dataloader(
 # @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_train_validation_dataloader(
     db: str,
-    graph_definition: Optional[GraphDefinition],
+    graph_definition: GraphDefinition,
     selection: Optional[List[int]],
     pulsemaps: Union[str, List[str]],
     features: List[str],

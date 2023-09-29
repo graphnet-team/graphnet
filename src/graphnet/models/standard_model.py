@@ -10,7 +10,6 @@ from torch.utils.data import DataLoader
 from torch_geometric.data import Data
 import pandas as pd
 
-from graphnet.utilities.config import save_model_config
 from graphnet.models.graphs import GraphDefinition
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.model import Model
@@ -24,7 +23,6 @@ class StandardModel(Model):
     model (detector read-in, GNN architecture, and task-specific read-outs).
     """
 
-    @save_model_config
     def __init__(
         self,
         *,

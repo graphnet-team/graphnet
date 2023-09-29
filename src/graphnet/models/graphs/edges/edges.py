@@ -7,7 +7,6 @@ import torch
 from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
 
-from graphnet.utilities.config import save_model_config
 from graphnet.models.utils import calculate_distance_matrix
 from graphnet.models import Model
 
@@ -27,7 +26,7 @@ class EdgeDefinition(Model):  # pylint: disable=too-few-public-methods
             graph: a graph with edges
         """
         if graph.edge_index is not None:
-            self.warnonce(
+            self.warning_once(
                 "GraphBuilder received graph with pre-existing "
                 "structure. Will overwrite."
             )
@@ -48,7 +47,6 @@ class EdgeDefinition(Model):  # pylint: disable=too-few-public-methods
 class KNNEdges(EdgeDefinition):  # pylint: disable=too-few-public-methods
     """Builds edges from the k-nearest neighbours."""
 
-    @save_model_config
     def __init__(
         self,
         nb_nearest_neighbours: int,
@@ -85,7 +83,6 @@ class KNNEdges(EdgeDefinition):  # pylint: disable=too-few-public-methods
 class RadialEdges(EdgeDefinition):
     """Builds graph from a sphere of chosen radius centred at each node."""
 
-    @save_model_config
     def __init__(
         self,
         radius: float,
@@ -126,7 +123,6 @@ class EuclideanEdges(EdgeDefinition):  # pylint: disable=too-few-public-methods
     See https://arxiv.org/pdf/1809.06166.pdf.
     """
 
-    @save_model_config
     def __init__(
         self,
         sigma: float,

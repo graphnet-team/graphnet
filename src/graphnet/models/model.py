@@ -18,11 +18,17 @@ from torch.utils.data import DataLoader, SequentialSampler
 from torch_geometric.data import Data
 
 from graphnet.utilities.logging import Logger
-from graphnet.utilities.config import Configurable, ModelConfig
+from graphnet.utilities.config import (
+    Configurable,
+    ModelConfig,
+    ModelConfigSaverABC,
+)
 from graphnet.training.callbacks import ProgressBar
 
 
-class Model(Logger, Configurable, LightningModule, ABC):
+class Model(
+    Logger, Configurable, LightningModule, ABC, metaclass=ModelConfigSaverABC
+):
     """Base class for all models in graphnet."""
 
     @abstractmethod
