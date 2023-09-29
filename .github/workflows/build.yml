@@ -44,6 +44,8 @@ jobs:
           echo "PYTHONPATH=/usr/local/icetray/lib:$PYTHONPATH" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=/usr/local/icetray/lib:/usr/local/icetray/cernroot/lib:/usr/local/icetray/lib/tools:$LD_LIBRARY_PATH" >> $GITHUB_ENV
       - uses: actions/checkout@v3
+      - name: Print available disk space before graphnet install
+        run: df -h
       - name: Upgrade packages already installed on icecube/icetray
         run: |
           pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
@@ -82,16 +84,22 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Print available disk space before graphnet install
+        run: df -h
       - name: Install package
         uses: ./.github/actions/install
         with:
           editable: true
+      - name: Print available disk space after graphnet install
+        run: df -h
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/utilities --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/01_icetray/
           coverage run --source=graphnet -m pytest tests/utilities
           coverage report -m
+      - name: Print available disk space after unit tests
+        run: df -h  
 
   build-macos:
     name: Unit tests - macOS
