@@ -35,7 +35,7 @@ class DynEdgeTITO(GNN):
     def __init__(
         self,
         nb_inputs: int,
-        features_subset: slice = slice(0, 4),
+        features_subset: List[int] = None,
         dyntrans_layer_sizes: Optional[List[Tuple[int, ...]]] = None,
         global_pooling_schemes: List[str] = ["max"],
     ):
@@ -120,7 +120,7 @@ class DynEdgeTITO(GNN):
         self._activation = torch.nn.LeakyReLU()
         self._nb_inputs = nb_inputs
         self._nb_global_variables = 5 + nb_inputs
-        self._features_subset = features_subset
+        self._features_subset = features_subset or [0, 1, 2, 3]
         self._construct_layers()
 
     def _construct_layers(self) -> None:
