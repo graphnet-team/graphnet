@@ -60,13 +60,10 @@ jobs:
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples
           coverage run --source=graphnet -m pytest tests/examples/01_icetray
           coverage xml -o coverage.xml
-      - name: install git
-        shell: bash
-        run: | 
-          sudo apt-get install git-all
-      - name: Work around permission issue
-        run: |
-          git config --global --add safe.directory /__w/graphnet/graphnet
+    
+      #- name: Work around permission issue
+      #  run: |
+      #    git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         if: needs.check-codeclimate-credentials.outputs.has_credentials == 'true'
