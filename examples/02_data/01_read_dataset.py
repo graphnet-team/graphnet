@@ -113,8 +113,14 @@ Read a few events from data in an intermediate format.
 """
     )
 
-    parser.add_argument("backend", choices=["sqlite", "parquet"])
+    parser.add_argument(
+        "backend",
+        choices=["sqlite", "parquet"],
+        default="sqlite",
+        const="sqlite",
+        nargs="?",
+    )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(args.backend)
