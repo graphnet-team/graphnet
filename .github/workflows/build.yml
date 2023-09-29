@@ -36,7 +36,7 @@ jobs:
     name: Unit tests - IceTray
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-latest
-    container: icecube/icetray:combo-stable
+    container: icecube/icetray:stable-slim
     steps:
       - name: Set environment variables
         run: |
@@ -46,10 +46,6 @@ jobs:
       - uses: actions/checkout@v3
       - name: Print available disk space before graphnet install
         run: df -h
-      - name: free disk space
-        run: |
-          docker rmi $(docker image ls -aq)
-          df -h
       - name: Upgrade packages already installed on icecube/icetray
         run: |
           pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
