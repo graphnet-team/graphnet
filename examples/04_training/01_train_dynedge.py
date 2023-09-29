@@ -213,7 +213,7 @@ Train GNN model without the use of config files.
 
     parser.with_standard_arguments(
         "gpus",
-        ("max-epochs", 5),
+        ("max-epochs", 1),
         "early-stopping-patience",
         ("batch-size", 16),
         "num-workers",
@@ -225,7 +225,7 @@ Train GNN model without the use of config files.
         help="If True, Weights & Biases are used to track the experiment.",
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(
         args.path,
