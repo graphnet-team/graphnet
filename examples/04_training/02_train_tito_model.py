@@ -182,8 +182,7 @@ def main(
 
     # Save model config and state dict - Version safe save method.
     model.save_state_dict(f"{path}/state_dict.pth")
-    # model.save_config(f"{path}/model_config.yml")
-    # Pending https://github.com/graphnet-team/graphnet/issues/606
+    model.save_config(f"{path}/model_config.yml")
 
 
 if __name__ == "__main__":
