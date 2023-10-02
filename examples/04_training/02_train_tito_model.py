@@ -182,7 +182,8 @@ def main(
 
     # Save model config and state dict - Version safe save method.
     model.save_state_dict(f"{path}/state_dict.pth")
-    model.save_config(f"{path}/model_config.yml")
+    # model.save_config(f"{path}/model_config.yml")
+    # Pending https://github.com/graphnet-team/graphnet/issues/606
 
 
 if __name__ == "__main__":
@@ -223,7 +224,7 @@ Train GNN model without the use of config files.
 
     parser.with_standard_arguments(
         "gpus",
-        ("max-epochs", 5),
+        ("max-epochs", 1),
         ("early-stopping-patience", 2),
         ("batch-size", 16),
         "num-workers",
@@ -235,7 +236,7 @@ Train GNN model without the use of config files.
         help="If True, Weights & Biases are used to track the experiment.",
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(
         args.path,
