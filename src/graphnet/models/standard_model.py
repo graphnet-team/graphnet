@@ -96,6 +96,7 @@ class StandardModel(Model):
 
     def forward(self, data: List[Data]) -> List[Union[Tensor, Data]]:
         """Forward pass, chaining model components."""
+        assert isinstance(data, List[Data])
         x_list = []
         for d in data:
             x = self._gnn(d)
