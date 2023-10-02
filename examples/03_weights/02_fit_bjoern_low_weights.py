@@ -45,6 +45,6 @@ Fit per-event weights according to the `BjoernLow` weight fitter.
 """
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main()
