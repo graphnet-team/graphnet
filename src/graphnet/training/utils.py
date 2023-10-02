@@ -41,8 +41,7 @@ class collator_sequence_buckleting:
         self.batch_splits = batch_splits
 
     def __call__(self, graphs: List[Data]) -> Batch:
-        """Execute sequence bucketing on the input list of graphs and sort them
-        by the number of pulses for each mini-batch.
+        """Execute sequence bucketing on the input list of graphs.
 
         Args:
             graphs: A list of Data objects representing the input graphs.
