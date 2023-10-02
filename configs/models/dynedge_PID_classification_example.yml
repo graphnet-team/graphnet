@@ -38,6 +38,7 @@ arguments:
   - ModelConfig:
       arguments:
         nb_outputs: 3 # number of classes
+        prediction_labels: ['noise', 'muon', 'neutrino']
         hidden_size: 128
         loss_function:
           ModelConfig:
