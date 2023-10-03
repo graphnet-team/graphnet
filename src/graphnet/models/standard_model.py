@@ -94,7 +94,9 @@ class StandardModel(Model):
             )
         return config
 
-    def forward(self, data: Union[Data, List[Data]]) -> List[Union[Tensor, Data]]:
+    def forward(
+        self, data: Union[Data, List[Data]]
+    ) -> List[Union[Tensor, Data]]:
         """Forward pass, chaining model components."""
         if isinstance(data, Data):
             data = [data]
