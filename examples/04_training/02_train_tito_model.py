@@ -107,7 +107,10 @@ def main(
     # Building model
     gnn = DynEdgeTITO(
         nb_inputs=graph_definition.nb_outputs,
+        dyntrans_layer_sizes=[(256, 256), (256, 256), (256, 256), (256, 256)],
         global_pooling_schemes=["max"],
+        use_global_features=True,
+        use_post_processing_layers=True,
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=gnn.nb_outputs,
