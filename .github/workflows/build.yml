@@ -38,6 +38,28 @@ jobs:
     runs-on: ubuntu-latest
     container: icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
     steps:
+      - name: Before Clean-up
+        run: |
+          echo "Free space:"
+          df -h
+
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+
+          # all of these default to true, but feel free to set to
+          # false if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: After Clean-up
+        run: |
+          echo "Free space:"
+          df -h
       - name: Set environment variables
         run: |
           echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
