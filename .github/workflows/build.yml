@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: install git
         run: |
-         apt-get --yes --force-yes install sudo  
+         apt-get --allow-change-held-packages install sudo  
          sudo apt-get install git-all
       - name: Set environment variables
         run: |
