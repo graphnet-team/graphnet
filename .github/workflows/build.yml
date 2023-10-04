@@ -42,8 +42,8 @@ jobs:
     steps:
       - name: install git
         run: |
-         apt-get -y --allow-change-held-packages install sudo  
-         sudo apt-get install git-all
+          apt-get --yes install sudo
+          sudo apt-get install --yes git-all
       - name: Set environment variables
         run: |
           echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
