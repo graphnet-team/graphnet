@@ -106,4 +106,4 @@ jobs:
           coverage run --source=graphnet -m pytest tests/utilities
           coverage report -m
       - name: Print available disk space after unit tests
-        run: df -h  
+        run: df -h
