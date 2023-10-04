@@ -80,6 +80,10 @@ jobs:
       matrix:
         python-version: [3.8, 3.9, '3.10', '3.11']
     steps:
+      - name: Before Clean-up
+        run: |
+          echo "Free space:"
+          df -h
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
@@ -89,7 +93,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Build
+      - name: After Clean-up
         run: |
           echo "Free space:"
           df -h
