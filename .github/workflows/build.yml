@@ -84,14 +84,19 @@ jobs:
         run: |
           echo "Free space:"
           df -h
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
+
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
         with:
-          root-reserve-mb: 512
-          swap-size-mb: 1024
-          remove-dotnet: 'true'
-      - name: Checkout
-        uses: actions/checkout@v3
+          tool-cache: true
+
+          # all of these default to true, but feel free to set to
+          # false if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
 
       - name: After Clean-up
         run: |
