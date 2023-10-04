@@ -86,28 +86,6 @@ jobs:
       matrix:
         python-version: [3.8, 3.9, '3.10', '3.11']
     steps:
-      - name: Before Clean-up
-        run: |
-          echo "Free space:"
-          df -h
-
-      - name: Free Disk Space
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: true
-
-          # all of these default to true, but feel free to set to
-          # false if necessary for your workflow
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          swap-storage: true
-
-      - name: After Clean-up
-        run: |
-          echo "Free space:"
-          df -h
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
