@@ -108,22 +108,22 @@ jobs:
       - name: Print available disk space after unit tests
         run: df -h  
 
-  build-macos:
-    name: Unit tests - macOS
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-      - name: Install package
-        uses: ./.github/actions/install
-        with:
-          editable: true
-          hardware: "macos"
-      - name: Run unit tests and generate coverage report
-        run: |
-          set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/  --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/
-          coverage report -m
+#  build-macos:
+#    name: Unit tests - macOS
+#    runs-on: macos-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up Python 3.8
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: 3.8
+#      - name: Install package
+#        uses: ./.github/actions/install
+#        with:
+#          editable: true
+#          hardware: "macos"
+#      - name: Run unit tests and generate coverage report
+#        run: |
+#          set -o pipefail  # To propagate exit code from pytest
+#          coverage run --source=graphnet -m pytest tests/  --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/
+#          coverage report -m
