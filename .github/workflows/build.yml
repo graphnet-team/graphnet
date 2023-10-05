@@ -43,6 +43,8 @@ jobs:
       - name: install git
         run: |
           apt-get --yes install sudo
+          sudo apt update --fix-missing 
+          sudo apt upgrade
           sudo apt-get install --yes git-all
       - name: Set environment variables
         run: |
