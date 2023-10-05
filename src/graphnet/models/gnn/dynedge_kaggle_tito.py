@@ -36,7 +36,7 @@ class DynEdgeTITO(GNN):
     def __init__(
         self,
         nb_inputs: int,
-        features_subset: Optional[Union[List[int], slice]] = None,
+        features_subset: List[int] = None,
         dyntrans_layer_sizes: Optional[List[Tuple[int, ...]]] = None,
         global_pooling_schemes: List[str] = ["max"],
         use_global_features: bool = True,
@@ -58,11 +58,7 @@ class DynEdgeTITO(GNN):
             use_post_processing_layers: Whether to use post-processing layers
                 after the `DynTrans` layers.
         """
-        # Latent feature subset for computing nearest neighbours in DynEdge.
-        if features_subset is None:
-            features_subset = slice(0, 4)  # 4D
-
-        # DynEdge layer sizes
+        # DynTrans layer sizes
         if dyntrans_layer_sizes is None:
             dyntrans_layer_sizes = [
                 (
@@ -136,7 +132,7 @@ class DynEdgeTITO(GNN):
         self._nb_inputs = nb_inputs
         self._nb_global_variables = 5 + nb_inputs
         self._nb_neighbours = 8
-        self._features_subset = features_subset
+        self._features_subset = features_subset or [0, 1, 2, 3]
         self._use_global_features = use_global_features
         self._use_post_processing_layers = use_post_processing_layers
 
