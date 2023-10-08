@@ -101,6 +101,13 @@ jobs:
           editable: true
       - name: Print available disk space after graphnet install
         run: df -h
+      - name: Print packages in pip
+        run: |
+          pip show torch
+          pip show torch-geometric
+          pip show torch-cluster
+          pip show torch-sparse
+          pip show torch-scatter
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
@@ -124,6 +131,13 @@ jobs:
         with:
           editable: true
           hardware: "macos"
+      - name: Print packages in pip
+        run: |
+            pip show torch
+            pip show torch-geometric
+            pip show torch-cluster
+            pip show torch-sparse
+            pip show torch-scatter
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
