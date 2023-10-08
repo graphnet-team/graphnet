@@ -1,4 +1,4 @@
 # Contains packages recommended for functional performance
 --find-links https://download.pytorch.org/whl/torch_stable.html
 torch==2.0.1+cu117
---find-links https://data.pyg.org/whl/torch-2.0.0+cu117.html
+--find-links https://data.pyg.org/whl/torch-2.1.0+cu117.html
