@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from abc import abstractmethod
 
 import torch
@@ -18,15 +18,19 @@ from copy import deepcopy
 class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
     """Base class for graph building."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self, input_feature_names: Optional[List[str]] = None
+    ) -> None:
         """Construct `Detector`."""
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
+        if input_feature_names is not None:
+            self.set_output_feature_names(
+                input_feature_names=input_feature_names
+            )
 
     @final
-    def forward(
-        self, x: torch.tensor, node_feature_names: List[str]
-    ) -> Tuple[Data, List[str]]:
+    def forward(self, x: torch.tensor) -> Tuple[Data, List[str]]:
         """Construct nodes from raw node features.
 
         Args:
@@ -38,10 +42,18 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
             graph: a graph without edges
             new_features_name: List of new feature names.
         """
-        graph, new_feature_names = self._construct_nodes(
-            x=x, feature_names=node_feature_names
-        )
-        return graph, new_feature_names
+        graph = self._construct_nodes(x=x)
+        try:
+            self._output_feature_names
+        except AttributeError as e:
+            self.error(
+                f"""{self.__class__.__name__} was instantiated without
+                       `input_feature_names` and it was not set prior to this
+                       forward call. If you are using this class outside a
+                       `GraphDefinition`, please instatiate with `input_feature_names`."""
+            )  # noqa
+            raise e
+        return graph, self._output_feature_names
 
     @property
     def nb_outputs(self) -> int:
@@ -61,10 +73,33 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
         assert isinstance(node_feature_names, list)
         self.nb_inputs = len(node_feature_names)
 
+    @final
+    def set_output_feature_names(self, input_feature_names: List[str]) -> None:
+        """Set output features names as a member variable.
+
+        Args:
+            input_feature_names: List of column names of the input to the
+            node definition.
+        """
+        self._output_feature_names = self._define_output_feature_names(
+            input_feature_names
+        )
+
     @abstractmethod
-    def _construct_nodes(
-        self, x: torch.tensor, feature_names: List[str]
-    ) -> Data:
+    def _define_output_feature_names(
+        self, input_feature_names: List[str]
+    ) -> List[str]:
+        """Construct names of output columns.
+
+        Args:
+            input_feature_names: List of column names for the input data.
+
+        Returns:
+            A list of column names for each column in the node definition output.
+        """
+
+    @abstractmethod
+    def _construct_nodes(self, x: torch.tensor) -> Tuple[Data, List[str]]:
         """Construct nodes from raw node features ´x´.
 
         Args:
@@ -82,10 +117,13 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
 class NodesAsPulses(NodeDefinition):
     """Represent each measured pulse of Cherenkov Radiation as a node."""
 
-    def _construct_nodes(
-        self, x: torch.Tensor, feature_names: List[str]
-    ) -> Data:
-        return Data(x=x), feature_names
+    def _define_output_feature_names(
+        self, input_feature_names: List[str]
+    ) -> List[str]:
+        return input_feature_names
+
+    def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
+        return Data(x=x)
 
 
 class PercentileClusters(NodeDefinition):
@@ -100,34 +138,37 @@ class PercentileClusters(NodeDefinition):
     def __init__(
         self,
         cluster_on: List[str],
-        feature_names: List[str],
         percentiles: List[int],
         add_counts: bool = True,
+        input_feature_names: Optional[List[str]] = None,
     ) -> None:
         """Construct `PercentileClusters`.
 
         Args:
             cluster_on: Names of features to create clusters from.
-            feature_names: List of colum names for the input data.
-                           E.g. ['dom_x', 'dom_y', 'dom_z',..]
             percentiles: List of percentiles. E.g. `[10, 50, 90]`.
             add_counts: If True, number of duplicates is added to output array.
+            input_feature_names: (Optional) column names for input features.
         """
         self._cluster_on = cluster_on
         self._percentiles = percentiles
         self._add_counts = add_counts
+        # Base class constructor
+        super().__init__(input_feature_names=input_feature_names)
+
+    def _define_output_feature_names(
+        self, input_feature_names: List[str]
+    ) -> List[str]:
         (
             cluster_idx,
             summ_idx,
             new_feature_names,
         ) = self._get_indices_and_feature_names(
-            feature_names, self._add_counts
+            input_feature_names, self._add_counts
         )
         self._cluster_indices = cluster_idx
         self._summarization_indices = summ_idx
-        self._output_feature_names = new_feature_names
-        # Base class constructor
-        super().__init__()
+        return new_feature_names
 
     def _get_indices_and_feature_names(
         self,
@@ -146,9 +187,7 @@ class PercentileClusters(NodeDefinition):
             new_feature_names.append("counts")
         return cluster_idx, summ_idx, new_feature_names
 
-    def _construct_nodes(
-        self, x: torch.Tensor, feature_names: List[str]
-    ) -> Data:
+    def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
         # Cast to Numpy
         x = x.numpy()
         # Construct clusters with percentile-summarized features
