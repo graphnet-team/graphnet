@@ -67,6 +67,11 @@ class GraphDefinition(Model):
             node_feature_names = list(self._detector.feature_map().keys())  # type: ignore
         self._node_feature_names = node_feature_names
 
+        # Set input data column names for node definition
+        self._node_definition.set_output_feature_names(
+            self._node_feature_names
+        )
+
         # Set data type
         self.to(dtype)
 
