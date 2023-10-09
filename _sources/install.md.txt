@@ -46,7 +46,6 @@ $ conda create --name graphnet python=3.8 gcc_linux-64 gxx_linux-64 libgcc cudat
 $ conda activate graphnet  # Optional
 (graphnet) $ pip install -r requirements/torch_cpu.txt -e .[develop,torch]  # CPU-only torch
 (graphnet) $ pip install -r requirements/torch_gpu.txt -e .[develop,torch]  # GPU support
-(graphnet) $ pip install -r requirements/torch_macos.txt -e .[develop,torch]  # On macOS
 ```
 This should allow you to e.g. run the scripts in [examples/](./examples/) out of the box.
 
