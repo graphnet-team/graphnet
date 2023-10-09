@@ -138,10 +138,10 @@ class GraphDefinition(Model):
         # Standardize / Scale  node features
         node_features = self._detector(node_features, node_feature_names)
 
-        # Create graph
-        graph, node_feature_names = self._node_definition(
-            node_features, node_feature_names
-        )
+        # Create graph & get new node feature names
+        graph, node_feature_names = self._node_definition(node_features)
+
+        # Enforce dtype
         graph.x = graph.x.type(self.dtype)
 
         # Attach number of pulses as static attribute.
