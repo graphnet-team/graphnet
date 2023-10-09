@@ -139,7 +139,10 @@ class GraphDefinition(Model):
         node_features = self._detector(node_features, node_feature_names)
 
         # Create graph
-        graph = self._node_definition(node_features)
+        graph, node_feature_names = self._node_definition(
+            node_features, node_feature_names
+        )
+        graph.x = graph.x.type(self.dtype)
 
         # Attach number of pulses as static attribute.
         graph.n_pulses = torch.tensor(len(node_features), dtype=torch.int32)
