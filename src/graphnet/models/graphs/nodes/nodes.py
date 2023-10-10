@@ -199,7 +199,7 @@ class PercentileClusters(NodeDefinition):
             add_counts=self._add_counts,
         )
 
-        return Data(x=torch.tensor(array)), self._output_feature_names
+        return Data(x=torch.tensor(array))
 
     def nb_outputs(self) -> int:
         """Return number of output features.
