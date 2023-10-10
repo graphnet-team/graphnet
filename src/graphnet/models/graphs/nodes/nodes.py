@@ -61,7 +61,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
 
         This the default, but may be overridden by specific inheriting classes.
         """
-        return self.nb_inputs
+        return len(self._output_feature_names)
 
     @final
     def set_number_of_inputs(self, node_feature_names: List[str]) -> None:
@@ -200,10 +200,3 @@ class PercentileClusters(NodeDefinition):
         )
 
         return Data(x=torch.tensor(array))
-
-    def nb_outputs(self) -> int:
-        """Return number of output features.
-
-        This the default, but may be overridden by specific inheriting classes.
-        """
-        return len(self._output_feature_names)
