@@ -50,7 +50,8 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
                 f"""{self.__class__.__name__} was instantiated without
                        `input_feature_names` and it was not set prior to this
                        forward call. If you are using this class outside a
-                       `GraphDefinition`, please instatiate with `input_feature_names`."""
+                       `GraphDefinition`, please instatiate
+                       with `input_feature_names`."""
             )  # noqa
             raise e
         return graph, self._output_feature_names
@@ -95,7 +96,8 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
             input_feature_names: List of column names for the input data.
 
         Returns:
-            A list of column names for each column in the node definition output.
+            A list of column names for each column in
+            the node definition output.
         """
 
     @abstractmethod
@@ -201,7 +203,10 @@ class PercentileClusters(NodeDefinition):
             )
         else:
             self.error(
-                f"""{self.__class__.__name__} was not instatiated with `input_feature_names` and has not been set later. Please instantiate this class with `input_feature_names` if you're using it outside `GraphDefinition`."""
+                f"""{self.__class__.__name__} was not instatiated with
+                `input_feature_names` and has not been set later.
+                Please instantiate this class with `input_feature_names`
+                if you're using it outside `GraphDefinition`."""
             )  # noqa
             raise AttributeError
 

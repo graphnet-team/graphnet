@@ -37,7 +37,7 @@ def gather_cluster_sequence(
 
     **Example**:
     Suppose `x` represents a neutrino event and we have chosen to cluster on
-    the PMT positions. Suppose also that `feature_idx` correspond to pulse time.
+    the PMT positions and that `feature_idx` correspond to pulse time.
 
     The resulting array will have dimensions `[n_pmts, m + 3]` where `m` is the
     maximum number of same-pmt pulses found in `x`, and `+3`for the three
@@ -45,7 +45,8 @@ def gather_cluster_sequence(
 
     Args:
         x:  Array for clustering
-        feature_idx: Index of the feature in `x` to be gathered for each cluster.
+        feature_idx: Index of the feature in `x` to
+                     be gathered for each cluster.
         cluster_columns: Index in `x` from which to build clusters.
 
     Returns:
@@ -127,9 +128,10 @@ def cluster_summarize_with_percentiles(
 
     Args:
         x: Array to be clustered
-        summarization_indices: List of column indices that defines features that
-                                will be summarized with percentiles.
-        cluster_indices: List of column indices on which the clusters are constructed.
+        summarization_indices: List of column indices that defines features
+                                that will be summarized with percentiles.
+        cluster_indices: List of column indices on which the clusters
+                        are constructed.
         percentiles: percentiles used to summarize `x`. E.g. [10,50,90].
 
     Returns:
