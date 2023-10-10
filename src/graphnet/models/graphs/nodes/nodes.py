@@ -191,12 +191,18 @@ class PercentileClusters(NodeDefinition):
         # Cast to Numpy
         x = x.numpy()
         # Construct clusters with percentile-summarized features
-        array = cluster_summarize_with_percentiles(
-            x=x,
-            summarization_indices=self._summarization_indices,
-            cluster_indices=self._cluster_indices,
-            percentiles=self._percentiles,
-            add_counts=self._add_counts,
-        )
+        if hasattr(self, "_summarization_indices"):
+            array = cluster_summarize_with_percentiles(
+                x=x,
+                summarization_indices=self._summarization_indices,
+                cluster_indices=self._cluster_indices,
+                percentiles=self._percentiles,
+                add_counts=self._add_counts,
+            )
+        else:
+            self.error(
+                f"""{self.__class__.__name__} was not instatiated with `input_feature_names` and has not been set later. Please instantiate this class with `input_feature_names` if you're using it outside `GraphDefinition`."""
+            )  # noqa
+            raise AttributeError
 
         return Data(x=torch.tensor(array))
