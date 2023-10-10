@@ -187,7 +187,7 @@ class PercentileClusters(NodeDefinition):
             new_feature_names.append("counts")
         return cluster_idx, summ_idx, new_feature_names
 
-    def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
         # Cast to Numpy
         x = x.numpy()
         # Construct clusters with percentile-summarized features
