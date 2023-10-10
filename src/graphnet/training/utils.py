@@ -47,8 +47,8 @@ class collator_sequence_buckleting:
             graphs: A list of Data objects representing the input graphs.
 
         Returns:
-            A list of Batch objects, each containing a mini-batch of the input graphs
-            sorted by their number of pulses.
+            A list of Batch objects, each containing a mini-batch of the input
+            graphs sorted by their number of pulses.
         """
         graphs = [g for g in graphs if g.n_pulses > 1]
         graphs.sort(key=lambda x: x.n_pulses)
