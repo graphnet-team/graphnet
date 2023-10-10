@@ -36,8 +36,16 @@ jobs:
     name: Unit tests - IceTray
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-latest
-    container: icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
+    container:
+      image: icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
+      options: --user root
     steps:
+      - name: install git
+        run: |
+          apt-get --yes install sudo
+          sudo apt update --fix-missing --yes
+          sudo apt upgrade --yes
+          sudo apt-get install --yes git-all
       - name: Set environment variables
         run: |
           echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
@@ -61,9 +69,9 @@ jobs:
           coverage run --source=graphnet -m pytest tests/examples/01_icetray
           coverage xml -o coverage.xml
     
-      #- name: Work around permission issue
-      #  run: |
-      #    git config --global --add safe.directory /__w/graphnet/graphnet
+      - name: Work around permission issue
+        run: |
+          git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         if: needs.check-codeclimate-credentials.outputs.has_credentials == 'true'
@@ -93,6 +101,13 @@ jobs:
           editable: true
       - name: Print available disk space after graphnet install
         run: df -h
+      - name: Print packages in pip
+        run: |
+          pip show torch
+          pip show torch-geometric
+          pip show torch-cluster
+          pip show torch-sparse
+          pip show torch-scatter
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
@@ -100,7 +115,7 @@ jobs:
           coverage run --source=graphnet -m pytest tests/utilities
           coverage report -m
       - name: Print available disk space after unit tests
-        run: df -h  
+        run: df -h
 
   build-macos:
     name: Unit tests - macOS
@@ -116,6 +131,13 @@ jobs:
         with:
           editable: true
           hardware: "macos"
+      - name: Print packages in pip
+        run: |
+            pip show torch
+            pip show torch-geometric
+            pip show torch-cluster
+            pip show torch-sparse
+            pip show torch-scatter
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest

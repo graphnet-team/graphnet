@@ -19,6 +19,28 @@ jobs:
       packages: write
       contents: read
     steps:
+      - name: Before Clean-up
+        run: |
+          echo "Free space:"
+          df -h
+
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+
+          # all of these default to true, but feel free to set to
+          # false if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: After Clean-up
+        run: |
+          echo "Free space:"
+          df -h
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up QEMU
