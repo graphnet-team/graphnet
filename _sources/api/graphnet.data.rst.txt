@@ -29,6 +29,7 @@ data
    graphnet.data.constants
    graphnet.data.dataconverter
    graphnet.data.dataloader
+   graphnet.data.filters
    graphnet.data.pipeline
 
 

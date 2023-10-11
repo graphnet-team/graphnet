@@ -1,0 +1,8 @@
+
+filters
+=======
+
+.. automodule:: graphnet.data.filters
+   :members:
+   :undoc-members:
+   :show-inheritance:

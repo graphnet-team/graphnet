@@ -482,6 +482,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.filters.html" class="md-nav__link">filters</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.pipeline.html" class="md-nav__link">pipeline</a>
       
     
@@ -640,7 +647,7 @@
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i3_filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
 <p>Base class for converting I3-files to intermediate file format.</p>
 <p>Construct DataConverter.</p>
@@ -693,6 +700,7 @@ files whose names contain:</p>
 <li><p><strong>workers</strong> (<em>int</em>) – </p></li>
 <li><p><strong>index_column</strong> (<em>str</em>) – </p></li>
 <li><p><strong>icetray_verbose</strong> (<em>int</em>) – </p></li>
+<li><p><strong>i3_filters</strong> (<em>List</em><em>[</em><a class="reference internal" href="graphnet.data.filters.html#graphnet.data.filters.I3Filter" title="graphnet.data.filters.I3Filter"><em>I3Filter</em></a><em>]</em>) – </p></li>
 </ul>
 </dd>
 </dl>
