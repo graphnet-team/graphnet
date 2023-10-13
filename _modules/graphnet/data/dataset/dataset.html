@@ -623,7 +623,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span> <span class="o">=</span> <span class="n">index_column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span> <span class="o">=</span> <span class="n">truth_table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_default_value</span> <span class="o">=</span> <span class="n">loss_weight_default_value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="o">=</span> <span class="n">graph_definition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">graph_definition</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_truth_table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
