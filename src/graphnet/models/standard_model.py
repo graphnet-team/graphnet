@@ -94,14 +94,22 @@ class StandardModel(Model):
             )
         return config
 
-    def forward(self, data: Data) -> List[Union[Tensor, Data]]:
+    def forward(
+        self, data: Union[Data, List[Data]]
+    ) -> List[Union[Tensor, Data]]:
         """Forward pass, chaining model components."""
-        assert isinstance(data, Data)
-        x = self._gnn(data)
+        if isinstance(data, Data):
+            data = [data]
+        x_list = []
+        for d in data:
+            x = self._gnn(d)
+            x_list.append(x)
+        x = torch.cat(x_list, dim=0)
+
         preds = [task(x) for task in self._tasks]
         return preds
 
-    def shared_step(self, batch: Data, batch_idx: int) -> Tensor:
+    def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
 
         Applies the forward pass and the following loss calculation, shared
@@ -111,8 +119,12 @@ class StandardModel(Model):
         loss = self.compute_loss(preds, batch)
         return loss
 
-    def training_step(self, train_batch: Data, batch_idx: int) -> Tensor:
+    def training_step(
+        self, train_batch: Union[Data, List[Data]], batch_idx: int
+    ) -> Tensor:
         """Perform training step."""
+        if isinstance(train_batch, Data):
+            train_batch = [train_batch]
         loss = self.shared_step(train_batch, batch_idx)
         self.log(
             "train_loss",
@@ -125,8 +137,12 @@ class StandardModel(Model):
         )
         return loss
 
-    def validation_step(self, val_batch: Data, batch_idx: int) -> Tensor:
+    def validation_step(
+        self, val_batch: Union[Data, List[Data]], batch_idx: int
+    ) -> Tensor:
         """Perform validation step."""
+        if isinstance(val_batch, Data):
+            val_batch = [val_batch]
         loss = self.shared_step(val_batch, batch_idx)
         self.log(
             "val_loss",
@@ -140,11 +156,21 @@ class StandardModel(Model):
         return loss
 
     def compute_loss(
-        self, preds: Tensor, data: Data, verbose: bool = False
+        self, preds: Tensor, data: List[Data], verbose: bool = False
     ) -> Tensor:
         """Compute and sum losses across tasks."""
+        data_merged = {}
+        target_labels_merged = list(set(self.target_labels))
+        for label in target_labels_merged:
+            data_merged[label] = torch.cat([d[label] for d in data], dim=0)
+        for task in self._tasks:
+            if task._loss_weight is not None:
+                data_merged[task._loss_weight] = torch.cat(
+                    [d[task._loss_weight] for d in data], dim=0
+                )
+
         losses = [
-            task.compute_loss(pred, data)
+            task.compute_loss(pred, data_merged)
             for task, pred in zip(self._tasks, preds)
         ]
         if verbose:
@@ -154,8 +180,8 @@ class StandardModel(Model):
         ), "Please reduce loss for each task separately"
         return torch.sum(torch.stack(losses))
 
-    def _get_batch_size(self, data: Data) -> int:
-        return torch.numel(torch.unique(data.batch))
+    def _get_batch_size(self, data: List[Data]) -> int:
+        return sum([torch.numel(torch.unique(d.batch)) for d in data])
 
     def inference(self) -> None:
         """Activate inference mode."""
