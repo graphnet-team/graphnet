@@ -355,6 +355,47 @@
 
 
 
+<div class="viewcode-block" id="collator_sequence_buckleting">
+<a class="viewcode-back" href="../../../api/graphnet.training.utils.html#graphnet.training.utils.collator_sequence_buckleting">[docs]</a>
+<span class="k">class</span> <span class="nc">collator_sequence_buckleting</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Perform the sequence bucketing for the graphs in the batch."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_splits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">"""Set cutting points of the different mini-batches.</span>
+
+<span class="sd">        batch_splits: list of floats, each element is the fraction of the total</span>
+<span class="sd">        number of graphs. This list should not explicitly define the first and</span>
+<span class="sd">        last elements, which will always be 0 and 1 respectively.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_splits</span> <span class="o">=</span> <span class="n">batch_splits</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graphs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Batch</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Execute sequence bucketing on the input list of graphs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            graphs: A list of Data objects representing the input graphs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of Batch objects, each containing a mini-batch of the input</span>
+<span class="sd">            graphs sorted by their number of pulses.</span>
+<span class="sd">        """</span>
+        <span class="n">graphs</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">graphs</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">n_pulses</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">graphs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">n_pulses</span><span class="p">)</span>
+        <span class="n">batch_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">minp</span><span class="p">,</span> <span class="n">maxp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_splits</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">min_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">minp</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">graphs</span><span class="p">))</span>
+            <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">maxp</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">graphs</span><span class="p">))</span>
+            <span class="n">this_graphs</span> <span class="o">=</span> <span class="n">graphs</span><span class="p">[</span><span class="n">min_idx</span><span class="p">:</span><span class="n">max_idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this_graphs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">this_batch</span> <span class="o">=</span> <span class="n">Batch</span><span class="o">.</span><span class="n">from_data_list</span><span class="p">(</span><span class="n">this_graphs</span><span class="p">)</span>
+                <span class="n">batch_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_batch</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">batch_list</span></div>
+
+
+
 <span class="c1"># @TODO: Remove in favour of DataLoader{,.from_dataset_config}</span>
 <div class="viewcode-block" id="make_dataloader">
 <a class="viewcode-back" href="../../../api/graphnet.training.utils.html#graphnet.training.utils.make_dataloader">[docs]</a>
