@@ -28,6 +28,44 @@ def collate_fn(graphs: List[Data]) -> Batch:
     return Batch.from_data_list(graphs)
 
 
+class collator_sequence_buckleting:
+    """Perform the sequence bucketing for the graphs in the batch."""
+
+    def __init__(self, batch_splits: List[float] = [0.8]):
+        """Set cutting points of the different mini-batches.
+
+        batch_splits: list of floats, each element is the fraction of the total
+        number of graphs. This list should not explicitly define the first and
+        last elements, which will always be 0 and 1 respectively.
+        """
+        self.batch_splits = batch_splits
+
+    def __call__(self, graphs: List[Data]) -> Batch:
+        """Execute sequence bucketing on the input list of graphs.
+
+        Args:
+            graphs: A list of Data objects representing the input graphs.
+
+        Returns:
+            A list of Batch objects, each containing a mini-batch of the input
+            graphs sorted by their number of pulses.
+        """
+        graphs = [g for g in graphs if g.n_pulses > 1]
+        graphs.sort(key=lambda x: x.n_pulses)
+        batch_list = []
+
+        for minp, maxp in zip(
+            [0] + self.batch_splits, self.batch_splits + [1]
+        ):
+            min_idx = int(minp * len(graphs))
+            max_idx = int(maxp * len(graphs))
+            this_graphs = graphs[min_idx:max_idx]
+            if len(this_graphs) > 0:
+                this_batch = Batch.from_data_list(this_graphs)
+                batch_list.append(this_batch)
+        return batch_list
+
+
 # @TODO: Remove in favour of DataLoader{,.from_dataset_config}
 def make_dataloader(
     db: str,
