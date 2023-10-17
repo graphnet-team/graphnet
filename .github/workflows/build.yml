@@ -40,10 +40,7 @@ jobs:
       - name: Build Singularity Image from IceTray Docker
         run:  | 
           singularity cache clean --force
-          singularity exec -f --writable-tmpfs docker://icecube/icetray:icetray-prod-v1.8.1-ubuntu22.04-X64-2023-10-03 bash
-      - name: install git
-        run: |
-          apt-get install --yes git-all
+          singularity exec -f --writable-tmpfs docker://icecube/icetray:icetray-prod-v1.8.1-ubuntu22.04-X64-2023-10-03 bash apt-get install --yes git-all
       - name: Set environment variables
         run: |
           echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
