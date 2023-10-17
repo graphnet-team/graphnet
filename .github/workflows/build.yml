@@ -38,7 +38,7 @@ jobs:
     runs-on: "self-hosted"
     steps:
       - name: Build Singularity Image from IceTray Docker
-        run: singularity exec docker://icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64 bash
+        run: singularity exec -f docker://icecube/icetray:icetray-prod-v1.8.1-ubuntu22.04-X64-2023-10-03 bash
       - name: install git
         run: |
           apt-get --yes install sudo
