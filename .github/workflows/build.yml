@@ -36,10 +36,9 @@ jobs:
     name: Unit tests - IceTray
     needs: [ check-codeclimate-credentials ]
     runs-on: "self-hosted"
-    container:
-      image: icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
-      options: --user root
     steps:
+      - name: Build Singularity Image from IceTray Docker
+        run: singularity exec docker://icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64 bash
       - name: install git
         run: |
           apt-get --yes install sudo
