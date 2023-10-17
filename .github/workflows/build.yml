@@ -39,7 +39,7 @@ jobs:
     steps:
       - name: Build Singularity Image from IceTray Docker
         run:  | 
-          singularity cache clean
+          singularity cache clean --force
           singularity exec -f --writable-tmpfs docker://icecube/icetray:icetray-prod-v1.8.1-ubuntu22.04-X64-2023-10-03 bash
       - name: install git
         run: |
