@@ -38,13 +38,12 @@ jobs:
     runs-on: "self-hosted"
     steps:
       - name: Build Singularity Image from IceTray Docker
-        run: singularity exec -f docker://icecube/icetray:icetray-prod-v1.8.1-ubuntu22.04-X64-2023-10-03 bash
+        run:  | 
+          singularity cache clean
+          singularity exec -f --writable-tmpfs docker://icecube/icetray:icetray-prod-v1.8.1-ubuntu22.04-X64-2023-10-03 bash
       - name: install git
         run: |
-          apt-get --yes install sudo
-          sudo apt update --fix-missing --yes
-          sudo apt upgrade --yes
-          sudo apt-get install --yes git-all
+          apt-get install --yes git-all
       - name: Set environment variables
         run: |
           echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
