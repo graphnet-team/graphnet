@@ -35,7 +35,7 @@ jobs:
   build-icetray:
     name: Unit tests - IceTray
     needs: [ check-codeclimate-credentials ]
-    runs-on: ubuntu-latest
+    runs-on: "self-hosted"
     container:
       image: icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
       options: --user root
@@ -83,7 +83,7 @@ jobs:
 
   build-matrix:
     name: Unit tests - Python versions
-    runs-on: "self-hosted"
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.8, 3.9, '3.10', '3.11']
@@ -101,8 +101,6 @@ jobs:
           editable: true
       - name: Print available disk space after graphnet install
         run: df -h
-      - name: install coverage
-        run: pip install coverage
       - name: Print packages in pip
         run: |
           pip show torch
