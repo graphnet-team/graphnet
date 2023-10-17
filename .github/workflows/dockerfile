@@ -1,0 +1,26 @@
+FROM icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
+
+ARG TORCH=1.9.1
+ARG PYG=2.0.1
+ARG CUDA=cpu
+
+RUN apt-get --yes install sudo
+    sudo apt update --fix-missing --yes
+    sudo apt upgrade --yes
+    sudo apt-get install --yes git-all
+
+RUN pip3 install torch==${TORCH}+${CUDA} -f https://download.pytorch.org/whl/cpu/torch_stable.html && \
+    pip3 install torch-cluster -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html && \
+    pip3 install torch-scatter -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html && \
+    pip3 install torch-sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html  && \
+    pip3 install torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html  && \
+    pip3 install torch-geometric==${PYG}
+
+RUN pip3 install git+https://github.com/icecube/graphnet.git
+
+WORKDIR /root
+
+ADD module.py ./module.py
+ADD apply.py ./apply.py
+
+CMD [ "/bin/bash" ]

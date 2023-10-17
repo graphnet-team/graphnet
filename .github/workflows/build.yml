@@ -81,65 +81,60 @@ jobs:
           coverageCommand: coverage report
           coverageLocations: coverage.xml:coverage.py
 
-  build-matrix:
-    name: Unit tests - Python versions
+  docker:
+    name: Build and publish
+    if: github.repository == 'graphnet-team/graphnet'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11']
+    permissions:
+      packages: write
+      contents: read
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Print available disk space before graphnet install
-        run: df -h
-      - name: Install package
-        uses: ./.github/actions/install
-        with:
-          editable: true
-      - name: Print available disk space after graphnet install
-        run: df -h
-      - name: Print packages in pip
+      - name: Before Clean-up
         run: |
-          pip show torch
-          pip show torch-geometric
-          pip show torch-cluster
-          pip show torch-sparse
-          pip show torch-scatter
-      - name: Run unit tests and generate coverage report
-        run: |
-          set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/ --ignore=tests/utilities --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/01_icetray/
-          coverage run --source=graphnet -m pytest tests/utilities
-          coverage report -m
-      - name: Print available disk space after unit tests
-        run: df -h
+          echo "Free space:"
+          df -h
 
-  build-macos:
-    name: Unit tests - macOS
-    runs-on: macos-latest
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+
+          # all of these default to true, but feel free to set to
+          # false if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: After Clean-up
+        run: |
+          echo "Free space:"
+          df -h
+      push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v4
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
-          python-version: 3.8
-      - name: Install package
-        uses: ./.github/actions/install
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          editable: true
-          hardware: "macos"
-      - name: Print packages in pip
-        run: |
-            pip show torch
-            pip show torch-geometric
-            pip show torch-cluster
-            pip show torch-sparse
-            pip show torch-scatter
-      - name: Run unit tests and generate coverage report
-        run: |
-          set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/  --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/
-          coverage report -m
+          images: orsoe/graphnet
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
