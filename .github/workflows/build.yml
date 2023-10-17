@@ -101,6 +101,8 @@ jobs:
           editable: true
       - name: Print available disk space after graphnet install
         run: df -h
+      - name: install coverage
+        run: install coverage
       - name: Print packages in pip
         run: |
           pip show torch
