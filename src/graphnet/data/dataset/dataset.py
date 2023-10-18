@@ -282,7 +282,7 @@ class Dataset(
         self._index_column = index_column
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
-        self._graph_definition = graph_definition
+        self._graph_definition = deepcopy(graph_definition)
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
