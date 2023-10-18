@@ -18,7 +18,7 @@ def test_transform_prediction_and_target() -> None:
         detector=IceCube86(),
         node_definition=NodesAsPulses(),
         nb_nearest_neighbours=8,
-        node_feature_names=FEATURES.DEEPCORE,
+        input_feature_names=FEATURES.DEEPCORE,
     )
     gnn = DynEdge(
         nb_inputs=graph_definition.nb_outputs,

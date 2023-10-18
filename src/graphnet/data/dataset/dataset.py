@@ -629,8 +629,8 @@ class Dataset(
         # Construct graph data object
         assert self._graph_definition is not None
         graph = self._graph_definition(
-            node_features=node_features,
-            node_feature_names=self._features[
+            input_features=node_features,
+            input_feature_names=self._features[
                 1:
             ],  # first entry is index column
             truth_dicts=truth_dicts,
