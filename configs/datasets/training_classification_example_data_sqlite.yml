@@ -10,7 +10,7 @@ graph_definition:
     node_definition:
       arguments: {}
       class_name: NodesAsPulses
-    node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+    input_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
   class_name: KNNGraph
 pulsemaps:
   - total
