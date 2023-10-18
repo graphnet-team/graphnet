@@ -65,14 +65,14 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
         return len(self._output_feature_names)
 
     @final
-    def set_number_of_inputs(self, node_feature_names: List[str]) -> None:
+    def set_number_of_inputs(self, input_feature_names: List[str]) -> None:
         """Return number of inputs expected by node definition.
 
         Args:
-            node_feature_names: name of each node feature column.
+            input_feature_names: name of each input feature column.
         """
-        assert isinstance(node_feature_names, list)
-        self.nb_inputs = len(node_feature_names)
+        assert isinstance(input_feature_names, list)
+        self.nb_inputs = len(input_feature_names)
 
     @final
     def set_output_feature_names(self, input_feature_names: List[str]) -> None:
