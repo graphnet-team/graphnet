@@ -25,7 +25,7 @@ arguments:
           ModelConfig:
             arguments: {}
             class_name: NodesAsPulses
-        node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+        input_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
       class_name: KNNGraph
   optimizer_class: '!class torch.optim.adam Adam'
   optimizer_kwargs: {eps: 0.001, lr: 0.001}

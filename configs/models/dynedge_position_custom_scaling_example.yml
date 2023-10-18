@@ -17,7 +17,7 @@ arguments:
           ModelConfig:
             arguments: {}
             class_name: NodesAsPulses
-        node_feature_names: null
+        input_feature_names: null
       class_name: KNNGraph
   gnn:
     ModelConfig:
