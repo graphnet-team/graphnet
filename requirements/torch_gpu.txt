@@ -1,4 +1,4 @@
-# Contains packages recommended for functional performance
+# Contains packages requirements for GPU installation
 --find-links https://download.pytorch.org/whl/torch_stable.html
 torch==2.1.0+cu118
 --find-links https://data.pyg.org/whl/torch-2.1.0+cu118.html
