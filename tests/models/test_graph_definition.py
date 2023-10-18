@@ -27,7 +27,7 @@ def test_graph_definition() -> None:
         detector=Prometheus(), perturbation_dict=perturbation_dict, seed=seed
     )
     original_output = graph_definition(
-        node_features=deepcopy(mock_data), node_feature_names=features
+        input_features=deepcopy(mock_data), input_feature_names=features
     )
 
     for _ in range(n_reps):
@@ -42,11 +42,11 @@ def test_graph_definition() -> None:
         )
 
         data = graph_definition(
-            node_features=deepcopy(mock_data), node_feature_names=features
+            input_features=deepcopy(mock_data), input_feature_names=features
         )
 
         perturbed_data = graph_definition_perturbed(
-            node_features=deepcopy(mock_data), node_feature_names=features
+            input_features=deepcopy(mock_data), input_feature_names=features
         )
 
         assert ~torch.equal(data.x, perturbed_data.x)  # should not be equal.
