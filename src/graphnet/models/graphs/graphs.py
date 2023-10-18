@@ -17,7 +17,7 @@ class KNNGraph(GraphDefinition):
         self,
         detector: Detector,
         node_definition: NodeDefinition = NodesAsPulses(),
-        node_feature_names: Optional[List[str]] = None,
+        input_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
         perturbation_dict: Optional[Dict[str, float]] = None,
         seed: Optional[Union[int, Generator]] = None,
@@ -29,7 +29,7 @@ class KNNGraph(GraphDefinition):
         Args:
             detector: Detector that represents your data.
             node_definition: Definition of nodes in the graph.
-            node_feature_names: Name of node features.
+            input_feature_names: Name of input feature columns.
             dtype: data type for node features.
             perturbation_dict: Dictionary mapping a feature name to a standard
                                deviation according to which the values for this
@@ -50,7 +50,7 @@ class KNNGraph(GraphDefinition):
                 columns=columns,
             ),
             dtype=dtype,
-            node_feature_names=node_feature_names,
+            input_feature_names=input_feature_names,
             perturbation_dict=perturbation_dict,
             seed=seed,
         )
