@@ -151,5 +151,7 @@ data/examples/output/
 **.parquet
 # Exception to pre-trained folders; here we want all .pth files 
 !/graphnet/src/graphnet/models/pretrained/**/**/**/**/**.pth
+# Exception to geometry tables 
+!/data/geometry_tables/**/**.parquet
 # Notebooks
 **.ipynb
