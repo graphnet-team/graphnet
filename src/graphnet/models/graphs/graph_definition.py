@@ -64,7 +64,7 @@ class GraphDefinition(Model):
             sensor_mask: A list of sensor id's to be masked from the graph. Any
                 sensor listed here will be removed from the graph. Defaults to None.
             string_mask: A list of string id's to be masked from the graph. Defaults to None.
-            sort_by: Name of feature to sort pulses by. Defaults to None.
+            sort_by: Name of node feature to sort by. Defaults to None.
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -89,7 +89,13 @@ class GraphDefinition(Model):
         # Sorting
         if sort_by is not None:
             assert isinstance(sort_by, str)
-            sort_by = self._node_feature_names.index(sort_by)  # type: ignore
+            try:
+                sort_by = self.output_feature_names.index(sort_by)  # type: ignore
+            except ValueError as e:
+                self.error(
+                    f"{sort_by} not in node features {self.output_feature_names}."
+                )
+                raise e
         self._sort_by = sort_by
 
         # Set input data column names for node definition
@@ -172,10 +178,6 @@ class GraphDefinition(Model):
                 input_features, input_feature_names
             )
 
-        if self._sort_by is not None:
-            ind = input_features[:, self._sort_by].argsort(kind="stable")
-            input_features = input_features[ind]
-
         # Gaussian perturbation of each column if perturbation dict is given
         input_features = self._perturb_input(input_features)
 
@@ -187,6 +189,8 @@ class GraphDefinition(Model):
 
         # Create graph & get new node feature names
         graph, node_feature_names = self._node_definition(input_features)
+        if self._sort_by is not None:
+            graph.x = graph.x[graph.x[:, self._sort_by].sort()[1]]
 
         # Enforce dtype
         graph.x = graph.x.type(self.dtype)

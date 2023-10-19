@@ -12,7 +12,7 @@ class ORCA150(Detector):
     """`Detector` class for Prometheus prototype."""
 
     geometry_table_path = os.path.join(
-        PROMETHEUS_GEOMETRY_TABLE_DIR, "orca150.parquet"
+        PROMETHEUS_GEOMETRY_TABLE_DIR, "orca_150.parquet"
     )
     xyz = ["sensor_pos_x", "sensor_pos_y", "sensor_pos_z"]
     string_id_column = "sensor_string_id"
