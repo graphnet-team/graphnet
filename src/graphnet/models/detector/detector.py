@@ -5,6 +5,7 @@ from typing import Dict, Callable, List
 
 from torch_geometric.data import Data
 import torch
+import pandas as pd
 
 from graphnet.models import Model
 from graphnet.utilities.decorators import final
@@ -24,26 +25,41 @@ class Detector(Model):
 
     @final
     def forward(  # type: ignore
-        self, node_features: torch.tensor, node_feature_names: List[str]
+        self, input_features: torch.tensor, input_feature_names: List[str]
     ) -> Data:
         """Pre-process graph `Data` features and build graph adjacency."""
-        return self._standardize(node_features, node_feature_names)
+        return self._standardize(input_features, input_feature_names)
+
+    @property
+    def geometry_table(self) -> pd.DataFrame:
+        """Public get method for retrieving a `Detector`s geometry table."""
+        if ~hasattr(self, "_geometry_table"):
+            try:
+                assert hasattr(self, "geometry_table_path")
+            except AssertionError as e:
+                self.error(
+                    f"""{self.__class__.__name__} does not have class
+                           variable `geometry_table_path` set."""
+                )
+                raise e
+            self._geometry_table = pd.read_parquet(self.geometry_table_path)
+        return self._geometry_table
 
     @final
     def _standardize(
-        self, node_features: torch.tensor, node_feature_names: List[str]
+        self, input_features: torch.tensor, input_feature_names: List[str]
     ) -> Data:
-        for idx, feature in enumerate(node_feature_names):
+        for idx, feature in enumerate(input_feature_names):
             try:
-                node_features[:, idx] = self.feature_map()[feature](  # type: ignore
-                    node_features[:, idx]
+                input_features[:, idx] = self.feature_map()[feature](  # type: ignore
+                    input_features[:, idx]
                 )
             except KeyError as e:
                 self.warning(
                     f"""No Standardization function found for '{feature}'"""
                 )
                 raise e
-        return node_features
+        return input_features
 
     def _identity(self, x: torch.tensor) -> torch.tensor:
         """Apply no standardization to input."""
