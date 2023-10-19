@@ -381,10 +381,14 @@
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
         </li></ul>
             </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -416,6 +420,13 @@
       <a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
       
     
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
+      
+    
     </li></ul>
     
     </li>
@@ -423,6 +434,13 @@
     
     
       <a href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
       
     
     </li></ul>
@@ -441,6 +459,13 @@
     
     
       <a href="graphnet.models.graphs.graphs.html" class="md-nav__link">graphs</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.graphs.utils.html" class="md-nav__link">utils</a>
       
     
     </li></ul>
@@ -536,10 +561,14 @@
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
         </li></ul>
             </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -581,10 +610,12 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tensor</span></code>) – standardized node features with shape ´[num_pulses, d]´,</p></li>
 <li><p><strong>features.</strong> (<em>where ´d´ is the number</em><em> of </em><em>node</em>) – </p></li>
+<li><p><strong>node_feature_names</strong> – list of names for each column in ´x´.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a graph without edges</p>
+<dd class="field-even"><p>a graph without edges
+new_features_name: List of new feature names.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>graph</p>
@@ -599,11 +630,27 @@
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs">
-<span class="sig-name descname"><span class="pre">set_number_of_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeDefinition.set_number_of_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_number_of_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeDefinition.set_number_of_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" title="Link to this definition">¶</a></dt>
 <dd><p>Return number of inputs expected by node definition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>node_feature_names</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – name of each node feature column.</p>
+<dd class="field-odd"><p><strong>input_feature_names</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – name of each input feature column.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names">
+<span class="sig-name descname"><span class="pre">set_output_feature_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeDefinition.set_output_feature_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" title="Link to this definition">¶</a></dt>
+<dd><p>Set output features names as a member variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_feature_names</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of column names of the input to the</p></li>
+<li><p><strong>definition.</strong> (<em>node</em>) – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -620,6 +667,32 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>Any</em>) – </p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.PercentileClusters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">PercentileClusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#PercentileClusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
+<p>Represent nodes as clusters with percentile summary node features.</p>
+<p>If <cite>cluster_on</cite> is set to the xyz coordinates of DOMs
+e.g. <cite>cluster_on = [‘dom_x’, ‘dom_y’, ‘dom_z’]</cite>, each node will be a
+unique DOM and the pulse information (charge, time) is summarized using
+percentiles.</p>
+<p>Construct <cite>PercentileClusters</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_on</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Names of features to create clusters from.</p></li>
+<li><p><strong>percentiles</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – List of percentiles. E.g. <cite>[10, 50, 90]</cite>.</p></li>
+<li><p><strong>add_counts</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – If True, number of duplicates is added to output array.</p></li>
+<li><p><strong>input_feature_names</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – (Optional) column names for input features.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>

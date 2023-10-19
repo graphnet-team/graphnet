@@ -25,6 +25,7 @@ graphs
 
    graphnet.models.graphs.graph_definition
    graphnet.models.graphs.graphs
+   graphnet.models.graphs.utils
 
 
 

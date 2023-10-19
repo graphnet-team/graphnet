@@ -410,12 +410,12 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>  <span class="c1"># py-l-i-n-t-:- -d-i-s-able=invalid-name</span>
 <span class="w">        </span><span class="sd">"""Process Physics I3Frame into graph."""</span>
         <span class="c1"># Extract features</span>
-        <span class="n">node_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_feature_array_from_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">input_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_feature_array_from_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
         <span class="c1"># Prepare graph data</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_features</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_features</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span><span class="p">(</span>
-                <span class="n">node_features</span><span class="o">=</span><span class="n">node_features</span><span class="p">,</span>
-                <span class="n">node_feature_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span>
+                <span class="n">input_features</span><span class="o">=</span><span class="n">input_features</span><span class="p">,</span>
+                <span class="n">input_feature_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">Batch</span><span class="o">.</span><span class="n">from_data_list</span><span class="p">([</span><span class="n">data</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>

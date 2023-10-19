@@ -352,7 +352,7 @@
         <span class="n">detector</span><span class="p">:</span> <span class="n">Detector</span><span class="p">,</span>
         <span class="n">node_definition</span><span class="p">:</span> <span class="n">NodeDefinition</span> <span class="o">=</span> <span class="n">NodesAsPulses</span><span class="p">(),</span>
         <span class="n">edge_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">node_feature_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
         <span class="n">perturbation_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Generator</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -370,7 +370,10 @@
 <span class="sd">            detector: The corresponding ´Detector´ representing the data.</span>
 <span class="sd">            node_definition: Definition of nodes. Defaults to NodesAsPulses.</span>
 <span class="sd">            edge_definition: Definition of edges. Defaults to None.</span>
-<span class="sd">            node_feature_names: Names of node feature columns. Defaults to None</span>
+<span class="sd">            input_feature_names: Names of each column in expected input data</span>
+<span class="sd">                that will be built into a graph. If not provided,</span>
+<span class="sd">                it is automatically assumed that all features in `Detector` is</span>
+<span class="sd">                used.</span>
 <span class="sd">            dtype: data type used for node features. e.g. ´torch.float´</span>
 <span class="sd">            perturbation_dict: Dictionary mapping a feature name to a standard</span>
 <span class="sd">                               deviation according to which the values for this</span>
@@ -388,25 +391,30 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_definition</span> <span class="o">=</span> <span class="n">node_definition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span> <span class="o">=</span> <span class="n">perturbation_dict</span>
 
-        <span class="k">if</span> <span class="n">node_feature_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">input_feature_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Assume all features in Detector is used.</span>
-            <span class="n">node_feature_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">feature_map</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_node_feature_names</span> <span class="o">=</span> <span class="n">node_feature_names</span>
+            <span class="n">input_feature_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">feature_map</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span> <span class="o">=</span> <span class="n">input_feature_names</span>
+
+        <span class="c1"># Set input data column names for node definition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_node_definition</span><span class="o">.</span><span class="n">set_output_feature_names</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span>
+        <span class="p">)</span>
 
         <span class="c1"># Set data type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="c1"># Set Input / Output dimensions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_definition</span><span class="o">.</span><span class="n">set_number_of_inputs</span><span class="p">(</span>
-            <span class="n">node_feature_names</span><span class="o">=</span><span class="n">node_feature_names</span>
+            <span class="n">input_feature_names</span><span class="o">=</span><span class="n">input_feature_names</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_feature_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_definition</span><span class="o">.</span><span class="n">nb_outputs</span>
 
         <span class="c1"># Set perturbation_cols if needed</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_node_feature_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="p">]</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -425,8 +433,8 @@
 <a class="viewcode-back" href="../../../../api/graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition.forward">[docs]</a>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">node_features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">node_feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">input_features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">truth_dicts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">custom_label_functions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -437,8 +445,8 @@
 <span class="w">        </span><span class="sd">"""Construct graph as ´Data´ object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            node_features: node features for graph. Shape ´[num_nodes, d]´</span>
-<span class="sd">            node_feature_names: name of each column. Shape ´[,d]´.</span>
+<span class="sd">            input_features: Input features for graph construction. Shape ´[num_rows, d]´</span>
+<span class="sd">            input_feature_names: name of each column. Shape ´[,d]´.</span>
 <span class="sd">            truth_dicts: Dictionary containing truth labels.</span>
 <span class="sd">            custom_label_functions: Custom label functions. See https://github.com/graphnet-team/graphnet/blob/main/GETTING_STARTED.md#adding-custom-truth-labels.</span>
 <span class="sd">            loss_weight_column: Name of column that holds loss weight.</span>
@@ -454,23 +462,27 @@
 <span class="sd">        """</span>
         <span class="c1"># Checks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_input</span><span class="p">(</span>
-            <span class="n">node_features</span><span class="o">=</span><span class="n">node_features</span><span class="p">,</span> <span class="n">node_feature_names</span><span class="o">=</span><span class="n">node_feature_names</span>
+            <span class="n">input_features</span><span class="o">=</span><span class="n">input_features</span><span class="p">,</span>
+            <span class="n">input_feature_names</span><span class="o">=</span><span class="n">input_feature_names</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Gaussian perturbation of each column if perturbation dict is given</span>
-        <span class="n">node_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturb_input</span><span class="p">(</span><span class="n">node_features</span><span class="p">)</span>
+        <span class="n">input_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturb_input</span><span class="p">(</span><span class="n">input_features</span><span class="p">)</span>
 
         <span class="c1"># Transform to pytorch tensor</span>
-        <span class="n">node_features</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">node_features</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">input_features</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">input_features</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="c1"># Standardize / Scale  node features</span>
-        <span class="n">node_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="p">(</span><span class="n">node_features</span><span class="p">,</span> <span class="n">node_feature_names</span><span class="p">)</span>
+        <span class="n">input_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="p">(</span><span class="n">input_features</span><span class="p">,</span> <span class="n">input_feature_names</span><span class="p">)</span>
 
-        <span class="c1"># Create graph</span>
-        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_definition</span><span class="p">(</span><span class="n">node_features</span><span class="p">)</span>
+        <span class="c1"># Create graph &amp; get new node feature names</span>
+        <span class="n">graph</span><span class="p">,</span> <span class="n">node_feature_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_definition</span><span class="p">(</span><span class="n">input_features</span><span class="p">)</span>
+
+        <span class="c1"># Enforce dtype</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="c1"># Attach number of pulses as static attribute.</span>
-        <span class="n">graph</span><span class="o">.</span><span class="n">n_pulses</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">node_features</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">n_pulses</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_features</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
         <span class="c1"># Assign edges</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edge_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -515,26 +527,26 @@
 
 
     <span class="k">def</span> <span class="nf">_validate_input</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">node_features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">node_feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">input_features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># node feature matrix dimension check</span>
-        <span class="k">assert</span> <span class="n">node_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_feature_names</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">input_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_feature_names</span><span class="p">)</span>
 
         <span class="c1"># check that provided features for input is the same that the ´Graph´</span>
         <span class="c1"># was instantiated with.</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_feature_names</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_node_feature_names</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">"""Input features (</span><span class="si">{</span><span class="n">node_feature_names</span><span class="si">}</span><span class="s2">) is not what </span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_feature_names</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"""Input features (</span><span class="si">{</span><span class="n">input_feature_names</span><span class="si">}</span><span class="s2">) is not what </span>
 <span class="s2">               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> was instatiated</span>
-<span class="s2">               with (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_feature_names</span><span class="si">}</span><span class="s2">)"""</span>  <span class="c1"># noqa</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">node_feature_names</span><span class="p">)):</span>
+<span class="s2">               with (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span><span class="si">}</span><span class="s2">)"""</span>  <span class="c1"># noqa</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_feature_names</span><span class="p">)):</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">node_feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="n">input_feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
             <span class="p">),</span> <span class="sa">f</span><span class="s2">""" Order of node features in data</span>
-<span class="s2">                    are not the same as expected. Got </span><span class="si">{</span><span class="n">node_feature_names</span><span class="si">}</span><span class="s2"> </span>
-<span class="s2">                    vs. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_feature_names</span><span class="si">}</span><span class="s2">"""</span>  <span class="c1"># noqa</span>
+<span class="s2">                    are not the same as expected. Got </span><span class="si">{</span><span class="n">input_feature_names</span><span class="si">}</span><span class="s2"> </span>
+<span class="s2">                    vs. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span><span class="si">}</span><span class="s2">"""</span>  <span class="c1"># noqa</span>
 
-    <span class="k">def</span> <span class="nf">_perturb_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_perturb_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"""Will randomly perturb</span>
@@ -542,13 +554,13 @@
 <span class="s2">                using stds </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="si">}</span><span class="s2">"""</span>  <span class="c1"># noqa</span>
             <span class="p">)</span>
             <span class="n">perturbed_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-                <span class="n">loc</span><span class="o">=</span><span class="n">node_features</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">],</span>
+                <span class="n">loc</span><span class="o">=</span><span class="n">input_features</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">],</span>
                 <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                     <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span>
                 <span class="p">),</span>
             <span class="p">)</span>
-            <span class="n">node_features</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">perturbed_features</span>
-        <span class="k">return</span> <span class="n">node_features</span>
+            <span class="n">input_features</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perturbation_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">perturbed_features</span>
+        <span class="k">return</span> <span class="n">input_features</span>
 
     <span class="k">def</span> <span class="nf">_add_loss_weights</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
