@@ -84,12 +84,12 @@ class GraphNeTI3Module:
     ) -> Data:  # py-l-i-n-t-:- -d-i-s-able=invalid-name
         """Process Physics I3Frame into graph."""
         # Extract features
-        node_features = self._extract_feature_array_from_frame(frame)
+        input_features = self._extract_feature_array_from_frame(frame)
         # Prepare graph data
-        if len(node_features) > 0:
+        if len(input_features) > 0:
             data = self._graph_definition(
-                node_features=node_features,
-                node_feature_names=self._features,
+                input_features=input_features,
+                input_feature_names=self._features,
             )
             return Batch.from_data_list([data])
         else:

@@ -10,7 +10,7 @@ graph_definition:
     node_definition:
       arguments: {}
       class_name: NodesAsPulses
-    node_feature_names: [dom_x, dom_y, dom_z, dom_time, charge, rde, pmt_area]
+    input_feature_names: [dom_x, dom_y, dom_z, dom_time, charge, rde, pmt_area]
   class_name: KNNGraph
 pulsemaps:
   - SRTTWOfflinePulsesDC
