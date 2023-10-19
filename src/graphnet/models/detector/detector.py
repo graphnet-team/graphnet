@@ -45,6 +45,21 @@ class Detector(Model):
             self._geometry_table = pd.read_parquet(self.geometry_table_path)
         return self._geometry_table
 
+    @property
+    def string_index_name(self) -> str:
+        """Public get method for retrieving the string index column name."""
+        return self.string_id_column
+
+    @property
+    def sensor_position_names(self) -> str:
+        """Public get method for retrieving the xyz coordinate column names."""
+        return self.xyz
+
+    @property
+    def sensor_index_name(self) -> str:
+        """Public get method for retrieving the sensor id column name."""
+        return self.sensor_id_column
+
     @final
     def _standardize(
         self, input_features: torch.tensor, input_feature_names: List[str]
