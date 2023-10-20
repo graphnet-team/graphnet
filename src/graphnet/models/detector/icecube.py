@@ -2,12 +2,21 @@
 
 from typing import Dict, Callable
 import torch
+import os
 
 from graphnet.models.detector.detector import Detector
+from graphnet.constants import ICECUBE_GEOMETRY_TABLE_DIR
 
 
 class IceCube86(Detector):
     """`Detector` class for IceCube-86."""
+
+    geometry_table_path = os.path.join(
+        ICECUBE_GEOMETRY_TABLE_DIR, "icecube86.parquet"
+    )
+    xyz = ["dom_x", "dom_x", "dom_x"]
+    string_id_column = "string"
+    sensor_id_column = "sensor_id"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension of input data."""
@@ -63,7 +72,7 @@ class IceCubeKaggle(Detector):
         return torch.log10(x) / 3.0
 
 
-class IceCubeDeepCore(Detector):
+class IceCubeDeepCore(IceCube86):
     """`Detector` class for IceCube-DeepCore."""
 
     def feature_map(self) -> Dict[str, Callable]:
