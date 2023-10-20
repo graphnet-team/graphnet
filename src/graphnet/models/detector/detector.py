@@ -51,7 +51,7 @@ class Detector(Model):
         return self.string_id_column
 
     @property
-    def sensor_position_names(self) -> str:
+    def sensor_position_names(self) -> List[str]:
         """Public get method for retrieving the xyz coordinate column names."""
         return self.xyz
 

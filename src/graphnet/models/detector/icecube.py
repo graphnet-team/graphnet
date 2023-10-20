@@ -14,7 +14,7 @@ class IceCube86(Detector):
     geometry_table_path = os.path.join(
         ICECUBE_GEOMETRY_TABLE_DIR, "icecube86.parquet"
     )
-    xyz = ["dom_x", "dom_x", "dom_x"]
+    xyz = ["dom_x", "dom_y", "dom_z"]
     string_id_column = "string"
     sensor_id_column = "sensor_id"
 
@@ -106,6 +106,13 @@ class IceCubeDeepCore(IceCube86):
 
 class IceCubeUpgrade(Detector):
     """`Detector` class for IceCube-Upgrade."""
+
+    geometry_table_path = os.path.join(
+        ICECUBE_GEOMETRY_TABLE_DIR, "icecube_upgrade.parquet"
+    )
+    xyz = ["dom_x", "dom_y", "dom_z"]
+    string_id_column = "string"
+    sensor_id_column = "sensor_id"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension of input data."""
