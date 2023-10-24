@@ -135,7 +135,6 @@ class DynEdgeTITO(GNN):
         self._features_subset = features_subset or [0, 1, 2, 3]
         self._use_global_features = use_global_features
         self._use_post_processing_layers = use_post_processing_layers
-
         self._construct_layers()
 
     def _construct_layers(self) -> None:
