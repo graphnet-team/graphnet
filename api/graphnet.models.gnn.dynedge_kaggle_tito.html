@@ -531,8 +531,8 @@
 <dt class="sig sig-object py" id="graphnet.models.gnn.dynedge_kaggle_tito.DynEdgeTITO">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.dynedge_kaggle_tito.</span></span><span class="sig-name descname"><span class="pre">DynEdgeTITO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/gnn/dynedge_kaggle_tito.html#DynEdgeTITO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.dynedge_kaggle_tito.DynEdgeTITO" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">GNN</span></code></a></p>
-<p>DynEdge (dynamical edge convolutional) model.</p>
-<p>Construct <cite>DynEdge</cite>.</p>
+<p>DynEdgeTITO (dynamical edge convolutional with Transformer) model.</p>
+<p>Construct <cite>DynEdgeTITO</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -541,9 +541,13 @@
 are used as metric dimensions when performing the k-nearest
 neighbours clustering. Defaults to [0,1,2,3].</p></li>
 <li><p><strong>dyntrans_layer_sizes</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The layer sizes, or latent feature dimenions,
-used in the <cite>DynTrans</cite> layer.</p></li>
+used in the <cite>DynTrans</cite> layer.
+Defaults to [(256, 256), (256, 256), (256, 256), (256, 256)].</p></li>
 <li><p><strong>global_pooling_schemes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">['max']</span></code>) – The list global pooling schemes to use.
 Options are: “min”, “max”, “mean”, and “sum”.</p></li>
+<li><p><strong>use_global_features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Whether to use global features after pooling.</p></li>
+<li><p><strong>use_post_processing_layers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Whether to use post-processing layers
+after the <cite>DynTrans</cite> layers.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
