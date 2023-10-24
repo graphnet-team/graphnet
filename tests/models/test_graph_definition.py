@@ -3,7 +3,7 @@
 from graphnet.models.graphs import KNNGraph
 from graphnet.models.detector.prometheus import Prometheus, ORCA150
 from graphnet.data.constants import FEATURES
-from graphnet.models.detector import IceCube86
+from graphnet.models.detector import IceCube86, IceCubeUpgrade
 from graphnet.models.graphs.nodes import PercentileClusters
 from graphnet.models.graphs import GraphDefinition
 from graphnet.constants import EXAMPLE_DATA_DIR, TEST_DATA_DIR
@@ -86,16 +86,24 @@ def test_geometry_tables() -> None:
             TEST_DATA_DIR,
             "sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db",
         ),
+        "IceCubeUpgrade": os.path.join(
+            TEST_DATA_DIR,
+            "sqlite/upgrade_genie_step4_140028_000998_first_5_frames/upgrade_genie_step4_140028_000998_first_5_frames.db",
+        ),
     }
     meta = {
         "ORCA150": {"pulsemap": "total", "truth_table": "mc_truth"},
         "IceCube86": {"pulsemap": "SRTInIcePulses", "truth_table": "truth"},
+        "IceCubeUpgrade": {
+            "pulsemap": "SplitInIcePulses",
+            "truth_table": "truth",
+        },
     }
 
     string_mask = np.arange(0, 50, 1).tolist()
 
     # Tests
-    for detector in [ORCA150(), IceCube86()]:
+    for detector in [ORCA150(), IceCube86(), IceCubeUpgrade()]:
         # Get configs for test
         database = databases[detector.__class__.__name__]
         truth_table = meta[detector.__class__.__name__]["truth_table"]
