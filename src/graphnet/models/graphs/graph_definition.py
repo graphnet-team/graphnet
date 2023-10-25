@@ -30,6 +30,10 @@ class GraphDefinition(Model):
         dtype: Optional[torch.dtype] = torch.float,
         perturbation_dict: Optional[Dict[str, float]] = None,
         seed: Optional[Union[int, Generator]] = None,
+        add_inactive_sensors: bool = False,
+        sensor_mask: Optional[List[int]] = None,
+        string_mask: Optional[List[int]] = None,
+        sort_by: str = None,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -55,6 +59,12 @@ class GraphDefinition(Model):
                                to None.
             seed: seed or Generator used to randomly sample perturbations.
                   Defaults to None.
+            add_inactive_sensors: If True, inactive sensors will be appended
+                to the graph with padded pulse information. Defaults to False.
+            sensor_mask: A list of sensor id's to be masked from the graph. Any
+                sensor listed here will be removed from the graph. Defaults to None.
+            string_mask: A list of string id's to be masked from the graph. Defaults to None.
+            sort_by: Name of node feature to sort by. Defaults to None.
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -64,11 +74,29 @@ class GraphDefinition(Model):
         self._edge_definition = edge_definition
         self._node_definition = node_definition
         self._perturbation_dict = perturbation_dict
+        self._sensor_mask = sensor_mask
+        self._string_mask = string_mask
+        self._add_inactive_sensors = add_inactive_sensors
+        self.output_feature_names = self._node_definition._output_feature_names
+
+        self._resolve_masks()
 
         if input_feature_names is None:
             # Assume all features in Detector is used.
             input_feature_names = list(self._detector.feature_map().keys())  # type: ignore
         self._input_feature_names = input_feature_names
+
+        # Sorting
+        if sort_by is not None:
+            assert isinstance(sort_by, str)
+            try:
+                sort_by = self.output_feature_names.index(sort_by)  # type: ignore
+            except ValueError as e:
+                self.error(
+                    f"{sort_by} not in node features {self.output_feature_names}."
+                )
+                raise e
+        self._sort_by = sort_by
 
         # Set input data column names for node definition
         self._node_definition.set_output_feature_names(
@@ -138,6 +166,18 @@ class GraphDefinition(Model):
             input_feature_names=input_feature_names,
         )
 
+        # Add inactive sensors if `add_inactive_sensors = True`
+        if self._add_inactive_sensors:
+            input_features = self._attach_inactive_sensors(
+                input_features, input_feature_names
+            )
+
+        # Mask out sensors if `sensor_mask` is given
+        if self._sensor_mask is not None:
+            input_features = self._mask_sensors(
+                input_features, input_feature_names
+            )
+
         # Gaussian perturbation of each column if perturbation dict is given
         input_features = self._perturb_input(input_features)
 
@@ -149,6 +189,8 @@ class GraphDefinition(Model):
 
         # Create graph & get new node feature names
         graph, node_feature_names = self._node_definition(input_features)
+        if self._sort_by is not None:
+            graph.x = graph.x[graph.x[:, self._sort_by].sort()[1]]
 
         # Enforce dtype
         graph.x = graph.x.type(self.dtype)
@@ -196,6 +238,81 @@ class GraphDefinition(Model):
         # Add GraphDefinition Stamp
         graph["graph_definition"] = self.__class__.__name__
         return graph
+
+    def _resolve_masks(self) -> None:
+        """Handle cases with sensor/string masks."""
+        if self._sensor_mask is not None:
+            if self._string_mask is not None:
+                assert (
+                    1 == 2
+                ), """Got arguments for both `sensor_mask`and `string_mask`. Please specify only one. """
+
+        if (self._sensor_mask is None) & (self._string_mask is not None):
+            self._sensor_mask = self._convert_string_to_sensor_mask()
+
+        return
+
+    def _convert_string_to_sensor_mask(self) -> List[int]:
+        """Convert a string mask to a sensor mask."""
+        string_id_column = self._detector.string_id_column
+        sensor_id_column = self._detector.sensor_id_column
+        geometry_table = self._detector.geometry_table
+        idx = geometry_table[string_id_column].isin(self._string_mask)
+        return np.asarray(geometry_table.loc[idx, sensor_id_column]).tolist()
+
+    def _attach_inactive_sensors(
+        self, input_features: np.ndarray, input_feature_names: List[str]
+    ) -> np.ndarray:
+        """Attach inactive sensors to `input_features`.
+
+        This function will query the detector geometry table and add any sensor
+        in the geometry table that is not already present in `node_features`.
+        """
+        lookup = self._geometry_table_lookup(
+            input_features, input_feature_names
+        )
+        geometry_table = self._detector.geometry_table
+        unique_sensors = geometry_table.reset_index(drop=True)
+
+        # multiple lines to avoid long line:
+        inactive_idx = ~geometry_table.isin(lookup).reset_index(drop=True)
+        inactive_idx = inactive_idx[geometry_table.columns[0]]
+        #
+        inactive_sensors = unique_sensors.loc[
+            inactive_idx, input_feature_names
+        ]
+        input_features = np.concatenate(
+            [input_features, inactive_sensors.to_numpy()], axis=0
+        )
+        return input_features
+
+    def _mask_sensors(
+        self, input_features: np.ndarray, input_feature_names: List[str]
+    ) -> np.ndarray:
+        """Mask sensors according to `sensor_mask`."""
+        sensor_id_column = self._detector.sensor_index_name
+        geometry_table = self._detector.geometry_table
+
+        lookup = self._geometry_table_lookup(
+            input_features=input_features,
+            input_feature_names=input_feature_names,
+        )
+        mask = ~geometry_table.loc[lookup, sensor_id_column].isin(
+            self._sensor_mask
+        )
+
+        return input_features[mask, :]
+
+    def _geometry_table_lookup(
+        self, input_features: np.ndarray, input_feature_names: List[str]
+    ) -> np.ndarray:
+        """Convert xyz in `input_features` into a set of sensor ids."""
+        lookup_columns = [
+            input_feature_names.index(feature)
+            for feature in self._detector.sensor_position_names
+        ]
+        idx = [*zip(*[tuple(input_features[:, k]) for k in lookup_columns])]
+        return self._detector.geometry_table.loc[idx, :].index
 
     def _validate_input(
         self, input_features: np.array, input_feature_names: List[str]
