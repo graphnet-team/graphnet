@@ -87,9 +87,7 @@ def main(
     ) = make_train_validation_dataloader(
         db=config["path"],
         graph_definition=graph_definition,
-        selection=list(
-            range(0, 100)
-        ),  # subset of events for speeding up training
+        selection=None,
         pulsemaps=config["pulsemap"],
         features=features,
         truth=truth,
