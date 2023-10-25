@@ -75,7 +75,7 @@ def get_event(
     return np.array(df)
 
 
-def skip_geometry_tables() -> None:
+def test_geometry_tables() -> None:
     """Test parts of GraphDefinition that is related to geometry tables."""
     # Test config
     databases = {
