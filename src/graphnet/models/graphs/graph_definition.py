@@ -77,7 +77,6 @@ class GraphDefinition(Model):
         self._sensor_mask = sensor_mask
         self._string_mask = string_mask
         self._add_inactive_sensors = add_inactive_sensors
-        self.output_feature_names = self._node_definition._output_feature_names
 
         self._resolve_masks()
 
@@ -85,6 +84,12 @@ class GraphDefinition(Model):
             # Assume all features in Detector is used.
             input_feature_names = list(self._detector.feature_map().keys())  # type: ignore
         self._input_feature_names = input_feature_names
+
+        # Set input data column names for node definition
+        self._node_definition.set_output_feature_names(
+            self._input_feature_names
+        )
+        self.output_feature_names = self._node_definition._output_feature_names
 
         # Sorting
         if sort_by is not None:
@@ -97,12 +102,6 @@ class GraphDefinition(Model):
                 )
                 raise e
         self._sort_by = sort_by
-
-        # Set input data column names for node definition
-        self._node_definition.set_output_feature_names(
-            self._input_feature_names
-        )
-
         # Set data type
         self.to(dtype)
 
