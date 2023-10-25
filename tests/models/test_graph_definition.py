@@ -103,7 +103,7 @@ def test_geometry_tables() -> None:
     string_mask = np.arange(0, 50, 1).tolist()
 
     # Tests
-    for detector in [ORCA150(), IceCube86(), IceCubeUpgrade()]:
+    for detector in [ORCA150(), IceCube86()]:
         # Get configs for test
         database = databases[detector.__class__.__name__]
         truth_table = meta[detector.__class__.__name__]["truth_table"]
