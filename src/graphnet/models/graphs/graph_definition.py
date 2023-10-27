@@ -274,9 +274,7 @@ class GraphDefinition(Model):
         unique_sensors = geometry_table.reset_index(drop=True)
 
         # multiple lines to avoid long line:
-        inactive_idx = ~geometry_table.isin(lookup).reset_index(drop=True)
-        inactive_idx = inactive_idx[geometry_table.columns[0]]
-        #
+        inactive_idx = ~geometry_table.index.isin(lookup)
         inactive_sensors = unique_sensors.loc[
             inactive_idx, input_feature_names
         ]
