@@ -191,6 +191,9 @@ class StandardModel(Model):
             x = self._gnn(d)
             x_list.append(x)
         x = torch.cat(x_list, dim=0)
+        
+        preds = [task(x) for task in self._tasks]
+        return preds
 
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
