@@ -385,6 +385,8 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.fit" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">fit()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.target_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">target_labels</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.prediction_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prediction_labels</span></code></a>
@@ -421,6 +423,13 @@
     
       <a href="#graphnet.models.standard_model.StandardModel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a>
       <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.standard_model.StandardModel.fit" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">fit()</span></code></a>
+      
+    
+    </li>
     <li class="md-nav__item">
     
     
@@ -566,6 +575,8 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">StandardModel</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.fit" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">fit()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.target_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">target_labels</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.standard_model.StandardModel.prediction_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prediction_labels</span></code></a>
@@ -611,7 +622,7 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.standard_model.</span></span><span class="sig-name descname"><span class="pre">StandardModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/standard_model.html#StandardModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
 <p>Main class for standard models in graphnet.</p>
-<p>This class chains together the different elements of a complete GNN-based
+<p>This class chains together the different elements of a complete GNN- based
 model (detector read-in, GNN architecture, and task-specific read-outs).</p>
 <p>Construct <cite>StandardModel</cite>.</p>
 <dl class="field-list simple">
@@ -625,6 +636,31 @@ model (detector read-in, GNN architecture, and task-specific read-outs).</p>
 <dd class="field-even"><p>object</p>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_dataloader</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callbacks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ckpt_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_every_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient_clip_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution_strategy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">trainer_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/standard_model.html#StandardModel.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.fit" title="Link to this definition">¶</a></dt>
+<dd><p>Fit <cite>StandardModel</cite> using <cite>pytorch_lightning.Trainer</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>train_dataloader</strong> (<em>DataLoader</em>) – </p></li>
+<li><p><strong>val_dataloader</strong> (<em>DataLoader</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>max_epochs</strong> (<em>int</em>) – </p></li>
+<li><p><strong>gpus</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>callbacks</strong> (<em>List</em><em>[</em><em>Callback</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+<li><p><strong>ckpt_path</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>logger</strong> (<em>Logger</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>log_every_n_steps</strong> (<em>int</em>) – </p></li>
+<li><p><strong>gradient_clip_val</strong> (<em>float</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>distribution_strategy</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>trainer_kwargs</strong> (<em>Any</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.standard_model.StandardModel.target_labels">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.standard_model.StandardModel.target_labels" title="Link to this definition">¶</a></dt>
