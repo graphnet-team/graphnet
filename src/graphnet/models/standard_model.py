@@ -202,7 +202,7 @@ class StandardModel(Model):
         loss = self.compute_loss(preds, batch)
         return loss
 
-   def training_step(
+    def training_step(
         self, train_batch: Union[Data, List[Data]], batch_idx: int
     ) -> Tensor:
         """Perform training step."""
