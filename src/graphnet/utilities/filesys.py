@@ -31,7 +31,9 @@ def has_extension(filename: str, extensions: List[str]) -> bool:
 
 
 def find_i3_files(
-    directories: Union[str, List[str]], gcd_rescue: Optional[str] = None
+    directories: Union[str, List[str]],
+    gcd_rescue: Optional[str] = None,
+    recursive: Optional[bool] = True,
 ) -> Tuple[List[str], List[str]]:
     """Find I3 files and corresponding GCD files in `directories`.
 
@@ -43,6 +45,7 @@ def find_i3_files(
         directories: Directories to search recursively for I3 files.
         gcd_rescue: Path to the GCD that will be default if no GCD is present
             in the directory.
+        recursive: Whether or not to search the directories recursively.
 
     Returns:
         i3_list: Paths to I3 files in `directories`
@@ -57,11 +60,14 @@ def find_i3_files(
 
     for directory in directories:
 
-        # Recursively find all I3-like files in `directory`.
+        # Find all I3-like files in `directory`, may or may not be recursively.
         paths = []
         i3_patterns = ["*.bz2", "*.zst", "*.gz"]
         for i3_pattern in i3_patterns:
-            paths.extend(list(Path(directory).rglob(i3_pattern)))
+            if recursive:
+                paths.extend(list(Path(directory).rglob(i3_pattern)))
+            else:
+                paths.extend(list(Path(directory).glob(i3_pattern)))
 
         # Loop over all folders containing such I3-like files.
         folders = sorted(set([path.parent for path in paths]))
