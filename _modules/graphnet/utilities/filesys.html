@@ -366,7 +366,9 @@
 <div class="viewcode-block" id="find_i3_files">
 <a class="viewcode-back" href="../../../api/graphnet.utilities.filesys.html#graphnet.utilities.filesys.find_i3_files">[docs]</a>
 <span class="k">def</span> <span class="nf">find_i3_files</span><span class="p">(</span>
-    <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">gcd_rescue</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">gcd_rescue</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">recursive</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Find I3 files and corresponding GCD files in `directories`.</span>
 
@@ -378,6 +380,7 @@
 <span class="sd">        directories: Directories to search recursively for I3 files.</span>
 <span class="sd">        gcd_rescue: Path to the GCD that will be default if no GCD is present</span>
 <span class="sd">            in the directory.</span>
+<span class="sd">        recursive: Whether or not to search the directories recursively.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        i3_list: Paths to I3 files in `directories`</span>
@@ -392,11 +395,14 @@
 
     <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">directories</span><span class="p">:</span>
 
-        <span class="c1"># Recursively find all I3-like files in `directory`.</span>
+        <span class="c1"># Find all I3-like files in `directory`, may or may not be recursively.</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">i3_patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"*.bz2"</span><span class="p">,</span> <span class="s2">"*.zst"</span><span class="p">,</span> <span class="s2">"*.gz"</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i3_pattern</span> <span class="ow">in</span> <span class="n">i3_patterns</span><span class="p">:</span>
-            <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">)))</span>
 
         <span class="c1"># Loop over all folders containing such I3-like files.</span>
         <span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]))</span>

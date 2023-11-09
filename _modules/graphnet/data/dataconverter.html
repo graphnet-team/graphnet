@@ -536,15 +536,22 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
     <span class="nd">@final</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">recursive</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Convert I3-files in `directories.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            directories: One or more directories, the I3 files within which</span>
 <span class="sd">                should be converted to an intermediate file format.</span>
+<span class="sd">            recursive: Whether or not to search the directories recursively.</span>
 <span class="sd">        """</span>
         <span class="c1"># Find all I3 and GCD files in the specified directories.</span>
-        <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span> <span class="o">=</span> <span class="n">find_i3_files</span><span class="p">(</span><span class="n">directories</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_rescue</span><span class="p">)</span>
+        <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span> <span class="o">=</span> <span class="n">find_i3_files</span><span class="p">(</span>
+            <span class="n">directories</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_rescue</span><span class="p">,</span> <span class="n">recursive</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i3_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No files found in </span><span class="si">{</span><span class="n">directories</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
             <span class="k">return</span>
