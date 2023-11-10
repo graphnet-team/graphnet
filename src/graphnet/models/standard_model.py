@@ -70,7 +70,6 @@ class StandardModel(Model):
         max_epochs: int = 10,
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
-        ckpt_path: Optional[str] = None,
         logger: Optional[LightningLogger] = None,
         log_every_n_steps: int = 1,
         gradient_clip_val: Optional[float] = None,
@@ -93,7 +92,6 @@ class StandardModel(Model):
             logger=logger,
             gradient_clip_val=gradient_clip_val,
             strategy=distribution_strategy,
-            default_root_dir=ckpt_path,
             **trainer_kwargs,
         )
 
@@ -130,7 +128,6 @@ class StandardModel(Model):
             max_epochs=max_epochs,
             gpus=gpus,
             callbacks=callbacks,
-            ckpt_path=ckpt_path,
             logger=logger,
             log_every_n_steps=log_every_n_steps,
             gradient_clip_val=gradient_clip_val,
