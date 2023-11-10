@@ -17,7 +17,6 @@ from torch_geometric.data import Data
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_sum
 
 from graphnet.models.components.layers import DynTrans
-from graphnet.utilities.config import save_model_config
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.utils import calculate_xyzt_homophily
 
@@ -32,7 +31,6 @@ GLOBAL_POOLINGS = {
 class DynEdgeTITO(GNN):
     """DynEdgeTITO (dynamical edge convolutional with Transformer) model."""
 
-    @save_model_config
     def __init__(
         self,
         nb_inputs: int,
