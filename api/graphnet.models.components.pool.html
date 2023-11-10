@@ -592,7 +592,7 @@
 <p>Like <cite>max_pool, just negating `data.x</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -610,7 +610,7 @@
 <p>Like <cite>max_pool_x, just negating `x</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -628,7 +628,7 @@
 <dd><p>Sum-pool values and distribute result to the individual nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -650,7 +650,7 @@ level to DOM-level by aggregating feature across each group returned by this
 method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -676,7 +676,7 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dd><p>Group pulses on the same DOM, using DOM and string number.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>data</strong> (<em>Data</em>) – </p>
@@ -689,7 +689,7 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dd><p>Group pulses on the same PMT, using PMT, DOM, and string number.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>data</strong> (<em>Data</em>) – </p>
@@ -703,13 +703,13 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
+<li><p><strong>cluster</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
 \ldots, N - 1 \}^N\)</span>, which assigns each node to a specific cluster.</p></li>
-<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Node feature matrix
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</p></li>
-<li><p><strong>batch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
+<li><p><strong>batch</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
 B-1\}}^N\)</span>, which assigns each node to a specific example.</p></li>
-<li><p><strong>size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The maximum number of clusters in a single
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The maximum number of clusters in a single
 example. This property is useful to obtain a batch-wise dense
 representation, <em>e.g.</em> for applying FC layers, but should only be
 used if the size of the maximum number of clusters per example is
@@ -717,7 +717,7 @@ known in advance.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -728,13 +728,13 @@ known in advance.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
+<li><p><strong>cluster</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
 \ldots, N - 1 \}^N\)</span>, which assigns each node to a specific cluster.</p></li>
-<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>) – Node feature matrix
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</p></li>
-<li><p><strong>batch</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
+<li><p><strong>batch</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
 B-1\}}^N\)</span>, which assigns each node to a specific example.</p></li>
-<li><p><strong>size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The maximum number of clusters in a single
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The maximum number of clusters in a single
 example. This property is useful to obtain a batch-wise dense
 representation, <em>e.g.</em> for applying FC layers, but should only be
 used if the size of the maximum number of clusters per example is
@@ -742,7 +742,7 @@ known in advance.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -758,16 +758,16 @@ cluster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
+<li><p><strong>cluster</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
 \ldots, N - 1 \}^N\)</span>, which assigns each node to a specific cluster.</p></li>
-<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – Graph data object.</p></li>
-<li><p><strong>transform</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A function/transform that takes in the
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span>) – Graph data object.</p></li>
+<li><p><strong>transform</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A function/transform that takes in the
 coarsened and pooled <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> object and
 returns a transformed version.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -783,16 +783,16 @@ cluster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
+<li><p><strong>cluster</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span>) – Cluster vector <span class="math notranslate nohighlight">\(\mathbf{c} \in \{ 0,
 \ldots, N - 1 \}^N\)</span>, which assigns each node to a specific cluster.</p></li>
-<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – Graph data object.</p></li>
-<li><p><strong>transform</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A function/transform that takes in the
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span>) – Graph data object.</p></li>
+<li><p><strong>transform</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A function/transform that takes in the
 coarsened and pooled <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> object and
 returns a transformed version.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>

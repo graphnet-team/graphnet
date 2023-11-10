@@ -536,17 +536,17 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nb_inputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of input features on each node.</p></li>
-<li><p><strong>features_subset</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The subset of latent features on each node that
+<li><p><strong>nb_inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of input features on each node.</p></li>
+<li><p><strong>features_subset</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The subset of latent features on each node that
 are used as metric dimensions when performing the k-nearest
 neighbours clustering. Defaults to [0,1,2,3].</p></li>
-<li><p><strong>dyntrans_layer_sizes</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The layer sizes, or latent feature dimenions,
+<li><p><strong>dyntrans_layer_sizes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The layer sizes, or latent feature dimenions,
 used in the <cite>DynTrans</cite> layer.
 Defaults to [(256, 256), (256, 256), (256, 256), (256, 256)].</p></li>
-<li><p><strong>global_pooling_schemes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">['max']</span></code>) – The list global pooling schemes to use.
+<li><p><strong>global_pooling_schemes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">['max']</span></code>) – The list global pooling schemes to use.
 Options are: “min”, “max”, “mean”, and “sum”.</p></li>
-<li><p><strong>use_global_features</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Whether to use global features after pooling.</p></li>
-<li><p><strong>use_post_processing_layers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Whether to use post-processing layers
+<li><p><strong>use_global_features</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Whether to use global features after pooling.</p></li>
+<li><p><strong>use_post_processing_layers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Whether to use post-processing layers
 after the <cite>DynTrans</cite> layers.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
@@ -562,7 +562,7 @@ after the <cite>DynTrans</cite> layers.</p></li>
 <dd><p>Apply learnable forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>data</strong> (<em>Data</em>) – </p>

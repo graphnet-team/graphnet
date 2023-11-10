@@ -491,9 +491,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>config_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to original config file.</p></li>
-<li><p><strong>new_config_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Path to save updated config file.</p></li>
-<li><p><strong>dummy_section</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'temp'</span></code>) – Dummy section name to use for config files without
+<li><p><strong>config_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Path to original config file.</p></li>
+<li><p><strong>new_config_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Path to save updated config file.</p></li>
+<li><p><strong>dummy_section</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'temp'</span></code>) – Dummy section name to use for config files without
 section headers.</p></li>
 </ul>
 </dd>
@@ -501,7 +501,7 @@ section headers.</p></li>
 <dd class="field-even"><p>ConfigUpdater instance for programatically updating config file.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigUpdater</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigUpdater</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -531,19 +531,19 @@ hypersurfaces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>config_outdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The output directory in which to store the
+<li><p><strong>config_outdir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The output directory in which to store the
 configuration.</p></li>
-<li><p><strong>weight_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">''</span></code>) – The name of the weight. If <cite>add_to_database=True</cite>,
+<li><p><strong>weight_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">''</span></code>) – The name of the weight. If <cite>add_to_database=True</cite>,
 this will be the name of the table.</p></li>
-<li><p><strong>pisa_config_dict</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The dictionary of PISA configurations. Can be
+<li><p><strong>pisa_config_dict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The dictionary of PISA configurations. Can be
 used to change assumptions regarding the fit.</p></li>
-<li><p><strong>add_to_database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If <cite>True</cite>, a table will be added to the database
+<li><p><strong>add_to_database</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If <cite>True</cite>, a table will be added to the database
 called <cite>weight_name</cite> with two columns:
 <cite>[index_column, weight_name]</cite></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A dataframe with columns <cite>[index_column, weight_name]</cite>.</p>
@@ -575,7 +575,7 @@ called <cite>weight_name</cite> with two columns:
 <dd><p>Fit 1D contours.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -595,7 +595,7 @@ called <cite>weight_name</cite> with two columns:
 <dd><p>Fit 2D contours.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">

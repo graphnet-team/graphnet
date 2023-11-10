@@ -583,14 +583,14 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>) – The MLP/torch.Module to be used within the <cite>EdgeConv</cite>.</p></li>
-<li><p><strong>aggr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'max'</span></code>) – Aggregation method to be used with <cite>EdgeConv</cite>.</p></li>
-<li><p><strong>nb_neighbors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">8</span></code>) – Number of neighbours to be clustered after the
+<li><p><strong>nn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span>) – The MLP/torch.Module to be used within the <cite>EdgeConv</cite>.</p></li>
+<li><p><strong>aggr</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'max'</span></code>) – Aggregation method to be used with <cite>EdgeConv</cite>.</p></li>
+<li><p><strong>nb_neighbors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">8</span></code>) – Number of neighbours to be clustered after the
 <cite>EdgeConv</cite> operation.</p></li>
-<li><p><strong>features_subset</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Subset of features in <cite>Data.x</cite> that should be used
+<li><p><strong>features_subset</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Subset of features in <cite>Data.x</cite> that should be used
 when dynamically performing the new graph clustering after the
 <cite>EdgeConv</cite> operation. Defaults to all features.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – Additional features to be passed to <cite>EdgeConv</cite>.</p></li>
+<li><p><strong>**kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) – Additional features to be passed to <cite>EdgeConv</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -600,7 +600,7 @@ when dynamically performing the new graph clustering after the
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -622,9 +622,9 @@ when dynamically performing the new graph clustering after the
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nn</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>) – The MLP/torch.Module to be used within the <cite>EdgeConvTito</cite>.</p></li>
-<li><p><strong>aggr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'max'</span></code>) – Aggregation method to be used with <cite>EdgeConvTito</cite>.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – Additional features to be passed to <cite>EdgeConvTito</cite>.</p></li>
+<li><p><strong>nn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span>) – The MLP/torch.Module to be used within the <cite>EdgeConvTito</cite>.</p></li>
+<li><p><strong>aggr</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'max'</span></code>) – Aggregation method to be used with <cite>EdgeConvTito</cite>.</p></li>
+<li><p><strong>**kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) – Additional features to be passed to <cite>EdgeConvTito</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -634,7 +634,7 @@ when dynamically performing the new graph clustering after the
 <dd><p>Reset all learnable parameters of the module.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -644,7 +644,7 @@ when dynamically performing the new graph clustering after the
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -660,7 +660,7 @@ when dynamically performing the new graph clustering after the
 <dd><p>Edgeconvtito message passing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -682,13 +682,13 @@ when dynamically performing the new graph clustering after the
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nn</strong> – The MLP/torch.Module to be used within the <cite>DynTrans</cite>.</p></li>
-<li><p><strong>layer_sizes</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – List of layer sizes to be used in <cite>DynTrans</cite>.</p></li>
-<li><p><strong>aggr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, default: <code class="docutils literal notranslate"><span class="pre">'max'</span></code>) – Aggregation method to be used with <cite>DynTrans</cite>.</p></li>
-<li><p><strong>features_subset</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Subset of features in <cite>Data.x</cite> that should be used
+<li><p><strong>layer_sizes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – List of layer sizes to be used in <cite>DynTrans</cite>.</p></li>
+<li><p><strong>aggr</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'max'</span></code>) – Aggregation method to be used with <cite>DynTrans</cite>.</p></li>
+<li><p><strong>features_subset</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Subset of features in <cite>Data.x</cite> that should be used
 when dynamically performing the new graph clustering after the
 <cite>EdgeConv</cite> operation. Defaults to all features.</p></li>
-<li><p><strong>n_head</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, default: <code class="docutils literal notranslate"><span class="pre">8</span></code>) – Number of heads to be used in the multiheadattention models.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – Additional features to be passed to <cite>DynTrans</cite>.</p></li>
+<li><p><strong>n_head</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">8</span></code>) – Number of heads to be used in the multiheadattention models.</p></li>
+<li><p><strong>**kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) – Additional features to be passed to <cite>DynTrans</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -698,7 +698,7 @@ when dynamically performing the new graph clustering after the
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">

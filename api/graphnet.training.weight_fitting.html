@@ -505,22 +505,22 @@ pandas.DataFrame and optionally saved to sql.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bins</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Desired bins used for fitting.</p></li>
-<li><p><strong>variable</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – the name of the variable. Must match corresponding column
+<li><p><strong>bins</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span>) – Desired bins used for fitting.</p></li>
+<li><p><strong>variable</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – the name of the variable. Must match corresponding column
 name in the truth table.</p></li>
-<li><p><strong>weight_name</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the weights.</p></li>
-<li><p><strong>add_to_database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, the weights are saved to sql in a table
+<li><p><strong>weight_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the weights.</p></li>
+<li><p><strong>add_to_database</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, the weights are saved to sql in a table
 named weight_name.</p></li>
-<li><p><strong>selection</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – a list of event_no’s. If given, only events in the
+<li><p><strong>selection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – a list of event_no’s. If given, only events in the
 selection is used for fitting.</p></li>
-<li><p><strong>transform</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>], default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A callable method that transform the variable into a
+<li><p><strong>transform</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A callable method that transform the variable into a
 desired space. E.g. np.log10 for energy. If given, fitting will
 happen in this space.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – Additional arguments passed to <cite>_fit_weights</cite>.</p></li>
+<li><p><strong>**kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) – Additional arguments passed to <cite>_fit_weights</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>DataFrame that contains weights, event_nos.</p>
