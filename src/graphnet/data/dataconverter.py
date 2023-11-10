@@ -201,15 +201,22 @@ class DataConverter(ABC, Logger):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     @final
-    def __call__(self, directories: Union[str, List[str]]) -> None:
+    def __call__(
+        self,
+        directories: Union[str, List[str]],
+        recursive: Optional[bool] = True,
+    ) -> None:
         """Convert I3-files in `directories.
 
         Args:
             directories: One or more directories, the I3 files within which
                 should be converted to an intermediate file format.
+            recursive: Whether or not to search the directories recursively.
         """
         # Find all I3 and GCD files in the specified directories.
-        i3_files, gcd_files = find_i3_files(directories, self._gcd_rescue)
+        i3_files, gcd_files = find_i3_files(
+            directories, self._gcd_rescue, recursive
+        )
         if len(i3_files) == 0:
             self.error(f"No files found in {directories}.")
             return

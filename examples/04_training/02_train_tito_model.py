@@ -87,9 +87,7 @@ def main(
     ) = make_train_validation_dataloader(
         db=config["path"],
         graph_definition=graph_definition,
-        selection=list(
-            range(0, 100)
-        ),  # subset of events for speeding up training
+        selection=None,
         pulsemaps=config["pulsemap"],
         features=features,
         truth=truth,
@@ -107,7 +105,11 @@ def main(
     # Building model
     gnn = DynEdgeTITO(
         nb_inputs=graph_definition.nb_outputs,
+        features_subset=[0, 1, 2, 3],
+        dyntrans_layer_sizes=[(256, 256), (256, 256), (256, 256), (256, 256)],
         global_pooling_schemes=["max"],
+        use_global_features=True,
+        use_post_processing_layers=True,
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=gnn.nb_outputs,
@@ -182,8 +184,7 @@ def main(
 
     # Save model config and state dict - Version safe save method.
     model.save_state_dict(f"{path}/state_dict.pth")
-    # model.save_config(f"{path}/model_config.yml")
-    # Pending https://github.com/graphnet-team/graphnet/issues/606
+    model.save_config(f"{path}/model_config.yml")
 
 
 if __name__ == "__main__":
@@ -213,7 +214,7 @@ Train GNN model without the use of config files.
             "Name of feature to use as regression target (default: "
             "%(default)s)"
         ),
-        default=["direction"],
+        default="direction",
     )
 
     parser.add_argument(

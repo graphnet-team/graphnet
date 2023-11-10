@@ -65,7 +65,7 @@ def main() -> None:
         detector=IceCubeDeepCore(),
         node_definition=NodesAsPulses(),
         nb_nearest_neighbours=8,
-        node_feature_names=FEATURES.DEEPCORE,
+        input_feature_names=FEATURES.DEEPCORE,
     )
 
     # Remove `interaction_time` if it exists

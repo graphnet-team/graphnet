@@ -115,7 +115,7 @@ def test_dataset(backend: str) -> None:
         detector=IceCubeDeepCore(),
         node_definition=NodesAsPulses(),
         nb_nearest_neighbours=8,
-        node_feature_names=FEATURES.DEEPCORE,
+        input_feature_names=FEATURES.DEEPCORE,
     )
 
     # Constructor DataConverter instance
@@ -168,7 +168,7 @@ def test_datasetquery_table(backend: str) -> None:
         detector=IceCubeDeepCore(),
         node_definition=NodesAsPulses(),
         nb_nearest_neighbours=8,
-        node_feature_names=FEATURES.DEEPCORE,
+        input_feature_names=FEATURES.DEEPCORE,
     )
     # Constructor DataConverter instance
     pulsemap = "SRTInIcePulses"
@@ -220,7 +220,7 @@ def test_parquet_to_sqlite_converter() -> None:
         detector=IceCubeDeepCore(),
         node_definition=NodesAsPulses(),
         nb_nearest_neighbours=8,
-        node_feature_names=FEATURES.DEEPCORE,
+        input_feature_names=FEATURES.DEEPCORE,
     )
     # Perform conversion from I3 to `backend`
     database_name = FILE_NAME + "_from_parquet"
