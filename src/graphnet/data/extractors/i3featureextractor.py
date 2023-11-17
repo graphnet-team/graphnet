@@ -202,7 +202,9 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         https://github.com/icecube/icetray/issues/2721 Note that the issue
         states to use 8ns, but I have found that actually 6ns is correct.
         """
-        # Use pulse width to check whether a pulse is (a) FADC-only, or includes ATWD (and probably also FADC)
+        # Use pulse width to check whether a pulse is
+        # (a) FADC-only, or
+        # includes ATWD (and probably also FADC)
         return pulse.width < (fadc_min_width_ns * icetray.I3Units.ns)
 
 
