@@ -391,7 +391,6 @@
             <span class="s2">"event_time"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"hlc"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"awtd"</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">"fadc"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"string"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"pmt_number"</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">"dom_number"</span><span class="p">:</span> <span class="p">[],</span>
@@ -489,16 +488,15 @@
                 <span class="n">output</span><span class="p">[</span><span class="s2">"is_saturated_dom"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_saturated_dom</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"is_errata_dom"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_errata_dom</span><span class="p">)</span>
                 <span class="n">output</span><span class="p">[</span><span class="s2">"event_time"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_time</span><span class="p">)</span>
+
                 <span class="c1"># Pulse flags</span>
                 <span class="n">flags</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pulse</span><span class="p">,</span> <span class="s2">"flags"</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">flags</span> <span class="o">==</span> <span class="n">padding_value</span><span class="p">:</span>
-                    <span class="n">output</span><span class="p">[</span><span class="s2">"hlc"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>  <span class="c1"># bit 0</span>
-                    <span class="n">output</span><span class="p">[</span><span class="s2">"awtd"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>  <span class="c1"># bit 1</span>
-                    <span class="n">output</span><span class="p">[</span><span class="s2">"fadc"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>  <span class="c1"># bit 2</span>
+                    <span class="n">output</span><span class="p">[</span><span class="s2">"hlc"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>
+                    <span class="n">output</span><span class="p">[</span><span class="s2">"awtd"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">output</span><span class="p">[</span><span class="s2">"hlc"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pulse</span><span class="o">.</span><span class="n">flags</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1</span><span class="p">)</span>  <span class="c1"># bit 0</span>
-                    <span class="n">output</span><span class="p">[</span><span class="s2">"awtd"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pulse</span><span class="o">.</span><span class="n">flags</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1</span><span class="p">)</span>  <span class="c1"># bit 1</span>
-                    <span class="n">output</span><span class="p">[</span><span class="s2">"fadc"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pulse</span><span class="o">.</span><span class="n">flags</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1</span><span class="p">)</span>  <span class="c1"># bit 2</span>
+                    <span class="n">output</span><span class="p">[</span><span class="s2">"awtd"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_awtd_flag</span><span class="p">(</span><span class="n">pulse</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">output</span>
 
@@ -515,7 +513,28 @@
                 <span class="n">rde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="o">.</span><span class="n">dom_cal</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span><span class="o">.</span><span class="n">relative_dom_eff</span>
             <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
                 <span class="n">rde</span> <span class="o">=</span> <span class="n">padding_value</span>
-        <span class="k">return</span> <span class="n">rde</span></div>
+        <span class="k">return</span> <span class="n">rde</span>
+
+    <span class="k">def</span> <span class="nf">_parse_awtd_flag</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">pulse</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">fadc_min_width_ns</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Parse awtd flag from pulse width.</span>
+
+<span class="sd">        Returns True if the pulse was readout using the awtd digitizer.</span>
+
+<span class="sd">        Method by Tom Stuttard.</span>
+
+<span class="sd">        Notes from Tom:</span>
+<span class="sd">        Function to read the bits of the pulse flags and unpack them into</span>
+<span class="sd">        meaningful info Using pulse width rather than flags to separate FADC vs</span>
+<span class="sd">        ATWD pulses, due to a known issue.</span>
+<span class="sd">        https://github.com/icecube/icetray/issues/2721 Note that the issue</span>
+<span class="sd">        states to use 8ns, but I have found that actually 6ns is correct.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Use pulse width to check whether a pulse is</span>
+        <span class="c1"># (a) FADC-only, or</span>
+        <span class="c1"># includes ATWD (and probably also FADC)</span>
+        <span class="k">return</span> <span class="n">pulse</span><span class="o">.</span><span class="n">width</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">fadc_min_width_ns</span> <span class="o">*</span> <span class="n">icetray</span><span class="o">.</span><span class="n">I3Units</span><span class="o">.</span><span class="n">ns</span><span class="p">)</span></div>
 
 
 
