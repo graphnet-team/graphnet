@@ -62,7 +62,6 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             "event_time": [],
             "hlc": [],
             "awtd": [],
-            "fadc": [],
             "string": [],
             "pmt_number": [],
             "dom_number": [],
@@ -160,16 +159,15 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
                 output["is_saturated_dom"].append(is_saturated_dom)
                 output["is_errata_dom"].append(is_errata_dom)
                 output["event_time"].append(event_time)
+
                 # Pulse flags
                 flags = getattr(pulse, "flags", padding_value)
                 if flags == padding_value:
-                    output["hlc"].append(padding_value)  # bit 0
-                    output["awtd"].append(padding_value)  # bit 1
-                    output["fadc"].append(padding_value)  # bit 2
+                    output["hlc"].append(padding_value)
+                    output["awtd"].append(padding_value)
                 else:
                     output["hlc"].append((pulse.flags >> 0) & 0x1)  # bit 0
-                    output["awtd"].append((pulse.flags >> 1) & 0x1)  # bit 1
-                    output["fadc"].append((pulse.flags >> 2) & 0x1)  # bit 2
+                    output["awtd"].append(self._parse_awtd_flag(pulse))
 
         return output
 
@@ -187,6 +185,27 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             except:  # noqa: E722
                 rde = padding_value
         return rde
+
+    def _parse_awtd_flag(
+        self, pulse: Any, fadc_min_width_ns: float = 6.0
+    ) -> bool:
+        """Parse awtd flag from pulse width.
+
+        Returns True if the pulse was readout using the awtd digitizer.
+
+        Method by Tom Stuttard.
+
+        Notes from Tom:
+        Function to read the bits of the pulse flags and unpack them into
+        meaningful info Using pulse width rather than flags to separate FADC vs
+        ATWD pulses, due to a known issue.
+        https://github.com/icecube/icetray/issues/2721 Note that the issue
+        states to use 8ns, but I have found that actually 6ns is correct.
+        """
+        # Use pulse width to check whether a pulse is
+        # (a) FADC-only, or
+        # includes ATWD (and probably also FADC)
+        return pulse.width < (fadc_min_width_ns * icetray.I3Units.ns)
 
 
 class I3FeatureExtractorIceCubeDeepCore(I3FeatureExtractorIceCube86):
