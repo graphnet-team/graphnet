@@ -39,6 +39,7 @@ from graphnet.utilities.decorators import final
 from graphnet.utilities.filesys import find_i3_files
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
+from graphnet.data.filters import I3Filter, NullSplitI3Filter
 
 if has_icecube_package():
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
@@ -107,6 +108,7 @@ class DataConverter(ABC, Logger):
         workers: int = 1,
         index_column: str = "event_no",
         icetray_verbose: int = 0,
+        i3_filters: List[I3Filter] = [],
     ):
         """Construct DataConverter.
 
@@ -167,6 +169,14 @@ class DataConverter(ABC, Logger):
         self._input_file_batch_pattern = input_file_batch_pattern
         self._workers = workers
 
+        # I3Filters (NullSplitI3Filter is always included)
+        self._i3filters = [NullSplitI3Filter()] + i3_filters
+
+        for filter in self._i3filters:
+            assert isinstance(
+                filter, I3Filter
+            ), f"{type(filter)} is not a subclass of I3Filter"
+
         # Create I3Extractors
         self._extractors = I3ExtractorCollection(*extractors)
 
@@ -191,15 +201,22 @@ class DataConverter(ABC, Logger):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     @final
-    def __call__(self, directories: Union[str, List[str]]) -> None:
+    def __call__(
+        self,
+        directories: Union[str, List[str]],
+        recursive: Optional[bool] = True,
+    ) -> None:
         """Convert I3-files in `directories.
 
         Args:
             directories: One or more directories, the I3 files within which
                 should be converted to an intermediate file format.
+            recursive: Whether or not to search the directories recursively.
         """
         # Find all I3 and GCD files in the specified directories.
-        i3_files, gcd_files = find_i3_files(directories, self._gcd_rescue)
+        i3_files, gcd_files = find_i3_files(
+            directories, self._gcd_rescue, recursive
+        )
         if len(i3_files) == 0:
             self.error(f"No files found in {directories}.")
             return
@@ -433,6 +450,7 @@ class DataConverter(ABC, Logger):
             except Exception as e:
                 if "I3" in str(e):
                     continue
+            # check if frame should be skipped
             if self._skip_frame(frame):
                 continue
 
@@ -555,14 +573,15 @@ class DataConverter(ABC, Logger):
         return output_file
 
     def _skip_frame(self, frame: "icetray.I3Frame") -> bool:
-        """Check if frame should be skipped.
-
-        Args:
-            frame: I3Frame to check.
+        """Check the user defined filters.
 
         Returns:
-            True if frame is a null split frame, else False.
+            bool: True if frame should be skipped, False otherwise.
         """
-        if frame["I3EventHeader"].sub_event_stream == "NullSplit":
-            return True
-        return False
+        if self._i3filters is None:
+            return False  # No filters defined, so we keep the frame
+
+        for filter in self._i3filters:
+            if not filter(frame):
+                return True  # keep_frame call false, skip the frame.
+        return False  # All filter keep_frame calls true, keep the frame.

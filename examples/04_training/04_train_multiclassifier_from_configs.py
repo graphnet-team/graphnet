@@ -1,4 +1,4 @@
-"""Simplified example of multi-class classification training Model."""
+"""Multi-class classification using DynEdge from pre-defined config files."""
 
 import os
 from typing import List, Optional, Dict, Any
@@ -175,7 +175,7 @@ if __name__ == "__main__":
             ),
         ),
         "gpus",
-        ("max-epochs", 5),
+        ("max-epochs", 1),
         "early-stopping-patience",
         ("batch-size", 16),
         "num-workers",
@@ -188,7 +188,7 @@ if __name__ == "__main__":
         default=None,
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(
         args.dataset_config,

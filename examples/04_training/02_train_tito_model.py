@@ -14,7 +14,6 @@ from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdgeTITO
 from graphnet.models.graphs import KNNGraph
-from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.task.reconstruction import (
     DirectionReconstructionWithKappa,
 )
@@ -28,7 +27,6 @@ from graphnet.utilities.logging import Logger
 # Constants
 features = FEATURES.PROMETHEUS
 truth = TRUTH.PROMETHEUS
-DYNTRANS_LAYER_SIZES = [(256, 256), (256, 256), (256, 256)]
 
 
 def main(
@@ -76,12 +74,7 @@ def main(
         },
     }
 
-    graph_definition = KNNGraph(
-        detector=Prometheus(),
-        node_definition=NodesAsPulses(),
-        nb_nearest_neighbours=8,
-        node_feature_names=features,
-    )
+    graph_definition = KNNGraph(detector=Prometheus())
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_tito_model")
     run_name = "dynedgeTITO_{}_example".format(config["target"])
     if wandb:
@@ -94,9 +87,7 @@ def main(
     ) = make_train_validation_dataloader(
         db=config["path"],
         graph_definition=graph_definition,
-        selection=list(
-            range(0, 100)
-        ),  # subset of events for speeding up training
+        selection=None,
         pulsemaps=config["pulsemap"],
         features=features,
         truth=truth,
@@ -114,8 +105,11 @@ def main(
     # Building model
     gnn = DynEdgeTITO(
         nb_inputs=graph_definition.nb_outputs,
+        features_subset=[0, 1, 2, 3],
+        dyntrans_layer_sizes=[(256, 256), (256, 256), (256, 256), (256, 256)],
         global_pooling_schemes=["max"],
-        dyntrans_layer_sizes=DYNTRANS_LAYER_SIZES,
+        use_global_features=True,
+        use_post_processing_layers=True,
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=gnn.nb_outputs,
@@ -182,9 +176,15 @@ def main(
     logger.info(f"Writing results to {path}")
     os.makedirs(path, exist_ok=True)
 
+    # Save results as .csv
     results.to_csv(f"{path}/results.csv")
-    model.save_state_dict(f"{path}/state_dict.pth")
+
+    # Save full model (including weights) to .pth file - Not version proof
     model.save(f"{path}/model.pth")
+
+    # Save model config and state dict - Version safe save method.
+    model.save_state_dict(f"{path}/state_dict.pth")
+    model.save_config(f"{path}/model_config.yml")
 
 
 if __name__ == "__main__":
@@ -214,7 +214,7 @@ Train GNN model without the use of config files.
             "Name of feature to use as regression target (default: "
             "%(default)s)"
         ),
-        default=["direction"],
+        default="direction",
     )
 
     parser.add_argument(
@@ -225,7 +225,7 @@ Train GNN model without the use of config files.
 
     parser.with_standard_arguments(
         "gpus",
-        ("max-epochs", 5),
+        ("max-epochs", 1),
         ("early-stopping-patience", 2),
         ("batch-size", 16),
         "num-workers",
@@ -237,7 +237,7 @@ Train GNN model without the use of config files.
         help="If True, Weights & Biases are used to track the experiment.",
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(
         args.path,

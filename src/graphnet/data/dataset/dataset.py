@@ -27,7 +27,7 @@ from graphnet.training.labels import Label
 from graphnet.utilities.config import (
     Configurable,
     DatasetConfig,
-    save_dataset_config,
+    DatasetConfigSaverABCMeta,
 )
 from graphnet.utilities.config.parsing import traverse_and_apply
 from graphnet.utilities.logging import Logger
@@ -85,7 +85,13 @@ def parse_graph_definition(cfg: dict) -> GraphDefinition:
     return graph_definition
 
 
-class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
+class Dataset(
+    Logger,
+    Configurable,
+    torch.utils.data.Dataset,
+    ABC,
+    metaclass=DatasetConfigSaverABCMeta,
+):
     """Base Dataset class for reading from any intermediate file format."""
 
     # Class method(s)
@@ -188,7 +194,6 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
             .replace("${GRAPHNET}", GRAPHNET_ROOT_DIR)
         )
 
-    @save_dataset_config
     def __init__(
         self,
         path: Union[str, List[str]],
@@ -277,7 +282,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         self._index_column = index_column
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
-        self._graph_definition = graph_definition
+        self._graph_definition = deepcopy(graph_definition)
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
@@ -369,7 +374,7 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
 
     @abstractmethod
     def _get_all_indices(self) -> List[int]:
-        """Return a list of all available values in `self._index_column`."""
+        """Return a list of all unique values in `self._index_column`."""
 
     @abstractmethod
     def _get_event_index(
@@ -624,8 +629,8 @@ class Dataset(Logger, Configurable, torch.utils.data.Dataset, ABC):
         # Construct graph data object
         assert self._graph_definition is not None
         graph = self._graph_definition(
-            node_features=node_features,
-            node_feature_names=self._features[
+            input_features=node_features,
+            input_feature_names=self._features[
                 1:
             ],  # first entry is index column
             truth_dicts=truth_dicts,

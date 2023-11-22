@@ -24,7 +24,7 @@ graph_definition = KNNGraph(
     detector=IceCubeDeepCore(),
     node_definition=NodesAsPulses(),
     nb_nearest_neighbours=8,
-    node_feature_names=features,
+    input_feature_names=features,
 )
 
 
@@ -88,4 +88,5 @@ if __name__ == "__main__":
 Combine multiple Datasets using EnsembleDataset.
 """
     )
+    args, unknown = parser.parse_known_args()
     main()

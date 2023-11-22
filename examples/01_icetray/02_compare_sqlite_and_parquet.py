@@ -16,7 +16,17 @@ from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
 
-from _common_icetray import ERROR_MESSAGE_MISSING_ICETRAY
+ERROR_MESSAGE_MISSING_ICETRAY = (
+    "This example requires IceTray to be installed, which doesn't seem to be "
+    "the case. Please install IceTray; run this example in the GraphNeT "
+    "Docker container which comes with IceTray installed; or run an example "
+    "script in one of the other folders:"
+    "\n * examples/02_data/"
+    "\n * examples/03_weights/"
+    "\n * examples/04_training/"
+    "\n * examples/05_pisa/"
+    "\nExiting."
+)
 
 OUTPUT_DIR = f"{EXAMPLE_OUTPUT_DIR}/compare_sqlite_and_parquet"
 PULSEMAP = "SRTInIcePulses"
@@ -34,7 +44,7 @@ def convert_data() -> None:
             I3FeatureExtractorIceCube86(PULSEMAP),
         ],
         outdir=OUTPUT_DIR,
-        workers=10,
+        workers=1,
     )
 
     # Run data converters.
@@ -85,7 +95,7 @@ agree.
 """
         )
 
-        args = parser.parse_args()
+        args, unknown = parser.parse_known_args()
 
         # Run example script(s)
         convert_data()

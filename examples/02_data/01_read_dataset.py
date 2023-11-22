@@ -17,7 +17,10 @@ from graphnet.data.dataset import SQLiteDataset
 from graphnet.data.dataset import ParquetDataset
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
-
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.detector.icecube import (
+    IceCubeDeepCore,
+)
 
 DATASET_CLASS = {
     "sqlite": SQLiteDataset,
@@ -44,6 +47,9 @@ def main(backend: str) -> None:
     num_workers = 30
     wait_time = 0.00  # sec.
 
+    # Define graph representation
+    graph_definition = KNNGraph(detector=IceCubeDeepCore())
+
     for table in [pulsemap, truth_table]:
         # Get column names from backend
         if backend == "sqlite":
@@ -62,15 +68,16 @@ def main(backend: str) -> None:
 
     # Common variables
     dataset = DATASET_CLASS[backend](
-        path,
-        pulsemap,
-        features,
-        truth,
+        path=path,
+        pulsemaps=pulsemap,
+        features=features,
+        truth=truth,
         truth_table=truth_table,
+        graph_definition=graph_definition,
     )
     assert isinstance(dataset, Dataset)
 
-    logger.info(dataset[1])
+    logger.info(str(dataset[1]))
     logger.info(dataset[1].x)
     if backend == "sqlite":
         assert isinstance(dataset, SQLiteDataset)
@@ -92,7 +99,7 @@ def main(backend: str) -> None:
         for batch in tqdm(dataloader, unit=" batches", colour="green"):
             time.sleep(wait_time)
 
-    logger.info(batch)
+    logger.info(str(batch))
     logger.info(batch.size())
     logger.info(batch.num_graphs)
 
@@ -106,8 +113,14 @@ Read a few events from data in an intermediate format.
 """
     )
 
-    parser.add_argument("backend", choices=["sqlite", "parquet"])
+    parser.add_argument(
+        "backend",
+        choices=["sqlite", "parquet"],
+        default="sqlite",
+        const="sqlite",
+        nargs="?",
+    )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(args.backend)

@@ -79,12 +79,7 @@ def main(
         wandb_logger.experiment.config.update(config)
 
     # Define graph representation
-    graph_definition = KNNGraph(
-        detector=Prometheus(),
-        node_definition=NodesAsPulses(),
-        nb_nearest_neighbours=8,
-        node_feature_names=features,
-    )
+    graph_definition = KNNGraph(detector=Prometheus())
 
     (
         training_dataloader,
@@ -166,9 +161,18 @@ def main(
     logger.info(f"Writing results to {path}")
     os.makedirs(path, exist_ok=True)
 
+    # Save results as .csv
     results.to_csv(f"{path}/results.csv")
-    model.save_state_dict(f"{path}/state_dict.pth")
+
+    # Save full model (including weights) to .pth file - not version safe
+    # Note: Models saved as .pth files in one version of graphnet
+    #       may not be compatible with a different version of graphnet.
     model.save(f"{path}/model.pth")
+
+    # Save model config and state dict - Version safe save method.
+    # This method of saving models is the safest way.
+    model.save_state_dict(f"{path}/state_dict.pth")
+    model.save_config(f"{path}/model_config.yml")
 
 
 if __name__ == "__main__":
@@ -209,7 +213,7 @@ Train GNN model without the use of config files.
 
     parser.with_standard_arguments(
         "gpus",
-        ("max-epochs", 5),
+        ("max-epochs", 1),
         "early-stopping-patience",
         ("batch-size", 16),
         "num-workers",
@@ -221,7 +225,7 @@ Train GNN model without the use of config files.
         help="If True, Weights & Biases are used to track the experiment.",
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(
         args.path,

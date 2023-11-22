@@ -5,9 +5,9 @@ import os
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
 from graphnet.data.extractors import (
     I3FeatureExtractorIceCubeUpgrade,
+    I3FeatureExtractorIceCube86,
     I3RetroExtractor,
     I3TruthExtractor,
-    I3GenericExtractor,
 )
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.parquet import ParquetDataConverter
@@ -16,7 +16,17 @@ from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
 
-from _common_icetray import ERROR_MESSAGE_MISSING_ICETRAY
+ERROR_MESSAGE_MISSING_ICETRAY = (
+    "This example requires IceTray to be installed, which doesn't seem to be "
+    "the case. Please install IceTray; run this example in the GraphNeT "
+    "Docker container which comes with IceTray installed; or run an example "
+    "script in one of the other folders:"
+    "\n * examples/02_data/"
+    "\n * examples/03_weights/"
+    "\n * examples/04_training/"
+    "\n * examples/05_pisa/"
+    "\nExiting."
+)
 
 CONVERTER_CLASS = {
     "sqlite": SQLiteDataConverter,
@@ -34,12 +44,7 @@ def main_icecube86(backend: str) -> None:
 
     converter: DataConverter = CONVERTER_CLASS[backend](
         [
-            I3GenericExtractor(
-                keys=[
-                    "SRTInIcePulses",
-                    "I3MCTree",
-                ]
-            ),
+            I3FeatureExtractorIceCube86("SRTInIcePulses"),
             I3TruthExtractor(),
         ],
         outdir,
@@ -94,7 +99,7 @@ Convert I3 files to an intermediate format.
             "detector", choices=["icecube-86", "icecube-upgrade"]
         )
 
-        args = parser.parse_args()
+        args, unknown = parser.parse_known_args()
 
         # Run example script
         if args.detector == "icecube-86":

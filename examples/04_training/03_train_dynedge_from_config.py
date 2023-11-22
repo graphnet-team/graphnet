@@ -1,4 +1,4 @@
-"""Simplified example of training Model."""
+"""Simplified example of training DynEdge from pre-defined config files."""
 
 from typing import List, Optional
 import os
@@ -46,7 +46,7 @@ def main(
             log_model=True,
         )
 
-    # Build model
+    # Build model from pre-defined config file made from Model.save_config
     model_config = ModelConfig.load(model_config_path)
     model: StandardModel = StandardModel.from_config(model_config, trust=True)
 
@@ -69,7 +69,8 @@ def main(
         archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model")
     run_name = "dynedge_{}_example".format("_".join(config.target))
 
-    # Construct dataloaders
+    # Construct dataloaders from pre-defined dataset config files.
+    # i.e. from Dataset.save_config
     dataset_config = DatasetConfig.load(dataset_config_path)
     dataloaders = DataLoader.from_dataset_config(
         dataset_config,
@@ -137,7 +138,7 @@ Train GNN model.
         "dataset-config",
         "model-config",
         "gpus",
-        ("max-epochs", 5),
+        ("max-epochs", 1),
         "early-stopping-patience",
         ("batch-size", 16),
         "num-workers",
@@ -156,7 +157,7 @@ Train GNN model.
         help="If True, Weights & Biases are used to track the experiment.",
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     main(
         args.dataset_config,
