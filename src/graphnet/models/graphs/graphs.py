@@ -16,7 +16,7 @@ class KNNGraph(GraphDefinition):
     def __init__(
         self,
         detector: Detector,
-        node_definition: NodeDefinition = NodesAsPulses(),
+        node_definition: NodeDefinition = None,
         input_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
         perturbation_dict: Optional[Dict[str, float]] = None,
@@ -44,7 +44,7 @@ class KNNGraph(GraphDefinition):
         # Base class constructor
         super().__init__(
             detector=detector,
-            node_definition=node_definition,
+            node_definition=node_definition or NodesAsPulses(),
             edge_definition=KNNEdges(
                 nb_nearest_neighbours=nb_nearest_neighbours,
                 columns=columns,
