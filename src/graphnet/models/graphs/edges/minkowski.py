@@ -82,7 +82,7 @@ class MinkowskiKNNEdges(EdgeDefinition):
             )
             num_points = x_masked.shape[0]
             num_edges = min(self.nb_nearest_neighbours, num_points)
-            col += [
+            row += [
                 c
                 for c in range(count, count + num_edges)
                 for _ in range(num_points)
@@ -91,7 +91,7 @@ class MinkowskiKNNEdges(EdgeDefinition):
 
             distance_sorted = distance_mat.argsort(dim=1)
             distance_sorted += count  # offset by previous events
-            row += distance_sorted[:num_edges].flatten().tolist()
+            col += distance_sorted[:num_edges].flatten().tolist()
             count += num_points
 
         graph.edge_index = torch.tensor(
