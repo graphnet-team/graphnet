@@ -148,6 +148,7 @@ def main(
     results = model.predict_as_dataframe(
         test_dataloaders,
         additional_attributes=additional_attributes + ["event_no"],
+        gpus=config.fit["gpus"],
     )
     results.to_csv(f"{path}/results.csv")
 

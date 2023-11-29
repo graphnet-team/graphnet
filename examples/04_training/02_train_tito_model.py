@@ -168,6 +168,7 @@ def main(
         validation_dataloader,
         additional_attributes=additional_attributes,
         prediction_columns=prediction_columns,
+        gpus=config["fit"]["gpus"],
     )
 
     # Save predictions and model to file

@@ -153,6 +153,7 @@ def main(
     results = model.predict_as_dataframe(
         validation_dataloader,
         additional_attributes=additional_attributes + ["event_no"],
+        gpus=config["fit"]["gpus"],
     )
 
     # Save predictions and model to file
