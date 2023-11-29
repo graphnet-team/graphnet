@@ -38,6 +38,7 @@ class TRUTH:
     ICECUBE86 = [
         "energy",
         "energy_track",
+        "energy_cascade",
         "position_x",
         "position_y",
         "position_z",

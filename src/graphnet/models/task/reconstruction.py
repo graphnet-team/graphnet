@@ -125,6 +125,26 @@ class EnergyReconstructionWithPower(Task):
         return torch.pow(10, x[:, 0] + 1.0).unsqueeze(1)
 
 
+class EnergyTCReconstruction(Task):
+    """Reconstructs track and cascade energies using stable method."""
+
+    # Requires two features: untransformed energy for track and cascade
+    default_target_labels = ["energy_track", "energy_cascade"]
+    default_prediction_labels = ["energy_track_pred", "energy_cascade_pred"]
+    nb_inputs = 2
+
+    def _forward(self, x: Tensor) -> Tensor:
+        # Transform to positive energy domain avoiding `-inf` in `log10`
+        # Transform, thereby preventing overflow and underflow error.
+        x[:, 0] = torch.nn.functional.softplus(
+            x[:, 0].clone(), beta=0.05
+        ) + eps_like(x[:, 0].clone())
+        x[:, 1] = torch.nn.functional.softplus(
+            x[:, 1].clone(), beta=0.05
+        ) + eps_like(x[:, 1].clone())
+        return x
+
+
 class EnergyReconstructionWithUncertainty(EnergyReconstruction):
     """Reconstructs energy and associated uncertainty (log(var))."""
 
