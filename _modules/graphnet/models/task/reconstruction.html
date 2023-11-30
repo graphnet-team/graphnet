@@ -470,6 +470,29 @@
 
 
 
+<div class="viewcode-block" id="EnergyTCReconstruction">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyTCReconstruction">[docs]</a>
+<span class="k">class</span> <span class="nc">EnergyTCReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reconstructs track and cascade energies using stable method."""</span>
+
+    <span class="c1"># Requires two features: untransformed energy for track and cascade</span>
+    <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"energy_track"</span><span class="p">,</span> <span class="s2">"energy_cascade"</span><span class="p">]</span>
+    <span class="n">default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"energy_track_pred"</span><span class="p">,</span> <span class="s2">"energy_cascade_pred"</span><span class="p">]</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># Transform to positive energy domain avoiding `-inf` in `log10`</span>
+        <span class="c1"># Transform, thereby preventing overflow and underflow error.</span>
+        <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.05</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">eps_like</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
+        <span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.05</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">eps_like</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+
+
 <div class="viewcode-block" id="EnergyReconstructionWithUncertainty">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstructionWithUncertainty">[docs]</a>
 <span class="k">class</span> <span class="nc">EnergyReconstructionWithUncertainty</span><span class="p">(</span><span class="n">EnergyReconstruction</span><span class="p">):</span>

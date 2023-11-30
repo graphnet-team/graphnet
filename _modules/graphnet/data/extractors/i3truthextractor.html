@@ -434,6 +434,7 @@
             <span class="s2">"track_length"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">"stopped_muon"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">"energy_track"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">"energy_cascade"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">"inelasticity"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">"DeepCoreFilter_13"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">"CascadeFilter_13"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
@@ -503,10 +504,15 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="p">(</span>
                     <span class="n">energy_track</span><span class="p">,</span>
+                    <span class="n">energy_cascade</span><span class="p">,</span>
                     <span class="n">inelasticity</span><span class="p">,</span>
                 <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_track_energy_and_inelasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>  <span class="c1"># track energy fails on northeren tracks with ""Hadrons" has no mass implemented. Cannot get total energy."</span>
-                <span class="n">energy_track</span><span class="p">,</span> <span class="n">inelasticity</span> <span class="o">=</span> <span class="p">(</span><span class="n">padding_value</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
+                <span class="n">energy_track</span><span class="p">,</span> <span class="n">energy_cascade</span><span class="p">,</span> <span class="n">inelasticity</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">padding_value</span><span class="p">,</span>
+                    <span class="n">padding_value</span><span class="p">,</span>
+                    <span class="n">padding_value</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="p">{</span>
@@ -523,6 +529,7 @@
                         <span class="n">frame</span><span class="p">,</span> <span class="n">padding_value</span>
                     <span class="p">),</span>
                     <span class="s2">"energy_track"</span><span class="p">:</span> <span class="n">energy_track</span><span class="p">,</span>
+                    <span class="s2">"energy_cascade"</span><span class="p">:</span> <span class="n">energy_cascade</span><span class="p">,</span>
                     <span class="s2">"inelasticity"</span><span class="p">:</span> <span class="n">inelasticity</span><span class="p">,</span>
                 <span class="p">}</span>
             <span class="p">)</span>
@@ -702,7 +709,7 @@
     <span class="k">def</span> <span class="nf">_get_primary_track_energy_and_inelasticity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Get the total energy of tracks from primary, and inelasticity.</span>
 
 <span class="sd">        Args:</span>
@@ -725,9 +732,10 @@
 
         <span class="n">energy_total</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">total_energy</span>
         <span class="n">energy_track</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">total_energy</span> <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">)</span>
+        <span class="n">energy_cascade</span> <span class="o">=</span> <span class="n">energy_total</span> <span class="o">-</span> <span class="n">energy_track</span>
         <span class="n">inelasticity</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">energy_track</span> <span class="o">/</span> <span class="n">energy_total</span>
 
-        <span class="k">return</span> <span class="n">energy_track</span><span class="p">,</span> <span class="n">inelasticity</span>
+        <span class="k">return</span> <span class="n">energy_track</span><span class="p">,</span> <span class="n">energy_cascade</span><span class="p">,</span> <span class="n">inelasticity</span>
 
     <span class="c1"># Utility methods</span>
     <span class="k">def</span> <span class="nf">_find_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">input_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
