@@ -371,6 +371,18 @@
         <li class="md-nav__item"><a href="#graphnet.training.callbacks.ProgressBar.on_train_epoch_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_train_epoch_end()</span></code></a>
         </li></ul>
             </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphnetEarlyStopping</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping.setup" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">setup()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_train_epoch_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_train_epoch_end()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_validation_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_validation_end()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_fit_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_fit_end()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -442,6 +454,41 @@
     
     
       <a href="#graphnet.training.callbacks.ProgressBar.on_train_epoch_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_train_epoch_end()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.callbacks.GraphnetEarlyStopping" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphnetEarlyStopping</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.callbacks.GraphnetEarlyStopping.setup" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">setup()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_train_epoch_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_train_epoch_end()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_validation_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_validation_end()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_fit_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_fit_end()</span></code></a>
       
     
     </li></ul>
@@ -532,6 +579,18 @@
         <li class="md-nav__item"><a href="#graphnet.training.callbacks.ProgressBar.on_train_epoch_start" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_train_epoch_start()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.callbacks.ProgressBar.on_train_epoch_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_train_epoch_end()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GraphnetEarlyStopping</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping.setup" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">setup()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_train_epoch_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_train_epoch_end()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_validation_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_validation_end()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_fit_end" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">on_fit_end()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -689,6 +748,90 @@ lightning is to overwrite the progress bar from previous epochs.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.callbacks.GraphnetEarlyStopping">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">GraphnetEarlyStopping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#GraphnetEarlyStopping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.GraphnetEarlyStopping" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">EarlyStopping</span></code></p>
+<p>Early stopping callback for graphnet.</p>
+<p>Construct <cite>GraphnetEarlyStopping</cite> Callback.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Path to directory to save best model and config.</p></li>
+<li><p><strong>**kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Keyword arguments to pass to <cite>EarlyStopping</cite>. See
+<cite>pytorch_lightning.callbacks.EarlyStopping</cite> for details.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.callbacks.GraphnetEarlyStopping.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphnet_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#GraphnetEarlyStopping.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.GraphnetEarlyStopping.setup" title="Link to this definition">¶</a></dt>
+<dd><p>Call at setup stage of training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainer</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></span>) – The trainer.</p></li>
+<li><p><strong>graphnet_model</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></span>) – The model.</p></li>
+<li><p><strong>stage</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The stage of training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.callbacks.GraphnetEarlyStopping.on_train_epoch_end">
+<span class="sig-name descname"><span class="pre">on_train_epoch_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphnet_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#GraphnetEarlyStopping.on_train_epoch_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_train_epoch_end" title="Link to this definition">¶</a></dt>
+<dd><p>Call after each train epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainer</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></span>) – Trainer object.</p></li>
+<li><p><strong>graphnet_model</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></span>) – Graphnet Model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<p>Returns: None.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.callbacks.GraphnetEarlyStopping.on_validation_end">
+<span class="sig-name descname"><span class="pre">on_validation_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphnet_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#GraphnetEarlyStopping.on_validation_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_validation_end" title="Link to this definition">¶</a></dt>
+<dd><p>Call after each validation epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainer</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></span>) – Trainer object.</p></li>
+<li><p><strong>graphnet_model</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></span>) – Graphnet Model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<p>Returns: None.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.training.callbacks.GraphnetEarlyStopping.on_fit_end">
+<span class="sig-name descname"><span class="pre">on_fit_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphnet_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#GraphnetEarlyStopping.on_fit_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.GraphnetEarlyStopping.on_fit_end" title="Link to this definition">¶</a></dt>
+<dd><p>Call at the end of training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainer</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></span>) – Trainer object.</p></li>
+<li><p><strong>graphnet_model</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></span>) – Graphnet Model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<p>Returns: None.</p>
 </dd></dl>
 </dd></dl>
 </section>
