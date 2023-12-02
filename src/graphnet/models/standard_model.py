@@ -126,7 +126,7 @@ class StandardModel(Model):
             # You are on your own!
             self.debug("Initializing training with user-provided callbacks.")
             pass
-
+        self._print_callbacks(callbacks)
         has_early_stopping = self._contains_callback(callbacks, EarlyStopping)
         has_model_checkpoint = self._contains_callback(
             callbacks, ModelCheckpoint
@@ -166,6 +166,14 @@ class StandardModel(Model):
                 torch.load(checkpoint_callback.best_model_path)["state_dict"]
             )
             self.info("Best-fit weights from EarlyStopping loaded.")
+
+    def _print_callbacks(self, callbacks: List[Callback]) -> None:
+        callback_names = []
+        for cbck in callbacks:
+            callback_names.append(cbck.__class__.__name__)
+        self.info(
+            f"Training initiated with callbacks: {', '.join(callback_names)}"
+        )
 
     def _contains_callback(
         self, callbacks: List[Callback], callback: Callback
