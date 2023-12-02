@@ -26,6 +26,7 @@ INSTALL_REQUIRES = [
     "timer>=0.2",
     "tqdm>=4.64",
     "wandb>=0.12",
+    "pytorch-lightning>=2.1.2",
 ]
 
 EXTRAS_REQUIRE = {
