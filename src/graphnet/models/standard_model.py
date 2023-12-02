@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Union, Type
 import numpy as np
 import torch
 from pytorch_lightning import Callback, Trainer
-from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from torch import Tensor
 from torch.nn import ModuleList
 from torch.optim import Adam
@@ -103,6 +103,7 @@ class StandardModel(Model):
         val_dataloader: Optional[DataLoader] = None,
         *,
         max_epochs: int = 10,
+        early_stopping_patience: int = 5,
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
         ckpt_path: Optional[str] = None,
@@ -115,12 +116,25 @@ class StandardModel(Model):
         """Fit `StandardModel` using `pytorch_lightning.Trainer`."""
         # Checks
         if callbacks is None:
+            # We create the bare-minimum callbacks for you.
             callbacks = self._create_default_callbacks(
                 val_dataloader=val_dataloader,
+                early_stopping_patience=early_stopping_patience,
             )
-        elif val_dataloader is not None:
-            callbacks = self._add_early_stopping(
-                val_dataloader=val_dataloader, callbacks=callbacks
+            self.debug("No Callbacks specified. Default callbacks added.")
+        else:
+            # You are on your own!
+            self.debug("Initializing training with user-provided callbacks.")
+            pass
+
+        has_early_stopping = self._contains_callback(callbacks, EarlyStopping)
+        has_model_checkpoint = self._contains_callback(
+            callbacks, ModelCheckpoint
+        )
+
+        if (has_early_stopping) & (has_model_checkpoint is False):
+            self.warning(
+                """No ModelCheckpoint found in callbacks. Best-fit model will not automatically be loaded after training!"""
             )
 
         self.train(mode=True)
@@ -142,6 +156,24 @@ class StandardModel(Model):
         except KeyboardInterrupt:
             self.warning("[ctrl+c] Exiting gracefully.")
             pass
+
+        # Load weights from best-fit model after training if possible
+        if has_early_stopping & has_model_checkpoint:
+            for callback in callbacks:
+                if isinstance(callback, ModelCheckpoint):
+                    checkpoint_callback = callback
+            self.load_state_dict(
+                torch.load(checkpoint_callback.best_model_path)["state_dict"]
+            )
+
+    def _contains_callback(
+        self, callbacks: List[Callback], callback: Callback
+    ) -> bool:
+        """Check if `callback` is in `callbacks`."""
+        for cbck in callbacks:
+            if isinstance(cbck, callback):
+                return True
+        return False
 
     @property
     def target_labels(self) -> List[str]:
@@ -401,11 +433,38 @@ class StandardModel(Model):
         )
         return results
 
-    def _create_default_callbacks(self, val_dataloader: DataLoader) -> List:
+    def _create_default_callbacks(
+        self,
+        val_dataloader: DataLoader,
+        early_stopping_patience: Optional[int] = None,
+    ) -> List:
+        """Create default callbacks.
+
+        Used in cases where no callbacks are specified by the user in .fit
+        """
         callbacks = [ProgressBar()]
-        callbacks = self._add_early_stopping(
-            val_dataloader=val_dataloader, callbacks=callbacks
-        )
+        if val_dataloader is not None:
+            assert early_stopping_patience is not None
+            # Add Early Stopping
+            callbacks.append(
+                EarlyStopping(
+                    monitor="val_loss",
+                    patience=early_stopping_patience,
+                )
+            )
+            # Add Model Check Point
+            callbacks.append(
+                ModelCheckpoint(
+                    save_top_k=1,
+                    monitor="val_loss",
+                    mode="min",
+                    filename=f"{self._gnn.__class__.__name__}"
+                    + "-{epoch}-{val_loss:.2f}-{train_loss:.2f}",
+                )
+            )
+            self.info(
+                f"EarlyStopping has been added with a patience of {early_stopping_patience}."
+            )
         return callbacks
 
     def _add_early_stopping(
