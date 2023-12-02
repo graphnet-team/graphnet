@@ -119,24 +119,12 @@ class Task(Model):
             transform_support,
         )
 
-    @abstractmethod
-    def forward(
-        self, x: Union[Tensor, Data], jacobian: Optional[Tensor]
-    ) -> Union[Tensor, Data]:
-        """Forward pass."""
-
-    @abstractmethod
-    def _forward(
-        self, x: Union[Tensor, Data], jacobian: Optional[Tensor]
-    ) -> Union[Tensor, Data]:
-        """Syntax like `.forward`, for implentation in inheriting classes."""
-
-    @abstractmethod
     def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
         """Compute loss of `pred` wrt.
 
         target labels in `data`.
         """
+        raise NotImplementedError
 
     @final
     def _transform_prediction(
@@ -268,6 +256,7 @@ class LearnedTask(Task):
         self, x: Union[Tensor, Data]
     ) -> Union[Tensor, Data]:
         """Syntax like `.forward`, for implentation in inheriting classes."""
+        raise NotImplementedError
 
     @abstractmethod
     def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
@@ -293,50 +282,6 @@ class LearnedTask(Task):
         self._regularisation_loss = 0  # Reset
         x = self._affine(x)
         x = self._forward(x=x)
-        return self._transform_prediction(x)
-
-
-class StaticTask(Task):
-    """A generic `Task` class without learnable parameters.
-
-    This `Task` should be used for `Tasks` that does not require a learned
-    mapping from the last latent layer of `Model` into the target space. E.g.
-    `graphnet.models.normalizing_flows`
-    """
-
-    def __init__(
-        self,
-        **task_kwargs: Any,
-    ):
-        """Construct `LearnedTask`."""
-        # Base class constructor
-        super().__init__(**task_kwargs)
-
-    @abstractmethod
-    def _forward(
-        self, x: Union[Tensor, Data], jacobian: Optional[Tensor]
-    ) -> Union[Tensor, Data]:
-        """Syntax like `.forward`, for implentation in inheriting classes."""
-
-    @abstractmethod
-    def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
-        """Compute loss of `pred` wrt.
-
-        target labels in `data`.
-        """
-
-    @property
-    @abstractmethod
-    def nb_inputs(self) -> int:
-        """Return number of inputs assumed by task."""
-
-    @final
-    def forward(
-        self, x: Union[Tensor, Data], jacobian: Optional[Tensor]
-    ) -> Union[Tensor, Data]:
-        """Forward pass."""
-        self._regularisation_loss = 0  # Reset
-        x = self._forward(x, jacobian)
         return self._transform_prediction(x)
 
 
@@ -368,7 +313,7 @@ class StandardLearnedTask(LearnedTask):
         """Return number of inputs assumed by task."""
 
     @abstractmethod
-    def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:  # type: ignore
+    def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Syntax like `.forward`, for implentation in inheriting classes."""
 
     @final
@@ -393,7 +338,7 @@ class StandardLearnedTask(LearnedTask):
         return loss
 
 
-class IdentityTask(LearnedTask):
+class IdentityTask(StandardLearnedTask):
     """Identity, or trivial, task."""
 
     def __init__(
@@ -441,7 +386,7 @@ class IdentityTask(LearnedTask):
         return x
 
 
-class FlowTask(StaticTask):
+class StandardFlowTask(Task):
     """A `Task` for `NormalizingFlow`s in GraphNeT."""
 
     def __init__(
@@ -464,9 +409,18 @@ class FlowTask(StaticTask):
         """Return number of inputs assumed by task."""
         return len(self._target_labels)
 
-    def _forward(self, x: Tensor, jacobian: Tensor) -> Tensor:
+    def _forward(self, x: Tensor, jacobian: Tensor) -> Tensor:  # type: ignore
         # Leave it as is.
         return x
+
+    @final
+    def forward(
+        self, x: Union[Tensor, Data], jacobian: Optional[Tensor]
+    ) -> Union[Tensor, Data]:
+        """Forward pass."""
+        self._regularisation_loss = 0  # Reset
+        x = self._forward(x, jacobian)
+        return self._transform_prediction(x)
 
     @final
     def compute_loss(
