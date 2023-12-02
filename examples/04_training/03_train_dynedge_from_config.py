@@ -3,13 +3,11 @@
 from typing import List, Optional
 import os
 
-from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
 from graphnet.constants import EXAMPLE_OUTPUT_DIR
 from graphnet.data.dataloader import DataLoader
 from graphnet.models import StandardModel
-from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.config import (
     DatasetConfig,
@@ -86,18 +84,10 @@ def main(
         wandb_logger.experiment.config.update(dataset_config.as_dict())
 
     # Train model
-    callbacks = [
-        EarlyStopping(
-            monitor="val_loss",
-            patience=config.early_stopping_patience,
-        ),
-        ProgressBar(),
-    ]
-
     model.fit(
         dataloaders["train"],
         dataloaders["validation"],
-        callbacks=callbacks,
+        early_stopping_patience=config.early_stopping_patience,
         logger=wandb_logger if wandb else None,
         **config.fit,
     )

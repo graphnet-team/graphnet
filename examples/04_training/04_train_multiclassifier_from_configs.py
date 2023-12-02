@@ -3,7 +3,6 @@
 import os
 from typing import List, Optional, Dict, Any
 
-from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
 from graphnet.data.dataset.dataset import EnsembleDataset
@@ -15,7 +14,6 @@ from graphnet.constants import (
 from graphnet.data.dataloader import DataLoader
 from graphnet.data.dataset import Dataset
 from graphnet.models import StandardModel
-from graphnet.training.callbacks import ProgressBar
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.config import (
     DatasetConfig,
@@ -112,18 +110,10 @@ def main(
         wandb_logger.experiment.config.update(dataset_config.as_dict())
 
     # Training model
-    callbacks = [
-        EarlyStopping(
-            monitor="val_loss",
-            patience=config.early_stopping_patience,
-        ),
-        ProgressBar(),
-    ]
-
     model.fit(
         train_dataloaders,
         valid_dataloaders,
-        callbacks=callbacks,
+        early_stopping_patience=config.early_stopping_patience,
         logger=wandb_logger if wandb else None,
         **config.fit,
     )
