@@ -119,13 +119,6 @@ class Task(Model):
             transform_support,
         )
 
-    def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
-        """Compute loss of `pred` wrt.
-
-        target labels in `data`.
-        """
-        raise NotImplementedError
-
     @final
     def _transform_prediction(
         self, prediction: Union[Tensor, Data]
