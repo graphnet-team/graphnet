@@ -165,6 +165,7 @@ class StandardModel(Model):
             self.load_state_dict(
                 torch.load(checkpoint_callback.best_model_path)["state_dict"]
             )
+            self.info("- EarlyStopping - Weights from best-fit model loaded.")
 
     def _contains_callback(
         self, callbacks: List[Callback], callback: Callback
