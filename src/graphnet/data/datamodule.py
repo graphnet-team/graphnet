@@ -1,3 +1,4 @@
+"""Base `Dataloader` class(es) used in `graphnet`."""
 from typing import Dict, Any, Optional, List, Tuple, Union
 import lightning as L
 from torch.utils.data import DataLoader
@@ -27,7 +28,7 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
         train_dataloader_kwargs: Optional[Dict[str, Any]] = None,
         validation_dataloader_kwargs: Optional[Dict[str, Any]] = None,
         test_dataloader_kwargs: Optional[Dict[str, Any]] = None,
-        train_val_split: Optional[List[float, float]] = [0.9, 0.10],
+        train_val_split: Optional[List[float]] = [0.9, 0.10],
         split_seed: int = 42,
     ) -> None:
         """Create dataloaders from dataset.
@@ -40,6 +41,7 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
             train_dataloader_kwargs: Arguments for the training DataLoader.
             validation_dataloader_kwargs: Arguments for the validation DataLoader.
             test_dataloader_kwargs: Arguments for the test DataLoader.
+            train_val_split (Optional): Split ratio for training and validation sets. Default is [0.9, 0.10].
             split_seed: seed used for shuffling and splitting selections into train/validation.
         """
         self._dataset = dataset_reference
@@ -81,7 +83,8 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
         # Creation of Datasets
         self._train_dataset = self._create_dataset(self._train_selection)
         self._val_dataset = self._create_dataset(self._val_selection)
-        self._test_dataset = self._create_dataset(self._test_selection)
+        if self._test_selection is not None:
+            self._test_dataset = self._create_dataset(self._test_selection)
 
         return
 
@@ -191,8 +194,8 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
             # Split the selection into train/validation
             if self._use_ensemble_dataset:
                 # Split every selection
-                self._train_selection = []
-                self._val_selection = []
+                self._train_selection: List[List[int]] = []
+                self._val_selection: List[List[int]] = []
                 for selection in self._selection:
                     train_selection, val_selection = self._split_selection(
                         selection
@@ -218,7 +221,7 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
             ) = self._infer_selections()
 
     def _split_selection(
-        self, selection: List[int]
+        self, selection: Union[int, List[int], List[List[int]]]
     ) -> Tuple[List[int], List[int]]:
         """Split train selection into train/validation.
 
@@ -228,12 +231,26 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
         Returns:
             Training selection, Validation selection.
         """
-        train_selection, val_selection = train_test_split(
-            selection,
-            train_size=self._train_val_split[0],
-            test_size=self._train_val_split[1],
-            random_state=self._rng,
-        )
+        if isinstance(selection, int):
+            train_selection, val_selection = [selection], []
+        elif isinstance(selection[0], list):
+            flat_selection = [
+                item for sublist in selection for item in sublist
+            ]
+            train_selection, val_selection = train_test_split(
+                flat_selection,
+                train_size=self._train_val_split[0],
+                test_size=self._train_val_split[1],
+                random_state=self._rng,
+            )
+        else:
+            train_selection, val_selection = train_test_split(
+                selection,
+                train_size=self._train_val_split[0],
+                test_size=self._train_val_split[1],
+                random_state=self._rng,
+            )
+
         return train_selection, val_selection
 
     def _infer_selections(self) -> Tuple[List[int], List[int]]:
@@ -266,7 +283,7 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
     def _infer_selections_on_single_dataset(
         self, dataset_path: str
     ) -> Tuple[List[int], List[int]]:
-        """Automatically infers training and validation selections for a single dataset.
+        """Automatically infers dataset train/val selections.
 
         Args:
             dataset_path (str): The path to the dataset.
