@@ -3,7 +3,6 @@
 import os
 from typing import Any, Dict, List, Optional
 
-from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
@@ -14,9 +13,8 @@ from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graphs import KNNGraph
-from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.task.reconstruction import EnergyReconstruction
-from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
+from graphnet.training.callbacks import PiecewiseLinearLR
 from graphnet.training.loss_functions import LogCoshLoss
 from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
@@ -130,18 +128,10 @@ def main(
     )
 
     # Training model
-    callbacks = [
-        EarlyStopping(
-            monitor="val_loss",
-            patience=config["early_stopping_patience"],
-        ),
-        ProgressBar(),
-    ]
-
     model.fit(
         training_dataloader,
         validation_dataloader,
-        callbacks=callbacks,
+        early_stopping_patience=config["early_stopping_patience"],
         logger=wandb_logger if wandb else None,
         **config["fit"],
     )
