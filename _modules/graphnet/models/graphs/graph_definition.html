@@ -406,11 +406,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_masks</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edge_definition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
-<span class="w">                </span><span class="sd">"""No EdgeDefinition given. Graphs will not have edges!"""</span>
-            <span class="p">)</span>
-
         <span class="k">if</span> <span class="n">input_feature_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Assume all features in Detector is used.</span>
             <span class="n">input_feature_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">feature_map</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
@@ -533,6 +528,12 @@
         <span class="c1"># Assign edges</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edge_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edge_definition</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">"""No EdgeDefinition provided. </span>
+<span class="sd">                Graphs will not have edges defined!"""</span>  <span class="c1"># noqa</span>
+            <span class="p">)</span>
 
         <span class="c1"># Attach data path - useful for Ensemble datasets.</span>
         <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
