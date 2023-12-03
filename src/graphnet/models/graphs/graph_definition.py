@@ -80,6 +80,11 @@ class GraphDefinition(Model):
 
         self._resolve_masks()
 
+        if self._edge_definition is None:
+            self.warning_once(
+                """No EdgeDefinition given. Graphs will not have edges!"""
+            )
+
         if input_feature_names is None:
             # Assume all features in Detector is used.
             input_feature_names = list(self._detector.feature_map().keys())  # type: ignore
@@ -200,12 +205,6 @@ class GraphDefinition(Model):
         # Assign edges
         if self._edge_definition is not None:
             graph = self._edge_definition(graph)
-        else:
-
-            self.warning_once(
-                """No EdgeDefinition provided. 
-                Graphs will not have edges defined!"""  # noqa
-            )
 
         # Attach data path - useful for Ensemble datasets.
         if data_path is not None:
