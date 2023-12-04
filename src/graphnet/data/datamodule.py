@@ -1,6 +1,6 @@
 """Base `Dataloader` class(es) used in `graphnet`."""
 from typing import Dict, Any, Optional, List, Tuple, Union
-import lightning as L
+import pytorch_lightning as pl
 from torch.utils.data import DataLoader
 from copy import deepcopy
 from sklearn.model_selection import train_test_split
@@ -16,7 +16,7 @@ from graphnet.utilities.logging import Logger
 from graphnet.training.utils import save_selection
 
 
-class GraphNeTDataModule(L.LightningDataModule, Logger):
+class GraphNeTDataModule(pl.LightningDataModule, Logger):
     """General Class for DataLoader Construction."""
 
     def __init__(
@@ -45,9 +45,9 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
             split_seed: seed used for shuffling and splitting selections into train/validation.
         """
         self._dataset = dataset_reference
-        self._selection = selection
-        self._train_val_split = train_val_split
-        self._test_selection = test_selection
+        self._selection = selection or [0]
+        self._train_val_split = train_val_split or [0.0]
+        self._test_selection = test_selection or [0.0]
         self._dataset_args = dataset_args
         self._rng = split_seed
 
@@ -83,8 +83,7 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
         # Creation of Datasets
         self._train_dataset = self._create_dataset(self._train_selection)
         self._val_dataset = self._create_dataset(self._val_selection)
-        if self._test_selection is not None:
-            self._test_dataset = self._create_dataset(self._test_selection)
+        self._test_dataset = self._create_dataset(self._test_selection)
 
         return
 
@@ -112,16 +111,16 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
         """
         return self._create_dataloader(self._test_dataset)
 
-    def teardown(self) -> None:
-        """Perform any necessary cleanup or shutdown procedures.
+    # def teardown(self) -> None:
+    #     """Perform any necessary cleanup or shutdown procedures.
 
-        This method can be used for tasks such as closing SQLite connections
-        after training. Override this method as needed.
+    #     This method can be used for tasks such as closing SQLite connections
+    #     after training. Override this method as needed.
 
-        Returns:
-            None
-        """
-        pass
+    #     Returns:
+    #         None
+    #     """
+    #     return None
 
     def _create_dataloader(
         self, dataset: Union[Dataset, EnsembleDataset]
@@ -134,7 +133,18 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
         Returns:
             DataLoader: The DataLoader configured for the given dataset.
         """
-        return DataLoader(dataset=dataset, **self._dataloader_args)
+        if dataset == self._train_dataset:
+            dataloader_args = self._train_dataloader_kwargs
+        elif dataset == self._val_dataset:
+            dataloader_args = self._validation_dataloader_kwargs
+        elif dataset == self._test_dataset:
+            dataloader_args = self._test_dataloader_kwargs
+        else:
+            raise ValueError(
+                "Unknown dataset encountered during dataloader creation."
+            )
+
+        return DataLoader(dataset=dataset, **dataloader_args)
 
     def _validate_dataset_class(self) -> None:
         """Sanity checks on the dataset reference (self._dataset).
@@ -182,8 +192,18 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
 
     def _validate_dataloader_args(self) -> None:
         """Sanity check on `dataloader_args`."""
-        if "dataset" in self._dataloader_args:
-            raise ValueError("`dataloader_args` must not contain `dataset`")
+        if "dataset" in self._train_dataloader_kwargs:
+            raise ValueError(
+                "`train_dataloader_kwargs` must not contain `dataset`"
+            )
+        if "dataset" in self._validation_dataloader_kwargs:
+            raise ValueError(
+                "`validation_dataloader_kwargs` must not contain `dataset`"
+            )
+        if "dataset" in self._test_dataloader_kwargs:
+            raise ValueError(
+                "`test_dataloader_kwargs` must not contain `dataset`"
+            )
 
     def _resolve_selections(self) -> None:
         if self._test_selection is None:
@@ -232,25 +252,20 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
             Training selection, Validation selection.
         """
         if isinstance(selection, int):
-            train_selection, val_selection = [selection], []
+            flat_selection = [selection]
         elif isinstance(selection[0], list):
             flat_selection = [
                 item for sublist in selection for item in sublist
             ]
-            train_selection, val_selection = train_test_split(
-                flat_selection,
-                train_size=self._train_val_split[0],
-                test_size=self._train_val_split[1],
-                random_state=self._rng,
-            )
         else:
-            train_selection, val_selection = train_test_split(
-                selection,
-                train_size=self._train_val_split[0],
-                test_size=self._train_val_split[1],
-                random_state=self._rng,
-            )
+            flat_selection = selection
 
+        train_selection, val_selection = train_test_split(
+            flat_selection,
+            train_size=self._train_val_split[0],
+            test_size=self._train_val_split[1],
+            random_state=self._rng,
+        )
         return train_selection, val_selection
 
     def _infer_selections(self) -> Tuple[List[int], List[int]]:
@@ -280,6 +295,8 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
                 self._dataset_args["path"]
             )
 
+        return (self._train_selection, self._val_selection)
+
     def _infer_selections_on_single_dataset(
         self, dataset_path: str
     ) -> Tuple[List[int], List[int]]:
@@ -305,8 +322,16 @@ class GraphNeTDataModule(L.LightningDataModule, Logger):
         all_events = all_events.values.tolist()  # shuffled list
         return self._split_selection(all_events)
 
+    def _construct_dataset(self, tmp_args: Dict[str, Any]) -> Dict[str, Any]:
+        """Construct dataset."""
+        return tmp_args
+
+    def _get_all_indices(self):
+        """Shuffle the list."""
+        return list
+
     def _create_dataset(
-        self, selection: Union[List[int], List[List[int]]]
+        self, selection: Union[List[int], List[List[int]], List[float]]
     ) -> Union[EnsembleDataset, Dataset]:
         """Instantiate `dataset_reference`.
 
