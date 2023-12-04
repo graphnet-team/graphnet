@@ -436,7 +436,11 @@
       <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.compute_loss">compute_loss() (graphnet.models.standard_model.StandardModel method)</a>
 
       <ul>
-        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.Task.compute_loss">(graphnet.models.task.task.Task method)</a>
+        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.LearnedTask.compute_loss">(graphnet.models.task.task.LearnedTask method)</a>
+</li>
+        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.compute_loss">(graphnet.models.task.task.StandardFlowTask method)</a>
+</li>
+        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask.compute_loss">(graphnet.models.task.task.StandardLearnedTask method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -689,8 +693,6 @@
 </li>
       <li><a href="api/graphnet.data.extractors.utilities.collections.html#graphnet.data.extractors.utilities.collections.flatten_nested_dictionary">flatten_nested_dictionary() (in module graphnet.data.extractors.utilities.collections)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening.forward">forward() (graphnet.models.coarsening.Coarsening method)</a>
 
       <ul>
@@ -720,13 +722,17 @@
 </li>
         <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.forward">(graphnet.models.standard_model.StandardModel method)</a>
 </li>
-        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.Task.forward">(graphnet.models.task.task.Task method)</a>
+        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.LearnedTask.forward">(graphnet.models.task.task.LearnedTask method)</a>
+</li>
+        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.forward">(graphnet.models.task.task.StandardFlowTask method)</a>
 </li>
         <li><a href="api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.LogCMK.forward">(graphnet.training.loss_functions.LogCMK static method)</a>
 </li>
         <li><a href="api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.LossFunction.forward">(graphnet.training.loss_functions.LossFunction method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.data.extractors.utilities.frames.html#graphnet.data.extractors.utilities.frames.frame_is_montecarlo">frame_is_montecarlo() (in module graphnet.data.extractors.utilities.frames)</a>
 </li>
       <li><a href="api/graphnet.data.extractors.utilities.frames.html#graphnet.data.extractors.utilities.frames.frame_is_noise">frame_is_noise() (in module graphnet.data.extractors.utilities.frames)</a>
@@ -1626,6 +1632,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.training.labels.html#graphnet.training.labels.Label">Label (class in graphnet.training.labels)</a>
 </li>
+      <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.LearnedTask">LearnedTask (class in graphnet.models.task.task)</a>
+</li>
       <li><a href="api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.lex_sort">lex_sort() (in module graphnet.models.graphs.utils)</a>
 </li>
       <li><a href="api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.list_all_submodules">list_all_submodules() (in module graphnet.utilities.config.parsing)</a>
@@ -1958,11 +1966,17 @@
 </li>
         <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.IdentityTask.nb_inputs">(graphnet.models.task.task.IdentityTask property)</a>
 </li>
+        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.LearnedTask.nb_inputs">(graphnet.models.task.task.LearnedTask property)</a>
+</li>
+        <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask.nb_inputs">(graphnet.models.task.task.StandardLearnedTask property)</a>
+</li>
         <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.Task.nb_inputs">(graphnet.models.task.task.Task property)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.nb_inputs">nb_inputs() (graphnet.models.task.task.StandardFlowTask method)</a>
+</li>
       <li><a href="api/graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN.nb_outputs">nb_outputs (graphnet.models.gnn.gnn.GNN property)</a>
 
       <ul>
@@ -2153,10 +2167,10 @@
         <li><a href="api/graphnet.data.extractors.i3extractor.html#graphnet.data.extractors.i3extractor.I3ExtractorCollection.set_files">(graphnet.data.extractors.i3extractor.I3ExtractorCollection method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.models.graphs.nodes.nodes.html#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs">set_number_of_inputs() (graphnet.models.graphs.nodes.nodes.NodeDefinition method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.models.graphs.nodes.nodes.html#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names">set_output_feature_names() (graphnet.models.graphs.nodes.nodes.NodeDefinition method)</a>
 </li>
       <li><a href="api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.setLevel">setLevel() (graphnet.utilities.logging.Logger method)</a>
@@ -2170,6 +2184,10 @@
       <li><a href="api/graphnet.data.dataset.sqlite.sqlite_dataset.html#graphnet.data.dataset.sqlite.sqlite_dataset.SQLiteDataset">SQLiteDataset (class in graphnet.data.dataset.sqlite.sqlite_dataset)</a>
 </li>
       <li><a href="api/graphnet.utilities.argparse.html#graphnet.utilities.argparse.ArgumentParser.standard_arguments">standard_arguments (graphnet.utilities.argparse.ArgumentParser attribute)</a>
+</li>
+      <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask">StandardFlowTask (class in graphnet.models.task.task)</a>
+</li>
+      <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask">StandardLearnedTask (class in graphnet.models.task.task)</a>
 </li>
       <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel">StandardModel (class in graphnet.models.standard_model)</a>
 </li>

@@ -597,8 +597,8 @@
 predicted. Returns the untransformed latent features, which are interpreted
 as the logits for each class being classified.</p>
 <p>Construct IdentityTask.</p>
-<p>Return the <cite>nb_outputs</cite> as a direct, affine transformation of the last
-hidden layer.</p>
+<p>A task that does not apply a learned embedding to the input. It returns
+the direct inputs from <cite>Model</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -614,45 +614,15 @@ hidden layer.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTask">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">BinaryClassificationTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#BinaryClassificationTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask" title="graphnet.models.task.task.StandardLearnedTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code></a></p>
 <p>Performs binary classification.</p>
-<p>Construct <cite>Task</cite>.</p>
+<p>Construct <cite>StandardLearnedTask</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>hidden_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number of nodes in the layer feeding into this
-tasks, used to construct the affine transformation to the
-predicted quantity.</p></li>
-<li><p><strong>loss_function</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.training.loss_functions.html#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></span>) – Loss function appropriate to the task.</p></li>
-<li><p><strong>target_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name(s) of the quantity/-ies being predicted, used
-to extract the  target tensor(s) from the <cite>Data</cite> object in
-<cite>.compute_loss(…)</cite>.</p></li>
-<li><p><strong>prediction_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The name(s) of each column that is predicted by
-the model during inference. If not given, the name will auto
-matically be set to <cite>target_label + _pred</cite>.</p></li>
-<li><p><strong>transform_prediction_and_target</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional function to transform
-both the predicted and target tensor before passing them to the
-loss function. Useful e.g. for having the model predict
-quantities on a physical scale, but transforming this scale to
-O(1) for a numerically stable loss computation.</p></li>
-<li><p><strong>transform_target</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional function to transform only the target
-tensor before passing it, and the predicted tensor, to the loss
-function. Useful e.g. for having the model predict a
-transformed version of the target quantity, e.g. the log10-
-scaled energy, rather than the physical quantity itself. Used
-in conjunction with <cite>transform_inference</cite> to perform the
-inverse transform on the predicted quantity to recover the
-physical scale.</p></li>
-<li><p><strong>transform_inference</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional function to inverse-transform the
-model prediction to recover a physical scale. Used in
-conjunction with <cite>transform_target</cite>.</p></li>
-<li><p><strong>transform_support</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional tuple to specify minimum and maximum
-of the range of validity for the inverse transforms
-<cite>transform_target</cite> and <cite>transform_inference</cite> in case this is
-restricted. By default the invertibility of <cite>transform_target</cite>
-is tested on the range [-1e6, 1e6].</p></li>
-<li><p><strong>loss_weight</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the attribute in <cite>data</cite> containing per-event
-loss weights.</p></li>
+<li><p><strong>hidden_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number of columns in the output of
+the last latent layer of <cite>Model</cite> using this Task.
+Available through <cite>Model.nb_outputs</cite></p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
@@ -677,45 +647,15 @@ loss weights.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTaskLogits">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">BinaryClassificationTaskLogits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#BinaryClassificationTaskLogits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask" title="graphnet.models.task.task.StandardLearnedTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code></a></p>
 <p>Performs binary classification form logits.</p>
-<p>Construct <cite>Task</cite>.</p>
+<p>Construct <cite>StandardLearnedTask</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>hidden_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number of nodes in the layer feeding into this
-tasks, used to construct the affine transformation to the
-predicted quantity.</p></li>
-<li><p><strong>loss_function</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.training.loss_functions.html#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></span>) – Loss function appropriate to the task.</p></li>
-<li><p><strong>target_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name(s) of the quantity/-ies being predicted, used
-to extract the  target tensor(s) from the <cite>Data</cite> object in
-<cite>.compute_loss(…)</cite>.</p></li>
-<li><p><strong>prediction_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The name(s) of each column that is predicted by
-the model during inference. If not given, the name will auto
-matically be set to <cite>target_label + _pred</cite>.</p></li>
-<li><p><strong>transform_prediction_and_target</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional function to transform
-both the predicted and target tensor before passing them to the
-loss function. Useful e.g. for having the model predict
-quantities on a physical scale, but transforming this scale to
-O(1) for a numerically stable loss computation.</p></li>
-<li><p><strong>transform_target</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional function to transform only the target
-tensor before passing it, and the predicted tensor, to the loss
-function. Useful e.g. for having the model predict a
-transformed version of the target quantity, e.g. the log10-
-scaled energy, rather than the physical quantity itself. Used
-in conjunction with <cite>transform_inference</cite> to perform the
-inverse transform on the predicted quantity to recover the
-physical scale.</p></li>
-<li><p><strong>transform_inference</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional function to inverse-transform the
-model prediction to recover a physical scale. Used in
-conjunction with <cite>transform_target</cite>.</p></li>
-<li><p><strong>transform_support</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional tuple to specify minimum and maximum
-of the range of validity for the inverse transforms
-<cite>transform_target</cite> and <cite>transform_inference</cite> in case this is
-restricted. By default the invertibility of <cite>transform_target</cite>
-is tested on the range [-1e6, 1e6].</p></li>
-<li><p><strong>loss_weight</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the attribute in <cite>data</cite> containing per-event
-loss weights.</p></li>
+<li><p><strong>hidden_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number of columns in the output of
+the last latent layer of <cite>Model</cite> using this Task.
+Available through <cite>Model.nb_outputs</cite></p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>

@@ -328,13 +328,13 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.models.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.task</span> <span class="kn">import</span> <span class="n">StandardLearnedTask</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.maths</span> <span class="kn">import</span> <span class="n">eps_like</span>
 
 
 <div class="viewcode-block" id="AzimuthReconstructionWithKappa">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.AzimuthReconstructionWithKappa">[docs]</a>
-<span class="k">class</span> <span class="nc">AzimuthReconstructionWithKappa</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AzimuthReconstructionWithKappa</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs azimuthal angle and associated kappa (1/var)."""</span>
 
     <span class="c1"># Requires two features: untransformed points in (x,y)-space.</span>
@@ -378,7 +378,7 @@
 
 <div class="viewcode-block" id="DirectionReconstructionWithKappa">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa">[docs]</a>
-<span class="k">class</span> <span class="nc">DirectionReconstructionWithKappa</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DirectionReconstructionWithKappa</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs direction with kappa from the 3D-vMF distribution."""</span>
 
     <span class="c1"># Requires three features: untransformed points in (x,y,z)-space.</span>
@@ -405,7 +405,7 @@
 
 <div class="viewcode-block" id="ZenithReconstruction">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.ZenithReconstruction">[docs]</a>
-<span class="k">class</span> <span class="nc">ZenithReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ZenithReconstruction</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs zenith angle."""</span>
 
     <span class="c1"># Requires two features: zenith angle itself.</span>
@@ -439,7 +439,7 @@
 
 <div class="viewcode-block" id="EnergyReconstruction">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction">[docs]</a>
-<span class="k">class</span> <span class="nc">EnergyReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">EnergyReconstruction</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs energy using stable method."""</span>
 
     <span class="c1"># Requires one feature: untransformed energy</span>
@@ -456,7 +456,7 @@
 
 <div class="viewcode-block" id="EnergyReconstructionWithPower">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstructionWithPower">[docs]</a>
-<span class="k">class</span> <span class="nc">EnergyReconstructionWithPower</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">EnergyReconstructionWithPower</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs energy."""</span>
 
     <span class="c1"># Requires one feature: untransformed energy</span>
@@ -472,7 +472,7 @@
 
 <div class="viewcode-block" id="EnergyTCReconstruction">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyTCReconstruction">[docs]</a>
-<span class="k">class</span> <span class="nc">EnergyTCReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">EnergyTCReconstruction</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs track and cascade energies using stable method."""</span>
 
     <span class="c1"># Requires two features: untransformed energy for track and cascade</span>
@@ -514,7 +514,7 @@
 
 <div class="viewcode-block" id="VertexReconstruction">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.VertexReconstruction">[docs]</a>
-<span class="k">class</span> <span class="nc">VertexReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">VertexReconstruction</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs vertex position and time."""</span>
 
     <span class="c1"># Requires four features, x, y, z, and t.</span>
@@ -539,7 +539,7 @@
 
 <div class="viewcode-block" id="PositionReconstruction">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.PositionReconstruction">[docs]</a>
-<span class="k">class</span> <span class="nc">PositionReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PositionReconstruction</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs vertex position."""</span>
 
     <span class="c1"># Requires three features, x, y, and z.</span>
@@ -563,7 +563,7 @@
 
 <div class="viewcode-block" id="TimeReconstruction">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.TimeReconstruction">[docs]</a>
-<span class="k">class</span> <span class="nc">TimeReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TimeReconstruction</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs time."""</span>
 
     <span class="c1"># Requires one feature, time.</span>
@@ -579,7 +579,7 @@
 
 <div class="viewcode-block" id="InelasticityReconstruction">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.InelasticityReconstruction">[docs]</a>
-<span class="k">class</span> <span class="nc">InelasticityReconstruction</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">InelasticityReconstruction</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs interaction inelasticity.</span>
 
 <span class="sd">    That is, 1-(track energy / hadronic energy).</span>

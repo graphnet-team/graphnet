@@ -345,7 +345,7 @@
 <div class="viewcode-block" id="Task">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.Task">[docs]</a>
 <span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Base class for all reconstruction and classification tasks."""</span>
+<span class="w">    </span><span class="sd">"""Base class for Tasks in GraphNeT."""</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
@@ -353,13 +353,11 @@
 <span class="w">        </span><span class="sd">"""Return number of inputs assumed by task."""</span>
 
     <span class="nd">@property</span>
-    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">default_target_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return default target labels."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_target_labels</span>
 
     <span class="nd">@property</span>
-    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">default_prediction_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return default prediction labels."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_prediction_labels</span>
@@ -367,7 +365,6 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">loss_function</span><span class="p">:</span> <span class="s2">"LossFunction"</span><span class="p">,</span>
         <span class="n">target_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">prediction_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -380,9 +377,6 @@
 <span class="w">        </span><span class="sd">"""Construct `Task`.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            hidden_size: The number of nodes in the layer feeding into this</span>
-<span class="sd">                tasks, used to construct the affine transformation to the</span>
-<span class="sd">                predicted quantity.</span>
 <span class="sd">            loss_function: Loss function appropriate to the task.</span>
 <span class="sd">            target_labels: Name(s) of the quantity/-ies being predicted, used</span>
 <span class="sd">                to extract the  target tensor(s) from the `Data` object in</span>
@@ -451,20 +445,6 @@
             <span class="n">transform_support</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Mapping from last hidden layer to required size of input</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Task.forward">
-<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.Task.forward">[docs]</a>
-    <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Forward pass."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
-
-
     <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">_transform_prediction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]</span>
@@ -473,33 +453,6 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_inference</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction_training</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
-
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Syntax like `.forward`, for implentation in inheriting classes."""</span>
-
-<div class="viewcode-block" id="Task.compute_loss">
-<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.Task.compute_loss">[docs]</a>
-    <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute loss of `pred` wrt.</span>
-
-<span class="sd">        target labels in `data`.</span>
-<span class="sd">        """</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
-        <span class="p">)</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">weights</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">loss</span></div>
-
 
 <div class="viewcode-block" id="Task.inference">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.Task.inference">[docs]</a>
@@ -598,9 +551,137 @@
 
 
 
+<div class="viewcode-block" id="LearnedTask">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.LearnedTask">[docs]</a>
+<span class="k">class</span> <span class="nc">LearnedTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Task class with a learned mapping.</span>
+
+<span class="sd">    Applies a learned mapping between the last latent layer of `Model` and</span>
+<span class="sd">    target space. E.g. the `LearnedTask` contains learnable parameters that</span>
+<span class="sd">    acts like a prediction head.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">task_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `LearnedTask`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hidden_size: The number of columns in the output of</span>
+<span class="sd">                         the last latent layer of `Model` using this Task.</span>
+<span class="sd">                         Available through `Model.nb_outputs`</span>
+<span class="sd">        """</span>
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">task_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Mapping from last hidden layer to required size of input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Syntax like `.forward`, for implentation in inheriting classes."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="LearnedTask.compute_loss">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.LearnedTask.compute_loss">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute loss of `pred` wrt.</span>
+
+<span class="sd">        target labels in `data`.</span>
+<span class="sd">        """</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return number of inputs assumed by task."""</span>
+
+<div class="viewcode-block" id="LearnedTask.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.LearnedTask.forward">[docs]</a>
+    <span class="nd">@final</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Forward call for `LearnedTask`.</span>
+
+<span class="sd">        The learned embedding transforms last latent layer of Model to meet</span>
+<span class="sd">        target dimensions.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StandardLearnedTask">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask">[docs]</a>
+<span class="k">class</span> <span class="nc">StandardLearnedTask</span><span class="p">(</span><span class="n">LearnedTask</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Standard class for classification and reconstruction in GraphNeT.</span>
+
+<span class="sd">    This class comes with a definition of `compute_loss` that is compatible</span>
+<span class="sd">    with the vast majority of supervised learning tasks.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">task_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `StandardLearnedTask`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hidden_size: The number of columns in the output of</span>
+<span class="sd">                         the last latent layer of `Model` using this Task.</span>
+<span class="sd">                         Available through `Model.nb_outputs`</span>
+<span class="sd">        """</span>
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">hidden_size</span><span class="o">=</span><span class="n">hidden_size</span><span class="p">,</span> <span class="o">**</span><span class="n">task_kwargs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return number of inputs assumed by task."""</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Syntax like `.forward`, for implentation in inheriting classes."""</span>
+
+<div class="viewcode-block" id="StandardLearnedTask.compute_loss">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask.compute_loss">[docs]</a>
+    <span class="nd">@final</span>
+    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute supervised learning loss.</span>
+
+<span class="sd">        Grabs truth labels in `data` and sends both `pred` and `target` to loss</span>
+<span class="sd">        function for evaluation. Suits most supervised learning `Task`s.</span>
+<span class="sd">        """</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_target</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="IdentityTask">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.IdentityTask">[docs]</a>
-<span class="k">class</span> <span class="nc">IdentityTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">IdentityTask</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Identity, or trivial, task."""</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -612,8 +693,8 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct IdentityTask.</span>
 
-<span class="sd">        Return the `nb_outputs` as a direct, affine transformation of the last</span>
-<span class="sd">        hidden layer.</span>
+<span class="sd">        A task that does not apply a learned embedding to the input. It returns</span>
+<span class="sd">        the direct inputs from `Model`.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span> <span class="o">=</span> <span class="n">nb_outputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_default_target_labels</span> <span class="o">=</span> <span class="p">(</span>
@@ -643,9 +724,87 @@
 <span class="w">        </span><span class="sd">"""Return number of inputs assumed by task."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span>
 
-    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
         <span class="c1"># Leave it as is.</span>
         <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="StandardFlowTask">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask">[docs]</a>
+<span class="k">class</span> <span class="nc">StandardFlowTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A `Task` for `NormalizingFlow`s in GraphNeT."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target_labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">task_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `StandardLearnedTask`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target_labels: A list of names for the targets of this Task.</span>
+<span class="sd">            hidden_size: The number of columns in the output of</span>
+<span class="sd">                         the last latent layer of `Model` using this Task.</span>
+<span class="sd">                         Available through `Model.nb_outputs`</span>
+<span class="sd">        """</span>
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="o">**</span><span class="n">task_kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StandardFlowTask.nb_inputs">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.nb_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return number of inputs assumed by task."""</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+        <span class="c1"># Leave it as is.</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<div class="viewcode-block" id="StandardFlowTask.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.forward">[docs]</a>
+    <span class="nd">@final</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">],</span> <span class="n">jacobian</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StandardFlowTask.compute_loss">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.compute_loss">[docs]</a>
+    <span class="nd">@final</span>
+    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute loss for normalizing flow tasks.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prediction: transformed sample in latent distribution space.</span>
+<span class="sd">            jacobian: the jacobian associated with the transformation.</span>
+<span class="sd">            data: the graph object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            the loss associated with the transformation.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span><span class="p">(</span>
+                <span class="n">prediction</span><span class="o">=</span><span class="n">prediction</span><span class="p">,</span>
+                <span class="n">jacobian</span><span class="o">=</span><span class="n">jacobian</span><span class="p">,</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+</div>
 
 </pre></div>
 
