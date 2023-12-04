@@ -19,7 +19,7 @@ from graphnet.utilities.decorators import final
 
 
 class Task(Model):
-    """Base class for all reconstruction and classification tasks."""
+    """Base class for Tasks in GraphNeT."""
 
     @property
     @abstractmethod
@@ -27,13 +27,11 @@ class Task(Model):
         """Return number of inputs assumed by task."""
 
     @property
-    @abstractmethod
     def default_target_labels(self) -> List[str]:
         """Return default target labels."""
         return self._default_target_labels
 
     @property
-    @abstractmethod
     def default_prediction_labels(self) -> List[str]:
         """Return default prediction labels."""
         return self._default_prediction_labels
@@ -41,7 +39,6 @@ class Task(Model):
     def __init__(
         self,
         *,
-        hidden_size: int,
         loss_function: "LossFunction",
         target_labels: Optional[Union[str, List[str]]] = None,
         prediction_labels: Optional[Union[str, List[str]]] = None,
@@ -54,9 +51,6 @@ class Task(Model):
         """Construct `Task`.
 
         Args:
-            hidden_size: The number of nodes in the layer feeding into this
-                tasks, used to construct the affine transformation to the
-                predicted quantity.
             loss_function: Loss function appropriate to the task.
             target_labels: Name(s) of the quantity/-ies being predicted, used
                 to extract the  target tensor(s) from the `Data` object in
@@ -125,17 +119,6 @@ class Task(Model):
             transform_support,
         )
 
-        # Mapping from last hidden layer to required size of input
-        self._affine = Linear(hidden_size, self.nb_inputs)
-
-    @final
-    def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
-        """Forward pass."""
-        self._regularisation_loss = 0  # Reset
-        x = self._affine(x)
-        x = self._forward(x)
-        return self._transform_prediction(x)
-
     @final
     def _transform_prediction(
         self, prediction: Union[Tensor, Data]
@@ -144,30 +127,6 @@ class Task(Model):
             return self._transform_prediction_inference(prediction)
         else:
             return self._transform_prediction_training(prediction)
-
-    @abstractmethod
-    def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
-        """Syntax like `.forward`, for implentation in inheriting classes."""
-
-    @final
-    def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
-        """Compute loss of `pred` wrt.
-
-        target labels in `data`.
-        """
-        target = torch.stack(
-            [data[label] for label in self._target_labels], dim=1
-        )
-        target = self._transform_target(target)
-        if self._loss_weight is not None:
-            weights = data[self._loss_weight]
-        else:
-            weights = None
-        loss = (
-            self._loss_function(pred, target, weights=weights)
-            + self._regularisation_loss
-        )
-        return loss
 
     @final
     def inference(self) -> None:
@@ -259,7 +218,120 @@ class Task(Model):
                 self._transform_prediction_inference = transform_inference
 
 
-class IdentityTask(Task):
+class LearnedTask(Task):
+    """Task class with a learned mapping.
+
+    Applies a learned mapping between the last latent layer of `Model` and
+    target space. E.g. the `LearnedTask` contains learnable parameters that
+    acts like a prediction head.
+    """
+
+    def __init__(
+        self,
+        hidden_size: int,
+        **task_kwargs: Any,
+    ):
+        """Construct `LearnedTask`.
+
+        Args:
+            hidden_size: The number of columns in the output of
+                         the last latent layer of `Model` using this Task.
+                         Available through `Model.nb_outputs`
+        """
+        # Base class constructor
+        super().__init__(**task_kwargs)
+
+        # Mapping from last hidden layer to required size of input
+        self._affine = Linear(hidden_size, self.nb_inputs)
+
+    @abstractmethod
+    def _forward(  # type: ignore
+        self, x: Union[Tensor, Data]
+    ) -> Union[Tensor, Data]:
+        """Syntax like `.forward`, for implentation in inheriting classes."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
+        """Compute loss of `pred` wrt.
+
+        target labels in `data`.
+        """
+
+    @property
+    @abstractmethod
+    def nb_inputs(self) -> int:
+        """Return number of inputs assumed by task."""
+
+    @final
+    def forward(  # type: ignore
+        self, x: Union[Tensor, Data]
+    ) -> Union[Tensor, Data]:
+        """Forward call for `LearnedTask`.
+
+        The learned embedding transforms last latent layer of Model to meet
+        target dimensions.
+        """
+        self._regularisation_loss = 0  # Reset
+        x = self._affine(x)
+        x = self._forward(x=x)
+        return self._transform_prediction(x)
+
+
+class StandardLearnedTask(LearnedTask):
+    """Standard class for classification and reconstruction in GraphNeT.
+
+    This class comes with a definition of `compute_loss` that is compatible
+    with the vast majority of supervised learning tasks.
+    """
+
+    def __init__(
+        self,
+        hidden_size: int,
+        **task_kwargs: Any,
+    ):
+        """Construct `StandardLearnedTask`.
+
+        Args:
+            hidden_size: The number of columns in the output of
+                         the last latent layer of `Model` using this Task.
+                         Available through `Model.nb_outputs`
+        """
+        # Base class constructor
+        super().__init__(hidden_size=hidden_size, **task_kwargs)
+
+    @property
+    @abstractmethod
+    def nb_inputs(self) -> int:
+        """Return number of inputs assumed by task."""
+
+    @abstractmethod
+    def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
+        """Syntax like `.forward`, for implentation in inheriting classes."""
+
+    @final
+    def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
+        """Compute supervised learning loss.
+
+        Grabs truth labels in `data` and sends both `pred` and `target` to loss
+        function for evaluation. Suits most supervised learning `Task`s.
+        """
+        target = torch.stack(
+            [data[label] for label in self._target_labels], dim=1
+        )
+        target = self._transform_target(target)
+        if self._loss_weight is not None:
+            weights = data[self._loss_weight]
+        else:
+            weights = None
+        loss = (
+            self._loss_function(pred, target, weights=weights)
+            + self._regularisation_loss
+        )
+        return loss
+
+
+class IdentityTask(StandardLearnedTask):
     """Identity, or trivial, task."""
 
     def __init__(
@@ -271,8 +343,8 @@ class IdentityTask(Task):
     ):
         """Construct IdentityTask.
 
-        Return the `nb_outputs` as a direct, affine transformation of the last
-        hidden layer.
+        A task that does not apply a learned embedding to the input. It returns
+        the direct inputs from `Model`.
         """
         self._nb_inputs = nb_outputs
         self._default_target_labels = (
@@ -302,6 +374,72 @@ class IdentityTask(Task):
         """Return number of inputs assumed by task."""
         return self._nb_inputs
 
-    def _forward(self, x: Tensor) -> Tensor:
+    def _forward(self, x: Union[Tensor, Data]) -> Tensor:  # type: ignore
         # Leave it as is.
         return x
+
+
+class StandardFlowTask(Task):
+    """A `Task` for `NormalizingFlow`s in GraphNeT."""
+
+    def __init__(
+        self,
+        target_labels: List[str],
+        **task_kwargs: Any,
+    ):
+        """Construct `StandardLearnedTask`.
+
+        Args:
+            target_labels: A list of names for the targets of this Task.
+            hidden_size: The number of columns in the output of
+                         the last latent layer of `Model` using this Task.
+                         Available through `Model.nb_outputs`
+        """
+        # Base class constructor
+        super().__init__(target_labels=target_labels, **task_kwargs)
+
+    def nb_inputs(self) -> int:
+        """Return number of inputs assumed by task."""
+        return len(self._target_labels)
+
+    def _forward(self, x: Tensor, jacobian: Tensor) -> Tensor:  # type: ignore
+        # Leave it as is.
+        return x
+
+    @final
+    def forward(
+        self, x: Union[Tensor, Data], jacobian: Optional[Tensor]
+    ) -> Union[Tensor, Data]:
+        """Forward pass."""
+        self._regularisation_loss = 0  # Reset
+        x = self._forward(x, jacobian)
+        return self._transform_prediction(x)
+
+    @final
+    def compute_loss(
+        self, prediction: Tensor, jacobian: Tensor, data: Data
+    ) -> Tensor:
+        """Compute loss for normalizing flow tasks.
+
+        Args:
+            prediction: transformed sample in latent distribution space.
+            jacobian: the jacobian associated with the transformation.
+            data: the graph object.
+
+        Returns:
+            the loss associated with the transformation.
+        """
+        if self._loss_weight is not None:
+            weights = data[self._loss_weight]
+        else:
+            weights = None
+        loss = (
+            self._loss_function(
+                prediction=prediction,
+                jacobian=jacobian,
+                weights=weights,
+                target=None,
+            )
+            + self._regularisation_loss
+        )
+        return loss
