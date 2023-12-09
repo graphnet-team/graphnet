@@ -49,7 +49,10 @@ class Model(
             self.info(
                 "It is recommended to use the .pth suffix for state_dict files."
             )
-        torch.save(self.cpu().state_dict(), path)
+        state_dict = self.state_dict()
+        for key, value in state_dict.items():
+            state_dict[key] = value.cpu()
+        torch.save(state_dict, path)
         self.info(f"Model state_dict saved to {path}")
 
     def load_state_dict(
