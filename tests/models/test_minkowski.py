@@ -143,18 +143,18 @@ def test_minkowski_knn_edges() -> None:
             [0, 0, 1, 1, 2, 2, 3, 3],
         ]
     )
-    assert torch.allclose(edge_index[0], expected[0])
+    assert torch.allclose(edge_index[1], expected[1])
 
     # Allow for "permutation of connections" in edge_index[1]
     assert torch.allclose(
-        edge_index[1, [0, 1]], expected[1, [0, 1]]
+        edge_index[0, [0, 1]], expected[0, [0, 1]]
     ) or torch.allclose(edge_index[1, [0, 1]], expected[1, [1, 0]])
     assert torch.allclose(
-        edge_index[1, [2, 3]], expected[1, [2, 3]]
+        edge_index[0, [2, 3]], expected[0, [2, 3]]
     ) or torch.allclose(edge_index[1, [2, 3]], expected[1, [3, 2]])
     assert torch.allclose(
-        edge_index[1, [4, 5]], expected[1, [4, 5]]
+        edge_index[0, [4, 5]], expected[0, [4, 5]]
     ) or torch.allclose(edge_index[1, [4, 5]], expected[1, [5, 4]])
     assert torch.allclose(
-        edge_index[1, [6, 7]], expected[1, [6, 7]]
+        edge_index[0, [6, 7]], expected[0, [6, 7]]
     ) or torch.allclose(edge_index[1, [6, 7]], expected[1, [7, 6]])
