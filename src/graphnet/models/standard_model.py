@@ -51,7 +51,6 @@ class StandardModel(Model):
         assert isinstance(tasks, (list, tuple))
         assert all(isinstance(task, StandardLearnedTask) for task in tasks)
         assert isinstance(graph_definition, GraphDefinition)
-        assert isinstance(architecture, GNN)
 
         # deprecation warnings
         if (architecture is None) & (gnn is not None):
