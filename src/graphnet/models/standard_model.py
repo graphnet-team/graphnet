@@ -33,7 +33,6 @@ class StandardModel(Model):
         *,
         graph_definition: GraphDefinition,
         architecture: GNN = None,
-        gnn: Optional[GNN] = None,
         tasks: Union[StandardLearnedTask, List[StandardLearnedTask]],
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
         optimizer_kwargs: Optional[Dict] = None,
@@ -51,20 +50,8 @@ class StandardModel(Model):
         assert isinstance(tasks, (list, tuple))
         assert all(isinstance(task, StandardLearnedTask) for task in tasks)
         assert isinstance(graph_definition, GraphDefinition)
-
-        # deprecation warnings
-        if (architecture is None) & (gnn is not None):
-            architecture = gnn
-            # Code continues after warning
-            self.warning(
-                """DeprecationWarning: Argument `gnn` will be deprecated in GraphNeT 2.0. Please use `architecture` instead."""
-            )
-        elif (architecture is None) & (gnn is None):
-            # Code stops
-            raise TypeError(
-                "__init__() missing 1 required keyword-only argument: 'architecture'"
-            )
         assert isinstance(architecture, GNN)
+
         # Member variable(s)
         self._graph_definition = graph_definition
         self._architecture = architecture
