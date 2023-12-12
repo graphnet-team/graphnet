@@ -51,19 +51,19 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
         nb_nearest_neighbours=8,
         input_feature_names=FEATURES.DEEPCORE,
     )
-    gnn = DynEdge(
+    architecture = DynEdge(
         nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = EnergyReconstruction(
-        hidden_size=gnn.nb_outputs,
+        hidden_size=architecture.nb_outputs,
         target_labels="energy",
         loss_function=LogCoshLoss(),
         transform_prediction_and_target=lambda x: torch.log10(x),
     )
     model = StandardModel(
         graph_definition=graph_definition,
-        gnn=gnn,
+        architecture=architecture,
         tasks=[task],
         optimizer_class=Adam,
         optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
@@ -102,7 +102,7 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
         "scheduler_class",
         "scheduler_kwargs",
         "scheduler_config",
-        "gnn",
+        "architecture",
     ]:
         assert (
             constructed_model.config.arguments[key]
