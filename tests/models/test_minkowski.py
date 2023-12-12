@@ -139,8 +139,8 @@ def test_minkowski_knn_edges() -> None:
     )(data).edge_index
     expected = torch.tensor(
         [
-            [0, 0, 1, 1, 2, 2, 3, 3],
             [1, 2, 0, 3, 0, 3, 1, 2],
+            [0, 0, 1, 1, 2, 2, 3, 3],
         ]
     )
     assert torch.allclose(edge_index[0], expected[0])
