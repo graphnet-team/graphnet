@@ -416,7 +416,7 @@ class I3PulseCleanerModule(I3InferenceModule):
 
         Arguments:
             frame: I3Frame (physics)
-            predictions: predictions from GNN
+            predictions: predictions from Model.
 
         Returns:
             predictions_map: a pulsemap from predictions
