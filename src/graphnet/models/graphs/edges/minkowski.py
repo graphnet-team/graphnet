@@ -4,7 +4,7 @@ from typing import Optional, List
 import torch
 from torch_geometric.data import Data
 from torch_geometric.utils import to_dense_batch
-from graphnet.models.graphs.edges import EdgeDefinition
+from graphnet.models.graphs.edges.edges import EdgeDefinition
 
 
 def compute_minkowski_distance_mat(
@@ -25,8 +25,9 @@ def compute_minkowski_distance_mat(
 
     Returns: Matrix of shape (n, m) of all pairwise Minkowski distances.
     """
-    assert x.shape == y.shape, "x and y must have the same shape"
-    assert x.dim() == 2, "x and y must be 2-dimensional"
+    space_coords = space_coords or [0, 1, 2]
+    assert x.dim() == 2, "x must be 2-dimensional"
+    assert y.dim() == 2, "x must be 2-dimensional"
     dist = x[:, None] - y[None, :]
     pos = dist[:, :, space_coords]
     time = dist[:, :, time_coord] * c
@@ -84,11 +85,13 @@ class MinkowskiKNNEdges(EdgeDefinition):
             num_edges = min(self.nb_nearest_neighbours, num_points)
             row += [
                 c
-                for c in range(count, count + num_edges)
-                for _ in range(num_points)
+                for c in range(num_points)
+                for _ in range(count, count + num_edges)
             ]
-            distance_mat[distance_mat < 0] *= self.time_like_weight
-
+            distance_mat[distance_mat < 0] *= -self.time_like_weight
+            distance_mat += (
+                torch.eye(distance_mat.shape[0]) * 1e9
+            )  # self-loops
             distance_sorted = distance_mat.argsort(dim=1)
             distance_sorted += count  # offset by previous events
             col += distance_sorted[:num_edges].flatten().tolist()
