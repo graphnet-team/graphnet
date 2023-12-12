@@ -34,11 +34,6 @@ def compute_minkowski_distance_mat(
     return (pos**2).sum(dim=-1) - time**2
 
 
-# TODO: Replace use of MinkowskiKNNEdges with
-#   custom Cuda/cpp kernel for reduced memory usage.
-#   Currently, O(n^2) memory is used, but O(n*k) is possible.
-#   Where n is the number of points in the largest event,
-#   and k is the number of neighbours to connect to.
 class MinkowskiKNNEdges(EdgeDefinition):
     """Builds edges between most light-like separated."""
 
