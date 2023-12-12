@@ -116,7 +116,7 @@ def main(
     )
     model = StandardModel(
         graph_definition=graph_definition,
-        gnn=architecture,
+        architecture=architecture,
         tasks=[task],
         optimizer_class=Adam,
         optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
