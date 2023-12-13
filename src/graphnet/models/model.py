@@ -64,9 +64,13 @@ class Model(
 
         # DEPRECATION UTILITY: REMOVE AT 2.0 LAUNCH
         # See https://github.com/graphnet-team/graphnet/issues/647
-        state_dict = rename_state_dict_entries(
+        state_dict, state_dict_altered = rename_state_dict_entries(
             state_dict=state_dict, old_phrase="_gnn", new_phrase="backbone"
         )
+        if state_dict_altered:
+            self.warn(
+                "DeprecationWarning: State dicts with `_gnn` entries will be deprecated in GraphNeT 2.0"
+            )
         return super().load_state_dict(state_dict, **kargs)
 
     @classmethod
