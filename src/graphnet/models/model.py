@@ -68,7 +68,7 @@ class Model(
             state_dict=state_dict, old_phrase="_gnn", new_phrase="backbone"
         )
         if state_dict_altered:
-            self.warn(
+            self.warning(
                 "DeprecationWarning: State dicts with `_gnn` entries will be deprecated in GraphNeT 2.0"
             )
         return super().load_state_dict(state_dict, **kargs)
