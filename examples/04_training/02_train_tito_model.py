@@ -101,7 +101,7 @@ def main(
     )
 
     # Building model
-    architecture = DynEdgeTITO(
+    backbone = DynEdgeTITO(
         nb_inputs=graph_definition.nb_outputs,
         features_subset=[0, 1, 2, 3],
         dyntrans_layer_sizes=[(256, 256), (256, 256), (256, 256), (256, 256)],
@@ -110,13 +110,13 @@ def main(
         use_post_processing_layers=True,
     )
     task = DirectionReconstructionWithKappa(
-        hidden_size=architecture.nb_outputs,
+        hidden_size=backbone.nb_outputs,
         target_labels=config["target"],
         loss_function=VonMisesFisher3DLoss(),
     )
     model = StandardModel(
         graph_definition=graph_definition,
-        architecture=architecture,
+        backbone=backbone,
         tasks=[task],
         optimizer_class=Adam,
         optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
