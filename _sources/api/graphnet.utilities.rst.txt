@@ -24,6 +24,7 @@ utilities
 
    graphnet.utilities.argparse
    graphnet.utilities.decorators
+   graphnet.utilities.deprecation_tools
    graphnet.utilities.filesys
    graphnet.utilities.imports
    graphnet.utilities.logging

@@ -1,0 +1,8 @@
+
+deprecation\_tools
+==================
+
+.. automodule:: graphnet.utilities.deprecation_tools
+   :members:
+   :undoc-members:
+   :show-inheritance:
