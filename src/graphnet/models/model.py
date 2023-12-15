@@ -9,6 +9,7 @@ from pytorch_lightning import LightningModule
 import torch
 from torch_geometric.data import Data
 
+from graphnet.utilities.deprecation_tools import rename_state_dict_entries
 from graphnet.utilities.logging import Logger
 from graphnet.utilities.config import (
     Configurable,
@@ -63,6 +64,16 @@ class Model(
             state_dict = torch.load(path)
         else:
             state_dict = path
+
+        # DEPRECATION UTILITY: REMOVE AT 2.0 LAUNCH
+        # See https://github.com/graphnet-team/graphnet/issues/647
+        state_dict, state_dict_altered = rename_state_dict_entries(
+            state_dict=state_dict, old_phrase="_gnn", new_phrase="backbone"
+        )
+        if state_dict_altered:
+            self.warning(
+                "DeprecationWarning: State dicts with `_gnn` entries will be deprecated in GraphNeT 2.0"
+            )
         return super().load_state_dict(state_dict, **kargs)
 
     @classmethod

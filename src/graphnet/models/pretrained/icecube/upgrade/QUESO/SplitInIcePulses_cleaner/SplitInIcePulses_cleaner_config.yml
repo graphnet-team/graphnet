@@ -1,5 +1,5 @@
 arguments:
-  gnn:
+  backbone:
     ModelConfig:
       arguments: {add_global_variables_after_pooling: false, dynedge_layer_sizes: null,
         features_subset: null, global_pooling_schemes: null, nb_inputs: 14, nb_neighbours: 8,

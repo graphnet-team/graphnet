@@ -96,12 +96,12 @@ def main(
 
     # Building model
 
-    gnn = DynEdge(
+    backbone = DynEdge(
         nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = EnergyReconstruction(
-        hidden_size=gnn.nb_outputs,
+        hidden_size=backbone.nb_outputs,
         target_labels=config["target"],
         loss_function=LogCoshLoss(),
         transform_prediction_and_target=lambda x: torch.log10(x),
@@ -109,7 +109,7 @@ def main(
     )
     model = StandardModel(
         graph_definition=graph_definition,
-        gnn=gnn,
+        backbone=backbone,
         tasks=[task],
         optimizer_class=Adam,
         optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},

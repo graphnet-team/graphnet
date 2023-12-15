@@ -25,14 +25,15 @@ class StandardModel(Model):
     """Main class for standard models in graphnet.
 
     This class chains together the different elements of a complete GNN- based
-    model (detector read-in, GNN architecture, and task-specific read-outs).
+    model (detector read-in, GNN backbone, and task-specific read-outs).
     """
 
     def __init__(
         self,
         *,
         graph_definition: GraphDefinition,
-        gnn: GNN,
+        backbone: GNN = None,
+        gnn: Optional[GNN] = None,
         tasks: Union[StandardLearnedTask, List[StandardLearnedTask]],
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
         optimizer_kwargs: Optional[Dict] = None,
@@ -50,11 +51,24 @@ class StandardModel(Model):
         assert isinstance(tasks, (list, tuple))
         assert all(isinstance(task, StandardLearnedTask) for task in tasks)
         assert isinstance(graph_definition, GraphDefinition)
-        assert isinstance(gnn, GNN)
+
+        # deprecation warnings
+        if (backbone is None) & (gnn is not None):
+            backbone = gnn
+            # Code continues after warning
+            self.warning(
+                """DeprecationWarning: Argument `gnn` will be deprecated in GraphNeT 2.0. Please use `backbone` instead."""
+            )
+        elif (backbone is None) & (gnn is None):
+            # Code stops
+            raise TypeError(
+                "__init__() missing 1 required keyword-only argument: 'backbone'"
+            )
+        assert isinstance(backbone, GNN)
 
         # Member variable(s)
         self._graph_definition = graph_definition
-        self._gnn = gnn
+        self.backbone = backbone
         self._tasks = ModuleList(tasks)
         self._optimizer_class = optimizer_class
         self._optimizer_kwargs = optimizer_kwargs or dict()
@@ -63,7 +77,7 @@ class StandardModel(Model):
         self._scheduler_config = scheduler_config or dict()
 
         # set dtype of GNN from graph_definition
-        self._gnn.type(self._graph_definition._dtype)
+        self.backbone.type(self._graph_definition._dtype)
 
     @staticmethod
     def _construct_trainer(
@@ -226,7 +240,7 @@ class StandardModel(Model):
             data = [data]
         x_list = []
         for d in data:
-            x = self._gnn(d)
+            x = self.backbone(d)
             x_list.append(x)
         x = torch.cat(x_list, dim=0)
 
@@ -467,7 +481,7 @@ class StandardModel(Model):
                     save_top_k=1,
                     monitor="val_loss",
                     mode="min",
-                    filename=f"{self._gnn.__class__.__name__}"
+                    filename=f"{self.backbone.__class__.__name__}"
                     + "-{epoch}-{val_loss:.2f}-{train_loss:.2f}",
                 )
             )
