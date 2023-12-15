@@ -245,14 +245,14 @@ class StandardModel(Model):
         x_list = []
         jacobian_list = []
         for d in data:
-            x = self._architecture(d)
-            if isinstance(self._architecture, NormalizingFlow):
+            x = self.backbone(d)
+            if isinstance(self.backbone, NormalizingFlow):
                 x_list.append(x[0])  # the embedding
                 jacobian_list.append(x[1])  # the jacobian
             else:
                 x_list.append(x)
         x = torch.cat(x_list, dim=0)
-        if isinstance(self._architecture, NormalizingFlow):
+        if isinstance(self.backbone, NormalizingFlow):
             jacobian = torch.cat(jacobian_list, dim=0)
             preds = [task(x, jacobian) for task in self._tasks]
             return preds, jacobian
