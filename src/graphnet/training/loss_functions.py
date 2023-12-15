@@ -443,3 +443,26 @@ class VonMisesFisher3DLoss(VonMisesFisherLoss):
         kappa = prediction[:, 3]
         p = kappa.unsqueeze(1) * prediction[:, [0, 1, 2]]
         return self._evaluate(p, target)
+
+
+class MultivariateGaussianFlowLoss(LossFunction):
+    """Loss for transforming input distribution to Multivariate Gaussian.
+
+    Intended for use by `NormalizingFlows.`
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        """Construct `MultivariateGaussianFlowLoss`."""
+        super().__init__(**kwargs)
+        self._const = torch.tensor(2 * torch.pi, dtype=torch.float)
+
+    def _forward(  # type: ignore
+        self, prediction: Tensor, jacobian: Tensor, target: Tensor
+    ) -> Tensor:
+        assert prediction.shape == jacobian.shape
+        loss = -torch.mean(
+            torch.log(jacobian)
+            - (torch.pow(prediction, 2) + torch.log(self._const)) / 2,
+            dim=1,
+        )
+        return loss
