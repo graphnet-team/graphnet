@@ -17,8 +17,9 @@ from pytorch_lightning.loggers import Logger as LightningLogger
 from graphnet.training.callbacks import ProgressBar
 from graphnet.models.graphs import GraphDefinition
 from graphnet.models.gnn.gnn import GNN
+from graphnet.models.flows import NormalizingFlow
 from graphnet.models.model import Model
-from graphnet.models.task import StandardLearnedTask
+from graphnet.models.task import StandardLearnedTask, StandardFlowTask
 
 
 class StandardModel(Model):
@@ -46,10 +47,13 @@ class StandardModel(Model):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Check(s)
-        if isinstance(tasks, StandardLearnedTask):
+        if isinstance(tasks, (StandardLearnedTask, StandardFlowTask)):
             tasks = [tasks]
         assert isinstance(tasks, (list, tuple))
-        assert all(isinstance(task, StandardLearnedTask) for task in tasks)
+        assert all(
+            isinstance(task, (StandardLearnedTask, StandardFlowTask))
+            for task in tasks
+        )
         assert isinstance(graph_definition, GraphDefinition)
 
         # deprecation warnings
@@ -64,7 +68,7 @@ class StandardModel(Model):
             raise TypeError(
                 "__init__() missing 1 required keyword-only argument: 'backbone'"
             )
-        assert isinstance(backbone, GNN)
+        assert isinstance(backbone, (GNN, NormalizingFlow))
 
         # Member variable(s)
         self._graph_definition = graph_definition
