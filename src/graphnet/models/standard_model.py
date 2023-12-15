@@ -1,6 +1,6 @@
 """Standard model class(es)."""
 from collections import OrderedDict
-from typing import Any, Dict, List, Optional, Union, Type
+from typing import Any, Dict, List, Optional, Union, Type, Tuple
 
 import numpy as np
 import torch
@@ -238,18 +238,27 @@ class StandardModel(Model):
 
     def forward(
         self, data: Union[Data, List[Data]]
-    ) -> List[Union[Tensor, Data]]:
+    ) -> Union[List[Union[Tensor, Data]], Tuple[Tensor, Tensor]]:
         """Forward pass, chaining model components."""
         if isinstance(data, Data):
             data = [data]
         x_list = []
+        jacobian_list = []
         for d in data:
-            x = self.backbone(d)
-            x_list.append(x)
+            x = self._architecture(d)
+            if isinstance(self._architecture, NormalizingFlow):
+                x_list.append(x[0])  # the embedding
+                jacobian_list.append(x[1])  # the jacobian
+            else:
+                x_list.append(x)
         x = torch.cat(x_list, dim=0)
-
-        preds = [task(x) for task in self._tasks]
-        return preds
+        if isinstance(self._architecture, NormalizingFlow):
+            jacobian = torch.cat(jacobian_list, dim=0)
+            preds = [task(x, jacobian) for task in self._tasks]
+            return preds, jacobian
+        else:
+            preds = [task(x) for task in self._tasks]
+            return preds
 
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
