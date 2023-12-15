@@ -16,9 +16,9 @@ from graphnet.models.graphs import GraphDefinition
 from graphnet.models.graphs.nodes import NodesAsPulses
 
 from graphnet.models.task import StandardFlowTask
-from graphnet.training.loss_functions import (  # type : ignore
-    LogCoshLoss,  # MultivariateGaussianFlowLoss,  # type : ignore
-)  # type : ignore
+from graphnet.training.loss_functions import (
+    MultivariateGaussianFlowLoss,
+)
 from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
@@ -65,7 +65,7 @@ def main(
     graph_definition = GraphDefinition(
         detector=detector,
         node_definition=NodesAsPulses(),
-        input_feature_names=input_feature_names,
+        input_feature_names=features,
     )
     (
         training_dataloader,
@@ -93,7 +93,7 @@ def main(
     task = StandardFlowTask(
         target_labels=graph_definition.output_feature_names,
         prediction_labels=graph_definition.output_feature_names,
-        loss_function=LogCoshLoss,  # MultivariateGaussianFlowLoss(),
+        loss_function=MultivariateGaussianFlowLoss(),
     )
     model = StandardModel(
         graph_definition=graph_definition,
@@ -132,16 +132,15 @@ def main(
 
 
 if __name__ == "__main__":
-    database = "/mnt/scratch/rasmus_orsoe/databases/dev_level2_oscNext_pulsenoise_full_v4_remerge_v2/data/dev_level2_oscNext_pulsenoise_full_v4_remerge_v2_part_1.db"
-    pulsemap = "SRTTWOfflinePulsesDC"
+    database = "/home/iwsatlas1/oersoe/github/graphnet/data/examples/sqlite/prometheus/prometheus-events.db"
+    pulsemap = "total"
     target = ""
-    truth_table = "truth"
-    gpus = [2]
+    truth_table = "mc_truth"
+    gpus = None
     max_epochs = 400
     early_stopping_patience = 16
     batch_size = 500
     num_workers = 30
-    input_feature_names = ["dom_x", "dom_y", "dom_z", "dom_time"]
     string_selection = [83.0, 84.0, 85.0, 86.0]
 
     string_mask = []
