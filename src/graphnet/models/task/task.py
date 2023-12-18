@@ -310,7 +310,9 @@ class StandardLearnedTask(LearnedTask):
         """Syntax like `.forward`, for implentation in inheriting classes."""
 
     @final
-    def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
+    def compute_loss(
+        self, prediction: Union[Tensor, Data], data: Data
+    ) -> Tensor:
         """Compute supervised learning loss.
 
         Grabs truth labels in `data` and sends both `pred` and `target` to loss
@@ -325,7 +327,9 @@ class StandardLearnedTask(LearnedTask):
         else:
             weights = None
         loss = (
-            self._loss_function(pred, target, weights=weights)
+            self._loss_function(
+                prediction=prediction, target=target, weights=weights
+            )
             + self._regularisation_loss
         )
         return loss
