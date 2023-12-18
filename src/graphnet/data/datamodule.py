@@ -111,16 +111,16 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         """
         return self._create_dataloader(self._test_dataset)
 
-    # def teardown(self) -> None:
-    #     """Perform any necessary cleanup or shutdown procedures.
+    def teardown(self) -> None:  # type: ignore[override]
+        """Perform any necessary cleanup or shutdown procedures.
 
-    #     This method can be used for tasks such as closing SQLite connections
-    #     after training. Override this method as needed.
+        This method can be used for tasks such as closing SQLite connections
+        after training. Override this method as needed.
 
-    #     Returns:
-    #         None
-    #     """
-    #     return None
+        Returns:
+            None
+        """
+        return None
 
     def _create_dataloader(
         self, dataset: Union[Dataset, EnsembleDataset]
@@ -214,8 +214,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             # Split the selection into train/validation
             if self._use_ensemble_dataset:
                 # Split every selection
-                self._train_selection: List[List[int]] = []
-                self._val_selection: List[List[int]] = []
+                self._train_selection = []
+                self._val_selection = []
                 for selection in self._selection:
                     train_selection, val_selection = self._split_selection(
                         selection
@@ -225,10 +225,13 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
 
             else:
                 # Split the only selection we got
+                assert isinstance(self._selection, list)
                 (
                     self._train_selection,
                     self._val_selection,
-                ) = self._split_selection(self._selection)
+                ) = self._split_selection(  # type: ignore
+                    self._selection
+                )
 
         if self._selection is None:
             # If not provided, we infer it by grabbing all event ids in the dataset.
@@ -251,14 +254,16 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         Returns:
             Training selection, Validation selection.
         """
+        assert isinstance(selection, (int, list))
         if isinstance(selection, int):
             flat_selection = [selection]
         elif isinstance(selection[0], list):
             flat_selection = [
-                item for sublist in selection for item in sublist
+                item for sublist in selection for item in sublist  # type: ignore
             ]
         else:
-            flat_selection = selection
+            flat_selection = selection  # type: ignore
+        assert isinstance(flat_selection, list)
 
         train_selection, val_selection = train_test_split(
             flat_selection,
@@ -284,8 +289,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                     train_selection,
                     val_selection,
                 ) = self._infer_selections_on_single_dataset(dataset_path)
-                self._train_selection.append(train_selection)
-                self._val_selection.append(val_selection)
+                self._train_selection.extend(train_selection)  # type: ignore
+                self._val_selection.extend(val_selection)  # type: ignore
         else:
             # Infer selection on a single dataset
             (
@@ -295,7 +300,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                 self._dataset_args["path"]
             )
 
-        return (self._train_selection, self._val_selection)
+        return (self._train_selection, self._val_selection)  # type: ignore
 
     def _infer_selections_on_single_dataset(
         self, dataset_path: str
@@ -322,13 +327,22 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         all_events = all_events.values.tolist()  # shuffled list
         return self._split_selection(all_events)
 
-    def _construct_dataset(self, tmp_args: Dict[str, Any]) -> Dict[str, Any]:
-        """Construct dataset."""
-        return tmp_args
-
     def _get_all_indices(self):
-        """Shuffle the list."""
+        """Get all indices.
+
+        Return:
+            List of indices in an unshuffled order.
+        """
         return list
+
+    def _construct_dataset(self, tmp_args: Dict[str, Any]) -> Dict[str, Any]:
+        """Construct dataset.
+
+        Return:
+            Dataset object constructed from input arguments.
+        """
+        # instance dataset class , that set of argunment ,
+        return tmp_args
 
     def _create_dataset(
         self, selection: Union[List[int], List[List[int]], List[float]]
@@ -348,7 +362,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             for dataset_idx in range(len(selection)):
                 datasets.append(
                     self._create_single_dataset(
-                        selection=selection[dataset_idx],
+                        selection=selection[dataset_idx],  # type: ignore
                         path=self._dataset_args["path"][dataset_idx],
                     )
                 )
@@ -358,12 +372,14 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         else:
             # Construct single dataset
             dataset = self._create_single_dataset(
-                selection=selection, path=self._dataset_args["path"]
+                selection=selection, path=self._dataset_args["path"]  # type: ignore
             )
         return dataset
 
     def _create_single_dataset(
-        self, selection: List[int], path: str
+        self,
+        selection: Union[List[int], List[List[int]], List[float]],
+        path: str,
     ) -> Dataset:
         """Instantiate a single `Dataset`.
 
