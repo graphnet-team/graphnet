@@ -34,7 +34,7 @@ class LossFunction(Model):
     @final
     def forward(  # type: ignore[override]
         self,
-        prediction: Tensor,
+        predictions: Tensor,
         target: Tensor,
         weights: Optional[Tensor] = None,
         return_elements: bool = False,
@@ -55,11 +55,9 @@ class LossFunction(Model):
         """
         # Toggle between LossFunction Types
         if isinstance(self, FlowLossFunction):
-            elements = self._forward(
-                prediction=prediction, target=target, jacobian=jacobian
-            )
+            elements = self._forward(prediction=predictions, jacobian=jacobian)
         elif isinstance(self, StandardLossFunction):
-            elements = self._forward(prediction=prediction, target=target)
+            elements = self._forward(prediction=predictions, target=target)
         else:
             raise NotImplementedError(
                 f"{self.__class__.__name__} is not supported by `StandardModel`"
@@ -67,10 +65,16 @@ class LossFunction(Model):
 
         if weights is not None:
             elements = elements * weights
-        assert elements.size(dim=0) == target.size(
-            dim=0
-        ), "`_forward` should return elementwise loss terms."
 
+        # checks
+        if target is not None:
+            assert elements.size(dim=0) == target.size(
+                dim=0
+            ), "`_forward` should return elementwise loss terms."
+        elif jacobian is not None:
+            assert elements.size(dim=0) == jacobian.size(
+                dim=0
+            ), "`_forward` should return elementwise loss terms."
         return elements if return_elements else torch.mean(elements)
 
 

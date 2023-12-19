@@ -272,13 +272,13 @@ class StandardModel(Model):
         between the training and validation step.
         """
         if isinstance(self.backbone, NormalizingFlow):
-            preds, jacobian = self(batch)
+            predictions, jacobian = self(batch)
             loss = self.compute_loss(
-                preds=preds, data=batch, kwargs={"jacobian": jacobian}
+                predictions=predictions, data=batch, jacobian=jacobian
             )
         elif isinstance(self.backbone, GNN):
-            preds = self(batch)
-            loss = self.compute_loss(preds=preds, data=batch)
+            predictions = self(batch)
+            loss = self.compute_loss(predictions=predictions, data=batch)
         return loss
 
     def training_step(
@@ -319,10 +319,10 @@ class StandardModel(Model):
 
     def compute_loss(
         self,
-        preds: Union[List[Tensor], List[List[Tensor]]],
+        predictions: Union[List[Tensor], List[List[Tensor]]],
         data: List[Data],
         verbose: bool = False,
-        **kwargs: Any,
+        jacobian: Optional[Tensor] = None,
     ) -> Tensor:
         """Compute and sum losses across tasks."""
         data_merged = {}
@@ -336,9 +336,11 @@ class StandardModel(Model):
                 )
 
         losses = []
-        for task in self._tasks:
+        for i, task in enumerate(self._tasks):
             losses.append(
-                task.compute_loss(predictions=preds, data=data, **kwargs)
+                task.compute_loss(
+                    predictions=predictions[i], data=data, jacobian=jacobian
+                )
             )
         if verbose:
             self.info(f"{losses}")

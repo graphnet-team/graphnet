@@ -421,7 +421,7 @@ class StandardFlowTask(Task):
 
     @final
     def compute_loss(
-        self, prediction: Tensor, jacobian: Tensor, data: Data
+        self, predictions: Tensor, jacobian: Tensor, data: Data
     ) -> Tensor:
         """Compute loss for normalizing flow tasks.
 
@@ -439,7 +439,7 @@ class StandardFlowTask(Task):
             weights = None
         loss = (
             self._loss_function(
-                prediction=prediction,
+                predictions=predictions,
                 jacobian=jacobian,
                 weights=weights,
                 target=None,
