@@ -92,8 +92,9 @@ def main(
     )
     task = StandardFlowTask(
         target_labels=graph_definition.output_feature_names,
-        prediction_labels=graph_definition.output_feature_names,
         loss_function=MultivariateGaussianFlowLoss(),
+        coordinate_columns=flow.coordinate_columns,
+        jacobian_columns=flow.jacobian_columns,
     )
     model = StandardModel(
         graph_definition=graph_definition,
@@ -137,10 +138,10 @@ if __name__ == "__main__":
     target = ""
     truth_table = "mc_truth"
     gpus = None
-    max_epochs = 400
-    early_stopping_patience = 16
-    batch_size = 500
-    num_workers = 30
+    max_epochs = 100
+    early_stopping_patience = 5
+    batch_size = 16
+    num_workers = 1
     string_selection = [83.0, 84.0, 85.0, 86.0]
 
     string_mask = []

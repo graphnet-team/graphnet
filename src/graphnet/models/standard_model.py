@@ -243,27 +243,14 @@ class StandardModel(Model):
         if isinstance(data, Data):
             data = [data]
 
-        if isinstance(self.backbone, NormalizingFlow):
-            x_list = []
-            jacobian_list = []
-            for d in data:
-                x, jacobian = self.backbone(d)
-                x_list.append(x)
-                jacobian_list.append(jacobian)
-            x = torch.cat(x_list, dim=0)
-            jac = torch.cat(jacobian_list, dim=0)
-            preds = [task(x, jac) for task in self._tasks]
-            return preds, jac
+        x_list = []
+        for d in data:
+            x = self.backbone(d)
+            x_list.append(x)
+        x = torch.cat(x_list, dim=0)
 
-        elif isinstance(self.backbone, GNN):
-            x_list = []
-            for d in data:
-                x = self.backbone(d)
-                x_list.append(x)
-            x = torch.cat(x_list, dim=0)
-
-            preds = [task(x) for task in self._tasks]
-            return preds
+        preds = [task(x) for task in self._tasks]
+        return preds
 
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
@@ -271,14 +258,8 @@ class StandardModel(Model):
         Applies the forward pass and the following loss calculation, shared
         between the training and validation step.
         """
-        if isinstance(self.backbone, NormalizingFlow):
-            predictions, jacobian = self(batch)
-            loss = self.compute_loss(
-                predictions=predictions, data=batch, jacobian=jacobian
-            )
-        elif isinstance(self.backbone, GNN):
-            predictions = self(batch)
-            loss = self.compute_loss(predictions=predictions, data=batch)
+        predictions = self(batch)
+        loss = self.compute_loss(predictions=predictions, data=batch)
         return loss
 
     def training_step(
@@ -322,9 +303,9 @@ class StandardModel(Model):
         predictions: Union[List[Tensor], List[List[Tensor]]],
         data: List[Data],
         verbose: bool = False,
-        jacobian: Optional[Tensor] = None,
     ) -> Tensor:
         """Compute and sum losses across tasks."""
+        # Prepare a common set of truth variables passed to all Tasks
         data_merged = {}
         target_labels_merged = list(set(self.target_labels))
         for label in target_labels_merged:
@@ -335,13 +316,13 @@ class StandardModel(Model):
                     [d[task._loss_weight] for d in data], dim=0
                 )
 
+        # Loop over Tasks and calculate loss for each
         losses = []
         for i, task in enumerate(self._tasks):
-            losses.append(
-                task.compute_loss(
-                    predictions=predictions[i], data=data, jacobian=jacobian
-                )
+            task_loss = task.compute_loss(
+                predictions=predictions[i], data=data_merged
             )
+            losses.append(task_loss)
         if verbose:
             self.info(f"{losses}")
         assert all(

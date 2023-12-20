@@ -4,6 +4,7 @@ Implemented by Rasmus Ørsøe, 2023.
 """
 from typing import List, Tuple
 
+import numpy as np
 import torch
 
 from graphnet.models.flows import NormalizingFlow
@@ -46,6 +47,8 @@ class INGA(NormalizingFlow):
                         Defaults to None, which will create an even partition.
             c: Scaling parameter for the neural network.
         """
+        self._coordinate_columns = np.arange(0, nb_inputs).tolist()
+        self._jacobian_columns = np.arange(nb_inputs, 2 * nb_inputs).tolist()
         super().__init__(nb_inputs)
 
         # Set Member variables
@@ -118,7 +121,7 @@ class INGA(NormalizingFlow):
                 y, partition_jacobian = spline_block(x=y)
                 global_jacobian *= partition_jacobian
             c += 1
-        return y, global_jacobian
+        return torch.concat([y, global_jacobian], dim=1)
 
     def inverse(self, y: torch.Tensor) -> torch.Tensor:
         """Inverse call.
