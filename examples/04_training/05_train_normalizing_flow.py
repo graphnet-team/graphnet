@@ -38,6 +38,7 @@ def main(
     early_stopping_patience: int,
     batch_size: int,
     num_workers: int,
+    wandb: bool = False,
 ) -> None:
     """Run example."""
     # Construct Logger
@@ -133,30 +134,66 @@ def main(
 
 
 if __name__ == "__main__":
-    database = "/home/iwsatlas1/oersoe/github/graphnet/data/examples/sqlite/prometheus/prometheus-events.db"
-    pulsemap = "total"
-    target = ""
-    truth_table = "mc_truth"
-    gpus = None
-    max_epochs = 100
-    early_stopping_patience = 5
-    batch_size = 16
-    num_workers = 1
-    string_selection = [83.0, 84.0, 85.0, 86.0]
 
-    string_mask = []
-    for string in np.arange(0, 87):
-        if string not in string_selection:
-            string_mask.append(string)
+    # Parse command-line arguments
+    parser = ArgumentParser(
+        description="""
+Train GNN model without the use of config files.
+"""
+    )
+
+    parser.add_argument(
+        "--path",
+        help="Path to dataset file (default: %(default)s)",
+        default=f"{EXAMPLE_DATA_DIR}/sqlite/prometheus/prometheus-events.db",
+    )
+
+    parser.add_argument(
+        "--pulsemap",
+        help="Name of pulsemap to use (default: %(default)s)",
+        default="total",
+    )
+
+    parser.add_argument(
+        "--target",
+        help=(
+            "Name of feature to use as regression target (default: "
+            "%(default)s)"
+        ),
+        default="total_energy",
+    )
+
+    parser.add_argument(
+        "--truth-table",
+        help="Name of truth table to be used (default: %(default)s)",
+        default="mc_truth",
+    )
+
+    parser.with_standard_arguments(
+        "gpus",
+        ("max-epochs", 1),
+        "early-stopping-patience",
+        ("batch-size", 16),
+        "num-workers",
+    )
+
+    parser.add_argument(
+        "--wandb",
+        action="store_true",
+        help="If True, Weights & Biases are used to track the experiment.",
+    )
+
+    args, unknown = parser.parse_known_args()
 
     main(
-        path=database,
-        pulsemap=pulsemap,
-        target=target,
-        truth_table=truth_table,
-        gpus=gpus,
-        max_epochs=max_epochs,
-        early_stopping_patience=early_stopping_patience,
-        batch_size=batch_size,
-        num_workers=num_workers,
+        args.path,
+        args.pulsemap,
+        args.target,
+        args.truth_table,
+        args.gpus,
+        args.max_epochs,
+        args.early_stopping_patience,
+        args.batch_size,
+        args.num_workers,
+        args.wandb,
     )
