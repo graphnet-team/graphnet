@@ -420,7 +420,6 @@ class StandardFlowTask(Task):
         """Return number of inputs assumed by task."""
         return len(self._target_labels)
 
-    @abstractmethod
     def _forward(self, x: Tensor, jacobian: Tensor) -> Tensor:
         # do nothing
         return torch.cat([x, jacobian], dim=1)
