@@ -6,7 +6,6 @@ handles per-event weights, etc.
 
 from abc import abstractmethod
 from typing import Any, Optional, Union, List, Dict
-import inspect
 
 import numpy as np
 import scipy.special
