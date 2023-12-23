@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from copy import deepcopy
 from sklearn.model_selection import train_test_split
 import pandas as pd
+import random
 
 from graphnet.data.dataset import (
     Dataset,
@@ -120,7 +121,22 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         Returns:
             None
         """
-        return None
+        if hasattr(self, "_train_dataset") and isinstance(
+            self._train_dataset, SQLiteDataset
+        ):
+            self._train_dataset._close_connection()
+
+        if hasattr(self, "_val_dataset") and isinstance(
+            self._val_dataset, SQLiteDataset
+        ):
+            self._val_dataset._close_connection()
+
+        if hasattr(self, "_test_dataset") and isinstance(
+            self._test_dataset, SQLiteDataset
+        ):
+            self._test_dataset._close_connection()
+
+        return
 
     def _create_dataloader(
         self, dataset: Union[Dataset, EnsembleDataset]
@@ -149,8 +165,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
     def _validate_dataset_class(self) -> None:
         """Sanity checks on the dataset reference (self._dataset).
 
-        Is it a GraphNeT-compatible dataset? has the class already been
-        instantiated? Did they try to pass EnsembleDataset?
+        Checks whether the dataset is an instance of SQLiteDataset,
+        ParquetDataset, or Dataset. Raises a TypeError if an invalid dataset
+        type is detected, or if an EnsembleDataset is used.
         """
         if not isinstance(
             self._dataset, (SQLiteDataset, ParquetDataset, Dataset)
@@ -296,7 +313,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             (
                 self._train_selection,
                 self._val_selection,
-            ) = self._infer_selections_on_single_dataset(
+            ) = self._infer_selections_on_single_dataset(  # type: ignore
                 self._dataset_args["path"]
             )
 
@@ -317,32 +334,46 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         tmp_args["path"] = dataset_path
         tmp_dataset = self._construct_dataset(tmp_args)
 
-        all_events = tmp_dataset._get_all_indices()  # unshuffled list
+        all_events = (
+            tmp_dataset._get_all_indices()
+        )  # unshuffled list, # sequential index
 
         # Multiple lines to avoid one large
         all_events = pd.DataFrame(all_events).sample(
             frac=1, replace=False, random_state=self._rng
         )
 
-        all_events = all_events.values.tolist()  # shuffled list
+        all_events = random.sample(
+            all_events, len(all_events)
+        )  # shuffled list
         return self._split_selection(all_events)
 
-    def _get_all_indices(self):
+    def _get_all_indices(self) -> List[int]:
         """Get all indices.
 
         Return:
             List of indices in an unshuffled order.
         """
-        return list
+        if self._use_ensemble_dataset:
+            all_indices = []
+            for dataset_path in self._dataset_args["path"]:
+                tmp_args = deepcopy(self._dataset_args)
+                tmp_args["path"] = dataset_path
+                tmp_dataset = self._construct_dataset(tmp_args)
+                all_indices.extend(tmp_dataset._get_all_indices())
+        else:
+            all_indices = self._dataset._get_all_indices()
 
-    def _construct_dataset(self, tmp_args: Dict[str, Any]) -> Dict[str, Any]:
+        return all_indices
+
+    def _construct_dataset(self, tmp_args: Dict[str, Any]) -> Dataset:
         """Construct dataset.
 
         Return:
             Dataset object constructed from input arguments.
         """
-        # instance dataset class , that set of argunment ,
-        return tmp_args
+        dataset = self._dataset(**tmp_args)
+        return dataset
 
     def _create_dataset(
         self, selection: Union[List[int], List[List[int]], List[float]]
@@ -393,4 +424,4 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         tmp_args = deepcopy(self._dataset_args)
         tmp_args["path"] = path
         tmp_args["selection"] = selection
-        return self._dataset(**tmp_args)
+        return self._construct_dataset(tmp_args)
