@@ -348,24 +348,6 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         )  # shuffled list
         return self._split_selection(all_events)
 
-    def _get_all_indices(self) -> List[int]:
-        """Get all indices.
-
-        Return:
-            List of indices in an unshuffled order.
-        """
-        if self._use_ensemble_dataset:
-            all_indices = []
-            for dataset_path in self._dataset_args["path"]:
-                tmp_args = deepcopy(self._dataset_args)
-                tmp_args["path"] = dataset_path
-                tmp_dataset = self._construct_dataset(tmp_args)
-                all_indices.extend(tmp_dataset._get_all_indices())
-        else:
-            all_indices = self._dataset._get_all_indices()
-
-        return all_indices
-
     def _construct_dataset(self, tmp_args: Dict[str, Any]) -> Dataset:
         """Construct dataset.
 
