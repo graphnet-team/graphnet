@@ -16,6 +16,7 @@ edges
    :maxdepth: 2
 
    graphnet.models.graphs.edges.edges
+   graphnet.models.graphs.edges.minkowski
 
 
 
