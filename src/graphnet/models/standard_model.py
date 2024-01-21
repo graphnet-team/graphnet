@@ -273,8 +273,8 @@ class StandardModel(Model):
             on_step=True,
             sync_dist=True,
         )
-        cur_lr = self.trainer.optimizers[0].param_groups[0]["lr"]
-        self.log("lr", cur_lr, prog_bar=True, on_step=True)
+        current_lr = self.trainer.optimizers[0].param_groups[0]["lr"]
+        self.log("lr", current_lr, prog_bar=True, on_step=True)
         return loss
 
     def validation_step(
