@@ -270,11 +270,9 @@ class StandardModel(Model):
             batch_size=self._get_batch_size(train_batch),
             prog_bar=True,
             on_epoch=True,
-            on_step=True,
+            on_step=False,
             sync_dist=True,
         )
-        cur_lr = self.trainer.optimizers[0].param_groups[0]["lr"]
-        self.log("lr", cur_lr, prog_bar=True, on_step=True)
         return loss
 
     def validation_step(
