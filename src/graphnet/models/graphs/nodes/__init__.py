@@ -5,4 +5,9 @@ graph-manipulation.´EdgeDefinition´ defines how edges are drawn between nodes
 and their features.
 """
 
-from .nodes import NodeDefinition, NodesAsPulses, PercentileClusters
+from .nodes import (
+    NodeDefinition,
+    NodesAsPulses,
+    PercentileClusters,
+    NodeAsDOMTimeSeries,
+)
