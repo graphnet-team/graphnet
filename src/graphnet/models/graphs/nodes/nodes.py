@@ -11,8 +11,11 @@ from graphnet.models import Model
 from graphnet.models.graphs.utils import (
     cluster_summarize_with_percentiles,
     identify_indices,
+    lex_sort,
 )
 from copy import deepcopy
+
+import numpy as np
 
 
 class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
@@ -211,3 +214,95 @@ class PercentileClusters(NodeDefinition):
             raise AttributeError
 
         return Data(x=torch.tensor(array))
+
+
+class NodeAsDOMTimeSeries:
+    """Represent each node as a DOM with time and charge time series data."""
+
+    def __init__(
+        self,
+        keys: List[str] = [
+            "dom_x",
+            "dom_y",
+            "dom_z",
+            "dom_time",
+            "charge",
+        ],
+        id_columns: List[str] = ["dom_x", "dom_y", "dom_z"],
+        time_column: str = "dom_time",
+        charge_column: str = "charge",
+        max_activations: Optional[int] = None,
+    ) -> None:
+        """Construct `NodeAsDOMTimeSeries`.
+
+        Args:
+            keys: Names of features in the data (in order).
+            id_columns: List of columns that uniquely identify a DOM.
+            time_column: Name of time column.
+            charge_column: Name of charge column.
+            max_activations: Maximum number of activations to include in the time series.
+        """
+        self._keys = keys
+        self._id_columns = [self._keys.index(key) for key in id_columns]
+        self._time_index = self._keys.index(time_column)
+        self._charge_index = self._keys.index(charge_column)
+        self._max_activations = max_activations
+        super().__init__()
+
+    def _define_output_feature_names(
+        self, input_feature_names: List[str]
+    ) -> List[str]:
+        return input_feature_names
+
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
+        """Construct nodes from raw node features ´x´."""
+        # Cast to Numpy
+        x = x.numpy()
+        # Sort by time
+        x = x[x[:, self._time_index].argsort()]
+        # Undo log10 scaling so we can sum charges
+        x[:, self._charge_index] = np.power(10, x[:, self._charge_index])
+        # Shift time to start at 0
+        x[:, self._time_index] -= np.min(x[:, self._time_index])
+        # Group pulses on the same DOM
+        x = lex_sort(x, self._id_columns)
+
+        unique_sensors, counts = np.unique(
+            x[:, self._id_columns], axis=0, return_counts=True
+        )
+        # sort DOMs and pulse-counts
+        sort_this = np.concatenate(
+            [unique_sensors, counts.reshape(-1, 1)], axis=1
+        )
+        sort_this = lex_sort(x=sort_this, cluster_columns=self._id_columns)
+        unique_sensors = sort_this[:, 0 : unique_sensors.shape[1]]
+        counts = sort_this[:, unique_sensors.shape[1] :].flatten().astype(int)
+
+        time_series = np.split(
+            x[:, [self._charge_index, self._time_index]], counts.cumsum()[:-1]
+        )
+
+        # add total charge to unique dom features and apply log10 scaling
+        time_charge = np.stack(
+            [
+                (image[0, 1], np.arcsinh(5 * image[:, 0].sum()) / 5)
+                for image in time_series
+            ]
+        )
+        x = np.column_stack([unique_sensors, time_charge])
+
+        if self._max_activations is not None:
+            counts[counts > self._max_activations] = self._max_activations
+            time_series = [
+                image[: self._max_activations] for image in time_series
+            ]
+        time_series = np.concatenate(time_series)
+        # apply inverse hyperbolic sine to charge values (handles zeros unlike log scaling)
+        time_series[:, 0] = np.arcsinh(5 * time_series[:, 0]) / 5
+
+        return Data(
+            x=torch.tensor(x),
+            time_series=torch.tensor(time_series),
+            cutter=torch.tensor(counts),
+            n_doms=len(x),
+        )
