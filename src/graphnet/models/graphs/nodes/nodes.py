@@ -282,7 +282,7 @@ class NodeAsDOMTimeSeries:
             x[:, [self._charge_index, self._time_index]], counts.cumsum()[:-1]
         )
 
-        # add total charge to unique dom features and apply log10 scaling
+        # add total charge to unique dom features and apply inverse hyperbolic sine scaling
         time_charge = np.stack(
             [
                 (image[0, 1], np.arcsinh(5 * image[:, 0].sum()) / 5)
