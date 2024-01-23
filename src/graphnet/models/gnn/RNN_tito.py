@@ -7,9 +7,6 @@ from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.gnn.dynedge_kaggle_tito import DynEdgeTITO
 from graphnet.models.rnn.node_rnn import Node_RNN
 
-# from graphnet.models.rnn.dom_window_rnn import Dom_Window_RNN
-from graphnet.models.rnn.node_transformer import Node_Transformer
-
 from graphnet.utilities.config import save_model_config
 from torch_geometric.data import Data
 
@@ -123,7 +120,6 @@ class RNN_TITO(GNN):
     def forward(self, data: Data) -> torch.Tensor:
         """Apply learnable forward pass of the RNN and tito model."""
         data = self._rnn(data)
-        # data = self._node_transformer(data)
         readout = self._dynedge_tito(data)
 
         return readout
