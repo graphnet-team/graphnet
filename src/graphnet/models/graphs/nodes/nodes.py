@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Union
 from abc import abstractmethod
 
 import torch
@@ -216,7 +216,7 @@ class PercentileClusters(NodeDefinition):
         return Data(x=torch.tensor(array))
 
 
-class NodeAsDOMTimeSeries:
+class NodeAsDOMTimeSeries(NodeDefinition):
     """Represent each node as a DOM with time and charge time series data."""
 
     def __init__(
@@ -243,11 +243,21 @@ class NodeAsDOMTimeSeries:
             max_activations: Maximum number of activations to include in the time series.
         """
         self._keys = keys
+        super().__init__(input_feature_names=self._keys)
         self._id_columns = [self._keys.index(key) for key in id_columns]
         self._time_index = self._keys.index(time_column)
-        self._charge_index = self._keys.index(charge_column)
+        try:
+            self._charge_index: Optional[int] = self._keys.index(charge_column)
+        except ValueError:
+            self.warning(
+                "Charge column with name {} not found. Running without.".format(
+                    charge_column
+                )
+            )
+
+            self._charge_index = None
+
         self._max_activations = max_activations
-        super().__init__()
 
     def _define_output_feature_names(
         self, input_feature_names: List[str]
@@ -258,10 +268,15 @@ class NodeAsDOMTimeSeries:
         """Construct nodes from raw node features ´x´."""
         # Cast to Numpy
         x = x.numpy()
+        # if there is no charge column add a dummy column of zeros with the same shape as the time column
+        if self._charge_index is None:
+            charge_index: int = len(self._keys)
+            x = np.insert(x, charge_index, np.zeros(x.shape[0]), axis=1)
+
         # Sort by time
         x = x[x[:, self._time_index].argsort()]
         # Undo log10 scaling so we can sum charges
-        x[:, self._charge_index] = np.power(10, x[:, self._charge_index])
+        x[:, charge_index] = np.power(10, x[:, charge_index])
         # Shift time to start at 0
         x[:, self._time_index] -= np.min(x[:, self._time_index])
         # Group pulses on the same DOM
@@ -279,10 +294,10 @@ class NodeAsDOMTimeSeries:
         counts = sort_this[:, unique_sensors.shape[1] :].flatten().astype(int)
 
         time_series = np.split(
-            x[:, [self._charge_index, self._time_index]], counts.cumsum()[:-1]
+            x[:, [charge_index, self._time_index]], counts.cumsum()[:-1]
         )
 
-        # add total charge to unique dom features and apply inverse hyperbolic sine scaling
+        # add first time and total charge to unique dom features and apply inverse hyperbolic sine scaling
         time_charge = np.stack(
             [
                 (image[0, 1], np.arcsinh(5 * image[:, 0].sum()) / 5)
