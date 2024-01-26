@@ -300,16 +300,10 @@ class TwoPartitionSplineBlock(SplineBlock):
         x_1 = x[:, self.partition[1]]
 
         spline_params_1 = self.nn_0(x_0) / 100
-        # if torch.sum(spline_params_1.isnan()==True) > 1:
-        #    self.error("NaN encountered in spline parameterization!")
-        #    assert torch.sum(spline_params_1.isnan()==True) == 0
         y_1, jacobian_1 = self.apply_splines_to_each_dimension(
             x=x_1, spline_parameters=spline_params_1
         )
         spline_params_0 = self.nn_1(y_1) / 100
-        # if torch.sum(spline_params_0.isnan()==True) > 1:
-        #    self.error("NaN encountered in spline parameterization!")
-        #    assert torch.sum(spline_params_0.isnan()==True) == 0
         y_0, jacobian_0 = self.apply_splines_to_each_dimension(
             x=x_0, spline_parameters=spline_params_0
         )
