@@ -49,6 +49,8 @@ class DeepIceModel(nn.Module):
         self.apply(self._init_weights)
         trunc_normal_(self.cls_token.weight, std=0.02)
         self.n_rel = n_rel
+        
+        super().__init__(dim_base, dim)
 
     def fix_init_weight(self):
         def rescale(param, layer_id):
@@ -162,6 +164,8 @@ class EncoderWithDirectionReconstruction(nn.Module):
         )
         self.apply(self._init_weights)
         trunc_normal_(self.cls_token.weight, std=0.02)
+        
+        super().__init__(dim_base, dim)
 
     def fix_init_weight(self):
         def rescale(param, layer_id):
