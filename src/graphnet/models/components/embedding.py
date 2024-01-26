@@ -25,7 +25,7 @@ class SinusoidalPosEmb(torch.nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Apply learnable forward pass to the layer."""
         device = x.device
-        half_dim = self.dim
+        half_dim = self.dim // 2
         emb = torch.log(torch.tensor(self.m, device=device)) / half_dim
         emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
         emb = x[..., None] * emb[None, ...]
