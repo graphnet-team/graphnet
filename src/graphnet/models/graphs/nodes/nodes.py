@@ -265,14 +265,10 @@ class IceMixNodes(NodeDefinition):
         f_s, f_a = ice_transparency(x)
         x = f_s / (f_s + f_a)
         return x
-    
-    def _calculate_new_features(x: torch.Tensor) -> torch.Tensor:
-        x = _calculate_ice_transparency(x)
-        return x
 
     def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
         
-        graph = torch.zeros(self.max_length, len(self.all_features))
+        graph = torch.zeros([self.max_length, len(self.all_features)])
         
         n_pulses = x.shape[0]
         event_length = n_pulses
@@ -283,7 +279,10 @@ class IceMixNodes(NodeDefinition):
             graph[:,3] = np.pad(x[:, self.feature_indexes["dom_time"]], (0, max(0, self.max_length - event_length))) # dom-time
             graph[:,4] = np.pad(x[:, self.feature_indexes["charge"]], (0, max(0, self.max_length - event_length))) # charge
             graph[:,5] = np.pad(torch.logical_not(x[:, self.feature_indexes["hlc"]]), (0, max(0, self.max_length - event_length))) # hlc
-
+            graph[:event_length,:3] = x[:, [self.feature_indexes["dom_x"],
+                                            self.feature_indexes["dom_y"],
+                                            self.feature_indexes["dom_z"]]]
+            graph[:,6] = x[:, self.feature_indexes["rde"]]
             
             #random_sampling = False
         else:
@@ -295,9 +294,13 @@ class IceMixNodes(NodeDefinition):
             ids_p = ids[auxiliary_p][: min(self.max_length - len(ids_n), len(auxiliary_p))]
             ids = np.concatenate([ids_n, ids_p])
             ids.sort()
-            graph[:,3] = x[:, self.feature_indexes["dom_time"]][ids] # dom_time
-            graph[:,4] = x[:, self.feature_indexes["charge"]][ids] # charge
+            graph[:,3] = x[ids, self.feature_indexes["dom_time"]] # dom_time
+            graph[:,4] = x[ids, self.feature_indexes["charge"]] # charge
             graph[:,5] = torch.logical_not(hlc)[ids] # hlc
+            graph[:,:3] = x[ids, [self.feature_indexes["dom_x"],
+                                  self.feature_indexes["dom_y"],
+                                  self.feature_indexes["dom_z"]]]
+            graph[ids,6] = x[ids, self.feature_indexes["rde"]]
             event_length = len(ids)
             
             #qe[:n_pulses] = np.pad(qe, (0, max(0, self.max_length - n_pulses)))
@@ -305,9 +308,7 @@ class IceMixNodes(NodeDefinition):
             #random_sampling = True
             
         graph[:event_length,8] = torch.ones_like(event_length) # mask
-        graph[:event_length,:3] = x[:, [self.feature_indexes["dom_x"],
-                                        self.feature_indexes["dom_y"],
-                                        self.feature_indexes["dom_z"]]]
+
         
         
         #x = _calculate_new_features(x)
