@@ -158,3 +158,44 @@ class IceCubeUpgrade(Detector):
 
     def _pmt_area(self, x: torch.tensor) -> torch.tensor:
         return x / 0.05
+    
+    
+class IceMixDetector(Detector):
+    """`Detector` class for IceCube-86."""
+
+    geometry_table_path = os.path.join(
+        ICECUBE_GEOMETRY_TABLE_DIR, "icecube86.parquet"
+    )
+        
+    xyz = ["dom_x", "dom_y", "dom_z"]
+    string_id_column = "string"
+    sensor_id_column = "sensor_id"
+
+    def feature_map(self) -> Dict[str, Callable]:
+        """Map standardization functions to each dimension of input data."""
+        feature_map = {
+            "dom_x": self._dom_xyz,
+            "dom_y": self._dom_xyz,
+            "dom_z": self._dom_xyz,
+            "dom_time": self._dom_time,
+            "charge": self._charge,
+            "rde": self._rde,
+            "pmt_area": self._pmt_area,
+            "hlc": self._identity,
+        }
+        return feature_map
+
+    def _dom_xyz(self, x: torch.tensor) -> torch.tensor:
+        return x / 500.0
+
+    def _dom_time(self, x: torch.tensor) -> torch.tensor:
+        return (x - 1.0e04) / 3.0e4
+
+    def _charge(self, x: torch.tensor) -> torch.tensor:
+        return torch.log10(x) / 3.0
+
+    def _rde(self, x: torch.tensor) -> torch.tensor:
+        return (x - 1.0) / 0.35
+
+    def _pmt_area(self, x: torch.tensor) -> torch.tensor:
+        return x / 0.05
