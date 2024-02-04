@@ -105,7 +105,7 @@ class Node_RNN(GNN):
         )
         rnn_out = self._rnn(time_series)[-1][0]
         # prepare node level features
-        charge = data.charge.tensor_split(splitter)
+        charge = data.x[:, data.time_series_index[0][0]].tensor_split(splitter)
         charge = torch.tensor(
             [
                 torch.asinh(5 * torch.sum(node_charges) / 5)
@@ -114,7 +114,7 @@ class Node_RNN(GNN):
         )
         batch = data.batch[x[:, -1].bool()]
         x = x[x[:, -1].bool()][:, :-1]
-        x[:, data.features[0].index("charge")] = charge
+        x[:, data.time_series_index[0][0]] = charge
 
         # combine the RNN output with the DOM summary features
         data.x = torch.hstack([x, rnn_out])

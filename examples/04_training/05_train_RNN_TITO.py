@@ -116,9 +116,9 @@ def main(
     backbone = RNN_TITO(
         nb_inputs=graph_definition.nb_outputs,
         nb_neighbours=8,
-        RNN_layers=2,
-        RNN_hidden_size=64,
-        RNN_dropout=0.5,
+        rnn_layers=2,
+        rnn_hidden_size=64,
+        rnn_dropout=0.5,
         features_subset=[0, 1, 2, 3],
         dyntrans_layer_sizes=[(256, 256), (256, 256), (256, 256), (256, 256)],
         post_processing_layer_sizes=[336, 256],
