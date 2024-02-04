@@ -262,7 +262,7 @@ class NodeAsDOMTimeSeries(NodeDefinition):
     def _define_output_feature_names(
         self, input_feature_names: List[str]
     ) -> List[str]:
-        return input_feature_names
+        return input_feature_names + ["new_node_col"]
 
     def _construct_nodes(self, x: torch.Tensor) -> Data:
         """Construct nodes from raw node features ´x´."""
@@ -272,6 +272,8 @@ class NodeAsDOMTimeSeries(NodeDefinition):
         if self._charge_index is None:
             charge_index: int = len(self._keys)
             x = np.insert(x, charge_index, np.zeros(x.shape[0]), axis=1)
+        else:
+            charge_index = self._charge_index
 
         # Sort by time
         x = x[x[:, self._time_index].argsort()]
@@ -285,7 +287,7 @@ class NodeAsDOMTimeSeries(NodeDefinition):
         unique_sensors, counts = np.unique(
             x[:, self._id_columns], axis=0, return_counts=True
         )
-        # sort DOMs and pulse-counts
+
         sort_this = np.concatenate(
             [unique_sensors, counts.reshape(-1, 1)], axis=1
         )
@@ -293,31 +295,12 @@ class NodeAsDOMTimeSeries(NodeDefinition):
         unique_sensors = sort_this[:, 0 : unique_sensors.shape[1]]
         counts = sort_this[:, unique_sensors.shape[1] :].flatten().astype(int)
 
-        time_series = np.split(
-            x[:, [charge_index, self._time_index]], counts.cumsum()[:-1]
-        )
-
-        # add first time and total charge to unique dom features and apply inverse hyperbolic sine scaling
-        time_charge = np.stack(
-            [
-                (image[0, 1], np.arcsinh(5 * image[:, 0].sum()) / 5)
-                for image in time_series
-            ]
-        )
-        x = np.column_stack([unique_sensors, time_charge])
-
-        if self._max_activations is not None:
-            counts[counts > self._max_activations] = self._max_activations
-            time_series = [
-                image[: self._max_activations] for image in time_series
-            ]
-        time_series = np.concatenate(time_series)
-        # apply inverse hyperbolic sine to charge values (handles zeros unlike log scaling)
-        time_series[:, 0] = np.arcsinh(5 * time_series[:, 0]) / 5
+        new_node_col = np.zeros(x.shape[0])
+        new_node_col[counts.cumsum()[:-1]] = 1
+        new_node_col[0] = 1
+        x = np.column_stack([x, new_node_col])
 
         return Data(
             x=torch.tensor(x),
-            time_series=torch.tensor(time_series),
-            cutter=torch.tensor(counts),
-            n_doms=len(x),
+            time_series_index=[charge_index, self._time_index],
         )

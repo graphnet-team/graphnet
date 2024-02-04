@@ -12,7 +12,7 @@ from torch_geometric.data import Data
 
 
 class RNN_TITO(GNN):
-    """The RNN_DynEdge model class.
+    """The RNN_TITO model class.
 
     Combines the Node_RNN and DynEdgeTITO models, intended for data with large
     amount of DOM activations per event. This model works only with non-
@@ -97,10 +97,12 @@ class RNN_TITO(GNN):
         super().__init__(nb_inputs, self._readout_layer_sizes[-1])
 
         self._rnn = Node_RNN(
-            num_layers=self._rnn_layers,
             nb_inputs=2,
             hidden_size=self._rnn_hidden_size,
-            rnn_dropout=self._rnn_dropout,
+            num_layers=self._rnn_layers,
+            nb_neighbours=self._nb_neighbours,
+            features_subset=self._features_subset,
+            dropout=self._rnn_dropout,
             embedding_dim=self._embedding_dim,
         )
 
