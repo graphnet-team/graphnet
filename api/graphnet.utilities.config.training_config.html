@@ -406,6 +406,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.training_config.TrainingConfig.dataloader" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">dataloader</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.training_config.TrainingConfig.model_computed_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_computed_fields</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.training_config.TrainingConfig.model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_config</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.training_config.TrainingConfig.model_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_fields</span></code></a>
@@ -447,6 +449,13 @@
     
     
       <a href="#graphnet.utilities.config.training_config.TrainingConfig.dataloader" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">dataloader</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.training_config.TrainingConfig.model_computed_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_computed_fields</span></code></a>
       
     
     </li>
@@ -556,6 +565,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.training_config.TrainingConfig.dataloader" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">dataloader</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.training_config.TrainingConfig.model_computed_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_computed_fields</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.training_config.TrainingConfig.model_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_config</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.training_config.TrainingConfig.model_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">model_fields</span></code></a>
@@ -584,8 +595,7 @@
 <p>Create a new model by parsing and validating input data from keyword arguments.</p>
 <p>Raises [<cite>ValidationError</cite>][pydantic_core.ValidationError] if the input data cannot be
 validated to form a valid model.</p>
-<p><cite>__init__</cite> uses <cite>__pydantic_self__</cite> instead of the more common <cite>self</cite> for the first arg to
-allow <cite>self</cite> as a field name.</p>
+<p><cite>self</cite> is explicitly positional-only to allow <cite>self</cite> as a field name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -612,6 +622,11 @@ allow <cite>self</cite> as a field name.</p>
 <dt class="sig sig-object py" id="graphnet.utilities.config.training_config.TrainingConfig.dataloader">
 <span class="sig-name descname"><span class="pre">dataloader</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">]</span></em><a class="headerlink" href="#graphnet.utilities.config.training_config.TrainingConfig.dataloader" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.utilities.config.training_config.TrainingConfig.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#graphnet.utilities.config.training_config.TrainingConfig.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.utilities.config.training_config.TrainingConfig.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#graphnet.utilities.config.training_config.TrainingConfig.model_config" title="Link to this definition">¶</a></dt>
