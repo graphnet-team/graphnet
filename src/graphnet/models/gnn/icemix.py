@@ -13,7 +13,7 @@ from torch_geometric.nn.pool import knn_graph
 from torch_geometric.utils import to_dense_batch
 
 
-class DeepIceModel(nn.Module):
+class DeepIceModel(GNN):
     def __init__(
         self,
         dim=384,
@@ -25,7 +25,7 @@ class DeepIceModel(nn.Module):
         n_rel=1,
         **kwargs,
     ):
-        super().__init__()
+        super().__init__(dim_base, dim)
         self.extractor = Extractor(dim_base, dim)
         self.rel_pos = Spacetime_encoder(head_size)
         self.sandwich = nn.ModuleList(
@@ -46,40 +46,9 @@ class DeepIceModel(nn.Module):
         )
         #self.proj_out = nn.Linear(dim, 3)
         self.use_checkpoint = use_checkpoint
-        self.apply(self._init_weights)
-        trunc_normal_(self.cls_token.weight, std=0.02)
         self.n_rel = n_rel
         
-        super().__init__(dim_base, dim)
-
-    def fix_init_weight(self):
-        def rescale(param, layer_id):
-            param.div_(math.sqrt(2.0 * layer_id))
-
-        for layer_id, layer in enumerate(self.blocks):
-            rescale(layer.attn.proj.weight.data, layer_id + 1)
-            rescale(layer.mlp.fc2.weight.data, layer_id + 1)
-
-    def _init_weights(self, m):
-        if isinstance(m, nn.Linear):
-            trunc_normal_(m.weight, std=0.02)
-            if isinstance(m, nn.Linear) and m.bias is not None:
-                nn.init.constant_(m.bias, 0)
-        elif isinstance(m, nn.LayerNorm):
-            nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
-
-    def init_weights(self, pretrained=None):
-        def _init_weights(m):
-            if isinstance(m, nn.Linear):
-                trunc_normal_(m.weight, std=0.02)
-                if isinstance(m, nn.Linear) and m.bias is not None:
-                    nn.init.constant_(m.bias, 0)
-            elif isinstance(m, nn.LayerNorm):
-                nn.init.constant_(m.bias, 0)
-                nn.init.constant_(m.weight, 1.0)
-
-        self.apply(_init_weights)
+        
 
     @torch.jit.ignore
     def no_weight_decay(self):
@@ -119,7 +88,7 @@ class DeepIceModel(nn.Module):
         return x[:, 0]
     
     
-class EncoderWithDirectionReconstruction(nn.Module):
+class EncoderWithDirectionReconstruction(GNN):
     def __init__(
         self,
         dim=384,
@@ -130,7 +99,7 @@ class EncoderWithDirectionReconstruction(nn.Module):
         knn_features=3,
         **kwargs,
     ):
-        super().__init__()
+        super().__init__(dim_base, dim)
         self.knn_features = knn_features
         self.extractor = ExtractorV11Scaled(dim_base, dim // 2)
         self.rel_pos = Spacetime_encoder(head_size)
@@ -162,40 +131,7 @@ class EncoderWithDirectionReconstruction(nn.Module):
             post_processing_layer_sizes=[336, dim // 2],
             dynedge_layer_sizes=[(128, 256), (336, 256), (336, 256), (336, 256)],
         )
-        self.apply(self._init_weights)
-        trunc_normal_(self.cls_token.weight, std=0.02)
         
-        super().__init__(dim_base, dim)
-
-    def fix_init_weight(self):
-        def rescale(param, layer_id):
-            param.div_(math.sqrt(2.0 * layer_id))
-
-        for layer_id, layer in enumerate(self.blocks):
-            rescale(layer.attn.proj.weight.data, layer_id + 1)
-            rescale(layer.mlp.fc2.weight.data, layer_id + 1)
-
-    def _init_weights(self, m):
-        if isinstance(m, nn.Linear):
-            trunc_normal_(m.weight, std=0.02)
-            if isinstance(m, nn.Linear) and m.bias is not None:
-                nn.init.constant_(m.bias, 0)
-        elif isinstance(m, nn.LayerNorm):
-            nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
-
-    def init_weights(self, pretrained=None):
-        def _init_weights(m):
-            if isinstance(m, nn.Linear):
-                trunc_normal_(m.weight, std=0.02)
-                if isinstance(m, nn.Linear) and m.bias is not None:
-                    nn.init.constant_(m.bias, 0)
-            elif isinstance(m, nn.LayerNorm):
-                nn.init.constant_(m.bias, 0)
-                nn.init.constant_(m.weight, 1.0)
-
-        self.apply(_init_weights)
-
     @torch.jit.ignore
     def no_weight_decay(self):
         return {"cls_token"}

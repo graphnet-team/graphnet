@@ -395,7 +395,7 @@ class Block_rel(nn.Module):
         mlp_ratio=4.0,
         qkv_bias=False,
         qk_scale=None,
-        drop=0.0,
+        dropout=0.0,
         attn_drop=0.0,
         drop_path=0.0,
         init_values=None,
@@ -416,8 +416,8 @@ class Block_rel(nn.Module):
         self.mlp = Mlp(
             in_features=dim,
             hidden_features=mlp_hidden_dim,
-            act_layer=act_layer,
-            drop=drop,
+            activation=act_layer,
+            dropout_prob=dropout,
         )
 
         if init_values is not None:
@@ -544,7 +544,7 @@ class Block(nn.Module):
         mlp_ratio=4.0,
         qkv_bias=False,
         qk_scale=None,
-        drop=0.0,
+        dropout=0.0,
         attn_drop=0.0,
         drop_path=0.0,
         init_values=None,
@@ -557,7 +557,7 @@ class Block(nn.Module):
         super().__init__()
         self.norm1 = norm_layer(dim)
         self.attn = nn.MultiheadAttention(
-            dim, num_heads, dropout=drop, batch_first=True
+            dim, num_heads, dropout=dropout, batch_first=True
         )
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.norm2 = norm_layer(dim)
@@ -565,8 +565,8 @@ class Block(nn.Module):
         self.mlp = Mlp(
             in_features=dim,
             hidden_features=mlp_hidden_dim,
-            act_layer=act_layer,
-            drop=drop,
+            activation=act_layer,
+            dropout_prob=dropout,
         )
 
         if init_values is not None:
