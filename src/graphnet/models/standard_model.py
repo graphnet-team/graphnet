@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Union, Type
 import numpy as np
 import torch
 from pytorch_lightning import Callback, Trainer
-from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from torch import Tensor
 from torch.nn import ModuleList
 from torch.optim import Adam
@@ -18,22 +18,23 @@ from graphnet.training.callbacks import ProgressBar
 from graphnet.models.graphs import GraphDefinition
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.model import Model
-from graphnet.models.task import Task
+from graphnet.models.task import StandardLearnedTask
 
 
 class StandardModel(Model):
     """Main class for standard models in graphnet.
 
     This class chains together the different elements of a complete GNN- based
-    model (detector read-in, GNN architecture, and task-specific read-outs).
+    model (detector read-in, GNN backbone, and task-specific read-outs).
     """
 
     def __init__(
         self,
         *,
         graph_definition: GraphDefinition,
-        gnn: GNN,
-        tasks: Union[Task, List[Task]],
+        backbone: GNN = None,
+        gnn: Optional[GNN] = None,
+        tasks: Union[StandardLearnedTask, List[StandardLearnedTask]],
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
         optimizer_kwargs: Optional[Dict] = None,
         scheduler_class: Optional[type] = None,
@@ -45,16 +46,29 @@ class StandardModel(Model):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Check(s)
-        if isinstance(tasks, Task):
+        if isinstance(tasks, StandardLearnedTask):
             tasks = [tasks]
         assert isinstance(tasks, (list, tuple))
-        assert all(isinstance(task, Task) for task in tasks)
+        assert all(isinstance(task, StandardLearnedTask) for task in tasks)
         assert isinstance(graph_definition, GraphDefinition)
-        assert isinstance(gnn, GNN)
+
+        # deprecation warnings
+        if (backbone is None) & (gnn is not None):
+            backbone = gnn
+            # Code continues after warning
+            self.warning(
+                """DeprecationWarning: Argument `gnn` will be deprecated in GraphNeT 2.0. Please use `backbone` instead."""
+            )
+        elif (backbone is None) & (gnn is None):
+            # Code stops
+            raise TypeError(
+                "__init__() missing 1 required keyword-only argument: 'backbone'"
+            )
+        assert isinstance(backbone, GNN)
 
         # Member variable(s)
         self._graph_definition = graph_definition
-        self._gnn = gnn
+        self.backbone = backbone
         self._tasks = ModuleList(tasks)
         self._optimizer_class = optimizer_class
         self._optimizer_kwargs = optimizer_kwargs or dict()
@@ -63,7 +77,7 @@ class StandardModel(Model):
         self._scheduler_config = scheduler_config or dict()
 
         # set dtype of GNN from graph_definition
-        self._gnn.type(self._graph_definition._dtype)
+        self.backbone.type(self._graph_definition._dtype)
 
     @staticmethod
     def _construct_trainer(
@@ -103,6 +117,7 @@ class StandardModel(Model):
         val_dataloader: Optional[DataLoader] = None,
         *,
         max_epochs: int = 10,
+        early_stopping_patience: int = 5,
         gpus: Optional[Union[List[int], int]] = None,
         callbacks: Optional[List[Callback]] = None,
         ckpt_path: Optional[str] = None,
@@ -115,12 +130,25 @@ class StandardModel(Model):
         """Fit `StandardModel` using `pytorch_lightning.Trainer`."""
         # Checks
         if callbacks is None:
+            # We create the bare-minimum callbacks for you.
             callbacks = self._create_default_callbacks(
                 val_dataloader=val_dataloader,
+                early_stopping_patience=early_stopping_patience,
             )
-        elif val_dataloader is not None:
-            callbacks = self._add_early_stopping(
-                val_dataloader=val_dataloader, callbacks=callbacks
+            self.debug("No Callbacks specified. Default callbacks added.")
+        else:
+            # You are on your own!
+            self.debug("Initializing training with user-provided callbacks.")
+            pass
+        self._print_callbacks(callbacks)
+        has_early_stopping = self._contains_callback(callbacks, EarlyStopping)
+        has_model_checkpoint = self._contains_callback(
+            callbacks, ModelCheckpoint
+        )
+
+        if (has_early_stopping) & (has_model_checkpoint is False):
+            self.warning(
+                """No ModelCheckpoint found in callbacks. Best-fit model will not automatically be loaded after training!"""
             )
 
         self.train(mode=True)
@@ -142,6 +170,33 @@ class StandardModel(Model):
         except KeyboardInterrupt:
             self.warning("[ctrl+c] Exiting gracefully.")
             pass
+
+        # Load weights from best-fit model after training if possible
+        if has_early_stopping & has_model_checkpoint:
+            for callback in callbacks:
+                if isinstance(callback, ModelCheckpoint):
+                    checkpoint_callback = callback
+            self.load_state_dict(
+                torch.load(checkpoint_callback.best_model_path)["state_dict"]
+            )
+            self.info("Best-fit weights from EarlyStopping loaded.")
+
+    def _print_callbacks(self, callbacks: List[Callback]) -> None:
+        callback_names = []
+        for cbck in callbacks:
+            callback_names.append(cbck.__class__.__name__)
+        self.info(
+            f"Training initiated with callbacks: {', '.join(callback_names)}"
+        )
+
+    def _contains_callback(
+        self, callbacks: List[Callback], callback: Callback
+    ) -> bool:
+        """Check if `callback` is in `callbacks`."""
+        for cbck in callbacks:
+            if isinstance(cbck, callback):
+                return True
+        return False
 
     @property
     def target_labels(self) -> List[str]:
@@ -185,7 +240,7 @@ class StandardModel(Model):
             data = [data]
         x_list = []
         for d in data:
-            x = self._gnn(d)
+            x = self.backbone(d)
             x_list.append(x)
         x = torch.cat(x_list, dim=0)
 
@@ -401,11 +456,38 @@ class StandardModel(Model):
         )
         return results
 
-    def _create_default_callbacks(self, val_dataloader: DataLoader) -> List:
+    def _create_default_callbacks(
+        self,
+        val_dataloader: DataLoader,
+        early_stopping_patience: Optional[int] = None,
+    ) -> List:
+        """Create default callbacks.
+
+        Used in cases where no callbacks are specified by the user in .fit
+        """
         callbacks = [ProgressBar()]
-        callbacks = self._add_early_stopping(
-            val_dataloader=val_dataloader, callbacks=callbacks
-        )
+        if val_dataloader is not None:
+            assert early_stopping_patience is not None
+            # Add Early Stopping
+            callbacks.append(
+                EarlyStopping(
+                    monitor="val_loss",
+                    patience=early_stopping_patience,
+                )
+            )
+            # Add Model Check Point
+            callbacks.append(
+                ModelCheckpoint(
+                    save_top_k=1,
+                    monitor="val_loss",
+                    mode="min",
+                    filename=f"{self.backbone.__class__.__name__}"
+                    + "-{epoch}-{val_loss:.2f}-{train_loss:.2f}",
+                )
+            )
+            self.info(
+                f"EarlyStopping has been added with a patience of {early_stopping_patience}."
+            )
         return callbacks
 
     def _add_early_stopping(

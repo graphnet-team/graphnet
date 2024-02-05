@@ -108,6 +108,7 @@ class I3TruthExtractor(I3Extractor):
             "track_length": padding_value,
             "stopped_muon": padding_value,
             "energy_track": padding_value,
+            "energy_cascade": padding_value,
             "inelasticity": padding_value,
             "DeepCoreFilter_13": padding_value,
             "CascadeFilter_13": padding_value,
@@ -177,10 +178,15 @@ class I3TruthExtractor(I3Extractor):
             try:
                 (
                     energy_track,
+                    energy_cascade,
                     inelasticity,
                 ) = self._get_primary_track_energy_and_inelasticity(frame)
             except RuntimeError:  # track energy fails on northeren tracks with ""Hadrons" has no mass implemented. Cannot get total energy."
-                energy_track, inelasticity = (padding_value, padding_value)
+                energy_track, energy_cascade, inelasticity = (
+                    padding_value,
+                    padding_value,
+                    padding_value,
+                )
 
             output.update(
                 {
@@ -197,6 +203,7 @@ class I3TruthExtractor(I3Extractor):
                         frame, padding_value
                     ),
                     "energy_track": energy_track,
+                    "energy_cascade": energy_cascade,
                     "inelasticity": inelasticity,
                 }
             )
@@ -376,7 +383,7 @@ class I3TruthExtractor(I3Extractor):
     def _get_primary_track_energy_and_inelasticity(
         self,
         frame: "icetray.I3Frame",
-    ) -> Tuple[float, float]:
+    ) -> Tuple[float, float, float]:
         """Get the total energy of tracks from primary, and inelasticity.
 
         Args:
@@ -399,9 +406,10 @@ class I3TruthExtractor(I3Extractor):
 
         energy_total = primary.total_energy
         energy_track = sum(track.total_energy for track in tracks)
+        energy_cascade = energy_total - energy_track
         inelasticity = 1.0 - energy_track / energy_total
 
-        return energy_track, inelasticity
+        return energy_track, energy_cascade, inelasticity
 
     # Utility methods
     def _find_data_type(self, mc: bool, input_file: str) -> str:

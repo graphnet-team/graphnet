@@ -1,5 +1,5 @@
 arguments:
-  gnn:
+  backbone:
     ModelConfig:
       arguments:
         add_global_variables_after_pooling: false

@@ -427,12 +427,12 @@ graph_definition = KNNGraph(
 	node_definition=NodesAsPulses(),
 	nb_nearest_neighbours=8,
 )
-gnn = DynEdge(
+architecture = DynEdge(
     nb_inputs=detector.nb_outputs,
     global_pooling_schemes=["min", "max", "mean"],
 )
 task = ZenithReconstructionWithKappa(
-    hidden_size=gnn.nb_outputs,
+    hidden_size=architecture.nb_outputs,
     target_labels="injection_zenith",
     loss_function=VonMisesFisher2DLoss(),
 )
@@ -440,7 +440,7 @@ task = ZenithReconstructionWithKappa(
 # Construct the Model
 model = StandardModel(
     graph_definition=graph_definition,
-    gnn=gnn,
+    architecture=architecture,
     tasks=[task],
 )
 ```
@@ -479,7 +479,7 @@ You can find several pre-defined `ModelConfig`'s under `graphnet/configs/models`
 
 ```yml
 arguments:
-  gnn:
+  architecture:
     ModelConfig:
       arguments:
         add_global_variables_after_pooling: false

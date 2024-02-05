@@ -3,7 +3,6 @@
 import os
 from typing import Any, Dict, List, Optional
 
-from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from torch.optim.adam import Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -18,7 +17,6 @@ from graphnet.models.task.reconstruction import (
     DirectionReconstructionWithKappa,
 )
 from graphnet.training.labels import Direction
-from graphnet.training.callbacks import ProgressBar
 from graphnet.training.loss_functions import VonMisesFisher3DLoss
 from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
@@ -103,7 +101,7 @@ def main(
     )
 
     # Building model
-    gnn = DynEdgeTITO(
+    backbone = DynEdgeTITO(
         nb_inputs=graph_definition.nb_outputs,
         features_subset=[0, 1, 2, 3],
         dyntrans_layer_sizes=[(256, 256), (256, 256), (256, 256), (256, 256)],
@@ -112,13 +110,13 @@ def main(
         use_post_processing_layers=True,
     )
     task = DirectionReconstructionWithKappa(
-        hidden_size=gnn.nb_outputs,
+        hidden_size=backbone.nb_outputs,
         target_labels=config["target"],
         loss_function=VonMisesFisher3DLoss(),
     )
     model = StandardModel(
         graph_definition=graph_definition,
-        gnn=gnn,
+        backbone=backbone,
         tasks=[task],
         optimizer_class=Adam,
         optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
@@ -133,18 +131,11 @@ def main(
     )
 
     # Training model
-    callbacks = [
-        EarlyStopping(
-            monitor="val_loss",
-            patience=config["early_stopping_patience"],
-        ),
-        ProgressBar(),
-    ]
 
     model.fit(
         training_dataloader,
         validation_dataloader,
-        callbacks=callbacks,
+        early_stopping_patience=config["early_stopping_patience"],
         logger=wandb_logger if wandb else None,
         **config["fit"],
     )
@@ -168,6 +159,7 @@ def main(
         validation_dataloader,
         additional_attributes=additional_attributes,
         prediction_columns=prediction_columns,
+        gpus=config["fit"]["gpus"],
     )
 
     # Save predictions and model to file

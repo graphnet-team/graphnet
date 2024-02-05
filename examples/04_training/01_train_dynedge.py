@@ -3,7 +3,6 @@
 import os
 from typing import Any, Dict, List, Optional
 
-from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 import torch
 from torch.optim.adam import Adam
@@ -14,9 +13,8 @@ from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graphs import KNNGraph
-from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.task.reconstruction import EnergyReconstruction
-from graphnet.training.callbacks import ProgressBar, PiecewiseLinearLR
+from graphnet.training.callbacks import PiecewiseLinearLR
 from graphnet.training.loss_functions import LogCoshLoss
 from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
@@ -98,12 +96,12 @@ def main(
 
     # Building model
 
-    gnn = DynEdge(
+    backbone = DynEdge(
         nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
     task = EnergyReconstruction(
-        hidden_size=gnn.nb_outputs,
+        hidden_size=backbone.nb_outputs,
         target_labels=config["target"],
         loss_function=LogCoshLoss(),
         transform_prediction_and_target=lambda x: torch.log10(x),
@@ -111,7 +109,7 @@ def main(
     )
     model = StandardModel(
         graph_definition=graph_definition,
-        gnn=gnn,
+        backbone=backbone,
         tasks=[task],
         optimizer_class=Adam,
         optimizer_kwargs={"lr": 1e-03, "eps": 1e-03},
@@ -130,18 +128,10 @@ def main(
     )
 
     # Training model
-    callbacks = [
-        EarlyStopping(
-            monitor="val_loss",
-            patience=config["early_stopping_patience"],
-        ),
-        ProgressBar(),
-    ]
-
     model.fit(
         training_dataloader,
         validation_dataloader,
-        callbacks=callbacks,
+        early_stopping_patience=config["early_stopping_patience"],
         logger=wandb_logger if wandb else None,
         **config["fit"],
     )
@@ -153,6 +143,7 @@ def main(
     results = model.predict_as_dataframe(
         validation_dataloader,
         additional_attributes=additional_attributes + ["event_no"],
+        gpus=config["fit"]["gpus"],
     )
 
     # Save predictions and model to file

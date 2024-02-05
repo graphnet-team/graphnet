@@ -5,7 +5,7 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from graphnet.models.task import Task, IdentityTask
+from graphnet.models.task import IdentityTask, StandardLearnedTask
 
 
 class MulticlassClassificationTask(IdentityTask):
@@ -17,7 +17,7 @@ class MulticlassClassificationTask(IdentityTask):
     """
 
 
-class BinaryClassificationTask(Task):
+class BinaryClassificationTask(StandardLearnedTask):
     """Performs binary classification."""
 
     # Requires one feature, logit for being signal class.
@@ -30,7 +30,7 @@ class BinaryClassificationTask(Task):
         return torch.sigmoid(x)
 
 
-class BinaryClassificationTaskLogits(Task):
+class BinaryClassificationTaskLogits(StandardLearnedTask):
     """Performs binary classification form logits."""
 
     # Requires one feature, logit for being signal class.

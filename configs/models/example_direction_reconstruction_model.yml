@@ -15,7 +15,7 @@ arguments:
             class_name: NodesAsPulses
         input_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
       class_name: KNNGraph
-  gnn:
+  backbone:
     ModelConfig:
       arguments:
         add_global_variables_after_pooling: false

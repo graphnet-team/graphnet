@@ -4,11 +4,11 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from graphnet.models.task import Task
+from graphnet.models.task import StandardLearnedTask
 from graphnet.utilities.maths import eps_like
 
 
-class AzimuthReconstructionWithKappa(Task):
+class AzimuthReconstructionWithKappa(StandardLearnedTask):
     """Reconstructs azimuthal angle and associated kappa (1/var)."""
 
     # Requires two features: untransformed points in (x,y)-space.
@@ -46,7 +46,7 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
         return angle
 
 
-class DirectionReconstructionWithKappa(Task):
+class DirectionReconstructionWithKappa(StandardLearnedTask):
     """Reconstructs direction with kappa from the 3D-vMF distribution."""
 
     # Requires three features: untransformed points in (x,y,z)-space.
@@ -70,7 +70,7 @@ class DirectionReconstructionWithKappa(Task):
         return torch.stack((vec_x, vec_y, vec_z, kappa), dim=1)
 
 
-class ZenithReconstruction(Task):
+class ZenithReconstruction(StandardLearnedTask):
     """Reconstructs zenith angle."""
 
     # Requires two features: zenith angle itself.
@@ -98,7 +98,7 @@ class ZenithReconstructionWithKappa(ZenithReconstruction):
         return torch.stack((angle, kappa), dim=1)
 
 
-class EnergyReconstruction(Task):
+class EnergyReconstruction(StandardLearnedTask):
     """Reconstructs energy using stable method."""
 
     # Requires one feature: untransformed energy
@@ -112,7 +112,7 @@ class EnergyReconstruction(Task):
         return torch.nn.functional.softplus(x, beta=0.05) + eps_like(x)
 
 
-class EnergyReconstructionWithPower(Task):
+class EnergyReconstructionWithPower(StandardLearnedTask):
     """Reconstructs energy."""
 
     # Requires one feature: untransformed energy
@@ -123,6 +123,26 @@ class EnergyReconstructionWithPower(Task):
     def _forward(self, x: Tensor) -> Tensor:
         # Transform energy
         return torch.pow(10, x[:, 0] + 1.0).unsqueeze(1)
+
+
+class EnergyTCReconstruction(StandardLearnedTask):
+    """Reconstructs track and cascade energies using stable method."""
+
+    # Requires two features: untransformed energy for track and cascade
+    default_target_labels = ["energy_track", "energy_cascade"]
+    default_prediction_labels = ["energy_track_pred", "energy_cascade_pred"]
+    nb_inputs = 2
+
+    def _forward(self, x: Tensor) -> Tensor:
+        # Transform to positive energy domain avoiding `-inf` in `log10`
+        # Transform, thereby preventing overflow and underflow error.
+        x[:, 0] = torch.nn.functional.softplus(
+            x[:, 0].clone(), beta=0.05
+        ) + eps_like(x[:, 0].clone())
+        x[:, 1] = torch.nn.functional.softplus(
+            x[:, 1].clone(), beta=0.05
+        ) + eps_like(x[:, 1].clone())
+        return x
 
 
 class EnergyReconstructionWithUncertainty(EnergyReconstruction):
@@ -141,7 +161,7 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
         return pred
 
 
-class VertexReconstruction(Task):
+class VertexReconstruction(StandardLearnedTask):
     """Reconstructs vertex position and time."""
 
     # Requires four features, x, y, z, and t.
@@ -163,7 +183,7 @@ class VertexReconstruction(Task):
         return x
 
 
-class PositionReconstruction(Task):
+class PositionReconstruction(StandardLearnedTask):
     """Reconstructs vertex position."""
 
     # Requires three features, x, y, and z.
@@ -184,7 +204,7 @@ class PositionReconstruction(Task):
         return x
 
 
-class TimeReconstruction(Task):
+class TimeReconstruction(StandardLearnedTask):
     """Reconstructs time."""
 
     # Requires one feature, time.
@@ -197,7 +217,7 @@ class TimeReconstruction(Task):
         return x
 
 
-class InelasticityReconstruction(Task):
+class InelasticityReconstruction(StandardLearnedTask):
     """Reconstructs interaction inelasticity.
 
     That is, 1-(track energy / hadronic energy).
