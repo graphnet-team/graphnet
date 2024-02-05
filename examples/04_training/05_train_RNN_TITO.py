@@ -116,6 +116,7 @@ def main(
     backbone = RNN_TITO(
         nb_inputs=graph_definition.nb_outputs,
         nb_neighbours=8,
+        time_series_columns=[4, 3],
         rnn_layers=2,
         rnn_hidden_size=64,
         rnn_dropout=0.5,

@@ -31,6 +31,7 @@ class Node_RNN(GNN):
         nb_inputs: int,
         hidden_size: int,
         num_layers: int,
+        time_series_columns: List[int],
         nb_neighbours: int = 8,
         features_subset: Optional[List[int]] = None,
         dropout: float = 0.5,
@@ -42,6 +43,7 @@ class Node_RNN(GNN):
             nb_inputs: Number of features in the input data.
             hidden_size: Number of features for the RNN output and hidden layers.
             num_layers: Number of layers in the RNN.
+            time_series_columns: The indices of the input data that should be treated as time series data. The first index should be the charge column.
             nb_neighbours: Number of neighbours to use when reconstructing the graph representation. Defaults to 8.
             features_subset: The subset of latent features on each node that are used as metric dimensions when performing the k-nearest neighbours clustering. Defaults to [0,1,2,3]
             dropout: Dropout fraction to use in the RNN. Defaults to 0.5.
@@ -49,6 +51,7 @@ class Node_RNN(GNN):
         """
         self._hidden_size = hidden_size
         self._num_layers = num_layers
+        self._time_series_columns = time_series_columns
         self._nb_neighbors = nb_neighbours
         self._features_subset = features_subset
         self._embedding_dim = embedding_dim
@@ -89,7 +92,7 @@ class Node_RNN(GNN):
         # cutter = data.cutter.cumsum(0)[:-1]
         # Optional embedding of the time and charge time series data.
         x = data.x
-        time_series = x[:, data.time_series_index[0]]
+        time_series = x[:, self._time_series_columns]
         if self._embedding_dim != 0:
             time_series = self._emb(time_series * 4096).reshape(
                 (
@@ -105,7 +108,7 @@ class Node_RNN(GNN):
         )
         rnn_out = self._rnn(time_series)[-1][0]
         # prepare node level features
-        charge = data.x[:, data.time_series_index[0][0]].tensor_split(splitter)
+        charge = data.x[:, self._time_series_columns[0]].tensor_split(splitter)
         charge = torch.tensor(
             [
                 torch.asinh(5 * torch.sum(node_charges) / 5)
@@ -114,7 +117,7 @@ class Node_RNN(GNN):
         )
         batch = data.batch[x[:, -1].bool()]
         x = x[x[:, -1].bool()][:, :-1]
-        x[:, data.time_series_index[0][0]] = charge
+        x[:, self._time_series_columns[0]] = charge
 
         # combine the RNN output with the DOM summary features
         data.x = torch.hstack([x, rnn_out])

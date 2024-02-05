@@ -24,6 +24,7 @@ class RNN_TITO(GNN):
     def __init__(
         self,
         nb_inputs: int,
+        time_series_columns: List[int],
         *,
         nb_neighbours: int = 8,
         rnn_layers: int = 2,
@@ -43,6 +44,7 @@ class RNN_TITO(GNN):
 
         Args:
             nb_inputs (int): Number of input features.
+            time_series_columns (List[int]): The indices of the input data that should be treated as time series data. The first index should be the charge column.
             nb_neighbours (int, optional): Number of neighbours to consider.
                 Defaults to 8.
             rnn_layers (int, optional): Number of RNN layers.
@@ -100,6 +102,7 @@ class RNN_TITO(GNN):
             nb_inputs=2,
             hidden_size=self._rnn_hidden_size,
             num_layers=self._rnn_layers,
+            time_series_columns=time_series_columns,
             nb_neighbours=self._nb_neighbours,
             features_subset=self._features_subset,
             dropout=self._rnn_dropout,

@@ -300,7 +300,4 @@ class NodeAsDOMTimeSeries(NodeDefinition):
         new_node_col[0] = 1
         x = np.column_stack([x, new_node_col])
 
-        return Data(
-            x=torch.tensor(x),
-            time_series_index=[charge_index, self._time_index],
-        )
+        return Data(x=torch.tensor(x))
