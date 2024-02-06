@@ -447,3 +447,31 @@ class GraphDefinition(Model):
         for key, fn in custom_label_functions.items():
             graph[key] = fn(graph)
         return graph
+    
+    def extra_repr(self) -> str:
+        """Provide a more detailed description for the object's string representation.
+
+        Returns:
+            str: A string representation containing detailed information about the object.
+        """
+        full_str = f"{self.__class__.__name__}(\n"
+        for item, value in self._config.__dict__.items():
+            if isinstance(value, Model):
+                full_str += self._predindent_args(value)
+            else:
+                full_str += f"    {item}={value}\n"
+        full_str += ")"
+        return full_str
+
+    def _predindent_args(self, model: Model) -> str:
+        """Indent nested model arguments.
+
+        Args:
+            model (Model): The nested model.
+
+        Returns:
+            str: Indented string representation of the nested model's arguments.
+        """
+        indented_str = model.extra_repr().replace("\n", "\n    ")
+        return f"    {indented_str}\n"
+
