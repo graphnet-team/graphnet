@@ -103,7 +103,8 @@ class GraphNeTFileReader(Logger, ABC):
                 assert isinstance(extractor, tuple(self.accepted_extractors))  # type: ignore
             except AssertionError as e:
                 self.error(
-                    f"{extractor.__class__.__name__} is not supported by {self.__class__.__name__}"
+                    f"{extractor.__class__.__name__}"
+                    f" is not supported by {self.__class__.__name__}"
                 )
                 raise e
 
@@ -154,7 +155,7 @@ class I3Reader(GraphNeTFileReader):
         gcd_rescue: str,
         i3_filters: Union[
             Type[I3Filter], List[Type[I3Filter]]
-        ] = NullSplitI3Filter,
+        ] = NullSplitI3Filter(),  # type: ignore
         icetray_verbose: int = 0,
     ):
         """Initialize `I3Reader`.
@@ -199,7 +200,10 @@ class I3Reader(GraphNeTFileReader):
         """
         # Set I3-GCD file pair in extractor
         for extractor in self._extractors:
-            extractor.set_files(file_path.i3_file, file_path.gcd_file)  # type: ignore
+            assert isinstance(extractor, I3Extractor)
+            extractor.set_gcd(
+                i3_file=file_path.i3_file, gcd_file=file_path.gcd_file
+            )  # type: ignore
 
         # Open I3 file
         i3_file_io = dataio.I3File(file_path.i3_file, "r")

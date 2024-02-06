@@ -65,6 +65,9 @@ class DataConverter(ABC, Logger):
         # with reader.
         self._file_reader.set_extractors(extractors)
 
+        # Base class constructor
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
+
     @final
     def __call__(
         self, input_dir: Union[str, List[str]], output_dir: str
@@ -78,14 +81,17 @@ class DataConverter(ABC, Logger):
             output_dir: The directory to save the files to. Input folder
                         structure is not respected.
         """
+        # Set outdir
+        self._output_dir = output_dir
         # Get the file reader to produce a list of input files
         # in the directory
         input_files = self._file_reader.find_files(path=input_dir)  # type: ignore
-        self._launch_jobs(input_files=input_files, output_dir=output_dir)
+        self._launch_jobs(input_files=input_files)
 
     @final
     def _launch_jobs(
-        self, input_files: Union[List[str], List[I3FileSet]]
+        self,
+        input_files: Union[List[str], List[I3FileSet]],
     ) -> None:
         """Multi Processing Logic.
 
@@ -109,7 +115,7 @@ class DataConverter(ABC, Logger):
         self._update_shared_variables(pool)
 
     @final
-    def _process_file(self, file_path: str) -> None:
+    def _process_file(self, file_path: Union[str, I3FileSet]) -> None:
         """Process a single file.
 
         Calls file reader to recieve extracted output, event ids
@@ -119,22 +125,30 @@ class DataConverter(ABC, Logger):
         """
         # Read and apply extractors
         data = self._file_reader(file_path=file_path)
+        n_events = len(data)  # type: ignore
 
-        # Assign event_no's to each event in data
+        # Assign event_no's to each event in data and transform to pd.DataFrame
         data = self._assign_event_no(data=data)
 
         # Create output file name
         output_file_name = self._create_file_name(input_file_path=file_path)
 
         # Apply save method
-        self._save_method(data=data, file_name=output_file_name)
+        self._save_method(
+            data=data,
+            file_name=output_file_name,
+            n_events=n_events,
+            output_dir=self._output_dir,
+        )
 
     @final
-    def _create_file_name(self, input_file_path: str) -> str:
+    def _create_file_name(self, input_file_path: Union[str, I3FileSet]) -> str:
         """Convert input file path to an output file name."""
+        if isinstance(input_file_path, I3FileSet):
+            input_file_path = input_file_path.i3_file
         path_without_extension = os.path.splitext(input_file_path)[0]
         base_file_name = path_without_extension.split("/")[-1]
-        return base_file_name + self._save_method.file_extension()  # type: ignore
+        return base_file_name  # type: ignore
 
     @final
     def _assign_event_no(
@@ -152,18 +166,23 @@ class DataConverter(ABC, Logger):
                 n_rows = self._count_rows(
                     event_dict=data[k], extractor_name=extractor_name
                 )
-
-                data[k][extractor_name][self._index_column] = np.repeat(
-                    event_nos[k], n_rows
-                ).tolist()
-                df = pd.DataFrame(
-                    data[k][extractor_name], index=[0] if n_rows == 1 else None
-                )
-                if extractor_name in dataframe_dict.keys():
-                    dataframe_dict[extractor_name].append(df)
-                else:
-                    dataframe_dict[extractor_name] = [df]
-
+                if n_rows > 0:
+                    data[k][extractor_name][self._index_column] = np.repeat(
+                        event_nos[k], n_rows
+                    ).tolist()
+                    df = pd.DataFrame(
+                        data[k][extractor_name],
+                        index=[0] if n_rows == 1 else None,
+                    )
+                    if extractor_name in dataframe_dict.keys():
+                        dataframe_dict[extractor_name].append(df)
+                    else:
+                        dataframe_dict[extractor_name] = [df]
+        # Merge each list of dataframes
+        for key in dataframe_dict.keys():
+            dataframe_dict[key] = pd.concat(
+                dataframe_dict[key], axis=0
+            ).reset_index(drop=True)
         return dataframe_dict
 
     @final
@@ -171,18 +190,24 @@ class DataConverter(ABC, Logger):
         self, event_dict: OrderedDict[str, Any], extractor_name: str
     ) -> int:
         """Count number of rows that features from `extractor_name` have."""
+        extractor_dict = event_dict[extractor_name]
+
         try:
-            extractor_dict = event_dict[extractor_name]
             # If all features in extractor_name have the same length
             # this line of code will execute without error and result
             # in an array with shape [num_features, n_rows_in_feature]
-            n_rows = np.asarray(list(extractor_dict.values())).shape[1]
+            # unless the list is empty!
+
+            shape = np.asarray(list(extractor_dict.values())).shape
+            if len(shape) > 1:
+                n_rows = shape[1]
+            else:
+                n_rows = 1
         except ValueError as e:
             self.error(
                 f"Features from {extractor_name} ({extractor_dict.keys()}) have different lengths."
             )
             raise e
-
         return n_rows
 
     def _request_event_nos(self, n_ids: int) -> List[int]:

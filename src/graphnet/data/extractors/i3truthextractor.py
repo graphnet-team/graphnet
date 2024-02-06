@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.path as mpath
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
-from graphnet.data.extractors.i3extractor import I3Extractor
+from graphnet.data.extractors.extractor import I3Extractor
 from graphnet.data.extractors.utilities.frames import (
     frame_is_montecarlo,
     frame_is_noise,
