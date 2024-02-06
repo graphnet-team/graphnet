@@ -326,7 +326,9 @@ def save_selection(selection: List[int], file_path: str) -> None:
        selection: List of event ids.
        file_path: File path to save the selection.
     """
-    with open(file_path, "w") as file:
-        file.write("event_id\n")
-        for event_id in selection:
-            file.write(f"{event_id}\n")
+    assert isinstance(
+        selection, list
+    ), "Selection should be a list of integers."
+    with open(file_path, "w") as f:
+        f.write(",".join(map(str, selection)))
+        f.write("\n")

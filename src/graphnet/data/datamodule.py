@@ -23,9 +23,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
     def __init__(
         self,
         dataset_reference: Union[SQLiteDataset, ParquetDataset, Dataset],
-        selection: Optional[Union[List[int], List[List[int]]]],
-        test_selection: Optional[Union[List[int], List[List[int]]]],
         dataset_args: Dict[str, Any],
+        selection: Optional[Union[List[int], List[List[int]]]] = None,
+        test_selection: Optional[Union[List[int], List[List[int]]]] = None,
         train_dataloader_kwargs: Optional[Dict[str, Any]] = None,
         validation_dataloader_kwargs: Optional[Dict[str, Any]] = None,
         test_dataloader_kwargs: Optional[Dict[str, Any]] = None,
@@ -36,20 +36,22 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
 
         Args:
             dataset_reference: A non-instantiated reference to the dataset class.
+            dataset_args: Arguments to instantiate graphnet.data.dataset.Dataset with.
             selection: (Optional) a list of event id's used for training and validation.
             test_selection: (Optional) a list of event id's used for testing.
-            dataset_args: Arguments to instantiate graphnet.data.dataset.Dataset with.
             train_dataloader_kwargs: Arguments for the training DataLoader.
             validation_dataloader_kwargs: Arguments for the validation DataLoader.
             test_dataloader_kwargs: Arguments for the test DataLoader.
             train_val_split (Optional): Split ratio for training and validation sets. Default is [0.9, 0.10].
             split_seed: seed used for shuffling and splitting selections into train/validation.
         """
+        Logger.__init__(self)
+        self._make_sure_root_logger_is_configured()
         self._dataset = dataset_reference
-        self._selection = selection or [0]
-        self._train_val_split = train_val_split or [0.0]
-        self._test_selection = test_selection or [0.0]
         self._dataset_args = dataset_args
+        self._selection = selection
+        self._test_selection = test_selection
+        self._train_val_split = train_val_split or [0.0]
         self._rng = split_seed
 
         self._train_dataloader_kwargs = train_dataloader_kwargs or {}
@@ -60,6 +62,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._use_ensemble_dataset = isinstance(
             self._dataset_args["path"], list
         )
+
+        self.setup("")
 
     def prepare_data(self) -> None:
         """Prepare the dataset for training."""
@@ -82,9 +86,10 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._resolve_selections()
 
         # Creation of Datasets
+        # self._dataset = self._create_dataset(self.)
         self._train_dataset = self._create_dataset(self._train_selection)
         self._val_dataset = self._create_dataset(self._val_selection)
-        self._test_dataset = self._create_dataset(self._test_selection)
+        self._test_dataset = self._create_dataset(self._test_selection)  # type: ignore
 
         return
 
@@ -169,12 +174,14 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         ParquetDataset, or Dataset. Raises a TypeError if an invalid dataset
         type is detected, or if an EnsembleDataset is used.
         """
-        if not isinstance(
-            self._dataset, (SQLiteDataset, ParquetDataset, Dataset)
-        ):
-            raise TypeError(
-                "dataset_reference must be an instance of SQLiteDataset, ParquetDataset, or Dataset."
-            )
+        print(self._dataset, "Dataset\n")
+        print(
+            f"Type of self._dataset before validation check: {type(self._dataset)}"
+        )
+        # if type(self._dataset) not in [SQLiteDataset, ParquetDataset, Dataset]:
+        #     raise TypeError(
+        #         "dataset_reference must be an instance of SQLiteDataset, ParquetDataset, or Dataset."
+        #     )
         if isinstance(self._dataset, EnsembleDataset):
             raise TypeError(
                 "EnsembleDataset is not allowed as dataset_reference."
@@ -250,7 +257,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                     self._selection
                 )
 
-        if self._selection is None:
+        else:  # selection is None
             # If not provided, we infer it by grabbing all event ids in the dataset.
             self.info(
                 f"{self.__class__.__name__} did not receive an argument for `selection`. Selection will automatically be created with a split of train: {self._train_val_split[0]} and validation: {self._train_val_split[1]}"
@@ -258,7 +265,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             (
                 self._train_selection,
                 self._val_selection,
-            ) = self._infer_selections()
+            ) = self._infer_selections()  # type: ignore
 
     def _split_selection(
         self, selection: Union[int, List[int], List[List[int]]]
@@ -336,16 +343,15 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
 
         all_events = (
             tmp_dataset._get_all_indices()
-        )  # unshuffled list, # sequential index
+        )  # unshuffled list, sequential index
 
         # Multiple lines to avoid one large
-        all_events = pd.DataFrame(all_events).sample(
-            frac=1, replace=False, random_state=self._rng
-        )
-
-        all_events = random.sample(
-            all_events, len(all_events)
+        all_events = (
+            pd.DataFrame(all_events)
+            .sample(frac=1, replace=False, random_state=self._rng)
+            .values.tolist()
         )  # shuffled list
+
         return self._split_selection(all_events)
 
     def _construct_dataset(self, tmp_args: Dict[str, Any]) -> Dataset:
@@ -354,6 +360,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         Return:
             Dataset object constructed from input arguments.
         """
+        print(tmp_args, "temp argument")
         dataset = self._dataset(**tmp_args)
         return dataset
 
