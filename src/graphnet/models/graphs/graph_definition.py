@@ -447,9 +447,9 @@ class GraphDefinition(Model):
         for key, fn in custom_label_functions.items():
             graph[key] = fn(graph)
         return graph
-    
+
     def extra_repr(self) -> str:
-        """Provide a more detailed description for the object's string representation.
+        """Provide a more detailed description of the object print.
 
         Returns:
             str: A string representation containing detailed information about the object.
@@ -474,4 +474,3 @@ class GraphDefinition(Model):
         """
         indented_str = model.extra_repr().replace("\n", "\n    ")
         return f"    {indented_str}\n"
-
