@@ -2,7 +2,6 @@
 
 from typing import List, Tuple, Optional
 from abc import abstractmethod
-import numpy as np
 
 import torch
 from torch_geometric.data import Data
@@ -241,7 +240,7 @@ class IceMixNodes(NodeDefinition):
                              "hlc", 
                              "rde", 
                              "scatt_lenght",
-                             "abs_lenght" 
+                             "abs_lenght",
                              "mask"]
         
         missing_features = set(self.all_features) - set(input_feature_names)
@@ -264,8 +263,8 @@ class IceMixNodes(NodeDefinition):
                             ids: List[int]) -> torch.Tensor:
 
         f_scattering, f_absoprtion = ice_transparency()
-        graph[:len(ids),7] = f_scattering(x[ids, self.feature_indexes["dom_z"]])
-        graph[:len(ids),8] = f_absoprtion(x[ids, self.feature_indexes["dom_z"]])
+        graph[:len(ids),7] = torch.tensor(f_scattering(x[ids, self.feature_indexes["dom_z"]]))
+        graph[:len(ids),8] = torch.tensor(f_absoprtion(x[ids, self.feature_indexes["dom_z"]]))
         return graph
 
     def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
@@ -284,7 +283,7 @@ class IceMixNodes(NodeDefinition):
             auxiliary_p = torch.nonzero(x[:, self.feature_indexes["hlc"]] == 1).squeeze(1)
             ids_n = ids[auxiliary_n][: min(self.max_length, len(auxiliary_n))]
             ids_p = ids[auxiliary_p][: min(self.max_length - len(ids_n), len(auxiliary_p))]
-            ids = np.concatenate([ids_n, ids_p]).sort()
+            ids = torch.cat([ids_n, ids_p]).sort().values
             #ids.sort()
             event_length = len(ids)
             
@@ -292,6 +291,6 @@ class IceMixNodes(NodeDefinition):
             graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
 
         graph = self._add_ice_properties(graph, x, ids) #ice properties  
-        graph[:event_length,9] = torch.ones_like(event_length) # mask
+        graph[:event_length,9] = torch.ones(event_length) # mask
         
         return Data(x=graph)

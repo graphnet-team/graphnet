@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
 import math
 
-from graphnet.models.components.layers import Extractor, Spacetime_encoder, Block_rel, Block, ExtractorV11Scaled
+from graphnet.models.components.layers import FourierEncoder, SpacetimeEncoder, Block_rel, Block
 from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.gnn.gnn import GNN
 
@@ -13,7 +13,7 @@ from torch_geometric.nn.pool import knn_graph
 from torch_geometric.utils import to_dense_batch
 
 
-class DeepIceModel(GNN):
+class DeepIce(GNN):
     def __init__(
         self,
         dim=384,
@@ -26,8 +26,8 @@ class DeepIceModel(GNN):
         **kwargs,
     ):
         super().__init__(dim_base, dim)
-        self.extractor = Extractor(dim_base, dim)
-        self.rel_pos = Spacetime_encoder(head_size)
+        self.fourier_ext = FourierEncoder(dim_base, dim)
+        self.rel_pos = SpacetimeEncoder(head_size)
         self.sandwich = nn.ModuleList(
             [Block_rel(dim=dim, num_heads=dim // head_size) for i in range(depth_rel)]
         )
@@ -57,7 +57,7 @@ class DeepIceModel(GNN):
     def forward(self, x0):
         mask = x0.mask
         Lmax = mask.sum(-1).max()
-        x = self.extractor(x0, Lmax)
+        x = self.fourier_ext(x0, Lmax)
         rel_pos_bias, rel_enc = self.rel_pos(x0, Lmax)
         # nbs = get_nbs(x0, Lmax)
         mask = mask[:, :Lmax]
@@ -88,7 +88,7 @@ class DeepIceModel(GNN):
         return x[:, 0]
     
     
-class EncoderWithDirectionReconstruction(GNN):
+class DeepIceWithDynEdge(GNN):
     def __init__(
         self,
         dim=384,
@@ -101,8 +101,8 @@ class EncoderWithDirectionReconstruction(GNN):
     ):
         super().__init__(dim_base, dim)
         self.knn_features = knn_features
-        self.extractor = ExtractorV11Scaled(dim_base, dim // 2)
-        self.rel_pos = Spacetime_encoder(head_size)
+        self.fourier_ext = FourierEncoder(dim_base, dim // 2, scaled=True)
+        self.rel_pos = SpacetimeEncoder(head_size)
         self.sandwich = nn.ModuleList(
             [
                 Block_rel(dim=dim, num_heads=dim // head_size),
@@ -126,7 +126,7 @@ class EncoderWithDirectionReconstruction(GNN):
         )
         #self.proj_out = nn.Linear(dim, 3)
         self.use_checkpoint = use_checkpoint
-        self.local_root = DynEdge(
+        self.dyn_edge = DynEdge(
             9,
             post_processing_layer_sizes=[336, dim // 2],
             dynedge_layer_sizes=[(128, 256), (336, 256), (336, 256), (336, 256)],
@@ -150,15 +150,14 @@ class EncoderWithDirectionReconstruction(GNN):
             dim=1,
         )
         Lmax = mask.sum(-1).max()
-        x = self.extractor(x0, Lmax)
+        x = self.fourier_ext(x0, Lmax)
         rel_pos_bias, rel_enc = self.rel_pos(x0, Lmax)
-        # nbs = get_nbs(x0, Lmax)
         mask = mask[:, :Lmax]
         batch_index = mask.nonzero()[:, 0]
         edge_index = knn_graph(x=graph_feature[:, :self.knn_features], k=8, batch=batch_index).to(
             mask.device
         )
-        graph_feature = self.local_root(
+        graph_feature = self.dyn_edge(
             graph_feature, edge_index, batch_index, x0.n_pulses
         )
         graph_feature, _ = to_dense_batch(graph_feature, batch_index)

@@ -184,8 +184,7 @@ def ice_transparency(datum: int = 1950):
     # Data from page 31 of https://arxiv.org/pdf/1301.5361.pdf
     # Datum is from footnote 8 of page 29
     df = pd.read_parquet(
-            os.path.join(DATA_DIR, "ice_properties/ice_transparency.txt"), 
-            delim_whitespace=True
+            os.path.join(DATA_DIR, "ice_properties/ice_transparency.parquet"), 
             )
     df["z"] = df["depth"] - datum
     df["z_norm"] = df["z"] / 500

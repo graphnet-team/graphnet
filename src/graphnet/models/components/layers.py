@@ -18,8 +18,6 @@ from pytorch_lightning import LightningModule
 from timm.models.layers import drop_path
 import math
 
-from torch.fft import fft
-
 class DynEdgeConv(EdgeConv, LightningModule):
     """Dynamical edge convolution layer."""
 
@@ -200,7 +198,7 @@ class DynTrans(EdgeConvTito, LightningModule):
 
 
 
-class DropPath(nn.Module):
+class DropPath(LightningModule):
     """DropPath regularization module for neural networks."""
     def __init__(
         self, 
@@ -225,13 +223,13 @@ class DropPath(nn.Module):
         return "p={}".format(self.drop_prob)
 
 
-class Mlp(nn.Module):
+class Mlp(LightningModule):
     """
     Multi-Layer Perceptron (MLP) module.
     """
     def __init__(
         self,
-        in_features: int = 768,
+        in_features: int = None,
         hidden_features: Optional[int] = None,
         out_features: Optional[int] = None,
         activation: Optional[nn.Module] = nn.GELU,
@@ -249,6 +247,11 @@ class Mlp(nn.Module):
             activation: Activation layer. Defaults to `nn.GELU`.
             dropout_prob: Dropout probability. Defaults to 0.0.
         """
+        
+        if in_features <= 0:
+            raise ValueError(
+                f"in_features must be greater than 0, got in_features={in_features} instead"
+            )
         super().__init__()
         out_features = out_features or in_features
         hidden_features = hidden_features or in_features
@@ -265,31 +268,37 @@ class Mlp(nn.Module):
         x = self.dropout(x)
         return x
 
-class SinusoidalPosEmb(nn.Module):
+class SinusoidalPosEmb(LightningModule):
     def __init__(
         self, 
-        emb_dim: int = 16, 
-        max_sequence_length: int = 10000,
+        dim: int = 16, 
+        n_freq: int = 10000,
+        scaled: bool = False,
     ):
         """
         Construct `SinusoidalPosEmb`.
 
-        This module generates sinusoidal positional embeddings to be added to input sequences.
+        This module generates sinusoidal positional embeddings to be 
+        added to input sequences.
 
         Args:
-            emb_dim: Dimensionality of the positional embeddings.
-            max_sequence_length: Maximum sequence length, used to scale the frequency of sinusoidal embeddings.
+            dim: Embedding dimension.
+            n_freq: Number of frequencies.
+            scaled: Whether or not to scale the embeddings.
         """
         super().__init__()
-        self.embe_dim = emb_dim
-        self.max_sequence_length = max_sequence_length
+        if dim % 2 != 0:
+            raise ValueError("dim must be even")
+        self.scale = nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
+        self.dim = dim
+        self.n_freq = n_freq
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass."""
         device = x.device
-        half_dim = self.emb_dim // 2
-        emb1 = math.log(self.max_sequence_length) / half_dim
-        emb2 = torch.log(self.max_sequence_length) / half_dim
+        half_dim = self.dim // 2
+        emb1 = math.log(self.n_freq) / half_dim
+        emb2 = torch.log(self.n_freq) / half_dim
         if emb1 == emb2:
             emb = emb1
         else:
@@ -297,16 +306,17 @@ class SinusoidalPosEmb(nn.Module):
         emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
         emb = x[..., None] * emb[None, ...]
         emb = torch.cat((emb.sin(), emb.cos()), dim=-1)
-        return emb
+        return emb * self.scale
 
-class Extractor(nn.Module):
+class FourierEncoder(LightningModule):
     def __init__(
         self, 
         base_dim: int = 128, 
         output_dim: int = 384,
+        scaled: bool = False,
     ):
         """
-        Construct `Extractor`.
+        Construct `FourierEncoder`.
 
         This module incorporates sinusoidal positional embeddings and auxiliary embeddings
         to process input sequences and produce meaningful representations.
@@ -314,11 +324,12 @@ class Extractor(nn.Module):
         Args:
             base_dim: Dimensionality of the base sinusoidal positional embeddings.
             output_dim: Output dimensionality of the final projection.
+            scaled: Whether or not to scale the embeddings.
         """
         super().__init__()
-        self.sin_emb = SinusoidalPosEmb(emb_dim=base_dim)
+        self.sin_emb = SinusoidalPosEmb(dim=base_dim, scaled=scaled)
         self.aux_emb = nn.Embedding(2, base_dim // 2)
-        self.sin_emb2 = SinusoidalPosEmb(emb_dim=base_dim // 2)
+        self.sin_emb2 = SinusoidalPosEmb(dim=base_dim // 2, scaled=scaled)
         self.projection = nn.Sequential(
             nn.Linear(6 * base_dim, 6 * base_dim),
             nn.LayerNorm(6 * base_dim),
@@ -352,13 +363,13 @@ class Extractor(nn.Module):
         return x
 
 
-class Spacetime_encoder(nn.Module):
+class SpacetimeEncoder(LightningModule):
     def __init__(
         self, 
         base_dim: int = 32,
     ):
         """
-        Construct `Spacetime_encoder`.
+        Construct `SpacetimeEncoder`.
 
         This module calculates space-time interval between each pair of events and
         generates sinusoidal positional embeddings to be added to input sequences.
@@ -367,7 +378,7 @@ class Spacetime_encoder(nn.Module):
             base_dim: Dimensionality of the sinusoidal positional embeddings.
         """
         super().__init__()
-        self.sin_emb = SinusoidalPosEmb(emb_dim=base_dim)
+        self.sin_emb = SinusoidalPosEmb(dim=base_dim)
         self.projection = nn.Linear(base_dim, base_dim)
 
     def forward(
@@ -387,28 +398,52 @@ class Spacetime_encoder(nn.Module):
         return rel_attn, sin_emb
 
 # BEiTv2 block
-class Block_rel(nn.Module):
+class Block_rel(LightningModule):
+    """Implementation of BEiTv2 Block.
+    """
     def __init__(
         self,
-        dim,
-        num_heads,
-        mlp_ratio=4.0,
-        qkv_bias=False,
-        qk_scale=None,
-        dropout=0.0,
-        attn_drop=0.0,
-        drop_path=0.0,
-        init_values=None,
-        act_layer=nn.GELU,
-        norm_layer=nn.LayerNorm,
-        window_size=None,
-        attn_head_dim=None,
-        **kwargs,
-    ):
+        dim: int = None,
+        num_heads: int = None,
+        mlp_ratio: float = 4.0,
+        qkv_bias: bool = False,
+        qk_scale: float = None,
+        dropout: float = 0.0,
+        attn_drop: float = 0.0,
+        drop_path: float = 0.0,
+        init_values: float = None,
+        activation: nn.Module = nn.GELU,
+        norm_layer: nn.Module = nn.LayerNorm,
+        attn_head_dim: int = None,
+    ):     
+        """
+        Construct 'Block_rel'.
+
+        Args:
+            dim: Dimension of the input tensor.
+            num_heads: Number of attention heads to use in the `Attention_rel` layer.
+            mlp_ratio: Ratio of the hidden size of the feedforward network to the
+                input size in the `Mlp` layer.
+            qkv_bias: Whether or not to include bias terms in the query, key, and 
+                value matrices in the `Attention_rel` layer.
+            qk_scale: Scaling factor for the dot product of the query and key matrices
+                in the `Attention_rel` layer.
+            dropout: Dropout probability to use in the `Mlp` layer.
+            attn_dropt: Dropout probability to use in the `Attention_rel` layer.
+            drop_path: Probability of applying drop path regularization to the output 
+                of the layer.
+            init_values: Initial value to use for the `gamma_1` and `gamma_2` 
+                parameters if not `None`.
+            act_layer: Activation function to use in the `Mlp` layer.
+            norm_layer: Normalization layer to use.
+            attn_head_dim: Dimension of the attention head outputs in the 
+                `Attention_rel` layer.   
+        """
+        
         super().__init__()
         self.norm1 = norm_layer(dim)
         self.attn = Attention_rel(
-            dim, num_heads, attn_drop=attn_drop, qkv_bias=qkv_bias
+            dim, num_heads, attn_drop=attn_drop, qkv_bias=qkv_bias, qk_scale=qk_scale, attn_head_dim=attn_head_dim
         )
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.norm2 = norm_layer(dim)
@@ -416,7 +451,7 @@ class Block_rel(nn.Module):
         self.mlp = Mlp(
             in_features=dim,
             hidden_features=mlp_hidden_dim,
-            activation=act_layer,
+            activation=activation,
             dropout_prob=dropout,
         )
 
@@ -430,7 +465,7 @@ class Block_rel(nn.Module):
         else:
             self.gamma_1, self.gamma_2 = None, None
 
-    def forward(self, x, key_padding_mask=None, rel_pos_bias=None, kv=None):
+    def forward(self, x: Tensor, key_padding_mask=None, rel_pos_bias=None, kv=None):
         """Forward pass."""
         if self.gamma_1 is None:
             xn = self.norm1(x)
@@ -463,22 +498,42 @@ class Block_rel(nn.Module):
             x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
         return x
 
-class Attention_rel(nn.Module):
+class Attention_rel(LightningModule):
     def __init__(
         self,
-        dim,
-        num_heads=8,
-        qkv_bias=False,
-        qk_scale=None,
-        attn_drop=0.0,
-        proj_drop=0.0,
-        attn_head_dim=None,
+        dim: int,
+        num_heads: int = 8,
+        qkv_bias: bool = False,
+        qk_scale: float = None,
+        attn_drop: float = 0.0,
+        proj_drop: float = 0.0,
+        attn_head_dim: int = None,
     ):
+        """
+        Args:
+            dim: Dimension of the input tensor.
+            num_heads: the number of attention heads to use (default: 8)
+            qkv_bias: whether to add bias to the query, key, and value
+                projections. Defaults to False.
+            qk_scale: a scaling factor that multiplies the dot product of query 
+                and key vectors. Defaults to None. If None, computed as
+                :math: `\sqrt{1/head_dim}`
+            attn_drop: the dropout probability for the attention weights.
+                Defaults to 0.0.
+            proj_drop: the dropout probability for the output of the attention
+                module. Defaults to 0.0.
+            attn_head_dim: the feature dimensionality of each attention head.
+                Defaults to None. If None, computed as `dim // num_heads`.
+        """
+        if dim <= 0 or num_heads <= 0:
+            raise ValueError(
+                f"dim and num_heads must be greater than 0,"
+                f" got dim={dim} and num_heads={num_heads} instead"
+            )
+        
         super().__init__()
         self.num_heads = num_heads
-        head_dim = dim // num_heads
-        if attn_head_dim is not None:
-            head_dim = attn_head_dim
+        head_dim = attn_head_dim or dim // num_heads
         all_head_dim = head_dim * self.num_heads
         self.scale = qk_scale or head_dim**-0.5
 
@@ -536,28 +591,43 @@ class Attention_rel(nn.Module):
         x = self.proj_drop(x)
         return x
 
-class Block(nn.Module):
+class Block(LightningModule):
     def __init__(
         self,
-        dim,
-        num_heads,
-        mlp_ratio=4.0,
-        qkv_bias=False,
-        qk_scale=None,
-        dropout=0.0,
-        attn_drop=0.0,
-        drop_path=0.0,
-        init_values=None,
-        act_layer=nn.GELU,
-        norm_layer=nn.LayerNorm,
-        window_size=None,
-        attn_head_dim=None,
-        **kwargs,
+        dim: int = None,
+        num_heads: int = None,
+        mlp_ratio: float = 4.0,
+        dropout: float = 0.0,
+        attn_drop: float = 0.0,
+        drop_path: float = 0.0,
+        init_values: float = None,
+        activation: nn.Module = nn.GELU,
+        norm_layer: nn.Module = nn.LayerNorm,
     ):
+        """
+        Construct 'Block'.
+
+        Args:
+            dim: Dimension of the input tensor.
+            num_heads: Number of attention heads to use in the `MultiheadAttention`
+                layer.
+            mlp_ratio: Ratio of the hidden size of the feedforward network to the
+                input size in the `Mlp` layer.
+            dropout: Dropout probability to use in the `Mlp` layer.
+            attn_dropt: Dropout probability to use in the `MultiheadAttention` layer.
+            drop_path: Probability of applying drop path regularization to the output 
+                of the layer.
+            init_values: Initial value to use for the `gamma_1` and `gamma_2` 
+                parameters if not `None`.
+            act_layer: Activation function to use in the `Mlp` layer.
+            norm_layer: Normalization layer to use.
+            attn_head_dim: Dimension of the attention head outputs in the 
+                `MultiheadAttention` layer.   
+        """     
         super().__init__()
         self.norm1 = norm_layer(dim)
         self.attn = nn.MultiheadAttention(
-            dim, num_heads, dropout=dropout, batch_first=True
+            dim, num_heads, dropout=attn_drop, batch_first=True
         )
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.norm2 = norm_layer(dim)
@@ -565,7 +635,7 @@ class Block(nn.Module):
         self.mlp = Mlp(
             in_features=dim,
             hidden_features=mlp_hidden_dim,
-            activation=act_layer,
+            activation=activation,
             dropout_prob=dropout,
         )
 
@@ -608,64 +678,4 @@ class Block(nn.Module):
                 )[0]
             )
             x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
-        return x
-   
-class ScaledSinusoidalEmbedding(nn.Module):
-    def __init__(self, dim=32, M=10000):
-        super().__init__()
-        assert (dim % 2) == 0
-        self.scale = nn.Parameter(torch.ones(1) * dim**-0.5)
-        self.dim = dim
-        self.M = M
-
-    def forward(self, x):
-        """Forward pass."""
-        device = x.device
-        half_dim = self.dim // 2
-        emb1 = math.log(self.M) / half_dim
-        emb2 = torch.log(self.M) / half_dim
-        if emb1 == emb2:
-            emb = emb1
-        else:
-            raise ValueError("emb1 != emb2")
-        emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
-        emb = x[..., None] * emb[None, ...]
-        emb = torch.cat((emb.sin(), emb.cos()), dim=-1)
-        return emb * self.scale
-    
-    
-class ExtractorV11Scaled(nn.Module):
-    def __init__(self, dim_base=128, dim=384):
-        super().__init__()
-        self.pos = ScaledSinusoidalEmbedding(dim=dim_base)
-        self.emb_charge = ScaledSinusoidalEmbedding(dim=dim_base)
-        self.time = ScaledSinusoidalEmbedding(dim=dim_base)
-        self.aux_emb = nn.Embedding(2, dim_base // 2)
-        self.emb2 = ScaledSinusoidalEmbedding(dim=dim_base // 2)
-        self.proj = nn.Sequential(
-            nn.Linear(6 * dim_base, 6 * dim_base),
-            nn.LayerNorm(6 * dim_base),
-            nn.GELU(),
-            nn.Linear(6 * dim_base, dim),
-        )
-
-    def forward(self, x, Lmax=None):
-        """Forward pass."""
-        pos = x.pos if Lmax is None else x.pos[:, :Lmax]
-        charge = x.charge if Lmax is None else x.charge[:, :Lmax]
-        time = x.time if Lmax is None else x.time[:, :Lmax]
-        auxiliary = x.auxiliary if Lmax is None else x.auxiliary[:, :Lmax]
-        length = torch.log10(x.n_pulses.to(dtype=pos.dtype))
-
-        x = torch.cat(
-            [
-                self.pos(4096 * pos).flatten(-2),
-                self.emb_charge(1024 * charge),
-                self.time(4096 * time),
-                self.aux_emb(auxiliary),
-                self.emb2(length).unsqueeze(1).expand(-1, pos.shape[1], -1),
-            ],
-            -1,
-        )
-        x = self.proj(x)
-        return x
+        return x  
