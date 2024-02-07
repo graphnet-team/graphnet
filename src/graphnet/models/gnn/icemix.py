@@ -59,10 +59,9 @@ class DeepIce(GNN):
 
     def forward(self, data: Data) -> Tensor:
         mask = data.mask
-        Lmax = data.n_pulses.sum(-1)
+        Lmax = max(data.n_pulses)
         x = self.fourier_ext(data, Lmax)
         rel_pos_bias, rel_enc = self.rel_pos(data, Lmax)
-        # nbs = get_nbs(x0, Lmax)
         mask = mask[:, :Lmax]
         B, _ = mask.shape
         attn_mask = torch.zeros(mask.shape, device=mask.device)

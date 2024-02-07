@@ -240,12 +240,12 @@ class IceMixNodes(NodeDefinition):
                              "hlc", 
                              "rde", 
                              "scatt_lenght",
-                             "abs_lenght",
-                             "mask"]
+                             "abs_lenght"]
         
         missing_features = set(self.all_features) - set(input_feature_names)
         if any(feat in missing_features for feat in self.all_features[:7]):
-            raise ValueError("Features dom_x, dom_y, dom_z, dom_time, charge, hlc, rde are required for IceMixNodes")
+            raise ValueError(f"Features dom_x, dom_y, dom_z, dom_time, charge, hlc, rde"
+                             f" are required for IceMixNodes")
         
         self.feature_indexes = {feat: self.all_features.index(feat) for feat in input_feature_names}
         self.input_feature_names  = input_feature_names   
@@ -269,9 +269,9 @@ class IceMixNodes(NodeDefinition):
 
     def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
         
-        graph = torch.zeros([self.max_length, len(self.all_features)])
-        
         n_pulses = x.shape[0]
+        graph = torch.zeros([n_pulses, len(self.all_features)])
+        
         event_length = n_pulses
         x[:, self.feature_indexes["hlc"]] = torch.logical_not(x[:, self.feature_indexes["hlc"]])
 
@@ -284,13 +284,10 @@ class IceMixNodes(NodeDefinition):
             ids_n = ids[auxiliary_n][: min(self.max_length, len(auxiliary_n))]
             ids_p = ids[auxiliary_p][: min(self.max_length - len(ids_n), len(auxiliary_p))]
             ids = torch.cat([ids_n, ids_p]).sort().values
-            #ids.sort()
             event_length = len(ids)
             
         for idx, feature in enumerate(self.all_features[:7]):
             graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
 
         graph = self._add_ice_properties(graph, x, ids) #ice properties  
-        graph[:event_length,9] = torch.ones(event_length) # mask
-        
         return Data(x=graph)
