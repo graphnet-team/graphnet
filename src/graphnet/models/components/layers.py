@@ -10,6 +10,7 @@ from torch_geometric.nn.pool import knn_graph
 from torch_geometric.typing import Adj, PairTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import reset
+from torch_geometric.data import Data
 import torch.nn as nn
 from torch.nn.functional import linear
 from torch.nn.modules import TransformerEncoder, TransformerEncoderLayer
@@ -340,14 +341,15 @@ class FourierEncoder(LightningModule):
     def forward(
         self, 
         x: Tensor, 
+        n_pulses: Tensor,
         Lmax: Optional[int] = None
     ) -> Tensor:
         """Forward pass."""
-        pos = x.pos if Lmax is None else x.pos[:, :Lmax]
-        charge = x.charge if Lmax is None else x.charge[:, :Lmax]
-        time = x.time if Lmax is None else x.time[:, :Lmax]
-        auxiliary = x.auxiliary if Lmax is None else x.auxiliary[:, :Lmax]
-        length = torch.log10(x.n_pulses.to(dtype=pos.dtype))
+        pos = x[:,:,:3] if Lmax is None else x[:,:Lmax,:3]
+        charge = x[:,:,4] if Lmax is None else x[:,:Lmax,4]
+        time = x[:,:,3] if Lmax is None else x[:,:Lmax,3]
+        auxiliary = x[:,:,5] if Lmax is None else x[:,:Lmax,5]
+        length = torch.log10(n_pulses.to(dtype=pos.dtype))
 
         x = torch.cat(
             [

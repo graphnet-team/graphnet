@@ -14,8 +14,6 @@ from torch_geometric.utils import to_dense_batch
 from torch_geometric.data import Data
 from torch import Tensor
 
-
-
 class DeepIce(GNN):
     def __init__(
         self,
@@ -56,12 +54,21 @@ class DeepIce(GNN):
     @torch.jit.ignore
     def no_weight_decay(self):
         return {"cls_token"}
+    
+    def _convert_data(self, data: Data):
+        """Convert the input data to a tensor of shape (B, L, D)"""
+        x_list = torch.split(data.x, data.n_pulses.tolist())
+        x = torch.nn.utils.rnn.pad_sequence(x_list, batch_first=True, padding_value=torch.inf)
+        mask = torch.ne(x, torch.inf)
+        x[~mask] = 0
+        return x, mask
 
     def forward(self, data: Data) -> Tensor:
-        mask = data.mask
-        Lmax = max(data.n_pulses)
-        x = self.fourier_ext(data, Lmax)
-        rel_pos_bias, rel_enc = self.rel_pos(data, Lmax)
+        x0, mask = self._convert_data(data)
+        n_pulses = data.n_pulses
+        Lmax = max(n_pulses)
+        x = self.fourier_ext(x0, n_pulses, Lmax)
+        rel_pos_bias, rel_enc = self.rel_pos(x0, Lmax)
         mask = mask[:, :Lmax]
         B, _ = mask.shape
         attn_mask = torch.zeros(mask.shape, device=mask.device)
