@@ -11,6 +11,9 @@ from timm.models.layers import trunc_normal_
 
 from torch_geometric.nn.pool import knn_graph
 from torch_geometric.utils import to_dense_batch
+from torch_geometric.data import Data
+from torch import Tensor
+
 
 
 class DeepIce(GNN):
@@ -54,11 +57,11 @@ class DeepIce(GNN):
     def no_weight_decay(self):
         return {"cls_token"}
 
-    def forward(self, x0):
-        mask = x0.mask
-        Lmax = mask.sum(-1).max()
-        x = self.fourier_ext(x0, Lmax)
-        rel_pos_bias, rel_enc = self.rel_pos(x0, Lmax)
+    def forward(self, data: Data) -> Tensor:
+        mask = data.mask
+        Lmax = data.n_pulses.sum(-1)
+        x = self.fourier_ext(data, Lmax)
+        rel_pos_bias, rel_enc = self.rel_pos(data, Lmax)
         # nbs = get_nbs(x0, Lmax)
         mask = mask[:, :Lmax]
         B, _ = mask.shape
@@ -130,35 +133,36 @@ class DeepIceWithDynEdge(GNN):
             9,
             post_processing_layer_sizes=[336, dim // 2],
             dynedge_layer_sizes=[(128, 256), (336, 256), (336, 256), (336, 256)],
+            global_pooling_schemes=None
         )
         
     @torch.jit.ignore
     def no_weight_decay(self):
         return {"cls_token"}
 
-    def forward(self, x0):
-        mask = x0.mask
+    def forward(self, data: Data) -> Tensor:
+        mask = data.mask
         graph_feature = torch.concat(
             [
-                x0.pos[mask],
-                x0.time[mask].view(-1, 1),
-                x0.auxiliary[mask].view(-1, 1),
-                x0.qe[mask].view(-1, 1),
-                x0.charge[mask].view(-1, 1),
-                x0.ice_properties[mask],
+                data.pos[mask],
+                data.time[mask].view(-1, 1),
+                data.auxiliary[mask].view(-1, 1),
+                data.qe[mask].view(-1, 1),
+                data.charge[mask].view(-1, 1),
+                data.ice_properties[mask],
             ],
             dim=1,
         )
         Lmax = mask.sum(-1).max()
-        x = self.fourier_ext(x0, Lmax)
-        rel_pos_bias, rel_enc = self.rel_pos(x0, Lmax)
+        x = self.fourier_ext(data, Lmax)
+        rel_pos_bias, rel_enc = self.rel_pos(data, Lmax)
         mask = mask[:, :Lmax]
         batch_index = mask.nonzero()[:, 0]
         edge_index = knn_graph(x=graph_feature[:, :self.knn_features], k=8, batch=batch_index).to(
             mask.device
         )
         graph_feature = self.dyn_edge(
-            graph_feature, edge_index, batch_index, x0.n_pulses
+            graph_feature, edge_index, batch_index, data.n_pulses
         )
         graph_feature, _ = to_dense_batch(graph_feature, batch_index)
 
