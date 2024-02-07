@@ -37,13 +37,13 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         Args:
             dataset_reference: A non-instantiated reference to the dataset class.
             dataset_args: Arguments to instantiate graphnet.data.dataset.Dataset with.
-            selection: (Optional) a list of event id's used for training and validation.
-            test_selection: (Optional) a list of event id's used for testing.
-            train_dataloader_kwargs: Arguments for the training DataLoader.
-            validation_dataloader_kwargs: Arguments for the validation DataLoader.
-            test_dataloader_kwargs: Arguments for the test DataLoader.
+            selection: (Optional) a list of event id's used for training and validation, Default None.
+            test_selection: (Optional) a list of event id's used for testing, Default None.
+            train_dataloader_kwargs: Arguments for the training DataLoader, Default None.
+            validation_dataloader_kwargs: Arguments for the validation DataLoader, Default None.
+            test_dataloader_kwargs: Arguments for the test DataLoader, Default None.
             train_val_split (Optional): Split ratio for training and validation sets. Default is [0.9, 0.10].
-            split_seed: seed used for shuffling and splitting selections into train/validation.
+            split_seed: seed used for shuffling and splitting selections into train/validation, Default 42.
         """
         Logger.__init__(self)
         self._make_sure_root_logger_is_configured()
@@ -63,7 +63,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             self._dataset_args["path"], list
         )
 
-        self.setup("")
+        self.setup("fit")
 
     def prepare_data(self) -> None:
         """Prepare the dataset for training."""
@@ -86,10 +86,11 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._resolve_selections()
 
         # Creation of Datasets
-        # self._dataset = self._create_dataset(self.)
-        self._train_dataset = self._create_dataset(self._train_selection)
-        self._val_dataset = self._create_dataset(self._val_selection)
-        self._test_dataset = self._create_dataset(self._test_selection)  # type: ignore
+        if stage == "fit" or stage == "validate":
+            self._train_dataset = self._create_dataset(self._train_selection)
+            self._val_dataset = self._create_dataset(self._val_selection)
+        elif stage == "test":
+            self._test_dataset = self._create_dataset(self._test_selection)  # type: ignore
 
         return
 
@@ -164,6 +165,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             raise ValueError(
                 "Unknown dataset encountered during dataloader creation."
             )
+
+        if dataloader_args is None:
+            raise AttributeError("Dataloader arguments not provided.")
 
         return DataLoader(dataset=dataset, **dataloader_args)
 
@@ -361,7 +365,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             Dataset object constructed from input arguments.
         """
         print(tmp_args, "temp argument")
-        dataset = self._dataset(**tmp_args)
+        dataset = self._dataset(**tmp_args)  # type: ignore
         return dataset
 
     def _create_dataset(
