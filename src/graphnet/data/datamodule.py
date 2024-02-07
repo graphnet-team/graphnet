@@ -5,7 +5,6 @@ from torch.utils.data import DataLoader
 from copy import deepcopy
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import random
 
 from graphnet.data.dataset import (
     Dataset,
@@ -14,7 +13,6 @@ from graphnet.data.dataset import (
     ParquetDataset,
 )
 from graphnet.utilities.logging import Logger
-from graphnet.training.utils import save_selection
 
 
 class GraphNeTDataModule(pl.LightningDataModule, Logger):
@@ -86,7 +84,10 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._resolve_selections()
 
         # Creation of Datasets
-        if self._test_selection is not None:
+        if (
+            self._test_selection is not None
+            or len(self._test_dataloader_kwargs) > 0
+        ):
             self._test_dataset = self._create_dataset(self._test_selection)  # type: ignore
         if stage == "fit" or stage == "validate":
             if self._train_selection is not None:
@@ -98,7 +99,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
 
         return
 
-    def train_dataloader(self) -> DataLoader:
+    @property
+    def train_dataloader(self) -> DataLoader:  # type: ignore[override]
         """Prepare and return the training DataLoader.
 
         Returns:
@@ -106,7 +108,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         """
         return self._create_dataloader(self._train_dataset)
 
-    def val_dataloader(self) -> DataLoader:
+    @property
+    def val_dataloader(self) -> DataLoader:  # type: ignore[override]
         """Prepare and return the validation DataLoader.
 
         Returns:
@@ -114,7 +117,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         """
         return self._create_dataloader(self._val_dataset)
 
-    def test_dataloader(self) -> DataLoader:
+    @property
+    def test_dataloader(self) -> DataLoader:  # type: ignore[override]
         """Prepare and return the test DataLoader.
 
         Returns:
@@ -369,6 +373,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             Dataset object constructed from input arguments.
         """
         print(tmp_args, "temp argument")
+        print(self._dataset, "<-dataset")
         dataset = self._dataset(**tmp_args)  # type: ignore
         return dataset
 

@@ -1,5 +1,6 @@
 """Unit tests for DataModule."""
 
+from copy import deepcopy
 import os
 from typing import List, Any, Dict, Tuple
 import pandas as pd
@@ -15,6 +16,25 @@ from graphnet.models.detector import IceCubeDeepCore
 from graphnet.models.graphs import KNNGraph
 from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.training.utils import save_selection
+
+
+def extract_all_events_ids(
+    file_path: str, dataset_kwargs: Dict[str, Any]
+) -> List[int]:
+    """Extract all available event ids."""
+    if file_path.endswith(".parquet"):
+        selection = pd.read_parquet(file_path)["event_id"].to_numpy().tolist()
+    elif file_path.endswith(".db"):
+        with sqlite3.connect(file_path) as conn:
+            query = f'SELECT event_no FROM {dataset_kwargs["truth_table"]}'
+            selection = (
+                pd.read_sql(query, conn)["event_no"].to_numpy().tolist()
+            )
+    else:
+        raise AssertionError(
+            f"File extension not accepted: {file_path.split('.')[-1]}"
+        )
+    return selection
 
 
 @pytest.fixture
@@ -109,38 +129,18 @@ def test_single_dataset_without_selections(
         train_dataloader_kwargs=dataloader_kwargs,
     )
 
-    train_dataloader = dm.train_dataloader()
-    val_dataloader = dm.val_dataloader()
-    print(dm.test_dataloader, "here")
+    train_dataloader = dm.train_dataloader
+    val_dataloader = dm.val_dataloader
 
     with pytest.raises(Exception):
         # should fail because we provided no test selection
-        test_dataloader = dm.test_dataloader()  # noqa
+        test_dataloader = dm.test_dataloader  # noqa
     # validation loader should have shuffle = False by default
     assert isinstance(val_dataloader.sampler, SequentialSampler)
     # Should have identical batch_size
     assert val_dataloader.batch_size != train_dataloader.batch_size
     # Training dataloader should contain more batches
     assert len(train_dataloader) > len(val_dataloader)
-
-
-def extract_all_events_ids(
-    file_path: str, dataset_kwargs: Dict[str, Any]
-) -> List[int]:
-    """Extract all available event ids."""
-    if file_path.endswith(".parquet"):
-        selection = pd.read_parquet(file_path)["event_id"].to_numpy().tolist()
-    elif file_path.endswith(".db"):
-        with sqlite3.connect(file_path) as conn:
-            query = f'SELECT event_no FROM {dataset_kwargs["truth_table"]}'
-            selection = (
-                pd.read_sql(query, conn)["event_no"].to_numpy().tolist()
-            )
-    else:
-        raise AssertionError(
-            f"File extension not accepted: {file_path.split('.')[-1]}"
-        )
-    return selection
 
 
 @pytest.mark.parametrize(
@@ -158,8 +158,8 @@ def test_single_dataset_with_selections(
     Returns:
         None
     """
-    # extract all events
     dataset_ref, dataset_kwargs, dataloader_kwargs = dataset_setup
+    # extract all events
     file_path = dataset_kwargs["path"]
     selection = extract_all_events_ids(
         file_path=file_path, dataset_kwargs=dataset_kwargs
@@ -178,9 +178,9 @@ def test_single_dataset_with_selections(
         test_selection=test_selection,
     )
 
-    train_dataloader = dm.train_dataloader()
-    val_dataloader = dm.val_dataloader()
-    test_dataloader = dm.test_dataloader()
+    train_dataloader = dm.train_dataloader
+    val_dataloader = dm.val_dataloader
+    test_dataloader = dm.test_dataloader
 
     # Check that the training and validation dataloader contains
     # the same number of events as was given in the selection.
@@ -190,3 +190,43 @@ def test_single_dataset_with_selections(
     assert len(test_dataloader.dataset) == len(test_selection)  # type: ignore
     # Training dataloader should have more batches
     assert len(train_dataloader) > len(val_dataloader)
+
+
+@pytest.mark.parametrize(
+    "dataset_ref", [SQLiteDataset, ParquetDataset], indirect=True
+)
+def test_dataloader_args(
+    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]]
+) -> None:
+    """Test that arguments to dataloaders are propagated correctly.
+
+    Args:
+        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple containing the dataset reference,
+            dataset keyword arguments, and dataloader keyword arguments.
+
+    Returns:
+        None
+    """
+    dataset_ref, dataset_kwargs, dataloader_kwargs = dataset_setup
+    val_dataloader_kwargs = deepcopy(dataloader_kwargs)
+    test_dataloader_kwargs = deepcopy(dataloader_kwargs)
+
+    # Setting batch sizes to different values
+    val_dataloader_kwargs["batch_size"] = 1
+    test_dataloader_kwargs["batch_size"] = 2
+    dataloader_kwargs["batch_size"] = 3
+
+    dm = GraphNeTDataModule(
+        dataset_reference=dataset_ref,
+        dataset_args=dataset_kwargs,
+        train_dataloader_kwargs=dataloader_kwargs,
+        validation_dataloader_kwargs=val_dataloader_kwargs,
+        test_dataloader_kwargs=test_dataloader_kwargs,
+    )
+
+    # Check that the resulting dataloaders have the right batch sizes
+    assert dm.train_dataloader.batch_size == dataloader_kwargs["batch_size"]
+    assert dm.val_dataloader.batch_size == val_dataloader_kwargs["batch_size"]
+    assert (
+        dm.test_dataloader.batch_size == test_dataloader_kwargs["batch_size"]
+    )
