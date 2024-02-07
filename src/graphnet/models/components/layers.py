@@ -298,12 +298,7 @@ class SinusoidalPosEmb(LightningModule):
         """Forward pass."""
         device = x.device
         half_dim = self.dim // 2
-        emb1 = math.log(self.n_freq) / half_dim
-        emb2 = torch.log(self.n_freq) / half_dim
-        if emb1 == emb2:
-            emb = emb1
-        else:
-            raise ValueError("emb1 != emb2")
+        emb = math.log(self.n_freq) / half_dim
         emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
         emb = x[..., None] * emb[None, ...]
         emb = torch.cat((emb.sin(), emb.cos()), dim=-1)
@@ -342,22 +337,17 @@ class FourierEncoder(LightningModule):
         self, 
         x: Tensor, 
         n_pulses: Tensor,
-        Lmax: Optional[int] = None
+        #Lmax: Optional[int] = None
     ) -> Tensor:
         """Forward pass."""
-        pos = x[:,:,:3] if Lmax is None else x[:,:Lmax,:3]
-        charge = x[:,:,4] if Lmax is None else x[:,:Lmax,4]
-        time = x[:,:,3] if Lmax is None else x[:,:Lmax,3]
-        auxiliary = x[:,:,5] if Lmax is None else x[:,:Lmax,5]
-        length = torch.log10(n_pulses.to(dtype=pos.dtype))
-
+        length = torch.log10(n_pulses.to(dtype=x.dtype))
         x = torch.cat(
             [
-                self.sin_emb(4096 * pos).flatten(-2),
-                self.sin_emb(1024 * charge),
-                self.sin_emb(4096 * time),
-                self.aux_emb(auxiliary),
-                self.sin_emb2(length).unsqueeze(1).expand(-1, pos.shape[1], -1),
+                self.sin_emb(4096 * x[:,:,:3]).flatten(-2), #pos
+                self.sin_emb(1024 * x[:,:,4]),              #charge
+                self.sin_emb(4096 * x[:,:,3]),              #time
+                self.aux_emb(x[:,:,5].long()),                     #auxiliary
+                self.sin_emb2(length).unsqueeze(1).expand(-1, max(n_pulses), -1),
             ],
             -1,
         )
@@ -386,13 +376,13 @@ class SpacetimeEncoder(LightningModule):
     def forward(
         self,
         x: Tensor,
-        Lmax: Optional[int] = None,
+        #Lmax: Optional[int] = None,
     ) -> Tensor:
         """Forward pass."""
-        pos = x.pos if Lmax is None else x.pos[:, :Lmax]
-        time = x.time if Lmax is None else x.time[:, :Lmax]
-        spacetime_interval = (pos[:, :, None] - pos[:, None, :]).pow(2).sum(-1) - (
-            (time[:, :, None] - time[:, None, :]) * (3e4 / 500 * 3e-1)
+        #pos = x[:,:,:3]
+        #time = x[:,:,3]
+        spacetime_interval = (x[:, :, :3, None] - x[:, :, None, :3]).pow(2).sum(-1) - (
+            (x[:, :, 3, None] - x[:, :, None, 3]) * (3e4 / 500 * 3e-1)
         ).pow(2)
         four_distance = torch.sign(spacetime_interval) * torch.sqrt(torch.abs(spacetime_interval))
         sin_emb = self.sin_emb(1024 * four_distance.clip(-4, 4))

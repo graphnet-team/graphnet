@@ -45,7 +45,6 @@ class DeepIce(GNN):
                 for i in range(depth)
             ]
         )
-        #self.proj_out = nn.Linear(dim, 3)
         self.use_checkpoint = use_checkpoint
         self.n_rel = n_rel
         
@@ -59,17 +58,15 @@ class DeepIce(GNN):
         """Convert the input data to a tensor of shape (B, L, D)"""
         x_list = torch.split(data.x, data.n_pulses.tolist())
         x = torch.nn.utils.rnn.pad_sequence(x_list, batch_first=True, padding_value=torch.inf)
-        mask = torch.ne(x, torch.inf)
+        mask = torch.ne(x[:,:,1], torch.inf)
         x[~mask] = 0
         return x, mask
 
     def forward(self, data: Data) -> Tensor:
         x0, mask = self._convert_data(data)
         n_pulses = data.n_pulses
-        Lmax = max(n_pulses)
-        x = self.fourier_ext(x0, n_pulses, Lmax)
-        rel_pos_bias, rel_enc = self.rel_pos(x0, Lmax)
-        mask = mask[:, :Lmax]
+        x = self.fourier_ext(x0, n_pulses)
+        rel_pos_bias, rel_enc = self.rel_pos(x0)
         B, _ = mask.shape
         attn_mask = torch.zeros(mask.shape, device=mask.device)
         attn_mask[~mask] = -torch.inf
@@ -93,7 +90,6 @@ class DeepIce(GNN):
             else:
                 x = blk(x, None, attn_mask)
 
-        #x = self.proj_out(x[:, 0])  # cls token
         return x[:, 0]
     
     
@@ -133,7 +129,6 @@ class DeepIceWithDynEdge(GNN):
                 for i in range(depth)
             ]
         )
-        #self.proj_out = nn.Linear(dim, 3)
         self.use_checkpoint = use_checkpoint
         self.dyn_edge = DynEdge(
             9,
@@ -195,5 +190,4 @@ class DeepIceWithDynEdge(GNN):
             else:
                 x = blk(x, None, attn_mask)
 
-        #x = self.proj_out(x[:, 0])  # cls token
         return x[:, 0]
