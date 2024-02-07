@@ -1,7 +1,7 @@
 """Unit tests for DataModule."""
 
 import os
-from typing import List, Any
+from typing import List, Any, Dict, Tuple
 
 import pytest
 from torch.utils.data import SequentialSampler
@@ -88,7 +88,7 @@ def test_save_selection(selection: List[int], file_path: str) -> None:
     "dataset_ref", [SQLiteDataset, ParquetDataset], indirect=True
 )
 def test_single_dataset_without_selections(
-    dataset_setup: tuple[Any, dict[str, Any], dict[str, int]]
+    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]]
 ) -> None:
     """Verify GraphNeTDataModule behavior when no test selection is provided.
 
