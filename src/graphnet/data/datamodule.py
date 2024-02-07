@@ -86,11 +86,15 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._resolve_selections()
 
         # Creation of Datasets
-        if stage == "fit" or stage == "validate":
-            self._train_dataset = self._create_dataset(self._train_selection)
-            self._val_dataset = self._create_dataset(self._val_selection)
-        elif stage == "test":
+        if self._test_selection is not None:
             self._test_dataset = self._create_dataset(self._test_selection)  # type: ignore
+        if stage == "fit" or stage == "validate":
+            if self._train_selection is not None:
+                self._train_dataset = self._create_dataset(
+                    self._train_selection
+                )
+            if self._val_selection is not None:
+                self._val_dataset = self._create_dataset(self._val_selection)
 
         return
 
