@@ -379,10 +379,10 @@ class SpacetimeEncoder(LightningModule):
         #Lmax: Optional[int] = None,
     ) -> Tensor:
         """Forward pass."""
-        #pos = x[:,:,:3]
-        #time = x[:,:,3]
-        spacetime_interval = (x[:, :, :3, None] - x[:, :, None, :3]).pow(2).sum(-1) - (
-            (x[:, :, 3, None] - x[:, :, None, 3]) * (3e4 / 500 * 3e-1)
+        pos = x[:,:,:3]
+        time = x[:,:,3]
+        spacetime_interval = (pos[:, :, None] - pos[:, None, :]).pow(2).sum(-1) - (
+            (time[:, :, None] - time[:, None, :]) * (3e4 / 500 * 3e-1)
         ).pow(2)
         four_distance = torch.sign(spacetime_interval) * torch.sqrt(torch.abs(spacetime_interval))
         sin_emb = self.sin_emb(1024 * four_distance.clip(-4, 4))

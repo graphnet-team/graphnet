@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
-import math
+from typing import List
 
 from graphnet.models.components.layers import FourierEncoder, SpacetimeEncoder, Block_rel, Block
 from graphnet.models.gnn.dynedge import DynEdge
@@ -14,17 +14,24 @@ from torch_geometric.utils import to_dense_batch
 from torch_geometric.data import Data
 from torch import Tensor
 
+def convert_data(data: Data):
+    """Convert the input data to a tensor of shape (B, L, D)"""
+    x_list = torch.split(data.x, data.n_pulses.tolist())
+    x = torch.nn.utils.rnn.pad_sequence(x_list, batch_first=True, padding_value=torch.inf)
+    mask = torch.ne(x[:,:,1], torch.inf)
+    x[~mask] = 0
+    return x, mask
+
 class DeepIce(GNN):
     def __init__(
         self,
-        dim=384,
-        dim_base=128,
-        depth=12,
-        use_checkpoint=False,
-        head_size=32,
-        depth_rel=4,
-        n_rel=1,
-        **kwargs,
+        dim: int = 384,
+        dim_base: int = 128,
+        depth: int = 12,
+        head_size: int = 32,
+        depth_rel: int = 4,
+        n_rel: int = 1,
+        max_pulses: int = 768,
     ):
         super().__init__(dim_base, dim)
         self.fourier_ext = FourierEncoder(dim_base, dim)
@@ -45,29 +52,18 @@ class DeepIce(GNN):
                 for i in range(depth)
             ]
         )
-        self.use_checkpoint = use_checkpoint
         self.n_rel = n_rel
         
-        
-
     @torch.jit.ignore
     def no_weight_decay(self):
         return {"cls_token"}
-    
-    def _convert_data(self, data: Data):
-        """Convert the input data to a tensor of shape (B, L, D)"""
-        x_list = torch.split(data.x, data.n_pulses.tolist())
-        x = torch.nn.utils.rnn.pad_sequence(x_list, batch_first=True, padding_value=torch.inf)
-        mask = torch.ne(x[:,:,1], torch.inf)
-        x[~mask] = 0
-        return x, mask
 
     def forward(self, data: Data) -> Tensor:
-        x0, mask = self._convert_data(data)
+        x0, mask = convert_data(data)
         n_pulses = data.n_pulses
         x = self.fourier_ext(x0, n_pulses)
         rel_pos_bias, rel_enc = self.rel_pos(x0)
-        B, _ = mask.shape
+        batch_size = mask.shape[0]
         attn_mask = torch.zeros(mask.shape, device=mask.device)
         attn_mask[~mask] = -torch.inf
 
@@ -77,18 +73,15 @@ class DeepIce(GNN):
                 rel_pos_bias = None
 
         mask = torch.cat(
-            [torch.ones(B, 1, dtype=mask.dtype, device=mask.device), mask], 1
+            [torch.ones(batch_size, 1, dtype=mask.dtype, device=mask.device), mask], 1
         )
         attn_mask = torch.zeros(mask.shape, device=mask.device)
         attn_mask[~mask] = -torch.inf
-        cls_token = self.cls_token.weight.unsqueeze(0).expand(B, -1, -1)
+        cls_token = self.cls_token.weight.unsqueeze(0).expand(batch_size, -1, -1)
         x = torch.cat([cls_token, x], 1)
 
         for blk in self.blocks:
-            if self.use_checkpoint:
-                x = checkpoint.checkpoint(blk, x, None, attn_mask)
-            else:
-                x = blk(x, None, attn_mask)
+            x = blk(x, None, attn_mask)
 
         return x[:, 0]
     
@@ -96,16 +89,15 @@ class DeepIce(GNN):
 class DeepIceWithDynEdge(GNN):
     def __init__(
         self,
-        dim=384,
-        dim_base=128,
-        depth=8,
-        use_checkpoint=False,
-        head_size=64,
-        knn_features=3,
-        **kwargs,
+        dim: int = 384,
+        dim_base: int = 128,
+        depth: int = 8,
+        head_size: int = 64,
+        features_subset: List[int] = [0, 1, 2],
+        max_pulses: int = 768,
     ):
         super().__init__(dim_base, dim)
-        self.knn_features = knn_features
+        self.features_subset = features_subset
         self.fourier_ext = FourierEncoder(dim_base, dim // 2, scaled=True)
         self.rel_pos = SpacetimeEncoder(head_size)
         self.sandwich = nn.ModuleList(
@@ -129,7 +121,6 @@ class DeepIceWithDynEdge(GNN):
                 for i in range(depth)
             ]
         )
-        self.use_checkpoint = use_checkpoint
         self.dyn_edge = DynEdge(
             9,
             post_processing_layer_sizes=[336, dim // 2],
@@ -142,7 +133,7 @@ class DeepIceWithDynEdge(GNN):
         return {"cls_token"}
 
     def forward(self, data: Data) -> Tensor:
-        mask = data.mask
+        x0, mask = convert_data(data)
         graph_feature = torch.concat(
             [
                 data.pos[mask],
@@ -159,7 +150,7 @@ class DeepIceWithDynEdge(GNN):
         rel_pos_bias, rel_enc = self.rel_pos(data, Lmax)
         mask = mask[:, :Lmax]
         batch_index = mask.nonzero()[:, 0]
-        edge_index = knn_graph(x=graph_feature[:, :self.knn_features], k=8, batch=batch_index).to(
+        edge_index = knn_graph(x=graph_feature[:, self.features_subset], k=8, batch=batch_index).to(
             mask.device
         )
         graph_feature = self.dyn_edge(
@@ -185,9 +176,6 @@ class DeepIceWithDynEdge(GNN):
         x = torch.cat([cls_token, x], 1)
 
         for blk in self.blocks:
-            if self.use_checkpoint:
-                x = checkpoint.checkpoint(blk, x, None, attn_mask)
-            else:
-                x = blk(x, None, attn_mask)
+            x = blk(x, None, attn_mask)
 
         return x[:, 0]
