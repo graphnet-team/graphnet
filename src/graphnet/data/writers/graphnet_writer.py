@@ -5,20 +5,16 @@ a deep-learning friendly file format.
 """
 
 import os
-from typing import List, Union, Dict, Any, OrderedDict
+from typing import Dict, List
 from abc import abstractmethod, ABC
 
 from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import Logger
-from graphnet.data.sqlite.sqlite_utilities import (
-    create_table,
-    create_table_and_save_to_sql,
-)
 
 import pandas as pd
 
 
-class GraphNeTFileSaveMethod(Logger, ABC):
+class GraphNeTWriter(Logger, ABC):
     """Generic base class for saving interim data format in `DataConverter`.
 
     Classes inheriting from `GraphNeTFileSaveMethod` must implement the
@@ -43,6 +39,21 @@ class GraphNeTFileSaveMethod(Logger, ABC):
             output_file_path: output file path.
             n_events: Number of events container in `data`.
         """
+        raise NotImplementedError
+
+    @abstractmethod
+    def merge_files(
+        self,
+        files: List[str],
+        output_dir: str,
+    ) -> None:
+        """Merge smaller files.
+
+        Args:
+            files: Files to be merged.
+            output_dir: The directory to store the merged files in.
+        """
+        raise NotImplementedError
 
     @final
     def __call__(
@@ -76,49 +87,3 @@ class GraphNeTFileSaveMethod(Logger, ABC):
     def file_extension(self) -> str:
         """Return file extension used to store the data."""
         return self._file_extension  # type: ignore
-
-
-class SQLiteSaveMethod(GraphNeTFileSaveMethod):
-    """A method for saving GraphNeT's interim dataformat to SQLite."""
-
-    _file_extension = ".db"
-
-    def _save_file(
-        self,
-        data: Dict[str, pd.DataFrame],
-        output_file_path: str,
-        n_events: int,
-    ) -> None:
-        """Save data to SQLite database."""
-        # Check(s)
-        if os.path.exists(output_file_path):
-            self.warning(
-                f"Output file {output_file_path} already exists. Appending."
-            )
-
-        # Concatenate data
-        if len(data) == 0:
-            self.warning(
-                "No data was extracted from the processed I3 file(s). "
-                f"No data saved to {output_file_path}"
-            )
-            return
-
-        saved_any = False
-        # Save each dataframe to SQLite database
-        self.debug(f"Saving to {output_file_path}")
-        for table, df in data.items():
-            if len(df) > 0:
-                create_table_and_save_to_sql(
-                    df,
-                    table,
-                    output_file_path,
-                    default_type="FLOAT",
-                    integer_primary_key=len(df) <= n_events,
-                )
-                saved_any = True
-
-        if saved_any:
-            self.debug("- Done saving")
-        else:
-            self.warning(f"No data saved to {output_file_path}")

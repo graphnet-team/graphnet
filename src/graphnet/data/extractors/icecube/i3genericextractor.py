@@ -2,12 +2,12 @@
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
-from graphnet.data.extractors.i3extractor import I3Extractor
-from graphnet.data.extractors.utilities.types import (
+from graphnet.data.extractors.icecube import I3Extractor
+from graphnet.data.extractors.icecube.utilities.types import (
     cast_object_to_pure_python,
     cast_pulse_series_to_pure_python,
 )
-from graphnet.data.extractors.utilities.collections import (
+from graphnet.data.extractors.icecube.utilities.collections import (
     transpose_list_of_dicts,
     serialise,
     flatten_nested_dictionary,

@@ -5,7 +5,7 @@ import os
 import numpy as np
 
 import graphnet.constants
-from graphnet.data.extractors import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCube86,
     I3TruthExtractor,
     I3GenericExtractor,
@@ -40,9 +40,9 @@ def test_i3genericextractor(test_data_dir: str = TEST_DATA_DIR) -> None:
     i3_file = os.path.join(test_data_dir, FILE_NAME) + ".i3.gz"
     gcd_file = os.path.join(test_data_dir, GCD_FILE)
 
-    generic_extractor.set_files(i3_file, gcd_file)
-    truth_extractor.set_files(i3_file, gcd_file)
-    feature_extractor.set_files(i3_file, gcd_file)
+    generic_extractor.set_gcd(i3_file, gcd_file)
+    truth_extractor.set_gcd(i3_file, gcd_file)
+    feature_extractor.set_gcd(i3_file, gcd_file)
 
     i3_file_io = dataio.I3File(i3_file, "r")
     ix_test = 5

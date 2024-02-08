@@ -3,7 +3,7 @@
 import os
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
-from graphnet.data.extractors import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCubeUpgrade,
     I3FeatureExtractorIceCube86,
     I3RetroExtractor,

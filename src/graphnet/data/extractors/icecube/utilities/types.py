@@ -4,11 +4,11 @@ from functools import wraps
 import inspect
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from graphnet.data.extractors.utilities.collections import (
+from graphnet.data.extractors.icecube.utilities.collections import (
     transpose_list_of_dicts,
     flatten_nested_dictionary,
 )
-from graphnet.data.extractors.utilities.frames import (
+from graphnet.data.extractors.icecube.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
 from graphnet.utilities.imports import has_icecube_package

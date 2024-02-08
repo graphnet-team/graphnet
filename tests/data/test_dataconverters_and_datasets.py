@@ -11,7 +11,7 @@ import graphnet.constants
 from graphnet.constants import TEST_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.dataconverter import DataConverter
-from graphnet.data.extractors import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCube86,
     I3TruthExtractor,
     I3RetroExtractor,

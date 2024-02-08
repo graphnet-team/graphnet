@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING, Any, Dict
 
-from graphnet.data.extractors.i3extractor import I3Extractor
+from graphnet.data.extractors.icecube import I3Extractor
 
 if TYPE_CHECKING:
     from icecube import icetray  # pyright: reportMissingImports=false

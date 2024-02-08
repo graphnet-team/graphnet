@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from torch_geometric.data import Data, Batch
 
-from graphnet.data.extractors import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractor,
     I3FeatureExtractorIceCubeUpgrade,
 )
@@ -70,7 +70,7 @@ class GraphNeTI3Module(Logger):
             self._i3_extractors = [pulsemap_extractor]
 
         for i3_extractor in self._i3_extractors:
-            i3_extractor.set_files(i3_file="", gcd_file=self._gcd_file)
+            i3_extractor.set_gcd(i3_file="", gcd_file=self._gcd_file)
 
     @abstractmethod
     def __call__(self, frame: I3Frame) -> bool:
