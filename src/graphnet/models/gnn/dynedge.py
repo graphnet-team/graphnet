@@ -309,19 +309,20 @@ class DynEdge(GNN):
         # Post-processing
         x = self._post_processing(x)
 
-        # (Optional) Global pooling
-        if self._global_pooling_schemes:
-            x = self._global_pooling(x, batch=batch)
-            if self._add_global_variables_after_pooling:
-                x = torch.cat(
-                    [
-                        x,
-                        global_variables,
-                    ],
-                    dim=1,
-                )
+        if not self._icemix_encoder:
+            # (Optional) Global pooling
+            if self._global_pooling_schemes:
+                x = self._global_pooling(x, batch=batch)
+                if self._add_global_variables_after_pooling:
+                    x = torch.cat(
+                        [
+                            x,
+                            global_variables,
+                        ],
+                        dim=1,
+                    )
 
-        # Read-out
-        x = self._readout(x)
+            # Read-out
+            x = self._readout(x)
 
         return x

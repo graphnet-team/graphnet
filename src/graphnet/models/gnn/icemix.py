@@ -1,13 +1,19 @@
+"""Implementation of IceMix architecture used in.
+
+                    IceCube - Neutrinos in Deep Ice
+Reconstruct the direction of neutrinos from the Universe to the South Pole
+
+Kaggle competition.
+
+Solution by DrHB: https://github.com/DrHB/icecube-2nd-place
+"""
 import torch
 import torch.nn as nn
-import torch.utils.checkpoint as checkpoint
 from typing import List
 
 from graphnet.models.components.layers import FourierEncoder, SpacetimeEncoder, Block_rel, Block
 from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.gnn.gnn import GNN
-
-from timm.models.layers import trunc_normal_
 
 from torch_geometric.nn.pool import knn_graph
 from torch_geometric.utils import to_dense_batch
@@ -23,6 +29,7 @@ def convert_data(data: Data):
     return x, mask
 
 class DeepIce(GNN):
+    """DeepIce model."""
     def __init__(
         self,
         dim: int = 384,
@@ -31,8 +38,17 @@ class DeepIce(GNN):
         head_size: int = 32,
         depth_rel: int = 4,
         n_rel: int = 1,
-        max_pulses: int = 768,
     ):
+        """Construct `DeepIce`.
+
+        Args:
+            dim: The latent feature dimension.
+            dim_base: The base feature dimension.
+            depth: The depth of the transformer.
+            head_size: The size of the attention heads.
+            depth_rel: The depth of the relative transformer.
+            n_rel: The number of relative transformer layers to use.
+        """
         super().__init__(dim_base, dim)
         self.fourier_ext = FourierEncoder(dim_base, dim)
         self.rel_pos = SpacetimeEncoder(head_size)
@@ -59,10 +75,11 @@ class DeepIce(GNN):
         return {"cls_token"}
 
     def forward(self, data: Data) -> Tensor:
+        """Apply learnable forward pass."""
         x0, mask = convert_data(data)
         n_pulses = data.n_pulses
         x = self.fourier_ext(x0, n_pulses)
-        rel_pos_bias, rel_enc = self.rel_pos(x0)
+        rel_pos_bias = self.rel_pos(x0)
         batch_size = mask.shape[0]
         attn_mask = torch.zeros(mask.shape, device=mask.device)
         attn_mask[~mask] = -torch.inf
@@ -87,6 +104,7 @@ class DeepIce(GNN):
     
     
 class DeepIceWithDynEdge(GNN):
+    """DeepIce model with DynEdge."""	
     def __init__(
         self,
         dim: int = 384,
@@ -94,8 +112,17 @@ class DeepIceWithDynEdge(GNN):
         depth: int = 8,
         head_size: int = 64,
         features_subset: List[int] = [0, 1, 2],
-        max_pulses: int = 768,
     ):
+        """Construct `DeepIceWithDynEdge`.
+        
+        Args:
+            dim: The latent feature dimension.
+            dim_base: The base feature dimension.
+            depth: The depth of the transformer.
+            head_size: The size of the attention heads.
+            features_subset: The subset of features to 
+                use for the edge construction.
+        """
         super().__init__(dim_base, dim)
         self.features_subset = features_subset
         self.fourier_ext = FourierEncoder(dim_base, dim // 2, scaled=True)
@@ -125,7 +152,8 @@ class DeepIceWithDynEdge(GNN):
             9,
             post_processing_layer_sizes=[336, dim // 2],
             dynedge_layer_sizes=[(128, 256), (336, 256), (336, 256), (336, 256)],
-            global_pooling_schemes=None
+            global_pooling_schemes=None,
+            icemix_encoder=True,
         )
         
     @torch.jit.ignore
@@ -133,46 +161,35 @@ class DeepIceWithDynEdge(GNN):
         return {"cls_token"}
 
     def forward(self, data: Data) -> Tensor:
+        """Apply learnable forward pass."""
         x0, mask = convert_data(data)
-        graph_feature = torch.concat(
-            [
-                data.pos[mask],
-                data.time[mask].view(-1, 1),
-                data.auxiliary[mask].view(-1, 1),
-                data.qe[mask].view(-1, 1),
-                data.charge[mask].view(-1, 1),
-                data.ice_properties[mask],
-            ],
-            dim=1,
-        )
-        Lmax = mask.sum(-1).max()
-        x = self.fourier_ext(data, Lmax)
-        rel_pos_bias, rel_enc = self.rel_pos(data, Lmax)
-        mask = mask[:, :Lmax]
-        batch_index = mask.nonzero()[:, 0]
-        edge_index = knn_graph(x=graph_feature[:, self.features_subset], k=8, batch=batch_index).to(
-            mask.device
-        )
-        graph_feature = self.dyn_edge(
-            graph_feature, edge_index, batch_index, data.n_pulses
-        )
-        graph_feature, _ = to_dense_batch(graph_feature, batch_index)
+        n_pulses = data.n_pulses
+        for i in range(3, 7):
+            data.x[:, i] = torch.squeeze(data.x[:, i].view(-1, 1))
+            
+        x = self.fourier_ext(x0, n_pulses)
+        rel_pos_bias = self.rel_pos(x0)
+        #edge_index = knn_graph(x=graph_feature[:, self.features_subset], k=8, batch=batch).to(
+        #    mask.device
+        #)
+        graph = self.dyn_edge(data)
+        graph, _ = to_dense_batch(graph, data.batch)
 
-        B, _ = mask.shape
+        batch_size = mask.shape[0]
         attn_mask = torch.zeros(mask.shape, device=mask.device)
         attn_mask[~mask] = -torch.inf
-        x = torch.cat([x, graph_feature], 2)
+        x = torch.cat([x, graph], 2)
 
         for blk in self.sandwich:
             x = blk(x, attn_mask, rel_pos_bias)
-            if self.knn_features == 3:
+            if len(self.features_subset) == 3:
                 rel_pos_bias = None
         mask = torch.cat(
-            [torch.ones(B, 1, dtype=mask.dtype, device=mask.device), mask], 1
+            [torch.ones(batch_size, 1, dtype=mask.dtype, device=mask.device), mask], 1
         )
         attn_mask = torch.zeros(mask.shape, device=mask.device)
         attn_mask[~mask] = -torch.inf
-        cls_token = self.cls_token.weight.unsqueeze(0).expand(B, -1, -1)
+        cls_token = self.cls_token.weight.unsqueeze(0).expand(batch_size, -1, -1)
         x = torch.cat([cls_token, x], 1)
 
         for blk in self.blocks:

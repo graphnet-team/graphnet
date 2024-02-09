@@ -387,7 +387,7 @@ class SpacetimeEncoder(LightningModule):
         four_distance = torch.sign(spacetime_interval) * torch.sqrt(torch.abs(spacetime_interval))
         sin_emb = self.sin_emb(1024 * four_distance.clip(-4, 4))
         rel_attn = self.projection(sin_emb)
-        return rel_attn, sin_emb
+        return rel_attn
 
 # BEiTv2 block
 class Block_rel(LightningModule):
