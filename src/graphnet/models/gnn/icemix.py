@@ -169,9 +169,6 @@ class DeepIceWithDynEdge(GNN):
             
         x = self.fourier_ext(x0, n_pulses)
         rel_pos_bias = self.rel_pos(x0)
-        #edge_index = knn_graph(x=graph_feature[:, self.features_subset], k=8, batch=batch).to(
-        #    mask.device
-        #)
         graph = self.dyn_edge(data)
         graph, _ = to_dense_batch(graph, data.batch)
 

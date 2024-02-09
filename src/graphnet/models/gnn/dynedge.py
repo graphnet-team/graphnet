@@ -66,7 +66,8 @@ class DynEdge(GNN):
                 operations.
             icemix_encoder: Whether to use the IceCubeMix encoder. If `True`,
                 the activation function is GELU, and layer normalization is
-                applied after each linear layer. Defaults to `False`.
+                applied after each linear layer. Additionally global pooling
+                and readout layer skipped. Defaults to `False`.
         """
         # Latent feature subset for computing nearest neighbours in DynEdge.
         if features_subset is None:
@@ -222,8 +223,6 @@ class DynEdge(GNN):
         layer_sizes = [nb_latent_features] + list(self._readout_layer_sizes)
         for nb_in, nb_out in zip(layer_sizes[:-1], layer_sizes[1:]):
             readout_layers.append(torch.nn.Linear(nb_in, nb_out))
-            if self._icemix_encoder:
-                readout_layers.append(torch.nn.LayerNorm(nb_out))
             readout_layers.append(self._activation)
 
         self._readout = torch.nn.Sequential(*readout_layers)
