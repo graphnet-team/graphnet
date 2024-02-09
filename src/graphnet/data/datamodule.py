@@ -325,8 +325,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                     train_selection,
                     val_selection,
                 ) = self._infer_selections_on_single_dataset(dataset_path)
-                self._train_selection.extend(train_selection)  # type: ignore
-                self._val_selection.extend(val_selection)  # type: ignore
+                self._train_selection.append(train_selection)  # type: ignore
+                self._val_selection.append(val_selection)  # type: ignore
         else:
             # Infer selection on a single dataset
             (
