@@ -336,18 +336,18 @@ class FourierEncoder(LightningModule):
     def forward(
         self, 
         x: Tensor, 
-        n_pulses: Tensor,
+        seq_length: Tensor,
         #Lmax: Optional[int] = None
     ) -> Tensor:
         """Forward pass."""
-        length = torch.log10(n_pulses.to(dtype=x.dtype))
+        length = torch.log10(seq_length.to(dtype=x.dtype))
         x = torch.cat(
             [
                 self.sin_emb(4096 * x[:,:,:3]).flatten(-2), #pos
                 self.sin_emb(1024 * x[:,:,4]),              #charge
                 self.sin_emb(4096 * x[:,:,3]),              #time
                 self.aux_emb(x[:,:,5].long()),                     #auxiliary
-                self.sin_emb2(length).unsqueeze(1).expand(-1, max(n_pulses), -1),
+                self.sin_emb2(length).unsqueeze(1).expand(-1, max(seq_length), -1),
             ],
             -1,
         )

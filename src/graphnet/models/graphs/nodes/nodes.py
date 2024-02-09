@@ -269,10 +269,7 @@ class IceMixNodes(NodeDefinition):
 
     def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
         
-        n_pulses = x.shape[0]
-        graph = torch.zeros([n_pulses, len(self.all_features)])
-        
-        event_length = n_pulses
+        event_length = x.shape[0]
         x[:, self.feature_indexes["hlc"]] = torch.logical_not(x[:, self.feature_indexes["hlc"]])
 
         if event_length < self.max_length:
@@ -284,8 +281,9 @@ class IceMixNodes(NodeDefinition):
             ids_n = ids[auxiliary_n][: min(self.max_length, len(auxiliary_n))]
             ids_p = ids[auxiliary_p][: min(self.max_length - len(ids_n), len(auxiliary_p))]
             ids = torch.cat([ids_n, ids_p]).sort().values
-            event_length = len(ids)
+            event_length = self.max_length
             
+        graph = torch.zeros([event_length, len(self.all_features)])
         for idx, feature in enumerate(self.all_features[:7]):
             graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
 

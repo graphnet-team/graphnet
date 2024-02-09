@@ -22,11 +22,12 @@ from torch import Tensor
 
 def convert_data(data: Data):
     """Convert the input data to a tensor of shape (B, L, D)"""
-    x_list = torch.split(data.x, data.n_pulses.tolist())
+    _, seq_length = torch.unique(data.batch, return_counts=True)
+    x_list = torch.split(data.x, seq_length.tolist())
     x = torch.nn.utils.rnn.pad_sequence(x_list, batch_first=True, padding_value=torch.inf)
     mask = torch.ne(x[:,:,1], torch.inf)
     x[~mask] = 0
-    return x, mask
+    return x, mask, seq_length
 
 class DeepIce(GNN):
     """DeepIce model."""
@@ -76,9 +77,8 @@ class DeepIce(GNN):
 
     def forward(self, data: Data) -> Tensor:
         """Apply learnable forward pass."""
-        x0, mask = convert_data(data)
-        n_pulses = data.n_pulses
-        x = self.fourier_ext(x0, n_pulses)
+        x0, mask, seq_length = convert_data(data)
+        x = self.fourier_ext(x0, seq_length)
         rel_pos_bias = self.rel_pos(x0)
         batch_size = mask.shape[0]
         attn_mask = torch.zeros(mask.shape, device=mask.device)
@@ -162,12 +162,11 @@ class DeepIceWithDynEdge(GNN):
 
     def forward(self, data: Data) -> Tensor:
         """Apply learnable forward pass."""
-        x0, mask = convert_data(data)
-        n_pulses = data.n_pulses
-        for i in range(3, 7):
-            data.x[:, i] = torch.squeeze(data.x[:, i].view(-1, 1))
+        x0, mask, seq_length = convert_data(data)
+        #for i in range(3, 7):
+        #    data.x[:, i] = torch.squeeze(data.x[:, i].view(-1, 1))
             
-        x = self.fourier_ext(x0, n_pulses)
+        x = self.fourier_ext(x0, seq_length)
         rel_pos_bias = self.rel_pos(x0)
         graph = self.dyn_edge(data)
         graph, _ = to_dense_batch(graph, data.batch)
