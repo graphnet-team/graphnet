@@ -5,3 +5,5 @@ intermediate file formats and reading this data.
 """
 from .extractors.icecube.utilities.i3_filters import I3Filter, I3FilterMask
 from .dataconverter import DataConverter
+from .pre_configured import I3ToParquetConverter
+from .pre_configured import I3ToSQLiteConverter

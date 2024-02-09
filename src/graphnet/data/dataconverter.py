@@ -38,6 +38,7 @@ class DataConverter(ABC, Logger):
         self,
         file_reader: Type[GraphNeTFileReader],
         save_method: Type[GraphNeTWriter],
+        outdir: str,
         extractors: Union[Type[Extractor], List[Type[Extractor]]],
         index_column: str = "event_no",
         num_workers: int = 1,
@@ -48,6 +49,7 @@ class DataConverter(ABC, Logger):
             file_reader: The method used for reading and applying `Extractors`.
             save_method: The method used to save the interim data format to
                          a graphnet supported file format.
+            outdir: The directory to save the files in.
             extractors: The `Extractor`(s) that will be applied to the input
                         files.
             index_column: Name of the event id column added to the events.
@@ -61,6 +63,7 @@ class DataConverter(ABC, Logger):
         self._num_workers = num_workers
         self._index_column = index_column
         self._index = 0
+        self._output_dir = outdir
         self._output_files: List[str] = []
 
         # Set Extractors. Will throw error if extractors are incompatible
@@ -71,20 +74,14 @@ class DataConverter(ABC, Logger):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     @final
-    def __call__(
-        self, input_dir: Union[str, List[str]], output_dir: str
-    ) -> None:
+    def __call__(self, input_dir: Union[str, List[str]]) -> None:
         """Extract data from files in `input_dir` and save to disk.
 
         Args:
             input_dir: A directory that contains the input files.
                         The directory will be searched recursively for files
                         matching the file extension.
-            output_dir: The directory to save the files to. Input folder
-                        structure is not respected.
         """
-        # Set outdir
-        self._output_dir = output_dir
         # Get the file reader to produce a list of input files
         # in the directory
         input_files = self._file_reader.find_files(path=input_dir)  # type: ignore
