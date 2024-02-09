@@ -311,7 +311,9 @@ class DataConverter(ABC, Logger):
             assert files is not None
 
         # Merge files
+        merge_path = os.path.join(self._output_dir, "merged")
+        self.info(f"Merging files to {merge_path}")
         self._save_method.merge_files(  # type:ignore
             files=files_to_merge,
-            output_dir=os.path.join(self._output_dir, "merged"),
+            output_dir=merge_path,
         )

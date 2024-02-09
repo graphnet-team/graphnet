@@ -13,7 +13,7 @@ class ParquetWriter(GraphNeTWriter):
     """Class for writing interim data format to Parquet."""
 
     # Class variables
-    file_suffix: str = ".parquet"
+    _file_extension = ".parquet"
 
     # Abstract method implementation(s)
     def _save_file(
@@ -22,13 +22,18 @@ class ParquetWriter(GraphNeTWriter):
         output_file_path: str,
         n_events: int,
     ) -> None:
-        """Save data to parquet file."""
-        # Check(s)
-        if os.path.exists(output_file_path):
-            self.warning(
-                f"Output file {output_file_path} already exists. Overwriting."
-            )
+        """Save data to parquet."""
+        raise NotImplementedError
 
-        self.debug(f"Saving to {output_file_path}")
-        awkward.to_parquet(awkward.from_iter(data), output_file_path)
-        self.debug("- Done saving")
+    def merge_files(self, files: List[str], output_dir: str) -> None:
+        """Merge parquet files.
+
+        Args:
+            files: input files for merging.
+            output_dir: directory to store merged file(s) in.
+
+        Raises:
+            NotImplementedError: _description_
+        """
+        self.error(f"{self.__class__.__name__} does not have a merge method.")
+        raise NotImplementedError
