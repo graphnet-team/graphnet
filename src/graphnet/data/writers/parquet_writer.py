@@ -33,7 +33,7 @@ class ParquetWriter(GraphNeTWriter):
             output_dir: directory to store merged file(s) in.
 
         Raises:
-            NotImplementedError: _description_
+            NotImplementedError
         """
         self.error(f"{self.__class__.__name__} does not have a merge method.")
         raise NotImplementedError
