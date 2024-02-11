@@ -19,7 +19,6 @@ from graphnet.data.extractors.icecube import (
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.dataset import ParquetDataset, SQLiteDataset
 from graphnet.data.sqlite import SQLiteDataConverter
-from graphnet.data.sqlite.sqlite_dataconverter import is_pulse_map
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.models.graphs import KNNGraph
@@ -50,17 +49,6 @@ def get_file_path(backend: str) -> str:
 
     path = os.path.join(TEST_OUTPUT_DIR, FILE_NAME + suffix)
     return path
-
-
-# Unit test(s)
-def test_is_pulsemap_check() -> None:
-    """Test behaviour of `is_pulsemap_check`."""
-    assert is_pulse_map("SplitInIcePulses") is True
-    assert is_pulse_map("SRTInIcePulses") is True
-    assert is_pulse_map("InIceDSTPulses") is True
-    assert is_pulse_map("RTTWOfflinePulses") is True
-    assert is_pulse_map("truth") is False
-    assert is_pulse_map("retro") is False
 
 
 @pytest.mark.order(1)
