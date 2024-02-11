@@ -182,11 +182,13 @@ class DataConverter(ABC, Logger):
                         dataframe_dict[extractor_name].append(df)
                     else:
                         dataframe_dict[extractor_name] = [df]
-        # Merge each list of dataframes
-        for key in dataframe_dict.keys():
-            dataframe_dict[key] = pd.concat(
-                dataframe_dict[key], axis=0
-            ).reset_index(drop=True)
+
+        # Merge each list of dataframes if wanted by writer
+        if self._save_method.expects_merged_dataframes:
+            for key in dataframe_dict.keys():
+                dataframe_dict[key] = pd.concat(
+                    dataframe_dict[key], axis=0
+                ).reset_index(drop=True)
         return dataframe_dict
 
     @final

@@ -40,6 +40,7 @@ class SQLiteWriter(GraphNeTWriter):
         """
         # Member Variables
         self._file_extension = ".db"
+        self._merge_dataframes = True
         self._max_table_size = max_table_size
         self._database_name = merged_database_name
 

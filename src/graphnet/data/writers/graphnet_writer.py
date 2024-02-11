@@ -87,3 +87,8 @@ class GraphNeTWriter(Logger, ABC):
     def file_extension(self) -> str:
         """Return file extension used to store the data."""
         return self._file_extension  # type: ignore
+
+    @property
+    def expects_merged_dataframes(self) -> bool:
+        """Return if writer expects input to be merged dataframes or not."""
+        return self._merge_dataframes  # type: ignore

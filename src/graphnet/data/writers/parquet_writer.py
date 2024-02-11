@@ -14,6 +14,7 @@ class ParquetWriter(GraphNeTWriter):
 
     # Class variables
     _file_extension = ".parquet"
+    _merge_dataframes = False
 
     # Abstract method implementation(s)
     def _save_file(
@@ -23,7 +24,18 @@ class ParquetWriter(GraphNeTWriter):
         n_events: int,
     ) -> None:
         """Save data to parquet."""
-        raise NotImplementedError
+        # Check(s)
+
+        if n_events > 0:
+            events = []
+            for k in range(n_events):
+                event = {}
+                for table in data.keys():
+                    event[table] = data[table][k].to_dict(orient="list")
+
+                events.append(event)
+
+            awkward.to_parquet(awkward.from_iter(events), output_file_path)
 
     def merge_files(self, files: List[str], output_dir: str) -> None:
         """Merge parquet files.
