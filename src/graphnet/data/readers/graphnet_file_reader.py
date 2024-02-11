@@ -26,6 +26,9 @@ class GraphNeTFileReader(Logger, ABC):
     class properties `accepted_file_extensions` and `accepted_extractors`.
     """
 
+    _accepted_file_extensions: List[str] = []
+    _accepted_extractors: List[Extractor] = []
+
     @abstractmethod
     def __call__(self, file_path: Union[str, I3FileSet]) -> List[OrderedDict]:
         """Open and apply extractors to a single file.
@@ -39,17 +42,17 @@ class GraphNeTFileReader(Logger, ABC):
     @property
     def accepted_file_extensions(self) -> List[str]:
         """Return list of accepted file extensions."""
-        return self._accepted_file_extensions  # type: ignore
+        return self._accepted_file_extensions
 
     @property
     def accepted_extractors(self) -> List[Extractor]:
         """Return list of compatible `Extractor`(s)."""
-        return self._accepted_extractors  # type: ignore
+        return self._accepted_extractors
 
     @property
     def extracor_names(self) -> List[str]:
         """Return list of table names produced by extractors."""
-        return [extractor.name for extractor in self._extractors]  # type: ignore
+        return [extractor.name for extractor in self._extractors]
 
     def find_files(
         self, path: Union[str, List[str]]
