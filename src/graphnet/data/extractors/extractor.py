@@ -1,13 +1,12 @@
 """Base I3Extractor class(es)."""
-
+from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
 
 if has_icecube_package() or TYPE_CHECKING:
-    from icecube import icetray, dataio  # pyright: reportMissingImports=false
+    from icecube import icetray  # pyright: reportMissingImports=false
 
 
 class Extractor(ABC, Logger):
