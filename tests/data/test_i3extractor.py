@@ -1,4 +1,4 @@
-"""Unit tests for I3Extractor class."""
+"""Unit tests for I3Extractor."""
 
 from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCube86,
