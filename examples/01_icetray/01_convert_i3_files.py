@@ -72,9 +72,6 @@ def main_icecube_upgrade(backend: str) -> None:
         ],
         outdir,
         workers=workers,
-        # nb_files_to_batch=10,
-        # sequential_batch_pattern="temp_{:03d}",
-        # input_file_batch_pattern="[A-Z]{1}_[0-9]{5}*.i3.zst",
         icetray_verbose=1,
     )
     converter(inputs)
