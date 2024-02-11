@@ -1,9 +1,9 @@
-
 """Class(es) implementing layers to be used in `graphnet` models."""
 
 from typing import Any, Callable, Optional, Sequence, Union, List, Tuple
 
 import torch
+import math
 from torch.functional import Tensor
 from torch_geometric.nn import EdgeConv
 from torch_geometric.nn.pool import knn_graph
@@ -17,7 +17,7 @@ from torch.nn.modules import TransformerEncoder, TransformerEncoderLayer
 from torch_geometric.utils import to_dense_batch
 from pytorch_lightning import LightningModule
 from timm.models.layers import drop_path
-import math
+
 
 class DynEdgeConv(EdgeConv, LightningModule):
     """Dynamical edge convolution layer."""
@@ -198,15 +198,14 @@ class DynTrans(EdgeConvTito, LightningModule):
         return x
 
 
-
 class DropPath(LightningModule):
     """DropPath regularization module for neural networks."""
+
     def __init__(
-        self, 
+        self,
         drop_prob: Optional[float] = None,
     ):
-        """
-        Construct `DropPath`.
+        """Construct `DropPath`.
 
         Args:
             drop_prob: Probability of dropping a path during training.
@@ -225,19 +224,17 @@ class DropPath(LightningModule):
 
 
 class Mlp(LightningModule):
-    """
-    Multi-Layer Perceptron (MLP) module.
-    """
+    """Multi-Layer Perceptron (MLP) module."""
+
     def __init__(
         self,
-        in_features: int = None,
+        in_features: int,
         hidden_features: Optional[int] = None,
         out_features: Optional[int] = None,
-        activation: Optional[nn.Module] = nn.GELU,
+        activation: nn.Module = nn.GELU,
         dropout_prob: Optional[float] = 0.0,
     ):
-        """
-        Construct `Mlp`.
+        """Construct `Mlp`.
 
         Args:
             in_features: Number of input features.
@@ -248,12 +245,11 @@ class Mlp(LightningModule):
             activation: Activation layer. Defaults to `nn.GELU`.
             dropout_prob: Dropout probability. Defaults to 0.0.
         """
-        
+        super().__init__()
         if in_features <= 0:
             raise ValueError(
                 f"in_features must be greater than 0, got in_features={in_features} instead"
             )
-        super().__init__()
         out_features = out_features or in_features
         hidden_features = hidden_features or in_features
         self.input_projection = nn.Linear(in_features, hidden_features)
@@ -269,17 +265,19 @@ class Mlp(LightningModule):
         x = self.dropout(x)
         return x
 
+
 class SinusoidalPosEmb(LightningModule):
+    """Sinusoidal positional embeddings module."""
+
     def __init__(
-        self, 
-        dim: int = 16, 
+        self,
+        dim: int = 16,
         n_freq: int = 10000,
         scaled: bool = False,
     ):
-        """
-        Construct `SinusoidalPosEmb`.
+        """Construct `SinusoidalPosEmb`.
 
-        This module generates sinusoidal positional embeddings to be 
+        This module generates sinusoidal positional embeddings to be
         added to input sequences.
 
         Args:
@@ -290,29 +288,33 @@ class SinusoidalPosEmb(LightningModule):
         super().__init__()
         if dim % 2 != 0:
             raise ValueError("dim must be even")
-        self.scale = nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
+        self.scale = (
+            nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
+        )
         self.dim = dim
-        self.n_freq = n_freq
+        self.n_freq = torch.Tensor([n_freq])
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass."""
         device = x.device
         half_dim = self.dim // 2
-        emb = math.log(self.n_freq) / half_dim
+        emb = torch.log(self.n_freq.to(device=device)) / half_dim
         emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
-        emb = x[..., None] * emb[None, ...]
-        emb = torch.cat((emb.sin(), emb.cos()), dim=-1)
+        emb = x.unsqueeze(-1) * emb.unsqueeze(0)
+        emb = torch.cat((torch.sin(emb), torch.cos(emb)), dim=-1)
         return emb * self.scale
 
+
 class FourierEncoder(LightningModule):
+    """Fourier encoder module."""
+
     def __init__(
-        self, 
-        base_dim: int = 128, 
+        self,
+        base_dim: int = 128,
         output_dim: int = 384,
         scaled: bool = False,
     ):
-        """
-        Construct `FourierEncoder`.
+        """Construct `FourierEncoder`.
 
         This module incorporates sinusoidal positional embeddings and auxiliary embeddings
         to process input sequences and produce meaningful representations.
@@ -334,20 +336,21 @@ class FourierEncoder(LightningModule):
         )
 
     def forward(
-        self, 
-        x: Tensor, 
+        self,
+        x: Tensor,
         seq_length: Tensor,
-        #Lmax: Optional[int] = None
     ) -> Tensor:
         """Forward pass."""
         length = torch.log10(seq_length.to(dtype=x.dtype))
         x = torch.cat(
             [
-                self.sin_emb(4096 * x[:,:,:3]).flatten(-2), #pos
-                self.sin_emb(1024 * x[:,:,4]),              #charge
-                self.sin_emb(4096 * x[:,:,3]),              #time
-                self.aux_emb(x[:,:,5].long()),                     #auxiliary
-                self.sin_emb2(length).unsqueeze(1).expand(-1, max(seq_length), -1),
+                self.sin_emb(4096 * x[:, :, :3]).flatten(-2),  # pos
+                self.sin_emb(1024 * x[:, :, 4]),  # charge
+                self.sin_emb(4096 * x[:, :, 3]),  # time
+                self.aux_emb(x[:, :, 5].long()),  # auxiliary
+                self.sin_emb2(length)
+                .unsqueeze(1)
+                .expand(-1, max(seq_length), -1),
             ],
             -1,
         )
@@ -356,12 +359,13 @@ class FourierEncoder(LightningModule):
 
 
 class SpacetimeEncoder(LightningModule):
+    """Spacetime encoder module."""
+
     def __init__(
-        self, 
+        self,
         base_dim: int = 32,
     ):
-        """
-        Construct `SpacetimeEncoder`.
+        """Construct `SpacetimeEncoder`.
 
         This module calculates space-time interval between each pair of events and
         generates sinusoidal positional embeddings to be added to input sequences.
@@ -376,30 +380,32 @@ class SpacetimeEncoder(LightningModule):
     def forward(
         self,
         x: Tensor,
-        #Lmax: Optional[int] = None,
+        # Lmax: Optional[int] = None,
     ) -> Tensor:
         """Forward pass."""
-        pos = x[:,:,:3]
-        time = x[:,:,3]
-        spacetime_interval = (pos[:, :, None] - pos[:, None, :]).pow(2).sum(-1) - (
-            (time[:, :, None] - time[:, None, :]) * (3e4 / 500 * 3e-1)
-        ).pow(2)
-        four_distance = torch.sign(spacetime_interval) * torch.sqrt(torch.abs(spacetime_interval))
+        pos = x[:, :, :3]
+        time = x[:, :, 3]
+        spacetime_interval = (pos[:, :, None] - pos[:, None, :]).pow(2).sum(
+            -1
+        ) - ((time[:, :, None] - time[:, None, :]) * (3e4 / 500 * 3e-1)).pow(2)
+        four_distance = torch.sign(spacetime_interval) * torch.sqrt(
+            torch.abs(spacetime_interval)
+        )
         sin_emb = self.sin_emb(1024 * four_distance.clip(-4, 4))
         rel_attn = self.projection(sin_emb)
         return rel_attn
 
-# BEiTv2 block
+
 class Block_rel(LightningModule):
-    """Implementation of BEiTv2 Block.
-    """
+    """Implementation of BEiTv2 Block."""
+
     def __init__(
         self,
-        dim: int = None,
-        num_heads: int = None,
+        dim: int,
+        num_heads: int,
         mlp_ratio: float = 4.0,
         qkv_bias: bool = False,
-        qk_scale: float = None,
+        qk_scale: Optional[float] = None,
         dropout: float = 0.0,
         attn_drop: float = 0.0,
         drop_path: float = 0.0,
@@ -407,37 +413,42 @@ class Block_rel(LightningModule):
         activation: nn.Module = nn.GELU,
         norm_layer: nn.Module = nn.LayerNorm,
         attn_head_dim: int = None,
-    ):     
-        """
-        Construct 'Block_rel'.
+    ):
+        """Construct 'Block_rel'.
 
         Args:
             dim: Dimension of the input tensor.
             num_heads: Number of attention heads to use in the `Attention_rel` layer.
             mlp_ratio: Ratio of the hidden size of the feedforward network to the
                 input size in the `Mlp` layer.
-            qkv_bias: Whether or not to include bias terms in the query, key, and 
+            qkv_bias: Whether or not to include bias terms in the query, key, and
                 value matrices in the `Attention_rel` layer.
             qk_scale: Scaling factor for the dot product of the query and key matrices
                 in the `Attention_rel` layer.
             dropout: Dropout probability to use in the `Mlp` layer.
-            attn_dropt: Dropout probability to use in the `Attention_rel` layer.
-            drop_path: Probability of applying drop path regularization to the output 
+            attn_drop: Dropout probability to use in the `Attention_rel` layer.
+            drop_path: Probability of applying drop path regularization to the output
                 of the layer.
-            init_values: Initial value to use for the `gamma_1` and `gamma_2` 
+            init_values: Initial value to use for the `gamma_1` and `gamma_2`
                 parameters if not `None`.
-            act_layer: Activation function to use in the `Mlp` layer.
+            activation: Activation function to use in the `Mlp` layer.
             norm_layer: Normalization layer to use.
-            attn_head_dim: Dimension of the attention head outputs in the 
-                `Attention_rel` layer.   
+            attn_head_dim: Dimension of the attention head outputs in the
+                `Attention_rel` layer.
         """
-        
         super().__init__()
         self.norm1 = norm_layer(dim)
         self.attn = Attention_rel(
-            dim, num_heads, attn_drop=attn_drop, qkv_bias=qkv_bias, qk_scale=qk_scale, attn_head_dim=attn_head_dim
+            dim,
+            num_heads,
+            attn_drop=attn_drop,
+            qkv_bias=qkv_bias,
+            qk_scale=qk_scale,
+            attn_head_dim=attn_head_dim,
         )
-        self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
+        self.drop_path = (
+            DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
+        )
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
         self.mlp = Mlp(
@@ -457,7 +468,13 @@ class Block_rel(LightningModule):
         else:
             self.gamma_1, self.gamma_2 = None, None
 
-    def forward(self, x: Tensor, key_padding_mask=None, rel_pos_bias=None, kv=None):
+    def forward(
+        self,
+        x: Tensor,
+        key_padding_mask: Optional[Tensor] = None,
+        rel_pos_bias: Optional[Tensor] = None,
+        kv: Tensor = None,
+    ) -> Tensor:
         """Forward pass."""
         if self.gamma_1 is None:
             xn = self.norm1(x)
@@ -490,7 +507,10 @@ class Block_rel(LightningModule):
             x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
         return x
 
+
 class Attention_rel(LightningModule):
+    """Attention mechanism with relative position bias."""
+
     def __init__(
         self,
         dim: int,
@@ -501,15 +521,16 @@ class Attention_rel(LightningModule):
         proj_drop: float = 0.0,
         attn_head_dim: int = None,
     ):
-        """
+        """Construct 'Attention_rel'.
+
         Args:
             dim: Dimension of the input tensor.
             num_heads: the number of attention heads to use (default: 8)
             qkv_bias: whether to add bias to the query, key, and value
                 projections. Defaults to False.
-            qk_scale: a scaling factor that multiplies the dot product of query 
+            qk_scale: a scaling factor that multiplies the dot product of query
                 and key vectors. Defaults to None. If None, computed as
-                :math: `\sqrt{1/head_dim}`
+                :math: `head_dim^(-1/2)`.
             attn_drop: the dropout probability for the attention weights.
                 Defaults to 0.0.
             proj_drop: the dropout probability for the output of the attention
@@ -522,7 +543,7 @@ class Attention_rel(LightningModule):
                 f"dim and num_heads must be greater than 0,"
                 f" got dim={dim} and num_heads={num_heads} instead"
             )
-        
+
         super().__init__()
         self.num_heads = num_heads
         head_dim = attn_head_dim or dim // num_heads
@@ -543,16 +564,29 @@ class Attention_rel(LightningModule):
         self.proj = nn.Linear(all_head_dim, dim)
         self.proj_drop = nn.Dropout(proj_drop)
 
-    def forward(self, q, k, v, rel_pos_bias=None, key_padding_mask=None):
+    def forward(
+        self,
+        q: Tensor,
+        k: Tensor,
+        v: Tensor,
+        rel_pos_bias: Optional[Tensor] = None,
+        key_padding_mask: Optional[Tensor] = None,
+    ) -> Tensor:
         """Forward pass."""
-        B, N, C = q.shape
+        batch_size, event_length, _ = q.shape
 
         q = linear(input=q, weight=self.proj_q.weight, bias=self.q_bias)
-        q = q.reshape(B, N, self.num_heads, -1).permute(0, 2, 1, 3)
+        q = q.reshape(batch_size, event_length, self.num_heads, -1).permute(
+            0, 2, 1, 3
+        )
         k = linear(input=k, weight=self.proj_k.weight, bias=None)
-        k = k.reshape(B, k.shape[1], self.num_heads, -1).permute(0, 2, 1, 3)
+        k = k.reshape(batch_size, k.shape[1], self.num_heads, -1).permute(
+            0, 2, 1, 3
+        )
         v = linear(input=v, weight=self.proj_v.weight, bias=self.v_bias)
-        v = v.reshape(B, v.shape[1], self.num_heads, -1).permute(0, 2, 1, 3)
+        v = v.reshape(batch_size, v.shape[1], self.num_heads, -1).permute(
+            0, 2, 1, 3
+        )
 
         q = q * self.scale
         attn = q @ k.transpose(-2, -1)
@@ -564,12 +598,15 @@ class Attention_rel(LightningModule):
                 key_padding_mask.dtype == torch.float32
                 or key_padding_mask.dtype == torch.float16
             ), "incorrect mask dtype"
-            bias = torch.min(key_padding_mask[:, None, :], key_padding_mask[:, :, None])
+            bias = torch.min(
+                key_padding_mask[:, None, :], key_padding_mask[:, :, None]
+            )
             bias[
-                torch.max(key_padding_mask[:, None, :], key_padding_mask[:, :, None])
+                torch.max(
+                    key_padding_mask[:, None, :], key_padding_mask[:, :, None]
+                )
                 < 0
             ] = 0
-            # print(bias.shape,bias.min(),bias.max())
             attn = attn + bias.unsqueeze(1)
 
         attn = attn.softmax(dim=-1)
@@ -578,16 +615,19 @@ class Attention_rel(LightningModule):
         x = (attn @ v).transpose(1, 2)
         if rel_pos_bias is not None:
             x = x + torch.einsum("bhij,bijc->bihc", attn, rel_pos_bias)
-        x = x.reshape(B, N, -1)
+        x = x.reshape(batch_size, event_length, -1)
         x = self.proj(x)
         x = self.proj_drop(x)
         return x
 
+
 class Block(LightningModule):
+    """Transformer block."""
+
     def __init__(
         self,
-        dim: int = None,
-        num_heads: int = None,
+        dim: int,
+        num_heads: int,
         mlp_ratio: float = 4.0,
         dropout: float = 0.0,
         attn_drop: float = 0.0,
@@ -596,8 +636,7 @@ class Block(LightningModule):
         activation: nn.Module = nn.GELU,
         norm_layer: nn.Module = nn.LayerNorm,
     ):
-        """
-        Construct 'Block'.
+        """Construct 'Block'.
 
         Args:
             dim: Dimension of the input tensor.
@@ -606,22 +645,22 @@ class Block(LightningModule):
             mlp_ratio: Ratio of the hidden size of the feedforward network to the
                 input size in the `Mlp` layer.
             dropout: Dropout probability to use in the `Mlp` layer.
-            attn_dropt: Dropout probability to use in the `MultiheadAttention` layer.
-            drop_path: Probability of applying drop path regularization to the output 
+            attn_drop: Dropout probability to use in the `MultiheadAttention` layer.
+            drop_path: Probability of applying drop path regularization to the output
                 of the layer.
-            init_values: Initial value to use for the `gamma_1` and `gamma_2` 
+            init_values: Initial value to use for the `gamma_1` and `gamma_2`
                 parameters if not `None`.
-            act_layer: Activation function to use in the `Mlp` layer.
+            activation: Activation function to use in the `Mlp` layer.
             norm_layer: Normalization layer to use.
-            attn_head_dim: Dimension of the attention head outputs in the 
-                `MultiheadAttention` layer.   
-        """     
+        """
         super().__init__()
         self.norm1 = norm_layer(dim)
         self.attn = nn.MultiheadAttention(
             dim, num_heads, dropout=attn_drop, batch_first=True
         )
-        self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
+        self.drop_path = (
+            DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
+        )
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
         self.mlp = Mlp(
@@ -641,7 +680,12 @@ class Block(LightningModule):
         else:
             self.gamma_1, self.gamma_2 = None, None
 
-    def forward(self, x, attn_mask=None, key_padding_mask=None):
+    def forward(
+        self,
+        x: Tensor,
+        attn_mask: Optional[Tensor] = None,
+        key_padding_mask: Optional[Tensor] = None,
+    ) -> Tensor:
         """Forward pass."""
         if self.gamma_1 is None:
             xn = self.norm1(x)
@@ -670,4 +714,4 @@ class Block(LightningModule):
                 )[0]
             )
             x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
-        return x  
+        return x

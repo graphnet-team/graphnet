@@ -17,6 +17,7 @@ GLOBAL_POOLINGS = {
     "mean": scatter_mean,
 }
 
+
 class DynEdge(GNN):
     """DynEdge (dynamical edge convolutional) model."""
 
@@ -34,6 +35,7 @@ class DynEdge(GNN):
         icemix_encoder: bool = False,
     ):
         """Construct `DynEdge`.
+
         Args:
             nb_inputs: Number of input features on each node.
             nb_neighbours: Number of neighbours to used in the k-nearest
@@ -98,7 +100,9 @@ class DynEdge(GNN):
         assert len(dynedge_layer_sizes)
         assert all(isinstance(sizes, tuple) for sizes in dynedge_layer_sizes)
         assert all(len(sizes) > 0 for sizes in dynedge_layer_sizes)
-        assert all(all(size > 0 for size in sizes) for sizes in dynedge_layer_sizes)
+        assert all(
+            all(size > 0 for size in sizes) for sizes in dynedge_layer_sizes
+        )
 
         self._dynedge_layer_sizes = dynedge_layer_sizes
 
@@ -146,7 +150,9 @@ class DynEdge(GNN):
                 "No global pooling schemes were request, so cannot add global"
                 " variables after pooling."
             )
-        self._add_global_variables_after_pooling = add_global_variables_after_pooling
+        self._add_global_variables_after_pooling = (
+            add_global_variables_after_pooling
+        )
 
         # Base class constructor
         super().__init__(nb_inputs, self._readout_layer_sizes[-1])
@@ -198,11 +204,14 @@ class DynEdge(GNN):
 
         # Post-processing operations
         nb_latent_features = (
-            sum(sizes[-1] for sizes in self._dynedge_layer_sizes) + nb_input_features
+            sum(sizes[-1] for sizes in self._dynedge_layer_sizes)
+            + nb_input_features
         )
 
         post_processing_layers = []
-        layer_sizes = [nb_latent_features] + list(self._post_processing_layer_sizes)
+        layer_sizes = [nb_latent_features] + list(
+            self._post_processing_layer_sizes
+        )
         for nb_in, nb_out in zip(layer_sizes[:-1], layer_sizes[1:]):
             post_processing_layers.append(torch.nn.Linear(nb_in, nb_out))
             if self._icemix_encoder:
@@ -213,7 +222,9 @@ class DynEdge(GNN):
 
         # Read-out operations
         nb_poolings = (
-            len(self._global_pooling_schemes) if self._global_pooling_schemes else 1
+            len(self._global_pooling_schemes)
+            if self._global_pooling_schemes
+            else 1
         )
         nb_latent_features = nb_out * nb_poolings
         if self._add_global_variables_after_pooling:
@@ -290,7 +301,8 @@ class DynEdge(GNN):
             ).type(torch.float)
 
             global_variables_distributed = torch.sum(
-                distribute.unsqueeze(dim=2) * global_variables.unsqueeze(dim=0),
+                distribute.unsqueeze(dim=2)
+                * global_variables.unsqueeze(dim=0),
                 dim=1,
             )
 

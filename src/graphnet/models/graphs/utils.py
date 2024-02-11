@@ -165,17 +165,18 @@ def cluster_summarize_with_percentiles(
     return array
 
 
-def ice_transparency(datum: int = 1950):
-    """Calculate the normalized scattering and absorption lengths
-    of ice as a function of depth.
+def ice_transparency(datum: int = 1950) -> Tuple[interp1d, interp1d]:
+    """Calculate the normalized scattering and absorption lengths.
+
+    Values are calculated for iceCube ice as a function of depth.
 
     Args:
         datum: The datum depth in meters.
                Default to 1950.
 
     Returns:
-        f_scattering: Function that takes a normalized depth 
-                      and returns the corresponding normalized 
+        f_scattering: Function that takes a normalized depth
+                      and returns the corresponding normalized
                       scattering length.
         f_absorption: Function that takes a normalized depth
                       and returns the corresponding normalized
@@ -184,13 +185,13 @@ def ice_transparency(datum: int = 1950):
     # Data from page 31 of https://arxiv.org/pdf/1301.5361.pdf
     # Datum is from footnote 8 of page 29
     df = pd.read_parquet(
-            os.path.join(DATA_DIR, "ice_properties/ice_transparency.parquet"), 
-            )
+        os.path.join(DATA_DIR, "ice_properties/ice_transparency.parquet"),
+    )
     df["z"] = df["depth"] - datum
     df["z_norm"] = df["z"] / 500
-    df[["scattering_len_norm", "absorption_len_norm"]] = RobustScaler().fit_transform(
-        df[["scattering_len", "absorption_len"]]
-    )
+    df[
+        ["scattering_len_norm", "absorption_len_norm"]
+    ] = RobustScaler().fit_transform(df[["scattering_len", "absorption_len"]])
 
     f_scattering = interp1d(df["z_norm"], df["scattering_len_norm"])
     f_absorption = interp1d(df["z_norm"], df["absorption_len_norm"])
