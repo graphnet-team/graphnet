@@ -150,9 +150,10 @@ class DataConverter(ABC, Logger):
         """Convert input file path to an output file name."""
         if isinstance(input_file_path, I3FileSet):
             input_file_path = input_file_path.i3_file
-        path_without_extension = os.path.splitext(input_file_path)[0]
-        base_file_name = path_without_extension.split("/")[-1]
-        return base_file_name  # type: ignore
+        file_name = os.path.basename(input_file_path)
+        index_of_dot = file_name.index(".")
+        file_name_without_extension = file_name[:index_of_dot]
+        return file_name_without_extension  # type: ignore
 
     @final
     def _assign_event_no(

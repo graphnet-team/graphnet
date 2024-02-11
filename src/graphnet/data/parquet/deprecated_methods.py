@@ -21,7 +21,7 @@ class ParquetDataConverter(I3ToParquetConverter):
         extractors: Union[Type[I3Extractor], List[Type[I3Extractor]]],
         outdir: str,
         index_column: str = "event_no",
-        num_workers: int = 1,
+        workers: int = 1,
         i3_filters: Union[
             Type[I3Filter], List[Type[I3Filter]]
         ] = NullSplitI3Filter(),  # type: ignore
@@ -44,20 +44,20 @@ class ParquetDataConverter(I3ToParquetConverter):
                              Defaults to 0.
             index_column: Name of the event id column added to the events.
                           Defaults to "event_no".
-            num_workers: The number of CPUs used for parallel processing.
+            workers: The number of CPUs used for parallel processing.
                          Defaults to 1 (no multiprocessing).
             i3_filters: Instances of `I3Filter` to filter PFrames. Defaults to
                         `NullSplitI3Filter`.
         """
-        self.warning(
-            f"{self.__class__.__name__} will be deprecated in "
-            "GraphNeT 2.0. Please use I3ToParquetConverter instead."
-        )
         super().__init__(
             extractors=extractors,
-            num_workers=num_workers,
+            num_workers=workers,
             index_column=index_column,
             i3_filters=i3_filters,
             outdir=outdir,
             gcd_rescue=gcd_rescue,
+        )
+        self.warning(
+            f"{self.__class__.__name__} will be deprecated in "
+            "GraphNeT 2.0. Please use I3ToParquetConverter instead."
         )
