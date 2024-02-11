@@ -27,7 +27,7 @@ class GraphNeTFileReader(Logger, ABC):
     """
 
     @abstractmethod
-    def __call__(self, file_path: str) -> List[OrderedDict]:
+    def __call__(self, file_path: Union[str, I3FileSet]) -> List[OrderedDict]:
         """Open and apply extractors to a single file.
 
         The `output` must be a list of dictionaries, where the number of events

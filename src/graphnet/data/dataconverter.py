@@ -36,10 +36,10 @@ class DataConverter(ABC, Logger):
 
     def __init__(
         self,
-        file_reader: Type[GraphNeTFileReader],
-        save_method: Type[GraphNeTWriter],
+        file_reader: GraphNeTFileReader,
+        save_method: GraphNeTWriter,
         outdir: str,
-        extractors: Union[Type[Extractor], List[Type[Extractor]]],
+        extractors: Union[Extractor, List[Extractor]],
         index_column: str = "event_no",
         num_workers: int = 1,
     ) -> None:
@@ -68,7 +68,7 @@ class DataConverter(ABC, Logger):
 
         # Set Extractors. Will throw error if extractors are incompatible
         # with reader.
-        self._file_reader.set_extractors(extractors)
+        self._file_reader.set_extractors(extractors=extractors)
 
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
