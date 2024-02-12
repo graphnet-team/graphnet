@@ -87,9 +87,9 @@ class GraphNeTFileReader(Logger, ABC):
         Args:
             extractors: A list of `Extractor`(s) to set as member variable.
         """
-        self._validate_extractors(extractors)
         if not isinstance(extractors, list):
             extractors = [extractors]
+        self._validate_extractors(extractors)
         self._extractors = extractors
 
     @final
