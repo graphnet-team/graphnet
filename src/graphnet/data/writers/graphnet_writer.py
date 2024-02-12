@@ -5,7 +5,7 @@ a deep-learning friendly file format.
 """
 
 import os
-from typing import Dict, List
+from typing import Dict, List, Union
 from abc import abstractmethod, ABC
 
 from graphnet.utilities.decorators import final
@@ -58,7 +58,7 @@ class GraphNeTWriter(Logger, ABC):
     @final
     def __call__(
         self,
-        data: Dict[str, pd.DataFrame],
+        data: Union[Dict[str, pd.DataFrame], Dict[str, List[pd.DataFrame]]],
         file_name: str,
         output_dir: str,
         n_events: int,
