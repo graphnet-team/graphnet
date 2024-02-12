@@ -157,8 +157,8 @@ class DataConverter(ABC, Logger):
 
     @final
     def _assign_event_no(
-        self, data: List[OrderedDict[str, Any]]
-    ) -> Dict[str, pd.DataFrame]:
+        self, data: List[OrderedDict]
+    ) -> Union[Dict[str, pd.DataFrame], Dict[str, List[pd.DataFrame]]]:
 
         # Request event_no's for the entire file
         event_nos = self._request_event_nos(n_ids=len(data))

@@ -27,9 +27,7 @@ class I3Reader(GraphNeTFileReader):
     def __init__(
         self,
         gcd_rescue: str,
-        i3_filters: Union[
-            Type[I3Filter], List[Type[I3Filter]]
-        ] = NullSplitI3Filter(),  # type: ignore
+        i3_filters: Union[I3Filter, List[I3Filter]] = None,
         icetray_verbose: int = 0,
     ):
         """Initialize `I3Reader`.
@@ -52,6 +50,8 @@ class I3Reader(GraphNeTFileReader):
         if icetray_verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
 
+        if i3_filters is None:
+            i3_filters = [NullSplitI3Filter()]
         # Set Member Variables
         self._accepted_file_extensions = [".bz2", ".zst", ".gz"]
         self._accepted_extractors = [I3Extractor]
@@ -96,12 +96,6 @@ class I3Reader(GraphNeTFileReader):
             results = [extractor(frame) for extractor in self._extractors]
 
             data_dict = OrderedDict(zip(self.extracor_names, results))
-
-            # If an I3GenericExtractor is used, we want each automatically
-            # parsed key to be stored as a separate table.
-            # for extractor in self._extractors:
-            #    if isinstance(extractor, I3GenericExtractor):
-            #        data_dict.update(data_dict.pop(extractor._name))
 
             data.append(data_dict)
         return data

@@ -4,7 +4,7 @@ These methods are used to open and apply `Extractors` to experiment-specific
 file formats.
 """
 
-from typing import List, Union, OrderedDict
+from typing import List, Union, OrderedDict, Any
 from abc import abstractmethod, ABC
 import glob
 import os
@@ -27,7 +27,7 @@ class GraphNeTFileReader(Logger, ABC):
     """
 
     _accepted_file_extensions: List[str] = []
-    _accepted_extractors: List[Extractor] = []
+    _accepted_extractors: List[Any] = []
 
     @abstractmethod
     def __call__(self, file_path: Union[str, I3FileSet]) -> List[OrderedDict]:
@@ -79,13 +79,17 @@ class GraphNeTFileReader(Logger, ABC):
         return files
 
     @final
-    def set_extractors(self, extractors: List[Extractor]) -> None:
+    def set_extractors(
+        self, extractors: Union[Extractor, List[Extractor]]
+    ) -> None:
         """Set `Extractor`(s) as member variable.
 
         Args:
             extractors: A list of `Extractor`(s) to set as member variable.
         """
         self._validate_extractors(extractors)
+        if not isinstance(extractors, list):
+            extractors = [extractors]
         self._extractors = extractors
 
     @final
