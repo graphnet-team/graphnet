@@ -42,12 +42,12 @@ def main_icecube86(backend: str) -> None:
     inputs = [f"{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02"]
     outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/ic86"
 
-    converter: DataConverter = CONVERTER_CLASS[backend](
-        [
+    converter = CONVERTER_CLASS[backend](
+        extractors=[
             I3FeatureExtractorIceCube86("SRTInIcePulses"),
             I3TruthExtractor(),
         ],
-        outdir,
+        outdir=outdir,
     )
     converter(inputs)
     if backend == "sqlite":
