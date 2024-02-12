@@ -33,7 +33,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         """Create dataloaders from dataset.
 
         Args:
-            dataset_reference: A non-instantiated reference to the dataset class.
+            dataset_reference: A non-instantiated reference
+                                to the dataset class.
             dataset_args: Arguments to instantiate
                             graphnet.data.dataset.Dataset with.
             selection: (Optional) a list of event id's used for training
@@ -96,7 +97,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             self._test_selection is not None
             or len(self._test_dataloader_kwargs) > 0
         ):
-            self._test_dataset = self._create_dataset(self._test_selection)  # type: ignore
+            self._test_dataset = self._create_dataset(
+                self._test_selection  # type: ignore
+            )
         if stage == "fit" or stage == "validate":
             if self._train_selection is not None:
                 self._train_dataset = self._create_dataset(
@@ -318,7 +321,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             flat_selection = [selection]
         elif isinstance(selection[0], list):
             flat_selection = [
-                item for sublist in selection for item in sublist  # type: ignore
+                item
+                for sublist in selection
+                for item in sublist  # type: ignore
             ]
         else:
             flat_selection = selection  # type: ignore
