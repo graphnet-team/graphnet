@@ -57,7 +57,7 @@ def main_icecube86(backend: str) -> None:
     )
     converter(inputs)
     if backend == "sqlite":
-        converter.merge_files(os.path.join(outdir, "merged"))
+        converter.merge_files()
 
 
 def main_icecube_upgrade(backend: str) -> None:
@@ -85,7 +85,7 @@ def main_icecube_upgrade(backend: str) -> None:
     )
     converter(inputs)
     if backend == "sqlite":
-        converter.merge_files(os.path.join(outdir, "merged"))
+        converter.merge_files()
 
 
 if __name__ == "__main__":
