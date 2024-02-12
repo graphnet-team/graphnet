@@ -13,6 +13,7 @@ from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import Logger
 from graphnet.data.dataclasses import I3FileSet
 from graphnet.data.extractors.extractor import Extractor
+from graphnet.data.extractors.icecube import I3Extractor
 
 
 class GraphNeTFileReader(Logger, ABC):
@@ -80,7 +81,7 @@ class GraphNeTFileReader(Logger, ABC):
 
     @final
     def set_extractors(
-        self, extractors: Union[Extractor, List[Extractor]]
+        self, extractors: Union[List[Extractor], List[I3Extractor]]
     ) -> None:
         """Set `Extractor`(s) as member variable.
 
