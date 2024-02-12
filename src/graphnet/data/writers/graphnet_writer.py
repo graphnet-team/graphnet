@@ -28,7 +28,7 @@ class GraphNeTWriter(Logger, ABC):
     @abstractmethod
     def _save_file(
         self,
-        data: Dict[str, pd.DataFrame],
+        data: Union[Dict[str, pd.DataFrame], Dict[str, List[pd.DataFrame]]],
         output_file_path: str,
         n_events: int,
     ) -> None:

@@ -19,7 +19,7 @@ class ParquetWriter(GraphNeTWriter):
     # Abstract method implementation(s)
     def _save_file(
         self,
-        data: Dict[str, pd.DataFrame],
+        data: Dict[str, List[pd.DataFrame]],
         output_file_path: str,
         n_events: int,
     ) -> None:

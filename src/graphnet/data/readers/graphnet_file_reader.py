@@ -94,7 +94,9 @@ class GraphNeTFileReader(Logger, ABC):
         self._extractors = extractors
 
     @final
-    def _validate_extractors(self, extractors: List[Extractor]) -> None:
+    def _validate_extractors(
+        self, extractors: Union[List[Extractor], List[I3Extractor]]
+    ) -> None:
         for extractor in extractors:
             try:
                 assert isinstance(extractor, tuple(self.accepted_extractors))  # type: ignore
