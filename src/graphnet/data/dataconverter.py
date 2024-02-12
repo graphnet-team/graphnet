@@ -132,6 +132,8 @@ class DataConverter(ABC, Logger):
         """
         # Read and apply extractors
         data: List[OrderedDict] = self._file_reader(file_path=file_path)
+
+        # Count number of events
         n_events = len(data)
 
         # Assign event_no's to each event in data and transform to pd.DataFrame
