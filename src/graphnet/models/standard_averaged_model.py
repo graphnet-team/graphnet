@@ -6,7 +6,11 @@ import torch
 from torch import Tensor
 from torch.optim import Adam
 from torch.optim.optimizer import Optimizer
-from torch.optim.swa_utils import AveragedModel, update_bn, get_ema_multi_avg_fn
+from torch.optim.swa_utils import (
+    AveragedModel,
+    update_bn,
+    get_ema_multi_avg_fn,
+)
 from torch_geometric.data import Data
 
 from graphnet.models import StandardModel
@@ -16,10 +20,7 @@ from graphnet.models.task import Task
 
 
 class StandardAveragedModel(StandardModel):
-    """Class for SWA and EMA models in graphnet.
-
-    This class redefines the methods to use the 
-    """
+    """Class for SWA and EMA models in graphnet."""
 
     def __init__(
         self,
@@ -38,30 +39,32 @@ class StandardAveragedModel(StandardModel):
         """Construct `StandardAverageModel`."""
         # Base class constructor
         super().__init__(
-                graph_definition=graph_definition,
-                gnn=gnn,
-                tasks=tasks,
-                optimizer_class=optimizer_class,
-                optimizer_kwargs=optimizer_kwargs,
-                scheduler_class=scheduler_class,
-                scheduler_kwargs=scheduler_kwargs,
-                scheduler_config=scheduler_config,
-            )
-        
+            graph_definition=graph_definition,
+            gnn=gnn,
+            tasks=tasks,
+            optimizer_class=optimizer_class,
+            optimizer_kwargs=optimizer_kwargs,
+            scheduler_class=scheduler_class,
+            scheduler_kwargs=scheduler_kwargs,
+            scheduler_config=scheduler_config,
+        )
+
         averaged_model_kwargs = {
             "device": self.device,
         }
-        
+
         if ema_decay is not None:
-            averaged_model_kwargs["multi_avg_fn"] = get_ema_multi_avg_fn(ema_decay)
-            
+            averaged_model_kwargs["multi_avg_fn"] = get_ema_multi_avg_fn(
+                ema_decay
+            )
+
         if swa_starting_epoch is None:
             self._swa_starting_epoch = 0
         else:
             self._swa_starting_epoch = swa_starting_epoch
-        
+
         self._averaged_model = AveragedModel(self, **averaged_model_kwargs)
-        
+
     def training_step(
         self, train_batch: Union[Data, List[Data]], batch_idx: int
     ) -> Tensor:
@@ -99,24 +102,24 @@ class StandardAveragedModel(StandardModel):
             sync_dist=True,
         )
         return loss
-    
+
     def optimizer_step(
-        self, 
-        epoch: int, 
-        batch_idx: int, 
-        optimizer: Optimizer | LightningOptimizer, 
-        optimizer_closure: Callable[[], Any] | None = None
+        self,
+        epoch: int,
+        batch_idx: int,
+        optimizer: Optimizer | LightningOptimizer,
+        optimizer_closure: Callable[[], Any] | None = None,
     ) -> None:
         """Perform an optimizer step."""
         super().optimizer_step(epoch, batch_idx, optimizer, optimizer_closure)
         if epoch >= self._swa_starting_epoch:
             self._averaged_model.update_parameters(self)
-    
+
     def on_train_end(self) -> None:
         """Update the model parameters with the Averaged ones."""
         # Update bn statistics for the swa_model at the end
         update_bn(self.trainer.train_dataloader, self._averaged_model)
-        
+
         average_model_state_dict = self._averaged_model.module.state_dict()
         del self._averaged_model
         # Update the model parameters with the Averaged ones
