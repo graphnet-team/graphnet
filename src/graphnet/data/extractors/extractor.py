@@ -1,12 +1,8 @@
 """Base I3Extractor class(es)."""
-from typing import TYPE_CHECKING
+from typing import Any
 from abc import ABC, abstractmethod
 
-from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
-
-if has_icecube_package() or TYPE_CHECKING:
-    from icecube import icetray  # pyright: reportMissingImports=false
 
 
 class Extractor(ABC, Logger):
@@ -40,11 +36,11 @@ class Extractor(ABC, Logger):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     @abstractmethod
-    def __call__(self, frame: "icetray.I3Frame") -> dict:
-        """Extract information from frame."""
+    def __call__(self, data: Any) -> dict:
+        """Extract information from data."""
         pass
 
     @property
     def name(self) -> str:
-        """Get the name of the `I3Extractor` instance."""
+        """Get the name of the `Extractor` instance."""
         return self._extractor_name
