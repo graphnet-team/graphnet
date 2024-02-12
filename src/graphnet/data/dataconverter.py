@@ -135,14 +135,17 @@ class DataConverter(ABC, Logger):
         n_events = len(data)
 
         # Assign event_no's to each event in data and transform to pd.DataFrame
-        data: Union[Dict[str, pd.DataFrame], Dict[str, List[pd.DataFrame]]] = self._assign_event_no(data=data)  # type: ignore
+        dataframes = self._assign_event_no(data=data)
+
+        # Delete `data` to save memory
+        del data
 
         # Create output file name
         output_file_name = self._create_file_name(input_file_path=file_path)
 
         # Apply save method
         self._save_method(
-            data=data,
+            data=dataframes,
             file_name=output_file_name,
             n_events=n_events,
             output_dir=self._output_dir,
