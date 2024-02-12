@@ -77,7 +77,7 @@ class I3Reader(GraphNeTFileReader):
             assert isinstance(extractor, I3Extractor)
             extractor.set_gcd(
                 i3_file=file_path.i3_file, gcd_file=file_path.gcd_file
-            )  # type: ignore
+            )
 
         # Open I3 file
         i3_file_io = dataio.I3File(file_path.i3_file, "r")

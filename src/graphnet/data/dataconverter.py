@@ -131,11 +131,11 @@ class DataConverter(ABC, Logger):
         This function is called in parallel.
         """
         # Read and apply extractors
-        data = self._file_reader(file_path=file_path)
+        data: List[OrderedDict] = self._file_reader(file_path=file_path)
         n_events = len(data)
 
         # Assign event_no's to each event in data and transform to pd.DataFrame
-        data = self._assign_event_no(data=data)  # type: ignore
+        data: Union[Dict[str, pd.DataFrame], Dict[str, List[pd.DataFrame]]] = self._assign_event_no(data=data)  # type: ignore
 
         # Create output file name
         output_file_name = self._create_file_name(input_file_path=file_path)
