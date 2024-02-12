@@ -17,6 +17,7 @@ from graphnet.utilities.logging import Logger
 from .readers.graphnet_file_reader import GraphNeTFileReader
 from .writers.graphnet_writer import GraphNeTWriter
 from .extractors import Extractor
+from .extractors.icecube import I3Extractor
 from .dataclasses import I3FileSet
 
 
@@ -39,7 +40,7 @@ class DataConverter(ABC, Logger):
         file_reader: GraphNeTFileReader,
         save_method: GraphNeTWriter,
         outdir: str,
-        extractors: Union[Extractor, List[Extractor]],
+        extractors: Union[List[Extractor], List[I3Extractor]],
         index_column: str = "event_no",
         num_workers: int = 1,
     ) -> None:
@@ -68,6 +69,8 @@ class DataConverter(ABC, Logger):
 
         # Set Extractors. Will throw error if extractors are incompatible
         # with reader.
+        if not isinstance(extractors, list):
+            extractors = [extractors]
         self._file_reader.set_extractors(extractors=extractors)
 
         # Base class constructor
@@ -132,7 +135,7 @@ class DataConverter(ABC, Logger):
         n_events = len(data)
 
         # Assign event_no's to each event in data and transform to pd.DataFrame
-        data = self._assign_event_no(data=data)
+        data = self._assign_event_no(data=data)  # type: ignore
 
         # Create output file name
         output_file_name = self._create_file_name(input_file_path=file_path)

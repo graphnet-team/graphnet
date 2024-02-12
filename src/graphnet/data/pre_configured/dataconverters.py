@@ -6,10 +6,7 @@ from graphnet.data import DataConverter
 from graphnet.data.readers import I3Reader
 from graphnet.data.writers import ParquetWriter, SQLiteWriter
 from graphnet.data.extractors.icecube import I3Extractor
-from graphnet.data.extractors.icecube.utilities.i3_filters import (
-    I3Filter,
-    NullSplitI3Filter,
-)
+from graphnet.data.extractors.icecube.utilities.i3_filters import I3Filter
 
 
 class I3ToParquetConverter(DataConverter):
@@ -18,13 +15,11 @@ class I3ToParquetConverter(DataConverter):
     def __init__(
         self,
         gcd_rescue: str,
-        extractors: Union[Type[I3Extractor], List[Type[I3Extractor]]],
+        extractors: List[I3Extractor],
         outdir: str,
         index_column: str = "event_no",
         num_workers: int = 1,
-        i3_filters: Union[
-            Type[I3Filter], List[Type[I3Filter]]
-        ] = NullSplitI3Filter(),  # type: ignore
+        i3_filters: Union[I3Filter, List[I3Filter]] = None,  # type: ignore
     ):
         """Convert I3 files to Parquet.
 
@@ -50,9 +45,9 @@ class I3ToParquetConverter(DataConverter):
                         `NullSplitI3Filter`.
         """
         super().__init__(
-            file_reader=I3Reader(gcd_rescue=gcd_rescue, i3_filters=i3_filters),  # type: ignore
-            save_method=ParquetWriter(),  # type: ignore
-            extractors=extractors,  # type: ignore
+            file_reader=I3Reader(gcd_rescue=gcd_rescue, i3_filters=i3_filters),
+            save_method=ParquetWriter(),
+            extractors=extractors,
             num_workers=num_workers,
             index_column=index_column,
             outdir=outdir,
@@ -65,13 +60,11 @@ class I3ToSQLiteConverter(DataConverter):
     def __init__(
         self,
         gcd_rescue: str,
-        extractors: Union[Type[I3Extractor], List[Type[I3Extractor]]],
+        extractors: List[I3Extractor],
         outdir: str,
         index_column: str = "event_no",
         num_workers: int = 1,
-        i3_filters: Union[
-            Type[I3Filter], List[Type[I3Filter]]
-        ] = NullSplitI3Filter(),  # type: ignore
+        i3_filters: Union[I3Filter, List[I3Filter]] = None,  # type: ignore
     ):
         """Convert I3 files to Parquet.
 
@@ -97,9 +90,9 @@ class I3ToSQLiteConverter(DataConverter):
                         `NullSplitI3Filter`.
         """
         super().__init__(
-            file_reader=I3Reader(gcd_rescue=gcd_rescue, i3_filters=i3_filters),  # type: ignore
-            save_method=SQLiteWriter(),  # type: ignore
-            extractors=extractors,  # type: ignore
+            file_reader=I3Reader(gcd_rescue=gcd_rescue, i3_filters=i3_filters),
+            save_method=SQLiteWriter(),
+            extractors=extractors,
             num_workers=num_workers,
             index_column=index_column,
             outdir=outdir,

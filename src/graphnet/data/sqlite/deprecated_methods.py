@@ -19,13 +19,11 @@ class SQLiteDataConverter(I3ToSQLiteConverter):
     def __init__(
         self,
         gcd_rescue: str,
-        extractors: Union[Type[I3Extractor], List[Type[I3Extractor]]],
+        extractors: List[I3Extractor],
         outdir: str,
         index_column: str = "event_no",
         workers: int = 1,
-        i3_filters: Union[
-            Type[I3Filter], List[Type[I3Filter]]
-        ] = NullSplitI3Filter(),  # type: ignore
+        i3_filters: Union[I3Filter, List[I3Filter]] = None,  # type: ignore
     ):
         """Convert I3 files to Parquet.
 
