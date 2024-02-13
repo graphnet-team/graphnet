@@ -1,11 +1,10 @@
-"""Standard model class(es)."""
+"""Averaged Standard model class(es)."""
 from typing import Any, Callable, Dict, List, Optional, Union, Type
+from collections import OrderedDict
 
-from pytorch_lightning.core.optimizer import LightningOptimizer
 import torch
 from torch import Tensor
 from torch.optim import Adam
-from torch.optim.optimizer import Optimizer
 from torch.optim.swa_utils import (
     AveragedModel,
     update_bn,
@@ -67,6 +66,9 @@ class StandardAveragedModel(StandardModel):
 
         self._averaged_model = AveragedModel(self, **averaged_model_kwargs)
 
+        for param in self._averaged_model.parameters():
+            param.requires_grad = False
+
     def training_step(
         self, train_batch: Union[Data, List[Data]], batch_idx: int
     ) -> Tensor:
@@ -103,6 +105,9 @@ class StandardAveragedModel(StandardModel):
             on_step=False,
             sync_dist=True,
         )
+
+        current_lr = self.trainer.optimizers[0].param_groups[0]["lr"]
+        self.log("lr", current_lr, prog_bar=True, on_step=True)
         return loss
 
     def optimizer_step(
@@ -116,6 +121,27 @@ class StandardAveragedModel(StandardModel):
         super().optimizer_step(epoch, batch_idx, optimizer, optimizer_closure)
         if epoch >= self._swa_starting_epoch:
             self._averaged_model.update_parameters(self)
+
+    def load_state_dict(
+        self, path: Union[str, Dict], **kargs: Optional[Any]
+    ) -> "StandardAveragedModel":  # pylint: disable=arguments-differ
+        """Load model `state_dict` from `path`."""
+        if isinstance(path, str):
+            state_dict = torch.load(path)
+        else:
+            state_dict = path
+
+        new_state_dict = OrderedDict()
+        for key, value in state_dict.items():
+            if not key.startswith("_averaged_model"):
+                if "_averaged_model.module." + key in state_dict:
+                    new_state_dict[key] = state_dict[
+                        "_averaged_model.module." + key
+                    ]
+                else:
+                    new_state_dict[key] = value
+
+        return super().load_state_dict(new_state_dict, **kargs)
 
     def on_train_end(self) -> None:
         """Update the model parameters with the Averaged ones."""
