@@ -253,11 +253,13 @@ class IceMixNodes(NodeDefinition):
 
         if z_name not in input_feature_names:
             raise ValueError(
-                f"z name {z_name} not in input_feature_names, {input_feature_names}"
+                f"z name {z_name} not found in "
+                f"input_feature_names {input_feature_names}"
             )
         if hlc_name not in input_feature_names:
             raise ValueError(
-                f"hlc name {hlc_name} not in input_feature_names, {input_feature_names}"
+                f"hlc name {hlc_name} not found in "
+                f"input_feature_names {input_feature_names}"
             )
 
         self.all_features = input_feature_names + [

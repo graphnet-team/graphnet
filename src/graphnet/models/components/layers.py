@@ -238,7 +238,7 @@ class Mlp(LightningModule):
         hidden_features: Optional[int] = None,
         out_features: Optional[int] = None,
         activation: nn.Module = nn.GELU,
-        dropout_prob: Optional[float] = 0.0,
+        dropout_prob: float = 0.0,
     ):
         """Construct `Mlp`.
 
@@ -415,10 +415,10 @@ class Block_rel(LightningModule):
         dropout: float = 0.0,
         attn_drop: float = 0.0,
         drop_path: float = 0.0,
-        init_values: float = None,
+        init_values: Optional[float] = None,
         activation: nn.Module = nn.GELU,
         norm_layer: nn.Module = nn.LayerNorm,
-        attn_head_dim: int = None,
+        attn_head_dim: Optional[int] = None,
     ):
         """Construct 'Block_rel'.
 
@@ -479,7 +479,7 @@ class Block_rel(LightningModule):
         x: Tensor,
         key_padding_mask: Optional[Tensor] = None,
         rel_pos_bias: Optional[Tensor] = None,
-        kv: Tensor = None,
+        kv: Optional[Tensor] = None,
     ) -> Tensor:
         """Forward pass."""
         if self.gamma_1 is None:
@@ -522,10 +522,10 @@ class Attention_rel(LightningModule):
         dim: int,
         num_heads: int = 8,
         qkv_bias: bool = False,
-        qk_scale: float = None,
+        qk_scale: Optional[float] = None,
         attn_drop: float = 0.0,
         proj_drop: float = 0.0,
-        attn_head_dim: int = None,
+        attn_head_dim: Optional[int] = None,
     ):
         """Construct 'Attention_rel'.
 
@@ -638,7 +638,7 @@ class Block(LightningModule):
         dropout: float = 0.0,
         attn_drop: float = 0.0,
         drop_path: float = 0.0,
-        init_values: float = None,
+        init_values: Optional[float] = None,
         activation: nn.Module = nn.GELU,
         norm_layer: nn.Module = nn.LayerNorm,
     ):
