@@ -108,7 +108,7 @@ class StandardAveragedModel(StandardModel):
         epoch: int,
         batch_idx: int,
         optimizer: Type[torch.optim.Optimizer],
-        optimizer_closure: Callable[[], Any] | None = None,
+        optimizer_closure: Optional[Callable[[], Any]] = None,
     ) -> None:
         """Perform an optimizer step."""
         super().optimizer_step(epoch, batch_idx, optimizer, optimizer_closure)
