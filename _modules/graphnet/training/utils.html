@@ -659,6 +659,24 @@
     <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s2">"_model.pth"</span><span class="p">)</span>
     <span class="n">Logger</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Results saved at: </span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="save_selection">
+<a class="viewcode-back" href="../../../api/graphnet.training.utils.html#graphnet.training.utils.save_selection">[docs]</a>
+<span class="k">def</span> <span class="nf">save_selection</span><span class="p">(</span><span class="n">selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Save the list of event numbers to a CSV file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">       selection: List of event ids.</span>
+<span class="sd">       file_path: File path to save the selection.</span>
+<span class="sd">    """</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">selection</span><span class="p">,</span> <span class="nb">list</span>
+    <span class="p">),</span> <span class="s2">"Selection should be a list of integers."</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">selection</span><span class="p">)))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
+
 </pre></div>
 
           </article>

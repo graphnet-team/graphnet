@@ -380,6 +380,8 @@
         <li class="md-nav__item"><a href="#graphnet.training.utils.get_predictions" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_predictions()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.utils.save_results" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_results()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.utils.save_selection" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_selection()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -425,6 +427,13 @@
     
     
       <a href="#graphnet.training.utils.save_results" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_results()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.utils.save_selection" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_selection()</span></code></a>
       
     
     </li></ul>
@@ -482,6 +491,8 @@
         <li class="md-nav__item"><a href="#graphnet.training.utils.get_predictions" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_predictions()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.utils.save_results" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_results()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.utils.save_selection" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_selection()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -628,6 +639,22 @@ last elements, which will always be 0 and 1 respectively.</p>
 <li><p><strong>archive</strong> (<em>str</em>) – </p></li>
 <li><p><strong>model</strong> (<a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><em>Model</em></a>) – </p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.training.utils.save_selection">
+<span class="sig-prename descclassname"><span class="pre">graphnet.training.utils.</span></span><span class="sig-name descname"><span class="pre">save_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/utils.html#save_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.utils.save_selection" title="Link to this definition">¶</a></dt>
+<dd><p>Save the list of event numbers to a CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – List of event ids.</p></li>
+<li><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – File path to save the selection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
