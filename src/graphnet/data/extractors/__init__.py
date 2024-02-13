@@ -18,3 +18,13 @@ from .i3genericextractor import I3GenericExtractor
 from .i3pisaextractor import I3PISAExtractor
 from .i3ntmuonlabelsextractor import I3NTMuonLabelExtractor
 from .i3quesoextractor import I3QUESOExtractor
+from .rootextractor import (
+    rootExtractor,
+    rootExtractorCollection
+)
+from .rootfeatureextractor import (
+    rootFeatureExtractor,
+    rootFeatureExtractorESSnuSB,
+    rootTruthExtractorESSnuSB,
+    rootfiTQunExtractorESSnuSB,
+)
