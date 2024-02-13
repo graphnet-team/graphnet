@@ -107,7 +107,7 @@ class StandardAveragedModel(StandardModel):
         self,
         epoch: int,
         batch_idx: int,
-        optimizer: Optimizer | LightningOptimizer,
+        optimizer: Type[torch.optim.Optimizer],
         optimizer_closure: Callable[[], Any] | None = None,
     ) -> None:
         """Perform an optimizer step."""
