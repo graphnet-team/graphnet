@@ -86,6 +86,7 @@ class IceCubeDeepCore(IceCube86):
             "charge": self._identity,
             "rde": self._rde,
             "pmt_area": self._pmt_area,
+            "hlc": self._identity,
         }
         return feature_map
 
@@ -132,6 +133,7 @@ class IceCubeUpgrade(Detector):
             "pmt_dir_y": self._identity,
             "pmt_dir_z": self._identity,
             "dom_type": self._dom_type,
+            "hlc": self._identity,
         }
 
         return feature_map
