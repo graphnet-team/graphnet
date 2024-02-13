@@ -26,7 +26,8 @@ class StandardAveragedModel(StandardModel):
         self,
         *,
         graph_definition: GraphDefinition,
-        gnn: GNN,
+        backbone: GNN,
+        gnn: Optional[GNN] = None,
         tasks: Union[Task, List[Task]],
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
         optimizer_kwargs: Optional[Dict] = None,
@@ -40,6 +41,7 @@ class StandardAveragedModel(StandardModel):
         # Base class constructor
         super().__init__(
             graph_definition=graph_definition,
+            backbone=backbone,
             gnn=gnn,
             tasks=tasks,
             optimizer_class=optimizer_class,
