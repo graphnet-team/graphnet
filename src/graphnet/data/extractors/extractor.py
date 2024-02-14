@@ -11,9 +11,9 @@ class Extractor(ABC, Logger):
     All classes inheriting from `Extractor` should implement the `__call__`
     method, and should return a pure python dictionary on the form
 
-    output = [{'var1: ..,
+    output = {'var1: ..,
                  ... ,
-              'var_n': ..}]
+              'var_n': ..}
 
     Variables can be scalar or array-like of shape [n, 1], where n denotes the
     number of elements in the array, and 1 the number of columns.
