@@ -137,7 +137,8 @@ class DynTrans(EdgeConvTito, LightningModule):
             features_subset: Subset of features in `Data.x` that should be used
                 when dynamically performing the new graph clustering after the
                 `EdgeConv` operation. Defaults to all features.
-            n_head: Number of heads to be used in the multiheadattention models.
+            n_head: Number of heads to be used in the multiheadattention
+                models.
             **kwargs: Additional features to be passed to `DynTrans`.
         """
         # Check(s)
@@ -254,7 +255,8 @@ class Mlp(LightningModule):
         super().__init__()
         if in_features <= 0:
             raise ValueError(
-                f"in_features must be greater than 0, got in_features={in_features} instead"
+                f"in_features must be greater than 0, got in_features "
+                f"{in_features} instead"
             )
         out_features = out_features or in_features
         hidden_features = hidden_features or in_features
@@ -322,11 +324,13 @@ class FourierEncoder(LightningModule):
     ):
         """Construct `FourierEncoder`.
 
-        This module incorporates sinusoidal positional embeddings and auxiliary embeddings
-        to process input sequences and produce meaningful representations.
+        This module incorporates sinusoidal positional embeddings and
+        auxiliary embeddings to process input sequences and produce meaningful
+        representations.
 
         Args:
-            base_dim: Dimensionality of the base sinusoidal positional embeddings.
+            base_dim: Dimensionality of the base sinusoidal positional
+                embeddings.
             output_dim: Output dimensionality of the final projection.
             scaled: Whether or not to scale the embeddings.
         """
@@ -373,8 +377,9 @@ class SpacetimeEncoder(LightningModule):
     ):
         """Construct `SpacetimeEncoder`.
 
-        This module calculates space-time interval between each pair of events and
-        generates sinusoidal positional embeddings to be added to input sequences.
+        This module calculates space-time interval between each pair of events
+        and generates sinusoidal positional embeddings to be added to input
+        sequences.
 
         Args:
             base_dim: Dimensionality of the sinusoidal positional embeddings.
@@ -424,17 +429,18 @@ class Block_rel(LightningModule):
 
         Args:
             dim: Dimension of the input tensor.
-            num_heads: Number of attention heads to use in the `Attention_rel` layer.
-            mlp_ratio: Ratio of the hidden size of the feedforward network to the
-                input size in the `Mlp` layer.
-            qkv_bias: Whether or not to include bias terms in the query, key, and
-                value matrices in the `Attention_rel` layer.
-            qk_scale: Scaling factor for the dot product of the query and key matrices
-                in the `Attention_rel` layer.
+            num_heads: Number of attention heads to use in the `Attention_rel`
+            layer.
+            mlp_ratio: Ratio of the hidden size of the feedforward network to
+                the input size in the `Mlp` layer.
+            qkv_bias: Whether or not to include bias terms in the query, key,
+                and value matrices in the `Attention_rel` layer.
+            qk_scale: Scaling factor for the dot product of the query and key
+                matrices in the `Attention_rel` layer.
             dropout: Dropout probability to use in the `Mlp` layer.
             attn_drop: Dropout probability to use in the `Attention_rel` layer.
-            drop_path: Probability of applying drop path regularization to the output
-                of the layer.
+            drop_path: Probability of applying drop path regularization to the
+                output of the layer.
             init_values: Initial value to use for the `gamma_1` and `gamma_2`
                 parameters if not `None`.
             activation: Activation function to use in the `Mlp` layer.
@@ -646,14 +652,15 @@ class Block(LightningModule):
 
         Args:
             dim: Dimension of the input tensor.
-            num_heads: Number of attention heads to use in the `MultiheadAttention`
-                layer.
-            mlp_ratio: Ratio of the hidden size of the feedforward network to the
-                input size in the `Mlp` layer.
+            num_heads: Number of attention heads to use in the
+                `MultiheadAttention` layer.
+            mlp_ratio: Ratio of the hidden size of the feedforward network to
+                the input size in the `Mlp` layer.
             dropout: Dropout probability to use in the `Mlp` layer.
-            attn_drop: Dropout probability to use in the `MultiheadAttention` layer.
-            drop_path: Probability of applying drop path regularization to the output
-                of the layer.
+            attn_drop: Dropout probability to use in the `MultiheadAttention`
+                layer.
+            drop_path: Probability of applying drop path regularization to the
+                output of the layer.
             init_values: Initial value to use for the `gamma_1` and `gamma_2`
                 parameters if not `None`.
             activation: Activation function to use in the `Mlp` layer.
