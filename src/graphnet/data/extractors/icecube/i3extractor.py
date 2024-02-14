@@ -73,6 +73,8 @@ class I3Extractor(Extractor):
         # Get CFrame
         try:
             c_frame = gcd.pop_frame(icetray.I3Frame.Calibration)
+            # If the line above fails, it means that no gcd file was given
+            # and that the i3 file does not have a C-Frame in it.
         except RuntimeError as e:
             self.warning(
                 "No GCD file was provided and no C-frame "
