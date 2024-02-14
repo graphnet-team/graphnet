@@ -37,28 +37,52 @@ class I3Extractor(Extractor):
         # Base class constructor
         super().__init__(extractor_name=extractor_name)
 
-    def set_gcd(self, gcd_file: str, i3_file: str) -> None:
-        """Load the geospatial information contained in the GCD-file."""
-        # If no GCD file is provided, search the I3 file for frames containing
-        # geometry (G) and calibration (C) information.
-        gcd = dataio.I3File(gcd_file or i3_file)
+    def set_gcd(self, i3_file: str, gcd_file: Optional[str] = None) -> None:
+        """Extract GFrame and CFrame from i3/gcd-file pair.
 
+           Information from these frames will be set as member variables of
+           `I3Extractor.`
+
+        Args:
+            i3_file: Path to i3 file that is being converted.
+            gcd_file: Path to GCD file. Defaults to None. If no GCD file is
+                      given, the method will attempt to find C and G frames in
+                      the i3 file instead. If either one of those are not
+                      present, `RuntimeErrors` will be raised.
+        """
+        if gcd_file is None:
+            # If no GCD file is provided, search the I3 file for frames
+            # containing geometry (GFrame) and calibration (CFrame)
+            gcd = dataio.I3File(i3_file)
+        else:
+            # Ideally ends here
+            gcd = dataio.I3File(gcd_file)
+
+        # Get GFrame
         try:
             g_frame = gcd.pop_frame(icetray.I3Frame.Geometry)
-        except RuntimeError:
+            # If the line above fails, it means that no gcd file was given
+            # and that the i3 file does not have a G-Frame in it.
+        except RuntimeError as e:
             self.error(
-                "No GCD file was provided and no G-frame was found. Exiting."
+                "No GCD file was provided "
+                f"and no G-frame was found in {i3_file.split('/')[-1]}."
             )
-            raise
-        else:
-            self._gcd_dict = g_frame["I3Geometry"].omgeo
+            raise e
 
+        # Get CFrame
         try:
             c_frame = gcd.pop_frame(icetray.I3Frame.Calibration)
-        except RuntimeError:
-            self.warning("No GCD file was provided and no C-frame was found.")
-        else:
-            self._calibration = c_frame["I3Calibration"]
+        except RuntimeError as e:
+            self.warning(
+                "No GCD file was provided and no C-frame "
+                f"was found in {i3_file.split('/')[-1]}."
+            )
+            raise e
+
+        # Save information as member variables of I3Extractor
+        self._gcd_dict = g_frame["I3Geometry"].omgeo
+        self._calibration = c_frame["I3Calibration"]
 
     @abstractmethod
     def __call__(self, frame: "icetray.I3Frame") -> dict:
