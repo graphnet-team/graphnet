@@ -66,7 +66,7 @@ class I3ToSQLiteConverter(DataConverter):
         num_workers: int = 1,
         i3_filters: Union[I3Filter, List[I3Filter]] = None,  # type: ignore
     ):
-        """Convert I3 files to Parquet.
+        """Convert I3 files to SQLite.
 
         Args:
             gcd_rescue: gcd_rescue: Path to a GCD file that will be used if no GCD file is
