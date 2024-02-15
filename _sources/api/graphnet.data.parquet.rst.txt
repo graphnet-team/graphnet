@@ -15,7 +15,7 @@ parquet
 .. toctree::
    :maxdepth: 2
 
-   graphnet.data.parquet.parquet_dataconverter
+   graphnet.data.parquet.deprecated_methods
 
 
 

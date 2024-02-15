@@ -1,0 +1,8 @@
+
+i3genericextractor
+==================
+
+.. automodule:: graphnet.data.extractors.icecube.i3genericextractor
+   :members:
+   :undoc-members:
+   :show-inheritance:

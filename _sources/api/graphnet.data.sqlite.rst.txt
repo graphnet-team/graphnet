@@ -15,8 +15,7 @@ sqlite
 .. toctree::
    :maxdepth: 2
 
-   graphnet.data.sqlite.sqlite_dataconverter
-   graphnet.data.sqlite.sqlite_utilities
+   graphnet.data.sqlite.deprecated_methods
 
 
 

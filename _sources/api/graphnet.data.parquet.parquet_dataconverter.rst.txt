@@ -1,8 +1,0 @@
-
-parquet\_dataconverter
-======================
-
-.. automodule:: graphnet.data.parquet.parquet_dataconverter
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -398,12 +398,13 @@
         <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">col</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">x_masked</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">batch</span><span class="p">][</span><span class="n">mask</span><span class="p">[</span><span class="n">batch</span><span class="p">]]</span>
             <span class="n">distance_mat</span> <span class="o">=</span> <span class="n">compute_minkowski_distance_mat</span><span class="p">(</span>
-                <span class="n">x_masked</span> <span class="o">:=</span> <span class="n">x</span><span class="p">[</span><span class="n">batch</span><span class="p">][</span><span class="n">mask</span><span class="p">[</span><span class="n">batch</span><span class="p">]],</span>
-                <span class="n">x_masked</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">space_coords</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">time_coord</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">x_masked</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">x_masked</span><span class="p">,</span>
+                <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span>
+                <span class="n">space_coords</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">space_coords</span><span class="p">,</span>
+                <span class="n">time_coord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_coord</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">num_points</span> <span class="o">=</span> <span class="n">x_masked</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">num_edges</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_nearest_neighbours</span><span class="p">,</span> <span class="n">num_points</span><span class="p">)</span>

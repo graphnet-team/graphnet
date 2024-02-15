@@ -1,8 +1,0 @@
-
-i3truthextractor
-================
-
-.. automodule:: graphnet.data.extractors.i3truthextractor
-   :members:
-   :undoc-members:
-   :show-inheritance:

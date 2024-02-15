@@ -1,8 +1,0 @@
-
-frames
-======
-
-.. automodule:: graphnet.data.extractors.utilities.frames
-   :members:
-   :undoc-members:
-   :show-inheritance:

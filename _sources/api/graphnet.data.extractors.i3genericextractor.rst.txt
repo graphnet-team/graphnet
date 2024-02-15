@@ -1,8 +1,0 @@
-
-i3genericextractor
-==================
-
-.. automodule:: graphnet.data.extractors.i3genericextractor
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -129,8 +129,8 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="sqlite_dataconverter" href="graphnet.data.sqlite.sqlite_dataconverter.html" />
-    <link rel="prev" title="parquet_dataconverter" href="graphnet.data.parquet.parquet_dataconverter.html" />
+    <link rel="next" title="deprecated_methods" href="graphnet.data.sqlite.deprecated_methods.html" />
+    <link rel="prev" title="i3reader" href="graphnet.data.readers.i3reader.html" />
   
    
 
@@ -330,6 +330,20 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.pre_configured.html" class="md-nav__link">pre_configured</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.readers.html" class="md-nav__link">readers</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     <label class="md-nav__link md-nav__link--active" for="__toc"> sqlite </label>
     
@@ -344,14 +358,7 @@
     <li class="md-nav__item">
     
     
-      <a href="graphnet.data.sqlite.sqlite_dataconverter.html" class="md-nav__link">sqlite_dataconverter</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.data.sqlite.sqlite_utilities.html" class="md-nav__link">sqlite_utilities</a>
+      <a href="graphnet.data.sqlite.deprecated_methods.html" class="md-nav__link">deprecated_methods</a>
       
     
     </li></ul>
@@ -367,7 +374,21 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.writers.html" class="md-nav__link">writers</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.constants.html" class="md-nav__link">constants</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.dataclasses.html" class="md-nav__link">dataclasses</a>
       
     
     </li>
@@ -389,13 +410,6 @@
     
     
       <a href="graphnet.data.datamodule.html" class="md-nav__link">datamodule</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.data.filters.html" class="md-nav__link">filters</a>
       
     
     </li>
@@ -476,25 +490,12 @@
             
   <section id="module-graphnet.data.sqlite">
 <span id="sqlite"></span><h1 id="api-graphnet-data-sqlite--page-root">sqlite<a class="headerlink" href="#api-graphnet-data-sqlite--page-root" title="Link to this heading">¶</a></h1>
-<p>SQLite-specific implementation of data classes.</p>
+<p>Module for deprecated methods using sqlite.</p>
 <p><h2> Submodules </h2></p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.data.sqlite.sqlite_dataconverter.html">sqlite_dataconverter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.SQLiteDataConverter"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.construct_dataframe"><code class="docutils literal notranslate"><span class="pre">construct_dataframe()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.is_pulse_map"><code class="docutils literal notranslate"><span class="pre">is_pulse_map()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_dataconverter.html#graphnet.data.sqlite.sqlite_dataconverter.is_mc_tree"><code class="docutils literal notranslate"><span class="pre">is_mc_tree()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html">sqlite_utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html#graphnet.data.sqlite.sqlite_utilities.database_exists"><code class="docutils literal notranslate"><span class="pre">database_exists()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html#graphnet.data.sqlite.sqlite_utilities.database_table_exists"><code class="docutils literal notranslate"><span class="pre">database_table_exists()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html#graphnet.data.sqlite.sqlite_utilities.run_sql_code"><code class="docutils literal notranslate"><span class="pre">run_sql_code()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html#graphnet.data.sqlite.sqlite_utilities.save_to_sql"><code class="docutils literal notranslate"><span class="pre">save_to_sql()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html#graphnet.data.sqlite.sqlite_utilities.attach_index"><code class="docutils literal notranslate"><span class="pre">attach_index()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html#graphnet.data.sqlite.sqlite_utilities.create_table"><code class="docutils literal notranslate"><span class="pre">create_table()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.sqlite_utilities.html#graphnet.data.sqlite.sqlite_utilities.create_table_and_save_to_sql"><code class="docutils literal notranslate"><span class="pre">create_table_and_save_to_sql()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.sqlite.deprecated_methods.html">deprecated_methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.sqlite.deprecated_methods.html#graphnet.data.sqlite.deprecated_methods.SQLiteDataConverter"><code class="docutils literal notranslate"><span class="pre">SQLiteDataConverter</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -511,7 +512,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.data.parquet.parquet_dataconverter.html" title="parquet_dataconverter"
+            <a href="graphnet.data.readers.i3reader.html" title="i3reader"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -520,17 +521,17 @@
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> "Previous" </span> parquet_dataconverter </span>
+                      class="md-footer-nav__direction"> "Previous" </span> i3reader </span>
               </div>
             </a>
           
           
-            <a href="graphnet.data.sqlite.sqlite_dataconverter.html" title="sqlite_dataconverter"
+            <a href="graphnet.data.sqlite.deprecated_methods.html" title="deprecated_methods"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> sqlite_dataconverter </span>
+                class="md-footer-nav__direction"> "Next" </span> deprecated_methods </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

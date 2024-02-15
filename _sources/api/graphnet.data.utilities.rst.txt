@@ -17,6 +17,7 @@ utilities
 
    graphnet.data.utilities.parquet_to_sqlite
    graphnet.data.utilities.random
+   graphnet.data.utilities.sqlite_utilities
    graphnet.data.utilities.string_selection_resolver
 
 

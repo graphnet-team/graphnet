@@ -1,8 +1,0 @@
-
-i3tumextractor
-==============
-
-.. automodule:: graphnet.data.extractors.i3tumextractor
-   :members:
-   :undoc-members:
-   :show-inheritance:

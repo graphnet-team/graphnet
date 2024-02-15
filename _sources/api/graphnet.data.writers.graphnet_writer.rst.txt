@@ -1,0 +1,8 @@
+
+graphnet\_writer
+================
+
+.. automodule:: graphnet.data.writers.graphnet_writer
+   :members:
+   :undoc-members:
+   :show-inheritance:

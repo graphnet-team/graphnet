@@ -1,0 +1,8 @@
+
+graphnet\_file\_reader
+======================
+
+.. automodule:: graphnet.data.readers.graphnet_file_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:

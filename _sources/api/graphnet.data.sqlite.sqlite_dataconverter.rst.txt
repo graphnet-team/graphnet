@@ -1,8 +1,0 @@
-
-sqlite\_dataconverter
-=====================
-
-.. automodule:: graphnet.data.sqlite.sqlite_dataconverter
-   :members:
-   :undoc-members:
-   :show-inheritance:

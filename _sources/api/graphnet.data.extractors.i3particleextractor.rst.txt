@@ -1,8 +1,0 @@
-
-i3particleextractor
-===================
-
-.. automodule:: graphnet.data.extractors.i3particleextractor
-   :members:
-   :undoc-members:
-   :show-inheritance:

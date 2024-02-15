@@ -130,7 +130,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="dataloader" href="graphnet.data.dataloader.html" />
-    <link rel="prev" title="constants" href="graphnet.data.constants.html" />
+    <link rel="prev" title="dataclasses" href="graphnet.data.dataclasses.html" />
   
    
 
@@ -330,6 +330,20 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.pre_configured.html" class="md-nav__link">pre_configured</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.readers.html" class="md-nav__link">readers</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.sqlite.html" class="md-nav__link">sqlite</a>
       
     
@@ -344,7 +358,21 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.writers.html" class="md-nav__link">writers</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.constants.html" class="md-nav__link">constants</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.dataclasses.html" class="md-nav__link">dataclasses</a>
       
     
     </li>
@@ -362,29 +390,13 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-data-dataconverter--page-root" class="md-nav__link">dataconverter</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.FileSet" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">FileSet</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.FileSet.i3_file" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">i3_file</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.FileSet.gcd_file" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gcd_file</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataconverter.init_global_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">init_global_index()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.cache_output_files" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cache_output_files()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DataConverter</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.file_suffix" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">file_suffix</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.execute" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.save_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_data()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.get_map_function" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_map_function()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.merge_files" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">merge_files()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.get_map_function" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_map_function()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -396,35 +408,7 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.data.dataconverter.FileSet" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">FileSet</span></code></a>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataconverter.FileSet.i3_file" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">i3_file</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataconverter.FileSet.gcd_file" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gcd_file</span></code></a>
-      
-    
-    </li></ul>
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
       <a href="#graphnet.data.dataconverter.init_global_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">init_global_index()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataconverter.cache_output_files" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cache_output_files()</span></code></a>
       
     
     </li>
@@ -436,21 +420,7 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.data.dataconverter.DataConverter.file_suffix" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">file_suffix</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataconverter.DataConverter.execute" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataconverter.DataConverter.save_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_data()</span></code></a>
+      <a href="#graphnet.data.dataconverter.DataConverter.get_map_function" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_map_function()</span></code></a>
       
     
     </li>
@@ -458,13 +428,6 @@
     
     
       <a href="#graphnet.data.dataconverter.DataConverter.merge_files" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">merge_files()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.dataconverter.DataConverter.get_map_function" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_map_function()</span></code></a>
       
     
     </li></ul>
@@ -483,13 +446,6 @@
     
     
       <a href="graphnet.data.datamodule.html" class="md-nav__link">datamodule</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.data.filters.html" class="md-nav__link">filters</a>
       
     
     </li>
@@ -562,29 +518,13 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-data-dataconverter--page-root" class="md-nav__link">dataconverter</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.FileSet" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">FileSet</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.FileSet.i3_file" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">i3_file</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.FileSet.gcd_file" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gcd_file</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataconverter.init_global_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">init_global_index()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.cache_output_files" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cache_output_files()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DataConverter</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.file_suffix" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">file_suffix</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.execute" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.save_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_data()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.get_map_function" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_map_function()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.merge_files" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">merge_files()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataconverter.DataConverter.get_map_function" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_map_function()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -601,28 +541,7 @@
             
   <section id="module-graphnet.data.dataconverter">
 <span id="dataconverter"></span><h1 id="api-graphnet-data-dataconverter--page-root">dataconverter<a class="headerlink" href="#api-graphnet-data-dataconverter--page-root" title="Link to this heading">¶</a></h1>
-<p>Base <cite>DataConverter</cite> class(es) used in GraphNeT.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.data.dataconverter.FileSet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">FileSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#FileSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.FileSet" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>i3_file</strong> (<em>str</em>) – </p></li>
-<li><p><strong>gcd_file</strong> (<em>str</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.data.dataconverter.FileSet.i3_file">
-<span class="sig-name descname"><span class="pre">i3_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#graphnet.data.dataconverter.FileSet.i3_file" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="graphnet.data.dataconverter.FileSet.gcd_file">
-<span class="sig-name descname"><span class="pre">gcd_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#graphnet.data.dataconverter.FileSet.gcd_file" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-</dd></dl>
+<p>Contains <cite>DataConverter</cite>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.init_global_index">
 <span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">init_global_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#init_global_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.init_global_index" title="Link to this definition">¶</a></dt>
@@ -639,139 +558,34 @@
 </dd>
 </dl>
 </dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.dataconverter.cache_output_files">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">cache_output_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#cache_output_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.cache_output_files" title="Link to this definition">¶</a></dt>
-<dd><p>Decorate <cite>process_method</cite> to cache output file names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">F</span></code>, bound= <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>])</span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>process_method</strong> (<em>F</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_files_to_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_file_batch_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icetray_verbose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i3_filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataconverter.</span></span><span class="sig-name descname"><span class="pre">DataConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_reader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
-<p>Base class for converting I3-files to intermediate file format.</p>
-<p>Construct DataConverter.</p>
-<p>When using <cite>input_file_batch_pattern</cite>, regular expressions are used to
-group files according to their names. All files that match a certain
-pattern up to wildcards are grouped into the same output file. This
-output file has the same name as the input files that are group into it,
-with wildcards replaced with “x”. Periods (.) and wildcards (*) have a
-special meaning: Periods are interpreted as literal periods, and not as
-matching any character (as in standard regex); and wildcards are
-interpreted as “.*” in standard regex.</p>
-<p>For instance, the pattern “[A-Z]{1}_[0-9]{5}*.i3.zst” will find all I3
-files whose names contain:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>one capital letter, followed by</p></li>
-<li><p>an underscore, followed by</p></li>
-<li><p>five numbers, followed by</p></li>
-<li><p>any string of characters ending in “.i3.zst”</p></li>
-</ul>
-</div></blockquote>
-<dl class="simple">
-<dt>This means that, e.g., the files:</dt><dd><ul class="simple">
-<li><p>upgrade_genie_step4_141020_A_000000.i3.zst</p></li>
-<li><p>upgrade_genie_step4_141020_A_000001.i3.zst</p></li>
-<li><p>…</p></li>
-<li><p>upgrade_genie_step4_141020_A_000008.i3.zst</p></li>
-<li><p>upgrade_genie_step4_141020_A_000009.i3.zst</p></li>
-</ul>
-</dd>
-</dl>
-<p>would be grouped into the output file named
-“upgrade_genie_step4_141020_A_00000x.&lt;suffix&gt;” but the file</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>upgrade_genie_step4_141020_A_000010.i3.zst</p></li>
-</ul>
-</div></blockquote>
-<p>would end up in a separate group, named
-“upgrade_genie_step4_141020_A_00001x.&lt;suffix&gt;”.</p>
+<p>A finalized data conversion class in GraphNeT.</p>
+<p><cite>DataConverter</cite> provides parallel processing of file conversion and
+extraction from experiment-specific file formats to graphnet-supported data
+formats. This class also assigns event id’s to training examples.</p>
+<p>Initialize <cite>DataConverter</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>extractors</strong> (<em>List</em><em>[</em><a class="reference internal" href="graphnet.data.extractors.i3extractor.html#graphnet.data.extractors.i3extractor.I3Extractor" title="graphnet.data.extractors.i3extractor.I3Extractor"><em>I3Extractor</em></a><em>]</em>) – </p></li>
-<li><p><strong>outdir</strong> (<em>str</em>) – </p></li>
-<li><p><strong>gcd_rescue</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>nb_files_to_batch</strong> (<em>int</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>sequential_batch_pattern</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>input_file_batch_pattern</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>workers</strong> (<em>int</em>) – </p></li>
-<li><p><strong>index_column</strong> (<em>str</em>) – </p></li>
-<li><p><strong>icetray_verbose</strong> (<em>int</em>) – </p></li>
-<li><p><strong>i3_filters</strong> (<em>List</em><em>[</em><a class="reference internal" href="graphnet.data.filters.html#graphnet.data.filters.I3Filter" title="graphnet.data.filters.I3Filter"><em>I3Filter</em></a><em>]</em>) – </p></li>
+<li><p><strong>file_reader</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader" title="graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code></a></span>) – The method used for reading and applying <cite>Extractors</cite>.</p></li>
+<li><p><strong>save_method</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.data.writers.graphnet_writer.html#graphnet.data.writers.graphnet_writer.GraphNeTWriter" title="graphnet.data.writers.graphnet_writer.GraphNeTWriter"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code></a></span>) – The method used to save the interim data format to
+a graphnet supported file format.</p></li>
+<li><p><strong>outdir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The directory to save the files in.</p></li>
+<li><p><strong>extractors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.extractor.html#graphnet.data.extractors.extractor.Extractor" title="graphnet.data.extractors.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.icecube.i3extractor.html#graphnet.data.extractors.icecube.i3extractor.I3Extractor" title="graphnet.data.extractors.icecube.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a>]]</span>) – The <a href="#id1"><span class="problematic" id="id2">`</span></a>Extractor`(s) that will be applied to the input
+files.</p></li>
+<li><p><strong>index_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – Name of the event id column added to the events.
+Defaults to “event_no”.</p></li>
+<li><p><strong>num_workers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – The number of CPUs used for parallel processing.
+Defaults to 1 (no multiprocessing).</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.file_suffix">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_suffix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.file_suffix" title="Link to this definition">¶</a></dt>
-<dd><p>Suffix to use on output files.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filesets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.execute" title="Link to this definition">¶</a></dt>
-<dd><p>General method for processing a set of I3 files.</p>
-<p>The files are converted individually according to the inheriting class/
-intermediate file format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filesets</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#graphnet.data.dataconverter.FileSet" title="graphnet.data.dataconverter.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a>]</span>) – List of paths to I3 and corresponding GCD files.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.save_data">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter.save_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.save_data" title="Link to this definition">¶</a></dt>
-<dd><p>Implementation-specific method for saving data to file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code>]</span>) – List of extracted features.</p></li>
-<li><p><strong>output_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of output file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.merge_files">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter.merge_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.merge_files" title="Link to this definition">¶</a></dt>
-<dd><p>Implementation-specific method for merging output files.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>output_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the output file containing the merged results.</p></li>
-<li><p><strong>input_files</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Intermediate files to be merged, according to the
-specific implementation. Default to None, meaning that all
-files output by the current instance are merged.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>NotImplementedError</strong> – If the method has not been implemented for the
-    backend in question.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.get_map_function">
-<span class="sig-name descname"><span class="pre">get_map_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span> <span class="pre">file(s)'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter.get_map_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.get_map_function" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_map_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit(s)'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter.get_map_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.get_map_function" title="Link to this definition">¶</a></dt>
 <dd><p>Identify map function to use (pure python or multiprocess).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -782,6 +596,23 @@ files output by the current instance are merged.</p></li>
 <li><p><strong>nb_files</strong> (<em>int</em>) – </p></li>
 <li><p><strong>unit</strong> (<em>str</em>) – </p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.dataconverter.DataConverter.merge_files">
+<span class="sig-name descname"><span class="pre">merge_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataconverter.html#DataConverter.merge_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataconverter.DataConverter.merge_files" title="Link to this definition">¶</a></dt>
+<dd><p>Merge converted files.</p>
+<blockquote>
+<div><p><cite>DataConverter</cite> will call the <cite>.merge_files</cite> method in the
+<cite>GraphNeTWriter</cite> module that it was instantiated with.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Intermediate files to be merged.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -798,7 +629,7 @@ files output by the current instance are merged.</p></li>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.data.constants.html" title="constants"
+            <a href="graphnet.data.dataclasses.html" title="dataclasses"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -807,7 +638,7 @@ files output by the current instance are merged.</p></li>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> "Previous" </span> constants </span>
+                      class="md-footer-nav__direction"> "Previous" </span> dataclasses </span>
               </div>
             </a>
           

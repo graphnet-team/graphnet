@@ -17,8 +17,11 @@ data
    graphnet.data.dataset
    graphnet.data.extractors
    graphnet.data.parquet
+   graphnet.data.pre_configured
+   graphnet.data.readers
    graphnet.data.sqlite
    graphnet.data.utilities
+   graphnet.data.writers
 
 |start-h2| Submodules |end-h2|
 
@@ -27,10 +30,10 @@ data
    :maxdepth: 2
 
    graphnet.data.constants
+   graphnet.data.dataclasses
    graphnet.data.dataconverter
    graphnet.data.dataloader
    graphnet.data.datamodule
-   graphnet.data.filters
    graphnet.data.pipeline
 
 

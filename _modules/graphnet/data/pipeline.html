@@ -337,7 +337,9 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data.sqlite.sqlite_utilities</span> <span class="kn">import</span> <span class="n">create_table_and_save_to_sql</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.utilities.sqlite_utilities</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_table_and_save_to_sql</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphnet.training.utils</span> <span class="kn">import</span> <span class="n">get_predictions</span><span class="p">,</span> <span class="n">make_dataloader</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.graphs</span> <span class="kn">import</span> <span class="n">GraphDefinition</span>
 

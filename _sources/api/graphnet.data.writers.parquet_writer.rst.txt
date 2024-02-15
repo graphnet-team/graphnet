@@ -1,0 +1,8 @@
+
+parquet\_writer
+===============
+
+.. automodule:: graphnet.data.writers.parquet_writer
+   :members:
+   :undoc-members:
+   :show-inheritance:

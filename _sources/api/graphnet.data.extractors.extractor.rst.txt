@@ -1,0 +1,8 @@
+
+extractor
+=========
+
+.. automodule:: graphnet.data.extractors.extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:

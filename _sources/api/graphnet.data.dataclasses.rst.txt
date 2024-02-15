@@ -1,0 +1,8 @@
+
+dataclasses
+===========
+
+.. automodule:: graphnet.data.dataclasses
+   :members:
+   :undoc-members:
+   :show-inheritance:
