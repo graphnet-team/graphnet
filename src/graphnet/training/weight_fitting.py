@@ -7,7 +7,9 @@ import numpy as np
 import pandas as pd
 import sqlite3
 
-from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
+from graphnet.data.utilities.sqlite_utilities import (
+    create_table_and_save_to_sql,
+)
 from graphnet.utilities.logging import Logger
 
 
