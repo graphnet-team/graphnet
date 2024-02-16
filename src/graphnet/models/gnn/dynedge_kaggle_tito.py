@@ -40,7 +40,7 @@ class DynEdgeTITO(GNN):
         use_global_features: bool = True,
         use_post_processing_layers: bool = True,
         post_processing_layer_sizes: List[int] = None,
-        readout_layer_sizes: List[int] = None,
+        readout_layer_sizes: Optional[List[int]] = None,
         n_head: int = 8,
         nb_neighbours: int = 8,
     ):
@@ -58,8 +58,8 @@ class DynEdgeTITO(GNN):
                 Options are: "min", "max", "mean", and "sum".
             use_global_features: Whether to use global features after pooling.
             use_post_processing_layers: Whether to use post-processing layers after the `DynTrans` layers.
-            post_processing_layer_sizes: (Optional) The layer sizes used in    the post-processing layers. Defaults to [336, 256].
-            readout_layer_sizes: (Optional) The layer sizes used in the readout layers. Defaults to [256, 128].
+            post_processing_layer_sizes: The layer sizes used in    the post-processing layers. Defaults to [336, 256].
+            readout_layer_sizes: The layer sizes used in the readout layers. Defaults to [256, 128].
             n_head: The number of heads to use in the `DynTrans` layer.
             nb_neighbours: The number of neighbours to use in the `DynTrans`
                 layer.
