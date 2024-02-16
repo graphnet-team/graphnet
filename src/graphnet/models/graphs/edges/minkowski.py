@@ -69,12 +69,13 @@ class MinkowskiKNNEdges(EdgeDefinition):
         row = []
         col = []
         for batch in range(x.shape[0]):
+            x_masked = x[batch][mask[batch]]
             distance_mat = compute_minkowski_distance_mat(
-                x_masked := x[batch][mask[batch]],
-                x_masked,
-                self.c,
-                self.space_coords,
-                self.time_coord,
+                x=x_masked,
+                y=x_masked,
+                c=self.c,
+                space_coords=self.space_coords,
+                time_coord=self.time_coord,
             )
             num_points = x_masked.shape[0]
             num_edges = min(self.nb_nearest_neighbours, num_points)

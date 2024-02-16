@@ -1,17 +1,14 @@
 """I3Extractor class(es) for extracting specific, reconstructed features."""
 
 from typing import TYPE_CHECKING, Any, Dict, List
-from graphnet.data.extractors.i3extractor import I3Extractor
-from graphnet.data.extractors.utilities.frames import (
+from .i3extractor import I3Extractor
+from graphnet.data.extractors.icecube.utilities.frames import (
     get_om_keys_and_pulseseries,
 )
 from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package() or TYPE_CHECKING:
-    from icecube import (
-        icetray,
-        dataclasses,
-    )  # pyright: reportMissingImports=false
+    from icecube import icetray  # pyright: reportMissingImports=false
 
 
 class I3FeatureExtractor(I3Extractor):
