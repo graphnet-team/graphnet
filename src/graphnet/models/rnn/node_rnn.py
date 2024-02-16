@@ -19,7 +19,7 @@ class Node_RNN(GNN):
 
     The model takes as input the typical DOM data format and transforms it into
     a time series of DOM activations pr. DOM. before applying a RNN layer and
-    outputting the an RNN output for each DOM. This model is in it's current
+    outputting the an RNN output for each DOM. This model is in its current
     state not intended to be used as a standalone model. Furthermore, it needs
     to be used with a time-series dataset and a "cutter" (see
     NodeAsDOMTimeSeries), which is not standard in the graphnet framework.

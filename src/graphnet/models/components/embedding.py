@@ -11,22 +11,22 @@ class SinusoidalPosEmb(torch.nn.Module):
     digitization of the input data
     """
 
-    def __init__(self, dim: int = 16, m: int = 10000) -> None:
+    def __init__(self, dim: int = 16, n_freq: int = 10000) -> None:
         """Construct `SinusoidalPosEmb`.
 
         Args:
             dim: Embedding dimension.
-            m: Number of frequencies.
+            n_freq: Number of frequencies.
         """
         super().__init__()
         self.dim = dim
-        self.m = m
+        self.n_freq = n_freq
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Apply learnable forward pass to the layer."""
         device = x.device
         half_dim = self.dim // 2
-        emb = torch.log(torch.tensor(self.m, device=device)) / half_dim
+        emb = torch.log(torch.tensor(self.n_freq, device=device)) / half_dim
         emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
         emb = x[..., None] * emb[None, ...]
         emb = torch.cat((emb.sin(), emb.cos()), dim=-1)
