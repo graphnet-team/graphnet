@@ -181,6 +181,7 @@ class SQLiteWriter(GraphNeTWriter):
                     database_path=database_path,
                     index_column=primary_key,
                     integer_primary_key=integer_primary_key,
+                    default_type="FLOAT",
                 )
 
                 # Update row counts if needed
