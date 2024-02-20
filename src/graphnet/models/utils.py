@@ -6,7 +6,7 @@ from torch_geometric.data import Batch
 import torch
 from torch import Tensor, LongTensor
 
-from torch_geometric.utils.homophily import homophily
+from torch_geometric.utils import homophily
 
 
 def calculate_xyzt_homophily(
