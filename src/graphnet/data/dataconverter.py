@@ -165,7 +165,7 @@ class DataConverter(ABC, Logger):
         for ext in self._file_reader._accepted_file_extensions:
             if file_name.endswith(ext):
                 file_name_without_extension = file_name.replace(ext, "")
-        return file_name_without_extension
+        return file_name_without_extension.replace(".i3", "")
 
     @final
     def _assign_event_no(
