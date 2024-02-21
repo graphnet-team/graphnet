@@ -15,14 +15,15 @@ from graphnet.models.components.embedding import SinusoidalPosEmb
 
 
 class Node_RNN(GNN):
-    """Implementation of the RNN model architecture.
+    """Implementation of the Node RNN model architecture.
 
     The model takes as input the typical DOM data format and transforms it into
     a time series of DOM activations pr. DOM. before applying a RNN layer and
     outputting the an RNN output for each DOM. This model is in its current
     state not intended to be used as a standalone model. Furthermore, it needs
-    to be used with a time-series dataset and a "cutter" (see
-    NodeAsDOMTimeSeries), which is not standard in the graphnet framework.
+    to be used with a time-series dataset object, where the last column in x is
+    a special column that is used to seperate the activation into time series
+    per dom per batch.
     """
 
     @save_model_config
@@ -37,7 +38,7 @@ class Node_RNN(GNN):
         dropout: float = 0.5,
         embedding_dim: int = 0,
     ) -> None:
-        """Construct `NodeTimeRNN`.
+        """Construct `Node_RNN`.
 
         Args:
             nb_inputs: Number of features in the input data.
@@ -100,6 +101,7 @@ class Node_RNN(GNN):
                     self._embedding_dim * time_series.shape[-1],
                 )
             )
+        # Create the dom + batch unique splitter from the new_node_col
         splitter = x[:, -1].argwhere()[1:].flatten().cpu()
         time_series = time_series.tensor_split(splitter)
         # apply RNN per DOM irrespective of batch and return the final state.
