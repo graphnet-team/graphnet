@@ -418,11 +418,14 @@
         <span class="c1"># in the directory</span>
         <span class="n">input_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_reader</span><span class="o">.</span><span class="n">find_files</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">input_dir</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_launch_jobs</span><span class="p">(</span><span class="n">input_files</span><span class="o">=</span><span class="n">input_files</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_method</span><span class="o">.</span><span class="n">file_extension</span><span class="si">}</span><span class="s2">"</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_file_name</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_method</span><span class="o">.</span><span class="n">file_extension</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="p">)</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">input_files</span>
+        <span class="p">]</span>
 
     <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">_launch_jobs</span><span class="p">(</span>
@@ -488,9 +491,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">,</span> <span class="n">I3FileSet</span><span class="p">):</span>
             <span class="n">input_file_path</span> <span class="o">=</span> <span class="n">input_file_path</span><span class="o">.</span><span class="n">i3_file</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span>
-        <span class="n">index_of_dot</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
-        <span class="n">file_name_without_extension</span> <span class="o">=</span> <span class="n">file_name</span><span class="p">[:</span><span class="n">index_of_dot</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">file_name_without_extension</span>
+        <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_reader</span><span class="o">.</span><span class="n">_accepted_file_extensions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
+                <span class="n">file_name_without_extension</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">file_name_without_extension</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">".i3"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
     <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">_assign_event_no</span><span class="p">(</span>
