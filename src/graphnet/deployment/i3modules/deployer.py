@@ -6,9 +6,9 @@ import multiprocessing
 from typing import TYPE_CHECKING, List, Union, Sequence
 import time
 import numpy as np
-from dataclasses import dataclass
 
 from graphnet.utilities.imports import has_icecube_package, has_torch_package
+from graphnet.data.dataclasses import Settings
 from graphnet.deployment.i3modules import (
     GraphNeTI3Module,
 )
@@ -19,16 +19,6 @@ if has_icecube_package() or TYPE_CHECKING:
 
 if has_torch_package or TYPE_CHECKING:
     import torch
-
-
-@dataclass
-class Settings:
-    """Dataclass for workers in GraphNeTI3Deployer."""
-
-    i3_files: List[str]
-    gcd_file: str
-    output_folder: str
-    modules: List[GraphNeTI3Module]
 
 
 class GraphNeTI3Deployer:
