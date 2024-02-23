@@ -34,7 +34,7 @@ class LossFunction(Model):
     def forward(  # type: ignore[override]
         self,
         predictions: Tensor,
-        target: Tensor,
+        target: Tensor = None,
         weights: Optional[Tensor] = None,
         return_elements: bool = False,
         jacobian: Tensor = None,

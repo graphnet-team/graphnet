@@ -465,7 +465,6 @@ class StandardFlowTask(Task):
                 predictions=pred,
                 jacobian=jacobian,
                 weights=weights,
-                target=None,
             )
             + self._regularisation_loss
         )
