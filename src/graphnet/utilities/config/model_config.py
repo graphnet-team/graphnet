@@ -249,6 +249,28 @@ class ModelConfig(BaseConfig):
 
         return {self.__class__.__name__: config_dict}
 
+    def __repr__(self) -> str:
+        """Return a string representation of the object."""
+        arguments_str = self._format_arguments(self.arguments)
+        return f"{self.__class__.__name__}(\n{arguments_str}\n)"
+
+    def _format_arguments(
+        self, arguments: Dict[str, Any], indent: int = 4
+    ) -> str:
+        """Format the arguments dictionary into a string representation."""
+        lines = []
+        for arg, value in arguments.items():
+            if isinstance(value, ModelConfig):
+                value_str = repr(value)
+            elif isinstance(value, dict):
+                value_str = self._format_arguments(value, indent + 4)
+            else:
+                value_str = repr(value)
+
+            lines.append(f"{' ' * indent}'{arg}': {value_str},")
+
+        return "{\n" + "\n".join(lines) + "\n" + " " * (indent - 4) + "}"
+
 
 def save_model_config(init_fn: Callable) -> Callable:
     """Save the arguments to `__init__` functions as a member `ModelConfig`."""
