@@ -74,9 +74,6 @@ class RationalQuadraticSpline(Model):
 
         # Calculate knot index `k` and s
         k = self._find_spline_idx(knot_y, y)
-        assert (
-            max(k) + 1 <= knot_y.shape[1]
-        ), f"""{knot_y.shape} vs. {max(k) + 1}"""
         s = self._calculate_s(knot_y, knot_x, k)
 
         # Calculate coefficients a, b and c from paper
