@@ -3,10 +3,6 @@
 import os
 from typing import Any, Dict, List, Optional
 
-from pytorch_lightning.loggers import WandbLogger
-import numpy as np
-import pandas as pd
-
 from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
