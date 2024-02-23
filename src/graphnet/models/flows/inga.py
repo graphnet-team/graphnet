@@ -9,7 +9,6 @@ import torch
 
 from graphnet.models.flows import NormalizingFlow
 from graphnet.models.flows.spline_blocks import (
-    SplineBlock,
     TwoPartitionSplineBlock,
 )
 from torch_geometric.data import Data
