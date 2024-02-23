@@ -22,7 +22,6 @@ class RationalQuadraticSpline(Model):
         self.b = b
         self._softmax = torch.nn.Softmax(dim=1)
         self._softplus = torch.nn.Softplus()
-        self._eps = 0
 
     def forward_spline(
         self,
@@ -219,12 +218,12 @@ class RationalQuadraticSpline(Model):
         knot_x = self._transform_to_internal_coordinates(knot_x_bins)
         knot_y = self._transform_to_internal_coordinates(knot_y_bins)
         knot_x = torch.nn.functional.pad(knot_x, (1, 0))
-        knot_x[:, 0] = -self.b - self._eps
-        knot_x[:, -1] = knot_x[:, -1] + self._eps
+        knot_x[:, 0] = -self.b
+        knot_x[:, -1] = knot_x[:, -1]
 
         knot_y = torch.nn.functional.pad(knot_y, (1, 0))
-        knot_y[:, 0] = -self.b - self._eps
-        knot_y[:, -1] = knot_y[:, -1] + self._eps
+        knot_y[:, 0] = -self.b
+        knot_y[:, -1] = knot_y[:, -1]
 
         d = self._softplus(d)
         d = torch.nn.functional.pad(d, (1, 1), value=1.0)
