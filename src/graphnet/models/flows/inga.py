@@ -112,7 +112,6 @@ class INGA(NormalizingFlow):
         c = 0
         x = data.x
         for spline_block in self.spline_blocks:
-            # self.info(f"spline block {c}")
             if is_first:
                 y, partition_jacobian = spline_block(x=x)
                 global_jacobian = partition_jacobian
