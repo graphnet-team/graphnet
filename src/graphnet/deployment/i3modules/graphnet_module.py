@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from torch_geometric.data import Data, Batch
 
-from graphnet.data.extractors import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractor,
     I3FeatureExtractorIceCubeUpgrade,
 )
@@ -15,6 +15,7 @@ from graphnet.models import Model, StandardModel
 from graphnet.models.graphs import GraphDefinition
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.config import ModelConfig
+from graphnet.utilities.logging import Logger
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube.icetray import (
@@ -28,7 +29,7 @@ if has_icecube_package() or TYPE_CHECKING:
     from icecube import dataclasses, dataio, icetray
 
 
-class GraphNeTI3Module:
+class GraphNeTI3Module(Logger):
     """Base I3 Module for GraphNeT.
 
     Contains methods for extracting pulsemaps, producing graphs and writing to
@@ -56,6 +57,7 @@ class GraphNeTI3Module:
                                 pulsemap from the I3Frames
             gcd_file: Path to the associated gcd-file.
         """
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
         assert isinstance(graph_definition, GraphDefinition)
         self._graph_definition = graph_definition
         self._pulsemap = pulsemap
@@ -68,7 +70,7 @@ class GraphNeTI3Module:
             self._i3_extractors = [pulsemap_extractor]
 
         for i3_extractor in self._i3_extractors:
-            i3_extractor.set_files(i3_file="", gcd_file=self._gcd_file)
+            i3_extractor.set_gcd(i3_file="", gcd_file=self._gcd_file)
 
     @abstractmethod
     def __call__(self, frame: I3Frame) -> bool:
@@ -200,6 +202,9 @@ class I3InferenceModule(GraphNeTI3Module):
         if graph is not None:
             predictions = self._inference(graph)
         else:
+            self.warning(
+                f"At least one event has no pulses in {self._pulsemap} - padding {self.prediction_columns} with NaN."
+            )
             predictions = np.repeat(
                 [np.nan], len(self.prediction_columns)
             ).reshape(-1, len(self.prediction_columns))

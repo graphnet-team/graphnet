@@ -13,7 +13,9 @@ import sqlite3
 import torch
 from torch.utils.data import DataLoader
 
-from graphnet.data.sqlite.sqlite_utilities import create_table_and_save_to_sql
+from graphnet.data.utilities.sqlite_utilities import (
+    create_table_and_save_to_sql,
+)
 from graphnet.training.utils import get_predictions, make_dataloader
 from graphnet.models.graphs import GraphDefinition
 

@@ -1,9 +1,10 @@
 """Example of converting I3-files to SQLite and Parquet."""
 
 import os
+from glob import glob
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
-from graphnet.data.extractors import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCubeUpgrade,
     I3FeatureExtractorIceCube86,
     I3RetroExtractor,
@@ -41,17 +42,22 @@ def main_icecube86(backend: str) -> None:
 
     inputs = [f"{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02"]
     outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/ic86"
+    gcd_rescue = glob(
+        "{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02/*GeoCalib*"
+    )[0]
 
-    converter: DataConverter = CONVERTER_CLASS[backend](
-        [
+    converter = CONVERTER_CLASS[backend](
+        extractors=[
             I3FeatureExtractorIceCube86("SRTInIcePulses"),
             I3TruthExtractor(),
         ],
-        outdir,
+        outdir=outdir,
+        gcd_rescue=gcd_rescue,
+        workers=1,
     )
     converter(inputs)
     if backend == "sqlite":
-        converter.merge_files(os.path.join(outdir, "merged"))
+        converter.merge_files()
 
 
 def main_icecube_upgrade(backend: str) -> None:
@@ -61,25 +67,25 @@ def main_icecube_upgrade(backend: str) -> None:
 
     inputs = [f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998"]
     outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/upgrade"
+    gcd_rescue = glob(
+        "{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/*GeoCalib*"
+    )[0]
     workers = 1
 
     converter: DataConverter = CONVERTER_CLASS[backend](
-        [
+        extractors=[
             I3TruthExtractor(),
             I3RetroExtractor(),
             I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMap_mDOM"),
             I3FeatureExtractorIceCubeUpgrade("I3RecoPulseSeriesMap_DEgg"),
         ],
-        outdir,
+        outdir=outdir,
         workers=workers,
-        # nb_files_to_batch=10,
-        # sequential_batch_pattern="temp_{:03d}",
-        # input_file_batch_pattern="[A-Z]{1}_[0-9]{5}*.i3.zst",
-        icetray_verbose=1,
+        gcd_rescue=gcd_rescue,
     )
     converter(inputs)
     if backend == "sqlite":
-        converter.merge_files(os.path.join(outdir, "merged"))
+        converter.merge_files()
 
 
 if __name__ == "__main__":

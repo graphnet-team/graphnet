@@ -4,10 +4,11 @@ from glob import glob
 from os.path import join
 from typing import TYPE_CHECKING, List, Sequence, Dict, Tuple, Any
 import os
+import numpy as np
 import pytest
 
 from graphnet.data.constants import FEATURES
-from graphnet.data.extractors.i3featureextractor import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.constants import (
@@ -139,16 +140,16 @@ def extract_predictions(
     Returns:
         Predictions from each model for each frame.
     """
-    file = dataio.I3File(file)
+    open_file = dataio.I3File(file)
     data = []
-    while file.more():  # type: ignore
-        frame = file.pop_physics()  # type: ignore
+    while open_file.more():  # type: ignore
+        frame = open_file.pop_physics()  # type: ignore
         predictions = {}
         for frame_entry in frame.keys():
             for model_path in model_paths:
                 model = model_path.split("/")[-1]
                 if model in frame_entry:
-                    predictions[model] = frame[frame_entry].value
+                    predictions[frame_entry] = frame[frame_entry].value
         data.append(predictions)
     return data
 
@@ -193,9 +194,7 @@ def test_deployment() -> None:
 def verify_QUESO_integrity() -> None:
     """Test new and original i3 files contain same predictions."""
     base_path = f"{PRETRAINED_MODEL_DIR}/icecube/upgrade/QUESO/"
-    queso_original_file = glob(
-        f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/*.i3.gz"
-    )[0]
+    queso_original_file = glob(f"{TEST_DATA_DIR}/deployment/QUESO/*.i3.gz")[0]
     queso_new_file = glob(f"{TEST_DATA_DIR}/output/QUESO_test/*.i3.gz")[0]
     queso_models = glob(base_path + "/*")
 
@@ -210,10 +209,18 @@ def verify_QUESO_integrity() -> None:
     for frame in range(len(original_predictions)):
         for model in original_predictions[frame].keys():
             assert model in new_predictions[frame].keys()
-            assert (
-                new_predictions[frame][model]
-                == original_predictions[frame][model]
-            )
+            try:
+                assert np.isclose(
+                    new_predictions[frame][model],
+                    original_predictions[frame][model],
+                    equal_nan=True,
+                )
+            except AssertionError as e:
+                print(
+                    f"Mismatch found in {model}: {new_predictions[frame][model]} vs. {original_predictions[frame][model]}"
+                )
+                raise e
+
     return
 
 

@@ -5,7 +5,7 @@ from os.path import join
 from typing import TYPE_CHECKING, List, Sequence
 
 from graphnet.data.constants import FEATURES
-from graphnet.data.extractors.i3featureextractor import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.constants import (

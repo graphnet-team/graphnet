@@ -317,3 +317,18 @@ def save_results(
     model.save_state_dict(path + "/" + tag + "_state_dict.pth")
     model.save(path + "/" + tag + "_model.pth")
     Logger().info("Results saved at: \n %s" % path)
+
+
+def save_selection(selection: List[int], file_path: str) -> None:
+    """Save the list of event numbers to a CSV file.
+
+    Args:
+       selection: List of event ids.
+       file_path: File path to save the selection.
+    """
+    assert isinstance(
+        selection, list
+    ), "Selection should be a list of integers."
+    with open(file_path, "w") as f:
+        f.write(",".join(map(str, selection)))
+        f.write("\n")
