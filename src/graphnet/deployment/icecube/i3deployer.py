@@ -1,6 +1,6 @@
 """Contains an IceCube-specific implementation of Deployer."""
 
-from typing import TYPE_CHECKING, List, Union, Sequence, Any
+from typing import TYPE_CHECKING, List, Union, Sequence
 import os
 import numpy as np
 
