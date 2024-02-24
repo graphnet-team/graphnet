@@ -1,4 +1,4 @@
-"""Contains the graphnet i3 deployment module."""
+"""Contains the graphnet deployer module."""
 import random
 from abc import abstractmethod, ABC
 import multiprocessing

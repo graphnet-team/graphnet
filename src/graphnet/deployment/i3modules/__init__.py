@@ -5,5 +5,5 @@ inference as part of an icetray reconstruction chain, for different IceCube
 detector configurations.
 """
 
-from .graphnet_module import *
+from .deployment_module import *
 from .deployer import *
