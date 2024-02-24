@@ -4,9 +4,9 @@ from graphnet.deployment.icecube import I3Deployer, I3InferenceModule
 
 
 class GraphNeTI3Deployer(I3Deployer):
-    """A generic baseclass for applying `DeploymentModules` to analysis files.
+    """Class has been renamed to `I3Deployer`.
 
-    Modules are applied in the order that they appear in `modules`.
+    Please use `I3Deployer` instead.
     """
 
     def __init__(
@@ -15,7 +15,7 @@ class GraphNeTI3Deployer(I3Deployer):
         gcd_file: str,
         n_workers: int = 1,
     ) -> None:
-        """Initialize `Deployer`.
+        """Initialize `GraphNeTI3Deployer`.
 
         Will apply `DeploymentModules` to files in the order in which they
         appear in `modules`. Each module is run independently.
