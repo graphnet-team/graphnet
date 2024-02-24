@@ -1,0 +1,38 @@
+"""Contains deprecated methods."""
+from typing import Union, Sequence
+from graphnet.deployment.icecube import I3Deployer, I3InferenceModule
+
+
+class GraphNeTI3Deployer(I3Deployer):
+    """A generic baseclass for applying `DeploymentModules` to analysis files.
+
+    Modules are applied in the order that they appear in `modules`.
+    """
+
+    def __init__(
+        self,
+        modules: Union[I3InferenceModule, Sequence[I3InferenceModule]],
+        gcd_file: str,
+        n_workers: int = 1,
+    ) -> None:
+        """Initialize `Deployer`.
+
+        Will apply `DeploymentModules` to files in the order in which they
+        appear in `modules`. Each module is run independently.
+
+        Args:
+            modules: List of `DeploymentModules`.
+                              Order of appearence in the list determines order
+                              of deployment.
+            gcd_file: path to gcd file.
+            n_workers: Number of workers. The deployer will divide the number
+                       of input files across workers. Defaults to 1.
+        """
+        super().__init__(
+            modules=modules, n_workers=n_workers, gcd_file=gcd_file
+        )
+        self.warning(
+            f"{self.__class__} will be deprecated in GraphNeT 2.0"
+            " Please use `I3Deployer` instead. "
+            " E.g.: `from graphnet.deployment.icecube import I3Deployer`"
+        )
