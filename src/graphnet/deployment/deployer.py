@@ -1,4 +1,4 @@
-"""Contains the graphnet deployer module."""
+"""Contains the graphnet deployment module."""
 import random
 from abc import abstractmethod, ABC
 import multiprocessing
@@ -6,9 +6,7 @@ from typing import TYPE_CHECKING, List, Union, Sequence, Any
 import time
 
 from graphnet.utilities.imports import has_torch_package
-from graphnet.deployment.i3modules import (
-    GraphNeTI3Module,
-)
+from graphnet.deployment import DeploymentModule
 from graphnet.utilities.logging import Logger
 
 if has_torch_package or TYPE_CHECKING:
@@ -46,7 +44,7 @@ class Deployer(ABC, Logger):
 
     def __init__(
         self,
-        modules: Union[GraphNeTI3Module, Sequence[GraphNeTI3Module]],
+        modules: Union[DeploymentModule, Sequence[DeploymentModule]],
         n_workers: int = 1,
     ) -> None:
         """Initialize `Deployer`.
@@ -61,6 +59,7 @@ class Deployer(ABC, Logger):
             n_workers: Number of workers. The deployer will divide the number
                        of input files across workers. Defaults to 1.
         """
+        super().__init__(name=__name__, class_name=self.__class__.__name__)
         # This makes sure that one worker cannot access more
         # than 1 core's worth of compute.
 
