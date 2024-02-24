@@ -1,11 +1,10 @@
-"""IceCube DeploymentModules.
+"""IceCube I3InferenceModule.
 
 Contains functionality for writing model predictions to i3 files.
 """
 from typing import List, Union, Optional, TYPE_CHECKING, Dict, Any
 
 import numpy as np
-from torch import Tensor
 from torch_geometric.data import Data, Batch
 
 from graphnet.utilities.config import ModelConfig
@@ -38,7 +37,7 @@ class I3InferenceModule(DeploymentModule):
         model_name: str,
         gcd_file: str,
         features: Optional[List[str]] = None,
-        prediction_columns: Optional[Union[List[str]]] = None,
+        prediction_columns: Optional[Union[List[str], None]] = None,
         pulsemap: Optional[str] = None,
     ):
         """General class for inference on I3Frames (physics).
