@@ -60,7 +60,7 @@ class DeploymentModule(Logger):
         state_dict: Union[Dict[str, Tensor], str],
     ) -> Model:
         """Load `Model` from config and insert learned weights."""
-        model = Model.from_config(model_config)
+        model = Model.from_config(model_config, trust=True)
         model.load_state_dict(state_dict)
         return model
 
