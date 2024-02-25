@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, List, Union, Sequence, Any
 import time
 
 from graphnet.utilities.imports import has_torch_package
-from graphnet.deployment import DeploymentModule
+from .deployment_module import DeploymentModule
 from graphnet.utilities.logging import Logger
 
 if has_torch_package or TYPE_CHECKING:
