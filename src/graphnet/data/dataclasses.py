@@ -3,7 +3,7 @@
 from typing import List
 from dataclasses import dataclass
 
-from graphnet.deployment.i3modules import GraphNeTI3Module
+from graphnet.deployment.i3modules import I3InferenceModule
 
 
 @dataclass
@@ -14,9 +14,9 @@ class I3FileSet:  # noqa: D101
 
 @dataclass
 class Settings:
-    """Dataclass for workers in GraphNeTI3Deployer."""
+    """Dataclass for workers in I3Deployer."""
 
     i3_files: List[str]
     gcd_file: str
     output_folder: str
-    modules: List[GraphNeTI3Module]
+    modules: List[I3InferenceModule]

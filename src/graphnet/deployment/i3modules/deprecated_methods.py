@@ -11,7 +11,9 @@ class GraphNeTI3Deployer(I3Deployer):
 
     def __init__(
         self,
-        modules: Union[I3InferenceModule, Sequence[I3InferenceModule]],
+        graphnet_modules: Union[
+            I3InferenceModule, Sequence[I3InferenceModule]
+        ],
         gcd_file: str,
         n_workers: int = 1,
     ) -> None:
@@ -21,7 +23,7 @@ class GraphNeTI3Deployer(I3Deployer):
         appear in `modules`. Each module is run independently.
 
         Args:
-            modules: List of `DeploymentModules`.
+            graphnet_modules: List of `DeploymentModules`.
                               Order of appearence in the list determines order
                               of deployment.
             gcd_file: path to gcd file.
@@ -29,7 +31,7 @@ class GraphNeTI3Deployer(I3Deployer):
                        of input files across workers. Defaults to 1.
         """
         super().__init__(
-            modules=modules, n_workers=n_workers, gcd_file=gcd_file
+            modules=graphnet_modules, n_workers=n_workers, gcd_file=gcd_file
         )
         self.warning(
             f"{self.__class__} will be deprecated in GraphNeT 2.0"
