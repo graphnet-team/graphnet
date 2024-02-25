@@ -85,9 +85,12 @@ class I3Deployer(Deployer):
         """Will prepare the settings for each worker."""
         try:
             os.makedirs(output_folder)
-        except FileExistsError:
-            assert False, f"""{output_folder} already exists. To avoid overwriting \n
-                    existing files, the process has been stopped."""
+        except FileExistsError as e:
+            self.error(
+                f"{output_folder} already exists. To avoid overwriting "
+                "existing files, the process has been stopped."
+            )
+            raise e
         if self._n_workers > len(input_files):
             self._n_workers = len(input_files)
         if self._n_workers > 1:
