@@ -135,7 +135,7 @@ class I3InferenceModule(DeploymentModule):
             if isinstance(predictions, list):
                 predictions = predictions[0]
                 self.warning(
-                    f"{self.__class__.__name__} is assumes one Task "
+                    f"{self.__class__.__name__} assumes one Task "
                     f"but got {len(predictions)}. Only the first will"
                     " be used."
                 )
