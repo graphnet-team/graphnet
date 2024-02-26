@@ -44,7 +44,6 @@ class I3PulseCleanerModule(I3InferenceModule):
         gcd_file: str,
         threshold: float = 0.7,
         discard_empty_events: bool = False,
-        prediction_columns: Optional[Union[List[str]]] = None,
     ):
         """General class for inference on I3Frames (physics).
 
@@ -67,9 +66,6 @@ class I3PulseCleanerModule(I3InferenceModule):
                             to speed up processing especially for noise
                             simulation, since it will not do any writing or
                             further calculations.
-            prediction_columns: column names for the predictions of the model.
-                            Will help define the named entry in the I3Frame.
-                            E.g. ['energy_reco']. Optional.
         """
         super().__init__(
             pulsemap=pulsemap,
@@ -78,7 +74,6 @@ class I3PulseCleanerModule(I3InferenceModule):
             model_config=model_config,
             state_dict=state_dict,
             model_name=model_name,
-            prediction_columns=prediction_columns,
             gcd_file=gcd_file,
         )
         self._threshold = threshold
