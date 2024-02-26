@@ -16,11 +16,9 @@ from graphnet.data.extractors.icecube import (
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube.icetray import (
-        I3Module,
         I3Frame,
     )  # pyright: reportMissingImports=false
     from icecube.dataclasses import (
-        I3Double,
         I3MapKeyVectorDouble,
     )  # pyright: reportMissingImports=false
     from icecube import dataclasses, dataio, icetray
