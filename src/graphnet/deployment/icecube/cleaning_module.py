@@ -21,7 +21,7 @@ if has_icecube_package() or TYPE_CHECKING:
     from icecube.dataclasses import (
         I3MapKeyVectorDouble,
     )  # pyright: reportMissingImports=false
-    from icecube import dataclasses, dataio, icetray
+    from icecube import dataclasses, dataio
 
 
 class I3PulseCleanerModule(I3InferenceModule):
