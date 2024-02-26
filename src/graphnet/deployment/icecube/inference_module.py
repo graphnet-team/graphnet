@@ -149,9 +149,7 @@ class I3InferenceModule(DeploymentModule):
             ).reshape(-1, len(self.prediction_columns))
         return predictions
 
-    def _create_data_representation(
-        self, frame: I3Frame
-    ) -> Data:  # py-l-i-n-t-:- -d-i-s-able=invalid-name
+    def _create_data_representation(self, frame: I3Frame) -> Data:
         """Process Physics I3Frame into graph."""
         # Extract features
         input_features = self._extract_feature_array_from_frame(frame)
