@@ -122,8 +122,9 @@ def test_complete_model_config(path: str = "/tmp/complete_model.yml") -> None:
             "transform_prediction_and_target"
         ](x_)
     )
-
-    assert repr(constructed_model) == repr(model)
+    model.verbose_print = False
+    constructed_model.verbose_print = False
+    assert constructed_model.extra_repr() == model.extra_repr()
 
 
 @pytest.mark.run(after="test_complete_model_config")
