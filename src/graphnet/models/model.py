@@ -107,6 +107,13 @@ class Model(
 
         return source._construct_model(trust, load_modules)
 
+    def set_verbose_print_recursively(self, verbose_print: bool) -> None:
+        """Set verbose_print recursively for all Model modules."""
+        for module in self.modules():
+            if isinstance(module, Model):
+                module.verbose_print = verbose_print
+        self.verbose_print = verbose_print
+
     def extra_repr(self) -> str:
         """Provide a more detailed description of the object print.
 
