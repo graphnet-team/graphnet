@@ -378,6 +378,8 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.model.Model" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.model.Model.verbose_print" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">verbose_print</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.model.Model.save" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.model.Model.load" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a>
@@ -387,6 +389,12 @@
         <li class="md-nav__item"><a href="#graphnet.models.model.Model.load_state_dict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">load_state_dict()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.model.Model.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.model.Model.set_verbose_print_recursively" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_verbose_print_recursively()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.model.Model.extra_repr" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">extra_repr()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.model.Model.extra_repr_recursive" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">extra_repr_recursive()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -400,6 +408,13 @@
     
       <a href="#graphnet.models.model.Model" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a>
       <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.model.Model.verbose_print" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">verbose_print</span></code></a>
+      
+    
+    </li>
     <li class="md-nav__item">
     
     
@@ -432,6 +447,27 @@
     
     
       <a href="#graphnet.models.model.Model.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.model.Model.set_verbose_print_recursively" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_verbose_print_recursively()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.model.Model.extra_repr" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">extra_repr()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.model.Model.extra_repr_recursive" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">extra_repr_recursive()</span></code></a>
       
     
     </li></ul>
@@ -503,6 +539,8 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.model.Model" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.model.Model.verbose_print" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">verbose_print</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.model.Model.save" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.model.Model.load" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a>
@@ -512,6 +550,12 @@
         <li class="md-nav__item"><a href="#graphnet.models.model.Model.load_state_dict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">load_state_dict()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.model.Model.from_config" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">from_config()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.model.Model.set_verbose_print_recursively" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_verbose_print_recursively()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.model.Model.extra_repr" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">extra_repr()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.model.Model.extra_repr_recursive" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">extra_repr_recursive()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -546,6 +590,10 @@
 <dd class="field-even"><p>object</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.verbose_print">
+<span class="sig-name descname"><span class="pre">verbose_print</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#graphnet.models.model.Model.verbose_print" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.model.Model.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/model.html#Model.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.save" title="Link to this definition">¶</a></dt>
@@ -622,6 +670,49 @@ namespace. Defaults to loading <cite>torch</cite>.</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.set_verbose_print_recursively">
+<span class="sig-name descname"><span class="pre">set_verbose_print_recursively</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose_print</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/model.html#Model.set_verbose_print_recursively"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.set_verbose_print_recursively" title="Link to this definition">¶</a></dt>
+<dd><p>Set verbose_print recursively for all Model modules.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>verbose_print</strong> (<em>bool</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.extra_repr">
+<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/model.html#Model.extra_repr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.extra_repr" title="Link to this definition">¶</a></dt>
+<dd><p>Provide a more detailed description of the object print.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A string representation containing detailed information
+about the object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.model.Model.extra_repr_recursive">
+<span class="sig-name descname"><span class="pre">extra_repr_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/model.html#Model.extra_repr_recursive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.model.Model.extra_repr_recursive" title="Link to this definition">¶</a></dt>
+<dd><p>Recursively format a dictionary for extra_repr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dictionary</strong> (<em>dict</em>) – </p></li>
+<li><p><strong>indent</strong> (<em>int</em>) – </p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

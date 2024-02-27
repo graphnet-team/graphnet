@@ -576,7 +576,29 @@
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">}</span></div>
-</div>
+
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return a string representation of the object."""</span>
+        <span class="n">arguments_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_arguments</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\n</span><span class="si">{</span><span class="n">arguments_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">)"</span>
+
+    <span class="k">def</span> <span class="nf">_format_arguments</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Format the arguments dictionary into a string representation."""</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ModelConfig</span><span class="p">):</span>
+                <span class="n">value_str</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">value_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_arguments</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">indent</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value_str</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">' '</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">indent</span><span class="si">}</span><span class="s2">'</span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">value_str</span><span class="si">}</span><span class="s2">,"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">"{</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">*</span> <span class="p">(</span><span class="n">indent</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"}"</span></div>
 
 
 

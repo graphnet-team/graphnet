@@ -349,6 +349,8 @@
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Base class for all components in graphnet."""</span>
 
+    <span class="n">verbose_print</span> <span class="o">=</span> <span class="kc">True</span>
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_batch_size</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">batch</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>
@@ -393,7 +395,7 @@
 
 <div class="viewcode-block" id="Model.load_state_dict">
 <a class="viewcode-back" href="../../../api/graphnet.models.model.html#graphnet.models.model.Model.load_state_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_state_dict</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">load_state_dict</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">],</span> <span class="o">**</span><span class="n">kargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Model"</span><span class="p">:</span>  <span class="c1"># pylint: disable=arguments-differ</span>
 <span class="w">        </span><span class="sd">"""Load model `state_dict` from `path`."""</span>
@@ -444,6 +446,53 @@
         <span class="p">),</span> <span class="sa">f</span><span class="s2">"Argument `source` of type (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="si">}</span><span class="s2">) is not a `ModelConfig"</span>
 
         <span class="k">return</span> <span class="n">source</span><span class="o">.</span><span class="n">_construct_model</span><span class="p">(</span><span class="n">trust</span><span class="p">,</span> <span class="n">load_modules</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Model.set_verbose_print_recursively">
+<a class="viewcode-back" href="../../../api/graphnet.models.model.html#graphnet.models.model.Model.set_verbose_print_recursively">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_verbose_print_recursively</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose_print</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Set verbose_print recursively for all Model modules."""</span>
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+                <span class="n">module</span><span class="o">.</span><span class="n">verbose_print</span> <span class="o">=</span> <span class="n">verbose_print</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose_print</span> <span class="o">=</span> <span class="n">verbose_print</span></div>
+
+
+<div class="viewcode-block" id="Model.extra_repr">
+<a class="viewcode-back" href="../../../api/graphnet.models.model.html#graphnet.models.model.Model.extra_repr">[docs]</a>
+    <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Provide a more detailed description of the object print.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: A string representation containing detailed information</span>
+<span class="sd">            about the object.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_repr</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose_print</span> <span class="k">else</span> <span class="s2">""</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Detailed information about the object."""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"""</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">extra_repr_recursive</span><span class="p">(</span>
+<span class="w">            </span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span><span class="si">}</span><span class="s2">)"""</span>
+
+<div class="viewcode-block" id="Model.extra_repr_recursive">
+<a class="viewcode-back" href="../../../api/graphnet.models.model.html#graphnet.models.model.Model.extra_repr_recursive">[docs]</a>
+    <span class="k">def</span> <span class="nf">extra_repr_recursive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Recursively format a dictionary for extra_repr."""</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">"{</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"class_name"</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s2">" "</span> <span class="o">*</span> <span class="n">indent</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">': "</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_repr_recursive</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">indent</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="n">value</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s2">",</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">" "</span> <span class="o">*</span> <span class="p">(</span><span class="n">indent</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"}"</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 </div>
 
 </pre></div>
