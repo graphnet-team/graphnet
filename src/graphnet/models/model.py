@@ -22,7 +22,9 @@ class Model(
     Logger, Configurable, LightningModule, ABC, metaclass=ModelConfigSaverABC
 ):
     """Base class for all components in graphnet."""
+
     verbose_print = True
+
     @staticmethod
     def _get_batch_size(data: List[Data]) -> int:
         return sum([torch.numel(torch.unique(d.batch)) for d in data])
@@ -109,11 +111,11 @@ class Model(
         """Provide a more detailed description of the object print.
 
         Returns:
-            str: A string representation containing detailed information 
+            str: A string representation containing detailed information
             about the object.
         """
         return self._extra_repr() if self.verbose_print else ""
-    
+
     def _extra_repr(self) -> str:
         """Detailed information about the object."""
         return f"""{self.__class__.__name__}(\n{self.extra_repr_recursive(
