@@ -324,7 +324,7 @@
   <h1 id="modules-graphnet-data-dataclasses--page-root">Source code for graphnet.data.dataclasses</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Module containing experiment-specific dataclasses."""</span>
 
-
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 
 
@@ -334,6 +334,19 @@
 <span class="k">class</span> <span class="nc">I3FileSet</span><span class="p">:</span>  <span class="c1"># noqa: D101</span>
     <span class="n">i3_file</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">gcd_file</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+
+<div class="viewcode-block" id="Settings">
+<a class="viewcode-back" href="../../../api/graphnet.data.dataclasses.html#graphnet.data.dataclasses.Settings">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Settings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Dataclass for workers in I3Deployer."""</span>
+
+    <span class="n">i3_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">gcd_file</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">output_folder</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">modules</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span></div>
 
 </pre></div>
 

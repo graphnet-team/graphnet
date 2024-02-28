@@ -15,6 +15,17 @@ deployment
    :maxdepth: 2
 
    graphnet.deployment.i3modules
+   graphnet.deployment.icecube
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.deployment.deployer
+   graphnet.deployment.deployment_module
+
 
 
 .. |start-h2| raw:: html

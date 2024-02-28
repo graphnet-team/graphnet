@@ -1,0 +1,8 @@
+
+deployment\_module
+==================
+
+.. automodule:: graphnet.deployment.deployment_module
+   :members:
+   :undoc-members:
+   :show-inheritance:

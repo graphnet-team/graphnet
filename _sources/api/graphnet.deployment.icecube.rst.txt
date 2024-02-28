@@ -1,9 +1,9 @@
 
-i3modules
-=========
+icecube
+=======
 
 
-.. automodule:: graphnet.deployment.i3modules
+.. automodule:: graphnet.deployment.icecube
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,9 @@ i3modules
 .. toctree::
    :maxdepth: 2
 
-   graphnet.deployment.i3modules.deprecated_methods
+   graphnet.deployment.icecube.cleaning_module
+   graphnet.deployment.icecube.i3deployer
+   graphnet.deployment.icecube.inference_module
 
 
 

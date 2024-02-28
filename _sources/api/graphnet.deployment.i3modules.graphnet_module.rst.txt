@@ -1,8 +1,0 @@
-
-graphnet\_module
-================
-
-.. automodule:: graphnet.deployment.i3modules.graphnet_module
-   :members:
-   :undoc-members:
-   :show-inheritance:

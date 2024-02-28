@@ -61,7 +61,7 @@
 </script>
   
   
-    <title>deployment &#8212; graphnet  documentation</title>
+    <title>inference_module &#8212; graphnet  documentation</title>
 
 <style>
   dt:target {
@@ -129,8 +129,8 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="i3modules" href="graphnet.deployment.i3modules.html" />
-    <link rel="prev" title="pipeline" href="graphnet.data.pipeline.html" />
+    <link rel="next" title="deployer" href="graphnet.deployment.deployer.html" />
+    <link rel="prev" title="i3deployer" href="graphnet.deployment.icecube.i3deployer.html" />
   
    
 
@@ -149,7 +149,7 @@
   <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
   <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
   <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-  <a href="#api/graphnet.deployment" tabindex="1" class="md-skip"> Skip to content </a>
+  <a href="#api/graphnet.deployment.icecube.inference_module" tabindex="1" class="md-skip"> Skip to content </a>
   <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
@@ -167,7 +167,7 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           <span class="md-header-nav__topic">GraphNeT</span>
-          <span class="md-header-nav__topic"> deployment </span>
+          <span class="md-header-nav__topic"> inference_module </span>
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -243,6 +243,8 @@
             
             <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
           <li class="md-tabs__item"><a href="graphnet.html" class="md-tabs__link">API</a></li>
+          <li class="md-tabs__item"><a href="graphnet.deployment.html" class="md-tabs__link">deployment</a></li>
+          <li class="md-tabs__item"><a href="graphnet.deployment.icecube.html" class="md-tabs__link">icecube</a></li>
       </ul>
     </div>
   </nav>
@@ -310,16 +312,7 @@
     <li class="md-nav__item">
     
     
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> deployment </label>
-    
-      <a href="#" class="md-nav__link md-nav__link--active">deployment</a>
-      
-        
-<nav class="md-nav md-nav--secondary">
-  <ul class="md-nav__list" data-md-scrollfix="">
-  </ul>
-</nav>
+      <a href="graphnet.deployment.html" class="md-nav__link">deployment</a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
@@ -332,7 +325,51 @@
     
     
       <a href="graphnet.deployment.icecube.html" class="md-nav__link">icecube</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.deployment.icecube.cleaning_module.html" class="md-nav__link">cleaning_module</a>
       
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.deployment.icecube.i3deployer.html" class="md-nav__link">i3deployer</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> inference_module </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">inference_module</a>
+      
+        
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-deployment-icecube-inference-module--page-root" class="md-nav__link">inference_module</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.deployment.icecube.inference_module.I3InferenceModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.deployment.icecube.inference_module.I3InferenceModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -400,7 +437,14 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-deployment-icecube-inference-module--page-root" class="md-nav__link">inference_module</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.deployment.icecube.inference_module.I3InferenceModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
               </div>
@@ -410,39 +454,38 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.deployment">
-<span id="deployment"></span><h1 id="api-graphnet-deployment--page-root">deployment<a class="headerlink" href="#api-graphnet-deployment--page-root" title="Link to this heading">¶</a></h1>
-<p>Modules for deploying trained models for physics analyses.</p>
-<p><cite>graphnet.deployment</cite> allows for using trained models for inference in domain-
-specific reconstruction chains.</p>
-<p><h2> Subpackages </h2></p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.deployment.i3modules.html">i3modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.i3modules.deprecated_methods.html">deprecated_methods</a></li>
+  <section id="module-graphnet.deployment.icecube.inference_module">
+<span id="inference-module"></span><h1 id="api-graphnet-deployment-icecube-inference-module--page-root">inference_module<a class="headerlink" href="#api-graphnet-deployment-icecube-inference-module--page-root" title="Link to this heading">¶</a></h1>
+<p>IceCube I3InferenceModule.</p>
+<p>Contains functionality for writing model predictions to i3 files.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.deployment.icecube.inference_module.I3InferenceModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.deployment.icecube.inference_module.</span></span><span class="sig-name descname"><span class="pre">I3InferenceModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulsemap_extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/deployment/icecube/inference_module.html#I3InferenceModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.deployment.icecube.inference_module.I3InferenceModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.deployment.deployment_module.html#graphnet.deployment.deployment_module.DeploymentModule" title="graphnet.deployment.deployment_module.DeploymentModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeploymentModule</span></code></a></p>
+<p>General class for inference on i3 frames.</p>
+<p>General class for inference on I3Frames (physics).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pulsemap_extractor</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.icecube.i3featureextractor.html#graphnet.data.extractors.icecube.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.icecube.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a>], <a class="reference internal" href="graphnet.data.extractors.icecube.i3featureextractor.html#graphnet.data.extractors.icecube.i3featureextractor.I3FeatureExtractor" title="graphnet.data.extractors.icecube.i3featureextractor.I3FeatureExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3FeatureExtractor</span></code></a>]</span>) – The extractor used to extract the pulsemap.</p></li>
+<li><p><strong>model_config</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfig" title="graphnet.utilities.config.model_config.ModelConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The ModelConfig (or path to it) that summarizes the
+model used for inference.</p></li>
+<li><p><strong>state_dict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Path to state_dict containing the learned weights.</p></li>
+<li><p><strong>model_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The name used for the model. Will help define the
+named entry in the I3Frame. E.g. “dynedge”.</p></li>
+<li><p><strong>gcd_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – path to associated gcd file.</p></li>
+<li><p><strong>features</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – the features of the pulsemap that the model is expecting.</p></li>
+<li><p><strong>prediction_columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – <p>column names for the predictions of the model.
+Will help define the named entry in the I3Frame.</p>
+<blockquote>
+<div><p>E.g. [‘energy_reco’]. Optional.</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>pulsemap</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – the pulsmap that the model is expecting as input.</p></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.deployment.icecube.html">icecube</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.icecube.cleaning_module.html">cleaning_module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.icecube.i3deployer.html">i3deployer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.icecube.inference_module.html">inference_module</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<p><h2> Submodules </h2></p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.deployment.deployer.html">deployer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.deployer.html#graphnet.deployment.deployer.Deployer"><code class="docutils literal notranslate"><span class="pre">Deployer</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.deployment.deployment_module.html">deployment_module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.deployment_module.html#graphnet.deployment.deployment_module.DeploymentModule"><code class="docutils literal notranslate"><span class="pre">DeploymentModule</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
+</dd>
+</dl>
+</dd></dl>
 </section>
 
 
@@ -455,7 +498,7 @@ specific reconstruction chains.</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.data.pipeline.html" title="pipeline"
+            <a href="graphnet.deployment.icecube.i3deployer.html" title="i3deployer"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -464,17 +507,17 @@ specific reconstruction chains.</p>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> "Previous" </span> pipeline </span>
+                      class="md-footer-nav__direction"> "Previous" </span> i3deployer </span>
               </div>
             </a>
           
           
-            <a href="graphnet.deployment.i3modules.html" title="i3modules"
+            <a href="graphnet.deployment.deployer.html" title="deployer"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> i3modules </span>
+                class="md-footer-nav__direction"> "Next" </span> deployer </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

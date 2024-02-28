@@ -61,7 +61,7 @@
 </script>
   
   
-    <title>deployment &#8212; graphnet  documentation</title>
+    <title>deployment_module &#8212; graphnet  documentation</title>
 
 <style>
   dt:target {
@@ -129,8 +129,8 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="i3modules" href="graphnet.deployment.i3modules.html" />
-    <link rel="prev" title="pipeline" href="graphnet.data.pipeline.html" />
+    <link rel="next" title="models" href="graphnet.models.html" />
+    <link rel="prev" title="deployer" href="graphnet.deployment.deployer.html" />
   
    
 
@@ -149,7 +149,7 @@
   <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
   <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
   <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-  <a href="#api/graphnet.deployment" tabindex="1" class="md-skip"> Skip to content </a>
+  <a href="#api/graphnet.deployment.deployment_module" tabindex="1" class="md-skip"> Skip to content </a>
   <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
@@ -167,7 +167,7 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           <span class="md-header-nav__topic">GraphNeT</span>
-          <span class="md-header-nav__topic"> deployment </span>
+          <span class="md-header-nav__topic"> deployment_module </span>
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -243,6 +243,7 @@
             
             <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
           <li class="md-tabs__item"><a href="graphnet.html" class="md-tabs__link">API</a></li>
+          <li class="md-tabs__item"><a href="graphnet.deployment.html" class="md-tabs__link">deployment</a></li>
       </ul>
     </div>
   </nav>
@@ -310,16 +311,7 @@
     <li class="md-nav__item">
     
     
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> deployment </label>
-    
-      <a href="#" class="md-nav__link md-nav__link--active">deployment</a>
-      
-        
-<nav class="md-nav md-nav--secondary">
-  <ul class="md-nav__list" data-md-scrollfix="">
-  </ul>
-</nav>
+      <a href="graphnet.deployment.html" class="md-nav__link">deployment</a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
@@ -345,8 +337,31 @@
     <li class="md-nav__item">
     
     
-      <a href="graphnet.deployment.deployment_module.html" class="md-nav__link">deployment_module</a>
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> deployment_module </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">deployment_module</a>
       
+        
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-deployment-deployment-module--page-root" class="md-nav__link">deployment_module</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.deployment.deployment_module.DeploymentModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DeploymentModule</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.deployment.deployment_module.DeploymentModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DeploymentModule</span></code></a>
+      
+    
+    </li></ul>
     
     </li></ul>
     
@@ -400,7 +415,14 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-deployment-deployment-module--page-root" class="md-nav__link">deployment_module</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.deployment.deployment_module.DeploymentModule" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DeploymentModule</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
               </div>
@@ -410,39 +432,29 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.deployment">
-<span id="deployment"></span><h1 id="api-graphnet-deployment--page-root">deployment<a class="headerlink" href="#api-graphnet-deployment--page-root" title="Link to this heading">¶</a></h1>
-<p>Modules for deploying trained models for physics analyses.</p>
-<p><cite>graphnet.deployment</cite> allows for using trained models for inference in domain-
-specific reconstruction chains.</p>
-<p><h2> Subpackages </h2></p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.deployment.i3modules.html">i3modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.i3modules.deprecated_methods.html">deprecated_methods</a></li>
+  <section id="module-graphnet.deployment.deployment_module">
+<span id="deployment-module"></span><h1 id="api-graphnet-deployment-deployment-module--page-root">deployment_module<a class="headerlink" href="#api-graphnet-deployment-deployment-module--page-root" title="Link to this heading">¶</a></h1>
+<p>Class(es) for deploying GraphNeT models in icetray as I3Modules.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.deployment.deployment_module.DeploymentModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.deployment.deployment_module.</span></span><span class="sig-name descname"><span class="pre">DeploymentModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/deployment/deployment_module.html#DeploymentModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.deployment.deployment_module.DeploymentModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
+<p>Base DeploymentModule for GraphNeT.</p>
+<p>Contains standard methods for loading models doing inference with them.
+Experiment-specific implementations may overwrite methods and should define
+<cite>__call__</cite>.</p>
+<p>Construct DeploymentModule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_config</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfig" title="graphnet.utilities.config.model_config.ModelConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – A model configuration file.</p></li>
+<li><p><strong>state_dict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – A state dict for the model.</p></li>
+<li><p><strong>device</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'cpu'</span></code>) – The computational device to use. Defaults to “cpu”.</p></li>
+<li><p><strong>prediction_columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Column names for each column in model output.</p></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.deployment.icecube.html">icecube</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.icecube.cleaning_module.html">cleaning_module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.icecube.i3deployer.html">i3deployer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.icecube.inference_module.html">inference_module</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<p><h2> Submodules </h2></p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.deployment.deployer.html">deployer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.deployer.html#graphnet.deployment.deployer.Deployer"><code class="docutils literal notranslate"><span class="pre">Deployer</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.deployment.deployment_module.html">deployment_module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.deployment.deployment_module.html#graphnet.deployment.deployment_module.DeploymentModule"><code class="docutils literal notranslate"><span class="pre">DeploymentModule</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
+</dd>
+</dl>
+</dd></dl>
 </section>
 
 
@@ -455,7 +467,7 @@ specific reconstruction chains.</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.data.pipeline.html" title="pipeline"
+            <a href="graphnet.deployment.deployer.html" title="deployer"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -464,17 +476,17 @@ specific reconstruction chains.</p>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> "Previous" </span> pipeline </span>
+                      class="md-footer-nav__direction"> "Previous" </span> deployer </span>
               </div>
             </a>
           
           
-            <a href="graphnet.deployment.i3modules.html" title="i3modules"
+            <a href="graphnet.models.html" title="models"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> i3modules </span>
+                class="md-footer-nav__direction"> "Next" </span> models </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

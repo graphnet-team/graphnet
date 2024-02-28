@@ -2,7 +2,7 @@
 deployer
 ========
 
-.. automodule:: graphnet.deployment.i3modules.deployer
+.. automodule:: graphnet.deployment.deployer
    :members:
    :undoc-members:
    :show-inheritance:
