@@ -89,11 +89,14 @@ class DataConverter(ABC, Logger):
         # in the directory
         input_files = self._file_reader.find_files(path=input_dir)
         self._launch_jobs(input_files=input_files)
-        self._output_files = glob(
+        self._output_files = [
             os.path.join(
-                self._output_dir, f"*{self._save_method.file_extension}"
+                self._output_dir,
+                self._create_file_name(file)
+                + self._save_method.file_extension,
             )
-        )
+            for file in input_files
+        ]
 
     @final
     def _launch_jobs(
@@ -159,9 +162,10 @@ class DataConverter(ABC, Logger):
         if isinstance(input_file_path, I3FileSet):
             input_file_path = input_file_path.i3_file
         file_name = os.path.basename(input_file_path)
-        index_of_dot = file_name.index(".")
-        file_name_without_extension = file_name[:index_of_dot]
-        return file_name_without_extension
+        for ext in self._file_reader._accepted_file_extensions:
+            if file_name.endswith(ext):
+                file_name_without_extension = file_name.replace(ext, "")
+        return file_name_without_extension.replace(".i3", "")
 
     @final
     def _assign_event_no(

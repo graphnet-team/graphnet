@@ -45,6 +45,7 @@ class I3GenericExtractor(I3Extractor):
         self,
         keys: Optional[Union[str, List[str]]] = None,
         exclude_keys: Optional[Union[str, List[str]]] = None,
+        extractor_name: str = GENERIC_EXTRACTOR_NAME,
     ):
         """Construct I3GenericExtractor.
 
@@ -72,7 +73,7 @@ class I3GenericExtractor(I3Extractor):
         self._exclude_keys: Optional[List[str]] = exclude_keys
 
         # Base class constructor
-        super().__init__(GENERIC_EXTRACTOR_NAME)
+        super().__init__(extractor_name)
 
     def _get_keys(self, frame: "icetray.I3Frame") -> List[str]:
         """Get the list of keys to be queried from `frame`.
@@ -170,6 +171,12 @@ class I3GenericExtractor(I3Extractor):
             # Flatten all other objects
             else:
                 results[key] = self._flatten_result(result)
+                if (
+                    isinstance(results[key], dict)
+                    and "value" in results[key]
+                    and len(results[key]) == 1
+                ):
+                    results[key] = results[key]["value"]
 
         # Serialise list of iterables to JSON
         results = {key: serialise(value) for key, value in results.items()}
