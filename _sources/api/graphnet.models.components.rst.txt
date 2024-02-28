@@ -15,6 +15,7 @@ components
 .. toctree::
    :maxdepth: 2
 
+   graphnet.models.components.embedding
    graphnet.models.components.layers
    graphnet.models.components.pool
 

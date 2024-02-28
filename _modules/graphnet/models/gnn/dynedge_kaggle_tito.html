@@ -365,6 +365,10 @@
         <span class="n">global_pooling_schemes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"max"</span><span class="p">],</span>
         <span class="n">use_global_features</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">use_post_processing_layers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">post_processing_layer_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">readout_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_head</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">nb_neighbours</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `DynEdgeTITO`.</span>
 
@@ -379,8 +383,12 @@
 <span class="sd">            global_pooling_schemes: The list global pooling schemes to use.</span>
 <span class="sd">                Options are: "min", "max", "mean", and "sum".</span>
 <span class="sd">            use_global_features: Whether to use global features after pooling.</span>
-<span class="sd">            use_post_processing_layers: Whether to use post-processing layers</span>
-<span class="sd">                after the `DynTrans` layers.</span>
+<span class="sd">            use_post_processing_layers: Whether to use post-processing layers after the `DynTrans` layers.</span>
+<span class="sd">            post_processing_layer_sizes: The layer sizes used in    the post-processing layers. Defaults to [336, 256].</span>
+<span class="sd">            readout_layer_sizes: The layer sizes used in the readout layers. Defaults to [256, 128].</span>
+<span class="sd">            n_head: The number of heads to use in the `DynTrans` layer.</span>
+<span class="sd">            nb_neighbours: The number of neighbours to use in the `DynTrans`</span>
+<span class="sd">                layer.</span>
 <span class="sd">        """</span>
         <span class="c1"># DynTrans layer sizes</span>
         <span class="k">if</span> <span class="n">dyntrans_layer_sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -414,18 +422,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dyntrans_layer_sizes</span> <span class="o">=</span> <span class="n">dyntrans_layer_sizes</span>
 
         <span class="c1"># Post-processing layer sizes</span>
-        <span class="n">post_processing_layer_sizes</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="mi">336</span><span class="p">,</span>
-            <span class="mi">256</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">post_processing_layer_sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">post_processing_layer_sizes</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="mi">336</span><span class="p">,</span>
+                <span class="mi">256</span><span class="p">,</span>
+            <span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_post_processing_layer_sizes</span> <span class="o">=</span> <span class="n">post_processing_layer_sizes</span>
 
         <span class="c1"># Read-out layer sizes</span>
-        <span class="n">readout_layer_sizes</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="mi">256</span><span class="p">,</span>
-            <span class="mi">128</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">readout_layer_sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">readout_layer_sizes</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="mi">256</span><span class="p">,</span>
+                <span class="mi">128</span><span class="p">,</span>
+            <span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_readout_layer_sizes</span> <span class="o">=</span> <span class="n">readout_layer_sizes</span>
 
@@ -455,10 +465,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span> <span class="o">=</span> <span class="n">nb_inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_global_variables</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="n">nb_inputs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nb_neighbours</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb_neighbours</span> <span class="o">=</span> <span class="n">nb_neighbours</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_features_subset</span> <span class="o">=</span> <span class="n">features_subset</span> <span class="ow">or</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_use_global_features</span> <span class="o">=</span> <span class="n">use_global_features</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_use_post_processing_layers</span> <span class="o">=</span> <span class="n">use_post_processing_layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_head</span> <span class="o">=</span> <span class="n">n_head</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_construct_layers</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_construct_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -473,7 +484,7 @@
                 <span class="p">[</span><span class="n">nb_latent_features</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">sizes</span><span class="p">),</span>
                 <span class="n">aggr</span><span class="o">=</span><span class="s2">"max"</span><span class="p">,</span>
                 <span class="n">features_subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_features_subset</span><span class="p">,</span>
-                <span class="n">n_head</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">n_head</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_head</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_conv_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_layer</span><span class="p">)</span>
             <span class="n">nb_latent_features</span> <span class="o">=</span> <span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>

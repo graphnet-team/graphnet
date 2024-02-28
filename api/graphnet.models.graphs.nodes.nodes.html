@@ -389,6 +389,8 @@
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -443,6 +445,13 @@
       <a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
       
     
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
+      
+    
     </li></ul>
     
     </li></ul>
@@ -469,6 +478,13 @@
       
     
     </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.rnn.html" class="md-nav__link">rnn</a>
+      
     
     </li>
     <li class="md-nav__item">
@@ -569,6 +585,8 @@
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -693,6 +711,29 @@ percentiles.</p>
 <li><p><strong>percentiles</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – List of percentiles. E.g. <cite>[10, 50, 90]</cite>.</p></li>
 <li><p><strong>add_counts</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – If True, number of duplicates is added to output array.</p></li>
 <li><p><strong>input_feature_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – (Optional) column names for input features.</p></li>
+<li><p><strong>args</strong> (<em>Any</em>) – </p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">NodeAsDOMTimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeAsDOMTimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
+<p>Represent each node as a DOM with time and charge time series data.</p>
+<p>Construct <cite>NodeAsDOMTimeSeries</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">['dom_x',</span> <span class="pre">'dom_y',</span> <span class="pre">'dom_z',</span> <span class="pre">'dom_time',</span> <span class="pre">'charge']</span></code>) – Names of features in the data (in order).</p></li>
+<li><p><strong>id_columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">['dom_x',</span> <span class="pre">'dom_y',</span> <span class="pre">'dom_z']</span></code>) – List of columns that uniquely identify a DOM.</p></li>
+<li><p><strong>time_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'dom_time'</span></code>) – Name of time column.</p></li>
+<li><p><strong>charge_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'charge'</span></code>) – Name of charge column.</p></li>
+<li><p><strong>max_activations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Maximum number of activations to include in the time series.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>

@@ -1,0 +1,8 @@
+
+node\_rnn
+=========
+
+.. automodule:: graphnet.models.rnn.node_rnn
+   :members:
+   :undoc-members:
+   :show-inheritance:

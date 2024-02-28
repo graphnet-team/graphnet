@@ -18,6 +18,7 @@ models
    graphnet.models.detector
    graphnet.models.gnn
    graphnet.models.graphs
+   graphnet.models.rnn
    graphnet.models.task
 
 |start-h2| Submodules |end-h2|
