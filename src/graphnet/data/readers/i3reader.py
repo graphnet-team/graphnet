@@ -46,6 +46,8 @@ class I3Reader(GraphNeTFileReader):
             icetray_verbose: Set the level of verbosity of icetray.
                              Defaults to 0.
         """
+        # checks
+        assert isinstance(gcd_rescue, str)
         # Set verbosity
         if icetray_verbose == 0:
             icetray.I3Logger.global_logger = icetray.I3NullLogger()
@@ -114,12 +116,16 @@ class I3Reader(GraphNeTFileReader):
             path,
             self._gcd_rescue,
         )
+        # checks
+        assert len(i3_files) == len(gcd_files)
 
         # Pack as I3FileSets
-        filesets = [
-            I3FileSet(i3_file, gcd_file)
-            for i3_file, gcd_file in zip(i3_files, gcd_files)
-        ]
+        filesets = []
+        for i3_file, gcd_file in zip(i3_files, gcd_files):
+            assert isinstance(i3_file, str)
+            assert isinstance(gcd_file, str), print(gcd_file, self._gcd_rescue)
+            filesets.append(I3FileSet(i3_file, gcd_file))
+
         return filesets
 
     def _skip_frame(self, frame: "icetray.I3Frame") -> bool:
