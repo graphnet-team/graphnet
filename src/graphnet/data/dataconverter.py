@@ -203,7 +203,9 @@ class DataConverter(ABC, Logger):
     @final
     def __call__(
         self,
-        directories: Union[str, List[str]],
+        i3_files = None,
+        gcd_files = None,
+        directories: Optional[Union[str, List[str]]] = None,
         recursive: Optional[bool] = True,
     ) -> None:
         """Convert I3-files in `directories.
@@ -213,13 +215,27 @@ class DataConverter(ABC, Logger):
                 should be converted to an intermediate file format.
             recursive: Whether or not to search the directories recursively.
         """
+
+        # User can either directly pass files, or instead pass directories in which files can be searched for
         # Find all I3 and GCD files in the specified directories.
-        i3_files, gcd_files = find_i3_files(
-            directories, self._gcd_rescue, recursive
-        )
+        if i3_files is not None :
+            assert gcd_files is not None
+            assert directories is None
+            assert isinstance(i3_files, list)
+            assert isinstance(gcd_files, list)
+            #TOD support GCD rescue
+        else :
+            assert i3_files is None
+            assert gcd_files is None
+            i3_files, gcd_files = find_i3_files(
+                directories, self._gcd_rescue, recursive
+            )
+
+        # Check I3/GCD files
         if len(i3_files) == 0:
             self.error(f"No files found in {directories}.")
             return
+        assert len(i3_files) == len(gcd_files), "Number of GCD files must match number of i3 files"
 
         # Save a record of the found I3 files in the output directory.
         self._save_filenames(i3_files)
