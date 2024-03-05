@@ -175,10 +175,11 @@ class VertexReconstruction(StandardLearnedTask):
     nb_inputs = 4
 
     def _forward(self, x: Tensor) -> Tensor:
-        # Scale xyz to roughly the right order of magnitude, leave time
-        x[:, 0] = x[:, 0] * 1e2
-        x[:, 1] = x[:, 1] * 1e2
-        x[:, 2] = x[:, 2] * 1e2
+        # Scale xyzt to roughly the right order of magnitude
+        x[:, 0] = x[:, 0] * 1e2 # 100s of m
+        x[:, 1] = x[:, 1] * 1e2 # 100s of m
+        x[:, 2] = x[:, 2] * 1e2 # 100s of m
+        x[:, 3] = x[:, 3] * 1e3 # 1000s of ns
 
         return x
 
