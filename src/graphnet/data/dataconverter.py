@@ -298,7 +298,9 @@ class DataConverter(ABC, Logger):
             self._output_files.extend(list(sorted(output_files[:])))
 
     @final
-    def merge_files(self, files: Optional[List[str]] = None) -> None:
+    def merge_files(
+        self, files: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """Merge converted files.
 
             `DataConverter` will call the `.merge_files` method in the
@@ -326,6 +328,5 @@ class DataConverter(ABC, Logger):
         merge_path = os.path.join(self._output_dir, "merged")
         self.info(f"Merging files to {merge_path}")
         self._save_method.merge_files(
-            files=files_to_merge,
-            output_dir=merge_path,
+            files=files_to_merge, output_dir=merge_path, **kwargs
         )
