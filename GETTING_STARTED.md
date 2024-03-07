@@ -23,8 +23,8 @@ Appendix:
 
 ## 1. Introduction
 
-GraphNeT is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs).
-The framework builds on [PyTorch](https://pytorch.org/), [PyG](https://www.pyg.org/), and [PyTorch-Lightning](https://www.pytorchlightning.ai/index.html), but attempts to abstract away many of the lower-level implementation details and instead provide simple, high-level components that makes it easy and fast for physicists to use GNNs in their research.
+GraphNeT is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using deep learning (DL).
+The framework builds on [PyTorch](https://pytorch.org/), [PyG](https://www.pyg.org/), and [PyTorch-Lightning](https://www.pytorchlightning.ai/index.html), but attempts to abstract away many of the lower-level implementation details and instead provide simple, high-level components that makes it easy and fast for physicists to use DL in their research.
 
 This tutorial aims to introduce the various elements of `GraphNeT` to new users.
 It will go through the main modules, explain some of the structure and design behind these, and show concrete code examples.
@@ -41,13 +41,13 @@ If you want to get your hands dirty right away, feel free to skip to [Section 3 
 ## 2. Overview of GraphNeT
 
 The main modules of GraphNeT are, in the order that you will likely use them:
-- [`graphnet.data`](src/graphnet/data): For converting domain-specific data (i.e., I3 in the case of IceCube) to generic, intermediate file formats (e.g., SQLite or Parquet) using [`DataConverter`](src/graphnet/data/dataconverter.py); and for reading data as graphs from these intermediate files when training GNNs using [`Dataset`](src/graphnet/data/dataset.py), and its format-specific subclasses and [`DataLoader`](src/graphnet/data/dataloader.py).
-- [`graphnet.models`](src/graphnet/models): For building GNNs to perform a variety of physics tasks. The base [`Model`](src/graphnet/models/model.py) class provides common interfaces for training and inference, as well as for model management (saving, loading, configs, etc.). This can be subclassed to build and train any GNN using GraphNeT functionality. The more specialised [`StandardModel`](src/graphnet/models/standard_model.py) provides a simple way to create a standard type of `Model` with a fixed structure. This type of model is composed of the following components, in sequence:
+- [`graphnet.data`](src/graphnet/data): For converting domain-specific data (i.e., I3 in the case of IceCube) to generic, intermediate file formats (e.g., SQLite or Parquet) using [`DataConverter`](src/graphnet/data/dataconverter.py); and for reading data as graphs from these intermediate files when training using [`Dataset`](src/graphnet/data/dataset.py), and its format-specific subclasses and [`DataLoader`](src/graphnet/data/dataloader.py).
+- [`graphnet.models`](src/graphnet/models): For building models to perform a variety of physics tasks. The base [`Model`](src/graphnet/models/model.py) class provides common interfaces for training and inference, as well as for model management (saving, loading, configs, etc.). This can be subclassed to build and train any model using GraphNeT functionality. The more specialised [`StandardModel`](src/graphnet/models/standard_model.py) provides a simple way to create a standard type of `Model` with a fixed structure. This type of model is composed of the following components, in sequence:
   - [`GraphDefinition`](src/graphnet/models/graphs/graph_definition.py): A single, self-contained module that handles all processing from raw data to graph representation. It consists of the following sub-modules in sequence: 
 	- [`Detector`](src/graphnet/models/detector/detector.py): For handling detector-specific preprocessing of data. Currently, this module provides standardization of experiment specific input data. 
-	- [`NodeDefinition`](src/graphnet/models/graphs/nodes/nodes.py): A swapable module that defines what a node represents. In charge of transforming the collection of standardized Cherenkov pulses associated with a triggered event into a node representation of choice. It is the choice in this module that defines if nodes represents single Cherenkov pulses, DOMs, entire strings or something completely different.  **Note**: You can create `NodeDefinitions` that represents  the data as sequences, images or whatever you fancy, making GraphNeT compatible with any deep learning paradigm, such as CNNs, Transformers etc.
-	- [`EdgeDefinition`](src/graphnet/models/graphs/edges/edges.py) (Optional):  A module that defines how edges are drawn between your nodes. This could be connecting the _N_ nearest neighbours of each node or connecting all nodes within a radius of _R_ meters of each other.
-  - [`GNN`](src/graphnet/models/gnn/gnn.py): For implementing the actual, learnable GNN layers. These are the components of GraphNeT that are actually being trained, and the architecture and complexity of these are central to the performance and optimisation on the physics/learning task being performed. For now, we provide a few different example architectures, e.g., [`DynEdge`](src/graphnet/models/gnn/convnet.py) and [`ConvNet`](src/graphnet/models/gnn/convnet.py), but in principle any GNN architecture could be implemented here — and we encourage you to contribute your favourite!
+	- [`NodeDefinition`](src/graphnet/models/graphs/nodes/nodes.py): A swapable module that defines what a node/row represents. In charge of transforming the collection of standardized Cherenkov pulses associated with a triggered event into a node/row representation of choice. It is the choice in this module that defines if nodes/rows represents single Cherenkov pulses, DOMs, entire strings or something completely different.  **Note**: You can create `NodeDefinitions` that represents  the data as sequences, images or whatever you fancy, making GraphNeT compatible with any deep learning paradigm, such as CNNs, Transformers etc.
+	- [`EdgeDefinition`](src/graphnet/models/graphs/edges/edges.py) (Optional):  A module that defines how edges are drawn between your nodes. This could be connecting the _N_ nearest neighbours of each node or connecting all nodes within a radius of _R_ meters of each other. For methods that does not directly use edges in their data representations, this module can be skipped. 
+  - [`backbone`](src/graphnet/models/gnn/gnn.py): For implementing the actual model architecture. These are the components of GraphNeT that are actually being trained, and the architecture and complexity of these are central to the performance and optimisation on the physics/learning task being performed. For now, we provide a few different example architectures, e.g., [`DynEdge`](src/graphnet/models/gnn/convnet.py) and [`ConvNet`](src/graphnet/models/gnn/convnet.py), but in principle any DL architecture could be implemented here — and we encourage you to contribute your favourite!
   - [`Task`](src/graphnet/models/task/task.py): For choosing a certain physics/learning task or tasks with respect to which the model should be trained. We provide a number of common [reconstruction](src/grapnet/models/task/reconstruction.py) (`DirectionReconstructionWithKappa` and `EnergyReconstructionWithUncertainty`) and [classification](src/grapnet/models/task/classification.py) (e.g., `BinaryClassificationTask` and `MulticlassClassificationTask`) tasks, but we encourage you to expand on these with new, more specialised tasks appropriate to your physics use case. For now, `Task` instances also require an appropriate [`LossFunction`](src/graphnet/training/loss_functions.py) to specify how the models should be trained (see below).
 
   These components are packaged in a particularly simple way in `StandardModel`, but they are not specific to it.
@@ -61,7 +61,7 @@ In the following sections, we will go through some of the main elements of Graph
 
 ## 3. Data
 
-You will probably want to train and apply GNN models on your own physics data. There are some pointers to this in Sections [A - Interfacing your data with GraphNeT](#a-interfacing-your-data-with-graphnet) and [B - Converting your data to a supported format](#b-converting-your-data-to-a-supported-format) below.
+You will probably want to train and apply models on your own physics data. There are some pointers to this in Sections [A - Interfacing your data with GraphNeT](#a-interfacing-your-data-with-graphnet) and [B - Converting your data to a supported format](#b-converting-your-data-to-a-supported-format) below.
 
 However, to get you started, GraphNeT comes with a tiny open-source data sample.
 You will not be able to train a fully-deployable model with such low statistics, but it's sufficient to introduce the code and start running a few examples.
@@ -391,13 +391,13 @@ That is, conceptually,
 
 > Data → `Model` → Predictions
 
-You can subclass the `Model` class to create any model implementation using GraphNeT components (such as instances of, e.g., the  `GraphDefinition`, `GNN`, and `Task` classes) along with PyTorch and PyG functionality.
+You can subclass the `Model` class to create any model implementation using GraphNeT components (such as instances of, e.g., the  `GraphDefinition`, `Backbone`, and `Task` classes) along with PyTorch and PyG functionality.
 All `Model`s that are applicable to the same detector configuration, regardless of how the `Model`s themselves are implemented, should be able to act on the same graph (`torch_geometric.data.Data`) objects, thereby making them interchangeable and directly comparable.
 
 ### The `StandardModel` class
 
 The simplest way to define a `Model` in GraphNeT is through the `StandardModel` subclass.
-This is uniquely defined based on one each of[`GraphDefinition`](),  [`GNN`](https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn), and one or more [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task)s.Each of these components will be a problem-specific instance of these parent classes.This structure guarantees modularity and reuseability. For example, the only adaptation needed to run a `Model` made for IceCube on a different experiment — say, KM3NeT — would be to switch out the `Detector` component in `GraphDefinition` representing IceCube with one that represents KM3NeT. Similarly, a `Model` developed for [`EnergyReconstruction`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction) can be put to work on a different problem, e.g., [`DirectionReconstructionWithKappa`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa), by switching out just the [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task) component.
+This is uniquely defined based on one each of[`GraphDefinition`](),  [`Backbone`](https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn), and one or more [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task)s.Each of these components will be a problem-specific instance of these parent classes.This structure guarantees modularity and reuseability. For example, the only adaptation needed to run a `Model` made for IceCube on a different experiment — say, KM3NeT — would be to switch out the `Detector` component in `GraphDefinition` representing IceCube with one that represents KM3NeT. Similarly, a `Model` developed for [`EnergyReconstruction`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction) can be put to work on a different problem, e.g., [`DirectionReconstructionWithKappa`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa), by switching out just the [`Task`](https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task) component.
 
   
 GraphNeT comes with many pre-defined components that you can simply import and use out-of-the-box.
@@ -427,12 +427,12 @@ graph_definition = KNNGraph(
 	node_definition=NodesAsPulses(),
 	nb_nearest_neighbours=8,
 )
-architecture = DynEdge(
+backbone = DynEdge(
     nb_inputs=detector.nb_outputs,
     global_pooling_schemes=["min", "max", "mean"],
 )
 task = ZenithReconstructionWithKappa(
-    hidden_size=architecture.nb_outputs,
+    hidden_size=backbone.nb_outputs,
     target_labels="injection_zenith",
     loss_function=VonMisesFisher2DLoss(),
 )
@@ -440,14 +440,14 @@ task = ZenithReconstructionWithKappa(
 # Construct the Model
 model = StandardModel(
     graph_definition=graph_definition,
-    architecture=architecture,
+    backbone=backbone,
     tasks=[task],
 )
 ```
 
-**Note:** We're adding the argument `global_pooling_schemes=["min", "max", "mean"],` to the `GNN` component, since by default, no global pooling is performed.
+**Note:** We're adding the argument `global_pooling_schemes=["min", "max", "mean"],` to the `Backbone` component, since by default, no global pooling is performed by this specific method.
 This is relevant when doing node-/hit-level predictions.
-However, when doing graph-/event-level predictions, we want to perform a global pooling after the last layer of the `GNN`.
+However, when doing graph-/event-level predictions, we want to perform a global pooling after the last layer of this`GNN`.
 
 ### Creating reproducible `Model`s using `ModelConfig`
 
@@ -540,7 +540,7 @@ class_name: StandardModel
 
 ## 6. Training `Model`s and tracking experiments
 
- `Model`s in GraphNeT comes with a powerful in-built [`Model.fit`](https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html#graphnet.models.model.Model.fit) method that reduces the training of GNNs on neutrino telescopes to a syntax that is similar to that of `sklearn`:
+ `Model`s in GraphNeT comes with a powerful in-built [`Model.fit`](https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html#graphnet.models.model.Model.fit) method that reduces the training of models on neutrino telescopes to a syntax that is similar to that of `sklearn`:
 
 ```python
 model = Model(...)
@@ -764,7 +764,7 @@ Similarly, every class inheriting from `Logger` can use the same methods as, e.g
 
 ## A. Interfacing your data with GraphNeT
 
-GraphNeT currently supports two data format — Parquet and SQLite — and you must therefore provide your data in either of these formats for training a GNN.
+GraphNeT currently supports two data format — Parquet and SQLite — and you must therefore provide your data in either of these formats for training a `Model`.
 This is done using the `DataConverter` class.
 Performing this conversion into one of the two supported formats can be a somewhat time-consuming task, but it is only done once, and then you are free to perform all of the training and optimisation you want.
 

@@ -10,7 +10,7 @@ from graphnet.constants import (
     PRETRAINED_MODEL_DIR,
 )
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.data.extractors.i3featureextractor import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.utilities.argparse import ArgumentParser

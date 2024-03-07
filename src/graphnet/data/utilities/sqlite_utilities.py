@@ -1,7 +1,7 @@
 """SQLite-specific utility functions for use in `graphnet.data`."""
 
 import os.path
-from typing import List
+from typing import List, Dict, Tuple
 
 import pandas as pd
 import sqlalchemy
@@ -14,6 +14,58 @@ def database_exists(database_path: str) -> bool:
         ".db"
     ), "Provided database path does not end in `.db`."
     return os.path.exists(database_path)
+
+
+def query_database(database: str, query: str) -> pd.DataFrame:
+    """Execute query on database, and return result.
+
+    Args:
+        database: path to database.
+        query: query to be executed.
+
+    Returns:
+        DataFrame containing the result of the query.
+    """
+    with sqlite3.connect(database) as conn:
+        return pd.read_sql(query, conn)
+
+
+def get_primary_keys(database: str) -> Tuple[Dict[str, str], str]:
+    """Get name of primary key column for each table in database.
+
+    Args:
+        database: path to database.
+
+    Returns:
+        A dictionary containing the names of primary keys in each table of
+        `database`. E.g. {'truth': "event_no",
+                          'SplitInIcePulses': None}
+        Name of the primary key.
+    """
+    with sqlite3.connect(database) as conn:
+        query = 'SELECT name FROM sqlite_master WHERE type == "table"'
+        table_names = [table[0] for table in conn.execute(query).fetchall()]
+
+        integer_primary_key = {}
+        for table in table_names:
+            query = f"SELECT l.name FROM pragma_table_info('{table}') as l WHERE l.pk = 1;"
+            first_primary_key = [
+                key[0] for key in conn.execute(query).fetchall()
+            ]
+            integer_primary_key[table] = (
+                first_primary_key[0] if len(first_primary_key) else None
+            )
+
+    # Get the primary key column name
+    primary_key_candidates = []
+    for val in set(integer_primary_key.values()):
+        if val is not None:
+            primary_key_candidates.append(val)
+
+    # There should only be one primary key:
+    assert len(primary_key_candidates) == 1
+
+    return integer_primary_key, primary_key_candidates[0]
 
 
 def database_table_exists(database_path: str, table_name: str) -> bool:

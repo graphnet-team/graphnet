@@ -9,5 +9,6 @@ from .nodes import (
     NodeDefinition,
     NodesAsPulses,
     PercentileClusters,
-    IceMixNodes,
+    NodeAsDOMTimeSeries,
+    IceMixNodes
 )

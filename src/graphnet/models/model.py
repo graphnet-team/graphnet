@@ -23,6 +23,8 @@ class Model(
 ):
     """Base class for all components in graphnet."""
 
+    verbose_print = True
+
     @staticmethod
     def _get_batch_size(data: List[Data]) -> int:
         return sum([torch.numel(torch.unique(d.batch)) for d in data])
@@ -56,7 +58,7 @@ class Model(
         torch.save(state_dict, path)
         self.info(f"Model state_dict saved to {path}")
 
-    def load_state_dict(
+    def load_state_dict(  # type: ignore[override]
         self, path: Union[str, Dict], **kargs: Optional[Any]
     ) -> "Model":  # pylint: disable=arguments-differ
         """Load model `state_dict` from `path`."""
@@ -104,3 +106,41 @@ class Model(
         ), f"Argument `source` of type ({type(source)}) is not a `ModelConfig"
 
         return source._construct_model(trust, load_modules)
+
+    def set_verbose_print_recursively(self, verbose_print: bool) -> None:
+        """Set verbose_print recursively for all Model modules."""
+        for module in self.modules():
+            if isinstance(module, Model):
+                module.verbose_print = verbose_print
+        self.verbose_print = verbose_print
+
+    def extra_repr(self) -> str:
+        """Provide a more detailed description of the object print.
+
+        Returns:
+            str: A string representation containing detailed information
+            about the object.
+        """
+        return self._extra_repr() if self.verbose_print else ""
+
+    def _extra_repr(self) -> str:
+        """Detailed information about the object."""
+        return f"""{self.__class__.__name__}(\n{self.extra_repr_recursive(
+            self._config.__dict__)})"""
+
+    def extra_repr_recursive(self, dictionary: dict, indent: int = 4) -> str:
+        """Recursively format a dictionary for extra_repr."""
+        result = "{\n"
+        for key, value in dictionary.items():
+            if key == "class_name":
+                continue
+            result += " " * indent + f"'{key}': "
+            if isinstance(value, dict):
+                result += self.extra_repr_recursive(value, indent + 4)
+            elif isinstance(value, Model):
+                result += value.__repr__()
+            else:
+                result += repr(value)
+            result += ",\n"
+        result += " " * (indent - 4) + "}"
+        return result

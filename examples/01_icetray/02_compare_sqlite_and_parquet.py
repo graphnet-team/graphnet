@@ -7,7 +7,7 @@ from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.dataset import SQLiteDataset, ParquetDataset
-from graphnet.data.extractors import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCube86,
     I3TruthExtractor,
     I3RetroExtractor,
