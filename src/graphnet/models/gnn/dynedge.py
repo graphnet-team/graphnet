@@ -32,7 +32,7 @@ class DynEdge(GNN):
         readout_layer_sizes: Optional[List[int]] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
         add_global_variables_after_pooling: bool = False,
-        activation_layer: Callable = torch.nn.LeakyReLU(),
+        activation_layer: Callable = None,
         add_norm_layer: bool = False,
         skip_readout: bool = False,
     ):
@@ -156,6 +156,9 @@ class DynEdge(GNN):
         self._add_global_variables_after_pooling = (
             add_global_variables_after_pooling
         )
+        
+        if activation_layer is None:
+            activation_layer = torch.nn.ReLU()
 
         # Base class constructor
         super().__init__(nb_inputs, self._readout_layer_sizes[-1])
