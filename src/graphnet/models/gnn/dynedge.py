@@ -156,7 +156,7 @@ class DynEdge(GNN):
         self._add_global_variables_after_pooling = (
             add_global_variables_after_pooling
         )
-        
+
         if activation_layer is None:
             activation_layer = torch.nn.ReLU()
 
