@@ -1,5 +1,5 @@
 """Implementation of the DynEdge GNN model architecture."""
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import List, Optional, Callable, Tuple, Union
 
 import torch
 from torch import Tensor, LongTensor
@@ -32,6 +32,9 @@ class DynEdge(GNN):
         readout_layer_sizes: Optional[List[int]] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
         add_global_variables_after_pooling: bool = False,
+        activation_layer: Callable = None,
+        add_norm_layer: bool = False,
+        skip_readout: bool = False,
     ):
         """Construct `DynEdge`.
 
@@ -65,6 +68,11 @@ class DynEdge(GNN):
                 after global pooling. The alternative is to  added (distribute)
                 them to the individual nodes before any convolutional
                 operations.
+            activation_layer: The activation function to use in the model.
+            add_norm_layer: Whether to add a normalization layer after each
+                linear layer.
+            skip_readout: Whether to skip the readout layer(s). If `True`, the
+                output of the last post-processing layer is returned directly.
         """
         # Latent feature subset for computing nearest neighbours in DynEdge.
         if features_subset is None:
@@ -149,15 +157,20 @@ class DynEdge(GNN):
             add_global_variables_after_pooling
         )
 
+        if activation_layer is None:
+            activation_layer = torch.nn.ReLU()
+
         # Base class constructor
         super().__init__(nb_inputs, self._readout_layer_sizes[-1])
 
         # Remaining member variables()
-        self._activation = torch.nn.LeakyReLU()
+        self._activation = activation_layer
         self._nb_inputs = nb_inputs
         self._nb_global_variables = 5 + nb_inputs
         self._nb_neighbours = nb_neighbours
         self._features_subset = features_subset
+        self._add_norm_layer = add_norm_layer
+        self._skip_readout = skip_readout
 
         self._construct_layers()
 
@@ -179,6 +192,8 @@ class DynEdge(GNN):
                 if ix == 0:
                     nb_in *= 2
                 layers.append(torch.nn.Linear(nb_in, nb_out))
+                if self._add_norm_layer:
+                    layers.append(torch.nn.LayerNorm(nb_out))
                 layers.append(self._activation)
 
             conv_layer = DynEdgeConv(
@@ -203,6 +218,8 @@ class DynEdge(GNN):
         )
         for nb_in, nb_out in zip(layer_sizes[:-1], layer_sizes[1:]):
             post_processing_layers.append(torch.nn.Linear(nb_in, nb_out))
+            if self._add_norm_layer:
+                post_processing_layers.append(torch.nn.LayerNorm(nb_out))
             post_processing_layers.append(self._activation)
 
         self._post_processing = torch.nn.Sequential(*post_processing_layers)
@@ -307,19 +324,20 @@ class DynEdge(GNN):
         # Post-processing
         x = self._post_processing(x)
 
-        # (Optional) Global pooling
-        if self._global_pooling_schemes:
-            x = self._global_pooling(x, batch=batch)
-            if self._add_global_variables_after_pooling:
-                x = torch.cat(
-                    [
-                        x,
-                        global_variables,
-                    ],
-                    dim=1,
-                )
+        if not self._skip_readout:
+            # (Optional) Global pooling
+            if self._global_pooling_schemes:
+                x = self._global_pooling(x, batch=batch)
+                if self._add_global_variables_after_pooling:
+                    x = torch.cat(
+                        [
+                            x,
+                            global_variables,
+                        ],
+                        dim=1,
+                    )
 
-        # Read-out
-        x = self._readout(x)
+            # Read-out
+            x = self._readout(x)
 
         return x
