@@ -323,7 +323,7 @@
             
   <h1 id="modules-graphnet-models-gnn-dynedge--page-root">Source code for graphnet.models.gnn.dynedge</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Implementation of the DynEdge GNN model architecture."""</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">LongTensor</span>
@@ -358,6 +358,9 @@
         <span class="n">readout_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">global_pooling_schemes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">add_global_variables_after_pooling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">activation_layer</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">add_norm_layer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">skip_readout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `DynEdge`.</span>
 
@@ -391,6 +394,11 @@
 <span class="sd">                after global pooling. The alternative is to  added (distribute)</span>
 <span class="sd">                them to the individual nodes before any convolutional</span>
 <span class="sd">                operations.</span>
+<span class="sd">            activation_layer: The activation function to use in the model.</span>
+<span class="sd">            add_norm_layer: Whether to add a normalization layer after each</span>
+<span class="sd">                linear layer.</span>
+<span class="sd">            skip_readout: Whether to skip the readout layer(s). If `True`, the</span>
+<span class="sd">                output of the last post-processing layer is returned directly.</span>
 <span class="sd">        """</span>
         <span class="c1"># Latent feature subset for computing nearest neighbours in DynEdge.</span>
         <span class="k">if</span> <span class="n">features_subset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -475,15 +483,20 @@
             <span class="n">add_global_variables_after_pooling</span>
         <span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">activation_layer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">activation_layer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nb_inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readout_layer_sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="c1"># Remaining member variables()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation_layer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span> <span class="o">=</span> <span class="n">nb_inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_global_variables</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="n">nb_inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_neighbours</span> <span class="o">=</span> <span class="n">nb_neighbours</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_features_subset</span> <span class="o">=</span> <span class="n">features_subset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_norm_layer</span> <span class="o">=</span> <span class="n">add_norm_layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_skip_readout</span> <span class="o">=</span> <span class="n">skip_readout</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_construct_layers</span><span class="p">()</span>
 
@@ -505,6 +518,8 @@
                 <span class="k">if</span> <span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">nb_in</span> <span class="o">*=</span> <span class="mi">2</span>
                 <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_in</span><span class="p">,</span> <span class="n">nb_out</span><span class="p">))</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_norm_layer</span><span class="p">:</span>
+                    <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">nb_out</span><span class="p">))</span>
                 <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">)</span>
 
             <span class="n">conv_layer</span> <span class="o">=</span> <span class="n">DynEdgeConv</span><span class="p">(</span>
@@ -529,6 +544,8 @@
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">nb_in</span><span class="p">,</span> <span class="n">nb_out</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">layer_sizes</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">layer_sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
             <span class="n">post_processing_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_in</span><span class="p">,</span> <span class="n">nb_out</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_norm_layer</span><span class="p">:</span>
+                <span class="n">post_processing_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">nb_out</span><span class="p">))</span>
             <span class="n">post_processing_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_post_processing</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">post_processing_layers</span><span class="p">)</span>
@@ -635,20 +652,21 @@
         <span class="c1"># Post-processing</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_processing</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="c1"># (Optional) Global pooling</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_global_pooling_schemes</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_global_pooling</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_global_variables_after_pooling</span><span class="p">:</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
-                    <span class="p">[</span>
-                        <span class="n">x</span><span class="p">,</span>
-                        <span class="n">global_variables</span><span class="p">,</span>
-                    <span class="p">],</span>
-                    <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_readout</span><span class="p">:</span>
+            <span class="c1"># (Optional) Global pooling</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_global_pooling_schemes</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_global_pooling</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_global_variables_after_pooling</span><span class="p">:</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="n">x</span><span class="p">,</span>
+                            <span class="n">global_variables</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="p">)</span>
 
-        <span class="c1"># Read-out</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="c1"># Read-out</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x</span></div>
 </div>

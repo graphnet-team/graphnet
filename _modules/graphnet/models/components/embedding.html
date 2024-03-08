@@ -324,12 +324,16 @@
   <h1 id="modules-graphnet-models-components-embedding--page-root">Source code for graphnet.models.components.embedding</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Classes for performing embedding of input data."""</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torch.functional</span> <span class="kn">import</span> <span class="n">Tensor</span>
+
+<span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">LightningModule</span>
 
 
 <div class="viewcode-block" id="SinusoidalPosEmb">
 <a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SinusoidalPosEmb">[docs]</a>
-<span class="k">class</span> <span class="nc">SinusoidalPosEmb</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Sinusoidal positional embedding layer.</span>
+<span class="k">class</span> <span class="nc">SinusoidalPosEmb</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Sinusoidal positional embeddings module.</span>
 
 <span class="sd">    This module is from the kaggle competition 2nd place solution (see</span>
 <span class="sd">    arXiv:2310.15674): It performs what is called Fourier encoding or it's used</span>
@@ -337,28 +341,146 @@
 <span class="sd">    digitization of the input data</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">n_freq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="n">n_freq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+        <span class="n">scaled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `SinusoidalPosEmb`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dim: Embedding dimension.</span>
 <span class="sd">            n_freq: Number of frequencies.</span>
+<span class="sd">            scaled: Whether or not to scale the output.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dim has to be even. Got: </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dim</span><span class="o">**-</span><span class="mf">0.5</span><span class="p">)</span> <span class="k">if</span> <span class="n">scaled</span> <span class="k">else</span> <span class="mf">1.0</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span> <span class="o">=</span> <span class="n">n_freq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">n_freq</span><span class="p">])</span>
 
 <div class="viewcode-block" id="SinusoidalPosEmb.forward">
 <a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SinusoidalPosEmb.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Apply learnable forward pass to the layer."""</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">device</span>
-        <span class="n">half_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">//</span> <span class="mi">2</span>
-        <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">))</span> <span class="o">/</span> <span class="n">half_dim</span>
+        <span class="n">half_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">))</span> <span class="o">/</span> <span class="n">half_dim</span>
         <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">half_dim</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">emb</span><span class="p">))</span>
-        <span class="n">emb</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">emb</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-        <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">emb</span><span class="o">.</span><span class="n">sin</span><span class="p">(),</span> <span class="n">emb</span><span class="o">.</span><span class="n">cos</span><span class="p">()),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">emb</span></div>
+        <span class="n">emb</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">emb</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">emb</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">emb</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">emb</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FourierEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">FourierEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Fourier encoder module.</span>
+
+<span class="sd">    This module incorporates sinusoidal positional embeddings and auxiliary</span>
+<span class="sd">    embeddings to process input sequences and produce meaningful</span>
+<span class="sd">    representations.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="n">output_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">,</span>
+        <span class="n">scaled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `FourierEncoder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seq_length: Dimensionality of the base sinusoidal positional</span>
+<span class="sd">                embeddings.</span>
+<span class="sd">            output_dim: Output dimensionality of the final projection.</span>
+<span class="sd">            scaled: Whether or not to scale the embeddings.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">seq_length</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb2</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FourierEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoder.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">seq_length</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">seq_length</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">4096</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># pos</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">]),</span>  <span class="c1"># charge</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">4096</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]),</span>  <span class="c1"># time</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aux_emb</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">long</span><span class="p">()),</span>  <span class="c1"># auxiliary</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb2</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">seq_length</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SpacetimeEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">SpacetimeEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Spacetime encoder module."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `SpacetimeEncoder`.</span>
+
+<span class="sd">        This module calculates space-time interval between each pair of events</span>
+<span class="sd">        and generates sinusoidal positional embeddings to be added to input</span>
+<span class="sd">        sequences.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seq_length: Dimensionality of the sinusoidal positional embeddings.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SpacetimeEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoder.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="c1"># Lmax: Optional[int] = None,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">spacetime_interval</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="n">time</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">time</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:])</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3e4</span> <span class="o">/</span> <span class="mi">500</span> <span class="o">*</span> <span class="mf">3e-1</span><span class="p">))</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">four_distance</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">spacetime_interval</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">spacetime_interval</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">sin_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="n">four_distance</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">rel_attn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">(</span><span class="n">sin_emb</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rel_attn</span></div>
 </div>
 
 </pre></div>

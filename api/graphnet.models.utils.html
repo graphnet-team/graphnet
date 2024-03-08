@@ -402,6 +402,8 @@
         <li class="md-nav__item"><a href="#graphnet.models.utils.calculate_distance_matrix" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">calculate_distance_matrix()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.utils.knn_graph_batch" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">knn_graph_batch()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.utils.array_to_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">array_to_sequence()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -426,6 +428,13 @@
     
     
       <a href="#graphnet.models.utils.knn_graph_batch" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">knn_graph_batch()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.utils.array_to_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">array_to_sequence()</span></code></a>
       
     
     </li></ul>
@@ -484,6 +493,8 @@
         <li class="md-nav__item"><a href="#graphnet.models.utils.calculate_distance_matrix" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">calculate_distance_matrix()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.utils.knn_graph_batch" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">knn_graph_batch()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.utils.array_to_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">array_to_sequence()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -556,6 +567,41 @@ Data.x[:,[0,1,2]]</p></li>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Returns the same batch of events, but with updated edges.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.utils.array_to_sequence">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.utils.</span></span><span class="sig-name descname"><span class="pre">array_to_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluding_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/utils.html#array_to_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.utils.array_to_sequence" title="Link to this definition">¶</a></dt>
+<dd><p>Convert <cite>x</cite> of shape [n,d] into a padded sequence of shape [B, L, D].</p>
+<blockquote>
+<div><p>Where B is the batch size, L is the sequence length and D is the
+features for each time step.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – array-like tensor with shape <cite>[n,d]</cite> where <cite>n</cite> is the total number</p></li>
+<li><p><strong>features.</strong> (<em>of pulses in the batch and d is the number</em><em> of  </em><em>node</em>) – </p></li>
+<li><p><strong>batch_idx</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span>) – a LongTensor identifying which row in <cite>x</cite> belongs to
+which training example.
+E.g. <cite>torch_geometric.data.Batch.batch</cite>.</p></li>
+<li><p><strong>padding_value</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0</span></code>) – The value to use for padding.</p></li>
+<li><p><strong>excluding_value</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">inf</span></code>) – This parameter represents a unique value that should
+not be present in the input tensor ‘x’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Padded sequence with dimensions  [B, L, D].
+mask: A tensor that identifies masked entries in <cite>x</cite>.</p>
+<blockquote>
+<div><p>E.g. : <cite>masked_entries = x[mask]</cite></p>
+</div></blockquote>
+<p>seq_length: A tensor containing the number of pulses in each event.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>x</p>
 </dd>
 </dl>
 </dd></dl>

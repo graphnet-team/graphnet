@@ -324,7 +324,7 @@
   <h1 id="modules-graphnet-models-components-layers--page-root">Source code for graphnet.models.components.layers</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Class(es) implementing layers to be used in `graphnet` models."""</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.functional</span> <span class="kn">import</span> <span class="n">Tensor</span>
@@ -333,8 +333,10 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.typing</span> <span class="kn">import</span> <span class="n">Adj</span><span class="p">,</span> <span class="n">PairTensor</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.nn.conv</span> <span class="kn">import</span> <span class="n">MessagePassing</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.nn.inits</span> <span class="kn">import</span> <span class="n">reset</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn.functional</span> <span class="kn">import</span> <span class="n">linear</span>
 <span class="kn">from</span> <span class="nn">torch.nn.modules</span> <span class="kn">import</span> <span class="n">TransformerEncoder</span><span class="p">,</span> <span class="n">TransformerEncoderLayer</span>
-<span class="kn">from</span> <span class="nn">torch.nn.modules.normalization</span> <span class="kn">import</span> <span class="n">LayerNorm</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">to_dense_batch</span>
 <span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">LightningModule</span>
 
@@ -473,13 +475,13 @@
 <span class="w">        </span><span class="sd">"""Construct `DynTrans`.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            nn: The MLP/torch.Module to be used within the `DynTrans`.</span>
 <span class="sd">            layer_sizes: List of layer sizes to be used in `DynTrans`.</span>
 <span class="sd">            aggr: Aggregation method to be used with `DynTrans`.</span>
 <span class="sd">            features_subset: Subset of features in `Data.x` that should be used</span>
 <span class="sd">                when dynamically performing the new graph clustering after the</span>
 <span class="sd">                `EdgeConv` operation. Defaults to all features.</span>
-<span class="sd">            n_head: Number of heads to be used in the multiheadattention models.</span>
+<span class="sd">            n_head: Number of heads to be used in the multiheadattention</span>
+<span class="sd">                models.</span>
 <span class="sd">            **kwargs: Additional features to be passed to `DynTrans`.</span>
 <span class="sd">        """</span>
         <span class="c1"># Check(s)</span>
@@ -495,17 +497,17 @@
         <span class="p">):</span>
             <span class="k">if</span> <span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">nb_in</span> <span class="o">*=</span> <span class="mi">3</span>  <span class="c1"># edgeConv1</span>
-            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_in</span><span class="p">,</span> <span class="n">nb_out</span><span class="p">))</span>
-            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">())</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_in</span><span class="p">,</span> <span class="n">nb_out</span><span class="p">))</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">())</span>
         <span class="n">d_model</span> <span class="o">=</span> <span class="n">nb_out</span>
 
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nn</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">),</span> <span class="n">aggr</span><span class="o">=</span><span class="n">aggr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">),</span> <span class="n">aggr</span><span class="o">=</span><span class="n">aggr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># Additional member variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">features_subset</span> <span class="o">=</span> <span class="n">features_subset</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span> <span class="o">=</span> <span class="n">LayerNorm</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>  <span class="c1"># lNorm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>  <span class="c1"># lNorm</span>
 
         <span class="c1"># Transformer layer(s)</span>
         <span class="n">encoder_layer</span> <span class="o">=</span> <span class="n">TransformerEncoderLayer</span><span class="p">(</span>
@@ -538,6 +540,438 @@
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_encoder</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">src_key_padding_mask</span><span class="o">=~</span><span class="n">mask</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
+        <span class="k">return</span> <span class="n">x</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DropPath">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.DropPath">[docs]</a>
+<span class="k">class</span> <span class="nc">DropPath</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Drop paths (Stochastic Depth) per sample."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">drop_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `DropPath`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            drop_prob: Probability of dropping a path during training.</span>
+<span class="sd">                If 0.0, no paths are dropped. Defaults to None.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DropPath</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_prob</span> <span class="o">=</span> <span class="n">drop_prob</span>
+
+<div class="viewcode-block" id="DropPath.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.DropPath.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_prob</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="n">keep_prob</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_prob</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">random_tensor</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">new_empty</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">bernoulli_</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keep_prob</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">random_tensor</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">keep_prob</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">random_tensor</span></div>
+
+
+<div class="viewcode-block" id="DropPath.extra_repr">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.DropPath.extra_repr">[docs]</a>
+    <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return extra representation of the module."""</span>
+        <span class="k">return</span> <span class="s2">"p=</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_prob</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Mlp">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.Mlp">[docs]</a>
+<span class="k">class</span> <span class="nc">Mlp</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Multi-Layer Perceptron (MLP) module."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">hidden_features</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_features</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">,</span>
+        <span class="n">dropout_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `Mlp`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            in_features: Number of input features.</span>
+<span class="sd">            hidden_features: Number of hidden features. Defaults to None.</span>
+<span class="sd">                If None, it is set to the value of `in_features`.</span>
+<span class="sd">            out_features: Number of output features. Defaults to None.</span>
+<span class="sd">                If None, it is set to the value of `in_features`.</span>
+<span class="sd">            activation: Activation layer. Defaults to `nn.GELU`.</span>
+<span class="sd">            dropout_prob: Dropout probability. Defaults to 0.0.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">in_features</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"in_features must be greater than 0, got in_features "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">in_features</span><span class="si">}</span><span class="s2"> instead"</span>
+            <span class="p">)</span>
+        <span class="n">out_features</span> <span class="o">=</span> <span class="n">out_features</span> <span class="ow">or</span> <span class="n">in_features</span>
+        <span class="n">hidden_features</span> <span class="o">=</span> <span class="n">hidden_features</span> <span class="ow">or</span> <span class="n">in_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">hidden_features</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_prob</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Mlp.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.Mlp.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_projection</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Block_rel">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.Block_rel">[docs]</a>
+<span class="k">class</span> <span class="nc">Block_rel</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Implementation of BEiTv2 Block."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">mlp_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
+        <span class="n">qkv_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">qk_scale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">attn_drop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">drop_path</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">init_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">,</span>
+        <span class="n">norm_layer</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">,</span>
+        <span class="n">attn_head_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct 'Block_rel'.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input_dim: Dimension of the input tensor.</span>
+<span class="sd">            num_heads: Number of attention heads to use in the `Attention_rel`</span>
+<span class="sd">            layer.</span>
+<span class="sd">            mlp_ratio: Ratio of the hidden size of the feedforward network to</span>
+<span class="sd">                the input size in the `Mlp` layer.</span>
+<span class="sd">            qkv_bias: Whether or not to include bias terms in the query, key,</span>
+<span class="sd">                and value matrices in the `Attention_rel` layer.</span>
+<span class="sd">            qk_scale: Scaling factor for the dot product of the query and key</span>
+<span class="sd">                matrices in the `Attention_rel` layer.</span>
+<span class="sd">            dropout: Dropout probability to use in the `Mlp` layer.</span>
+<span class="sd">            attn_drop: Dropout probability to use in the `Attention_rel` layer.</span>
+<span class="sd">            drop_path: Probability of applying drop path regularization to the</span>
+<span class="sd">                output of the layer.</span>
+<span class="sd">            init_values: Initial value to use for the `gamma_1` and `gamma_2`</span>
+<span class="sd">                parameters if not `None`.</span>
+<span class="sd">            activation: Activation function to use in the `Mlp` layer.</span>
+<span class="sd">            norm_layer: Normalization layer to use.</span>
+<span class="sd">            attn_head_dim: Dimension of the attention head outputs in the</span>
+<span class="sd">                `Attention_rel` layer.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attn</span> <span class="o">=</span> <span class="n">Attention_rel</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="p">,</span>
+            <span class="n">num_heads</span><span class="p">,</span>
+            <span class="n">attn_drop</span><span class="o">=</span><span class="n">attn_drop</span><span class="p">,</span>
+            <span class="n">qkv_bias</span><span class="o">=</span><span class="n">qkv_bias</span><span class="p">,</span>
+            <span class="n">qk_scale</span><span class="o">=</span><span class="n">qk_scale</span><span class="p">,</span>
+            <span class="n">attn_head_dim</span><span class="o">=</span><span class="n">attn_head_dim</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DropPath</span><span class="p">(</span><span class="n">drop_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">drop_path</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm2</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+        <span class="n">mlp_hidden_dim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_dim</span> <span class="o">*</span> <span class="n">mlp_ratio</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span> <span class="o">=</span> <span class="n">Mlp</span><span class="p">(</span>
+            <span class="n">in_features</span><span class="o">=</span><span class="n">input_dim</span><span class="p">,</span>
+            <span class="n">hidden_features</span><span class="o">=</span><span class="n">mlp_hidden_dim</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">dropout_prob</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">init_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma_1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">init_values</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">input_dim</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma_2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">init_values</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">input_dim</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Block_rel.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.Block_rel.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">key_padding_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rel_pos_bias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">kv</span> <span class="o">=</span> <span class="n">xn</span> <span class="k">if</span> <span class="n">kv</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">kv</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span>
+                    <span class="n">xn</span><span class="p">,</span>
+                    <span class="n">kv</span><span class="p">,</span>
+                    <span class="n">kv</span><span class="p">,</span>
+                    <span class="n">rel_pos_bias</span><span class="o">=</span><span class="n">rel_pos_bias</span><span class="p">,</span>
+                    <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">key_padding_mask</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">kv</span> <span class="o">=</span> <span class="n">xn</span> <span class="k">if</span> <span class="n">kv</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">kv</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gamma_1</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span>
+                        <span class="n">xn</span><span class="p">,</span>
+                        <span class="n">kv</span><span class="p">,</span>
+                        <span class="n">kv</span><span class="p">,</span>
+                        <span class="n">rel_pos_bias</span><span class="o">=</span><span class="n">rel_pos_bias</span><span class="p">,</span>
+                        <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">key_padding_mask</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Attention_rel">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.Attention_rel">[docs]</a>
+<span class="k">class</span> <span class="nc">Attention_rel</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Attention mechanism with relative position bias."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">qkv_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">qk_scale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">attn_drop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">proj_drop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">attn_head_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct 'Attention_rel'.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input_dim: Dimension of the input tensor.</span>
+<span class="sd">            num_heads: the number of attention heads to use (default: 8)</span>
+<span class="sd">            qkv_bias: whether to add bias to the query, key, and value</span>
+<span class="sd">                projections. Defaults to False.</span>
+<span class="sd">            qk_scale: a scaling factor that multiplies the dot product of query</span>
+<span class="sd">                and key vectors. Defaults to None. If None, computed as</span>
+<span class="sd">                :math: `head_dim^(-1/2)`.</span>
+<span class="sd">            attn_drop: the dropout probability for the attention weights.</span>
+<span class="sd">                Defaults to 0.0.</span>
+<span class="sd">            proj_drop: the dropout probability for the output of the attention</span>
+<span class="sd">                module. Defaults to 0.0.</span>
+<span class="sd">            attn_head_dim: the feature dimensionality of each attention head.</span>
+<span class="sd">                Defaults to None. If None, computed as `dim // num_heads`.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">input_dim</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">num_heads</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"dim and num_heads must be greater than 0,"</span>
+                <span class="sa">f</span><span class="s2">" got input_dim=</span><span class="si">{</span><span class="n">input_dim</span><span class="si">}</span><span class="s2"> and num_heads=</span><span class="si">{</span><span class="n">num_heads</span><span class="si">}</span><span class="s2"> instead"</span>
+            <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+        <span class="n">head_dim</span> <span class="o">=</span> <span class="n">attn_head_dim</span> <span class="ow">or</span> <span class="n">input_dim</span> <span class="o">//</span> <span class="n">num_heads</span>
+        <span class="n">all_head_dim</span> <span class="o">=</span> <span class="n">head_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">qk_scale</span> <span class="ow">or</span> <span class="n">head_dim</span><span class="o">**-</span><span class="mf">0.5</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">proj_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">all_head_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proj_k</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">all_head_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proj_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">all_head_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">qkv_bias</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_bias</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">all_head_dim</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v_bias</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">all_head_dim</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_bias</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v_bias</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">attn_drop</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">attn_drop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">all_head_dim</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proj_drop</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">proj_drop</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Attention_rel.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.Attention_rel.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">q</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">v</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">rel_pos_bias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">key_padding_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">event_length</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">q</span> <span class="o">=</span> <span class="n">linear</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">proj_q</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q_bias</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">event_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>
+        <span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">linear</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">proj_k</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>
+        <span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">linear</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">proj_v</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v_bias</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>
+        <span class="p">)</span>
+
+        <span class="n">q</span> <span class="o">=</span> <span class="n">q</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span>
+        <span class="n">attn</span> <span class="o">=</span> <span class="n">q</span> <span class="o">@</span> <span class="n">k</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rel_pos_bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">"bhic,bijc-&gt;bhij"</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">rel_pos_bias</span><span class="p">)</span>
+            <span class="n">attn</span> <span class="o">=</span> <span class="n">attn</span> <span class="o">+</span> <span class="n">bias</span>
+        <span class="k">if</span> <span class="n">key_padding_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">key_padding_mask</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+                <span class="ow">or</span> <span class="n">key_padding_mask</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span>
+            <span class="p">),</span> <span class="s2">"incorrect mask dtype"</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+                <span class="n">key_padding_mask</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="n">key_padding_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">bias</span><span class="p">[</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                    <span class="n">key_padding_mask</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="n">key_padding_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">attn</span> <span class="o">=</span> <span class="n">attn</span> <span class="o">+</span> <span class="n">bias</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">attn</span> <span class="o">=</span> <span class="n">attn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">attn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn_drop</span><span class="p">(</span><span class="n">attn</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">attn</span> <span class="o">@</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rel_pos_bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">"bhij,bijc-&gt;bihc"</span><span class="p">,</span> <span class="n">attn</span><span class="p">,</span> <span class="n">rel_pos_bias</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">event_length</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj_drop</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Block">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.Block">[docs]</a>
+<span class="k">class</span> <span class="nc">Block</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Transformer block."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">mlp_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">attn_drop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">drop_path</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">init_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">,</span>
+        <span class="n">norm_layer</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct 'Block'.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input_dim: Dimension of the input tensor.</span>
+<span class="sd">            num_heads: Number of attention heads to use in the</span>
+<span class="sd">                `MultiheadAttention` layer.</span>
+<span class="sd">            mlp_ratio: Ratio of the hidden size of the feedforward network to</span>
+<span class="sd">                the input size in the `Mlp` layer.</span>
+<span class="sd">            dropout: Dropout probability to use in the `Mlp` layer.</span>
+<span class="sd">            attn_drop: Dropout probability to use in the `MultiheadAttention`</span>
+<span class="sd">                layer.</span>
+<span class="sd">            drop_path: Probability of applying drop path regularization to the</span>
+<span class="sd">                output of the layer.</span>
+<span class="sd">            init_values: Initial value to use for the `gamma_1` and `gamma_2`</span>
+<span class="sd">                parameters if not `None`.</span>
+<span class="sd">            activation: Activation function to use in the `Mlp` layer.</span>
+<span class="sd">            norm_layer: Normalization layer to use.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MultiheadAttention</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">attn_drop</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DropPath</span><span class="p">(</span><span class="n">drop_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">drop_path</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm2</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+        <span class="n">mlp_hidden_dim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_dim</span> <span class="o">*</span> <span class="n">mlp_ratio</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span> <span class="o">=</span> <span class="n">Mlp</span><span class="p">(</span>
+            <span class="n">in_features</span><span class="o">=</span><span class="n">input_dim</span><span class="p">,</span>
+            <span class="n">hidden_features</span><span class="o">=</span><span class="n">mlp_hidden_dim</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">dropout_prob</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">init_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma_1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">init_values</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">input_dim</span><span class="p">)),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma_2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">init_values</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">input_dim</span><span class="p">)),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Block.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.layers.html#graphnet.models.components.layers.Block.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">attn_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">key_padding_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span>
+                    <span class="n">xn</span><span class="p">,</span>
+                    <span class="n">xn</span><span class="p">,</span>
+                    <span class="n">xn</span><span class="p">,</span>
+                    <span class="n">attn_mask</span><span class="o">=</span><span class="n">attn_mask</span><span class="p">,</span>
+                    <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">key_padding_mask</span><span class="p">,</span>
+                    <span class="n">need_weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gamma_1</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span>
+                    <span class="n">xn</span><span class="p">,</span>
+                    <span class="n">xn</span><span class="p">,</span>
+                    <span class="n">xn</span><span class="p">,</span>
+                    <span class="n">attn_mask</span><span class="o">=</span><span class="n">attn_mask</span><span class="p">,</span>
+                    <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">key_padding_mask</span><span class="p">,</span>
+                    <span class="n">need_weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">x</span></div>
 </div>
 

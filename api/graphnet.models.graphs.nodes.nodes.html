@@ -391,6 +391,8 @@
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -450,6 +452,13 @@
     
     
       <a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
       
     
     </li></ul>
@@ -587,6 +596,8 @@
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -734,6 +745,32 @@ percentiles.</p>
 <li><p><strong>time_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'dom_time'</span></code>) – Name of time column.</p></li>
 <li><p><strong>charge_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'charge'</span></code>) – Name of charge column.</p></li>
 <li><p><strong>max_activations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Maximum number of activations to include in the time series.</p></li>
+<li><p><strong>args</strong> (<em>Any</em>) – </p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.IceMixNodes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">IceMixNodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#IceMixNodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.IceMixNodes" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
+<p>Calculate ice properties and perform random sampling.</p>
+<p>Ice properties are calculated based on the z-coordinate of the pulse. For
+each event, a random sampling is performed to keep the number of pulses
+below a maximum number of pulses if n_pulses is over the limit.</p>
+<p>Construct <cite>IceMixNodes</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_feature_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Column names for input features. Minimum</p></li>
+<li><p><strong>names.</strong> (<em>required features are z coordinate and hlc column</em>) – </p></li>
+<li><p><strong>max_pulses</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">768</span></code>) – Maximum number of pulses to keep in the event.</p></li>
+<li><p><strong>z_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'dom_z'</span></code>) – Name of the z-coordinate column.</p></li>
+<li><p><strong>hlc_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'hlc'</span></code>) – Name of the <cite>Hard Local Coincidence Check</cite> column.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
