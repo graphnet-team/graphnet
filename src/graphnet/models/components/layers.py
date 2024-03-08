@@ -1,9 +1,8 @@
 """Class(es) implementing layers to be used in `graphnet` models."""
 
-from typing import Any, Callable, Optional, Sequence, Union, List, Tuple
+from typing import Any, Callable, Optional, Sequence, Union, List
 
 import torch
-import math
 from torch.functional import Tensor
 from torch_geometric.nn import EdgeConv
 from torch_geometric.nn.pool import knn_graph
@@ -274,145 +273,12 @@ class Mlp(LightningModule):
         return x
 
 
-class SinusoidalPosEmb(LightningModule):
-    """Sinusoidal positional embeddings module."""
-
-    def __init__(
-        self,
-        dim: int = 16,
-        n_freq: int = 10000,
-        scaled: bool = False,
-    ):
-        """Construct `SinusoidalPosEmb`.
-
-        This module generates sinusoidal positional embeddings to be
-        added to input sequences.
-
-        Args:
-            dim: Embedding dimension.
-            n_freq: Number of frequencies.
-            scaled: Whether or not to scale the embeddings.
-        """
-        super().__init__()
-        if dim % 2 != 0:
-            raise ValueError("dim must be even")
-        self.scale = (
-            nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
-        )
-        self.dim = dim
-        self.n_freq = torch.Tensor([n_freq])
-
-    def forward(self, x: Tensor) -> Tensor:
-        """Forward pass."""
-        device = x.device
-        half_dim = self.dim // 2
-        emb = torch.log(self.n_freq.to(device=device)) / half_dim
-        emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
-        emb = x.unsqueeze(-1) * emb.unsqueeze(0)
-        emb = torch.cat((torch.sin(emb), torch.cos(emb)), dim=-1)
-        return emb * self.scale
-
-
-class FourierEncoder(LightningModule):
-    """Fourier encoder module."""
-
-    def __init__(
-        self,
-        base_dim: int = 128,
-        output_dim: int = 384,
-        scaled: bool = False,
-    ):
-        """Construct `FourierEncoder`.
-
-        This module incorporates sinusoidal positional embeddings and
-        auxiliary embeddings to process input sequences and produce meaningful
-        representations.
-
-        Args:
-            base_dim: Dimensionality of the base sinusoidal positional
-                embeddings.
-            output_dim: Output dimensionality of the final projection.
-            scaled: Whether or not to scale the embeddings.
-        """
-        super().__init__()
-        self.sin_emb = SinusoidalPosEmb(dim=base_dim, scaled=scaled)
-        self.aux_emb = nn.Embedding(2, base_dim // 2)
-        self.sin_emb2 = SinusoidalPosEmb(dim=base_dim // 2, scaled=scaled)
-        self.projection = nn.Sequential(
-            nn.Linear(6 * base_dim, 6 * base_dim),
-            nn.LayerNorm(6 * base_dim),
-            nn.GELU(),
-            nn.Linear(6 * base_dim, output_dim),
-        )
-
-    def forward(
-        self,
-        x: Tensor,
-        seq_length: Tensor,
-    ) -> Tensor:
-        """Forward pass."""
-        length = torch.log10(seq_length.to(dtype=x.dtype))
-        x = torch.cat(
-            [
-                self.sin_emb(4096 * x[:, :, :3]).flatten(-2),  # pos
-                self.sin_emb(1024 * x[:, :, 4]),  # charge
-                self.sin_emb(4096 * x[:, :, 3]),  # time
-                self.aux_emb(x[:, :, 5].long()),  # auxiliary
-                self.sin_emb2(length)
-                .unsqueeze(1)
-                .expand(-1, max(seq_length), -1),
-            ],
-            -1,
-        )
-        x = self.projection(x)
-        return x
-
-
-class SpacetimeEncoder(LightningModule):
-    """Spacetime encoder module."""
-
-    def __init__(
-        self,
-        base_dim: int = 32,
-    ):
-        """Construct `SpacetimeEncoder`.
-
-        This module calculates space-time interval between each pair of events
-        and generates sinusoidal positional embeddings to be added to input
-        sequences.
-
-        Args:
-            base_dim: Dimensionality of the sinusoidal positional embeddings.
-        """
-        super().__init__()
-        self.sin_emb = SinusoidalPosEmb(dim=base_dim)
-        self.projection = nn.Linear(base_dim, base_dim)
-
-    def forward(
-        self,
-        x: Tensor,
-        # Lmax: Optional[int] = None,
-    ) -> Tensor:
-        """Forward pass."""
-        pos = x[:, :, :3]
-        time = x[:, :, 3]
-        spacetime_interval = (pos[:, :, None] - pos[:, None, :]).pow(2).sum(
-            -1
-        ) - ((time[:, :, None] - time[:, None, :]) * (3e4 / 500 * 3e-1)).pow(2)
-        four_distance = torch.sign(spacetime_interval) * torch.sqrt(
-            torch.abs(spacetime_interval)
-        )
-        sin_emb = self.sin_emb(1024 * four_distance.clip(-4, 4))
-        rel_attn = self.projection(sin_emb)
-        return rel_attn
-
-
 class Block_rel(LightningModule):
     """Implementation of BEiTv2 Block."""
 
     def __init__(
         self,
-        dim: int,
+        input_dim: int,
         num_heads: int,
         mlp_ratio: float = 4.0,
         qkv_bias: bool = False,
@@ -428,7 +294,7 @@ class Block_rel(LightningModule):
         """Construct 'Block_rel'.
 
         Args:
-            dim: Dimension of the input tensor.
+            input_dim: Dimension of the input tensor.
             num_heads: Number of attention heads to use in the `Attention_rel`
             layer.
             mlp_ratio: Ratio of the hidden size of the feedforward network to
@@ -449,9 +315,9 @@ class Block_rel(LightningModule):
                 `Attention_rel` layer.
         """
         super().__init__()
-        self.norm1 = norm_layer(dim)
+        self.norm1 = norm_layer(input_dim)
         self.attn = Attention_rel(
-            dim,
+            input_dim,
             num_heads,
             attn_drop=attn_drop,
             qkv_bias=qkv_bias,
@@ -461,10 +327,10 @@ class Block_rel(LightningModule):
         self.drop_path = (
             DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         )
-        self.norm2 = norm_layer(dim)
-        mlp_hidden_dim = int(dim * mlp_ratio)
+        self.norm2 = norm_layer(input_dim)
+        mlp_hidden_dim = int(input_dim * mlp_ratio)
         self.mlp = Mlp(
-            in_features=dim,
+            in_features=input_dim,
             hidden_features=mlp_hidden_dim,
             activation=activation,
             dropout_prob=dropout,
@@ -472,10 +338,10 @@ class Block_rel(LightningModule):
 
         if init_values is not None:
             self.gamma_1 = nn.Parameter(
-                init_values * torch.ones((dim)), requires_grad=True
+                init_values * torch.ones(input_dim), requires_grad=True
             )
             self.gamma_2 = nn.Parameter(
-                init_values * torch.ones((dim)), requires_grad=True
+                init_values * torch.ones(input_dim), requires_grad=True
             )
         else:
             self.gamma_1, self.gamma_2 = None, None
@@ -525,7 +391,7 @@ class Attention_rel(LightningModule):
 
     def __init__(
         self,
-        dim: int,
+        input_dim: int,
         num_heads: int = 8,
         qkv_bias: bool = False,
         qk_scale: Optional[float] = None,
@@ -536,7 +402,7 @@ class Attention_rel(LightningModule):
         """Construct 'Attention_rel'.
 
         Args:
-            dim: Dimension of the input tensor.
+            input_dim: Dimension of the input tensor.
             num_heads: the number of attention heads to use (default: 8)
             qkv_bias: whether to add bias to the query, key, and value
                 projections. Defaults to False.
@@ -550,21 +416,21 @@ class Attention_rel(LightningModule):
             attn_head_dim: the feature dimensionality of each attention head.
                 Defaults to None. If None, computed as `dim // num_heads`.
         """
-        if dim <= 0 or num_heads <= 0:
+        if input_dim <= 0 or num_heads <= 0:
             raise ValueError(
                 f"dim and num_heads must be greater than 0,"
-                f" got dim={dim} and num_heads={num_heads} instead"
+                f" got input_dim={input_dim} and num_heads={num_heads} instead"
             )
 
         super().__init__()
         self.num_heads = num_heads
-        head_dim = attn_head_dim or dim // num_heads
+        head_dim = attn_head_dim or input_dim // num_heads
         all_head_dim = head_dim * self.num_heads
         self.scale = qk_scale or head_dim**-0.5
 
-        self.proj_q = nn.Linear(dim, all_head_dim, bias=False)
-        self.proj_k = nn.Linear(dim, all_head_dim, bias=False)
-        self.proj_v = nn.Linear(dim, all_head_dim, bias=False)
+        self.proj_q = nn.Linear(input_dim, all_head_dim, bias=False)
+        self.proj_k = nn.Linear(input_dim, all_head_dim, bias=False)
+        self.proj_v = nn.Linear(input_dim, all_head_dim, bias=False)
         if qkv_bias:
             self.q_bias = nn.Parameter(torch.zeros(all_head_dim))
             self.v_bias = nn.Parameter(torch.zeros(all_head_dim))
@@ -573,7 +439,7 @@ class Attention_rel(LightningModule):
             self.v_bias = None
 
         self.attn_drop = nn.Dropout(attn_drop)
-        self.proj = nn.Linear(all_head_dim, dim)
+        self.proj = nn.Linear(all_head_dim, input_dim)
         self.proj_drop = nn.Dropout(proj_drop)
 
     def forward(
@@ -638,7 +504,7 @@ class Block(LightningModule):
 
     def __init__(
         self,
-        dim: int,
+        input_dim: int,
         num_heads: int,
         mlp_ratio: float = 4.0,
         dropout: float = 0.0,
@@ -651,7 +517,7 @@ class Block(LightningModule):
         """Construct 'Block'.
 
         Args:
-            dim: Dimension of the input tensor.
+            input_dim: Dimension of the input tensor.
             num_heads: Number of attention heads to use in the
                 `MultiheadAttention` layer.
             mlp_ratio: Ratio of the hidden size of the feedforward network to
@@ -667,17 +533,17 @@ class Block(LightningModule):
             norm_layer: Normalization layer to use.
         """
         super().__init__()
-        self.norm1 = norm_layer(dim)
+        self.norm1 = norm_layer(input_dim)
         self.attn = nn.MultiheadAttention(
-            dim, num_heads, dropout=attn_drop, batch_first=True
+            input_dim, num_heads, dropout=attn_drop, batch_first=True
         )
         self.drop_path = (
             DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         )
-        self.norm2 = norm_layer(dim)
-        mlp_hidden_dim = int(dim * mlp_ratio)
+        self.norm2 = norm_layer(input_dim)
+        mlp_hidden_dim = int(input_dim * mlp_ratio)
         self.mlp = Mlp(
-            in_features=dim,
+            in_features=input_dim,
             hidden_features=mlp_hidden_dim,
             activation=activation,
             dropout_prob=dropout,
@@ -685,10 +551,10 @@ class Block(LightningModule):
 
         if init_values is not None:
             self.gamma_1 = nn.Parameter(
-                init_values * torch.ones((dim)), requires_grad=True
+                init_values * torch.ones((input_dim)), requires_grad=True
             )
             self.gamma_2 = nn.Parameter(
-                init_values * torch.ones((dim)), requires_grad=True
+                init_values * torch.ones((input_dim)), requires_grad=True
             )
         else:
             self.gamma_1, self.gamma_2 = None, None

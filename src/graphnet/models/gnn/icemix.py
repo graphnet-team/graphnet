@@ -12,10 +12,12 @@ import torch.nn as nn
 from typing import Set, Dict, Any, List
 
 from graphnet.models.components.layers import (
-    FourierEncoder,
-    SpacetimeEncoder,
     Block_rel,
     Block,
+)
+from graphnet.models.components.embedding import (
+    FourierEncoder,
+    SpacetimeEncoder,
 )
 from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.gnn.gnn import GNN
@@ -31,8 +33,8 @@ class DeepIce(GNN):
 
     def __init__(
         self,
-        dim: int = 384,
-        dim_base: int = 128,
+        hidden_dim: int = 384,
+        seq_length: int = 128,
         depth: int = 12,
         head_size: int = 32,
         depth_rel: int = 4,
@@ -44,8 +46,8 @@ class DeepIce(GNN):
         """Construct `DeepIce`.
 
         Args:
-            dim: The latent feature dimension.
-            dim_base: The base feature dimension.
+            hidden_dim: The latent feature dimension.
+            seq_length: The base feature dimension.
             depth: The depth of the transformer.
             head_size: The size of the attention heads.
             depth_rel: The depth of the relative transformer.
@@ -58,24 +60,26 @@ class DeepIce(GNN):
                 Competition settings. If `include_dynedge` is False, this
                 argument have no impact.
         """
-        super().__init__(dim_base, dim)
-        fourier_out_dim = dim // 2 if include_dynedge else dim
+        super().__init__(seq_length, hidden_dim)
+        fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
         self.fourier_ext = FourierEncoder(
-            dim_base, fourier_out_dim, scaled=scaled_emb
+            seq_length, fourier_out_dim, scaled=scaled_emb
         )
         self.rel_pos = SpacetimeEncoder(head_size)
         self.sandwich = nn.ModuleList(
             [
-                Block_rel(dim=dim, num_heads=dim // head_size)
+                Block_rel(
+                    input_dim=hidden_dim, num_heads=hidden_dim // head_size
+                )
                 for _ in range(depth_rel)
             ]
         )
-        self.cls_token = nn.Linear(dim, 1, bias=False)
+        self.cls_token = nn.Linear(hidden_dim, 1, bias=False)
         self.blocks = nn.ModuleList(
             [
                 Block(
-                    dim=dim,
-                    num_heads=dim // head_size,
+                    input_dim=hidden_dim,
+                    num_heads=hidden_dim // head_size,
                     mlp_ratio=4,
                     drop_path=0.0 * (i / (depth - 1)),
                     init_values=1,
@@ -90,7 +94,7 @@ class DeepIce(GNN):
             self.dyn_edge = DynEdge(
                 nb_inputs=9,
                 nb_neighbours=9,
-                post_processing_layer_sizes=[336, dim // 2],
+                post_processing_layer_sizes=[336, hidden_dim // 2],
                 dynedge_layer_sizes=[
                     (128, 256),
                     (336, 256),
