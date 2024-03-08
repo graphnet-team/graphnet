@@ -12,6 +12,7 @@ from graphnet.models.graphs.utils import (
     cluster_summarize_with_percentiles,
     identify_indices,
     lex_sort,
+    ice_transparency,
 )
 from copy import deepcopy
 
@@ -301,3 +302,125 @@ class NodeAsDOMTimeSeries(NodeDefinition):
         x = np.column_stack([x, new_node_col])
 
         return Data(x=torch.tensor(x))
+
+
+class IceMixNodes(NodeDefinition):
+    """Calculate ice properties and perform random sampling.
+
+    Ice properties are calculated based on the z-coordinate of the pulse. For
+    each event, a random sampling is performed to keep the number of pulses
+    below a maximum number of pulses if n_pulses is over the limit.
+    """
+
+    def __init__(
+        self,
+        input_feature_names: Optional[List[str]] = None,
+        max_pulses: int = 768,
+        z_name: str = "dom_z",
+        hlc_name: str = "hlc",
+    ) -> None:
+        """Construct `IceMixNodes`.
+
+        Args:
+            input_feature_names: Column names for input features. Minimum
+            required features are z coordinate and hlc column names.
+            max_pulses: Maximum number of pulses to keep in the event.
+            z_name: Name of the z-coordinate column.
+            hlc_name: Name of the `Hard Local Coincidence Check` column.
+        """
+        super().__init__(input_feature_names=input_feature_names)
+
+        if input_feature_names is None:
+            input_feature_names = [
+                "dom_x",
+                "dom_y",
+                "dom_z",
+                "dom_time",
+                "charge",
+                "hlc",
+                "rde",
+            ]
+
+        if z_name not in input_feature_names:
+            raise ValueError(
+                f"z name {z_name} not found in "
+                f"input_feature_names {input_feature_names}"
+            )
+        if hlc_name not in input_feature_names:
+            raise ValueError(
+                f"hlc name {hlc_name} not found in "
+                f"input_feature_names {input_feature_names}"
+            )
+
+        self.all_features = input_feature_names + [
+            "scatt_lenght",
+            "abs_lenght",
+        ]
+
+        self.feature_indexes = {
+            feat: self.all_features.index(feat) for feat in input_feature_names
+        }
+
+        self.f_scattering, self.f_absoprtion = ice_transparency()
+
+        self.input_feature_names = input_feature_names
+        self.n_features = len(self.all_features)
+        self.max_length = max_pulses
+        self.z_name = z_name
+        self.hlc_name = hlc_name
+
+    def _define_output_feature_names(
+        self, input_feature_names: List[str]
+    ) -> List[str]:
+        return self.all_features
+
+    def _add_ice_properties(
+        self, graph: torch.Tensor, x: torch.Tensor, ids: List[int]
+    ) -> torch.Tensor:
+
+        graph[: len(ids), -2] = torch.tensor(
+            self.f_scattering(x[ids, self.feature_indexes[self.z_name]])
+        )
+        graph[: len(ids), -1] = torch.tensor(
+            self.f_absoprtion(x[ids, self.feature_indexes[self.z_name]])
+        )
+        return graph
+
+    def _pulse_sampler(
+        self, x: torch.Tensor, event_length: int
+    ) -> torch.Tensor:
+
+        if event_length < self.max_length:
+            ids = torch.arange(event_length)
+        else:
+            ids = torch.randperm(event_length)
+            auxiliary_n = torch.nonzero(
+                x[:, self.feature_indexes[self.hlc_name]] == 0
+            ).squeeze(1)
+            auxiliary_p = torch.nonzero(
+                x[:, self.feature_indexes[self.hlc_name]] == 1
+            ).squeeze(1)
+            ids_n = ids[auxiliary_n][: min(self.max_length, len(auxiliary_n))]
+            ids_p = ids[auxiliary_p][
+                : min(self.max_length - len(ids_n), len(auxiliary_p))
+            ]
+            ids = torch.cat([ids_n, ids_p]).sort().values
+        return ids
+
+    def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
+
+        event_length = x.shape[0]
+        x[:, self.feature_indexes[self.hlc_name]] = torch.logical_not(
+            x[:, self.feature_indexes[self.hlc_name]]
+        )  # hlc in kaggle was flipped
+        ids = self._pulse_sampler(x, event_length)
+        event_length = min(self.max_length, event_length)
+
+        graph = torch.zeros([event_length, self.n_features])
+        for idx, feature in enumerate(
+            self.all_features[: self.n_features - 2]
+        ):
+            graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
+
+        graph = self._add_ice_properties(graph, x, ids)  # ice properties
+        return Data(x=graph)
