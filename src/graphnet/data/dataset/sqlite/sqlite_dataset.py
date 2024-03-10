@@ -1,6 +1,6 @@
 """`Dataset` class(es) for reading data from SQLite databases."""
 
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union, Dict
 import pandas as pd
 import sqlite3
 
@@ -12,6 +12,9 @@ class SQLiteDataset(Dataset):
 
     # Implementing abstract method(s)
     def _init(self) -> None:
+        # Purely internal member variables
+        self._missing_variables: Dict[str, List[str]] = {}
+        self._remove_missing_columns()
         # Check(s)
         self._database_list: Optional[List[str]]
         if isinstance(self._path, list):
@@ -43,7 +46,7 @@ class SQLiteDataset(Dataset):
         self,
         table: str,
         columns: Union[List[str], str],
-        sequential_index: Optional[int] = None,
+        sequential_index: int,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
         """Query table at a specific index, optionally with some selection."""
@@ -87,9 +90,7 @@ class SQLiteDataset(Dataset):
         self._close_connection()
         return indices.values.ravel().tolist()
 
-    def _get_event_index(
-        self, sequential_index: Optional[int]
-    ) -> Optional[int]:
+    def _get_event_index(self, sequential_index: int) -> int:
         index: int = 0
         if sequential_index is not None:
             index_ = self._indices[sequential_index]

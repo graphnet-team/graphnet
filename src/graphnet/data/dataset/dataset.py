@@ -29,17 +29,13 @@ from graphnet.utilities.config import (
     DatasetConfig,
     DatasetConfigSaverABCMeta,
 )
-from graphnet.utilities.config.parsing import traverse_and_apply
+from graphnet.exceptions.exceptions import ColumnMissingException
 from graphnet.utilities.logging import Logger
 from graphnet.models.graphs import GraphDefinition
 
 from graphnet.utilities.config.parsing import (
     get_all_grapnet_classes,
 )
-
-
-class ColumnMissingException(Exception):
-    """Exception to indicate a missing column in a dataset."""
 
 
 def load_module(class_name: str) -> Type:
@@ -277,7 +273,7 @@ class Dataset(
         self._path = path
         self._selection = None
         self._pulsemaps = pulsemaps
-        self._features = [index_column] + features
+        self._features = features
         self._truth = [index_column] + truth
         self._index_column = index_column
         self._truth_table = truth_table
@@ -346,10 +342,6 @@ class Dataset(
         else:
             self._indices = selection
 
-        # Purely internal member variables
-        self._missing_variables: Dict[str, List[str]] = {}
-        self._remove_missing_columns()
-
         # Implementation-specific post-init code.
         self._post_init()
 
@@ -377,9 +369,7 @@ class Dataset(
         """Return a list of all unique values in `self._index_column`."""
 
     @abstractmethod
-    def _get_event_index(
-        self, sequential_index: Optional[int]
-    ) -> Optional[int]:
+    def _get_event_index(self, sequential_index: int) -> int:
         """Return the event index corresponding to a `sequential_index`."""
 
     @abstractmethod
@@ -387,7 +377,7 @@ class Dataset(
         self,
         table: str,
         columns: Union[List[str], str],
-        sequential_index: Optional[int] = None,
+        sequential_index: int,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
         """Query a table at a specific index, optionally with some selection.
@@ -506,6 +496,7 @@ class Dataset(
     ) -> List[str]:
         """Return a list missing columns in `table`."""
         for column in columns:
+            self.query_table(table, [column], 0)
             try:
                 self.query_table(table, [column], 0)
             except ColumnMissingException:
@@ -579,9 +570,9 @@ class Dataset(
 
     def _create_graph(
         self,
-        features: List[Tuple[float, ...]],
-        truth: Tuple[Any, ...],
-        node_truth: Optional[List[Tuple[Any, ...]]] = None,
+        features: np.ndarray,
+        truth: np.ndarray,
+        node_truth: Optional[np.ndarray] = None,
         loss_weight: Optional[float] = None,
     ) -> Data:
         """Create Pytorch Data (i.e. graph) object.
@@ -598,7 +589,7 @@ class Dataset(
         """
         # Convert nested list to simple dict
         truth_dict = {
-            key: truth[index] for index, key in enumerate(self._truth)
+            key: truth[:, index] for index, key in enumerate(self._truth)
         }
 
         # Define custom labels
@@ -606,10 +597,9 @@ class Dataset(
 
         # Convert nested list to simple dict
         if node_truth is not None:
-            node_truth_array = np.asarray(node_truth)
             assert self._node_truth is not None
             node_truth_dict = {
-                key: node_truth_array[:, index]
+                key: node_truth[:, index]
                 for index, key in enumerate(self._node_truth)
             }
 
@@ -620,9 +610,7 @@ class Dataset(
 
         # Catch cases with no reconstructed pulses
         if len(features):
-            node_features = np.asarray(features)[
-                :, 1:
-            ]  # first entry is index column
+            node_features = features
         else:
             node_features = np.array([]).reshape((0, len(self._features) - 1))
 
@@ -630,9 +618,7 @@ class Dataset(
         assert self._graph_definition is not None
         graph = self._graph_definition(
             input_features=node_features,
-            input_feature_names=self._features[
-                1:
-            ],  # first entry is index column
+            input_feature_names=self._features,
             truth_dicts=truth_dicts,
             custom_label_functions=self._label_fns,
             loss_weight_column=self._loss_weight_column,
