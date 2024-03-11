@@ -14,7 +14,7 @@
 
 ## :rocket: About
 
-**GraphNeT** is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using graph neural networks (GNNs). GraphNeT makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques.
+**GraphNeT** is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using deep learning (DL). GraphNeT makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques.
 
 Feel free to join the [GraphNeT Slack group](https://join.slack.com/t/graphnet-team/signup)!
 
@@ -128,7 +128,7 @@ You can use any of the following Docker image tags:
 
 ## :ringed_planet:  Use cases
 
-Below is an incomplete list of potential use cases for GNNs in neutrino telescopes.
+Below is an incomplete list of potential use cases for Deep Learning in neutrino telescopes.
 These are categorised as either "Reconstruction challenges" that are considered common and that may benefit several experiments physics analyses; and those same "Experiments" and "Physics analyses".
 
 <details>

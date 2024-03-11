@@ -5,7 +5,7 @@ from os.path import join
 from typing import TYPE_CHECKING, List, Sequence
 
 from graphnet.data.constants import FEATURES
-from graphnet.data.extractors.i3featureextractor import (
+from graphnet.data.extractors.icecube import (
     I3FeatureExtractorIceCubeUpgrade,
 )
 from graphnet.constants import (
@@ -23,7 +23,6 @@ if has_icecube_package() or TYPE_CHECKING:
 
     from graphnet.deployment.i3modules import (
         I3InferenceModule,
-        GraphNeTI3Module,
     )
 
 ERROR_MESSAGE_MISSING_ICETRAY = (
@@ -43,7 +42,7 @@ def apply_to_files(
     i3_files: List[str],
     gcd_file: str,
     output_folder: str,
-    modules: Sequence["GraphNeTI3Module"],
+    modules: Sequence["I3InferenceModule"],
 ) -> None:
     """Will start an IceTray read/write chain with graphnet modules.
 

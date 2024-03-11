@@ -23,7 +23,7 @@ if has_pisa_package() or TYPE_CHECKING:
     from pisa.analysis.analysis import Analysis
     from pisa import ureg
 
-from graphnet.data.sqlite import create_table_and_save_to_sql
+from graphnet.data.utilities import create_table_and_save_to_sql
 
 mpl.use("pdf")
 plt.rc("font", family="serif")
