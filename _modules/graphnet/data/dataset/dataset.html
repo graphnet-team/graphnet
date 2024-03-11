@@ -418,6 +418,21 @@
 
 
 
+<div class="viewcode-block" id="parse_labels">
+<a class="viewcode-back" href="../../../../api/graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.parse_labels">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_labels</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Label</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Construct Label from DatasetConfig."""</span>
+    <span class="k">assert</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">labels</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">"class_name"</span><span class="p">])(</span>
+            <span class="o">**</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">"arguments"</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">labels</span></div>
+
+
+
 <div class="viewcode-block" id="Dataset">
 <a class="viewcode-back" href="../../../../api/graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.Dataset">[docs]</a>
 <span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span>
@@ -468,6 +483,8 @@
         <span class="n">cfg</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_graph_definition</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_labels</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">source</span><span class="o">.</span><span class="n">_dataset_class</span><span class="p">(</span><span class="o">**</span><span class="n">cfg</span><span class="p">)</span></div>
 
 
@@ -554,6 +571,7 @@
         <span class="n">loss_weight_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight_default_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct Dataset.</span>
 
@@ -600,6 +618,7 @@
 <span class="sd">                `"10000 random events ~ event_no % 5 &gt; 0"` or `"20% random</span>
 <span class="sd">                events ~ event_no % 5 &gt; 0"`).</span>
 <span class="sd">            graph_definition: Method that defines the graph representation.</span>
+<span class="sd">            labels: Dictionary of labels to be added to the dataset.</span>
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
@@ -624,6 +643,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span> <span class="o">=</span> <span class="n">truth_table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_default_value</span> <span class="o">=</span> <span class="n">loss_weight_default_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">graph_definition</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
 
         <span class="k">if</span> <span class="n">node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_truth_table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -672,6 +692,10 @@
             <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
             <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
         <span class="c1"># Implementation-specific initialisation.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
