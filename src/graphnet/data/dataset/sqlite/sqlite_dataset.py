@@ -3,6 +3,7 @@
 from typing import Any, List, Optional, Tuple, Union, Dict
 import pandas as pd
 import sqlite3
+import numpy as np
 
 from graphnet.data.dataset.dataset import Dataset, ColumnMissingException
 
@@ -12,9 +13,6 @@ class SQLiteDataset(Dataset):
 
     # Implementing abstract method(s)
     def _init(self) -> None:
-        # Purely internal member variables
-        self._missing_variables: Dict[str, List[str]] = {}
-        self._remove_missing_columns()
         # Check(s)
         self._database_list: Optional[List[str]]
         if isinstance(self._path, list):
@@ -40,6 +38,9 @@ class SQLiteDataset(Dataset):
         self._conn: Optional[sqlite3.Connection] = None
 
     def _post_init(self) -> None:
+        # Purely internal member variables
+        self._missing_variables: Dict[str, List[str]] = {}
+        self._remove_missing_columns()
         self._close_connection()
 
     def query_table(
@@ -80,7 +81,7 @@ class SQLiteDataset(Dataset):
                 raise ColumnMissingException(str(e))
             else:
                 raise e
-        return result
+        return np.asarray(result)
 
     def _get_all_indices(self) -> List[int]:
         self._establish_connection(0)

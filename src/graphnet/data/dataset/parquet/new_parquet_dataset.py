@@ -198,8 +198,8 @@ class ParquetDataset(Dataset):
     def query_table(  # type: ignore
         self,
         table: str,
-        sequential_index: int,
         columns: Union[List[str], str],
+        sequential_index: int,
         selection: Optional[str] = None,
     ) -> np.ndarray:
         """Query a table at a specific index, optionally with some selection.

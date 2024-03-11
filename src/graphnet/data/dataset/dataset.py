@@ -379,7 +379,7 @@ class Dataset(
         columns: Union[List[str], str],
         sequential_index: int,
         selection: Optional[str] = None,
-    ) -> List[Tuple[Any, ...]]:
+    ) -> np.ndarray:
         """Query a table at a specific index, optionally with some selection.
 
         Args:
@@ -496,9 +496,10 @@ class Dataset(
     ) -> List[str]:
         """Return a list missing columns in `table`."""
         for column in columns:
-            self.query_table(table, [column], 0)
             try:
-                self.query_table(table, [column], 0)
+                self.query_table(
+                    table=table, columns=[column], sequential_index=0
+                )
             except ColumnMissingException:
                 if table not in self._missing_variables:
                     self._missing_variables[table] = []
@@ -510,12 +511,7 @@ class Dataset(
 
     def _query(
         self, sequential_index: int
-    ) -> Tuple[
-        List[Tuple[float, ...]],
-        Tuple[Any, ...],
-        Optional[List[Tuple[Any, ...]]],
-        Optional[float],
-    ]:
+    ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray], Optional[float]]:
         """Query file for event features and truth information.
 
         The returned lists have lengths corresponding to the number of pulses
@@ -537,11 +533,14 @@ class Dataset(
             features_pulsemap = self.query_table(
                 pulsemap, self._features, sequential_index, self._selection
             )
-            features.extend(features_pulsemap)
+            features.append(features_pulsemap)
 
-        truth: Tuple[Any, ...] = self.query_table(
+        if len(self._pulsemaps) > 0:
+            features = np.concatenate(features, axis=0)
+
+        truth = self.query_table(
             self._truth_table, self._truth, sequential_index
-        )[0]
+        )
         if self._node_truth:
             assert self._node_truth_table is not None
             node_truth = self.query_table(
@@ -553,19 +552,15 @@ class Dataset(
         else:
             node_truth = None
 
-        loss_weight: Optional[float] = None  # Default
         if self._loss_weight_column is not None:
             assert self._loss_weight_table is not None
-            loss_weight_list = self.query_table(
+            loss_weight = self.query_table(
                 self._loss_weight_table,
                 self._loss_weight_column,
                 sequential_index,
             )
-            if len(loss_weight_list):
-                loss_weight = loss_weight_list[0][0]
-            else:
-                loss_weight = -1.0
-
+        else:
+            loss_weight = None
         return features, truth, node_truth, loss_weight
 
     def _create_graph(
@@ -587,7 +582,9 @@ class Dataset(
         Returns:
             Graph object.
         """
-        # Convert nested list to simple dict
+        # Convert truth to dict
+        if len(truth.shape) == 1:
+            truth = truth.reshape(1, -1)
         truth_dict = {
             key: truth[:, index] for index, key in enumerate(self._truth)
         }
@@ -614,6 +611,7 @@ class Dataset(
         else:
             node_features = np.array([]).reshape((0, len(self._features) - 1))
 
+        assert isinstance(features, np.ndarray)
         # Construct graph data object
         assert self._graph_definition is not None
         graph = self._graph_definition(
