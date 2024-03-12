@@ -1468,6 +1468,13 @@
 </li>
       </ul></li>
       <li>
+    graphnet.models.standard_averaged_model
+
+      <ul>
+        <li><a href="api/graphnet.models.standard_averaged_model.html#module-graphnet.models.standard_averaged_model">module</a>
+</li>
+      </ul></li>
+      <li>
     graphnet.models.standard_model
 
       <ul>
@@ -1880,7 +1887,11 @@
       <li><a href="api/graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.load_module">load_module() (in module graphnet.data.dataset.dataset)</a>
 </li>
       <li><a href="api/graphnet.models.model.html#graphnet.models.model.Model.load_state_dict">load_state_dict() (graphnet.models.model.Model method)</a>
+
+      <ul>
+        <li><a href="api/graphnet.models.standard_averaged_model.html#graphnet.models.standard_averaged_model.StandardAveragedModel.load_state_dict">(graphnet.models.standard_averaged_model.StandardAveragedModel method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.VonMisesFisherLoss.log_cmk">log_cmk() (graphnet.training.loss_functions.VonMisesFisherLoss class method)</a>
@@ -2151,6 +2162,8 @@
 </li>
         <li><a href="api/graphnet.models.rnn.node_rnn.html#module-graphnet.models.rnn.node_rnn">graphnet.models.rnn.node_rnn</a>
 </li>
+        <li><a href="api/graphnet.models.standard_averaged_model.html#module-graphnet.models.standard_averaged_model">graphnet.models.standard_averaged_model</a>
+</li>
         <li><a href="api/graphnet.models.standard_model.html#module-graphnet.models.standard_model">graphnet.models.standard_model</a>
 </li>
         <li><a href="api/graphnet.models.task.html#module-graphnet.models.task">graphnet.models.task</a>
@@ -2306,6 +2319,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping.on_fit_end">on_fit_end() (graphnet.training.callbacks.GraphnetEarlyStopping method)</a>
 </li>
+      <li><a href="api/graphnet.models.standard_averaged_model.html#graphnet.models.standard_averaged_model.StandardAveragedModel.on_train_end">on_train_end() (graphnet.models.standard_averaged_model.StandardAveragedModel method)</a>
+</li>
       <li><a href="api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping.on_train_epoch_end">on_train_epoch_end() (graphnet.training.callbacks.GraphnetEarlyStopping method)</a>
 
       <ul>
@@ -2317,6 +2332,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping.on_validation_end">on_validation_end() (graphnet.training.callbacks.GraphnetEarlyStopping method)</a>
+</li>
+      <li><a href="api/graphnet.models.standard_averaged_model.html#graphnet.models.standard_averaged_model.StandardAveragedModel.optimizer_step">optimizer_step() (graphnet.models.standard_averaged_model.StandardAveragedModel method)</a>
 </li>
       <li><a href="api/graphnet.utilities.argparse.html#graphnet.utilities.argparse.Options">Options (class in graphnet.utilities.argparse)</a>
 </li>
@@ -2490,14 +2507,14 @@
 </li>
       <li><a href="api/graphnet.data.dataclasses.html#graphnet.data.dataclasses.Settings">Settings (class in graphnet.data.dataclasses)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.data.datamodule.html#graphnet.data.datamodule.GraphNeTDataModule.setup">setup() (graphnet.data.datamodule.GraphNeTDataModule method)</a>
 
       <ul>
         <li><a href="api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping.setup">(graphnet.training.callbacks.GraphnetEarlyStopping method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.shared_step">shared_step() (graphnet.models.standard_model.StandardModel method)</a>
 </li>
       <li><a href="api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SinusoidalPosEmb">SinusoidalPosEmb (class in graphnet.models.components.embedding)</a>
@@ -2511,6 +2528,8 @@
       <li><a href="api/graphnet.data.writers.sqlite_writer.html#graphnet.data.writers.sqlite_writer.SQLiteWriter">SQLiteWriter (class in graphnet.data.writers.sqlite_writer)</a>
 </li>
       <li><a href="api/graphnet.utilities.argparse.html#graphnet.utilities.argparse.ArgumentParser.standard_arguments">standard_arguments (graphnet.utilities.argparse.ArgumentParser attribute)</a>
+</li>
+      <li><a href="api/graphnet.models.standard_averaged_model.html#graphnet.models.standard_averaged_model.StandardAveragedModel">StandardAveragedModel (class in graphnet.models.standard_averaged_model)</a>
 </li>
       <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask">StandardFlowTask (class in graphnet.models.task.task)</a>
 </li>
@@ -2566,12 +2585,16 @@
 </li>
       <li><a href="api/graphnet.data.datamodule.html#graphnet.data.datamodule.GraphNeTDataModule.train_dataloader">train_dataloader (graphnet.data.datamodule.GraphNeTDataModule property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.Task.train_eval">train_eval() (graphnet.models.task.task.Task method)</a>
 </li>
-      <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.training_step">training_step() (graphnet.models.standard_model.StandardModel method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/graphnet.models.standard_averaged_model.html#graphnet.models.standard_averaged_model.StandardAveragedModel.training_step">training_step() (graphnet.models.standard_averaged_model.StandardAveragedModel method)</a>
+
+      <ul>
+        <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.training_step">(graphnet.models.standard_model.StandardModel method)</a>
 </li>
+      </ul></li>
       <li><a href="api/graphnet.utilities.config.training_config.html#graphnet.utilities.config.training_config.TrainingConfig">TrainingConfig (class in graphnet.utilities.config.training_config)</a>
 </li>
       <li><a href="api/graphnet.data.extractors.icecube.utilities.collections.html#graphnet.data.extractors.icecube.utilities.collections.transpose_list_of_dicts">transpose_list_of_dicts() (in module graphnet.data.extractors.icecube.utilities.collections)</a>
@@ -2616,12 +2639,16 @@
 </li>
       <li><a href="api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.validate_files">validate_files() (graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader method)</a>
 </li>
-      <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.validation_step">validation_step() (graphnet.models.standard_model.StandardModel method)</a>
+      <li><a href="api/graphnet.models.standard_averaged_model.html#graphnet.models.standard_averaged_model.StandardAveragedModel.validation_step">validation_step() (graphnet.models.standard_averaged_model.StandardAveragedModel method)</a>
+
+      <ul>
+        <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.validation_step">(graphnet.models.standard_model.StandardModel method)</a>
 </li>
-      <li><a href="api/graphnet.models.model.html#graphnet.models.model.Model.verbose_print">verbose_print (graphnet.models.model.Model attribute)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/graphnet.models.model.html#graphnet.models.model.Model.verbose_print">verbose_print (graphnet.models.model.Model attribute)</a>
+</li>
       <li><a href="api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.VertexReconstruction">VertexReconstruction (class in graphnet.models.task.reconstruction)</a>
 </li>
       <li><a href="api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.VonMisesFisher2DLoss">VonMisesFisher2DLoss (class in graphnet.training.loss_functions)</a>

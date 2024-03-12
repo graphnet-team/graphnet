@@ -1,0 +1,8 @@
+
+standard\_averaged\_model
+=========================
+
+.. automodule:: graphnet.models.standard_averaged_model
+   :members:
+   :undoc-members:
+   :show-inheritance:

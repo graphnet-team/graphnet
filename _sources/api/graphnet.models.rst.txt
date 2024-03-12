@@ -29,6 +29,7 @@ models
 
    graphnet.models.coarsening
    graphnet.models.model
+   graphnet.models.standard_averaged_model
    graphnet.models.standard_model
    graphnet.models.utils
 
