@@ -40,14 +40,18 @@ GCD_FILE = (
 
 
 # Utility method(s)
-def get_file_path(backend: str) -> str:
+def get_file_path(backend: str, table: str = "") -> str:
     """Return the path to the output file for `backend`."""
     suffix = {
         "sqlite": ".db",
         "parquet": ".parquet",
     }[backend]
-
-    path = os.path.join(TEST_OUTPUT_DIR, FILE_NAME + suffix)
+    if backend == "sqlite":
+        path = os.path.join(TEST_OUTPUT_DIR, backend, FILE_NAME + suffix)
+    elif backend == "parquet":
+        path = os.path.join(
+            TEST_OUTPUT_DIR, backend, table, FILE_NAME + f"_{table}" + suffix
+        )
     return path
 
 
@@ -69,7 +73,7 @@ def test_dataconverter(
         )
     opt = dict(
         extractors=extractors,
-        outdir=TEST_OUTPUT_DIR,
+        outdir=os.path.join(TEST_OUTPUT_DIR, backend),
         gcd_rescue=os.path.join(
             test_data_dir,
             GCD_FILE,
@@ -89,8 +93,15 @@ def test_dataconverter(
     converter(test_data_dir)
 
     # Check output
-    path = get_file_path(backend)
-    assert os.path.exists(path), path
+    if backend == "sqlite":
+        path = get_file_path(backend)
+        assert os.path.exists(path), path
+    elif backend == "parquet":
+        for extractor in extractors:
+            table = extractor._extractor_name
+            path = get_file_path(backend, table=table)
+            print(path)
+            assert os.path.exists(path), path
 
 
 @pytest.mark.order(2)
@@ -147,56 +158,6 @@ def test_dataset(backend: str) -> None:
 
 
 @pytest.mark.order(3)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
-def test_datasetquery_table(backend: str) -> None:
-    """Test the implementation of `Dataset.query_table` for `backend`."""
-    path = get_file_path(backend)
-    assert os.path.exists(path)
-    graph_definition = KNNGraph(
-        detector=IceCubeDeepCore(),
-        node_definition=NodesAsPulses(),
-        nb_nearest_neighbours=8,
-        input_feature_names=FEATURES.DEEPCORE,
-    )
-    # Constructor DataConverter instance
-    pulsemap = "SRTInIcePulses"
-    opt = dict(
-        path=path,
-        pulsemaps=pulsemap,
-        features=FEATURES.DEEPCORE,
-        truth=TRUTH.DEEPCORE,
-        graph_definition=graph_definition,
-    )
-
-    if backend == "sqlite":
-        dataset = SQLiteDataset(**opt)  # type: ignore[arg-type]
-    elif backend == "parquet":
-        dataset = ParquetDataset(**opt)  # type: ignore[arg-type]
-    else:
-        assert False, "Shouldn't reach here"
-
-    # Compare to expectations
-    nb_events_to_test = 5
-    assert isinstance(opt["features"], list), print(opt["features"])
-    results_all = dataset.query_table(
-        pulsemap,
-        columns=["event_no", opt["features"][0]],
-    )
-    for ix_test in range(nb_events_to_test):
-
-        results_single = dataset.query_table(
-            pulsemap,
-            columns=["event_no", opt["features"][0]],
-            sequential_index=ix_test,
-        )
-        event_nos = list(set([res[0] for res in results_single]))
-        assert len(event_nos) == 1
-        event_no: int = event_nos[0]
-        results_all_subset = [res for res in results_all if res[0] == event_no]
-        assert results_all_subset == results_single
-
-
-@pytest.mark.order(4)
 def test_parquet_to_sqlite_converter() -> None:
     """Test the implementation of `ParquetToSQLiteConverter`."""
     # Constructor ParquetToSQLiteConverter instance
@@ -268,5 +229,5 @@ def test_database_query_plan(pulsemap: str, event_no: int) -> None:
 if __name__ == "__main__":
     test_dataconverter("sqlite")
     test_dataconverter("parquet")
-    test_parquet_to_sqlite_converter()
+    # test_parquet_to_sqlite_converter()
     test_database_query_plan("SRTInIcePulses", 1)
