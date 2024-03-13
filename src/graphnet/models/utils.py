@@ -1,6 +1,6 @@
 """Utility functions for `graphnet.models`."""
 
-from typing import List, Tuple, Union
+from typing import List, Tuple, Any
 from torch_geometric.nn import knn_graph
 from torch_geometric.data import Batch
 import torch
@@ -59,3 +59,47 @@ def knn_graph_batch(batch: Batch, k: List[int], columns: List[int]) -> Batch:
             x=data_list[i].x[:, columns], k=k[i]
         )
     return Batch.from_data_list(data_list)
+
+
+def array_to_sequence(
+    x: Tensor,
+    batch_idx: LongTensor,
+    padding_value: Any = 0,
+    excluding_value: Any = torch.inf,
+) -> Tuple[Tensor, Tensor, Tensor]:
+    """Convert `x` of shape [n,d] into a padded sequence of shape [B, L, D].
+
+       Where B is the batch size, L is the sequence length and D is the
+       features for each time step.
+
+    Args:
+        x: array-like tensor with shape `[n,d]` where `n` is the total number
+        of pulses in the batch and `d` is the number of  node features.
+        batch_idx: a LongTensor identifying which row in `x` belongs to
+                which training example.
+                E.g. `torch_geometric.data.Batch.batch`.
+        padding_value: The value to use for padding.
+        excluding_value: This parameter represents a unique value that should
+                not be present in the input tensor 'x'
+    Returns:
+        x: Padded sequence with dimensions  [B, L, D].
+        mask: A tensor that identifies masked entries in `x`.
+               E.g. : `masked_entries = x[mask]`
+        seq_length: A tensor containing the number of pulses in each event.
+    """
+    if torch.any(torch.eq(x, excluding_value)):
+        raise ValueError(
+            f"Transformation cannot be made because input tensor "
+            f"`x` contains at least one element equal to "
+            f"excluding value {excluding_value}."
+        )
+
+    _, seq_length = torch.unique(batch_idx, return_counts=True)
+    x_list = torch.split(x, seq_length.tolist())
+
+    x = torch.nn.utils.rnn.pad_sequence(
+        x_list, batch_first=True, padding_value=excluding_value
+    )
+    mask = torch.ne(x[:, :, 1], excluding_value)
+    x[~mask] = padding_value
+    return x, mask, seq_length
