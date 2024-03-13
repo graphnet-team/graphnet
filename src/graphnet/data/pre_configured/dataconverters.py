@@ -3,7 +3,7 @@
 from typing import List, Union, Type
 
 from graphnet.data import DataConverter
-from graphnet.data.readers import I3Reader
+from graphnet.data.readers import I3Reader, ParquetReader
 from graphnet.data.writers import ParquetWriter, SQLiteWriter
 from graphnet.data.extractors.icecube import I3Extractor
 from graphnet.data.extractors.icecube.utilities.i3_filters import I3Filter
@@ -91,6 +91,42 @@ class I3ToSQLiteConverter(DataConverter):
         """
         super().__init__(
             file_reader=I3Reader(gcd_rescue=gcd_rescue, i3_filters=i3_filters),
+            save_method=SQLiteWriter(),
+            extractors=extractors,
+            num_workers=num_workers,
+            index_column=index_column,
+            outdir=outdir,
+        )
+
+
+class ParquetToSQLiteConverter(DataConverter):
+    """Preconfigured DataConverter for converting Parquet to SQLite files.
+
+    This class converts Parquet files written by ParquetWriter to SQLite.
+    """
+
+    def __init__(
+        self,
+        extractors: List[I3Extractor],
+        outdir: str,
+        index_column: str = "event_no",
+        num_workers: int = 1,
+    ):
+        """Convert internal Parquet files to SQLite.
+
+        Args:
+            extractors: The `Extractor`(s) that will be applied to the input
+                        files.
+            outdir: The directory to save the files in.
+            icetray_verbose: Set the level of verbosity of icetray.
+                             Defaults to 0.
+            index_column: Name of the event id column added to the events.
+                          Defaults to "event_no".
+            num_workers: The number of CPUs used for parallel processing.
+                         Defaults to 1 (no multiprocessing).
+        """
+        super().__init__(
+            file_reader=ParquetReader(),
             save_method=SQLiteWriter(),
             extractors=extractors,
             num_workers=num_workers,
