@@ -63,7 +63,7 @@ class DeepIce(GNN):
         super().__init__(seq_length, hidden_dim)
         fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
         self.fourier_ext = FourierEncoder(
-            seq_length, fourier_out_dim, scaled=scaled_emb
+            seq_length=seq_length, output_dim=fourier_out_dim, scaled=scaled_emb
         )
         self.rel_pos = SpacetimeEncoder(head_size)
         self.sandwich = nn.ModuleList(

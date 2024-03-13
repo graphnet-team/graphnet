@@ -59,6 +59,7 @@ class FourierEncoder(LightningModule):
     def __init__(
         self,
         seq_length: int = 128,
+        mlp_dim: int = 768
         output_dim: int = 384,
         scaled: bool = False,
     ):
@@ -75,10 +76,10 @@ class FourierEncoder(LightningModule):
         self.aux_emb = nn.Embedding(2, seq_length // 2)
         self.sin_emb2 = SinusoidalPosEmb(dim=seq_length // 2, scaled=scaled)
         self.projection = nn.Sequential(
-            nn.Linear(6 * seq_length, 6 * seq_length),
-            nn.LayerNorm(6 * seq_length),
+            nn.Linear(6 * seq_length, mlp_dim),
+            nn.LayerNorm(mlp_dim),
             nn.GELU(),
-            nn.Linear(6 * seq_length, output_dim),
+            nn.Linear(mlp_dim, output_dim),
         )
 
     def forward(
