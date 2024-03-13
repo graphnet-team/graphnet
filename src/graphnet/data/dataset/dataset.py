@@ -430,7 +430,6 @@ class Dataset(
         features, truth, node_truth, loss_weight = self._query(
             sequential_index
         )
-        print(truth)
         graph = self._create_graph(features, truth, node_truth, loss_weight)
         return graph
 
@@ -630,7 +629,6 @@ class Dataset(
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
         """Return dictionary of  labels, to be added as graph attributes."""
         if "pid" in truth_dict.keys():
-            print(truth_dict["pid"])
             abs_pid = abs(truth_dict["pid"])
 
             labels_dict = {
