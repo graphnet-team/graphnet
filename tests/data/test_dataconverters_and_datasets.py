@@ -212,9 +212,8 @@ def test_parquet_to_sqlite_converter() -> None:
 def test_database_query_plan(pulsemap: str, event_no: int) -> None:
     """Test query plan agreement in original and parquet-converted database."""
     # Configure paths to databases to compare
-    database_name = FILE_NAME + "_from_parquet"
-    parquet_converted_database = (
-        f"{TEST_OUTPUT_DIR}/{database_name}/data/{database_name}.db"
+    parquet_converted_database = os.path.join(
+        TEST_OUTPUT_DIR, "parquet_to_sqlite", "merged", "merged.db"
     )
     sqlite_database = get_file_path("sqlite")
 
