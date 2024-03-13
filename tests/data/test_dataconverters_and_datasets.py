@@ -156,6 +156,9 @@ def test_dataset(backend: str) -> None:
         assert isinstance(opt["features"], list), print(opt["features"])
         assert len(event.features) == len(opt["features"])
 
+    for k in range(len(dataset)):
+        dataset.__getitem__(k)
+
 
 @pytest.mark.order(3)
 def test_parquet_to_sqlite_converter() -> None:
