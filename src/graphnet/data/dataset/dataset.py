@@ -430,6 +430,7 @@ class Dataset(
         features, truth, node_truth, loss_weight = self._query(
             sequential_index
         )
+        print(truth)
         graph = self._create_graph(features, truth, node_truth, loss_weight)
         return graph
 
@@ -629,14 +630,13 @@ class Dataset(
     def _get_labels(self, truth_dict: Dict[str, Any]) -> Dict[str, Any]:
         """Return dictionary of  labels, to be added as graph attributes."""
         if "pid" in truth_dict.keys():
+            print(truth_dict["pid"])
             abs_pid = abs(truth_dict["pid"])
-            sim_type = truth_dict["sim_type"]
 
             labels_dict = {
                 self._index_column: truth_dict[self._index_column],
                 "muon": int(abs_pid == 13),
                 "muon_stopped": int(truth_dict.get("stopped_muon") == 1),
-                "noise": int((abs_pid == 1) & (sim_type != "data")),
                 "neutrino": int(
                     (abs_pid != 13) & (abs_pid != 1)
                 ),  # @TODO: `abs_pid in [12,14,16]`?
