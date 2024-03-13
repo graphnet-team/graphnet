@@ -156,6 +156,7 @@ data/examples/output/
 !/data/tests/sqlite/upgrade_genie_step4_140028_000998_first_5_frames/upgrade_genie_step4_140028_000998_first_5_frames.db
 !/data/tests/parquet/oscNext_genie_level7_v02/truth/**
 !/data/tests/parquet/oscNext_genie_level7_v02/SRTInIcePulses/**
+!/data/test/parquet/oscNext_genie_level7_v02/**
 !/data/examples/sqlite/prometheus/prometheus-events.db
 # Notebooks
 **.ipynb
