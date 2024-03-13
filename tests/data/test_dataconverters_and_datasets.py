@@ -16,6 +16,7 @@ from graphnet.data.extractors.icecube import (
     I3TruthExtractor,
     I3RetroExtractor,
 )
+from graphnet.data.extractors.internal import ParquetExtractor
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.dataset import ParquetDataset, SQLiteDataset
 from graphnet.data.sqlite import SQLiteDataConverter
@@ -164,9 +165,14 @@ def test_dataset(backend: str) -> None:
 def test_parquet_to_sqlite_converter() -> None:
     """Test the implementation of `ParquetToSQLiteConverter`."""
     # Constructor ParquetToSQLiteConverter instance
+    outdir = os.path.join(TEST_OUTPUT_DIR, "parquet_to_sqlite")
     converter = ParquetToSQLiteConverter(
-        parquet_path=get_file_path("parquet"),
-        mc_truth_table="truth",
+        extractors=[
+            ParquetExtractor(extractor_name="truth"),
+            ParquetExtractor(extractor_name="SRTInIcePulses"),
+        ],
+        outdir=outdir,
+        num_workers=1,
     )
     graph_definition = KNNGraph(
         detector=IceCubeDeepCore(),
@@ -175,11 +181,11 @@ def test_parquet_to_sqlite_converter() -> None:
         input_feature_names=FEATURES.DEEPCORE,
     )
     # Perform conversion from I3 to `backend`
-    database_name = FILE_NAME + "_from_parquet"
-    converter.run(TEST_OUTPUT_DIR, database_name)
+    converter(get_file_path("parquet"))
+    converter.merge_files()
 
     # Check that output exists
-    path = f"{TEST_OUTPUT_DIR}/{database_name}/data/{database_name}.db"
+    path = f"{outdir}/merged/merged.db"
     assert os.path.exists(path), path
 
     # Check that datasets agree
@@ -232,5 +238,5 @@ def test_database_query_plan(pulsemap: str, event_no: int) -> None:
 if __name__ == "__main__":
     test_dataconverter("sqlite")
     test_dataconverter("parquet")
-    # test_parquet_to_sqlite_converter()
+    test_parquet_to_sqlite_converter()
     test_database_query_plan("SRTInIcePulses", 1)

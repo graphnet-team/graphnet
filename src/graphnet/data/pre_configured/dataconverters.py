@@ -6,6 +6,7 @@ from graphnet.data import DataConverter
 from graphnet.data.readers import I3Reader, ParquetReader
 from graphnet.data.writers import ParquetWriter, SQLiteWriter
 from graphnet.data.extractors.icecube import I3Extractor
+from graphnet.data.extractors.internal import ParquetExtractor
 from graphnet.data.extractors.icecube.utilities.i3_filters import I3Filter
 
 
@@ -107,7 +108,7 @@ class ParquetToSQLiteConverter(DataConverter):
 
     def __init__(
         self,
-        extractors: List[I3Extractor],
+        extractors: List[ParquetExtractor],
         outdir: str,
         index_column: str = "event_no",
         num_workers: int = 1,

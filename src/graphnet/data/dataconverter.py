@@ -14,6 +14,7 @@ from glob import glob
 
 from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import Logger
+from graphnet.data.extractors.internal import ParquetExtractor
 from .readers.graphnet_file_reader import GraphNeTFileReader
 from .writers.graphnet_writer import GraphNeTWriter
 from .extractors import Extractor
@@ -40,7 +41,9 @@ class DataConverter(ABC, Logger):
         file_reader: GraphNeTFileReader,
         save_method: GraphNeTWriter,
         outdir: str,
-        extractors: Union[List[Extractor], List[I3Extractor]],
+        extractors: Union[
+            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+        ],
         index_column: str = "event_no",
         num_workers: int = 1,
     ) -> None:
