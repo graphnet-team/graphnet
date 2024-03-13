@@ -47,7 +47,7 @@ class SQLiteDataset(Dataset):
         self,
         table: str,
         columns: Union[List[str], str],
-        sequential_index: int,
+        sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
     ) -> List[Tuple[Any, ...]]:
         """Query table at a specific index, optionally with some selection."""
@@ -91,7 +91,7 @@ class SQLiteDataset(Dataset):
         self._close_connection()
         return indices.values.ravel().tolist()
 
-    def _get_event_index(self, sequential_index: int) -> int:
+    def _get_event_index(self, sequential_index: Optional[int]) -> int:
         index: int = 0
         if sequential_index is not None:
             index_ = self._indices[sequential_index]

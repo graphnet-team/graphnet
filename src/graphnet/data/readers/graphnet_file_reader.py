@@ -99,7 +99,10 @@ class GraphNeTFileReader(Logger, ABC):
 
     @final
     def _validate_extractors(
-        self, extractors: Union[List[Extractor], List[I3Extractor]]
+        self,
+        extractors: Union[
+            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+        ],
     ) -> None:
         for extractor in extractors:
             try:

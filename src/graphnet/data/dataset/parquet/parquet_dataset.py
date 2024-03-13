@@ -199,7 +199,7 @@ class ParquetDataset(Dataset):
         self,
         table: str,
         columns: Union[List[str], str],
-        sequential_index: int,
+        sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
     ) -> np.ndarray:
         """Query a table at a specific index, optionally with some selection.
@@ -226,10 +226,39 @@ class ParquetDataset(Dataset):
         if isinstance(columns, str):
             columns = [columns]
         assert self._file_cache is not None
-        file_idx = bisect_right(self._batch_cumsum, sequential_index)
-        row_id = self._get_row_idx(sequential_index)
+        if sequential_index is None:
+            file_indices = np.arange(0, len(self._batch_cumsum), 1)
+        else:
+            file_indices = [bisect_right(self._batch_cumsum, sequential_index)]
+
+        arrays = []
+        for file_idx in file_indices:
+            array = self._query_table(
+                table=table,
+                columns=columns,
+                file_idx=file_idx,
+                sequential_index=sequential_index,
+                selection=selection,
+            )
+            arrays.append(array)
+        return np.concatenate(arrays, axis=0)
+
+    def _query_table(
+        self,
+        table: str,
+        columns: Union[List[str], str],
+        file_idx: int,
+        sequential_index: Optional[int] = None,
+        selection: Optional[str] = None,
+    ) -> np.ndarray:
+
         self._load_table(table_name=table, file_idx=file_idx)
-        df = self._file_cache[table][file_idx][row_id]
+        df = self._file_cache[table][file_idx]
+        if sequential_index is not None:
+            row_id = self._get_row_idx(sequential_index)
+        else:
+            row_id = np.arange(0, len(df), 1)
+        df = df[row_id]
         if len(df) > 0:
             arrays = []
             for column in columns:

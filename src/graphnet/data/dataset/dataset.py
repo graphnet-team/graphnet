@@ -377,7 +377,7 @@ class Dataset(
         self,
         table: str,
         columns: Union[List[str], str],
-        sequential_index: int,
+        sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
     ) -> np.ndarray:
         """Query a table at a specific index, optionally with some selection.
