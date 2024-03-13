@@ -70,7 +70,7 @@ class ParquetWriter(GraphNeTWriter):
         """Convert files into shuffled batches.
 
             Events will be shuffled, and the resulting batches will constitute
-            random subsamples of the events. The output follows the
+            random subsamples of the full dataset.
 
         Args:
             files: Files converted to parquet. Note this argument is ignored
@@ -198,10 +198,13 @@ class ParquetWriter(GraphNeTWriter):
                     idx = split["file_name"] == unique_file
                     table_shards.append(df.loc[split[index_column][idx], :])
                 os.makedirs(os.path.join(outdir, table), exist_ok=True)
-                combined_df = pd.concat(table_shards, axis=0)
-                combined_df.to_parquet(
-                    os.path.join(outdir, table, f"{table}_{batch_id}.parquet")
-                )
+                if len(table_shards) > 0:
+                    combined_df = pd.concat(table_shards, axis=0)
+                    combined_df.to_parquet(
+                        os.path.join(
+                            outdir, table, f"{table}_{batch_id}.parquet"
+                        )
+                    )
 
     def _validate_inputs(
         self, tables: List[str], input_dir: str, truth_dir: str

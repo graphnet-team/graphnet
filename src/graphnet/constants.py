@@ -19,9 +19,7 @@ TEST_SQLITE_DATA = os.path.join(
     TEST_DATA_DIR, "sqlite", _test_dataset_name, f"{_test_dataset_file}.db"
 )
 TEST_PARQUET_DATA = os.path.join(
-    TEST_DATA_DIR,
-    "parquet",
-    _test_dataset_name,
+    TEST_DATA_DIR, "parquet", _test_dataset_name, "merged"
 )
 
 # Example data
