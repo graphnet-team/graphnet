@@ -22,7 +22,6 @@ TEST_PARQUET_DATA = os.path.join(
     TEST_DATA_DIR,
     "parquet",
     _test_dataset_name,
-    f"{_test_dataset_file}.parquet",
 )
 
 # Example data
