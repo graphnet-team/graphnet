@@ -180,8 +180,8 @@ def test_parquet_to_sqlite_converter() -> None:
         nb_nearest_neighbours=8,
         input_feature_names=FEATURES.DEEPCORE,
     )
-    # Perform conversion from I3 to `backend`
-    converter(get_file_path("parquet"))
+    # Perform conversion from I3 to parquet
+    converter(os.path.join(TEST_OUTPUT_DIR, "parquet"))
     converter.merge_files()
 
     # Check that output exists
@@ -201,10 +201,12 @@ def test_parquet_to_sqlite_converter() -> None:
 
     assert len(dataset_from_parquet) == len(dataset)
     for ix in range(len(dataset)):
+        dataset_from_parquet[ix].x
+        dataset[ix].x
         assert torch.allclose(dataset_from_parquet[ix].x, dataset[ix].x)
 
 
-@pytest.mark.order(5)
+@pytest.mark.order(4)
 @pytest.mark.parametrize("pulsemap", ["SRTInIcePulses"])
 @pytest.mark.parametrize("event_no", [1])
 def test_database_query_plan(pulsemap: str, event_no: int) -> None:
