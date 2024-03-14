@@ -92,6 +92,7 @@ def test_dataconverter(
 
     # Perform conversion from I3 to `backend`
     converter(test_data_dir)
+    converter.merge_files()
 
     # Check output
     if backend == "sqlite":
@@ -101,7 +102,6 @@ def test_dataconverter(
         for extractor in extractors:
             table = extractor._extractor_name
             path = get_file_path(backend, table=table)
-            print(path)
             assert os.path.exists(path), path
 
 
@@ -109,8 +109,10 @@ def test_dataconverter(
 @pytest.mark.parametrize("backend", ["sqlite", "parquet"])
 def test_dataset(backend: str) -> None:
     """Test the implementation of `Dataset` for `backend`."""
-    path = get_file_path(backend)
-    assert os.path.exists(path)
+    if backend == "sqlite":
+        path = get_file_path(backend)
+    elif backend == "parquet":
+        path = os.path.join(TEST_OUTPUT_DIR, backend, "merged")
     graph_definition = KNNGraph(
         detector=IceCubeDeepCore(),
         node_definition=NodesAsPulses(),
@@ -234,10 +236,3 @@ def test_database_query_plan(pulsemap: str, event_no: int) -> None:
     assert "USING INDEX event_no" in parquet_plan["detail"].iloc[0]
 
     assert (sqlite_plan["detail"] == parquet_plan["detail"]).all()
-
-
-if __name__ == "__main__":
-    test_dataconverter("sqlite")
-    test_dataconverter("parquet")
-    test_parquet_to_sqlite_converter()
-    test_database_query_plan("SRTInIcePulses", 1)
