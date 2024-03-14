@@ -6,7 +6,9 @@ from typing import List, Any, Dict, Tuple
 import pandas as pd
 import sqlite3
 import pytest
+from glob import glob
 from torch.utils.data import SequentialSampler
+import numpy as np
 
 from graphnet.constants import EXAMPLE_DATA_DIR
 from graphnet.data.constants import FEATURES, TRUTH
@@ -18,18 +20,29 @@ from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.training.utils import save_selection
 
 
-def extract_all_events_ids(
+def get_dataset_size() -> int:
+    """Return number of events in dataset."""
+    path = f"{EXAMPLE_DATA_DIR}/sqlite/prometheus/prometheus-events.db"
+    with sqlite3.connect(path) as conn:
+        query = "select event_no from mc_truth"
+        return pd.read_sql(query, conn).shape[0]
+
+
+def extract_dataset_indices(
     file_path: str, dataset_kwargs: Dict[str, Any]
 ) -> List[int]:
     """Extract all available event ids."""
-    if file_path.endswith(".parquet"):
-        selection = pd.read_parquet(file_path)["event_id"].to_numpy().tolist()
-    elif file_path.endswith(".db"):
+    if file_path.endswith(".db"):
         with sqlite3.connect(file_path) as conn:
             query = f'SELECT event_no FROM {dataset_kwargs["truth_table"]}'
             selection = (
                 pd.read_sql(query, conn)["event_no"].to_numpy().tolist()
             )
+    elif "merged" in file_path:
+        files = glob(
+            os.path.join(file_path, dataset_kwargs["truth_table"], "*.parquet")
+        )
+        selection = np.arange(0, len(files)).tolist()
     else:
         raise AssertionError(
             f"File extension not accepted: {file_path.split('.')[-1]}"
@@ -161,12 +174,12 @@ def test_single_dataset_with_selections(
     dataset_ref, dataset_kwargs, dataloader_kwargs = dataset_setup
     # extract all events
     file_path = dataset_kwargs["path"]
-    selection = extract_all_events_ids(
+    selection = extract_dataset_indices(
         file_path=file_path, dataset_kwargs=dataset_kwargs
     )
 
-    test_selection = selection[0:10]
-    train_val_selection = selection[10:]
+    test_selection = selection[0:5]
+    train_val_selection = selection[5:]
 
     # Only training_dataloader args
     # Default values should be assigned to validation dataloader
@@ -184,10 +197,16 @@ def test_single_dataset_with_selections(
 
     # Check that the training and validation dataloader contains
     # the same number of events as was given in the selection.
-    assert len(train_dataloader.dataset) + len(val_dataloader.dataset) == len(train_val_selection)  # type: ignore
-    # Check that the number of events in the test dataset is equal to the
-    # number of events given in the selection.
-    assert len(test_dataloader.dataset) == len(test_selection)  # type: ignore
+    if isinstance(dataset_ref, SQLiteDataset):
+        a = len(train_dataloader.dataset) + len(val_dataloader.dataset)
+        assert a == len(train_val_selection)  # type: ignore
+        assert len(test_dataloader.dataset) == len(test_selection)  # type: ignore
+    elif isinstance(dataset_ref, ParquetDataset):
+        # Parquet dataset selection is batches not events
+        a = train_dataloader.dataset._indices + val_dataloader.dataset._indices
+        assert a == len(train_val_selection)
+        assert len(test_dataloader.dataset._indices) == len(test_selection)
+
     # Training dataloader should have more batches
     assert len(train_dataloader) > len(val_dataloader)
 
@@ -288,7 +307,7 @@ def test_ensemble_dataset_with_selections(
     # extract all events
     dataset_ref, dataset_kwargs, dataloader_kwargs = dataset_setup
     file_path = dataset_kwargs["path"]
-    selection = extract_all_events_ids(
+    selection = extract_dataset_indices(
         file_path=file_path, dataset_kwargs=dataset_kwargs
     )
 
@@ -307,18 +326,21 @@ def test_ensemble_dataset_with_selections(
         )
 
     # Pass two datasets and two selections; should work:
-    selection_1 = selection[0:20]
-    selection_2 = selection[0:10]
+    selection_1 = selection[0:5]
+    selection_2 = selection[5:]
     dm = GraphNeTDataModule(
         dataset_reference=dataset_ref,
         dataset_args=ensemble_dataset_kwargs,
         train_dataloader_kwargs=dataloader_kwargs,
         selection=[selection_1, selection_2],
     )
-    n_events_in_dataloaders = len(dm.train_dataloader.dataset) + len(dm.val_dataloader.dataset)  # type: ignore
 
     # Check that the number of events in train/val match
-    assert n_events_in_dataloaders == len(selection_1) + len(selection_2)
+    a = len(dm.train_dataloader.dataset)
+    b = len(dm.val_dataloader.dataset)
+    n_events = a + b  # type: ignore
+
+    assert n_events == get_dataset_size()
 
     # Pass two datasets, two selections and two test selections; should work
     dm2 = GraphNeTDataModule(
@@ -329,6 +351,6 @@ def test_ensemble_dataset_with_selections(
         test_selection=[selection_1, selection_2],
     )
 
-    # Check that the number of events in test dataloaders are correct.
-    n_events_in_test_dataloaders = len(dm2.test_dataloader.dataset)  # type: ignore
-    assert n_events_in_test_dataloaders == len(selection_1) + len(selection_2)
+    n_events = len(dm2.test_dataloader.dataset)  # type: ignore
+
+    assert n_events == get_dataset_size()
