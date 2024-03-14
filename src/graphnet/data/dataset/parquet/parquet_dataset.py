@@ -99,6 +99,7 @@ class ParquetDataset(Dataset):
             cache_size: Number of batches to cache in memory.
                         Must be at least 1. Defaults to 1.
         """
+        self._validate_selection(selection)
         # Base class constructor
         super().__init__(
             path=path,
@@ -153,6 +154,20 @@ class ParquetDataset(Dataset):
         for table in tables:
             cache[table] = OrderedDict()
         return cache
+
+    def _validate_selection(
+        self,
+        selection: Optional[Union[str, List[int], List[List[int]]]] = None,
+    ) -> None:
+        if selection is not None:
+            try:
+                assert not isinstance(selection, str)
+            except AssertionError:
+                e = AssertionError(
+                    f"{self.__class__.__name__} does not support "
+                    "string  selections."
+                )
+                raise e
 
     def _init(self) -> None:
         return
@@ -225,7 +240,7 @@ class ParquetDataset(Dataset):
         """
         if isinstance(columns, str):
             columns = [columns]
-        assert self._file_cache is not None
+
         if sequential_index is None:
             file_indices = np.arange(0, len(self._batch_cumsum), 1)
         else:
