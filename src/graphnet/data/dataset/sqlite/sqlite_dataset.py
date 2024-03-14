@@ -96,11 +96,13 @@ class SQLiteDataset(Dataset):
         if sequential_index is not None:
             index_ = self._indices[sequential_index]
             if self._database_list is None:
-                assert isinstance(index_, int)
-                index = index_
+                if not isinstance(index_, int):
+                    index_ = int(index_)  # type: ignore
             else:
-                assert isinstance(index_, list)
-                index = index_[0]
+                if not isinstance(index_, int):
+                    index_ = int(index_[0])
+            assert isinstance(index_, int)
+            index = index_
         return index
 
     # Custom, internal method(s)

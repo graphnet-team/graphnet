@@ -61,7 +61,6 @@ def test_dataset_config_save_load_reconstruct(backend: str) -> None:
             dataset_name,
             "merged",
         )
-    print(path)
     # Constructor DataConverter instance
     opt = dict(
         path=path,
