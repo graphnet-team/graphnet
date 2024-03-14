@@ -63,9 +63,9 @@ class DeploymentModule(Logger):
         model = Model.from_config(model_config, trust=True)
         if isinstance(state_dict, str) and state_dict.endswith(".ckpt"):
             ckpt = load(state_dict)
-            self.model.load_state_dict(ckpt["state_dict"])
+            model.load_state_dict(ckpt["state_dict"])
         else:
-            self.model.load_state_dict(state_dict)
+            model.load_state_dict(state_dict)
         return model
 
     def _resolve_prediction_columns(
