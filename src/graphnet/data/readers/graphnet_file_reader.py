@@ -14,6 +14,7 @@ from graphnet.utilities.logging import Logger
 from graphnet.data.dataclasses import I3FileSet
 from graphnet.data.extractors.extractor import Extractor
 from graphnet.data.extractors.icecube import I3Extractor
+from graphnet.data.extractors.internal import ParquetExtractor
 
 
 class GraphNeTFileReader(Logger, ABC):
@@ -81,7 +82,10 @@ class GraphNeTFileReader(Logger, ABC):
 
     @final
     def set_extractors(
-        self, extractors: Union[List[Extractor], List[I3Extractor]]
+        self,
+        extractors: Union[
+            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+        ],
     ) -> None:
         """Set `Extractor`(s) as member variable.
 
@@ -95,7 +99,10 @@ class GraphNeTFileReader(Logger, ABC):
 
     @final
     def _validate_extractors(
-        self, extractors: Union[List[Extractor], List[I3Extractor]]
+        self,
+        extractors: Union[
+            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+        ],
     ) -> None:
         for extractor in extractors:
             try:

@@ -1,134 +1,370 @@
-"""`Dataset` class(es) for reading from Parquet files."""
+"""Base :py:class:`Dataset` class(es) used in GraphNeT."""
 
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from copy import deepcopy
+from abc import ABC, abstractmethod
+from typing import (
+    cast,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    Iterable,
+    Type,
+)
 
 import numpy as np
-import awkward as ak
+import torch
+import os
+from torch_geometric.data import Data
+import polars as pol
+from polars.exceptions import InvalidOperationError
+from glob import glob
+from bisect import bisect_right
+from collections import OrderedDict
 
-from graphnet.data.dataset.dataset import Dataset, ColumnMissingException
+from graphnet.models.graphs import GraphDefinition
+from graphnet.data.dataset import Dataset
+from graphnet.exceptions.exceptions import ColumnMissingException
 
 
 class ParquetDataset(Dataset):
-    """Pytorch dataset for reading from Parquet files."""
+    """Base Dataset class for reading from any intermediate file format."""
 
-    # Implementing abstract method(s)
+    def __init__(
+        self,
+        path: str,
+        graph_definition: GraphDefinition,
+        pulsemaps: Union[str, List[str]],
+        features: List[str],
+        truth: List[str],
+        *,
+        node_truth: Optional[List[str]] = None,
+        index_column: str = "event_no",
+        truth_table: str = "truth",
+        node_truth_table: Optional[str] = None,
+        string_selection: Optional[List[int]] = None,
+        selection: Optional[Union[str, List[int], List[List[int]]]] = None,
+        dtype: torch.dtype = torch.float32,
+        loss_weight_table: Optional[str] = None,
+        loss_weight_column: Optional[str] = None,
+        loss_weight_default_value: Optional[float] = None,
+        seed: Optional[int] = None,
+        cache_size: int = 1,
+    ):
+        """Construct Dataset.
+
+        Args:
+            path: Path to the file(s) from which this `Dataset` should read.
+            pulsemaps: Name(s) of the pulse map series that should be used to
+                construct the nodes on the individual graph objects, and their
+                features. Multiple pulse series maps can be used, e.g., when
+                different DOM types are stored in different maps.
+            features: List of columns in the input files that should be used as
+                node features on the graph objects.
+            truth: List of event-level columns in the input files that should
+                be used added as attributes on the  graph objects.
+            node_truth: List of node-level columns in the input files that
+                should be used added as attributes on the graph objects.
+            index_column: Name of the column in the input files that contains
+                unique indicies to identify and map events across tables.
+            truth_table: Name of the table containing event-level truth
+                information.
+            node_truth_table: Name of the table containing node-level truth
+                information.
+            string_selection: Subset of strings for which data should be read
+                and used to construct graph objects. Defaults to None, meaning
+                all strings for which data exists are used.
+            selection: The batch ids to include in the dataset.
+                        Defaults to None, meaning that batches are read.
+            dtype: Type of the feature tensor on the graph objects returned.
+            loss_weight_table: Name of the table containing per-event loss
+                weights.
+            loss_weight_column: Name of the column in `loss_weight_table`
+                containing per-event loss weights. This is also the name of the
+                corresponding attribute assigned to the graph object.
+            loss_weight_default_value: Default per-event loss weight.
+                NOTE: This default value is only applied when
+                `loss_weight_table` and `loss_weight_column` are specified, and
+                in this case to events with no value in the corresponding
+                table/column. That is, if no per-event loss weight table/column
+                is provided, this value is ignored. Defaults to None.
+            seed: Random number generator seed, used for selecting a random
+                subset of events when resolving a string-based selection (e.g.,
+                `"10000 random events ~ event_no % 5 > 0"` or `"20% random
+                events ~ event_no % 5 > 0"`).
+            graph_definition: Method that defines the graph representation.
+            cache_size: Number of batches to cache in memory.
+                        Must be at least 1. Defaults to 1.
+        """
+        self._validate_selection(selection)
+        # Base class constructor
+        super().__init__(
+            path=path,
+            pulsemaps=pulsemaps,
+            features=features,
+            truth=truth,
+            node_truth=node_truth,
+            index_column=index_column,
+            truth_table=truth_table,
+            node_truth_table=node_truth_table,
+            string_selection=string_selection,
+            selection=selection,
+            dtype=dtype,
+            loss_weight_table=loss_weight_table,
+            loss_weight_column=loss_weight_column,
+            loss_weight_default_value=loss_weight_default_value,
+            seed=seed,
+            graph_definition=graph_definition,
+        )
+
+        # mypy..
+        assert isinstance(self._path, str)
+        self._path: str = self._path
+        # Member Variables
+        self._cache_size = cache_size
+        self._batch_sizes = self._calculate_sizes()
+        self._batch_cumsum = np.cumsum(self._batch_sizes)
+        self._file_cache = self._initialize_file_cache(
+            truth_table=truth_table,
+            node_truth_table=node_truth_table,
+            pulsemaps=pulsemaps,
+        )
+        # Purely internal member variables
+        self._missing_variables: Dict[str, List[str]] = {}
+        self._remove_missing_columns()
+
+    def _initialize_file_cache(
+        self,
+        truth_table: str,
+        node_truth_table: Optional[str],
+        pulsemaps: Union[str, List[str]],
+    ) -> Dict[str, OrderedDict]:
+        tables = [truth_table]
+        if node_truth_table is not None:
+            tables.append(node_truth_table)
+        if isinstance(pulsemaps, str):
+            tables.append(pulsemaps)
+        elif isinstance(pulsemaps, list):
+            tables.extend(pulsemaps)
+
+        cache: Dict[str, OrderedDict] = {}
+        for table in tables:
+            cache[table] = OrderedDict()
+        return cache
+
+    def _validate_selection(
+        self,
+        selection: Optional[Union[str, List[int], List[List[int]]]] = None,
+    ) -> None:
+        if selection is not None:
+            try:
+                assert not isinstance(selection, str)
+            except AssertionError:
+                e = AssertionError(
+                    f"{self.__class__.__name__} does not support "
+                    "string  selections."
+                )
+                raise e
+
     def _init(self) -> None:
-        # Check(s)
-        if not isinstance(self._path, list):
+        return
 
-            assert isinstance(self._path, str)
+    def _get_event_index(self, sequential_index: int) -> int:
+        event_index = self.query_table(
+            table=self._truth_table,
+            sequential_index=sequential_index,
+            columns=[self._index_column],
+        )
+        return event_index
 
-            assert self._path.endswith(
-                ".parquet"
-            ), f"Format of input file `{self._path}` is not supported"
-
-        assert (
-            self._node_truth is None
-        ), "Argument `node_truth` is currently not supported."
-        assert (
-            self._node_truth_table is None
-        ), "Argument `node_truth_table` is currently not supported."
-        assert (
-            self._string_selection is None
-        ), "Argument `string_selection` is currently not supported"
-
-        # Set custom member variable(s)
-        if not isinstance(self._path, list):
-            self._parquet_hook = ak.from_parquet(self._path, lazy=False)
-        else:
-            self._parquet_hook = ak.concatenate(
-                ak.from_parquet(file) for file in self._path
-            )
+    def __len__(self) -> int:
+        """Return length of dataset, i.e. number of training examples."""
+        return sum(self._batch_sizes)
 
     def _get_all_indices(self) -> List[int]:
-        return np.arange(
-            len(
-                ak.to_numpy(
-                    self._parquet_hook[self._truth_table][self._index_column]
-                ).tolist()
+        """Return a list of all unique values in `self._index_column`."""
+        files = glob(os.path.join(self._path, self._truth_table, "*.parquet"))
+        return np.arange(0, len(files), 1)
+
+    def _calculate_sizes(self) -> List[int]:
+        """Calculate the number of events in each batch."""
+        sizes = []
+        for batch_id in self._indices:
+            path = os.path.join(
+                self._path,
+                self._truth_table,
+                f"{self.truth_table}_{batch_id}.parquet",
             )
-        ).tolist()
+            sizes.append(len(pol.read_parquet(path)))
+        return sizes
 
-    def _get_event_index(
-        self, sequential_index: Optional[int]
-    ) -> Optional[int]:
-        index: Optional[int]
-        if sequential_index is None:
-            index = None
+    def _get_row_idx(self, sequential_index: int) -> int:
+        """Return the row index corresponding to a `sequential_index`."""
+        file_idx = bisect_right(self._batch_cumsum, sequential_index)
+        if file_idx > 0:
+            idx = int(sequential_index - self._batch_cumsum[file_idx - 1])
         else:
-            index = cast(List[int], self._indices)[sequential_index]
+            idx = sequential_index
+        return idx
 
-        return index
-
-    def _format_dictionary_result(
-        self, dictionary: Dict
-    ) -> List[Tuple[Any, ...]]:
-        """Convert the output of `ak.to_list()` into a list of tuples."""
-        # All scalar values
-        if all(map(np.isscalar, dictionary.values())):
-            return [tuple(dictionary.values())]
-
-        # All arrays should have same length
-        array_lengths = [
-            len(values)
-            for values in dictionary.values()
-            if not np.isscalar(values)
-        ]
-        assert len(set(array_lengths)) == 1, (
-            f"Arrays in {dictionary} have differing lengths "
-            f"({set(array_lengths)})."
-        )
-        nb_elements = array_lengths[0]
-
-        # Broadcast scalars
-        for key in dictionary:
-            value = dictionary[key]
-            if np.isscalar(value):
-                dictionary[key] = np.repeat(
-                    value, repeats=nb_elements
-                ).tolist()
-
-        return list(map(tuple, list(zip(*dictionary.values()))))
-
-    def query_table(
+    def query_table(  # type: ignore
         self,
         table: str,
         columns: Union[List[str], str],
         sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
-    ) -> List[Tuple[Any, ...]]:
-        """Query table at a specific index, optionally with some selection."""
-        # Check(s)
-        assert (
-            selection is None
-        ), "Argument `selection` is currently not supported"
+    ) -> np.ndarray:
+        """Query a table at a specific index, optionally with some selection.
 
-        index = self._get_event_index(sequential_index)
+        Args:
+            table: Table to be queried.
+            columns: Columns to read out.
+            sequential_index: Sequentially numbered index
+                (i.e. in [0,len(self))) of the event to query. This _may_
+                differ from the indexation used in `self._indices`. If no value
+                is provided, the entire column is returned.
+            selection: Selection to be imposed before reading out data.
+                Defaults to None.
 
-        try:
-            if index is None:
-                ak_array = self._parquet_hook[table][columns][:]
-            else:
-                ak_array = self._parquet_hook[table][columns][index]
-        except ValueError as e:
-            if "does not exist (not in record)" in str(e):
-                raise ColumnMissingException(str(e))
-            else:
-                raise e
+        Returns:
+            List of tuples containing the values in `columns`. If the `table`
+                contains only scalar data for `columns`, a list of length 1 is
+                returned
 
-        output = ak_array.to_list()
+        Raises:
+            ColumnMissingException: If one or more element in `columns` is not
+                present in `table`.
+        """
+        if isinstance(columns, str):
+            columns = [columns]
 
-        result: List[Tuple[Any, ...]] = []
+        if sequential_index is None:
+            file_indices = np.arange(0, len(self._batch_cumsum), 1)
+        else:
+            file_indices = [bisect_right(self._batch_cumsum, sequential_index)]
 
-        # Querying single index
-        if isinstance(output, dict):
-            assert list(output.keys()) == columns
-            result = self._format_dictionary_result(output)
+        arrays = []
+        for file_idx in file_indices:
+            array = self._query_table(
+                table=table,
+                columns=columns,
+                file_idx=file_idx,
+                sequential_index=sequential_index,
+                selection=selection,
+            )
+            arrays.append(array)
+        return np.concatenate(arrays, axis=0)
 
-        # Querying entire columm
-        elif isinstance(output, list):
-            for dictionary in output:
-                assert list(dictionary.keys()) == columns
-                result.extend(self._format_dictionary_result(dictionary))
+    def _query_table(
+        self,
+        table: str,
+        columns: Union[List[str], str],
+        file_idx: int,
+        sequential_index: Optional[int] = None,
+        selection: Optional[str] = None,
+    ) -> np.ndarray:
 
-        return result
+        self._load_table(table_name=table, file_idx=file_idx)
+        df = self._file_cache[table][file_idx]
+        if sequential_index is not None:
+            row_id = self._get_row_idx(sequential_index)
+        else:
+            row_id = np.arange(0, len(df), 1)
+        df = df[row_id]
+        if len(df) > 0:
+            arrays = []
+            for column in columns:
+                if column in df.columns:
+                    try:
+                        array = df.select(column).explode(column).to_numpy()
+                    except InvalidOperationError:
+                        # Can only explode list-like structures
+                        array = df.select(column).to_numpy()
+                    arrays.append(array.reshape(-1, 1))
+                else:
+                    raise ColumnMissingException(f"{column} not in {table}")
+
+            # Repeat event_no if needed
+            if (self._index_column in columns) & (len(columns) > 1):
+                idx = columns.index(self._index_column)
+                idx2 = columns.index(columns[~idx])
+                arrays[idx] = np.repeat(
+                    arrays[idx], len(arrays[idx2])
+                ).reshape(-1, 1)
+
+            array = np.concatenate(arrays, axis=1)
+        else:
+            array = np.array()
+        return array
+
+    def _load_table(self, table_name: str, file_idx: int) -> None:
+        """Load and possibly cache a parquet table."""
+        if file_idx not in self._file_cache[table_name].keys():
+            file_path = os.path.join(
+                self._path, table_name, f"{table_name}_{file_idx}.parquet"
+            )
+            df = pol.read_parquet(file_path).sort(self._index_column)
+            if table_name in self._pulsemaps:
+                pol_columns = [pol.col(feat) for feat in self._features]
+                df = df.group_by(self._index_column).agg(pol_columns)
+            self._file_cache[table_name][file_idx] = df.sort(
+                self._index_column
+            )
+            n_files_cached: int = len(self._file_cache[table_name])
+            if n_files_cached > self._cache_size:
+                del self._file_cache[table_name][
+                    list(self._file_cache[table_name].keys())[0]
+                ]
+
+    def __getitem__(self, sequential_index: int) -> Data:
+        """Return graph `Data` object at `index`."""
+        if not (0 <= sequential_index < len(self)):
+            raise IndexError(
+                f"Index {sequential_index} not in range [0, {len(self) - 1}]"
+            )
+        if self._node_truth_table is not None:
+            node_truth = self.query_table(
+                table=self._node_truth_table,
+                columns=self._node_truth_columns,
+                sequential_index=sequential_index,
+            )
+        else:
+            node_truth = None
+
+        if self._loss_weight_table is not None:
+            assert isinstance(self._loss_weight_column, str)
+            loss_weight = self.query_table(
+                table=self._loss_weight_table,
+                columns=self._loss_weight_column,
+                sequential_index=sequential_index,
+            )
+        else:
+            loss_weight = None
+
+        features = []
+        for pulsemap in self._pulsemaps:
+            features.append(
+                self.query_table(
+                    table=pulsemap,
+                    columns=self._features,
+                    sequential_index=sequential_index,
+                )
+            )
+        features = np.concatenate(features, axis=0)
+
+        truth = self.query_table(
+            table=self._truth_table,
+            columns=self._truth,
+            sequential_index=sequential_index,
+        )
+
+        graph = self._create_graph(
+            features=features,
+            truth=truth,
+            node_truth=node_truth,
+            loss_weight=loss_weight,
+        )
+        return graph

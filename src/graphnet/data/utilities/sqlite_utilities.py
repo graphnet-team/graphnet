@@ -63,9 +63,13 @@ def get_primary_keys(database: str) -> Tuple[Dict[str, str], str]:
             primary_key_candidates.append(val)
 
     # There should only be one primary key:
-    assert len(primary_key_candidates) == 1
+    if len(primary_key_candidates) > 0:
+        assert len(primary_key_candidates) == 1
+        primary_key_name = primary_key_candidates[0]
+    else:
+        primary_key_name = None
 
-    return integer_primary_key, primary_key_candidates[0]
+    return integer_primary_key, primary_key_name
 
 
 def database_table_exists(database_path: str, table_name: str) -> bool:

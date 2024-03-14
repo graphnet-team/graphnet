@@ -46,7 +46,6 @@ class TRUTH:
         "zenith",
         "pid",
         "elasticity",
-        "sim_type",
         "interaction_type",
         "interaction_time",  # Added for vertex reconstruction
         "inelasticity",
