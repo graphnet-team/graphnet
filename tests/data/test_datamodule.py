@@ -57,7 +57,7 @@ def dataset_setup(dataset_ref: pytest.FixtureRequest) -> tuple:
     data_path = (
         f"{EXAMPLE_DATA_DIR}/sqlite/prometheus/prometheus-events.db"
         if dataset_ref is SQLiteDataset
-        else f"{EXAMPLE_DATA_DIR}/parquet/prometheus/prometheus-events.parquet"
+        else f"{EXAMPLE_DATA_DIR}/parquet/prometheus/merged"
     )
 
     # Setup basic inputs; can be altered by individual tests
