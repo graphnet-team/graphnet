@@ -25,7 +25,7 @@ arguments:
           ModelConfig:
             arguments: {}
             class_name: NodesAsPulses
-        input_feature_names: null
+        input_feature_names: ['dom_x', 'dom_y', 'dom_z', 'dom_time', 'charge', 'rde', 'pmt_area', 'string', 'pmt_number', 'dom_number', 'pmt_dir_x', 'pmt_dir_y', 'pmt_dir_z', 'dom_type']
       class_name: KNNGraph
   optimizer_class: '!class torch.optim.adam Adam'
   optimizer_kwargs: null

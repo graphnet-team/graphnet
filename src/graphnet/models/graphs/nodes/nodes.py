@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Union
 from abc import abstractmethod
 
 import torch
@@ -11,8 +11,12 @@ from graphnet.models import Model
 from graphnet.models.graphs.utils import (
     cluster_summarize_with_percentiles,
     identify_indices,
+    lex_sort,
+    ice_transparency,
 )
 from copy import deepcopy
+
+import numpy as np
 
 
 class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
@@ -211,3 +215,212 @@ class PercentileClusters(NodeDefinition):
             raise AttributeError
 
         return Data(x=torch.tensor(array))
+
+
+class NodeAsDOMTimeSeries(NodeDefinition):
+    """Represent each node as a DOM with time and charge time series data."""
+
+    def __init__(
+        self,
+        keys: List[str] = [
+            "dom_x",
+            "dom_y",
+            "dom_z",
+            "dom_time",
+            "charge",
+        ],
+        id_columns: List[str] = ["dom_x", "dom_y", "dom_z"],
+        time_column: str = "dom_time",
+        charge_column: str = "charge",
+        max_activations: Optional[int] = None,
+    ) -> None:
+        """Construct `NodeAsDOMTimeSeries`.
+
+        Args:
+            keys: Names of features in the data (in order).
+            id_columns: List of columns that uniquely identify a DOM.
+            time_column: Name of time column.
+            charge_column: Name of charge column.
+            max_activations: Maximum number of activations to include in the time series.
+        """
+        self._keys = keys
+        super().__init__(input_feature_names=self._keys)
+        self._id_columns = [self._keys.index(key) for key in id_columns]
+        self._time_index = self._keys.index(time_column)
+        try:
+            self._charge_index: Optional[int] = self._keys.index(charge_column)
+        except ValueError:
+            self.warning(
+                "Charge column with name {} not found. Running without.".format(
+                    charge_column
+                )
+            )
+
+            self._charge_index = None
+
+        self._max_activations = max_activations
+
+    def _define_output_feature_names(
+        self, input_feature_names: List[str]
+    ) -> List[str]:
+        return input_feature_names + ["new_node_col"]
+
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
+        """Construct nodes from raw node features ´x´."""
+        # Cast to Numpy
+        x = x.numpy()
+        # if there is no charge column add a dummy column of zeros with the same shape as the time column
+        if self._charge_index is None:
+            charge_index: int = len(self._keys)
+            x = np.insert(x, charge_index, np.zeros(x.shape[0]), axis=1)
+        else:
+            charge_index = self._charge_index
+
+        # Sort by time
+        x = x[x[:, self._time_index].argsort()]
+        # Undo log10 scaling so we can sum charges
+        x[:, charge_index] = np.power(10, x[:, charge_index])
+        # Shift time to start at 0
+        x[:, self._time_index] -= np.min(x[:, self._time_index])
+        # Group pulses on the same DOM
+        x = lex_sort(x, self._id_columns)
+
+        unique_sensors, counts = np.unique(
+            x[:, self._id_columns], axis=0, return_counts=True
+        )
+
+        sort_this = np.concatenate(
+            [unique_sensors, counts.reshape(-1, 1)], axis=1
+        )
+        sort_this = lex_sort(x=sort_this, cluster_columns=self._id_columns)
+        unique_sensors = sort_this[:, 0 : unique_sensors.shape[1]]
+        counts = sort_this[:, unique_sensors.shape[1] :].flatten().astype(int)
+
+        new_node_col = np.zeros(x.shape[0])
+        new_node_col[counts.cumsum()[:-1]] = 1
+        new_node_col[0] = 1
+        x = np.column_stack([x, new_node_col])
+
+        return Data(x=torch.tensor(x))
+
+
+class IceMixNodes(NodeDefinition):
+    """Calculate ice properties and perform random sampling.
+
+    Ice properties are calculated based on the z-coordinate of the pulse. For
+    each event, a random sampling is performed to keep the number of pulses
+    below a maximum number of pulses if n_pulses is over the limit.
+    """
+
+    def __init__(
+        self,
+        input_feature_names: Optional[List[str]] = None,
+        max_pulses: int = 768,
+        z_name: str = "dom_z",
+        hlc_name: str = "hlc",
+    ) -> None:
+        """Construct `IceMixNodes`.
+
+        Args:
+            input_feature_names: Column names for input features. Minimum
+            required features are z coordinate and hlc column names.
+            max_pulses: Maximum number of pulses to keep in the event.
+            z_name: Name of the z-coordinate column.
+            hlc_name: Name of the `Hard Local Coincidence Check` column.
+        """
+        super().__init__(input_feature_names=input_feature_names)
+
+        if input_feature_names is None:
+            input_feature_names = [
+                "dom_x",
+                "dom_y",
+                "dom_z",
+                "dom_time",
+                "charge",
+                "hlc",
+                "rde",
+            ]
+
+        if z_name not in input_feature_names:
+            raise ValueError(
+                f"z name {z_name} not found in "
+                f"input_feature_names {input_feature_names}"
+            )
+        if hlc_name not in input_feature_names:
+            raise ValueError(
+                f"hlc name {hlc_name} not found in "
+                f"input_feature_names {input_feature_names}"
+            )
+
+        self.all_features = input_feature_names + [
+            "scatt_lenght",
+            "abs_lenght",
+        ]
+
+        self.feature_indexes = {
+            feat: self.all_features.index(feat) for feat in input_feature_names
+        }
+
+        self.f_scattering, self.f_absoprtion = ice_transparency()
+
+        self.input_feature_names = input_feature_names
+        self.n_features = len(self.all_features)
+        self.max_length = max_pulses
+        self.z_name = z_name
+        self.hlc_name = hlc_name
+
+    def _define_output_feature_names(
+        self, input_feature_names: List[str]
+    ) -> List[str]:
+        return self.all_features
+
+    def _add_ice_properties(
+        self, graph: torch.Tensor, x: torch.Tensor, ids: List[int]
+    ) -> torch.Tensor:
+
+        graph[: len(ids), -2] = torch.tensor(
+            self.f_scattering(x[ids, self.feature_indexes[self.z_name]])
+        )
+        graph[: len(ids), -1] = torch.tensor(
+            self.f_absoprtion(x[ids, self.feature_indexes[self.z_name]])
+        )
+        return graph
+
+    def _pulse_sampler(
+        self, x: torch.Tensor, event_length: int
+    ) -> torch.Tensor:
+
+        if event_length < self.max_length:
+            ids = torch.arange(event_length)
+        else:
+            ids = torch.randperm(event_length)
+            auxiliary_n = torch.nonzero(
+                x[:, self.feature_indexes[self.hlc_name]] == 0
+            ).squeeze(1)
+            auxiliary_p = torch.nonzero(
+                x[:, self.feature_indexes[self.hlc_name]] == 1
+            ).squeeze(1)
+            ids_n = ids[auxiliary_n][: min(self.max_length, len(auxiliary_n))]
+            ids_p = ids[auxiliary_p][
+                : min(self.max_length - len(ids_n), len(auxiliary_p))
+            ]
+            ids = torch.cat([ids_n, ids_p]).sort().values
+        return ids
+
+    def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
+
+        event_length = x.shape[0]
+        x[:, self.feature_indexes[self.hlc_name]] = torch.logical_not(
+            x[:, self.feature_indexes[self.hlc_name]]
+        )  # hlc in kaggle was flipped
+        ids = self._pulse_sampler(x, event_length)
+        event_length = min(self.max_length, event_length)
+
+        graph = torch.zeros([event_length, self.n_features])
+        for idx, feature in enumerate(
+            self.all_features[: self.n_features - 2]
+        ):
+            graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
+
+        graph = self._add_ice_properties(graph, x, ids)  # ice properties
+        return Data(x=graph)
