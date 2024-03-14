@@ -15,8 +15,8 @@ class ParquetReader(GraphNeTFileReader):
     _accepted_file_extensions = [".parquet"]
     _accepted_extractors = [ParquetExtractor]
 
-    def __call__(self, file_path: str) -> Dict[str, pd.DataFrame]:  # type: ignore
-        """Extract data from single I3 file.
+    def __call__(self, file_path: str) -> Dict[str, pd.DataFrame]:
+        """Extract data from single parquet file.
 
         Args:
             file_path: Path to parquet file.

@@ -141,7 +141,8 @@ class DataConverter(ABC, Logger):
 
         #
         if isinstance(data, list):
-            # Assign event_no's to each event in data and transform to pd.DataFrame
+            # Assign event_no's to each event in data
+            # and transform to pd.DataFrame
             n_events = len(data)
             dataframes = self._assign_event_no(data=data)
         elif isinstance(data, dict):

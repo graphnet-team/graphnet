@@ -4,10 +4,11 @@ These methods are used to open and apply `Extractors` to experiment-specific
 file formats.
 """
 
-from typing import List, Union, OrderedDict, Any
+from typing import List, Union, OrderedDict, Any, Dict
 from abc import abstractmethod, ABC
 import glob
 import os
+import pandas as pd
 
 from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import Logger
@@ -32,7 +33,9 @@ class GraphNeTFileReader(Logger, ABC):
     _accepted_extractors: List[Any] = []
 
     @abstractmethod
-    def __call__(self, file_path: Union[str, I3FileSet]) -> List[OrderedDict]:
+    def __call__(
+        self, file_path: Any
+    ) -> Union[List[OrderedDict[str, pd.DataFrame]], Dict[str, pd.DataFrame]]:
         """Open and apply extractors to a single file.
 
         The `output` must be a list of dictionaries, where the number of events
