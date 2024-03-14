@@ -352,7 +352,6 @@ class Dataset(
         # Implementation-specific initialisation.
         self._init()
 
-
         # Set unique indices
         self._indices: Union[List[int], List[List[int]]]
         if selection is None:
