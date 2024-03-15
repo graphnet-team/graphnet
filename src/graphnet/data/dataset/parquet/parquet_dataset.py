@@ -337,7 +337,7 @@ class ParquetDataset(Dataset):
                 f"Index {sequential_index} not in range [0, {len(self) - 1}]"
             )
         if self._node_truth_table is not None:
-            assert isinstance(self._node_truth, (list, str))
+            assert isinstance(self._node_truth, (list, str))  # mypy..
             node_truth = self.query_table(
                 table=self._node_truth_table,
                 columns=self._node_truth,
