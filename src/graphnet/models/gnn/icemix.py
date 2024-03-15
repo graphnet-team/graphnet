@@ -42,6 +42,7 @@ class DeepIce(GNN):
         scaled_emb: bool = False,
         include_dynedge: bool = False,
         dynedge_args: Dict[str, Any] = None,
+        n_features: int = 6,
     ):
         """Construct `DeepIce`.
 
@@ -59,11 +60,15 @@ class DeepIce(GNN):
                 provided, DynEdge will be initialized with the original Kaggle
                 Competition settings. If `include_dynedge` is False, this
                 argument have no impact.
+            n_features: The number of features in the input data.
         """
         super().__init__(seq_length, hidden_dim)
         fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
         self.fourier_ext = FourierEncoder(
-            seq_length, fourier_out_dim, scaled=scaled_emb
+            seq_length,
+            fourier_out_dim,
+            scaled=scaled_emb,
+            n_features=n_features,
         )
         self.rel_pos = SpacetimeEncoder(head_size)
         self.sandwich = nn.ModuleList(

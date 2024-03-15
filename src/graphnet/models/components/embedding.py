@@ -61,6 +61,7 @@ class FourierEncoder(LightningModule):
         seq_length: int = 128,
         output_dim: int = 384,
         scaled: bool = False,
+        n_features: int = 6,
     ):
         """Construct `FourierEncoder`.
 
@@ -69,17 +70,21 @@ class FourierEncoder(LightningModule):
                 embeddings.
             output_dim: Output dimensionality of the final projection.
             scaled: Whether or not to scale the embeddings.
+            n_features: The number of features in the input data.
         """
         super().__init__()
         self.sin_emb = SinusoidalPosEmb(dim=seq_length, scaled=scaled)
         self.aux_emb = nn.Embedding(2, seq_length // 2)
         self.sin_emb2 = SinusoidalPosEmb(dim=seq_length // 2, scaled=scaled)
+        hidden_dim = 6 * seq_length if n_features >= 5 else int(5.5 * seq_length)
         self.projection = nn.Sequential(
-            nn.Linear(6 * seq_length, 6 * seq_length),
-            nn.LayerNorm(6 * seq_length),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LayerNorm(hidden_dim),
             nn.GELU(),
-            nn.Linear(6 * seq_length, output_dim),
+            nn.Linear(hidden_dim, output_dim),
         )
+        
+        self.n_features = n_features
 
     def forward(
         self,
@@ -88,18 +93,21 @@ class FourierEncoder(LightningModule):
     ) -> Tensor:
         """Forward pass."""
         length = torch.log10(seq_length.to(dtype=x.dtype))
-        x = torch.cat(
-            [
-                self.sin_emb(4096 * x[:, :, :3]).flatten(-2),  # pos
-                self.sin_emb(1024 * x[:, :, 4]),  # charge
-                self.sin_emb(4096 * x[:, :, 3]),  # time
-                self.aux_emb(x[:, :, 5].long()),  # auxiliary
-                self.sin_emb2(length)
-                .unsqueeze(1)
-                .expand(-1, max(seq_length), -1),
-            ],
-            -1,
-        )
+        b = [
+            self.sin_emb(4096 * x[:, :, :3]).flatten(-2),  # Position
+            self.sin_emb(1024 * x[:, :, 4]),  # Charge
+            self.sin_emb(4096 * x[:, :, 3]),  # Time
+        ]
+
+        if self.n_features >= 5:
+            b.append(self.aux_emb(x[:, :, 5].long()))  # Auxiliary
+        elif self.n_features < 4:
+            raise ValueError(f"At least x_dom, y_dom, z_dom, charge and "
+                             f"dom_time are required. Got only "
+                             f"{self.n_features} features.") 
+        b.append(self.sin_emb2(length).unsqueeze(1).expand(-1, max(seq_length), -1))  # Length
+        
+        x = torch.cat(b, -1)
         x = self.projection(x)
         return x
 
