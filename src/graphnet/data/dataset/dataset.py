@@ -321,7 +321,10 @@ class Dataset(
 
         self._selection = None
         if self._string_selection:
-            self._selection = f"{self._string_column} in {str(tuple(self._string_selection))}"
+            # Broken into multple lines lines for length
+            col = self._string_column
+            condition = str(tuple(self._string_selection))
+            self._selection = f"{col} in {condition}"
 
         self._loss_weight_column = loss_weight_column
         self._loss_weight_table = loss_weight_table
