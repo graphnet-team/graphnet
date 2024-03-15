@@ -296,6 +296,7 @@ class Dataset(
         self._loss_weight_default_value = loss_weight_default_value
         self._graph_definition = deepcopy(graph_definition)
         self._labels = labels
+        self._string_column = graph_definition._detector.string_index_name
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
@@ -320,7 +321,7 @@ class Dataset(
 
         self._selection = None
         if self._string_selection:
-            self._selection = f"string in {str(tuple(self._string_selection))}"
+            self._selection = f"{self._string_column} in {str(tuple(self._string_selection))}"
 
         self._loss_weight_column = loss_weight_column
         self._loss_weight_table = loss_weight_table

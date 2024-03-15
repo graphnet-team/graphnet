@@ -20,6 +20,7 @@ import torch
 import os
 from torch_geometric.data import Data
 import polars as pol
+from polars.series.series import Series
 from polars.exceptions import InvalidOperationError
 from glob import glob
 from bisect import bisect_right
@@ -132,6 +133,7 @@ class ParquetDataset(Dataset):
             node_truth_table=node_truth_table,
             pulsemaps=pulsemaps,
         )
+        self._string_selection = string_selection
         # Purely internal member variables
         self._missing_variables: Dict[str, List[str]] = {}
         self._remove_missing_columns()
@@ -193,6 +195,7 @@ class ParquetDataset(Dataset):
         """Calculate the number of events in each batch."""
         sizes = []
         for batch_id in self._indices:
+            print(batch_id)
             path = os.path.join(
                 self._path,
                 self._truth_table,
@@ -242,9 +245,11 @@ class ParquetDataset(Dataset):
             columns = [columns]
 
         if sequential_index is None:
-            file_indices = np.arange(0, len(self._batch_cumsum), 1)
+            file_idx = np.arange(0, len(self._batch_cumsum), 1)
         else:
-            file_indices = [bisect_right(self._batch_cumsum, sequential_index)]
+            file_idx = [bisect_right(self._batch_cumsum, sequential_index)]
+
+        file_indices = [self._indices[idx] for idx in file_idx]
 
         arrays = []
         for file_idx in file_indices:
@@ -275,27 +280,13 @@ class ParquetDataset(Dataset):
             row_id = np.arange(0, len(df), 1)
         df = df[row_id]
         if len(df) > 0:
-            arrays = []
-            for column in columns:
-                if column in df.columns:
-                    try:
-                        array = df.select(column).explode(column).to_numpy()
-                    except InvalidOperationError:
-                        # Can only explode list-like structures
-                        array = df.select(column).to_numpy()
-                    arrays.append(array.reshape(-1, 1))
-                else:
-                    raise ColumnMissingException(f"{column} not in {table}")
-
-            # Repeat event_no if needed
-            if (self._index_column in columns) & (len(columns) > 1):
-                idx = columns.index(self._index_column)
-                idx2 = columns.index(columns[~idx])
-                arrays[idx] = np.repeat(
-                    arrays[idx], len(arrays[idx2])
-                ).reshape(-1, 1)
-
-            array = np.concatenate(arrays, axis=1)
+            self._raise_column_exception(
+                df_columns=df.columns, columns=columns, table=table
+            )
+            data = df.select(columns)
+            if isinstance(data[columns[0]][0], Series):
+                data = data.explode(columns)
+            array = data.to_numpy()
         else:
             array = np.array()
         return array
@@ -306,10 +297,21 @@ class ParquetDataset(Dataset):
             file_path = os.path.join(
                 self._path, table_name, f"{table_name}_{file_idx}.parquet"
             )
+            print(file_idx)
             df = pol.read_parquet(file_path).sort(self._index_column)
-            if table_name in self._pulsemaps:
-                pol_columns = [pol.col(feat) for feat in self._features]
+            if (table_name in self._pulsemaps) or (
+                table_name == self._node_truth_table
+            ):
+                if table_name == self._node_truth_table:
+                    pol_columns = [pol.col(self._node_truth)]
+                else:
+                    pol_columns = [pol.col(feat) for feat in self._features]
+
+                if self._string_selection:
+                    pol_columns.append(pol.col(self._string_column))
+
                 df = df.group_by(self._index_column).agg(pol_columns)
+
             self._file_cache[table_name][file_idx] = df.sort(
                 self._index_column
             )
@@ -319,6 +321,15 @@ class ParquetDataset(Dataset):
                     list(self._file_cache[table_name].keys())[0]
                 ]
 
+    def _raise_column_exception(
+        self, df_columns: List[str], columns: Union[List[str], str], table: str
+    ) -> None:
+        if isinstance(columns, str):
+            columns = [columns]
+        for column in columns:
+            if column not in df_columns:
+                raise ColumnMissingException(f"{column} not in {table}")
+
     def __getitem__(self, sequential_index: int) -> Data:
         """Return graph `Data` object at `index`."""
         if not (0 <= sequential_index < len(self)):
@@ -326,9 +337,10 @@ class ParquetDataset(Dataset):
                 f"Index {sequential_index} not in range [0, {len(self) - 1}]"
             )
         if self._node_truth_table is not None:
+            assert isinstance(self._node_truth, (list, str))
             node_truth = self.query_table(
                 table=self._node_truth_table,
-                columns=self._node_truth_columns,
+                columns=self._node_truth,
                 sequential_index=sequential_index,
             )
         else:
