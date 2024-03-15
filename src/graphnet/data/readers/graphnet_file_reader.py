@@ -38,10 +38,16 @@ class GraphNeTFileReader(Logger, ABC):
     ) -> Union[List[OrderedDict[str, pd.DataFrame]], Dict[str, pd.DataFrame]]:
         """Open and apply extractors to a single file.
 
-        The `output` must be a list of dictionaries, where the number of events
-        in the file `n_events` satisfies `len(output) = n_events`. I.e each
-        element in the list is a dictionary, and each field in the dictionary
-        is the output of a single extractor.
+        The `output` must be either
+        A) list of dictionaries, where the number of events
+            in the file `n_events` satisfies `len(output) = n_events`.
+            I.e each element in the list is a dictionary, and each field in
+            the dictionary is the output of a single extractor. If this is
+            provided, the `DataConverter` will automatically assign event ids.
+        B) A single dictionary where each field contains a single dataframe,
+            which holds the data from the `Extractor` for the entire file. In
+            this case, the `Reader` must itself assign event ids. This method
+            is faster if your files are not storing events serially.
         """
 
     @property
