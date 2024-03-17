@@ -59,7 +59,7 @@ class FourierEncoder(LightningModule):
     def __init__(
         self,
         seq_length: int = 128,
-        mlp_dim: int = 768
+        mlp_dim: int = 768,
         output_dim: int = 384,
         scaled: bool = False,
     ):
