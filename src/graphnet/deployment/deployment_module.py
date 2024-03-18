@@ -3,7 +3,7 @@ from abc import abstractmethod
 from typing import Any, List, Union, Dict
 
 import numpy as np
-from torch import Tensor
+from torch import Tensor, load
 from torch_geometric.data import Data, Batch
 
 from graphnet.models import Model
@@ -61,7 +61,11 @@ class DeploymentModule(Logger):
     ) -> Model:
         """Load `Model` from config and insert learned weights."""
         model = Model.from_config(model_config, trust=True)
-        model.load_state_dict(state_dict)
+        if isinstance(state_dict, str) and state_dict.endswith(".ckpt"):
+            ckpt = load(state_dict)
+            model.load_state_dict(ckpt["state_dict"])
+        else:
+            model.load_state_dict(state_dict)
         return model
 
     def _resolve_prediction_columns(
