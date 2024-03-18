@@ -16,7 +16,7 @@ class CombinedExtractor(I3Extractor):
         """Construct CombinedExtractor.
 
         Args:
-        extractors: List of extractors to combine.
+        extractors: List of extractors to combine. The extractors must all return data on the same level; e.g. all event-level data or pulse-level data. Mixing tables that contain event-level and pulse-level information will fail.
         extractor_name: Name of the new extractor.
         """
         super().__init__(extractor_name=extractor_name)
