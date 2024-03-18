@@ -54,6 +54,7 @@ class WeightFitter(ABC, Logger):
         add_to_database: bool = False,
         selection: Optional[List[int]] = None,
         transform: Optional[Callable] = None,
+        db_count_norm: Optional[int] = None,
         **kwargs: Any,
     ) -> pd.DataFrame:
         """Fit weights.
@@ -73,6 +74,7 @@ class WeightFitter(ABC, Logger):
             transform: A callable method that transform the variable into a
                 desired space. E.g. np.log10 for energy. If given, fitting will
                 happen in this space.
+            db_count_norm: If given, the total sum of the weights for the given db will be this number.
             **kwargs: Additional arguments passed to `_fit_weights`.
 
         Returns:
@@ -94,6 +96,10 @@ class WeightFitter(ABC, Logger):
         if self._transform is not None:
             truth[self._variable] = self._transform(truth[self._variable])
         weights = self._fit_weights(truth, **kwargs)
+        if db_count_norm is not None:
+            weights[self._weight_name] = (
+                weights[self._weight_name] * db_count_norm / len(weights)
+            )
 
         if add_to_database:
             create_table_and_save_to_sql(
