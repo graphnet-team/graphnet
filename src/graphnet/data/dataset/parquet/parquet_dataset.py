@@ -32,7 +32,7 @@ from graphnet.exceptions.exceptions import ColumnMissingException
 
 
 class ParquetDataset(Dataset):
-    """Base Dataset class for reading from any intermediate file format."""
+    """Dataset class for Parquet-files converted with `ParquetWriter`."""
 
     def __init__(
         self,
@@ -167,7 +167,7 @@ class ParquetDataset(Dataset):
             except AssertionError:
                 e = AssertionError(
                     f"{self.__class__.__name__} does not support "
-                    "string  selections."
+                    "str-selections."
                 )
                 raise e
 
