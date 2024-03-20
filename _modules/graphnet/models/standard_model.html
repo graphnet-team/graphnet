@@ -771,6 +771,9 @@
             <span class="sa">f</span><span class="s2">"number of output columns (</span><span class="si">{</span><span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">) don't match."</span>
         <span class="p">)</span>
 
+        <span class="c1"># Check if predictions are on event- or pulse-level</span>
+        <span class="n">pulse_level_predictions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+
         <span class="c1"># Get additional attributes</span>
         <span class="n">attributes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
             <span class="p">[(</span><span class="n">attr</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">additional_attributes</span><span class="p">]</span>
@@ -784,24 +787,38 @@
                 <span class="c1"># Check if node level predictions</span>
                 <span class="c1"># If true, additional attributes are repeated</span>
                 <span class="c1"># to make dimensions fit</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="o">.</span><span class="n">dataset</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">pulse_level_predictions</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
                         <span class="n">batch</span><span class="o">.</span><span class="n">n_pulses</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
                     <span class="p">):</span>
                         <span class="n">attribute</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span>
                             <span class="n">attribute</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">n_pulses</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
                         <span class="p">)</span>
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-                        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
-                                <span class="s2">"Could not automatically adjust length"</span>
-                                <span class="sa">f</span><span class="s2">"of additional attribute </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> to match length of"</span>
-                                <span class="sa">f</span><span class="s2">"predictions. Make sure </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> is a graph-level or"</span>
-                                <span class="s2">"node-level attribute. Attribute skipped."</span>
-                            <span class="p">)</span>
-                            <span class="k">pass</span>
                 <span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+
+        <span class="c1"># Confirm that attributes match length of predictions</span>
+        <span class="n">skip_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+                    <span class="s2">"Could not automatically adjust length"</span>
+                    <span class="sa">f</span><span class="s2">" of additional attribute '</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">' to match length of"</span>
+                    <span class="sa">f</span><span class="s2">" predictions.This error can be caused by heavy"</span>
+                    <span class="s2">" disagreement between number of examples in the"</span>
+                    <span class="s2">" dataset vs. actual events in the dataloader, e.g. "</span>
+                    <span class="s2">" heavy filtering of events in `collate_fn` passed to"</span>
+                    <span class="s2">" `dataloader`. This can also be caused by requesting"</span>
+                    <span class="s2">" pulse-level attributes for `Task`s that produce"</span>
+                    <span class="s2">" event-level predictions. Attribute skipped."</span>
+                <span class="p">)</span>
+                <span class="n">skip_attributes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+        <span class="c1"># Remove bad attributes</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">skip_attributes</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="n">additional_attributes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">[</span><span class="n">predictions</span><span class="p">]</span>
