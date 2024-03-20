@@ -1,6 +1,7 @@
 """Example of converting Parquet files to SQLite database."""
 
 import os.path
+from typing import List
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_PARQUET_DATA
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
@@ -9,7 +10,7 @@ from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
 
 
-def main(parquet_path: str) -> None:
+def main(parquet_path: str, tables: List[str]) -> None:
     """Run example."""
     # Construct Logger
     logger = Logger()
@@ -24,11 +25,9 @@ def main(parquet_path: str) -> None:
             "before running this script again."
         )
 
+    extractors = [ParquetExtractor(table) for table in tables]
     converter = ParquetToSQLiteConverter(
-        extractors=[
-            ParquetExtractor("SRTInIcePulses"),
-            ParquetExtractor("truth"),
-        ],
+        extractors=extractors,
         outdir=outdir,
         num_workers=1,
     )
@@ -51,6 +50,12 @@ Convert Parquet files to SQLite database.
         default=TEST_PARQUET_DATA,
     )
 
+    parser.add_argument(
+        "--tables",
+        action="store",
+        help="Parquet tables to convert (default: %(default)s)",
+        default=["truth", "SRTInIcePulses"],
+    )
     args, unknown = parser.parse_known_args()
 
-    main(args.parquet_path)
+    main(args.parquet_path, args.tables)
