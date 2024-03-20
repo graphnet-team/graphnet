@@ -1,3 +1,3 @@
 """Transformer-specific modules."""
 
-from .transformer import ISeeCube
+from .iseecube import ISeeCube

@@ -39,7 +39,8 @@ class ISeeCube(GNN):
             num_layers: The depth of the transformer.
             num_heads: The number of the attention heads.
             mlp_dim: The mlp dimension of FourierEncoder and Transformer.
-            rel_pos_buckets: Relative position buckets for relative position bias.
+            rel_pos_buckets: Relative position buckets for relative position
+                bias.
             max_rel_pos: Maximum relative position for relative position bias.
             num_register_tokens: The number of register tokens.
             scaled_emb: Whether to scale the sinusoidal positional embeddings.

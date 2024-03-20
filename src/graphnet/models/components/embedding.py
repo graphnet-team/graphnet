@@ -68,14 +68,15 @@ class FourierEncoder(LightningModule):
         Args:
             seq_length: Dimensionality of the base sinusoidal positional
                 embeddings.
-            output_dim: Output dimensionality of the final projection.
+            mlp_dim: Hidden dimensionality of the final Mlp.
+            output_dim: Output dimensionality of the final Mlp.
             scaled: Whether or not to scale the embeddings.
         """
         super().__init__()
         self.sin_emb = SinusoidalPosEmb(dim=seq_length, scaled=scaled)
         self.aux_emb = nn.Embedding(2, seq_length // 2)
         self.sin_emb2 = SinusoidalPosEmb(dim=seq_length // 2, scaled=scaled)
-        self.projection = nn.Sequential(
+        self.mlp = nn.Sequential(
             nn.Linear(6 * seq_length, mlp_dim),
             nn.LayerNorm(mlp_dim),
             nn.GELU(),
@@ -101,7 +102,7 @@ class FourierEncoder(LightningModule):
             ],
             -1,
         )
-        x = self.projection(x)
+        x = self.mlp(x)
         return x
 
 
