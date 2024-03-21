@@ -1,8 +1,9 @@
 """`Dataset` class(es) for reading data from SQLite databases."""
 
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union, Dict
 import pandas as pd
 import sqlite3
+import numpy as np
 
 from graphnet.data.dataset.dataset import Dataset, ColumnMissingException
 
@@ -37,6 +38,9 @@ class SQLiteDataset(Dataset):
         self._conn: Optional[sqlite3.Connection] = None
 
     def _post_init(self) -> None:
+        # Purely internal member variables
+        self._missing_variables: Dict[str, List[str]] = {}
+        self._remove_missing_columns()
         self._close_connection()
 
     def query_table(
@@ -77,7 +81,7 @@ class SQLiteDataset(Dataset):
                 raise ColumnMissingException(str(e))
             else:
                 raise e
-        return result
+        return np.asarray(result)
 
     def _get_all_indices(self) -> List[int]:
         self._establish_connection(0)
@@ -87,18 +91,18 @@ class SQLiteDataset(Dataset):
         self._close_connection()
         return indices.values.ravel().tolist()
 
-    def _get_event_index(
-        self, sequential_index: Optional[int]
-    ) -> Optional[int]:
+    def _get_event_index(self, sequential_index: Optional[int]) -> int:
         index: int = 0
         if sequential_index is not None:
             index_ = self._indices[sequential_index]
             if self._database_list is None:
-                assert isinstance(index_, int)
-                index = index_
+                if not isinstance(index_, int):
+                    index_ = int(index_)  # type: ignore
             else:
-                assert isinstance(index_, list)
-                index = index_[0]
+                if not isinstance(index_, int):
+                    index_ = int(index_[0])
+            assert isinstance(index_, int)
+            index = index_
         return index
 
     # Custom, internal method(s)

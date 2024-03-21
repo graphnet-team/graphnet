@@ -80,7 +80,8 @@ def find_i3_files(
             folder_i3_files = list(filter(is_i3_file, folder_files))
             folder_gcd_files = list(filter(is_gcd_file, folder_files))
 
-            # Make sure that no more than one GCD file is found; and use rescue file of none is found.
+            # Make sure that no more than one GCD file is found;
+            # and use rescue file if none is found.
             assert len(folder_gcd_files) <= 1
             if len(folder_gcd_files) == 0:
                 assert gcd_rescue is not None

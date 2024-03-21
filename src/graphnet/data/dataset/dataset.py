@@ -29,17 +29,13 @@ from graphnet.utilities.config import (
     DatasetConfig,
     DatasetConfigSaverABCMeta,
 )
-from graphnet.utilities.config.parsing import traverse_and_apply
+from graphnet.exceptions.exceptions import ColumnMissingException
 from graphnet.utilities.logging import Logger
 from graphnet.models.graphs import GraphDefinition
 
 from graphnet.utilities.config.parsing import (
     get_all_grapnet_classes,
 )
-
-
-class ColumnMissingException(Exception):
-    """Exception to indicate a missing column in a dataset."""
 
 
 def load_module(class_name: str) -> Type:
@@ -293,13 +289,14 @@ class Dataset(
         self._path = path
         self._selection = None
         self._pulsemaps = pulsemaps
-        self._features = [index_column] + features
+        self._features = features
         self._truth = [index_column] + truth
         self._index_column = index_column
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
         self._graph_definition = deepcopy(graph_definition)
         self._labels = labels
+        self._string_column = graph_definition._detector.string_index_name
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
@@ -324,7 +321,10 @@ class Dataset(
 
         self._selection = None
         if self._string_selection:
-            self._selection = f"string in {str(tuple(self._string_selection))}"
+            # Broken into multple lines lines for length
+            col = self._string_column
+            condition = str(tuple(self._string_selection))
+            self._selection = f"{col} in {condition}"
 
         self._loss_weight_column = loss_weight_column
         self._loss_weight_table = loss_weight_table
@@ -367,10 +367,6 @@ class Dataset(
         else:
             self._indices = selection
 
-        # Purely internal member variables
-        self._missing_variables: Dict[str, List[str]] = {}
-        self._remove_missing_columns()
-
         # Implementation-specific post-init code.
         self._post_init()
 
@@ -398,9 +394,7 @@ class Dataset(
         """Return a list of all unique values in `self._index_column`."""
 
     @abstractmethod
-    def _get_event_index(
-        self, sequential_index: Optional[int]
-    ) -> Optional[int]:
+    def _get_event_index(self, sequential_index: int) -> int:
         """Return the event index corresponding to a `sequential_index`."""
 
     @abstractmethod
@@ -410,7 +404,7 @@ class Dataset(
         columns: Union[List[str], str],
         sequential_index: Optional[int] = None,
         selection: Optional[str] = None,
-    ) -> List[Tuple[Any, ...]]:
+    ) -> np.ndarray:
         """Query a table at a specific index, optionally with some selection.
 
         Args:
@@ -528,7 +522,9 @@ class Dataset(
         """Return a list missing columns in `table`."""
         for column in columns:
             try:
-                self.query_table(table, [column], 0)
+                self.query_table(
+                    table=table, columns=[column], sequential_index=0
+                )
             except ColumnMissingException:
                 if table not in self._missing_variables:
                     self._missing_variables[table] = []
@@ -540,12 +536,7 @@ class Dataset(
 
     def _query(
         self, sequential_index: int
-    ) -> Tuple[
-        List[Tuple[float, ...]],
-        Tuple[Any, ...],
-        Optional[List[Tuple[Any, ...]]],
-        Optional[float],
-    ]:
+    ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray], Optional[float]]:
         """Query file for event features and truth information.
 
         The returned lists have lengths corresponding to the number of pulses
@@ -567,11 +558,14 @@ class Dataset(
             features_pulsemap = self.query_table(
                 pulsemap, self._features, sequential_index, self._selection
             )
-            features.extend(features_pulsemap)
+            features.append(features_pulsemap)
 
-        truth: Tuple[Any, ...] = self.query_table(
+        if len(self._pulsemaps) > 0:
+            features = np.concatenate(features, axis=0)
+
+        truth = self.query_table(
             self._truth_table, self._truth, sequential_index
-        )[0]
+        )
         if self._node_truth:
             assert self._node_truth_table is not None
             node_truth = self.query_table(
@@ -583,26 +577,22 @@ class Dataset(
         else:
             node_truth = None
 
-        loss_weight: Optional[float] = None  # Default
         if self._loss_weight_column is not None:
             assert self._loss_weight_table is not None
-            loss_weight_list = self.query_table(
+            loss_weight = self.query_table(
                 self._loss_weight_table,
                 self._loss_weight_column,
                 sequential_index,
             )
-            if len(loss_weight_list):
-                loss_weight = loss_weight_list[0][0]
-            else:
-                loss_weight = -1.0
-
+        else:
+            loss_weight = None
         return features, truth, node_truth, loss_weight
 
     def _create_graph(
         self,
-        features: List[Tuple[float, ...]],
-        truth: Tuple[Any, ...],
-        node_truth: Optional[List[Tuple[Any, ...]]] = None,
+        features: np.ndarray,
+        truth: np.ndarray,
+        node_truth: Optional[np.ndarray] = None,
         loss_weight: Optional[float] = None,
     ) -> Data:
         """Create Pytorch Data (i.e. graph) object.
@@ -617,9 +607,11 @@ class Dataset(
         Returns:
             Graph object.
         """
-        # Convert nested list to simple dict
+        # Convert truth to dict
+        if len(truth.shape) == 1:
+            truth = truth.reshape(1, -1)
         truth_dict = {
-            key: truth[index] for index, key in enumerate(self._truth)
+            key: truth[:, index] for index, key in enumerate(self._truth)
         }
 
         # Define custom labels
@@ -627,10 +619,9 @@ class Dataset(
 
         # Convert nested list to simple dict
         if node_truth is not None:
-            node_truth_array = np.asarray(node_truth)
             assert self._node_truth is not None
             node_truth_dict = {
-                key: node_truth_array[:, index]
+                key: node_truth[:, index]
                 for index, key in enumerate(self._node_truth)
             }
 
@@ -641,19 +632,16 @@ class Dataset(
 
         # Catch cases with no reconstructed pulses
         if len(features):
-            node_features = np.asarray(features)[
-                :, 1:
-            ]  # first entry is index column
+            node_features = features
         else:
             node_features = np.array([]).reshape((0, len(self._features) - 1))
 
+        assert isinstance(features, np.ndarray)
         # Construct graph data object
         assert self._graph_definition is not None
         graph = self._graph_definition(
             input_features=node_features,
-            input_feature_names=self._features[
-                1:
-            ],  # first entry is index column
+            input_feature_names=self._features,
             truth_dicts=truth_dicts,
             custom_label_functions=self._label_fns,
             loss_weight_column=self._loss_weight_column,
@@ -667,13 +655,11 @@ class Dataset(
         """Return dictionary of  labels, to be added as graph attributes."""
         if "pid" in truth_dict.keys():
             abs_pid = abs(truth_dict["pid"])
-            sim_type = truth_dict["sim_type"]
 
             labels_dict = {
                 self._index_column: truth_dict[self._index_column],
                 "muon": int(abs_pid == 13),
                 "muon_stopped": int(truth_dict.get("stopped_muon") == 1),
-                "noise": int((abs_pid == 1) & (sim_type != "data")),
                 "neutrino": int(
                     (abs_pid != 13) & (abs_pid != 1)
                 ),  # @TODO: `abs_pid in [12,14,16]`?

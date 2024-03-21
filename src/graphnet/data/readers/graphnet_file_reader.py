@@ -4,16 +4,18 @@ These methods are used to open and apply `Extractors` to experiment-specific
 file formats.
 """
 
-from typing import List, Union, OrderedDict, Any
+from typing import List, Union, OrderedDict, Any, Dict
 from abc import abstractmethod, ABC
 import glob
 import os
+import pandas as pd
 
 from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import Logger
 from graphnet.data.dataclasses import I3FileSet
 from graphnet.data.extractors.extractor import Extractor
 from graphnet.data.extractors.icecube import I3Extractor
+from graphnet.data.extractors.internal import ParquetExtractor
 
 
 class GraphNeTFileReader(Logger, ABC):
@@ -31,13 +33,21 @@ class GraphNeTFileReader(Logger, ABC):
     _accepted_extractors: List[Any] = []
 
     @abstractmethod
-    def __call__(self, file_path: Union[str, I3FileSet]) -> List[OrderedDict]:
+    def __call__(
+        self, file_path: Any
+    ) -> Union[List[OrderedDict[str, pd.DataFrame]], Dict[str, pd.DataFrame]]:
         """Open and apply extractors to a single file.
 
-        The `output` must be a list of dictionaries, where the number of events
-        in the file `n_events` satisfies `len(output) = n_events`. I.e each
-        element in the list is a dictionary, and each field in the dictionary
-        is the output of a single extractor.
+        The `output` must be either
+        A) list of dictionaries, where the number of events
+            in the file `n_events` satisfies `len(output) = n_events`.
+            I.e each element in the list is a dictionary, and each field in
+            the dictionary is the output of a single extractor. If this is
+            provided, the `DataConverter` will automatically assign event ids.
+        B) A single dictionary where each field contains a single dataframe,
+            which holds the data from the `Extractor` for the entire file. In
+            this case, the `Reader` must itself assign event ids. This method
+            is faster if your files are not storing events serially.
         """
 
     @property
@@ -81,7 +91,10 @@ class GraphNeTFileReader(Logger, ABC):
 
     @final
     def set_extractors(
-        self, extractors: Union[List[Extractor], List[I3Extractor]]
+        self,
+        extractors: Union[
+            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+        ],
     ) -> None:
         """Set `Extractor`(s) as member variable.
 
@@ -95,7 +108,10 @@ class GraphNeTFileReader(Logger, ABC):
 
     @final
     def _validate_extractors(
-        self, extractors: Union[List[Extractor], List[I3Extractor]]
+        self,
+        extractors: Union[
+            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+        ],
     ) -> None:
         for extractor in extractors:
             try:

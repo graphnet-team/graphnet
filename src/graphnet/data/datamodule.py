@@ -316,9 +316,11 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         Returns:
             Training selection, Validation selection.
         """
+        print(selection)
         assert isinstance(selection, (int, list))
         if isinstance(selection, int):
             flat_selection = [selection]
+
         elif isinstance(selection[0], list):
             flat_selection = [
                 item
