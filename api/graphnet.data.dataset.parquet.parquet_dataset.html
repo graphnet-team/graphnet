@@ -480,6 +480,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.exceptions.html" class="md-nav__link">exceptions</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.html" class="md-nav__link">models</a>
       
     
@@ -549,17 +556,17 @@
             
   <section id="module-graphnet.data.dataset.parquet.parquet_dataset">
 <span id="parquet-dataset"></span><h1 id="api-graphnet-data-dataset-parquet-parquet-dataset--page-root">parquet_dataset<a class="headerlink" href="#api-graphnet-data-dataset-parquet-parquet-dataset--page-root" title="Link to this heading">¶</a></h1>
-<p><cite>Dataset</cite> class(es) for reading from Parquet files.</p>
+<p>Base <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code> class(es) used in GraphNeT.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.parquet.parquet_dataset.</span></span><span class="sig-name descname"><span class="pre">ParquetDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset/parquet/parquet_dataset.html#ParquetDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.Dataset" title="graphnet.data.dataset.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
-<p>Pytorch dataset for reading from Parquet files.</p>
+<p>Dataset class for Parquet-files converted with <cite>ParquetWriter</cite>.</p>
 <p>Construct Dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Path to the file(s) from which this <cite>Dataset</cite> should read.</p></li>
+<li><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Path to the file(s) from which this <cite>Dataset</cite> should read.</p></li>
 <li><p><strong>pulsemaps</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Name(s) of the pulse map series that should be used to
 construct the nodes on the individual graph objects, and their
 features. Multiple pulse series maps can be used, e.g., when
@@ -579,11 +586,8 @@ information.</p></li>
 <li><p><strong>string_selection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Subset of strings for which data should be read
 and used to construct graph objects. Defaults to None, meaning
 all strings for which data exists are used.</p></li>
-<li><p><strong>selection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The events that should be read. This can be given either
-as list of indicies (in <cite>index_column</cite>); or a string-based
-selection used to query the <cite>Dataset</cite> for events passing the
-selection. Defaults to None, meaning that all events in the
-input files are read.</p></li>
+<li><p><strong>selection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The batch ids to include in the dataset.
+Defaults to None, meaning that batches are read.</p></li>
 <li><p><strong>dtype</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – Type of the feature tensor on the graph objects returned.</p></li>
 <li><p><strong>loss_weight_table</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the table containing per-event loss
 weights.</p></li>
@@ -601,7 +605,8 @@ subset of events when resolving a string-based selection (e.g.,
 <cite>“10000 random events ~ event_no % 5 &gt; 0”</cite> or <cite>“20% random
 events ~ event_no % 5 &gt; 0”</cite>).</p></li>
 <li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a></span>) – Method that defines the graph representation.</p></li>
-<li><p><strong>labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Dictionary of labels to be added to the dataset.</p></li>
+<li><p><strong>cache_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Number of batches to cache in memory.
+Must be at least 1. Defaults to 1.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
@@ -613,18 +618,34 @@ events ~ event_no % 5 &gt; 0”</cite>).</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.query_table">
 <span class="sig-name descname"><span class="pre">query_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset/parquet/parquet_dataset.html#ParquetDataset.query_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.query_table" title="Link to this definition">¶</a></dt>
-<dd><p>Query table at a specific index, optionally with some selection.</p>
+<dd><p>Query a table at a specific index, optionally with some selection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]]</span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>table</strong> (<em>str</em>) – </p></li>
-<li><p><strong>columns</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em>) – </p></li>
-<li><p><strong>sequential_index</strong> (<em>int</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>selection</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Table to be queried.</p></li>
+<li><p><strong>columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Columns to read out.</p></li>
+<li><p><strong>sequential_index</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Sequentially numbered index
+(i.e. in [0,len(self))) of the event to query. This _may_
+differ from the indexation used in <cite>self._indices</cite>. If no value
+is provided, the entire column is returned.</p></li>
+<li><p><strong>selection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Selection to be imposed before reading out data.
+Defaults to None.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>List of tuples containing the values in <cite>columns</cite>. If the <cite>table</cite></dt><dd><p>contains only scalar data for <cite>columns</cite>, a list of length 1 is
+returned</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="graphnet.exceptions.exceptions.html#graphnet.exceptions.exceptions.ColumnMissingException" title="graphnet.exceptions.exceptions.ColumnMissingException"><strong>ColumnMissingException</strong></a> – If one or more element in <cite>columns</cite> is not
+    present in <cite>table</cite>.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -327,9 +327,10 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.data</span> <span class="kn">import</span> <span class="n">DataConverter</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.readers</span> <span class="kn">import</span> <span class="n">I3Reader</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.readers</span> <span class="kn">import</span> <span class="n">I3Reader</span><span class="p">,</span> <span class="n">ParquetReader</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.writers</span> <span class="kn">import</span> <span class="n">ParquetWriter</span><span class="p">,</span> <span class="n">SQLiteWriter</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.icecube</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.internal</span> <span class="kn">import</span> <span class="n">ParquetExtractor</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.icecube.utilities.i3_filters</span> <span class="kn">import</span> <span class="n">I3Filter</span>
 
 
@@ -420,6 +421,45 @@
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">file_reader</span><span class="o">=</span><span class="n">I3Reader</span><span class="p">(</span><span class="n">gcd_rescue</span><span class="o">=</span><span class="n">gcd_rescue</span><span class="p">,</span> <span class="n">i3_filters</span><span class="o">=</span><span class="n">i3_filters</span><span class="p">),</span>
+            <span class="n">save_method</span><span class="o">=</span><span class="n">SQLiteWriter</span><span class="p">(),</span>
+            <span class="n">extractors</span><span class="o">=</span><span class="n">extractors</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
+            <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParquetToSQLiteConverter">
+<a class="viewcode-back" href="../../../../api/graphnet.data.pre_configured.dataconverters.html#graphnet.data.pre_configured.dataconverters.ParquetToSQLiteConverter">[docs]</a>
+<span class="k">class</span> <span class="nc">ParquetToSQLiteConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preconfigured DataConverter for converting Parquet to SQLite files.</span>
+
+<span class="sd">    This class converts Parquet files written by ParquetWriter to SQLite.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">extractors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">],</span>
+        <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Convert internal Parquet files to SQLite.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            extractors: The `Extractor`(s) that will be applied to the input</span>
+<span class="sd">                        files.</span>
+<span class="sd">            outdir: The directory to save the files in.</span>
+<span class="sd">            icetray_verbose: Set the level of verbosity of icetray.</span>
+<span class="sd">                             Defaults to 0.</span>
+<span class="sd">            index_column: Name of the event id column added to the events.</span>
+<span class="sd">                          Defaults to "event_no".</span>
+<span class="sd">            num_workers: The number of CPUs used for parallel processing.</span>
+<span class="sd">                         Defaults to 1 (no multiprocessing).</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">file_reader</span><span class="o">=</span><span class="n">ParquetReader</span><span class="p">(),</span>
             <span class="n">save_method</span><span class="o">=</span><span class="n">SQLiteWriter</span><span class="p">(),</span>
             <span class="n">extractors</span><span class="o">=</span><span class="n">extractors</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>

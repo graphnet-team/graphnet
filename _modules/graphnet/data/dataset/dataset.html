@@ -353,20 +353,13 @@
     <span class="n">DatasetConfig</span><span class="p">,</span>
     <span class="n">DatasetConfigSaverABCMeta</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.config.parsing</span> <span class="kn">import</span> <span class="n">traverse_and_apply</span>
+<span class="kn">from</span> <span class="nn">graphnet.exceptions.exceptions</span> <span class="kn">import</span> <span class="n">ColumnMissingException</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.graphs</span> <span class="kn">import</span> <span class="n">GraphDefinition</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config.parsing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_all_grapnet_classes</span><span class="p">,</span>
 <span class="p">)</span>
-
-
-<div class="viewcode-block" id="ColumnMissingException">
-<a class="viewcode-back" href="../../../../api/graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.ColumnMissingException">[docs]</a>
-<span class="k">class</span> <span class="nc">ColumnMissingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Exception to indicate a missing column in a dataset."""</span></div>
-
 
 
 <div class="viewcode-block" id="load_module">
@@ -637,13 +630,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span> <span class="o">=</span> <span class="n">pulsemaps</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_features</span> <span class="o">=</span> <span class="p">[</span><span class="n">index_column</span><span class="p">]</span> <span class="o">+</span> <span class="n">features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_features</span> <span class="o">=</span> <span class="n">features</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_truth</span> <span class="o">=</span> <span class="p">[</span><span class="n">index_column</span><span class="p">]</span> <span class="o">+</span> <span class="n">truth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span> <span class="o">=</span> <span class="n">index_column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span> <span class="o">=</span> <span class="n">truth_table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_default_value</span> <span class="o">=</span> <span class="n">loss_weight_default_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">graph_definition</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_string_column</span> <span class="o">=</span> <span class="n">graph_definition</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">string_index_name</span>
 
         <span class="k">if</span> <span class="n">node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_truth_table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -668,7 +662,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string_selection</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"string in </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_selection</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
+            <span class="c1"># Broken into multple lines lines for length</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string_column</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_selection</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="o">=</span> <span class="n">loss_weight_column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="o">=</span> <span class="n">loss_weight_table</span>
@@ -711,10 +708,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span> <span class="o">=</span> <span class="n">selection</span>
 
-        <span class="c1"># Purely internal member variables</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_missing_columns</span><span class="p">()</span>
-
         <span class="c1"># Implementation-specific post-init code.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span>
 
@@ -742,9 +735,7 @@
 <span class="w">        </span><span class="sd">"""Return a list of all unique values in `self._index_column`."""</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_get_event_index</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_get_event_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the event index corresponding to a `sequential_index`."""</span>
 
 <div class="viewcode-block" id="Dataset.query_table">
@@ -756,7 +747,7 @@
         <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">sequential_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Query a table at a specific index, optionally with some selection.</span>
 
 <span class="sd">        Args:</span>
@@ -878,7 +869,9 @@
 <span class="w">        </span><span class="sd">"""Return a list missing columns in `table`."""</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
+                    <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">sequential_index</span><span class="o">=</span><span class="mi">0</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="n">ColumnMissingException</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_missing_variables</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -890,12 +883,7 @@
 
     <span class="k">def</span> <span class="nf">_query</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
-        <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
-        <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
-        <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span>
-        <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-    <span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Query file for event features and truth information.</span>
 
 <span class="sd">        The returned lists have lengths corresponding to the number of pulses</span>
@@ -917,11 +905,14 @@
             <span class="n">features_pulsemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
                 <span class="n">pulsemap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span> <span class="n">sequential_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span>
             <span class="p">)</span>
-            <span class="n">features</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">features_pulsemap</span><span class="p">)</span>
+            <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">features_pulsemap</span><span class="p">)</span>
 
-        <span class="n">truth</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">,</span> <span class="n">sequential_index</span>
-        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="n">node_truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
@@ -933,26 +924,22 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">node_truth</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">loss_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Default</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="n">loss_weight_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
+            <span class="n">loss_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_table</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_table</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="p">,</span>
                 <span class="n">sequential_index</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loss_weight_list</span><span class="p">):</span>
-                <span class="n">loss_weight</span> <span class="o">=</span> <span class="n">loss_weight_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">loss_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
-
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loss_weight</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">features</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">node_truth</span><span class="p">,</span> <span class="n">loss_weight</span>
 
     <span class="k">def</span> <span class="nf">_create_graph</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
-        <span class="n">truth</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
-        <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">truth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Create Pytorch Data (i.e. graph) object.</span>
@@ -967,9 +954,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Graph object.</span>
 <span class="sd">        """</span>
-        <span class="c1"># Convert nested list to simple dict</span>
+        <span class="c1"># Convert truth to dict</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">truth</span> <span class="o">=</span> <span class="n">truth</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">truth_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">truth</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">truth</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truth</span><span class="p">)</span>
         <span class="p">}</span>
 
         <span class="c1"># Define custom labels</span>
@@ -977,10 +966,9 @@
 
         <span class="c1"># Convert nested list to simple dict</span>
         <span class="k">if</span> <span class="n">node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">node_truth_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">node_truth</span><span class="p">)</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="n">node_truth_dict</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">key</span><span class="p">:</span> <span class="n">node_truth_array</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">node_truth</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_truth</span><span class="p">)</span>
             <span class="p">}</span>
 
@@ -991,19 +979,16 @@
 
         <span class="c1"># Catch cases with no reconstructed pulses</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">):</span>
-            <span class="n">node_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">features</span><span class="p">)[</span>
-                <span class="p">:,</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="p">]</span>  <span class="c1"># first entry is index column</span>
+            <span class="n">node_features</span> <span class="o">=</span> <span class="n">features</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">node_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
         <span class="c1"># Construct graph data object</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span><span class="p">(</span>
             <span class="n">input_features</span><span class="o">=</span><span class="n">node_features</span><span class="p">,</span>
-            <span class="n">input_feature_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">[</span>
-                <span class="mi">1</span><span class="p">:</span>
-            <span class="p">],</span>  <span class="c1"># first entry is index column</span>
+            <span class="n">input_feature_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span>
             <span class="n">truth_dicts</span><span class="o">=</span><span class="n">truth_dicts</span><span class="p">,</span>
             <span class="n">custom_label_functions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_fns</span><span class="p">,</span>
             <span class="n">loss_weight_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_column</span><span class="p">,</span>
@@ -1017,13 +1002,11 @@
 <span class="w">        </span><span class="sd">"""Return dictionary of  labels, to be added as graph attributes."""</span>
         <span class="k">if</span> <span class="s2">"pid"</span> <span class="ow">in</span> <span class="n">truth_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">abs_pid</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">truth_dict</span><span class="p">[</span><span class="s2">"pid"</span><span class="p">])</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="n">truth_dict</span><span class="p">[</span><span class="s2">"sim_type"</span><span class="p">]</span>
 
             <span class="n">labels_dict</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">:</span> <span class="n">truth_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">],</span>
                 <span class="s2">"muon"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">13</span><span class="p">),</span>
                 <span class="s2">"muon_stopped"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">truth_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stopped_muon"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="s2">"noise"</span><span class="p">:</span> <span class="nb">int</span><span class="p">((</span><span class="n">abs_pid</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sim_type</span> <span class="o">!=</span> <span class="s2">"data"</span><span class="p">)),</span>
                 <span class="s2">"neutrino"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
                     <span class="p">(</span><span class="n">abs_pid</span> <span class="o">!=</span> <span class="mi">13</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">abs_pid</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="p">),</span>  <span class="c1"># @TODO: `abs_pid in [12,14,16]`?</span>

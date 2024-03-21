@@ -16,6 +16,7 @@ API
 
    graphnet.data
    graphnet.deployment
+   graphnet.exceptions
    graphnet.models
    graphnet.pisa
    graphnet.training

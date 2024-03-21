@@ -441,7 +441,7 @@
       </ul></li>
       <li><a href="api/graphnet.training.utils.html#graphnet.training.utils.collator_sequence_buckleting">collator_sequence_buckleting (class in graphnet.training.utils)</a>
 </li>
-      <li><a href="api/graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.ColumnMissingException">ColumnMissingException</a>
+      <li><a href="api/graphnet.exceptions.exceptions.html#graphnet.exceptions.exceptions.ColumnMissingException">ColumnMissingException</a>
 </li>
       <li><a href="api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.compute_loss">compute_loss() (graphnet.models.standard_model.StandardModel method)</a>
 
@@ -701,6 +701,8 @@
 
       <ul>
         <li><a href="api/graphnet.data.readers.i3reader.html#graphnet.data.readers.i3reader.I3Reader.find_files">(graphnet.data.readers.i3reader.I3Reader method)</a>
+</li>
+        <li><a href="api/graphnet.data.readers.internal_parquet_reader.html#graphnet.data.readers.internal_parquet_reader.ParquetReader.find_files">(graphnet.data.readers.internal_parquet_reader.ParquetReader method)</a>
 </li>
       </ul></li>
       <li><a href="api/graphnet.utilities.filesys.html#graphnet.utilities.filesys.find_i3_files">find_i3_files() (in module graphnet.utilities.filesys)</a>
@@ -1088,6 +1090,20 @@
 </li>
       </ul></li>
       <li>
+    graphnet.data.extractors.internal
+
+      <ul>
+        <li><a href="api/graphnet.data.extractors.internal.html#module-graphnet.data.extractors.internal">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.internal.parquet_extractor
+
+      <ul>
+        <li><a href="api/graphnet.data.extractors.internal.parquet_extractor.html#module-graphnet.data.extractors.internal.parquet_extractor">module</a>
+</li>
+      </ul></li>
+      <li>
     graphnet.data.parquet
 
       <ul>
@@ -1141,6 +1157,13 @@
 
       <ul>
         <li><a href="api/graphnet.data.readers.i3reader.html#module-graphnet.data.readers.i3reader">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.readers.internal_parquet_reader
+
+      <ul>
+        <li><a href="api/graphnet.data.readers.internal_parquet_reader.html#module-graphnet.data.readers.internal_parquet_reader">module</a>
 </li>
       </ul></li>
       <li>
@@ -1255,6 +1278,20 @@
 
       <ul>
         <li><a href="api/graphnet.deployment.icecube.inference_module.html#module-graphnet.deployment.icecube.inference_module">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.exceptions
+
+      <ul>
+        <li><a href="api/graphnet.exceptions.html#module-graphnet.exceptions">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.exceptions.exceptions
+
+      <ul>
+        <li><a href="api/graphnet.exceptions.exceptions.html#module-graphnet.exceptions.exceptions">module</a>
 </li>
       </ul></li>
       <li>
@@ -2054,6 +2091,10 @@
 </li>
         <li><a href="api/graphnet.data.extractors.icecube.utilities.types.html#module-graphnet.data.extractors.icecube.utilities.types">graphnet.data.extractors.icecube.utilities.types</a>
 </li>
+        <li><a href="api/graphnet.data.extractors.internal.html#module-graphnet.data.extractors.internal">graphnet.data.extractors.internal</a>
+</li>
+        <li><a href="api/graphnet.data.extractors.internal.parquet_extractor.html#module-graphnet.data.extractors.internal.parquet_extractor">graphnet.data.extractors.internal.parquet_extractor</a>
+</li>
         <li><a href="api/graphnet.data.parquet.html#module-graphnet.data.parquet">graphnet.data.parquet</a>
 </li>
         <li><a href="api/graphnet.data.parquet.deprecated_methods.html#module-graphnet.data.parquet.deprecated_methods">graphnet.data.parquet.deprecated_methods</a>
@@ -2069,6 +2110,8 @@
         <li><a href="api/graphnet.data.readers.graphnet_file_reader.html#module-graphnet.data.readers.graphnet_file_reader">graphnet.data.readers.graphnet_file_reader</a>
 </li>
         <li><a href="api/graphnet.data.readers.i3reader.html#module-graphnet.data.readers.i3reader">graphnet.data.readers.i3reader</a>
+</li>
+        <li><a href="api/graphnet.data.readers.internal_parquet_reader.html#module-graphnet.data.readers.internal_parquet_reader">graphnet.data.readers.internal_parquet_reader</a>
 </li>
         <li><a href="api/graphnet.data.sqlite.html#module-graphnet.data.sqlite">graphnet.data.sqlite</a>
 </li>
@@ -2101,6 +2144,10 @@
         <li><a href="api/graphnet.deployment.icecube.cleaning_module.html#module-graphnet.deployment.icecube.cleaning_module">graphnet.deployment.icecube.cleaning_module</a>
 </li>
         <li><a href="api/graphnet.deployment.icecube.inference_module.html#module-graphnet.deployment.icecube.inference_module">graphnet.deployment.icecube.inference_module</a>
+</li>
+        <li><a href="api/graphnet.exceptions.html#module-graphnet.exceptions">graphnet.exceptions</a>
+</li>
+        <li><a href="api/graphnet.exceptions.exceptions.html#module-graphnet.exceptions.exceptions">graphnet.exceptions.exceptions</a>
 </li>
         <li><a href="api/graphnet.models.html#module-graphnet.models">graphnet.models</a>
 </li>
@@ -2353,7 +2400,11 @@
 </li>
       <li><a href="api/graphnet.data.dataset.parquet.parquet_dataset.html#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset">ParquetDataset (class in graphnet.data.dataset.parquet.parquet_dataset)</a>
 </li>
-      <li><a href="api/graphnet.data.utilities.parquet_to_sqlite.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter">ParquetToSQLiteConverter (class in graphnet.data.utilities.parquet_to_sqlite)</a>
+      <li><a href="api/graphnet.data.extractors.internal.parquet_extractor.html#graphnet.data.extractors.internal.parquet_extractor.ParquetExtractor">ParquetExtractor (class in graphnet.data.extractors.internal.parquet_extractor)</a>
+</li>
+      <li><a href="api/graphnet.data.readers.internal_parquet_reader.html#graphnet.data.readers.internal_parquet_reader.ParquetReader">ParquetReader (class in graphnet.data.readers.internal_parquet_reader)</a>
+</li>
+      <li><a href="api/graphnet.data.pre_configured.dataconverters.html#graphnet.data.pre_configured.dataconverters.ParquetToSQLiteConverter">ParquetToSQLiteConverter (class in graphnet.data.pre_configured.dataconverters)</a>
 </li>
       <li><a href="api/graphnet.data.writers.parquet_writer.html#graphnet.data.writers.parquet_writer.ParquetWriter">ParquetWriter (class in graphnet.data.writers.parquet_writer)</a>
 </li>
@@ -2371,10 +2422,10 @@
 </li>
       <li><a href="api/graphnet.training.callbacks.html#graphnet.training.callbacks.PiecewiseLinearLR">PiecewiseLinearLR (class in graphnet.training.callbacks)</a>
 </li>
-      <li><a href="api/graphnet.pisa.plotting.html#graphnet.pisa.plotting.plot_1D_contour">plot_1D_contour() (in module graphnet.pisa.plotting)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/graphnet.pisa.plotting.html#graphnet.pisa.plotting.plot_1D_contour">plot_1D_contour() (in module graphnet.pisa.plotting)</a>
+</li>
       <li><a href="api/graphnet.pisa.plotting.html#graphnet.pisa.plotting.plot_2D_contour">plot_2D_contour() (in module graphnet.pisa.plotting)</a>
 </li>
       <li><a href="api/graphnet.utilities.argparse.html#graphnet.utilities.argparse.Options.pop_default">pop_default() (graphnet.utilities.argparse.Options method)</a>
@@ -2445,12 +2496,8 @@
 </li>
       <li><a href="api/graphnet.models.gnn.RNN_tito.html#graphnet.models.gnn.RNN_tito.RNN_TITO">RNN_TITO (class in graphnet.models.gnn.RNN_tito)</a>
 </li>
-      <li><a href="api/graphnet.data.utilities.parquet_to_sqlite.html#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run">run() (graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter method)</a>
-
-      <ul>
-        <li><a href="api/graphnet.deployment.deployer.html#graphnet.deployment.deployer.Deployer.run">(graphnet.deployment.deployer.Deployer method)</a>
+      <li><a href="api/graphnet.deployment.deployer.html#graphnet.deployment.deployer.Deployer.run">run() (graphnet.deployment.deployer.Deployer method)</a>
 </li>
-      </ul></li>
       <li><a href="api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.run_sql_code">run_sql_code() (in module graphnet.data.utilities.sqlite_utilities)</a>
 </li>
   </ul></td>

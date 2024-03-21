@@ -423,6 +423,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">primary_key_rescue</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""SQLite-specific method for merging output files/databases.</span>
 
@@ -437,6 +438,9 @@
 <span class="sd">                you have many events, as tables exceeding</span>
 <span class="sd">                400 million rows tend to be noticably slower to query.</span>
 <span class="sd">                Defaults to None (All events are put into a single database.)</span>
+<span class="sd">            primary_key_rescue: The name of the columns on which the primary</span>
+<span class="sd">                key is constructed. This will only be used if it is not</span>
+<span class="sd">                possible to infer the primary key name.</span>
 <span class="sd">        """</span>
         <span class="c1"># Warnings</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_table_size</span><span class="p">:</span>
@@ -448,10 +452,10 @@
 
         <span class="c1"># Set variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_partition_count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_primary_key_rescue</span> <span class="o">=</span> <span class="n">primary_key_rescue</span>
 
         <span class="c1"># Construct full database path</span>
         <span class="n">database_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_name</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">database_path</span><span class="p">)</span>
         <span class="c1"># Start merging if files are given</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -487,10 +491,11 @@
 
         <span class="c1"># Merge temporary databases into newly created one</span>
         <span class="k">for</span> <span class="n">file_count</span><span class="p">,</span> <span class="n">input_file</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">files</span><span class="p">),</span> <span class="n">colour</span><span class="o">=</span><span class="s2">"green"</span><span class="p">):</span>
-
             <span class="c1"># Extract table names and index column name in database</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">tables</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="n">get_primary_keys</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="n">input_file</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primary_key_rescue</span>
             <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">"No tables found in database."</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Database </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2"> is empty. Skipping."</span><span class="p">)</span>

@@ -415,7 +415,8 @@
             <span class="n">folder_i3_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_i3_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
             <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_gcd_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
 
-            <span class="c1"># Make sure that no more than one GCD file is found; and use rescue file of none is found.</span>
+            <span class="c1"># Make sure that no more than one GCD file is found;</span>
+            <span class="c1"># and use rescue file if none is found.</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">gcd_rescue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>

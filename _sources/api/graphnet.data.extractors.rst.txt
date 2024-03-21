@@ -15,6 +15,7 @@ extractors
    :maxdepth: 2
 
    graphnet.data.extractors.icecube
+   graphnet.data.extractors.internal
 
 |start-h2| Submodules |end-h2|
 

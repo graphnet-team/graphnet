@@ -397,9 +397,13 @@
             <span class="n">primary_key_candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
     <span class="c1"># There should only be one primary key:</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">primary_key_candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">primary_key_candidates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">primary_key_candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">primary_key_name</span> <span class="o">=</span> <span class="n">primary_key_candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">primary_key_name</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">return</span> <span class="n">integer_primary_key</span><span class="p">,</span> <span class="n">primary_key_candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">integer_primary_key</span><span class="p">,</span> <span class="n">primary_key_name</span></div>
 
 
 

@@ -472,6 +472,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.exceptions.html" class="md-nav__link">exceptions</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.html" class="md-nav__link">models</a>
       
     
@@ -544,37 +551,42 @@
 <p>DataConverter for the Parquet backend.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.writers.parquet_writer.ParquetWriter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.writers.parquet_writer.</span></span><span class="sig-name descname"><span class="pre">ParquetWriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/writers/parquet_writer.html#ParquetWriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.writers.parquet_writer.ParquetWriter" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.writers.parquet_writer.</span></span><span class="sig-name descname"><span class="pre">ParquetWriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/writers/parquet_writer.html#ParquetWriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.writers.parquet_writer.ParquetWriter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.writers.graphnet_writer.html#graphnet.data.writers.graphnet_writer.GraphNeTWriter" title="graphnet.data.writers.graphnet_writer.GraphNeTWriter"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code></a></p>
 <p>Class for writing interim data format to Parquet.</p>
-<p>Construct <cite>Logger</cite>.</p>
+<p>Construct <cite>ParquetWriter</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>class_name</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>level</strong> (<em>int</em>) – </p></li>
-<li><p><strong>log_folder</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
+<li><p><strong>truth_table</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'truth'</span></code>) – Name of the tables containing event-level truth data.
+defaults to “truth”.</p></li>
+<li><p><strong>index_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – The column used for indexation.
+Defaults to “event_no”.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.writers.parquet_writer.ParquetWriter.merge_files">
-<span class="sig-name descname"><span class="pre">merge_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/writers/parquet_writer.html#ParquetWriter.merge_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.writers.parquet_writer.ParquetWriter.merge_files" title="Link to this definition">¶</a></dt>
-<dd><p>Merge parquet files.</p>
+<span class="sig-name descname"><span class="pre">merge_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events_per_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/writers/parquet_writer.html#ParquetWriter.merge_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.writers.parquet_writer.ParquetWriter.merge_files" title="Link to this definition">¶</a></dt>
+<dd><p>Convert files into shuffled batches.</p>
+<blockquote>
+<div><p>Events will be shuffled, and the resulting batches will constitute
+random subsamples of the full dataset.</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – input files for merging.</p></li>
-<li><p><strong>output_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – directory to store merged file(s) in.</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Files converted to parquet. Note this argument is ignored
+by this method, as these files are automatically found
+using the <cite>output_dir</cite>.</p></li>
+<li><p><strong>output_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The directory to store the batched data.</p></li>
+<li><p><strong>events_per_batch</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">200000</span></code>) – Number of events in each batch.
+Defaults to 200000.</p></li>
+<li><p><strong>num_workers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Number of workers to use for merging. Defaults to 1.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>NotImplementedError</strong> – </p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>

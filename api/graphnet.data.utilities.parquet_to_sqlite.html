@@ -364,35 +364,10 @@
       
         
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-data-utilities-parquet-to-sqlite--page-root" class="md-nav__link">parquet_to_sqlite</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a>
-        </li></ul>
-            </nav>
-        </li></ul>
-            </nav>
-        </li>
   </ul>
 </nav>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter</span></code></a>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a>
       
-    
-    </li></ul>
-    
-    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -479,6 +454,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.exceptions.html" class="md-nav__link">exceptions</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.html" class="md-nav__link">models</a>
       
     
@@ -525,18 +507,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-data-utilities-parquet-to-sqlite--page-root" class="md-nav__link">parquet_to_sqlite</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a>
-        </li></ul>
-            </nav>
-        </li></ul>
-            </nav>
-        </li>
   </ul>
 </nav>
               </div>
@@ -549,41 +520,6 @@
   <section id="module-graphnet.data.utilities.parquet_to_sqlite">
 <span id="parquet-to-sqlite"></span><h1 id="api-graphnet-data-utilities-parquet-to-sqlite--page-root">parquet_to_sqlite<a class="headerlink" href="#api-graphnet-data-utilities-parquet-to-sqlite--page-root" title="Link to this heading">¶</a></h1>
 <p>Utilities for converting files from Parquet to SQLite.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.utilities.parquet_to_sqlite.</span></span><span class="sig-name descname"><span class="pre">ParquetToSQLiteConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parquet_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc_truth_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_fields</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/utilities/parquet_to_sqlite.html#ParquetToSQLiteConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
-<p>Convert Parquet files to a SQLite database.</p>
-<p>Each event in the parquet file(s) are assigned a unique event id. By
-default, every field in the parquet file(s) are extracted. One can choose
-to exclude certain fields by using the argument exclude_fields.</p>
-<p>Construct <cite>ParquetToSQLiteConverter</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>parquet_path</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>mc_truth_table</strong> (<em>str</em>) – </p></li>
-<li><p><strong>excluded_fields</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/utilities/parquet_to_sqlite.html#ParquetToSQLiteConverter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.utilities.parquet_to_sqlite.ParquetToSQLiteConverter.run" title="Link to this definition">¶</a></dt>
-<dd><p>Run Parquet to SQLite conversion.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outdir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Output directory for SQLite database.</p></li>
-<li><p><strong>database_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of output SQLite database.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
 </section>
 
 

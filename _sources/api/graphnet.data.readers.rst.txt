@@ -17,6 +17,7 @@ readers
 
    graphnet.data.readers.graphnet_file_reader
    graphnet.data.readers.i3reader
+   graphnet.data.readers.internal_parquet_reader
 
 
 

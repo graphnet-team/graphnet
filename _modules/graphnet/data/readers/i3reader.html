@@ -372,6 +372,8 @@
 <span class="sd">            icetray_verbose: Set the level of verbosity of icetray.</span>
 <span class="sd">                             Defaults to 0.</span>
 <span class="sd">        """</span>
+        <span class="c1"># checks</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gcd_rescue</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="c1"># Set verbosity</span>
         <span class="k">if</span> <span class="n">icetray_verbose</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">icetray</span><span class="o">.</span><span class="n">I3Logger</span><span class="o">.</span><span class="n">global_logger</span> <span class="o">=</span> <span class="n">icetray</span><span class="o">.</span><span class="n">I3NullLogger</span><span class="p">()</span>
@@ -442,12 +444,16 @@
             <span class="n">path</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_rescue</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="c1"># checks</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">i3_files</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">gcd_files</span><span class="p">)</span>
 
         <span class="c1"># Pack as I3FileSets</span>
-        <span class="n">filesets</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">I3FileSet</span><span class="p">(</span><span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span><span class="p">)</span>
-        <span class="p">]</span>
+        <span class="n">filesets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i3_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gcd_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="nb">print</span><span class="p">(</span><span class="n">gcd_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_rescue</span><span class="p">)</span>
+            <span class="n">filesets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">I3FileSet</span><span class="p">(</span><span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">filesets</span></div>
 
 

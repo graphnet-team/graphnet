@@ -328,16 +328,18 @@
 <span class="sd">file formats.</span>
 <span class="sd">"""</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABC</span>
 <span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.decorators</span> <span class="kn">import</span> <span class="n">final</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.dataclasses</span> <span class="kn">import</span> <span class="n">I3FileSet</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.extractor</span> <span class="kn">import</span> <span class="n">Extractor</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.icecube</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.internal</span> <span class="kn">import</span> <span class="n">ParquetExtractor</span>
 
 
 <div class="viewcode-block" id="GraphNeTFileReader">
@@ -357,13 +359,21 @@
     <span class="n">_accepted_extractors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">I3FileSet</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Open and apply extractors to a single file.</span>
 
-<span class="sd">        The `output` must be a list of dictionaries, where the number of events</span>
-<span class="sd">        in the file `n_events` satisfies `len(output) = n_events`. I.e each</span>
-<span class="sd">        element in the list is a dictionary, and each field in the dictionary</span>
-<span class="sd">        is the output of a single extractor.</span>
+<span class="sd">        The `output` must be either</span>
+<span class="sd">        A) list of dictionaries, where the number of events</span>
+<span class="sd">            in the file `n_events` satisfies `len(output) = n_events`.</span>
+<span class="sd">            I.e each element in the list is a dictionary, and each field in</span>
+<span class="sd">            the dictionary is the output of a single extractor. If this is</span>
+<span class="sd">            provided, the `DataConverter` will automatically assign event ids.</span>
+<span class="sd">        B) A single dictionary where each field contains a single dataframe,</span>
+<span class="sd">            which holds the data from the `Extractor` for the entire file. In</span>
+<span class="sd">            this case, the `Reader` must itself assign event ids. This method</span>
+<span class="sd">            is faster if your files are not storing events serially.</span>
 <span class="sd">        """</span>
 
     <span class="nd">@property</span>
@@ -412,7 +422,10 @@
 <a class="viewcode-back" href="../../../../api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.set_extractors">[docs]</a>
     <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">set_extractors</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">extractors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">extractors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">]</span>
+        <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Set `Extractor`(s) as member variable.</span>
 
@@ -427,7 +440,10 @@
 
     <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">_validate_extractors</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">extractors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">extractors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">]</span>
+        <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="n">extractors</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
