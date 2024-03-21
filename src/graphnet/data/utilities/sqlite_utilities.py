@@ -46,6 +46,8 @@ def get_primary_keys(database: str) -> Tuple[Dict[str, str], str]:
         query = 'SELECT name FROM sqlite_master WHERE type == "table"'
         table_names = [table[0] for table in conn.execute(query).fetchall()]
 
+        assert len(table_names) > 0, "No tables found in database."
+
         integer_primary_key = {}
         for table in table_names:
             query = f"SELECT l.name FROM pragma_table_info('{table}') as l WHERE l.pk = 1;"
