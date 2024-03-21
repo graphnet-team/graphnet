@@ -269,6 +269,8 @@ class NodeAsDOMTimeSeries(NodeDefinition):
         """Construct nodes from raw node features ´x´."""
         # Cast to Numpy
         x = x.numpy()
+        if x.shape[0] == 0:
+            return Data(x=torch.tensor(np.column_stack([x, []])))
         # if there is no charge column add a dummy column of zeros with the same shape as the time column
         if self._charge_index is None:
             charge_index: int = len(self._keys)
