@@ -33,10 +33,11 @@ class LossFunction(Model):
     @final
     def forward(  # type: ignore[override]
         self,
-        prediction: Tensor,
-        target: Tensor,
+        predictions: Tensor,
+        target: Tensor = None,
         weights: Optional[Tensor] = None,
         return_elements: bool = False,
+        jacobian: Tensor = None,
     ) -> Tensor:
         """Forward pass for all loss functions.
 
@@ -45,26 +46,60 @@ class LossFunction(Model):
             target: Tensor containing targets. Shape [N,T]
             return_elements: Whether elementwise loss terms should be returned.
                 The alternative is to return the averaged loss across examples.
+            jacobian: Jacobian from `NormalizingFlows`
 
         Returns:
             Loss, either averaged to a scalar (if `return_elements = False`) or
             elementwise terms with shape [N,] (if `return_elements = True`).
         """
-        elements = self._forward(prediction, target)
+        # Toggle between LossFunction Types
+        if isinstance(self, FlowLossFunction):
+            elements = self._forward(prediction=predictions, jacobian=jacobian)
+        elif isinstance(self, StandardLossFunction):
+            elements = self._forward(prediction=predictions, target=target)
+        else:
+            raise NotImplementedError(
+                f"{self.__class__.__name__} is not supported by `StandardModel`"
+            )
+
         if weights is not None:
             elements = elements * weights
-        assert elements.size(dim=0) == target.size(
-            dim=0
-        ), "`_forward` should return elementwise loss terms."
 
+        # checks
+        if target is not None:
+            assert elements.size(dim=0) == target.size(
+                dim=0
+            ), "`_forward` should return elementwise loss terms."
+        elif jacobian is not None:
+            assert elements.size(dim=0) == jacobian.size(
+                dim=0
+            ), "`_forward` should return elementwise loss terms."
         return elements if return_elements else torch.mean(elements)
+
+
+class StandardLossFunction(LossFunction):
+    """Standard loss function stucture for supervised learning.
+
+    _forward call recieves prediction and target and computes a loss.
+    """
 
     @abstractmethod
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Syntax like `.forward`, for implentation in inheriting classes."""
 
 
-class MSELoss(LossFunction):
+class FlowLossFunction(LossFunction):
+    """Loss function stucture for `NormalizingFlow`.
+
+    _forward call recieves prediction and jacobian and constructs a loss.
+    """
+
+    @abstractmethod
+    def _forward(self, prediction: Tensor, jacobian: Tensor) -> Tensor:
+        """Syntax like `.forward`, for implentation in inheriting classes."""
+
+
+class MSELoss(StandardLossFunction):
     """Mean squared error loss."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
@@ -88,7 +123,7 @@ class RMSELoss(MSELoss):
         return elements
 
 
-class LogCoshLoss(LossFunction):
+class LogCoshLoss(StandardLossFunction):
     """Log-cosh loss function.
 
     Acts like x^2 for small x; and like |x| for large x.
@@ -110,7 +145,7 @@ class LogCoshLoss(LossFunction):
         return elements
 
 
-class CrossEntropyLoss(LossFunction):
+class CrossEntropyLoss(StandardLossFunction):
     """Compute cross-entropy loss for classification tasks.
 
     Predictions are an [N, num_class]-matrix of logits (i.e., non-softmax'ed
@@ -193,7 +228,7 @@ class CrossEntropyLoss(LossFunction):
         return self._loss(prediction.float(), target_one_hot.float())
 
 
-class BinaryCrossEntropyLoss(LossFunction):
+class BinaryCrossEntropyLoss(StandardLossFunction):
     """Compute binary cross entropy loss.
 
     Predictions are vector probabilities (i.e., values between 0 and 1), and
@@ -276,7 +311,7 @@ class LogCMK(torch.autograd.Function):
         )
 
 
-class VonMisesFisherLoss(LossFunction):
+class VonMisesFisherLoss(StandardLossFunction):
     """General class for calculating von Mises-Fisher loss.
 
     Requires implementation for specific dimension `m` in which the target and
@@ -399,7 +434,7 @@ class VonMisesFisher2DLoss(VonMisesFisherLoss):
         return self._evaluate(p, t)
 
 
-class EuclideanDistanceLoss(LossFunction):
+class EuclideanDistanceLoss(StandardLossFunction):
     """Mean squared error in three dimensions."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
@@ -443,3 +478,22 @@ class VonMisesFisher3DLoss(VonMisesFisherLoss):
         kappa = prediction[:, 3]
         p = kappa.unsqueeze(1) * prediction[:, [0, 1, 2]]
         return self._evaluate(p, target)
+
+
+class MultivariateGaussianFlowLoss(FlowLossFunction):
+    """Loss for transforming input distribution to Multivariate Gaussian.
+
+    Intended for use by `NormalizingFlows.`
+    """
+
+    # Class variable
+    _const = torch.tensor(2 * torch.pi, dtype=torch.float)
+
+    def _forward(self, prediction: Tensor, jacobian: Tensor) -> Tensor:
+        assert prediction.shape == jacobian.shape
+        loss = -torch.mean(
+            torch.log(jacobian)
+            - (torch.pow(prediction, 2) + torch.log(self._const)) / 2,
+            dim=1,
+        )
+        return loss

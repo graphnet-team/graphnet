@@ -1,6 +1,6 @@
 """Standard model class(es)."""
 from collections import OrderedDict
-from typing import Any, Dict, List, Optional, Union, Type
+from typing import Any, Dict, List, Optional, Union, Type, Tuple
 
 import numpy as np
 import torch
@@ -17,8 +17,9 @@ from pytorch_lightning.loggers import Logger as LightningLogger
 from graphnet.training.callbacks import ProgressBar
 from graphnet.models.graphs import GraphDefinition
 from graphnet.models.gnn.gnn import GNN
+from graphnet.models.flows import NormalizingFlow
 from graphnet.models.model import Model
-from graphnet.models.task import StandardLearnedTask
+from graphnet.models.task import StandardLearnedTask, StandardFlowTask
 
 
 class StandardModel(Model):
@@ -46,10 +47,13 @@ class StandardModel(Model):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
         # Check(s)
-        if isinstance(tasks, StandardLearnedTask):
+        if isinstance(tasks, (StandardLearnedTask, StandardFlowTask)):
             tasks = [tasks]
         assert isinstance(tasks, (list, tuple))
-        assert all(isinstance(task, StandardLearnedTask) for task in tasks)
+        assert all(
+            isinstance(task, (StandardLearnedTask, StandardFlowTask))
+            for task in tasks
+        )
         assert isinstance(graph_definition, GraphDefinition)
 
         # deprecation warnings
@@ -64,7 +68,7 @@ class StandardModel(Model):
             raise TypeError(
                 "__init__() missing 1 required keyword-only argument: 'backbone'"
             )
-        assert isinstance(backbone, GNN)
+        assert isinstance(backbone, (GNN, NormalizingFlow))
 
         # Member variable(s)
         self._graph_definition = graph_definition
@@ -234,10 +238,11 @@ class StandardModel(Model):
 
     def forward(
         self, data: Union[Data, List[Data]]
-    ) -> List[Union[Tensor, Data]]:
+    ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
         """Forward pass, chaining model components."""
         if isinstance(data, Data):
             data = [data]
+
         x_list = []
         for d in data:
             x = self.backbone(d)
@@ -253,8 +258,8 @@ class StandardModel(Model):
         Applies the forward pass and the following loss calculation, shared
         between the training and validation step.
         """
-        preds = self(batch)
-        loss = self.compute_loss(preds, batch)
+        predictions = self(batch)
+        loss = self.compute_loss(predictions=predictions, data=batch)
         return loss
 
     def training_step(
@@ -297,9 +302,13 @@ class StandardModel(Model):
         return loss
 
     def compute_loss(
-        self, preds: Tensor, data: List[Data], verbose: bool = False
+        self,
+        predictions: Union[List[Tensor], List[List[Tensor]]],
+        data: List[Data],
+        verbose: bool = False,
     ) -> Tensor:
         """Compute and sum losses across tasks."""
+        # Prepare a common set of truth variables passed to all Tasks
         data_merged = {}
         target_labels_merged = list(set(self.target_labels))
         for label in target_labels_merged:
@@ -310,10 +319,13 @@ class StandardModel(Model):
                     [d[task._loss_weight] for d in data], dim=0
                 )
 
-        losses = [
-            task.compute_loss(pred, data_merged)
-            for task, pred in zip(self._tasks, preds)
-        ]
+        # Loop over Tasks and calculate loss for each
+        losses = []
+        for i, task in enumerate(self._tasks):
+            task_loss = task.compute_loss(
+                predictions=predictions[i], data=data_merged
+            )
+            losses.append(task_loss)
         if verbose:
             self.info(f"{losses}")
         assert all(
