@@ -32,7 +32,7 @@ class DynEdge(GNN):
         readout_layer_sizes: Optional[List[int]] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
         add_global_variables_after_pooling: bool = False,
-        activation_layer: Callable = None,
+        activation_layer: Optional[Callable] = None,
         add_norm_layer: bool = False,
         skip_readout: bool = False,
     ):

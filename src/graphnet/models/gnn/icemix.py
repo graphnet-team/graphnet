@@ -34,7 +34,7 @@ class DeepIce(GNN):
     def __init__(
         self,
         hidden_dim: int = 384,
-        seq_length: int = 128,
+        seq_length: int = 192,
         depth: int = 12,
         head_size: int = 32,
         depth_rel: int = 4,

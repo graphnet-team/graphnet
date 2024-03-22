@@ -22,6 +22,8 @@ from pytorch_lightning.loggers import WandbLogger
 from torch.optim.adam import Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
+from torch.nn import GELU
+
 from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
@@ -41,7 +43,6 @@ from graphnet.utilities.logging import Logger
 # Constants
 features = FEATURES.PROMETHEUS
 truth = TRUTH.PROMETHEUS
-
 
 def main(
     path: str,
@@ -85,6 +86,7 @@ def main(
         "fit": {
             "gpus": gpus,
             "max_epochs": max_epochs,
+            "distribution_strategy": 'ddp_find_unused_parameters_true',
         },
     }
 
@@ -131,9 +133,10 @@ def main(
         n_rel=4, 
         scaled_emb=True,
         include_dynedge=True,
-        dynedge_args={"nb_inputs": len(features)+2, 
+        dynedge_args={"nb_inputs": graph_definition._node_definition.n_features, 
                       "nb_neighbours": 9,
-                      "activation_layer": torch.nn.GELU(),
+                      "post_processing_layer_sizes": [336, 384],
+                      "activation_layer": GELU(),
                       "add_norm_layer": True,
                       "skip_readout": True},
         n_features=len(features),)
