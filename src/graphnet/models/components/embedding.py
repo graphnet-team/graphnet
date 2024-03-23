@@ -76,14 +76,16 @@ class FourierEncoder(LightningModule):
         self.sin_emb = SinusoidalPosEmb(dim=seq_length, scaled=scaled)
         self.aux_emb = nn.Embedding(2, seq_length // 2)
         self.sin_emb2 = SinusoidalPosEmb(dim=seq_length // 2, scaled=scaled)
-        hidden_dim = 6 * seq_length if n_features >= 5 else int(5.5 * seq_length)
+        hidden_dim = (
+            6 * seq_length if n_features >= 5 else int(5.5 * seq_length)
+        )
         self.projection = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, output_dim),
         )
-        
+
         self.n_features = n_features
 
     def forward(
@@ -102,11 +104,15 @@ class FourierEncoder(LightningModule):
         if self.n_features >= 5:
             b.append(self.aux_emb(x[:, :, 5].long()))  # Auxiliary
         elif self.n_features < 4:
-            raise ValueError(f"At least x_dom, y_dom, z_dom, charge and "
-                             f"dom_time are required. Got only "
-                             f"{self.n_features} features.") 
-        b.append(self.sin_emb2(length).unsqueeze(1).expand(-1, max(seq_length), -1))  # Length
-        
+            raise ValueError(
+                f"At least x_dom, y_dom, z_dom, charge and "
+                f"dom_time are required. Got only "
+                f"{self.n_features} features."
+            )
+        b.append(
+            self.sin_emb2(length).unsqueeze(1).expand(-1, max(seq_length), -1)
+        )  # Length
+
         x = torch.cat(b, -1)
         x = self.projection(x)
         return x

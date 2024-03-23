@@ -6,12 +6,11 @@ There are a few things to note about this example:
 - Random samplin of the pulses will be random if no hlc field is defined.
 - hlc pulse will be flipped, since this is how the original model were trained.
 
-There weights of 5 different models trained for the competitio are available 
+There weights of 5 different models trained for the competitio are available
 under /src/graphnet/models/pretrained/icemix/ directory.
 
 - For those weights the the Direction label has X and Y coordinates flipped, so
 some work has to be performed in that sense.
-
 """
 
 import os
@@ -43,6 +42,7 @@ from graphnet.utilities.logging import Logger
 # Constants
 features = FEATURES.PROMETHEUS
 truth = TRUTH.PROMETHEUS
+
 
 def main(
     path: str,
@@ -86,17 +86,21 @@ def main(
         "fit": {
             "gpus": gpus,
             "max_epochs": max_epochs,
-            "distribution_strategy": 'ddp_find_unused_parameters_true',
+            "distribution_strategy": "ddp_find_unused_parameters_true",
         },
     }
 
-    graph_definition = KNNGraph(detector=Prometheus(),
-                                node_definition=IceMixNodes(input_feature_names = features, 
-                                                            max_pulses=128, 
-                                                            z_name='sensor_pos_z',
-                                                            hlc_name=None),
-                                input_feature_names=features,
-                                columns=[0, 1, 2, 3],)
+    graph_definition = KNNGraph(
+        detector=Prometheus(),
+        node_definition=IceMixNodes(
+            input_feature_names=features,
+            max_pulses=128,
+            z_name="sensor_pos_z",
+            hlc_name=None,
+        ),
+        input_feature_names=features,
+        columns=[0, 1, 2, 3],
+    )
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_tito_model")
     run_name = "Icemix_{}_example".format(config["target"])
     if wandb:
@@ -126,20 +130,23 @@ def main(
 
     # Building model
     backbone = DeepIce(
-        hidden_dim=768, 
-        seq_length=192, 
-        depth=12, 
-        head_size=64, 
-        n_rel=4, 
+        hidden_dim=768,
+        seq_length=192,
+        depth=12,
+        head_size=64,
+        n_rel=4,
         scaled_emb=True,
         include_dynedge=True,
-        dynedge_args={"nb_inputs": graph_definition._node_definition.n_features, 
-                      "nb_neighbours": 9,
-                      "post_processing_layer_sizes": [336, 384],
-                      "activation_layer": GELU(),
-                      "add_norm_layer": True,
-                      "skip_readout": True},
-        n_features=len(features),)
+        dynedge_args={
+            "nb_inputs": graph_definition._node_definition.n_features,
+            "nb_neighbours": 9,
+            "post_processing_layer_sizes": [336, 384],
+            "activation_layer": "gelu",
+            "add_norm_layer": True,
+            "skip_readout": True,
+        },
+        n_features=len(features),
+    )
     task = DirectionReconstructionWithKappa(
         hidden_size=backbone.nb_outputs,
         target_labels=config["target"],
