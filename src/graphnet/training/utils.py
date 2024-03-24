@@ -171,7 +171,7 @@ def make_train_validation_dataloader(
                 truth_table=truth_table,
                 index_column=index_column,
             )
-        elif db.endswith(".parquet"):
+        else:
             dataset = ParquetDataset(
                 path=db,
                 graph_definition=graph_definition,
@@ -180,10 +180,6 @@ def make_train_validation_dataloader(
                 truth=truth,
                 truth_table=truth_table,
                 index_column=index_column,
-            )
-        else:
-            raise RuntimeError(
-                f"File {db} with format {db.split('.'[-1])} not supported."
             )
         selection = dataset._get_all_indices()
 

@@ -1,6 +1,7 @@
 """Base I3Extractor class(es)."""
-from typing import Any
+from typing import Any, Union
 from abc import ABC, abstractmethod
+import pandas as pd
 
 from graphnet.utilities.logging import Logger
 
@@ -36,7 +37,7 @@ class Extractor(ABC, Logger):
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     @abstractmethod
-    def __call__(self, data: Any) -> dict:
+    def __call__(self, data: Any) -> Union[dict, pd.DataFrame]:
         """Extract information from data."""
         pass
 

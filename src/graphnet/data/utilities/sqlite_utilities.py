@@ -46,6 +46,8 @@ def get_primary_keys(database: str) -> Tuple[Dict[str, str], str]:
         query = 'SELECT name FROM sqlite_master WHERE type == "table"'
         table_names = [table[0] for table in conn.execute(query).fetchall()]
 
+        assert len(table_names) > 0, "No tables found in database."
+
         integer_primary_key = {}
         for table in table_names:
             query = f"SELECT l.name FROM pragma_table_info('{table}') as l WHERE l.pk = 1;"
@@ -63,9 +65,13 @@ def get_primary_keys(database: str) -> Tuple[Dict[str, str], str]:
             primary_key_candidates.append(val)
 
     # There should only be one primary key:
-    assert len(primary_key_candidates) == 1
+    if len(primary_key_candidates) > 0:
+        assert len(primary_key_candidates) == 1
+        primary_key_name = primary_key_candidates[0]
+    else:
+        primary_key_name = None
 
-    return integer_primary_key, primary_key_candidates[0]
+    return integer_primary_key, primary_key_name
 
 
 def database_table_exists(database_path: str, table_name: str) -> bool:

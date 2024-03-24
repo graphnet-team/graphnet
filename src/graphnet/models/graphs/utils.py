@@ -1,7 +1,12 @@
 """Utility functions for construction of graphs."""
 
 from typing import List, Tuple
+import os
 import numpy as np
+import pandas as pd
+from scipy.interpolate import interp1d
+from sklearn.preprocessing import RobustScaler
+from graphnet.constants import DATA_DIR
 
 
 def lex_sort(x: np.array, cluster_columns: List[int]) -> np.ndarray:
@@ -158,3 +163,31 @@ def cluster_summarize_with_percentiles(
         )
 
     return array
+
+
+def ice_transparency() -> Tuple[interp1d, interp1d]:
+    """Return interpolation functions for optical properties of IceCube.
+
+        NOTE: The resulting interpolation functions assumes that the
+        Z-coordinate of pulse are scaled as `z = z/500`.
+        Any deviation from this scaling method results in inaccurate results.
+
+    Returns:
+        f_scattering: Function that takes a normalized depth and returns the
+                      corresponding normalized scattering length.
+        f_absorption: Function that takes a normalized depth and returns the
+                      corresponding normalized absorption length.
+    """
+    # Data from page 31 of https://arxiv.org/pdf/1301.5361.pdf
+    df = pd.read_parquet(
+        os.path.join(DATA_DIR, "ice_properties/ice_transparency.parquet"),
+    )
+    df["z"] = df["depth"] - 1950
+    df["z_norm"] = df["z"] / 500
+    df[
+        ["scattering_len_norm", "absorption_len_norm"]
+    ] = RobustScaler().fit_transform(df[["scattering_len", "absorption_len"]])
+
+    f_scattering = interp1d(df["z_norm"], df["scattering_len_norm"])
+    f_absorption = interp1d(df["z_norm"], df["absorption_len_norm"])
+    return f_scattering, f_absorption
