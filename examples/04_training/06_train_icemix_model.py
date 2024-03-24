@@ -1,16 +1,9 @@
 """Example of training Model.
 
-This example is based on Icemix solution proposed in https://github.com/DrHB/icecube-2nd-place.git (2nd place solution).
+This example is based on Icemix solution proposed in 
+https://github.com/DrHB/icecube-2nd-place.git (2nd place solution).
 There are a few things to note about this example:
 
-- Random samplin of the pulses will be random if no hlc field is defined.
-- hlc pulse will be flipped, since this is how the original model were trained.
-
-There weights of 5 different models trained for the competitio are available
-under /src/graphnet/models/pretrained/icemix/ directory.
-
-- For those weights the the Direction label has X and Y coordinates flipped, so
-some work has to be performed in that sense.
 """
 
 import os
@@ -20,8 +13,6 @@ from typing import Any, Dict, List, Optional
 from pytorch_lightning.loggers import WandbLogger
 from torch.optim.adam import Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-
-from torch.nn import GELU
 
 from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
@@ -101,7 +92,7 @@ def main(
         input_feature_names=features,
         columns=[0, 1, 2, 3],
     )
-    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_tito_model")
+    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_icemix_model")
     run_name = "Icemix_{}_example".format(config["target"])
     if wandb:
         # Log configuration to W&B
