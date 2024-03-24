@@ -1,8 +1,12 @@
 """Module for combining multiple extractors into a single extractor."""
+from typing import TYPE_CHECKING
+
+from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors.icecube.i3extractor import I3Extractor
 from typing import List, Dict
 
-from icecube import icetray
+if has_icecube_package() or TYPE_CHECKING:
+    from icecube import icetray  # pyright: reportMissingImports=false
 
 
 class CombinedExtractor(I3Extractor):
