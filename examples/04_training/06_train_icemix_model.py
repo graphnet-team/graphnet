@@ -6,7 +6,6 @@ few things to note about this example:
 """
 
 import os
-import torch
 from typing import Any, Dict, List, Optional
 
 from pytorch_lightning.loggers import WandbLogger
