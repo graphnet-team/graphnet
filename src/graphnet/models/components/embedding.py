@@ -95,25 +95,25 @@ class FourierEncoder(LightningModule):
     ) -> Tensor:
         """Forward pass."""
         length = torch.log10(seq_length.to(dtype=x.dtype))
-        b = [
+        embeddings = [
             self.sin_emb(4096 * x[:, :, :3]).flatten(-2),  # Position
             self.sin_emb(1024 * x[:, :, 4]),  # Charge
             self.sin_emb(4096 * x[:, :, 3]),  # Time
         ]
 
         if self.n_features >= 5:
-            b.append(self.aux_emb(x[:, :, 5].long()))  # Auxiliary
+            embeddings.append(self.aux_emb(x[:, :, 5].long()))  # Auxiliary
         elif self.n_features < 4:
             raise ValueError(
                 f"At least x_dom, y_dom, z_dom, charge and "
                 f"dom_time are required. Got only "
                 f"{self.n_features} features."
             )
-        b.append(
+        embeddings.append(
             self.sin_emb2(length).unsqueeze(1).expand(-1, max(seq_length), -1)
         )  # Length
 
-        x = torch.cat(b, -1)
+        x = torch.cat(embeddings, -1)
         x = self.projection(x)
         return x
 
