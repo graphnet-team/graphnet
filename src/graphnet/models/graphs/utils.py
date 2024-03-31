@@ -184,8 +184,6 @@ def ice_transparency() -> Tuple[interp1d, interp1d]:
     )
     df["z"] = df["depth"] - 1950
     df["z_norm"] = df["z"] / 500
-    df["z"] = df["depth"] - 1950 + 350
-    df["z_norm"] = df["z"] / 100
     df[
         ["scattering_len_norm", "absorption_len_norm"]
     ] = RobustScaler().fit_transform(df[["scattering_len", "absorption_len"]])
