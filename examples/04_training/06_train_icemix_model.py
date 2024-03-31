@@ -1,9 +1,8 @@
 """Example of training Model.
 
-This example is based on Icemix solution proposed in 
-https://github.com/DrHB/icecube-2nd-place.git (2nd place solution).
-There are a few things to note about this example:
-
+This example is based on Icemix solution proposed in
+https://github.com/DrHB/icecube-2nd-place.git (2nd place solution). There are a
+few things to note about this example:
 """
 
 import os

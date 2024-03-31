@@ -107,7 +107,7 @@ class DeepIce(GNN):
                     (336, 256),
                 ],
                 global_pooling_schemes=None,
-                activation_layer='gelu', 
+                activation_layer="gelu",
                 add_norm_layer=True,
                 skip_readout=True,
             )
