@@ -86,6 +86,11 @@ def main(
             max_pulses=128,
             z_name="sensor_pos_z",
             hlc_name=None,
+            add_ice_properties=True,
+            ice_args={
+                "z_offset": -1650,
+                "z_scaling": 100,
+            },
         ),
         input_feature_names=features,
         columns=[0, 1, 2, 3],

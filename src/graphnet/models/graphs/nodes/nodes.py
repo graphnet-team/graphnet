@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional, Union
+from typing import List, Tuple, Optional, Union, Dict
 from abc import abstractmethod
 
 import torch
@@ -321,6 +321,7 @@ class IceMixNodes(NodeDefinition):
         z_name: str = "dom_z",
         hlc_name: Optional[str] = "hlc",
         add_ice_properties: bool = True,
+        ice_args: Optional[Dict[str, Union[int, float]]] = None,
     ) -> None:
         """Construct `IceMixNodes`.
 
@@ -332,6 +333,8 @@ class IceMixNodes(NodeDefinition):
             hlc_name: Name of the `Hard Local Coincidence Check` column.
             add_ice_properties: If True, scattering and absoption length of
             ice in IceCube are added to the feature set based on z coordinate.
+            ice_args: Offset and scaling of the z coordinate in the Detector,
+            to be able to make similar conversion in the ice data.
         """
         if input_feature_names is None:
             input_feature_names = [
@@ -354,7 +357,7 @@ class IceMixNodes(NodeDefinition):
                 "scatt_lenght",
                 "abs_lenght",
             ]
-            self.f_scattering, self.f_absoprtion = ice_transparency()
+            self.f_scattering, self.f_absoprtion = ice_transparency(ice_args)
 
         super().__init__(input_feature_names=input_feature_names)
 

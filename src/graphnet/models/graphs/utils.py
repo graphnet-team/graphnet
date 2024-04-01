@@ -1,6 +1,6 @@
 """Utility functions for construction of graphs."""
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Dict, Union
 import os
 import numpy as np
 import pandas as pd
@@ -165,7 +165,9 @@ def cluster_summarize_with_percentiles(
     return array
 
 
-def ice_transparency() -> Tuple[interp1d, interp1d]:
+def ice_transparency(
+    scaling_args: Optional[Dict[str, Union[int, float]]] = None
+) -> Tuple[interp1d, interp1d]:
     """Return interpolation functions for optical properties of IceCube.
 
         NOTE: The resulting interpolation functions assumes that the
@@ -182,8 +184,22 @@ def ice_transparency() -> Tuple[interp1d, interp1d]:
     df = pd.read_parquet(
         os.path.join(DATA_DIR, "ice_properties/ice_transparency.parquet"),
     )
-    df["z"] = df["depth"] - 1950
-    df["z_norm"] = df["z"] / 500
+
+    if scaling_args is None:
+        z_offset = -1950.0
+        z_scaling = 500.0
+    else:
+        if not all(
+            key in scaling_args.keys() for key in ["z_offset", "z_scaling"]
+        ):
+            raise ValueError(
+                f"scaling_args must contain keys 'z_offset' and 'z_scaling', "
+                f"got {scaling_args.keys()}"
+            )
+        z_offset = scaling_args["z_offset"]
+        z_scaling = scaling_args["z_scaling"]
+
+    df["z_norm"] = (df["depth"] + z_offset) / z_scaling
     df[
         ["scattering_len_norm", "absorption_len_norm"]
     ] = RobustScaler().fit_transform(df[["scattering_len", "absorption_len"]])
