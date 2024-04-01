@@ -166,13 +166,17 @@ def cluster_summarize_with_percentiles(
 
 
 def ice_transparency(
-    scaling_args: Optional[Dict[str, Union[int, float]]] = None
+    z_offset: float = None, z_scaling: float = None
 ) -> Tuple[interp1d, interp1d]:
     """Return interpolation functions for optical properties of IceCube.
 
         NOTE: The resulting interpolation functions assumes that the
         Z-coordinate of pulse are scaled as `z = z/500`.
         Any deviation from this scaling method results in inaccurate results.
+
+    Args:
+        z_offset: Offset to be added to the depth of the DOM.
+        z_scaling: Scaling factor to be applied to the depth of the DOM.
 
     Returns:
         f_scattering: Function that takes a normalized depth and returns the
@@ -185,19 +189,8 @@ def ice_transparency(
         os.path.join(DATA_DIR, "ice_properties/ice_transparency.parquet"),
     )
 
-    if scaling_args is None:
-        z_offset = -1950.0
-        z_scaling = 500.0
-    else:
-        if not all(
-            key in scaling_args.keys() for key in ["z_offset", "z_scaling"]
-        ):
-            raise ValueError(
-                f"scaling_args must contain keys 'z_offset' and 'z_scaling', "
-                f"got {scaling_args.keys()}"
-            )
-        z_offset = scaling_args["z_offset"]
-        z_scaling = scaling_args["z_scaling"]
+    z_offset = z_offset or -1950.0
+    z_scaling = z_scaling or 500.0
 
     df["z_norm"] = (df["depth"] + z_offset) / z_scaling
     df[

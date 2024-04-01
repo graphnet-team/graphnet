@@ -9,7 +9,7 @@ Solution by DrHB: https://github.com/DrHB/icecube-2nd-place
 """
 import torch
 import torch.nn as nn
-from typing import Set, Dict, Any, List
+from typing import Set, Dict, Any
 
 from graphnet.models.components.layers import (
     Block_rel,

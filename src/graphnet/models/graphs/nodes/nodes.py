@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional, Union, Dict
+from typing import List, Tuple, Optional, Dict
 from abc import abstractmethod
 
 import torch
@@ -321,7 +321,10 @@ class IceMixNodes(NodeDefinition):
         z_name: str = "dom_z",
         hlc_name: Optional[str] = "hlc",
         add_ice_properties: bool = True,
-        ice_args: Optional[Dict[str, Union[int, float]]] = None,
+        ice_args: Dict[str, Optional[float]] = {
+            "z_offset": None,
+            "z_scaling": None,
+        },
     ) -> None:
         """Construct `IceMixNodes`.
 
@@ -357,7 +360,7 @@ class IceMixNodes(NodeDefinition):
                 "scatt_lenght",
                 "abs_lenght",
             ]
-            self.f_scattering, self.f_absoprtion = ice_transparency(ice_args)
+            self.f_scattering, self.f_absoprtion = ice_transparency(**ice_args)
 
         super().__init__(input_feature_names=input_feature_names)
 

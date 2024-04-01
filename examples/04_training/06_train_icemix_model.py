@@ -88,8 +88,8 @@ def main(
             hlc_name=None,
             add_ice_properties=True,
             ice_args={
-                "z_offset": -1650,
-                "z_scaling": 100,
+                "z_offset": -1650.0,
+                "z_scaling": 100.0,
             },
         ),
         input_feature_names=features,
