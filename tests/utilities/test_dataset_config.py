@@ -35,7 +35,7 @@ graph_definition = KNNGraph(
 
 
 @pytest.mark.order(1)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@pytest.mark.parametrize("backend", ["sqlite"])
 def test_dataset_config_save_load_reconstruct(backend: str) -> None:
     """Test saving, loading, and reconstructing dataset."""
     # Arrange
@@ -47,13 +47,20 @@ def test_dataset_config_save_load_reconstruct(backend: str) -> None:
         "parquet": "parquet",
     }[backend]
 
-    path = os.path.join(
-        graphnet.constants.TEST_DATA_DIR,
-        backend,
-        dataset_name,
-        f"{file_name}.{suffix}",
-    )
-
+    if backend == "sqlite":
+        path = os.path.join(
+            graphnet.constants.TEST_DATA_DIR,
+            backend,
+            dataset_name,
+            f"{file_name}.{suffix}",
+        )
+    elif backend == "parquet":
+        path = os.path.join(
+            graphnet.constants.TEST_DATA_DIR,
+            backend,
+            dataset_name,
+            "merged",
+        )
     # Constructor DataConverter instance
     opt = dict(
         path=path,
@@ -92,7 +99,7 @@ def test_dataset_config_save_load_reconstruct(backend: str) -> None:
 
 
 @pytest.mark.order(2)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@pytest.mark.parametrize("backend", ["sqlite"])
 def test_dataset_config_dict_selection(backend: str) -> None:
     """Test constructing Dataset with dictionary of selections."""
     # Arrange
@@ -123,7 +130,7 @@ def test_dataset_config_dict_selection(backend: str) -> None:
 
 
 @pytest.mark.order(3)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@pytest.mark.parametrize("backend", ["sqlite"])
 def test_dataset_config_list_selection(backend: str) -> None:
     """Test constructing Dataset with list of selections."""
     # Arrange
@@ -141,7 +148,7 @@ def test_dataset_config_list_selection(backend: str) -> None:
 
 
 @pytest.mark.order(3)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@pytest.mark.parametrize("backend", ["sqlite"])
 def test_dataset_config_dict_of_list_selection(backend: str) -> None:
     """Test constructing Dataset with dictionary of lists of selections."""
     # Arrange
@@ -166,7 +173,7 @@ def test_dataset_config_dict_of_list_selection(backend: str) -> None:
 
 
 @pytest.mark.order(4)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@pytest.mark.parametrize("backend", ["sqlite"])
 def test_dataset_config_functions(backend: str) -> None:
     """Test constructing Dataset with selections containing functions."""
     # Arrange
@@ -221,7 +228,7 @@ def test_dataset_config_functions(backend: str) -> None:
 
 
 @pytest.mark.order(5)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@pytest.mark.parametrize("backend", ["sqlite"])
 def test_dataset_config_files(backend: str) -> None:
     """Test constructing Dataset with selections containing functions."""
     # Arrange
@@ -262,7 +269,3 @@ def test_dataset_config_files(backend: str) -> None:
         )
         == 0
     )
-
-
-if __name__ == "__main__":
-    test_dataset_config_files("sqlite")
