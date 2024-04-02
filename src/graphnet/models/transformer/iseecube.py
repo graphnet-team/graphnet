@@ -2,6 +2,7 @@
 
 https://github.com/ChenLi2049/ISeeCube/
 """
+
 import torch
 import torch.nn as nn
 
@@ -80,9 +81,7 @@ class ISeeCube(GNN):
 
     def forward(self, data: Data) -> Tensor:
         """Apply learnable forward pass."""
-        x, _, _ = array_to_sequence(
-            data.x, data.batch, padding_value=0
-        )
+        x, _, _ = array_to_sequence(data.x, data.batch, padding_value=0)
         x = self.fourier_ext(x)
         batch_size = x.shape[0]
 
