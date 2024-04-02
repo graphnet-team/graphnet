@@ -53,7 +53,9 @@ class FourierEncoder(LightningModule):
 
     This module incorporates sinusoidal positional embeddings and auxiliary
     embeddings to process input sequences and produce meaningful
-    representations.
+    representations. The module assumes that the input data is in the format of
+    (x, y, z, time, charge, auxiliary), being the first four features
+    mandatory.
     """
 
     def __init__(
@@ -73,12 +75,21 @@ class FourierEncoder(LightningModule):
             n_features: The number of features in the input data.
         """
         super().__init__()
+
         self.sin_emb = SinusoidalPosEmb(dim=seq_length, scaled=scaled)
         self.aux_emb = nn.Embedding(2, seq_length // 2)
         self.sin_emb2 = SinusoidalPosEmb(dim=seq_length // 2, scaled=scaled)
-        hidden_dim = (
-            6 * seq_length if n_features >= 5 else int(5.5 * seq_length)
-        )
+
+        if n_features < 4:
+            raise ValueError(
+                f"At least x, y, z and time of the DOM are required. Got only "
+                f"{n_features} features."
+            )
+        elif n_features >= 6:
+            hidden_dim = 6 * seq_length
+        else:
+            hidden_dim = int((n_features + 0.5) * seq_length)
+
         self.projection = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             nn.LayerNorm(hidden_dim),
@@ -95,20 +106,16 @@ class FourierEncoder(LightningModule):
     ) -> Tensor:
         """Forward pass."""
         length = torch.log10(seq_length.to(dtype=x.dtype))
-        embeddings = [
-            self.sin_emb(4096 * x[:, :, :3]).flatten(-2),  # Position
-            self.sin_emb(1024 * x[:, :, 4]),  # Charge
-            self.sin_emb(4096 * x[:, :, 3]),  # Time
-        ]
+        embeddings = [self.sin_emb(4096 * x[:, :, :3]).flatten(-2)]  # Position
 
         if self.n_features >= 5:
+            embeddings.append(self.sin_emb(1024 * x[:, :, 4]))  # Charge
+
+        embeddings.append(self.sin_emb(4096 * x[:, :, 3]))  # Time
+
+        if self.n_features >= 6:
             embeddings.append(self.aux_emb(x[:, :, 5].long()))  # Auxiliary
-        elif self.n_features < 4:
-            raise ValueError(
-                f"At least x_dom, y_dom, z_dom, charge and "
-                f"dom_time are required. Got only "
-                f"{self.n_features} features."
-            )
+
         embeddings.append(
             self.sin_emb2(length).unsqueeze(1).expand(-1, max(seq_length), -1)
         )  # Length

@@ -361,6 +361,8 @@ class IceMixNodes(NodeDefinition):
                 "abs_lenght",
             ]
             self.f_scattering, self.f_absoprtion = ice_transparency(**ice_args)
+        else:
+            self.all_features = input_feature_names
 
         super().__init__(input_feature_names=input_feature_names)
 
