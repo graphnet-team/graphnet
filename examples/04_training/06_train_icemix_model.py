@@ -1,8 +1,7 @@
 """Example of training Model.
 
 This example is based on Icemix solution proposed in
-https://github.com/DrHB/icecube-2nd-place.git (2nd place solution). There are a
-few things to note about this example:
+https://github.com/DrHB/icecube-2nd-place.git (2nd place solution).
 """
 
 import os
@@ -86,11 +85,7 @@ def main(
             max_pulses=128,
             z_name="sensor_pos_z",
             hlc_name=None,
-            add_ice_properties=True,
-            ice_args={
-                "z_offset": -1650.0,
-                "z_scaling": 100.0,
-            },
+            add_ice_properties=False,
         ),
         input_feature_names=features,
         columns=[0, 1, 2, 3],
