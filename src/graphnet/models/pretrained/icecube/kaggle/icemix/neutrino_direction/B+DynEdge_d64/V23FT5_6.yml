@@ -1,0 +1,68 @@
+arguments:
+  backbone:
+    ModelConfig:
+      arguments:
+        depth: 12
+        depth_rel: 4
+        dynedge_args:
+          activation_layer: gelu
+          add_norm_layer: true
+          dynedge_layer_sizes:
+          - [128, 256]
+          - [336, 256]
+          - [336, 256]
+          - [336, 256]
+          global_pooling_schemes: null
+          nb_inputs: 8
+          nb_neighbours: 9
+          post_processing_layer_sizes: [336, 384]
+          skip_readout: true
+        head_size: 64
+        hidden_dim: 768
+        include_dynedge: true
+        n_features: 6
+        n_rel: 4
+        scaled_emb: true
+        seq_length: 192
+      class_name: DeepIce
+  gnn: null
+  graph_definition:
+    ModelConfig:
+      arguments:
+        columns: [0, 1, 2, 3]
+        detector:
+          ModelConfig:
+            arguments: {}
+            class_name: IceCubeKaggle
+        dtype: torch.float32
+        input_feature_names: [x, y, z, time, charge, auxiliary]
+        nb_nearest_neighbours: 6
+        node_definition:
+          ModelConfig:
+            arguments:
+              add_ice_properties: true
+              hlc_name: auxiliary
+              input_feature_names: [x, y, z, time, charge, auxiliary]
+              max_pulses: 192
+              z_name: z
+            class_name: IceMixNodes
+        perturbation_dict: null
+        seed: null
+      class_name: KNNGraph
+  optimizer_class: '!class torch.optim.adamw AdamW'
+  optimizer_kwargs: {eps: 1e-07, lr: 1e-05, weight_decay: 0.05}
+  scheduler_class: '!class torch.optim.lr_scheduler OneCycleLR'
+  scheduler_config: {frequency: 1, interval: step, monitor: val_loss}
+  scheduler_kwargs: {anneal_strategy: cos, div_factor: 25, epochs: 1, final_div_factor: 25,
+    max_lr: 1e-05, pct_start: 0.01, steps_per_epoch: null}
+  tasks:
+  - ModelConfig:
+      arguments:
+        hidden_size: 768
+        loss_function:
+          ModelConfig:
+            arguments: {}
+            class_name: VonMisesFisher3DLoss
+        target_labels: direction
+      class_name: DirectionReconstructionWithKappa
+class_name: StandardModel
