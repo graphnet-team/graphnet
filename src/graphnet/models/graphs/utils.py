@@ -1,6 +1,6 @@
 """Utility functions for construction of graphs."""
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Dict, Union
 import os
 import numpy as np
 import pandas as pd
@@ -165,12 +165,18 @@ def cluster_summarize_with_percentiles(
     return array
 
 
-def ice_transparency() -> Tuple[interp1d, interp1d]:
+def ice_transparency(
+    z_offset: float = None, z_scaling: float = None
+) -> Tuple[interp1d, interp1d]:
     """Return interpolation functions for optical properties of IceCube.
 
         NOTE: The resulting interpolation functions assumes that the
         Z-coordinate of pulse are scaled as `z = z/500`.
         Any deviation from this scaling method results in inaccurate results.
+
+    Args:
+        z_offset: Offset to be added to the depth of the DOM.
+        z_scaling: Scaling factor to be applied to the depth of the DOM.
 
     Returns:
         f_scattering: Function that takes a normalized depth and returns the
@@ -182,8 +188,11 @@ def ice_transparency() -> Tuple[interp1d, interp1d]:
     df = pd.read_parquet(
         os.path.join(DATA_DIR, "ice_properties/ice_transparency.parquet"),
     )
-    df["z"] = df["depth"] - 1950
-    df["z_norm"] = df["z"] / 500
+
+    z_offset = z_offset or -1950.0
+    z_scaling = z_scaling or 500.0
+
+    df["z_norm"] = (df["depth"] + z_offset) / z_scaling
     df[
         ["scattering_len_norm", "absorption_len_norm"]
     ] = RobustScaler().fit_transform(df[["scattering_len", "absorption_len"]])
