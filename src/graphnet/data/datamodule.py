@@ -1,7 +1,6 @@
 """Base `Dataloader` class(es) used in `graphnet`."""
 from typing import Dict, Any, Optional, List, Tuple, Union
 import pytorch_lightning as pl
-from torch.utils.data import DataLoader
 from copy import deepcopy
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -13,7 +12,7 @@ from graphnet.data.dataset import (
     ParquetDataset,
 )
 from graphnet.utilities.logging import Logger
-from graphnet.training.utils import collate_fn
+from graphnet.data.dataloader import DataLoader
 
 
 class GraphNeTDataModule(pl.LightningDataModule, Logger):
@@ -66,21 +65,12 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._validation_dataloader_kwargs = validation_dataloader_kwargs or {}
         self._test_dataloader_kwargs = test_dataloader_kwargs or {}
 
-        self._resolve_dataloader_kwargs()
         # If multiple dataset paths are given, we should use EnsembleDataset
         self._use_ensemble_dataset = isinstance(
             self._dataset_args["path"], list
         )
 
         self.setup("fit")
-
-    def _resolve_dataloader_kwargs(self) -> None:
-        if "collate_fn" not in self._train_dataloader_kwargs:
-            self._train_dataloader_kwargs["collate_fn"] = collate_fn
-        if "collate_fn" not in self._validation_dataloader_kwargs:
-            self._validation_dataloader_kwargs["collate_fn"] = collate_fn
-        if "collate_fn" not in self._test_dataloader_kwargs:
-            self._test_dataloader_kwargs["collate_fn"] = collate_fn
 
     def prepare_data(self) -> None:
         """Prepare the dataset for training."""
