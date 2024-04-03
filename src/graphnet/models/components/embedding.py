@@ -61,7 +61,7 @@ class FourierEncoder(LightningModule):
     def __init__(
         self,
         seq_length: int = 128,
-        mlp_dim: int = 768,
+        mlp_dim: int = 1536,
         output_dim: int = 384,
         scaled: bool = False,
         n_features: int = 6,
@@ -92,11 +92,11 @@ class FourierEncoder(LightningModule):
         else:
             hidden_dim = int((n_features + 0.5) * seq_length)
 
-        self.projection = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
+        self.mlp = nn.Sequential(
+            nn.Linear(hidden_dim, mlp_dim),
+            nn.LayerNorm(mlp_dim),
             nn.GELU(),
-            nn.Linear(hidden_dim, output_dim),
+            nn.Linear(mlp_dim, output_dim),
         )
 
         self.n_features = n_features
@@ -123,7 +123,7 @@ class FourierEncoder(LightningModule):
         )  # Length
 
         x = torch.cat(embeddings, -1)
-        x = self.projection(x)
+        x = self.mlp(x)
 
         return x
 
