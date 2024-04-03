@@ -13,6 +13,7 @@ from graphnet.data.dataset import (
     ParquetDataset,
 )
 from graphnet.utilities.logging import Logger
+from graphnet.training.utils import collate_fn
 
 
 class GraphNeTDataModule(pl.LightningDataModule, Logger):
@@ -65,12 +66,22 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._validation_dataloader_kwargs = validation_dataloader_kwargs or {}
         self._test_dataloader_kwargs = test_dataloader_kwargs or {}
 
+        self._resolve_dataloader_kwargs()
+
         # If multiple dataset paths are given, we should use EnsembleDataset
         self._use_ensemble_dataset = isinstance(
             self._dataset_args["path"], list
         )
 
         self.setup("fit")
+
+    def _resolve_dataloader_kwargs(self) -> None:
+        if "collate_fn" not in self._train_dataloader_kwargs:
+            self._train_dataloader_kwargs["collate_fn"] = collate_fn
+        if "collate_fn" not in self._validation_dataloader_kwargs:
+            self._validation_dataloader_kwargs["collate_fn"] = collate_fn
+        if "collate_fn" not in self._test_dataloader_kwargs:
+            self._test_dataloader_kwargs["collate_fn"] = collate_fn
 
     def prepare_data(self) -> None:
         """Prepare the dataset for training."""
@@ -316,7 +327,6 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         Returns:
             Training selection, Validation selection.
         """
-        print(selection)
         assert isinstance(selection, (int, list))
         if isinstance(selection, int):
             flat_selection = [selection]

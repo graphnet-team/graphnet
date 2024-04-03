@@ -15,7 +15,7 @@ def main(backend: str) -> None:
     """Convert h5 files from LiquidO to intermediate `backend` format."""
     # Fixed inputs
     input_dir = [f"{TEST_DATA_DIR}/liquid-o"]
-    outdir = f"{EXAMPLE_OUTPUT_DIR}/liquid-o/{backend}"
+    outdir = "/home/iwsatlas1/oersoe/phd/tmp/liquid-o/outdir"  # f"{EXAMPLE_OUTPUT_DIR}/liquid-o/{backend}"
     num_workers = 1
 
     if backend == "parquet":
@@ -33,7 +33,7 @@ def main(backend: str) -> None:
 
     converter(input_dir=input_dir)
 
-    converter.merge_files()
+    converter.merge_files(events_per_batch=20)
 
 
 if __name__ == "__main__":

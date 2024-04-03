@@ -28,7 +28,7 @@ class LiquidO_v1(Detector):
         }
         return feature_map
 
-    def _sipm_xyz_xyz(self, x: torch.tensor) -> torch.tensor:
+    def _sipm_xyz(self, x: torch.tensor) -> torch.tensor:
         return x / 1000
 
     def _t(self, x: torch.tensor) -> torch.tensor:
