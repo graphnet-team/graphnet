@@ -30,7 +30,6 @@ from graphnet.models.graphs import GraphDefinition
 from graphnet.data.dataset import Dataset
 from graphnet.exceptions.exceptions import ColumnMissingException
 
-
 # Force spawn-method
 try:
     torch.multiprocessing.set_start_method("spawn")
@@ -202,7 +201,6 @@ class ParquetDataset(Dataset):
         """Calculate the number of events in each batch."""
         sizes = []
         for batch_id in self._indices:
-            print(batch_id)
             path = os.path.join(
                 self._path,
                 self._truth_table,
@@ -304,7 +302,6 @@ class ParquetDataset(Dataset):
             file_path = os.path.join(
                 self._path, table_name, f"{table_name}_{file_idx}.parquet"
             )
-            print(file_idx)
             df = pol.read_parquet(file_path).sort(self._index_column)
             if (table_name in self._pulsemaps) or (
                 table_name == self._node_truth_table
