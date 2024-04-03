@@ -34,6 +34,7 @@ class DeepIce(GNN):
     def __init__(
         self,
         hidden_dim: int = 384,
+        mlp_ratio: int = 4,
         seq_length: int = 192,
         depth: int = 12,
         head_size: int = 32,
@@ -48,6 +49,7 @@ class DeepIce(GNN):
 
         Args:
             hidden_dim: The latent feature dimension.
+            mlp_ratio: Mlp expansion ratio of FourierEncoder and Transformer.
             seq_length: The base feature dimension.
             depth: The depth of the transformer.
             head_size: The size of the attention heads.
@@ -65,8 +67,9 @@ class DeepIce(GNN):
         super().__init__(seq_length, hidden_dim)
         fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
         self.fourier_ext = FourierEncoder(
-            seq_length,
-            fourier_out_dim,
+            seq_length=seq_length,
+            mlp_dim=hidden_dim * mlp_ratio,
+            output_dim=hidden_dim,
             scaled=scaled_emb,
             n_features=n_features,
         )
@@ -85,7 +88,7 @@ class DeepIce(GNN):
                 Block(
                     input_dim=hidden_dim,
                     num_heads=hidden_dim // head_size,
-                    mlp_ratio=4,
+                    mlp_ratio=mlp_ratio,
                     drop_path=0.0 * (i / (depth - 1)),
                     init_values=1,
                 )
