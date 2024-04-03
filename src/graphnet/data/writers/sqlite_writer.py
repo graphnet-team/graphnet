@@ -24,6 +24,7 @@ class SQLiteWriter(GraphNeTWriter):
         self,
         merged_database_name: str = "merged.db",
         max_table_size: Optional[int] = None,
+        index_column: str = "event_no",
     ) -> None:
         """Initialize `SQLiteWriter`.
 
@@ -37,12 +38,14 @@ class SQLiteWriter(GraphNeTWriter):
                 you have many events, as tables exceeding
                 400 million rows tend to be noticably slower to query.
                 Defaults to None (All events are put into a single database).
+            index_column: Name of column that contains event id.
         """
         # Member Variables
         self._file_extension = ".db"
         self._merge_dataframes = True
         self._max_table_size = max_table_size
         self._database_name = merged_database_name
+        self._index_column = index_column
 
         # Add file extension to database name if forgotten
         if not self._database_name.endswith(self._file_extension):
@@ -83,6 +86,7 @@ class SQLiteWriter(GraphNeTWriter):
                     output_file_path,
                     default_type="FLOAT",
                     integer_primary_key=len(df) <= n_events,
+                    index_column=self._index_column,
                 )
                 saved_any = True
 
