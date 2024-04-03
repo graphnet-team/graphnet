@@ -69,7 +69,7 @@ class DeepIce(GNN):
         self.fourier_ext = FourierEncoder(
             seq_length=seq_length,
             mlp_dim=hidden_dim * mlp_ratio,
-            output_dim=hidden_dim,
+            output_dim=fourier_out_dim,
             scaled=scaled_emb,
             n_features=n_features,
         )
