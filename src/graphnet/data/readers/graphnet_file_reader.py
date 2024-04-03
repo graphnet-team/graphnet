@@ -16,6 +16,7 @@ from graphnet.data.dataclasses import I3FileSet
 from graphnet.data.extractors.extractor import Extractor
 from graphnet.data.extractors.icecube import I3Extractor
 from graphnet.data.extractors.internal import ParquetExtractor
+from graphnet.data.extractors.liquido import H5Extractor
 
 
 class GraphNeTFileReader(Logger, ABC):
@@ -93,7 +94,10 @@ class GraphNeTFileReader(Logger, ABC):
     def set_extractors(
         self,
         extractors: Union[
-            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+            List[Extractor],
+            List[I3Extractor],
+            List[ParquetExtractor],
+            List[H5Extractor],
         ],
     ) -> None:
         """Set `Extractor`(s) as member variable.
