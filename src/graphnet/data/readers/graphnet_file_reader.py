@@ -114,7 +114,10 @@ class GraphNeTFileReader(Logger, ABC):
     def _validate_extractors(
         self,
         extractors: Union[
-            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+            List[Extractor],
+            List[I3Extractor],
+            List[ParquetExtractor],
+            List[H5Extractor],
         ],
     ) -> None:
         for extractor in extractors:
