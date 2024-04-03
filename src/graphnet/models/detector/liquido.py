@@ -12,7 +12,7 @@ class LiquidO_v1(Detector):
     """`Detector` class for LiquidO prototype."""
 
     geometry_table_path = os.path.join(
-        LIQUIDO_GEOMETRY_TABLE_DIR, "liquiodo_v1.parquet"
+        LIQUIDO_GEOMETRY_TABLE_DIR, "liquido_v1.parquet"
     )
     xyz = ["sipm_x", "sipm_y", "sipm_z"]
     string_id_column = "fiber_id"
