@@ -385,7 +385,9 @@
 
 <span class="sd">    This module incorporates sinusoidal positional embeddings and auxiliary</span>
 <span class="sd">    embeddings to process input sequences and produce meaningful</span>
-<span class="sd">    representations.</span>
+<span class="sd">    representations. The module assumes that the input data is in the format of</span>
+<span class="sd">    (x, y, z, time, charge, auxiliary), being the first four features</span>
+<span class="sd">    mandatory.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -393,6 +395,7 @@
         <span class="n">seq_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
         <span class="n">output_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">,</span>
         <span class="n">scaled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">n_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `FourierEncoder`.</span>
 
@@ -401,17 +404,32 @@
 <span class="sd">                embeddings.</span>
 <span class="sd">            output_dim: Output dimensionality of the final projection.</span>
 <span class="sd">            scaled: Whether or not to scale the embeddings.</span>
+<span class="sd">            n_features: The number of features in the input data.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aux_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">seq_length</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb2</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n_features</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"At least x, y, z and time of the DOM are required. Got only "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n_features</span><span class="si">}</span><span class="s2"> features."</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">n_features</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">hidden_dim</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hidden_dim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">n_features</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">),</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">),</span>
             <span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">(),</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">),</span>
         <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_features</span> <span class="o">=</span> <span class="n">n_features</span>
 
 <div class="viewcode-block" id="FourierEncoder.forward">
 <a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoder.forward">[docs]</a>
@@ -422,18 +440,21 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Forward pass."""</span>
         <span class="n">length</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">seq_length</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">4096</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># pos</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">]),</span>  <span class="c1"># charge</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">4096</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]),</span>  <span class="c1"># time</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">aux_emb</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">long</span><span class="p">()),</span>  <span class="c1"># auxiliary</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb2</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">seq_length</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">4096</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)]</span>  <span class="c1"># Position</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_features</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">]))</span>  <span class="c1"># Charge</span>
+
+        <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">4096</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]))</span>  <span class="c1"># Time</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_features</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aux_emb</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">long</span><span class="p">()))</span>  <span class="c1"># Auxiliary</span>
+
+        <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb2</span><span class="p">(</span><span class="n">length</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">seq_length</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># Length</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span></div>
 </div>

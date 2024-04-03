@@ -615,12 +615,14 @@ digitization of the input data</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.components.embedding.FourierEncoder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">FourierEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#FourierEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.FourierEncoder" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">FourierEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#FourierEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.FourierEncoder" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
 <p>Fourier encoder module.</p>
 <p>This module incorporates sinusoidal positional embeddings and auxiliary
 embeddings to process input sequences and produce meaningful
-representations.</p>
+representations. The module assumes that the input data is in the format of
+(x, y, z, time, charge, auxiliary), being the first four features
+mandatory.</p>
 <p>Construct <cite>FourierEncoder</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -629,6 +631,7 @@ representations.</p>
 embeddings.</p></li>
 <li><p><strong>output_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">384</span></code>) – Output dimensionality of the final projection.</p></li>
 <li><p><strong>scaled</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether or not to scale the embeddings.</p></li>
+<li><p><strong>n_features</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">6</span></code>) – The number of features in the input data.</p></li>
 </ul>
 </dd>
 </dl>

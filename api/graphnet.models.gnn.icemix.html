@@ -583,7 +583,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hidden_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">384</span></code>) – The latent feature dimension.</p></li>
-<li><p><strong>seq_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">128</span></code>) – The base feature dimension.</p></li>
+<li><p><strong>seq_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">192</span></code>) – The base feature dimension.</p></li>
 <li><p><strong>depth</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">12</span></code>) – The depth of the transformer.</p></li>
 <li><p><strong>head_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">32</span></code>) – The size of the attention heads.</p></li>
 <li><p><strong>depth_rel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">4</span></code>) – The depth of the relative transformer.</p></li>
@@ -595,6 +595,7 @@ will be added as features to the model.</p></li>
 provided, DynEdge will be initialized with the original Kaggle
 Competition settings. If <cite>include_dynedge</cite> is False, this
 argument have no impact.</p></li>
+<li><p><strong>n_features</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">6</span></code>) – The number of features in the input data.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>) – </p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>) – </p></li>
 </ul>
