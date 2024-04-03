@@ -31,6 +31,13 @@ from graphnet.data.dataset import Dataset
 from graphnet.exceptions.exceptions import ColumnMissingException
 
 
+# Force spawn-method
+try:
+    torch.multiprocessing.set_start_method("spawn")
+except RuntimeError:
+    pass
+
+
 class ParquetDataset(Dataset):
     """Dataset class for Parquet-files converted with `ParquetWriter`."""
 
