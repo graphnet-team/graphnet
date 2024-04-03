@@ -5,6 +5,7 @@ import pandas as pd
 import h5py
 
 from graphnet.data.extractors import Extractor
+from graphnet.data.constants import TRUTH, FEATURES
 
 
 class H5Extractor(Extractor):
@@ -48,3 +49,27 @@ class H5Extractor(Extractor):
                 f"that the column names match. ({self._column_names})"
             )
             raise e
+
+
+class H5HitExtractor(H5Extractor):
+    """Extractor for `HitData` in LiquidO H5 files."""
+
+    def __init__(self) -> None:
+        """Extractor for `HitData` in LiquidO H5 files."""
+        # Base class constructor
+        super().__init__(
+            extractor_name="HitData",
+            column_names=["event_no"] + FEATURES.LIQUIDO,
+        )
+
+
+class H5TruthExtractor(H5Extractor):
+    """Extractor for `TruthData` in LiquidO H5 files."""
+
+    def __init__(self) -> None:
+        """Extractor for `TruthData` in LiquidO H5 files."""
+        # Base class constructor
+        super().__init__(
+            extractor_name="TruthData",
+            column_names=["event_no"] + TRUTH.LIQUIDO,
+        )

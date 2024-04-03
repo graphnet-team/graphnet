@@ -4,7 +4,7 @@ import os
 from glob import glob
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
-from graphnet.data.extractors.liquido import H5Extractor
+from graphnet.data.extractors.liquido import H5HitExtractor, H5TruthExtractor
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.readers import LiquidOReader
 from graphnet.data.writers import ParquetWriter, SQLiteWriter
@@ -21,18 +21,12 @@ def main(backend: str) -> None:
     if backend == "parquet":
         save_method = ParquetWriter(truth_table="TruthData")
     elif backend == "sqlite":
-        save_method = SQLiteWriter()
+        save_method = SQLiteWriter()  # type: ignore
 
-    truth_extractor = H5Extractor(
-        "TruthData", ["event_no", "x", "y", "z", "ze", "az", "t", "E", "pid"]
-    )
-    hit_extractor = H5Extractor(
-        "HitData", ["event_no", "sipmID", "x", "y", "z", "t", "var"]
-    )
     converter = DataConverter(
         file_reader=LiquidOReader(),
         save_method=save_method,
-        extractors=[truth_extractor, hit_extractor],
+        extractors=[H5HitExtractor(), H5TruthExtractor()],
         outdir=outdir,
         num_workers=num_workers,
     )
