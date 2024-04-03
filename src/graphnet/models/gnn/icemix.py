@@ -9,7 +9,7 @@ Solution by DrHB: https://github.com/DrHB/icecube-2nd-place
 """
 import torch
 import torch.nn as nn
-from typing import Set, Dict, Any, List
+from typing import Set, Dict, Any
 
 from graphnet.models.components.layers import (
     Block_rel,
@@ -34,7 +34,7 @@ class DeepIce(GNN):
     def __init__(
         self,
         hidden_dim: int = 384,
-        seq_length: int = 128,
+        seq_length: int = 192,
         depth: int = 12,
         head_size: int = 32,
         depth_rel: int = 4,
@@ -42,6 +42,7 @@ class DeepIce(GNN):
         scaled_emb: bool = False,
         include_dynedge: bool = False,
         dynedge_args: Dict[str, Any] = None,
+        n_features: int = 6,
     ):
         """Construct `DeepIce`.
 
@@ -59,13 +60,15 @@ class DeepIce(GNN):
                 provided, DynEdge will be initialized with the original Kaggle
                 Competition settings. If `include_dynedge` is False, this
                 argument have no impact.
+            n_features: The number of features in the input data.
         """
         super().__init__(seq_length, hidden_dim)
         fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
         self.fourier_ext = FourierEncoder(
-            seq_length=seq_length,
-            output_dim=fourier_out_dim,
+            seq_length,
+            fourier_out_dim,
             scaled=scaled_emb,
+            n_features=n_features,
         )
         self.rel_pos = SpacetimeEncoder(head_size)
         self.sandwich = nn.ModuleList(
@@ -104,7 +107,7 @@ class DeepIce(GNN):
                     (336, 256),
                 ],
                 global_pooling_schemes=None,
-                activation_layer=nn.GELU(),
+                activation_layer="gelu",
                 add_norm_layer=True,
                 skip_readout=True,
             )
