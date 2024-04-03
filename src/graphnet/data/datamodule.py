@@ -13,7 +13,6 @@ from graphnet.data.dataset import (
     ParquetDataset,
 )
 from graphnet.utilities.logging import Logger
-from graphnet.training.utils import collate_fn
 
 
 class GraphNeTDataModule(pl.LightningDataModule, Logger):
