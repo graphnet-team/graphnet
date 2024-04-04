@@ -23,6 +23,7 @@ extractors
 .. toctree::
    :maxdepth: 2
 
+   graphnet.data.extractors.combine_extractors
    graphnet.data.extractors.extractor
 
 
