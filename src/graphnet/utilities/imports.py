@@ -33,19 +33,6 @@ def has_torch_package() -> bool:
         return False
 
 
-def has_pisa_package() -> bool:
-    """Check whether the `pisa` package is available."""
-    try:
-        import pisa  # pyright: reportMissingImports=false
-
-        return True
-    except ImportError:
-        Logger(log_folder=None).warning_once(
-            "`pisa` not available. Some functionality may be missing.",
-        )
-        return False
-
-
 def requires_icecube(test_function: Callable) -> Callable:
     """Decorate `test_function` for use only if `icecube` module is present."""
 
