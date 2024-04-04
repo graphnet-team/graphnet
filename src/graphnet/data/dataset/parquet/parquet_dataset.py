@@ -30,12 +30,6 @@ from graphnet.models.graphs import GraphDefinition
 from graphnet.data.dataset import Dataset
 from graphnet.exceptions.exceptions import ColumnMissingException
 
-# Force spawn-method
-try:
-    torch.multiprocessing.set_start_method("spawn")
-except RuntimeError:
-    pass
-
 
 class ParquetDataset(Dataset):
     """Dataset class for Parquet-files converted with `ParquetWriter`."""
@@ -290,6 +284,11 @@ class ParquetDataset(Dataset):
             )
             data = df.select(columns)
             if isinstance(data[columns[0]][0], Series):
+                # Force spawn-method
+                try:
+                    torch.multiprocessing.set_start_method("spawn")
+                except RuntimeError:
+                    pass
                 data = data.explode(columns)
             array = data.to_numpy()
         else:
