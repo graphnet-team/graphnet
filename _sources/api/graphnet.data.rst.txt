@@ -34,7 +34,6 @@ data
    graphnet.data.dataconverter
    graphnet.data.dataloader
    graphnet.data.datamodule
-   graphnet.data.pipeline
 
 
 
