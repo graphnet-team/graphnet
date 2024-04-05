@@ -1,4 +1,5 @@
 """Example of converting H5 files from LiquidO to SQLite and Parquet."""
+import os
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
 from graphnet.data.extractors.liquido import H5HitExtractor, H5TruthExtractor
@@ -13,6 +14,7 @@ def main(backend: str) -> None:
     # Fixed inputs
     input_dir = [f"{TEST_DATA_DIR}/liquid-o"]
     outdir = f"{EXAMPLE_OUTPUT_DIR}/liquid-o/{backend}"
+    os.makedirs(outdir, exist_ok=True)
     num_workers = 1
 
     if backend == "parquet":
