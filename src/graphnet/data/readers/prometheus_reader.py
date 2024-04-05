@@ -48,11 +48,14 @@ class PrometheusReader(GraphNeTFileReader):
         files = []
         if isinstance(path, str):
             path = [path]
+
+        # List of files as Path objects
         for p in path:
             files.extend(
                 list(Path(p).rglob(f"*{self.accepted_file_extensions}"))
             )
 
+        # List of files as str's
         paths_as_str: List[str] = []
         for f in files:
             paths_as_str.append(f.absolute().as_posix())
