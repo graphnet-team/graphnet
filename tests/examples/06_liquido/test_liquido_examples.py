@@ -6,7 +6,7 @@ from glob import glob
 
 from graphnet.constants import GRAPHNET_ROOT_DIR
 
-EXAMPLE_PATH = os.path.join(GRAPHNET_ROOT_DIR, "examples/06_data")
+EXAMPLE_PATH = os.path.join(GRAPHNET_ROOT_DIR, "examples/05_liquido")
 examples = glob(EXAMPLE_PATH + "/*.py")
 
 
