@@ -30,7 +30,7 @@ class FEATURES:
         "t",
     ]
     KAGGLE = ["x", "y", "z", "time", "charge", "auxiliary"]
-    LIQUIDO = ["sipmID", "sipm_x", "sipm_y", "sipm_z", "t", "var"]
+    LIQUIDO = ["sipm_x", "sipm_y", "sipm_z", "t"]
 
 
 class TRUTH:

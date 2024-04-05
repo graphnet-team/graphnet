@@ -5,7 +5,6 @@ import pandas as pd
 import h5py
 
 from graphnet.data.extractors import Extractor
-from graphnet.data.constants import TRUTH, FEATURES
 
 
 class H5Extractor(Extractor):
@@ -59,7 +58,15 @@ class H5HitExtractor(H5Extractor):
         # Base class constructor
         super().__init__(
             extractor_name="HitData",
-            column_names=["event_no"] + FEATURES.LIQUIDO,
+            column_names=[
+                "event_no",
+                "sipmID",
+                "sipm_x",
+                "sipm_y",
+                "sipm_z",
+                "t",
+                "var",
+            ],
         )
 
 
@@ -71,5 +78,15 @@ class H5TruthExtractor(H5Extractor):
         # Base class constructor
         super().__init__(
             extractor_name="TruthData",
-            column_names=["event_no"] + TRUTH.LIQUIDO,
+            column_names=[
+                "event_no",
+                "vertex_x",
+                "vertex_y",
+                "vertex_z",
+                "zenith",
+                "azimuth",
+                "interaction_time",
+                "energy",
+                "pid",
+            ],
         )
