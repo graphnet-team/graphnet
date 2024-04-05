@@ -27,6 +27,7 @@ INSTALL_REQUIRES = [
     "tqdm>=4.64",
     "wandb>=0.12",
     "polars >=0.19",
+    "h5py>= 3.7.0",
 ]
 
 EXTRAS_REQUIRE = {
