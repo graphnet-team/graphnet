@@ -1,9 +1,9 @@
 
-readers
+liquido
 =======
 
 
-.. automodule:: graphnet.data.readers
+.. automodule:: graphnet.data.extractors.liquido
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,10 +15,7 @@ readers
 .. toctree::
    :maxdepth: 2
 
-   graphnet.data.readers.graphnet_file_reader
-   graphnet.data.readers.i3reader
-   graphnet.data.readers.internal_parquet_reader
-   graphnet.data.readers.liquido_reader
+   graphnet.data.extractors.liquido.h5_extractor
 
 
 

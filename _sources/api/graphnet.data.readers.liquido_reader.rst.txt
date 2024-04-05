@@ -1,0 +1,8 @@
+
+liquido\_reader
+===============
+
+.. automodule:: graphnet.data.readers.liquido_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:

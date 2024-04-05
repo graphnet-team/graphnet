@@ -16,6 +16,7 @@ extractors
 
    graphnet.data.extractors.icecube
    graphnet.data.extractors.internal
+   graphnet.data.extractors.liquido
 
 |start-h2| Submodules |end-h2|
 

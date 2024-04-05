@@ -521,7 +521,6 @@
 <span class="w">        </span><span class="sd">"""Calculate the number of events in each batch."""</span>
         <span class="n">sizes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">batch_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">batch_id</span><span class="p">)</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span><span class="p">,</span>
@@ -626,7 +625,6 @@
             <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">file_idx</span><span class="si">}</span><span class="s2">.parquet"</span>
             <span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">file_idx</span><span class="p">)</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">pol</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">table_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemaps</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
                 <span class="n">table_name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_truth_table</span>

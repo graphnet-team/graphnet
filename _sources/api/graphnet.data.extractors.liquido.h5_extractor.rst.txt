@@ -1,0 +1,8 @@
+
+h5\_extractor
+=============
+
+.. automodule:: graphnet.data.extractors.liquido.h5_extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:

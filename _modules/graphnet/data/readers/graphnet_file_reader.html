@@ -340,6 +340,7 @@
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.extractor</span> <span class="kn">import</span> <span class="n">Extractor</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.icecube</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.internal</span> <span class="kn">import</span> <span class="n">ParquetExtractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.liquido</span> <span class="kn">import</span> <span class="n">H5Extractor</span>
 
 
 <div class="viewcode-block" id="GraphNeTFileReader">
@@ -424,7 +425,10 @@
     <span class="k">def</span> <span class="nf">set_extractors</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
-            <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">]</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">H5Extractor</span><span class="p">],</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Set `Extractor`(s) as member variable.</span>
@@ -442,7 +446,10 @@
     <span class="k">def</span> <span class="nf">_validate_extractors</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
-            <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">]</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">H5Extractor</span><span class="p">],</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="n">extractors</span><span class="p">:</span>

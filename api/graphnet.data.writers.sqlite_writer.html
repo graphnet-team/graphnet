@@ -553,7 +553,7 @@
 a deep-learning friendly file format.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.writers.sqlite_writer.SQLiteWriter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.writers.sqlite_writer.</span></span><span class="sig-name descname"><span class="pre">SQLiteWriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merged_database_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_table_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/writers/sqlite_writer.html#SQLiteWriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.writers.sqlite_writer.SQLiteWriter" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.writers.sqlite_writer.</span></span><span class="sig-name descname"><span class="pre">SQLiteWriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merged_database_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_table_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/writers/sqlite_writer.html#SQLiteWriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.writers.sqlite_writer.SQLiteWriter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.writers.graphnet_writer.html#graphnet.data.writers.graphnet_writer.GraphNeTWriter" title="graphnet.data.writers.graphnet_writer.GraphNeTWriter"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code></a></p>
 <p>A method for saving GraphNeT’s interim dataformat to SQLite.</p>
 <p>Initialize <cite>SQLiteWriter</cite>.</p>
@@ -569,6 +569,7 @@ Note that the size is approximate. This feature is useful if
 you have many events, as tables exceeding
 400 million rows tend to be noticably slower to query.
 Defaults to None (All events are put into a single database).</p></li>
+<li><p><strong>index_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – Name of column that contains event id.</p></li>
 </ul>
 </dd>
 </dl>

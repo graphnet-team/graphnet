@@ -350,6 +350,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">merged_database_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"merged.db"</span><span class="p">,</span>
         <span class="n">max_table_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Initialize `SQLiteWriter`.</span>
 
@@ -363,12 +364,14 @@
 <span class="sd">                you have many events, as tables exceeding</span>
 <span class="sd">                400 million rows tend to be noticably slower to query.</span>
 <span class="sd">                Defaults to None (All events are put into a single database).</span>
+<span class="sd">            index_column: Name of column that contains event id.</span>
 <span class="sd">        """</span>
         <span class="c1"># Member Variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file_extension</span> <span class="o">=</span> <span class="s2">".db"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_merge_dataframes</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_table_size</span> <span class="o">=</span> <span class="n">max_table_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_database_name</span> <span class="o">=</span> <span class="n">merged_database_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span> <span class="o">=</span> <span class="n">index_column</span>
 
         <span class="c1"># Add file extension to database name if forgotten</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_extension</span><span class="p">):</span>
@@ -409,6 +412,7 @@
                     <span class="n">output_file_path</span><span class="p">,</span>
                     <span class="n">default_type</span><span class="o">=</span><span class="s2">"FLOAT"</span><span class="p">,</span>
                     <span class="n">integer_primary_key</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">n_events</span><span class="p">,</span>
+                    <span class="n">index_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">saved_any</span> <span class="o">=</span> <span class="kc">True</span>
 
