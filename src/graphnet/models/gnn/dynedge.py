@@ -32,7 +32,7 @@ class DynEdge(GNN):
         readout_layer_sizes: Optional[List[int]] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
         add_global_variables_after_pooling: bool = False,
-        activation_layer: Callable = None,
+        activation_layer: Optional[str] = None,
         add_norm_layer: bool = False,
         skip_readout: bool = False,
     ):
@@ -157,8 +157,14 @@ class DynEdge(GNN):
             add_global_variables_after_pooling
         )
 
-        if activation_layer is None:
+        if activation_layer is None or activation_layer.lower() == "relu":
             activation_layer = torch.nn.ReLU()
+        elif activation_layer.lower() == "gelu":
+            activation_layer = torch.nn.GELU()
+        else:
+            raise ValueError(
+                f"Activation layer {activation_layer} not supported."
+            )
 
         # Base class constructor
         super().__init__(nb_inputs, self._readout_layer_sizes[-1])

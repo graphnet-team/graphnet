@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional, Union
+from typing import List, Tuple, Optional, Dict
 from abc import abstractmethod
 
 import torch
@@ -319,7 +319,12 @@ class IceMixNodes(NodeDefinition):
         input_feature_names: Optional[List[str]] = None,
         max_pulses: int = 768,
         z_name: str = "dom_z",
-        hlc_name: str = "hlc",
+        hlc_name: Optional[str] = "hlc",
+        add_ice_properties: bool = True,
+        ice_args: Dict[str, Optional[float]] = {
+            "z_offset": None,
+            "z_scaling": None,
+        },
     ) -> None:
         """Construct `IceMixNodes`.
 
@@ -329,9 +334,11 @@ class IceMixNodes(NodeDefinition):
             max_pulses: Maximum number of pulses to keep in the event.
             z_name: Name of the z-coordinate column.
             hlc_name: Name of the `Hard Local Coincidence Check` column.
+            add_ice_properties: If True, scattering and absoption length of
+            ice in IceCube are added to the feature set based on z coordinate.
+            ice_args: Offset and scaling of the z coordinate in the Detector,
+            to be able to make similar conversion in the ice data.
         """
-        super().__init__(input_feature_names=input_feature_names)
-
         if input_feature_names is None:
             input_feature_names = [
                 "dom_x",
@@ -343,33 +350,39 @@ class IceMixNodes(NodeDefinition):
                 "rde",
             ]
 
-        if z_name not in input_feature_names:
-            raise ValueError(
-                f"z name {z_name} not found in "
-                f"input_feature_names {input_feature_names}"
-            )
-        if hlc_name not in input_feature_names:
-            raise ValueError(
-                f"hlc name {hlc_name} not found in "
-                f"input_feature_names {input_feature_names}"
-            )
+        if add_ice_properties:
+            if z_name not in input_feature_names:
+                raise ValueError(
+                    f"z name '{z_name}' not found in "
+                    f"input_feature_names {input_feature_names}"
+                )
+            self.all_features = input_feature_names + [
+                "scatt_lenght",
+                "abs_lenght",
+            ]
+            self.f_scattering, self.f_absoprtion = ice_transparency(**ice_args)
+        else:
+            self.all_features = input_feature_names
 
-        self.all_features = input_feature_names + [
-            "scatt_lenght",
-            "abs_lenght",
-        ]
+        super().__init__(input_feature_names=input_feature_names)
+
+        if hlc_name not in input_feature_names:
+            self.warning(
+                f"hlc name '{hlc_name}' not found in input_feature_names"
+                f" '{input_feature_names}', subsampling will be random."
+            )
+            hlc_name = None
 
         self.feature_indexes = {
             feat: self.all_features.index(feat) for feat in input_feature_names
         }
-
-        self.f_scattering, self.f_absoprtion = ice_transparency()
 
         self.input_feature_names = input_feature_names
         self.n_features = len(self.all_features)
         self.max_length = max_pulses
         self.z_name = z_name
         self.hlc_name = hlc_name
+        self.add_ice_properties = add_ice_properties
 
     def _define_output_feature_names(
         self, input_feature_names: List[str]
@@ -396,33 +409,45 @@ class IceMixNodes(NodeDefinition):
             ids = torch.arange(event_length)
         else:
             ids = torch.randperm(event_length)
-            auxiliary_n = torch.nonzero(
-                x[:, self.feature_indexes[self.hlc_name]] == 0
-            ).squeeze(1)
-            auxiliary_p = torch.nonzero(
-                x[:, self.feature_indexes[self.hlc_name]] == 1
-            ).squeeze(1)
-            ids_n = ids[auxiliary_n][: min(self.max_length, len(auxiliary_n))]
-            ids_p = ids[auxiliary_p][
-                : min(self.max_length - len(ids_n), len(auxiliary_p))
-            ]
-            ids = torch.cat([ids_n, ids_p]).sort().values
+            if self.hlc_name is not None:
+                auxiliary_n = torch.nonzero(
+                    x[:, self.feature_indexes[self.hlc_name]] == 0
+                ).squeeze(1)
+                auxiliary_p = torch.nonzero(
+                    x[:, self.feature_indexes[self.hlc_name]] == 1
+                ).squeeze(1)
+                ids_n = ids[auxiliary_n][
+                    : min(self.max_length, len(auxiliary_n))
+                ]
+                ids_p = ids[auxiliary_p][
+                    : min(self.max_length - len(ids_n), len(auxiliary_p))
+                ]
+
+                ids = torch.cat([ids_n, ids_p]).sort().values
+            else:
+                ids = ids[: self.max_length]
+
         return ids
 
     def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
 
         event_length = x.shape[0]
-        x[:, self.feature_indexes[self.hlc_name]] = torch.logical_not(
-            x[:, self.feature_indexes[self.hlc_name]]
-        )  # hlc in kaggle was flipped
+        if self.hlc_name is not None:
+            x[:, self.feature_indexes[self.hlc_name]] = torch.logical_not(
+                x[:, self.feature_indexes[self.hlc_name]]
+            )  # hlc in kaggle was flipped
         ids = self._pulse_sampler(x, event_length)
         event_length = min(self.max_length, event_length)
 
         graph = torch.zeros([event_length, self.n_features])
-        for idx, feature in enumerate(
-            self.all_features[: self.n_features - 2]
-        ):
+
+        if self.add_ice_properties:
+            graph = self._add_ice_properties(graph, x, ids)
+            non_ice_features = self.all_features[: self.n_features - 2]
+        else:
+            non_ice_features = self.all_features
+
+        for idx, feature in enumerate(non_ice_features):
             graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
 
-        graph = self._add_ice_properties(graph, x, ids)  # ice properties
         return Data(x=graph)

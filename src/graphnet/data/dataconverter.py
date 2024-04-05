@@ -19,6 +19,7 @@ from .readers.graphnet_file_reader import GraphNeTFileReader
 from .writers.graphnet_writer import GraphNeTWriter
 from .extractors import Extractor
 from .extractors.icecube import I3Extractor
+from .extractors.liquido import H5Extractor
 from .dataclasses import I3FileSet
 
 
@@ -42,7 +43,10 @@ class DataConverter(ABC, Logger):
         save_method: GraphNeTWriter,
         outdir: str,
         extractors: Union[
-            List[Extractor], List[I3Extractor], List[ParquetExtractor]
+            List[Extractor],
+            List[I3Extractor],
+            List[ParquetExtractor],
+            List[H5Extractor],
         ],
         index_column: str = "event_no",
         num_workers: int = 1,
