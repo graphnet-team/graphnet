@@ -1,7 +1,4 @@
-"""Example of converting I3-files to SQLite and Parquet."""
-
-import os
-from glob import glob
+"""Example of converting H5 files from LiquidO to SQLite and Parquet."""
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
 from graphnet.data.extractors.liquido import H5HitExtractor, H5TruthExtractor
