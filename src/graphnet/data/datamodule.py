@@ -29,6 +29,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         test_dataloader_kwargs: Optional[Dict[str, Any]] = None,
         train_val_split: Optional[List[float]] = [0.9, 0.10],
         split_seed: int = 42,
+        download_dir: Optional[str] = None,
     ) -> None:
         """Create dataloaders from dataset.
 
@@ -51,6 +52,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                                 validation sets. Default is [0.9, 0.10].
             split_seed: seed used for shuffling and splitting selections into
                         train/validation, Default 42.
+            download_dir: Directory to download data, if needed.
+                        Defaults to None.
         """
         Logger.__init__(self)
         self._make_sure_root_logger_is_configured()
@@ -60,6 +63,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._test_selection = test_selection
         self._train_val_split = train_val_split or [0.0]
         self._rng = split_seed
+        self._download_dir = download_dir
 
         self._train_dataloader_kwargs = train_dataloader_kwargs or {}
         self._validation_dataloader_kwargs = validation_dataloader_kwargs or {}
@@ -69,7 +73,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._use_ensemble_dataset = isinstance(
             self._dataset_args["path"], list
         )
-
+        # Prepare data for Dataset instantiation
+        self.prepare_data()
+        # Create Dataloaders
         self.setup("fit")
 
     def prepare_data(self) -> None:
