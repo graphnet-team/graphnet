@@ -195,8 +195,13 @@ class ParquetWriter(GraphNeTWriter):
                         + f"_{table}.parquet"
                     )
                     df = pd.read_parquet(path)
-                    idx = split["file_name"] == unique_file
-                    table_shards.append(df.loc[split[index_column][idx], :])
+
+                    id = split[index_column][split["file_name"] == unique_file]
+
+                    # Filter out indices that point to empty events
+                    idx = [i for i in id if i in df.index]
+                    table_shards.append(df.loc[idx, :])
+
                 os.makedirs(os.path.join(outdir, table), exist_ok=True)
                 if len(table_shards) > 0:
                     combined_df = pd.concat(table_shards, axis=0)
