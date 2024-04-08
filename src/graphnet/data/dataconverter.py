@@ -9,17 +9,18 @@ import multiprocessing.pool
 from multiprocessing.sharedctypes import Synchronized
 import pandas as pd
 import os
-from glob import glob
 
 
 from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import Logger
-from graphnet.data.extractors.internal import ParquetExtractor
 from .readers.graphnet_file_reader import GraphNeTFileReader
 from .writers.graphnet_writer import GraphNeTWriter
 from .extractors import Extractor
 from .extractors.icecube import I3Extractor
 from .extractors.liquido import H5Extractor
+from .extractors.internal import ParquetExtractor
+from .extractors.prometheus import PrometheusExtractor
+
 from .dataclasses import I3FileSet
 
 
@@ -47,6 +48,7 @@ class DataConverter(ABC, Logger):
             List[I3Extractor],
             List[ParquetExtractor],
             List[H5Extractor],
+            List[PrometheusExtractor],
         ],
         index_column: str = "event_no",
         num_workers: int = 1,
