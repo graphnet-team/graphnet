@@ -257,7 +257,7 @@ class ERDAHostedDataset(CuratedDataModule):
     Inheriting subclasses will just need to fill out the `_file_hashes`
     attribute, which points to the file-id of a ERDA-hosted sharelink. It
     is assumed that sharelinks point to a single compressed file that has
-    been compressed using `tar xf` with extension ".tar.gz".
+    been compressed using `tar` with extension ".tar.gz".
 
     E.g. suppose that the sharelink below
     https://sid.erda.dk/share_redirect/FbEEzAbg5A
