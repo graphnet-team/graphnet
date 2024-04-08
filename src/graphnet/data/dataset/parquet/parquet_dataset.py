@@ -284,8 +284,10 @@ class ParquetDataset(Dataset):
             )
             data = df.select(columns)
             if isinstance(data[columns[0]][0], Series):
-                data = data.explode(columns)
-            array = data.to_numpy()
+                x = [data[col][0].to_numpy().reshape(-1, 1) for col in columns]
+                array = np.concatenate(x, axis=1)
+            else:
+                array = data.to_numpy()
         else:
             array = np.array()
         return array
