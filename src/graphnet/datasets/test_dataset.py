@@ -48,7 +48,7 @@ class TestDataset(ERDAHostedDataset):
             features: List of features from user to use as input.
             truth: List of event-level truth form user.
 
-        Returns: Dataset arguments without selections
+        Returns: Dataset arguments and selections
         """
         dataset_path = os.path.join(self.dataset_dir, "merged.db")
 
@@ -60,4 +60,5 @@ class TestDataset(ERDAHostedDataset):
             "features": features,
             "truth": truth,
         }
-        return dataset_args, None, None
+        selection = [0, 1, 2, 3, 4, 6, 7, 8, 9]  # event 5 is empty
+        return dataset_args, selection, None
