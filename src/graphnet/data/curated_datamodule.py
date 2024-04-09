@@ -14,7 +14,7 @@ from graphnet.models.graphs import GraphDefinition
 from graphnet.data.dataset import ParquetDataset, SQLiteDataset
 
 
-class CuratedDataModule(GraphNeTDataModule):
+class CuratedDataset(GraphNeTDataModule):
     """Generic base class for curated datasets.
 
     Curated Datasets in GraphNeT are pre-converted datasets that have been
@@ -249,7 +249,7 @@ class CuratedDataModule(GraphNeTDataModule):
         return dataset_dir
 
 
-class ERDAHostedDataset(CuratedDataModule):
+class ERDAHostedDataset(CuratedDataset):
     """A base class for dataset/datamodule hosted at ERDA.
 
     Inheriting subclasses will just need to fill out the `_file_hashes`

@@ -28,7 +28,10 @@ def test_erda_hosted_dataset(backend: str) -> None:
     """
     graph_definition = KNNGraph(detector=ORCA150())
     data_module = TestDataset(
-        download_dir="", graph_definition=graph_definition, backend=backend
+        download_dir="",
+        graph_definition=graph_definition,
+        backend=backend,
+        train_dataloader_kwargs={"batch_size": 3, "num_workers": 1},
     )
 
     data_module.description()
