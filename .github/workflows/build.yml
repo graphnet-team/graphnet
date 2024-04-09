@@ -66,7 +66,8 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
-          coverage run -a --source=graphnet -m pytest tests/examples/04_training tests/utilities 
+          coverage run -a --source=graphnet -m pytest tests/examples/04_training
+          coverage run -a --source=graphnet -m pytest tests/utilities 
           coverage xml -o coverage.xml
     
       - name: Work around permission issue
