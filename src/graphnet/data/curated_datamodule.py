@@ -66,8 +66,6 @@ class CuratedDataModule(GraphNeTDataModule):
         elif backend.lower() == "sqlite":
             dataset_ref = SQLiteDataset  # type: ignore
 
-        assert isinstance(dataset_ref, (ParquetDataset, SQLiteDataset))  # mypy
-
         # Methods:
         features, truth = self._verify_args(features=features, truth=truth)
         self.prepare_data()
@@ -267,7 +265,7 @@ class ERDAHostedDataset(CuratedDataModule):
 
     # Member variables
     _mirror = "https://sid.erda.dk/share_redirect"
-    _file_hashes = None  # Must be filled out by you!
+    _file_hashes: Dict[str, str] = {}  # Must be filled out by you!
 
     def prepare_data(self) -> None:
         """Prepare the dataset for training."""
