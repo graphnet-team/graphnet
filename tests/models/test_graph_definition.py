@@ -81,7 +81,7 @@ def test_geometry_tables() -> None:
     """Test parts of GraphDefinition that is related to geometry tables."""
     # Test config
     databases = {
-        "ORCA150": os.path.join(
+        "ORCA150SuperDense": os.path.join(
             EXAMPLE_DATA_DIR, "sqlite/prometheus/prometheus-events.db"
         ),
         "IceCube86": os.path.join(
