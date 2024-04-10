@@ -161,6 +161,19 @@ class EnergyReconstructionWithUncertainty(EnergyReconstruction):
         return pred
 
 
+class LengthReconstruction(StandardLearnedTask):
+    """Reconstructs track length."""
+
+    # Requires one feature: untransformed energy
+    default_target_labels = ["track"]
+    default_prediction_labels = ["track_pred"]
+    nb_inputs = 1
+
+    def _forward(self, x: Tensor) -> Tensor:
+        # Leave as it is
+        return x
+
+
 class VertexReconstruction(StandardLearnedTask):
     """Reconstructs vertex position and time."""
 
