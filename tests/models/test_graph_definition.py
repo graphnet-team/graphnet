@@ -1,7 +1,7 @@
 """Unit tests for GraphDefinition."""
 
 from graphnet.models.graphs import KNNGraph
-from graphnet.models.detector.prometheus import Prometheus, ORCA150
+from graphnet.models.detector.prometheus import ORCA150SuperDense
 from graphnet.data.constants import FEATURES
 from graphnet.models.detector import IceCube86, IceCubeUpgrade
 from graphnet.models.graphs.nodes import PercentileClusters
@@ -32,7 +32,9 @@ def test_graph_definition() -> None:
     n_reps = 5
 
     graph_definition = KNNGraph(
-        detector=Prometheus(), perturbation_dict=perturbation_dict, seed=seed
+        detector=ORCA150SuperDense(),
+        perturbation_dict=perturbation_dict,
+        seed=seed,
     )
     original_output = graph_definition(
         input_features=deepcopy(mock_data), input_feature_names=features
@@ -40,11 +42,11 @@ def test_graph_definition() -> None:
 
     for _ in range(n_reps):
         graph_definition_perturbed = KNNGraph(
-            detector=Prometheus(), perturbation_dict=perturbation_dict
+            detector=ORCA150SuperDense(), perturbation_dict=perturbation_dict
         )
 
         graph_definition = KNNGraph(
-            detector=Prometheus(),
+            detector=ORCA150SuperDense(),
             perturbation_dict=perturbation_dict,
             seed=seed,
         )
@@ -92,7 +94,7 @@ def test_geometry_tables() -> None:
         ),
     }
     meta = {
-        "ORCA150": {"pulsemap": "total", "truth_table": "mc_truth"},
+        "ORCA150SuperDense": {"pulsemap": "total", "truth_table": "mc_truth"},
         "IceCube86": {"pulsemap": "SRTInIcePulses", "truth_table": "truth"},
         "IceCubeUpgrade": {
             "pulsemap": "SplitInIcePulses",
@@ -103,7 +105,7 @@ def test_geometry_tables() -> None:
     string_mask = np.arange(0, 50, 1).tolist()
 
     # Tests
-    for detector in [ORCA150(), IceCube86(), IceCubeUpgrade()]:
+    for detector in [ORCA150SuperDense(), IceCube86(), IceCubeUpgrade()]:
         # Get configs for test
         database = databases[detector.__class__.__name__]
         truth_table = meta[detector.__class__.__name__]["truth_table"]
