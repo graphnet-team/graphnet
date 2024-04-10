@@ -9,7 +9,7 @@ from graphnet.constants import PROMETHEUS_GEOMETRY_TABLE_DIR
 
 
 class ORCA150SuperDense(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus ORCA150SuperDense."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "orca_150.parquet"
@@ -39,7 +39,7 @@ class ORCA150SuperDense(Detector):
 
 
 class TRIDENT1211(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus TRIDENT1211."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "trident.parquet"
@@ -69,7 +69,7 @@ class TRIDENT1211(Detector):
 
 
 class IceCubeUpgrade7(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus IceCubeUpgrade7."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "icecube_upgrade.parquet"
@@ -99,7 +99,7 @@ class IceCubeUpgrade7(Detector):
 
 
 class WaterDemo81(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus WaterDemo81."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "demo_water.parquet"
@@ -129,7 +129,7 @@ class WaterDemo81(Detector):
 
 
 class BaikalGVD8(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus BaikalGVD8."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "gvd.parquet"
@@ -159,7 +159,7 @@ class BaikalGVD8(Detector):
 
 
 class IceDemo81(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus IceDemo81."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "demo_ice.parquet"
@@ -189,7 +189,7 @@ class IceDemo81(Detector):
 
 
 class ARCA115(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus ARCA115."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "arca.parquet"
@@ -219,7 +219,7 @@ class ARCA115(Detector):
 
 
 class ORCA150(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus ORCA150."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "orca.parquet"
@@ -249,7 +249,7 @@ class ORCA150(Detector):
 
 
 class IceCube86(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus IceCube86."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "icecube86.parquet"
@@ -279,7 +279,7 @@ class IceCube86(Detector):
 
 
 class IceCubeDeepCore8(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus IceCubeDeepCore8."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "icecube_deepcore.parquet"
@@ -309,7 +309,7 @@ class IceCubeDeepCore8(Detector):
 
 
 class IceCubeGen2(Detector):
-    """`Detector` class for Prometheus prototype."""
+    """`Detector` class for Prometheus IceCubeGen2."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "icecube_gen2.parquet"
