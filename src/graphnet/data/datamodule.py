@@ -126,9 +126,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
 
         Datasets relying on threaded libraries often require the
         multiprocessing context to be set to "spawn". This method will check
-        the arguments for this entry and throw and error if the field is
-        already assigned to a wrong value. If the value is not specified, it is
-        added automatically with a log entry.
+        the arguments for this entry and throw an error if the field is already
+        assigned to a wrong value. If the value is not specified, it is added
+        automatically with a log entry.
         """
         arg = "multiprocessing_context"
         if arg in dataloader_args:
