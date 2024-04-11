@@ -105,19 +105,12 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             )
 
         if self._dataset == ParquetDataset:
-            self._train_dataloader_kwargs = self._add_context(
-                train_dl_args, "training"
-            )
-            self._validation_dataloader_kwargs = self._add_context(
-                val_dl_args, "validation"
-            )
+            train_dl_args = self._add_context(train_dl_args, "training")
+            val_dl_args = self._add_context(val_dl_args, "validation")
             if self._test_selection is not None:
                 assert test_dl_args is not None
-                self._test_dataloader_kwargs = self._add_context(
-                    test_dl_args, "test"
-                )
-            else:
-                self._test_dataloader_kwargs = {}
+                test_dl_args = self._add_context(test_dl_args, "test")
+
         else:
             self._train_dataloader_kwargs = train_dl_args
             self._validation_dataloader_kwargs = val_dl_args
