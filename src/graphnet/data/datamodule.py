@@ -118,6 +118,10 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                 )
             else:
                 self._test_dataloader_kwargs = {}
+        else:
+            self._train_dataloader_kwargs = train_dl_args
+            self._validation_dataloader_kwargs = val_dl_args
+            self._test_dataloader_kwargs = test_dl_args or {}
 
     def _add_context(
         self, dataloader_args: Dict[str, Any], dataloader_type: str
