@@ -151,7 +151,7 @@ def test_single_dataset_without_selections(
     # validation loader should have shuffle = False by default
     assert isinstance(val_dataloader.sampler, SequentialSampler)
     # Should have identical batch_size
-    assert val_dataloader.batch_size != train_dataloader.batch_size
+    assert val_dataloader.batch_size == train_dataloader.batch_size
     # Training dataloader should contain more batches
     assert len(train_dataloader) > len(val_dataloader)
 
