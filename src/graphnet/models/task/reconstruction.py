@@ -165,8 +165,8 @@ class LengthReconstruction(StandardLearnedTask):
     """Reconstructs track length."""
 
     # Requires one feature: untransformed energy
-    default_target_labels = ["track"]
-    default_prediction_labels = ["track_pred"]
+    default_target_labels = ["length"]
+    default_prediction_labels = ["length_pred"]
     nb_inputs = 1
 
     def _forward(self, x: Tensor) -> Tensor:
@@ -189,10 +189,12 @@ class VertexReconstruction(StandardLearnedTask):
 
     def _forward(self, x: Tensor) -> Tensor:
         # Scale xyzt to roughly the right order of magnitude
-        x[:, 0] = x[:, 0] * 1e2 # 100s of m
-        x[:, 1] = x[:, 1] * 1e2 # 100s of m
-        x[:, 2] = x[:, 2] * 1e2 # 100s of m
-        x[:, 3] = x[:, 3] * 1e3 # 1000s of ns
+        x[:, 0] = x[:, 0] / 1e2 # 100s of m
+        x[:, 1] = x[:, 1] / 1e2 # 100s of m
+        x[:, 2] = x[:, 2] / 1e2 # 100s of m
+        x[:, 3] = x[:, 3] / 1e4 # 1000s of ns, peak at around 10,000 ns
+
+        #TODO remove this?
 
         return x
 
@@ -211,10 +213,9 @@ class PositionReconstruction(StandardLearnedTask):
 
     def _forward(self, x: Tensor) -> Tensor:
         # Scale to roughly the right order of magnitude
-        x[:, 0] = x[:, 0] * 1e2
-        x[:, 1] = x[:, 1] * 1e2
-        x[:, 2] = x[:, 2] * 1e2
-
+        x[:, 0] = x[:, 0] / 1e2
+        x[:, 1] = x[:, 1] / 1e2
+        x[:, 2] = x[:, 2] / 1e2
         return x
 
 
