@@ -94,14 +94,16 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         if val_dl_args is None:
             self.info(
                 "No `val_dataloader_kwargs` given. This arg has "
-                "been set to `train_dataloader_kwargs` automatically."
+                "been set to `train_dataloader_kwargs` with `shuffle` = False."
             )
             val_dl_args = deepcopy(train_dl_args)
+            val_dl_args["shuffle"] = False  # Important for inference
         if (test_dl_args is None) & (self._test_selection is not None):
             test_dl_args = deepcopy(train_dl_args)
+            test_dl_args["shuffle"] = False  # Important for inference
             self.info(
                 "No `test_dataloader_kwargs` given. This arg has "
-                "been set to `train_dataloader_kwargs` automatically."
+                "been set to `train_dataloader_kwargs` with `shuffle` = False."
             )
 
         if self._dataset == ParquetDataset:
@@ -121,33 +123,37 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         """Handle assignment of `multiprocessing_context` arg to loaders.
 
         Datasets relying on threaded libraries often require the
-        multiprocessing context to be set to "spawn". This method will check
-        the arguments for this entry and throw an error if the field is already
-        assigned to a wrong value. If the value is not specified, it is added
-        automatically with a log entry.
+        multiprocessing context to be set to "spawn" if "num_workers" > 0. This
+        method will check the arguments for this entry and throw an error if
+        the field is already assigned to a wrong value. If the value is not
+        specified, it is added automatically with a log entry.
         """
         arg = "multiprocessing_context"
-        if arg in dataloader_args:
-            if dataloader_args[arg] != "spawn":
-                # Wrongly assigned by user
-                self.error(
-                    "DataLoaders using `ParquetDataset` must have "
-                    "multiprocessing_context = 'spawn'. "
-                    f" Found '{dataloader_args[arg]}' in ",
-                    f"{dataloader_type} dataloader.",
-                )
-                raise ValueError("multiprocessing_context must be 'spawn'")
+        if dataloader_args["num_workers"] != 0:
+            # If using multiprocessing
+            if arg in dataloader_args:
+                if dataloader_args[arg] != "spawn":
+                    # Wrongly assigned by user
+                    self.error(
+                        "DataLoaders using `ParquetDataset` must have "
+                        "multiprocessing_context = 'spawn'. "
+                        f" Found '{dataloader_args[arg]}' in ",
+                        f"{dataloader_type} dataloader.",
+                    )
+                    raise ValueError("multiprocessing_context must be 'spawn'")
+                else:
+                    # Correctly assigned by user
+                    return dataloader_args
             else:
-                # Correctly assigned by user
+                # Forgotten assignment by user
+                dataloader_args[arg] = "spawn"
+                self.warning_once(
+                    f"{self.__class__.__name__} has automatically "
+                    "set multiprocessing_context = 'spawn' in "
+                    f"{dataloader_type} dataloader."
+                )
                 return dataloader_args
         else:
-            # Forgotten assignment by user
-            dataloader_args[arg] = "spawn"
-            self.warning_once(
-                f"{self.__class__.__name__} has automatically "
-                "set multiprocessing_context = 'spawn' in "
-                f"{dataloader_type} dataloader."
-            )
             return dataloader_args
 
     def prepare_data(self) -> None:
