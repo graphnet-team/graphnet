@@ -90,7 +90,7 @@ def dataset_setup(dataset_ref: pytest.FixtureRequest) -> tuple:
         "graph_definition": graph_definition,
     }
 
-    dataloader_kwargs = {"batch_size": 2, "num_workers": 1}
+    dataloader_kwargs = {"batch_size": 2, "num_workers": 1, "shuffle": True}
 
     return dataset_ref, dataset_kwargs, dataloader_kwargs
 
@@ -209,6 +209,11 @@ def test_single_dataset_with_selections(
 
     # Training dataloader should have more batches
     assert len(train_dataloader) > len(val_dataloader)
+
+    # validation loader should have shuffle = False by default
+    assert isinstance(val_dataloader.sampler, SequentialSampler)
+    # test loader should have shuffle = False by default
+    assert isinstance(test_dataloader.sampler, SequentialSampler)
 
 
 @pytest.mark.parametrize(
