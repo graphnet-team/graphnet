@@ -15,6 +15,7 @@ API
    :maxdepth: 2
 
    graphnet.data
+   graphnet.datasets
    graphnet.deployment
    graphnet.exceptions
    graphnet.models

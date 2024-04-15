@@ -1,0 +1,8 @@
+
+curated\_datamodule
+===================
+
+.. automodule:: graphnet.data.curated_datamodule
+   :members:
+   :undoc-members:
+   :show-inheritance:

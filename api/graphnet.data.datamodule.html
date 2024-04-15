@@ -129,7 +129,7 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="deployment" href="graphnet.deployment.html" />
+    <link rel="next" title="datasets" href="graphnet.datasets.html" />
     <link rel="prev" title="dataloader" href="graphnet.data.dataloader.html" />
   
    
@@ -372,6 +372,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.curated_datamodule.html" class="md-nav__link">curated_datamodule</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.dataclasses.html" class="md-nav__link">dataclasses</a>
       
     
@@ -481,6 +488,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.datasets.html" class="md-nav__link">datasets</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.deployment.html" class="md-nav__link">deployment</a>
       
     
@@ -577,7 +591,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset_reference</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.data.dataset.sqlite.sqlite_dataset.html#graphnet.data.dataset.sqlite.sqlite_dataset.SQLiteDataset" title="graphnet.data.dataset.sqlite.sqlite_dataset.SQLiteDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLiteDataset</span></code></a>, <a class="reference internal" href="graphnet.data.dataset.parquet.parquet_dataset.html#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset" title="graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a>, <a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.Dataset" title="graphnet.data.dataset.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]</span>) – A non-instantiated reference
+<li><p><strong>dataset_reference</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code>[<a class="reference internal" href="graphnet.data.dataset.sqlite.sqlite_dataset.html#graphnet.data.dataset.sqlite.sqlite_dataset.SQLiteDataset" title="graphnet.data.dataset.sqlite.sqlite_dataset.SQLiteDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLiteDataset</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code>[<a class="reference internal" href="graphnet.data.dataset.parquet.parquet_dataset.html#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset" title="graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code>[<a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.Dataset" title="graphnet.data.dataset.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]]</span>) – A non-instantiated reference
 to the dataset class.</p></li>
 <li><p><strong>dataset_args</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Arguments to instantiate
 graphnet.data.dataset.Dataset with.</p></li>
@@ -702,12 +716,12 @@ after training. Override this method as needed.</p>
             </a>
           
           
-            <a href="graphnet.deployment.html" title="deployment"
+            <a href="graphnet.datasets.html" title="datasets"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> deployment </span>
+                class="md-footer-nav__direction"> "Next" </span> datasets </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
