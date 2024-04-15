@@ -1,5 +1,5 @@
 """Base `Dataloader` class(es) used in `graphnet`."""
-from typing import Dict, Any, Optional, List, Tuple, Union
+from typing import Dict, Any, Optional, List, Tuple, Union, Type
 import pytorch_lightning as pl
 from copy import deepcopy
 from sklearn.model_selection import train_test_split
@@ -20,7 +20,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
 
     def __init__(
         self,
-        dataset_reference: Union[SQLiteDataset, ParquetDataset, Dataset],
+        dataset_reference: Union[
+            Type[SQLiteDataset], Type[ParquetDataset], Type[Dataset]
+        ],
         dataset_args: Dict[str, Any],
         selection: Optional[Union[List[int], List[List[int]]]] = None,
         test_selection: Optional[Union[List[int], List[List[int]]]] = None,
@@ -70,6 +72,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             self._dataset_args["path"], list
         )
 
+        # Create Dataloaders
         self.setup("fit")
 
     def prepare_data(self) -> None:
