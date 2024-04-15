@@ -634,7 +634,7 @@ class Dataset(
         if len(features):
             node_features = features
         else:
-            node_features = np.array([]).reshape((0, len(self._features) - 1))
+            node_features = np.array([]).reshape((0, len(self._features)))
 
         assert isinstance(features, np.ndarray)
         # Construct graph data object

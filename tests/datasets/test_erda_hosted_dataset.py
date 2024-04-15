@@ -6,6 +6,7 @@ from graphnet.models.detector.prometheus import ORCA150
 from graphnet.models.graphs import KNNGraph
 from graphnet.datasets import TestDataset
 from graphnet.training.utils import DataLoader
+from graphnet.constants import TEST_DATA_DIR
 
 
 def iterate_dataloader(dataloader: DataLoader) -> None:
@@ -28,7 +29,7 @@ def test_erda_hosted_dataset(backend: str) -> None:
     """
     graph_definition = KNNGraph(detector=ORCA150())
     data_module = TestDataset(
-        download_dir="",
+        download_dir=TEST_DATA_DIR,
         graph_definition=graph_definition,
         backend=backend,
         train_dataloader_kwargs={"batch_size": 3, "num_workers": 1},

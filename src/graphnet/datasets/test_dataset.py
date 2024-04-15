@@ -60,5 +60,5 @@ class TestDataset(ERDAHostedDataset):
             "features": features,
             "truth": truth,
         }
-        selection = [0, 1, 2, 3, 4, 6, 7, 8, 9]  # event 5 is empty
+        selection = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]  # event 5 is empty
         return dataset_args, selection, None
