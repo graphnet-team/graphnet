@@ -383,6 +383,9 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct Dataset.</span>
 
+<span class="sd">            NOTE: DataLoaders using this Dataset should have</span>
+<span class="sd">            "multiprocessing_context = 'spawn'" set to avoid thread locking.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            path: Path to the file(s) from which this `Dataset` should read.</span>
 <span class="sd">            pulsemaps: Name(s) of the pulse map series that should be used to</span>

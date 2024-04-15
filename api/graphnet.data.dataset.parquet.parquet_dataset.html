@@ -563,6 +563,10 @@
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.Dataset" title="graphnet.data.dataset.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 <p>Dataset class for Parquet-files converted with <cite>ParquetWriter</cite>.</p>
 <p>Construct Dataset.</p>
+<blockquote>
+<div><p>NOTE: DataLoaders using this Dataset should have
+“multiprocessing_context = ‘spawn’” set to avoid thread locking.</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

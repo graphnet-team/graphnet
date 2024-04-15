@@ -352,9 +352,12 @@
         <span class="n">dataset_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">test_selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">train_dataloader_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">validation_dataloader_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">test_dataloader_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">train_dataloader_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"batch_size"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"num_workers"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">validation_dataloader_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">test_dataloader_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">train_val_split</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">],</span>
         <span class="n">split_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -368,13 +371,14 @@
 <span class="sd">            selection: (Optional) a list of event id's used for training</span>
 <span class="sd">                    and validation, Default None.</span>
 <span class="sd">            test_selection: (Optional) a list of event id's used for testing,</span>
-<span class="sd">                            Default None.</span>
+<span class="sd">                            Defaults to None.</span>
 <span class="sd">            train_dataloader_kwargs: Arguments for the training DataLoader,</span>
-<span class="sd">                                    Default None.</span>
+<span class="sd">                                 Defaults{"batch_size": 2, "num_workers": 1}.</span>
 <span class="sd">            validation_dataloader_kwargs: Arguments for the validation</span>
-<span class="sd">                                        DataLoader, Default None.</span>
+<span class="sd">                                        DataLoader. Defaults to</span>
+<span class="sd">                                        `train_dataloader_kwargs`.</span>
 <span class="sd">            test_dataloader_kwargs: Arguments for the test DataLoader,</span>
-<span class="sd">                                    Default None.</span>
+<span class="sd">                                    Defaults to `train_dataloader_kwargs`.</span>
 <span class="sd">            train_val_split (Optional): Split ratio for training and</span>
 <span class="sd">                                validation sets. Default is [0.9, 0.10].</span>
 <span class="sd">            split_seed: seed used for shuffling and splitting selections into</span>
@@ -389,9 +393,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_val_split</span> <span class="o">=</span> <span class="n">train_val_split</span> <span class="ow">or</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span> <span class="o">=</span> <span class="n">split_seed</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_train_dataloader_kwargs</span> <span class="o">=</span> <span class="n">train_dataloader_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_validation_dataloader_kwargs</span> <span class="o">=</span> <span class="n">validation_dataloader_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_test_dataloader_kwargs</span> <span class="o">=</span> <span class="n">test_dataloader_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_dataloader_kwargs</span><span class="p">(</span>
+            <span class="n">train_dataloader_kwargs</span><span class="p">,</span>
+            <span class="n">validation_dataloader_kwargs</span><span class="p">,</span>
+            <span class="n">test_dataloader_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># If multiple dataset paths are given, we should use EnsembleDataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_use_ensemble_dataset</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -400,6 +406,84 @@
 
         <span class="c1"># Create Dataloaders</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="s2">"fit"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_dataloader_kwargs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">train_dl_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">val_dl_args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">test_dl_args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Copy train dataloader args to other dataloaders if not given.</span>
+
+<span class="sd">        Also checks that ParquetDataset dataloaders have multiprocessing</span>
+<span class="sd">        context set to "spawn" as this is strictly required.</span>
+
+<span class="sd">        See: https://docs.pola.rs/user-guide/misc/multiprocessing/</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">val_dl_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"No `val_dataloader_kwargs` given. This arg has "</span>
+                <span class="s2">"been set to `train_dataloader_kwargs` with `shuffle` = False."</span>
+            <span class="p">)</span>
+            <span class="n">val_dl_args</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">train_dl_args</span><span class="p">)</span>
+            <span class="n">val_dl_args</span><span class="p">[</span><span class="s2">"shuffle"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Important for inference</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">test_dl_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_test_selection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">test_dl_args</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">train_dl_args</span><span class="p">)</span>
+            <span class="n">test_dl_args</span><span class="p">[</span><span class="s2">"shuffle"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Important for inference</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"No `test_dataloader_kwargs` given. This arg has "</span>
+                <span class="s2">"been set to `train_dataloader_kwargs` with `shuffle` = False."</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">==</span> <span class="n">ParquetDataset</span><span class="p">:</span>
+            <span class="n">train_dl_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_context</span><span class="p">(</span><span class="n">train_dl_args</span><span class="p">,</span> <span class="s2">"training"</span><span class="p">)</span>
+            <span class="n">val_dl_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_context</span><span class="p">(</span><span class="n">val_dl_args</span><span class="p">,</span> <span class="s2">"validation"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_selection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">test_dl_args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">test_dl_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_context</span><span class="p">(</span><span class="n">test_dl_args</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train_dataloader_kwargs</span> <span class="o">=</span> <span class="n">train_dl_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validation_dataloader_kwargs</span> <span class="o">=</span> <span class="n">val_dl_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_test_dataloader_kwargs</span> <span class="o">=</span> <span class="n">test_dl_args</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_add_context</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dataloader_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">dataloader_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Handle assignment of `multiprocessing_context` arg to loaders.</span>
+
+<span class="sd">        Datasets relying on threaded libraries often require the</span>
+<span class="sd">        multiprocessing context to be set to "spawn" if "num_workers" &gt; 0. This</span>
+<span class="sd">        method will check the arguments for this entry and throw an error if</span>
+<span class="sd">        the field is already assigned to a wrong value. If the value is not</span>
+<span class="sd">        specified, it is added automatically with a log entry.</span>
+<span class="sd">        """</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="s2">"multiprocessing_context"</span>
+        <span class="k">if</span> <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"num_workers"</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># If using multiprocessing</span>
+            <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">dataloader_args</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dataloader_args</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"spawn"</span><span class="p">:</span>
+                    <span class="c1"># Wrongly assigned by user</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="s2">"DataLoaders using `ParquetDataset` must have "</span>
+                        <span class="s2">"multiprocessing_context = 'spawn'. "</span>
+                        <span class="sa">f</span><span class="s2">" Found '</span><span class="si">{</span><span class="n">dataloader_args</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="si">}</span><span class="s2">' in "</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dataloader_type</span><span class="si">}</span><span class="s2"> dataloader."</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"multiprocessing_context must be 'spawn'"</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Correctly assigned by user</span>
+                    <span class="k">return</span> <span class="n">dataloader_args</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Forgotten assignment by user</span>
+                <span class="n">dataloader_args</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"spawn"</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> has automatically "</span>
+                    <span class="s2">"set multiprocessing_context = 'spawn' in "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dataloader_type</span><span class="si">}</span><span class="s2"> dataloader."</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">dataloader_args</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dataloader_args</span>
 
 <div class="viewcode-block" id="GraphNeTDataModule.prepare_data">
 <a class="viewcode-back" href="../../../api/graphnet.data.datamodule.html#graphnet.data.datamodule.GraphNeTDataModule.prepare_data">[docs]</a>
