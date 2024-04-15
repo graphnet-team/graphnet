@@ -31,7 +31,7 @@ class DataLoader(torch.utils.data.DataLoader):
         dataset: Dataset,
         batch_size: int = 1,
         shuffle: bool = False,
-        num_workers: int = 10,
+        num_workers: int = 1,
         persistent_workers: bool = True,
         collate_fn: Callable = collate_fn,
         prefetch_factor: int = 2,

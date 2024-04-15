@@ -57,6 +57,9 @@ class ParquetDataset(Dataset):
     ):
         """Construct Dataset.
 
+            NOTE: DataLoaders using this Dataset should have
+            "multiprocessing_context = 'spawn'" set to avoid thread locking.
+
         Args:
             path: Path to the file(s) from which this `Dataset` should read.
             pulsemaps: Name(s) of the pulse map series that should be used to
