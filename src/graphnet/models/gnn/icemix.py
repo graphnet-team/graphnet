@@ -68,7 +68,7 @@ class DeepIce(GNN):
         fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
         self.fourier_ext = FourierEncoder(
             seq_length=seq_length,
-            mlp_dim=hidden_dim * mlp_ratio,
+            mlp_dim=None,
             output_dim=fourier_out_dim,
             scaled=scaled_emb,
             n_features=n_features,
