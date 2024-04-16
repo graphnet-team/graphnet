@@ -61,7 +61,7 @@ class FourierEncoder(LightningModule):
     def __init__(
         self,
         seq_length: int = 128,
-        mlp_dim: int = 1536,
+        mlp_dim: Optional[int] = None,
         output_dim: int = 384,
         scaled: bool = False,
         n_features: int = 6,
@@ -71,8 +71,11 @@ class FourierEncoder(LightningModule):
         Args:
             seq_length: Dimensionality of the base sinusoidal positional
                 embeddings.
-            mlp_dim: Hidden dimensionality of the final Mlp.
-            output_dim: Output dimensionality of the final Mlp.
+            mlp_dim: mlp_dim (Optional): Size of hidden, latent space of 
+                MLP. If not given, `mlp_dim` is set automatically as
+                multiples of `seq_length` (in consistent with the 2nd
+                place solution), depending on `n_features`.
+            output_dim: Dimension of the output (I.e. number of columns).
             scaled: Whether or not to scale the embeddings.
             n_features: The number of features in the input data.
         """
@@ -91,6 +94,9 @@ class FourierEncoder(LightningModule):
             hidden_dim = 6 * seq_length
         else:
             hidden_dim = int((n_features + 0.5) * seq_length)
+
+        if mlp_dim is None:
+            mlp_dim = hidden_dim
 
         self.mlp = nn.Sequential(
             nn.Linear(hidden_dim, mlp_dim),
