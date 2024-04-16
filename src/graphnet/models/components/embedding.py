@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 from torch.functional import Tensor
 
+from typing import Optional
+
 from pytorch_lightning import LightningModule
 
 
