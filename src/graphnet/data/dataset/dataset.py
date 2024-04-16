@@ -634,7 +634,7 @@ class Dataset(
         if len(features):
             node_features = features
         else:
-            node_features = np.array([]).reshape((0, len(self._features) - 1))
+            node_features = np.array([]).reshape((0, len(self._features)))
 
         assert isinstance(features, np.ndarray)
         # Construct graph data object
@@ -667,7 +667,7 @@ class Dataset(
                 "v_u": int(abs_pid == 14),
                 "v_t": int(abs_pid == 16),
                 "track": int(
-                    (abs_pid == 14) & (truth_dict["interaction_type"] == 1)
+                    (abs_pid == 14) & (truth_dict.get("interaction_type") == 1)
                 ),
                 "dbang": self._get_dbang_label(truth_dict),
                 "corsika": int(abs_pid > 20),

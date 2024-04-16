@@ -1,7 +1,6 @@
 """Base `Dataloader` class(es) used in `graphnet`."""
-from typing import Dict, Any, Optional, List, Tuple, Union
+from typing import Dict, Any, Optional, List, Tuple, Union, Type
 import pytorch_lightning as pl
-from torch.utils.data import DataLoader
 from copy import deepcopy
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -13,6 +12,7 @@ from graphnet.data.dataset import (
     ParquetDataset,
 )
 from graphnet.utilities.logging import Logger
+from graphnet.data.dataloader import DataLoader
 
 
 class GraphNeTDataModule(pl.LightningDataModule, Logger):
@@ -20,13 +20,18 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
 
     def __init__(
         self,
-        dataset_reference: Union[SQLiteDataset, ParquetDataset, Dataset],
+        dataset_reference: Union[
+            Type[SQLiteDataset], Type[ParquetDataset], Type[Dataset]
+        ],
         dataset_args: Dict[str, Any],
         selection: Optional[Union[List[int], List[List[int]]]] = None,
         test_selection: Optional[Union[List[int], List[List[int]]]] = None,
-        train_dataloader_kwargs: Optional[Dict[str, Any]] = None,
-        validation_dataloader_kwargs: Optional[Dict[str, Any]] = None,
-        test_dataloader_kwargs: Optional[Dict[str, Any]] = None,
+        train_dataloader_kwargs: Dict[str, Any] = {
+            "batch_size": 2,
+            "num_workers": 1,
+        },
+        validation_dataloader_kwargs: Dict[str, Any] = None,
+        test_dataloader_kwargs: Dict[str, Any] = None,
         train_val_split: Optional[List[float]] = [0.9, 0.10],
         split_seed: int = 42,
     ) -> None:
@@ -40,13 +45,14 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             selection: (Optional) a list of event id's used for training
                     and validation, Default None.
             test_selection: (Optional) a list of event id's used for testing,
-                            Default None.
+                            Defaults to None.
             train_dataloader_kwargs: Arguments for the training DataLoader,
-                                    Default None.
+                                 Defaults{"batch_size": 2, "num_workers": 1}.
             validation_dataloader_kwargs: Arguments for the validation
-                                        DataLoader, Default None.
+                                        DataLoader. Defaults to
+                                        `train_dataloader_kwargs`.
             test_dataloader_kwargs: Arguments for the test DataLoader,
-                                    Default None.
+                                    Defaults to `train_dataloader_kwargs`.
             train_val_split (Optional): Split ratio for training and
                                 validation sets. Default is [0.9, 0.10].
             split_seed: seed used for shuffling and splitting selections into
@@ -61,16 +67,97 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._train_val_split = train_val_split or [0.0]
         self._rng = split_seed
 
-        self._train_dataloader_kwargs = train_dataloader_kwargs or {}
-        self._validation_dataloader_kwargs = validation_dataloader_kwargs or {}
-        self._test_dataloader_kwargs = test_dataloader_kwargs or {}
+        self._set_dataloader_kwargs(
+            train_dataloader_kwargs,
+            validation_dataloader_kwargs,
+            test_dataloader_kwargs,
+        )
 
         # If multiple dataset paths are given, we should use EnsembleDataset
         self._use_ensemble_dataset = isinstance(
             self._dataset_args["path"], list
         )
 
+        # Create Dataloaders
         self.setup("fit")
+
+    def _set_dataloader_kwargs(
+        self,
+        train_dl_args: Dict[str, Any],
+        val_dl_args: Union[Dict[str, Any], None],
+        test_dl_args: Union[Dict[str, Any], None],
+    ) -> None:
+        """Copy train dataloader args to other dataloaders if not given.
+
+        Also checks that ParquetDataset dataloaders have multiprocessing
+        context set to "spawn" as this is strictly required.
+
+        See: https://docs.pola.rs/user-guide/misc/multiprocessing/
+        """
+        if val_dl_args is None:
+            self.info(
+                "No `val_dataloader_kwargs` given. This arg has "
+                "been set to `train_dataloader_kwargs` with `shuffle` = False."
+            )
+            val_dl_args = deepcopy(train_dl_args)
+            val_dl_args["shuffle"] = False  # Important for inference
+        if (test_dl_args is None) & (self._test_selection is not None):
+            test_dl_args = deepcopy(train_dl_args)
+            test_dl_args["shuffle"] = False  # Important for inference
+            self.info(
+                "No `test_dataloader_kwargs` given. This arg has "
+                "been set to `train_dataloader_kwargs` with `shuffle` = False."
+            )
+
+        if self._dataset == ParquetDataset:
+            train_dl_args = self._add_context(train_dl_args, "training")
+            val_dl_args = self._add_context(val_dl_args, "validation")
+            if self._test_selection is not None:
+                assert test_dl_args is not None
+                test_dl_args = self._add_context(test_dl_args, "test")
+
+        self._train_dataloader_kwargs = train_dl_args
+        self._validation_dataloader_kwargs = val_dl_args
+        self._test_dataloader_kwargs = test_dl_args or {}
+
+    def _add_context(
+        self, dataloader_args: Dict[str, Any], dataloader_type: str
+    ) -> Dict[str, Any]:
+        """Handle assignment of `multiprocessing_context` arg to loaders.
+
+        Datasets relying on threaded libraries often require the
+        multiprocessing context to be set to "spawn" if "num_workers" > 0. This
+        method will check the arguments for this entry and throw an error if
+        the field is already assigned to a wrong value. If the value is not
+        specified, it is added automatically with a log entry.
+        """
+        arg = "multiprocessing_context"
+        if dataloader_args["num_workers"] != 0:
+            # If using multiprocessing
+            if arg in dataloader_args:
+                if dataloader_args[arg] != "spawn":
+                    # Wrongly assigned by user
+                    self.error(
+                        "DataLoaders using `ParquetDataset` must have "
+                        "multiprocessing_context = 'spawn'. "
+                        f" Found '{dataloader_args[arg]}' in ",
+                        f"{dataloader_type} dataloader.",
+                    )
+                    raise ValueError("multiprocessing_context must be 'spawn'")
+                else:
+                    # Correctly assigned by user
+                    return dataloader_args
+            else:
+                # Forgotten assignment by user
+                dataloader_args[arg] = "spawn"
+                self.warning_once(
+                    f"{self.__class__.__name__} has automatically "
+                    "set multiprocessing_context = 'spawn' in "
+                    f"{dataloader_type} dataloader."
+                )
+                return dataloader_args
+        else:
+            return dataloader_args
 
     def prepare_data(self) -> None:
         """Prepare the dataset for training."""
@@ -316,7 +403,6 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         Returns:
             Training selection, Validation selection.
         """
-        print(selection)
         assert isinstance(selection, (int, list))
         if isinstance(selection, int):
             flat_selection = [selection]
