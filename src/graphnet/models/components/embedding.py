@@ -71,10 +71,10 @@ class FourierEncoder(LightningModule):
         Args:
             seq_length: Dimensionality of the base sinusoidal positional
                 embeddings.
-            mlp_dim: mlp_dim (Optional): Size of hidden, latent space of 
-                MLP. If not given, `mlp_dim` is set automatically as
-                multiples of `seq_length` (in consistent with the 2nd
-                place solution), depending on `n_features`.
+            mlp_dim (Optional): Size of hidden, latent space of MLP. If not
+                given, `mlp_dim` is set automatically as multiples of
+                `seq_length` (in consistent with the 2nd place solution),
+                depending on `n_features`.
             output_dim: Dimension of the output (I.e. number of columns).
             scaled: Whether or not to scale the embeddings.
             n_features: The number of features in the input data.
