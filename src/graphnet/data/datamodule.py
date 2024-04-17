@@ -26,10 +26,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         dataset_args: Dict[str, Any],
         selection: Optional[Union[List[int], List[List[int]]]] = None,
         test_selection: Optional[Union[List[int], List[List[int]]]] = None,
-        train_dataloader_kwargs: Dict[str, Any] = {
-            "batch_size": 2,
-            "num_workers": 1,
-        },
+        train_dataloader_kwargs: Dict[str, Any] = None,
         validation_dataloader_kwargs: Dict[str, Any] = None,
         test_dataloader_kwargs: Dict[str, Any] = None,
         train_val_split: Optional[List[float]] = [0.9, 0.10],
@@ -67,6 +64,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         self._train_val_split = train_val_split or [0.0]
         self._rng = split_seed
 
+        if train_dataloader_kwargs is None:
+            train_dataloader_kwargs = {"batch_size": 2, "num_workers": 1}
+                    
         self._set_dataloader_kwargs(
             train_dataloader_kwargs,
             validation_dataloader_kwargs,
