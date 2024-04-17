@@ -66,7 +66,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
 
         if train_dataloader_kwargs is None:
             train_dataloader_kwargs = {"batch_size": 2, "num_workers": 1}
-                    
+
         self._set_dataloader_kwargs(
             train_dataloader_kwargs,
             validation_dataloader_kwargs,
