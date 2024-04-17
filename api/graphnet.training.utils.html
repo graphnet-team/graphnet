@@ -123,7 +123,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../about.html" />
@@ -525,7 +525,7 @@
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>graphs</strong> (<em>List</em><em>[</em><em>Data</em><em>]</em>) – </p>
+<dd class="field-even"><p><strong>graphs</strong> (<em>List</em><em>[</em><em>Data</em><em>]</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -540,7 +540,7 @@ number of graphs. This list should not explicitly define the first and
 last elements, which will always be 0 and 1 respectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>batch_splits</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – </p>
+<dd class="field-odd"><p><strong>batch_splits</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -554,24 +554,24 @@ last elements, which will always be 0 and 1 respectively.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>db</strong> (<em>str</em>) – </p></li>
-<li><p><strong>pulsemaps</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a>) – </p></li>
-<li><p><strong>features</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>truth</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – </p></li>
-<li><p><strong>shuffle</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>) – </p></li>
-<li><p><strong>num_workers</strong> (<em>int</em>) – </p></li>
-<li><p><strong>persistent_workers</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>node_truth</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – </p></li>
-<li><p><strong>truth_table</strong> (<em>str</em>) – </p></li>
-<li><p><strong>node_truth_table</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>string_selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>) – </p></li>
-<li><p><strong>loss_weight_table</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>loss_weight_column</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>index_column</strong> (<em>str</em>) – </p></li>
-<li><p><strong>labels</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+<li><p><strong>db</strong> (<em>str</em>)</p></li>
+<li><p><strong>pulsemaps</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a>)</p></li>
+<li><p><strong>features</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>truth</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>shuffle</strong> (<em>bool</em>)</p></li>
+<li><p><strong>selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>num_workers</strong> (<em>int</em>)</p></li>
+<li><p><strong>persistent_workers</strong> (<em>bool</em>)</p></li>
+<li><p><strong>node_truth</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>truth_table</strong> (<em>str</em>)</p></li>
+<li><p><strong>node_truth_table</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>string_selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>loss_weight_table</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>loss_weight_column</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>index_column</strong> (<em>str</em>)</p></li>
+<li><p><strong>labels</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -586,26 +586,26 @@ last elements, which will always be 0 and 1 respectively.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>db</strong> (<em>str</em>) – </p></li>
-<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a>) – </p></li>
-<li><p><strong>selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>) – </p></li>
-<li><p><strong>pulsemaps</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>features</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>truth</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – </p></li>
-<li><p><strong>database_indices</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>) – </p></li>
-<li><p><strong>seed</strong> (<em>int</em>) – </p></li>
-<li><p><strong>test_size</strong> (<em>float</em>) – </p></li>
-<li><p><strong>num_workers</strong> (<em>int</em>) – </p></li>
-<li><p><strong>persistent_workers</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>node_truth</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>truth_table</strong> (<em>str</em>) – </p></li>
-<li><p><strong>node_truth_table</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>string_selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>) – </p></li>
-<li><p><strong>loss_weight_column</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>loss_weight_table</strong> (<em>str</em><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>index_column</strong> (<em>str</em>) – </p></li>
-<li><p><strong>labels</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+<li><p><strong>db</strong> (<em>str</em>)</p></li>
+<li><p><strong>graph_definition</strong> (<a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><em>GraphDefinition</em></a>)</p></li>
+<li><p><strong>selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>pulsemaps</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>features</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>truth</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>database_indices</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>seed</strong> (<em>int</em>)</p></li>
+<li><p><strong>test_size</strong> (<em>float</em>)</p></li>
+<li><p><strong>num_workers</strong> (<em>int</em>)</p></li>
+<li><p><strong>persistent_workers</strong> (<em>bool</em>)</p></li>
+<li><p><strong>node_truth</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>truth_table</strong> (<em>str</em>)</p></li>
+<li><p><strong>node_truth_table</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>string_selection</strong> (<em>List</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>loss_weight_column</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>loss_weight_table</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>index_column</strong> (<em>str</em>)</p></li>
+<li><p><strong>labels</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -620,12 +620,12 @@ last elements, which will always be 0 and 1 respectively.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>trainer</strong> (<em>Trainer</em>) – </p></li>
-<li><p><strong>model</strong> (<a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><em>Model</em></a>) – </p></li>
-<li><p><strong>dataloader</strong> (<em>DataLoader</em>) – </p></li>
-<li><p><strong>prediction_columns</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>node_level</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>additional_attributes</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – </p></li>
+<li><p><strong>trainer</strong> (<em>Trainer</em>)</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><em>Model</em></a>)</p></li>
+<li><p><strong>dataloader</strong> (<em>DataLoader</em>)</p></li>
+<li><p><strong>prediction_columns</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>node_level</strong> (<em>bool</em>)</p></li>
+<li><p><strong>additional_attributes</strong> (<em>List</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -640,11 +640,11 @@ last elements, which will always be 0 and 1 respectively.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>db</strong> (<em>str</em>) – </p></li>
-<li><p><strong>tag</strong> (<em>str</em>) – </p></li>
-<li><p><strong>results</strong> (<em>DataFrame</em>) – </p></li>
-<li><p><strong>archive</strong> (<em>str</em>) – </p></li>
-<li><p><strong>model</strong> (<a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><em>Model</em></a>) – </p></li>
+<li><p><strong>db</strong> (<em>str</em>)</p></li>
+<li><p><strong>tag</strong> (<em>str</em>)</p></li>
+<li><p><strong>results</strong> (<em>DataFrame</em>)</p></li>
+<li><p><strong>archive</strong> (<em>str</em>)</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><em>Model</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -714,7 +714,7 @@ last elements, which will always be 0 and 1 respectively.</p>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.3.5.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

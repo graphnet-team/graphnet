@@ -123,7 +123,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="author" title="About these documents" href="../about.html" />
@@ -584,7 +584,7 @@
 <p>Base <cite>Dataloader</cite> class(es) used in <cite>graphnet</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.datamodule.GraphNeTDataModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.datamodule.</span></span><span class="sig-name descname"><span class="pre">GraphNeTDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">dataset_reference,</span> <span class="pre">dataset_args,</span> <span class="pre">selection,</span> <span class="pre">test_selection,</span> <span class="pre">train_dataloader_kwargs={'batch_size':</span> <span class="pre">2,</span> <span class="pre">'num_workers':</span> <span class="pre">1},</span> <span class="pre">validation_dataloader_kwargs,</span> <span class="pre">test_dataloader_kwargs,</span> <span class="pre">train_val_split=[0.9,</span> <span class="pre">0.1],</span> <span class="pre">split_seed</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/datamodule.html#GraphNeTDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.datamodule.GraphNeTDataModule" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.datamodule.</span></span><span class="sig-name descname"><span class="pre">GraphNeTDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">dataset_reference,</span> <span class="pre">dataset_args,</span> <span class="pre">selection,</span> <span class="pre">test_selection,</span> <span class="pre">train_dataloader_kwargs,</span> <span class="pre">validation_dataloader_kwargs,</span> <span class="pre">test_dataloader_kwargs,</span> <span class="pre">train_val_split=[0.9,</span> <span class="pre">0.1],</span> <span class="pre">split_seed</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/datamodule.html#GraphNeTDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.datamodule.GraphNeTDataModule" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningDataModule</span></code>, <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
 <p>General Class for DataLoader Construction.</p>
 <p>Create dataloaders from dataset.</p>
@@ -599,7 +599,7 @@ graphnet.data.dataset.Dataset with.</p></li>
 and validation, Default None.</p></li>
 <li><p><strong>test_selection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – (Optional) a list of event id’s used for testing,
 Defaults to None.</p></li>
-<li><p><strong>train_dataloader_kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">{'batch_size':</span> <span class="pre">2,</span> <span class="pre">'num_workers':</span> <span class="pre">1}</span></code>) – Arguments for the training DataLoader,
+<li><p><strong>train_dataloader_kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Arguments for the training DataLoader,
 Defaults{“batch_size”: 2, “num_workers”: 1}.</p></li>
 <li><p><strong>validation_dataloader_kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Arguments for the validation
 DataLoader. Defaults to
@@ -740,7 +740,7 @@ after training. Override this method as needed.</p>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.3.5.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>
