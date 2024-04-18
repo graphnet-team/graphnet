@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 from torch.functional import Tensor
 
+from typing import Optional
+
 from pytorch_lightning import LightningModule
 
 
@@ -61,6 +63,7 @@ class FourierEncoder(LightningModule):
     def __init__(
         self,
         seq_length: int = 128,
+        mlp_dim: Optional[int] = None,
         output_dim: int = 384,
         scaled: bool = False,
         n_features: int = 6,
@@ -70,7 +73,11 @@ class FourierEncoder(LightningModule):
         Args:
             seq_length: Dimensionality of the base sinusoidal positional
                 embeddings.
-            output_dim: Output dimensionality of the final projection.
+            mlp_dim (Optional): Size of hidden, latent space of MLP. If not
+                given, `mlp_dim` is set automatically as multiples of
+                `seq_length` (in consistent with the 2nd place solution),
+                depending on `n_features`.
+            output_dim: Dimension of the output (I.e. number of columns).
             scaled: Whether or not to scale the embeddings.
             n_features: The number of features in the input data.
         """
@@ -90,11 +97,14 @@ class FourierEncoder(LightningModule):
         else:
             hidden_dim = int((n_features + 0.5) * seq_length)
 
-        self.projection = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
+        if mlp_dim is None:
+            mlp_dim = hidden_dim
+
+        self.mlp = nn.Sequential(
+            nn.Linear(hidden_dim, mlp_dim),
+            nn.LayerNorm(mlp_dim),
             nn.GELU(),
-            nn.Linear(hidden_dim, output_dim),
+            nn.Linear(mlp_dim, output_dim),
         )
 
         self.n_features = n_features
@@ -121,7 +131,8 @@ class FourierEncoder(LightningModule):
         )  # Length
 
         x = torch.cat(embeddings, -1)
-        x = self.projection(x)
+        x = self.mlp(x)
+
         return x
 
 
