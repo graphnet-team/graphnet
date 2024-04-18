@@ -20,6 +20,7 @@ models
    graphnet.models.graphs
    graphnet.models.rnn
    graphnet.models.task
+   graphnet.models.transformer
 
 |start-h2| Submodules |end-h2|
 
