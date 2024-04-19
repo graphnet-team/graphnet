@@ -40,14 +40,14 @@ This repository aims to support python 3 version that are actively supported (cu
 Code quality
 ------------
 
-To ensure consistency in code style and adherence to select best practices, we **require** that all developers use :code:`black`, :code:`flake8`, :code:`mypy`, :code:`pydocstyle`, and :code:`docformatter` for automatically formatting and checking their code. This can conveniently be done using pre-commit hooks. To set this up, first make sure that you have installed the :code:`pre-commit` python package. It comes with included when installing |graphnet|\ GraphNeT with the :code:`develop` tag, i.e., :code:`pip install -e .[develop]`. Then, do
+To ensure consistency in code style and adherence to select best practices, we **require** that all developers use :code:`black`, :code:`flake8`, :code:`mypy`, :code:`pydocstyle`, and :code:`docformatter` for automatically formatting and checking their code. This can conveniently be done using pre-commit hooks. To set this up, first make sure that you have installed the :code:`pre-commit` python package. It is included when installing |graphnet|\ GraphNeT with the :code:`develop` tag, i.e., :code:`pip install -e .[develop]`. Then, do
 
 .. code-block:: bash
    
    pre-commit install
 
 
-Then, everytime you commit a change, your code and docstrings will automatically be formatted using :code:`black` and :code:`docformatter`, and :code:`flake8`, :code:`mypy`, and :code:`pydocstyle` will check for errors and adherence to PEP8, PEP257, and static typing. See an illustration of the concept below:
+Then, everytime you commit a change, your code and docstrings will automatically be formatted using :code:`black` and :code:`docformatter`, while :code:`flake8`, :code:`mypy`, and :code:`pydocstyle` will check for errors and adherence to PEP8, PEP257, and static typing. See an illustration of the concept below:
 
 .. image:: ../../../assets/images/precommit_pipeline.png
 
