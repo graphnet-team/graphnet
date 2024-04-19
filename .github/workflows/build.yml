@@ -147,7 +147,7 @@ jobs:
           coverage report -m
 
   docs:
-    name: Check that documentation compiles
+    name: Documentation Compilation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
