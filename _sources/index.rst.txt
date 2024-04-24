@@ -5,6 +5,9 @@
    :maxdepth: 1
    :hidden:
 
-   install
-   contribute
+   
+   installation/install.rst
    api/graphnet.rst
+   about/about.rst
+   contribute/contribute.rst
+   
