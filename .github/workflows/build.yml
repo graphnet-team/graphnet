@@ -145,3 +145,24 @@ jobs:
           coverage run --source=graphnet -m pytest tests/  --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/ --ignore=tests/utilities
           coverage run -a --source=graphnet -m pytest tests/utilities
           coverage report -m
+
+  docs:
+    name: Documentation Compilation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install package
+        uses: ./.github/actions/install
+      - name: Build documentation
+        run: |
+          cd docs
+          make clean
+          sphinx-apidoc \
+            --module-first \
+            --separate \
+            --force \
+            -d 2 \
+            --templatedir=source/_templates/ \
+            -o source/api ../src/
+          sed -i "2s/.*/API/" source/api/graphnet.rst
+          make html

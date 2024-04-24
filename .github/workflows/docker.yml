@@ -12,7 +12,7 @@ env:
 
 jobs:
   docker:
-    name: Build and publish
+    name: Build and Publish Docker Image
     if: github.repository == 'graphnet-team/graphnet'
     runs-on: ubuntu-latest
     permissions:
