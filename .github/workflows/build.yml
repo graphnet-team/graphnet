@@ -120,7 +120,7 @@ jobs:
 
   build-macos:
     name: Unit tests - macOS
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.8
@@ -131,7 +131,7 @@ jobs:
         uses: ./.github/actions/install
         with:
           editable: true
-          hardware: "macos"
+          hardware: "cpu"
       - name: Print packages in pip
         run: |
             pip show torch
