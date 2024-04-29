@@ -36,5 +36,6 @@ runs:
       shell: bash
     - name: Install package
       run: |
+        echo requirements/torch_${{ inputs.hardware }}.txt ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
         pip install -r requirements/torch_${{ inputs.hardware }}.txt ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
       shell: bash
