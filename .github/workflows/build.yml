@@ -131,7 +131,7 @@ jobs:
         uses: ./.github/actions/install
         with:
           editable: true
-          hardware: "macos"
+          hardware: "cpu"
       - name: Print packages in pip
         run: |
             pip show torch
