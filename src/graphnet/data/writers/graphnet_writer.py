@@ -22,7 +22,7 @@ class GraphNeTWriter(Logger, ABC):
     from a single file.
 
     In addition, classes inheriting from `GraphNeTFileSaveMethod` must
-    set the `file_extension` property. What
+    set the `file_extension` property.
     """
 
     @abstractmethod
