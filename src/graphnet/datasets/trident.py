@@ -1,11 +1,12 @@
 """A CuratedDataset for unit tests."""
 from typing import Dict, Any, List, Tuple, Union
 import os
+from sklearn.model_selection import train_test_split
 
+from graphnet.training.labels import Direction
 from graphnet.data import ERDAHostedDataset
 from graphnet.data.constants import FEATURES
 from graphnet.data.utilities import query_database
-from sklearn.model_selection import train_test_split
 
 
 class TRIDENTSmall(ERDAHostedDataset):
@@ -71,6 +72,12 @@ class TRIDENTSmall(ERDAHostedDataset):
             "graph_definition": self._graph_definition,
             "features": features,
             "truth": truth,
+            "labels": [
+                Direction(
+                    azimuth_key="initial_state_azimuth",
+                    zenith_key="initial_state_zenith",
+                )
+            ],
         }
 
         return dataset_args, train_val, test
