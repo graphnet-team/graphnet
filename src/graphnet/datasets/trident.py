@@ -4,6 +4,8 @@ import os
 
 from graphnet.data import ERDAHostedDataset
 from graphnet.data.constants import FEATURES
+from graphnet.data.utilities import query_database
+from sklearn.model_selection import train_test_split
 
 
 class TRIDENTSmall(ERDAHostedDataset):
@@ -34,8 +36,8 @@ class TRIDENTSmall(ERDAHostedDataset):
         " Simulation produced by Stephan Meighen-Berger, "
         "U. Melbourne."
     )
-    _available_backends = ["sqlite", "parquet"]
-    _file_hashes = {"sqlite": "F2R8qb8JW7", "parquet": "BRRgyslRno"}
+    _available_backends = ["sqlite"]
+    _file_hashes = {"sqlite": "F2R8qb8JW7"}
     _citation = None
 
     def _prepare_args(
@@ -50,11 +52,18 @@ class TRIDENTSmall(ERDAHostedDataset):
 
         Returns: Dataset arguments and selections
         """
-        if backend == "sqlite":
-            dataset_path = os.path.join(self.dataset_dir, "merged.db")
-        elif backend == "parquet":
-            dataset_path = self.dataset_dir
+        dataset_path = os.path.join(self.dataset_dir, "merged.db")
 
+        event_nos = query_database(
+            database=dataset_path, query="SELECT event_no FROM mc_truth"
+        )
+
+        train_val, test = train_test_split(
+            event_nos["event_no"].tolist(),
+            test_size=0.10,
+            random_state=42,
+            shuffle=True,
+        )
         dataset_args = {
             "truth_table": self._truth_table,
             "pulsemaps": self._pulsemaps,
@@ -64,4 +73,4 @@ class TRIDENTSmall(ERDAHostedDataset):
             "truth": truth,
         }
 
-        return dataset_args, None, None
+        return dataset_args, train_val, test
