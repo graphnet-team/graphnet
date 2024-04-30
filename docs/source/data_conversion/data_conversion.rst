@@ -145,7 +145,7 @@ Below is an example of a reader meant to parse and extract data from :code:`.h5`
 :code:`Extractors`
 ~~~~~~~~~~~~~~~~~
 
-Because rarely all the data available in files from experiments are needed for training deep learning models, GraphNeT uses :code:`Extractors` to extract only 
+Rarely `all` the data available in files from experiments are needed for training deep learning models, therefore GraphNeT uses :code:`Extractors` to extract only 
 specific parts of the available data.
 
 :code:`Extractors` are written to work with a specific :code:`GraphNeTFileReader` and should subclass :code:`Extractor`.
@@ -213,7 +213,7 @@ Below is an example of an :code:`Extractor` that will retrieve tables :code:`.h5
 :code:`Writers`
 ~~~~~~~~~~~~~~
 
-Writers are methods used to save the interim data format from :code:`DataConverter` to disk. They subclass :code:`GraphNetWriter` and should 
+Writers are methods used to save the interim data format from :code:`DataConverter` to disk. They are subclasses of the :code:`GraphNetWriter` and should 
 implement the :code:`save_file method`, which recieves the interim data format from from a single file, and optionally the :code:`merge_files` method,
 which will be called by :code:`DataConverter` through :code:`DataConverter.merge_files()`. 
 
