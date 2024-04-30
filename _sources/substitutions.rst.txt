@@ -9,4 +9,7 @@
    :height: 50px
    :alt: graphnet
    :align: bottom
-   
+
+.. |clearfloat|  raw:: html
+
+    <div class="clearer"></div>

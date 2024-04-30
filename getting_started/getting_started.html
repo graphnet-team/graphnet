@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="lang:clipboard.copy" content="Copy to clipboard">
+  <meta name="lang:clipboard.copied" content="Copied to clipboard">
+  <meta name="lang:search.language" content="en">
+  <meta name="lang:search.pipeline.stopwords" content="True">
+  <meta name="lang:search.pipeline.trimmer" content="True">
+  <meta name="lang:search.result.none" content="No matching documents">
+  <meta name="lang:search.result.one" content="1 matching document">
+  <meta name="lang:search.result.other" content="# matching documents">
+  <meta name="lang:search.tokenizer" content="[\s\-]+">
+
+  
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel="stylesheet">
+
+    <style>
+      body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+    </style>
+  
+
+  <link rel="stylesheet" href="../_static/stylesheets/application.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-palette.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-fixes.css"/>
+  
+  <link rel="stylesheet" href="../_static/fonts/material-icons.css"/>
+  
+  <meta name="theme-color" content="#3f51b5">
+  <script src="../_static/javascripts/modernizr.js"></script>
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-XXXXX');
+</script>
+  
+  
+    <title>GraphNeT tutorial &#8212; graphnet  documentation</title>
+
+<style>
+  dt:target {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+
+  /*
+    .sig-prename {
+     display: none;
+  }
+  */
+
+  .py.class .sig-name,
+  .py.function .sig-name,
+  .py.method .sig-name,
+  .py.exception .sig-name {
+    color: #37474f;
+    font-feature-settings: "kern";
+    font-family: "Roboto Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.method .sig-object,
+  .py.exception .sig-object {
+    padding: 1ex;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.exception .sig-object {
+    border-top: 1px solid gray;
+  }
+  .py.method .sig-object {
+    border-top: 1px solid lightgray;
+  }
+
+  .py.class .sig-object,
+  .py.exception .sig-object {
+    background: rgba(0,0,0,0.06);
+  }
+  .py.function .sig-object,
+  .py.method .sig-object {
+    background: rgba(0,0,0,0.03);
+  }
+
+  #eu-emblem {
+    margin: 0;
+  }
+
+  #eu-emblem figcaption {
+    display: none;
+  }
+
+</style>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/favicon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  
+   
+
+  </head>
+  <body dir=ltr
+        data-md-color-primary=indigo data-md-color-accent=blue>
+  
+  <svg class="md-svg">
+    <defs data-children-count="0">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+      
+    </defs>
+  </svg>
+  
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
+  <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+  <a href="#getting_started/getting_started" tabindex="1" class="md-skip"> Skip to content </a>
+  <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../index.html" title="graphnet  documentation"
+           class="md-header-nav__button md-logo">
+          
+            &nbsp;
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          <span class="md-header-nav__topic">GraphNeT</span>
+          <span class="md-header-nav__topic"> GraphNeT tutorial </span>
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+        
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" action="../search.html" method="get" name="search">
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
+             autocapitalize="off" autocomplete="off" spellcheck="false"
+             data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+          </div>
+        </div>
+      
+      
+  
+  <script src="../_static/javascripts/version_dropdown.js"></script>
+  <script>
+    var json_loc = "../"versions.json"",
+        target_loc = "../../",
+        text = "Versions";
+    $( document ).ready( add_version_dropdown(json_loc, target_loc, text));
+  </script>
+  
+
+    </div>
+  </nav>
+</header>
+
+  
+  <div class="md-container">
+    
+    
+    
+  <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+            
+            <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
+      </ul>
+    </div>
+  </nav>
+    <main class="md-main">
+      <div class="md-main__inner md-grid" data-md-component="container">
+        
+          <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../index.html" title="graphnet documentation" class="md-nav__button md-logo">
+      
+        <img src="../_static/" alt=" logo" width="48" height="48">
+      
+    </a>
+    <a href="../index.html"
+       title="graphnet documentation">GraphNeT</a>
+  </label>
+    <div class="md-nav__source">
+      <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+    </div>
+  
+  
+
+  
+  <ul class="md-nav__list">
+    <li class="md-nav__item">
+    
+    
+      <a href="../installation/install.html" class="md-nav__link">Installation</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../models/models.html" class="md-nav__link">Models In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../datasets/datasets.html" class="md-nav__link">Datasets In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../data_conversion/data_conversion.html" class="md-nav__link">Data Conversion in GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../integration/integration.html" class="md-nav__link">Integrating New Experiments into GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../contribute/contribute.html" class="md-nav__link">Contributing To GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../api/graphnet.html" class="md-nav__link">API</a>
+      
+    
+    </li>
+  </ul>
+  
+
+</nav>
+              </div>
+            </div>
+          </div>
+          <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#getting-started-getting-started--page-root" class="md-nav__link">GraphNeT tutorial</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#contents" class="md-nav__link">Contents</a>
+        </li>
+        <li class="md-nav__item"><a href="#appendix" class="md-nav__link">Appendix</a>
+        </li>
+        <li class="md-nav__item"><a href="#introduction" class="md-nav__link">Introduction</a>
+        </li>
+        <li class="md-nav__item"><a href="#overview-of-graphnet" class="md-nav__link">Overview of GraphNeT</a>
+        </li>
+        <li class="md-nav__item"><a href="#adding-custom-truth-labels" class="md-nav__link">Adding custom truth labels</a>
+        </li>
+        <li class="md-nav__item"><a href="#combining-multiple-datasets" class="md-nav__link">Combining Multiple Datasets</a>
+        </li>
+        <li class="md-nav__item"><a href="#creating-reproducible-datasets-using-datasetconfig" class="md-nav__link">Creating reproducible Datasets using DatasetConfig</a>
+        </li>
+        <li class="md-nav__item"><a href="#example-dataconfig" class="md-nav__link">Example <code class="docutils literal notranslate"><span class="pre">DataConfig</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#advanced-functionality-in-sqlitedataset" class="md-nav__link">Advanced Functionality in SQLiteDataset</a>
+        </li>
+        <li class="md-nav__item"><a href="#the-model-class" class="md-nav__link">The <code class="docutils literal notranslate"><span class="pre">Model</span></code> class</a>
+        </li>
+        <li class="md-nav__item"><a href="#the-standardmodel-class" class="md-nav__link">The <code class="docutils literal notranslate"><span class="pre">StandardModel</span></code> class</a>
+        </li>
+        <li class="md-nav__item"><a href="#creating-reproducible-models-using-modelconfig" class="md-nav__link">Creating reproducible <code class="docutils literal notranslate"><span class="pre">Model</span></code>s using <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#example-modelconfig" class="md-nav__link">Example <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+              </div>
+            </div>
+          </div>
+        
+        <div class="md-content">
+          <article class="md-content__inner md-typeset" role="main">
+            
+  <section id="graphnet-tutorial">
+<h1 id="getting-started-getting-started--page-root">GraphNeT tutorial<a class="headerlink" href="#getting-started-getting-started--page-root" title="Link to this heading">¶</a></h1>
+<section id="contents">
+<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Introduction</span> <span class="pre">&lt;#1-introduction&gt;</span></code>__</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Overview</span> <span class="pre">of</span> <span class="pre">GraphNeT</span> <span class="pre">&lt;#2-overview-of-graphnet&gt;</span></code>__</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Data</span> <span class="pre">&lt;#3-data&gt;</span></code>__</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">The</span> <span class="pre">Dataset</span> <span class="pre">and</span> <span class="pre">DataLoader</span> <span class="pre">classes</span> <span class="pre">&lt;#4-the-dataset-and-dataloader-classes&gt;</span></code>__</p></li>
+</ol>
+</section>
+<section id="appendix">
+<h2 id="appendix">Appendix<a class="headerlink" href="#appendix" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>A. <code class="docutils literal notranslate"><span class="pre">Interfacing</span> <span class="pre">your</span> <span class="pre">data</span> <span class="pre">with</span> <span class="pre">GraphNeT</span> <span class="pre">&lt;#a-interfacing-your-data-with-graphnet&gt;</span></code>__</p></li>
+<li><p>B. <code class="docutils literal notranslate"><span class="pre">Converting</span> <span class="pre">your</span> <span class="pre">data</span> <span class="pre">to</span> <span class="pre">a</span> <span class="pre">supported</span> <span class="pre">format</span> <span class="pre">&lt;#b-converting-your-data-to-a-supported-format&gt;</span></code>__</p></li>
+<li><p>C. <code class="docutils literal notranslate"><span class="pre">Basics</span> <span class="pre">for</span> <span class="pre">SQLite</span> <span class="pre">databases</span> <span class="pre">in</span> <span class="pre">GraphNeT</span> <span class="pre">&lt;#c-basics-for-sqlite-databases-in-graphnet&gt;</span></code>__</p></li>
+</ul>
+</section>
+<section id="introduction">
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<p>GraphNeT is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using deep learning (DL). The framework builds on <code class="docutils literal notranslate"><span class="pre">PyTorch</span> <span class="pre">&lt;https://pytorch.org/&gt;</span></code><strong>, <code class="docutils literal notranslate"><span class="pre">PyG</span> <span class="pre">&lt;https://www.pyg.org/&gt;</span></code></strong>, and <code class="docutils literal notranslate"><span class="pre">PyTorch-Lightning</span> <span class="pre">&lt;https://www.pytorchlightning.ai/index.html&gt;</span></code>__, but attempts to abstract away many of the lower-level implementation details and instead provide simple, high-level components that makes it easy and fast for physicists to use DL in their research.</p>
+<p>This tutorial aims to introduce the various elements of GraphNeT to new users. It will go through the main modules, explain some of the structure and design behind these, and show concrete code examples. Users should be able to follow along and run the code themselves, after having <code class="docutils literal notranslate"><span class="pre">installed</span> <span class="pre">&lt;README.md&gt;</span></code>__ GraphNeT. After completing the tutorial, users should be able to continue running some of the provided <code class="docutils literal notranslate"><span class="pre">example</span> <span class="pre">scripts</span> <span class="pre">&lt;examples/&gt;</span></code>__ and start modifying these to suit their own needs.</p>
+<p>However, this tutorial and the accompanying example scripts are not comprehensive: They are intended as simple starting point, showing just some of the things you can do with GraphNeT. If you have any question, run into any problems, or just need help, consider first joining the <code class="docutils literal notranslate"><span class="pre">GraphNeT</span> <span class="pre">team's</span> <span class="pre">Slack</span> <span class="pre">group</span> <span class="pre">&lt;https://join.slack.com/t/graphnet-team/signup&gt;</span></code>__ to talk to like-minded folks, or <code class="docutils literal notranslate"><span class="pre">open</span> <span class="pre">an</span> <span class="pre">issue</span> <span class="pre">&lt;https://github.com/graphnet-team/graphnet/issues/new/choose&gt;</span></code>__ if you have a feature to suggest or are confident you have encountered a bug.</p>
+<p>If you want a quick lay of the land, you can start with <code class="docutils literal notranslate"><span class="pre">Section</span> <span class="pre">2</span> <span class="pre">-</span> <span class="pre">Overview</span> <span class="pre">of</span> <span class="pre">GraphNet</span> <span class="pre">&lt;#2-overview-of-graphnet&gt;</span></code><strong>. If you want to get your hands dirty right away, feel free to skip to <code class="docutils literal notranslate"><span class="pre">Section</span> <span class="pre">3</span> <span class="pre">-</span> <span class="pre">Data</span> <span class="pre">&lt;#3-data&gt;</span></code></strong> and the subsequent sections.</p>
+</section>
+<section id="overview-of-graphnet">
+<h2 id="overview-of-graphnet">Overview of GraphNeT<a class="headerlink" href="#overview-of-graphnet" title="Link to this heading">¶</a></h2>
+<p>The main modules of GraphNeT are, in the order that you will likely use them:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">graphnet.data</span> <span class="pre">&lt;src/graphnet/data&gt;</span></code><strong>: For converting domain-specific data (i.e., I3 in the case of IceCube) to generic, intermediate file formats (e.g., SQLite or Parquet) using <code class="docutils literal notranslate"><span class="pre">DataConverter</span> <span class="pre">&lt;src/graphnet/data/dataconverter.py&gt;</span></code></strong>; and for reading data as graphs from these intermediate files when training using <code class="docutils literal notranslate"><span class="pre">Dataset</span> <span class="pre">&lt;src/graphnet/data/dataset.py&gt;</span></code>, and its format-specific subclasses and <code class="docutils literal notranslate"><span class="pre">DataLoader</span> <span class="pre">&lt;src/graphnet/data/dataloader.py&gt;</span></code>__.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">graphnet.models</span> <span class="pre">&lt;src/graphnet/models&gt;</span></code><strong>: For building models to perform a variety of physics tasks. The base <code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">&lt;src/graphnet/models/model.py&gt;</span></code></strong> class provides common interfaces for training and inference, as well as for model management (saving, loading, configs, etc.). This can be subclassed to build and train any model using GraphNeT functionality. The more specialised <code class="docutils literal notranslate"><span class="pre">StandardModel</span> <span class="pre">&lt;src/graphnet/models/standard_model.py&gt;</span></code>__ provides a simple way to create a standard type of <code class="docutils literal notranslate"><span class="pre">Model</span></code> with a fixed structure. This type of model is composed of the following components, in sequence:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GraphDefinition</span> <span class="pre">&lt;src/graphnet/models/graphs/graph_definition.py&gt;</span></code>__: A single, self-contained module that handles all processing from raw data to graph representation. It consists of the following sub-modules in sequence:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Detector</span> <span class="pre">&lt;src/graphnet/models/detector/detector.py&gt;</span></code>__: For handling detector-specific preprocessing of data. Currently, this module provides standardization of experiment specific input data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NodeDefinition</span> <span class="pre">&lt;src/graphnet/models/graphs/nodes/nodes.py&gt;</span></code>__: A swapable module that defines what a node/row represents. In charge of transforming the collection of standardized Cherenkov pulses associated with a triggered event into a node/row representation of choice. It is the choice in this module that defines if nodes/rows represents single Cherenkov pulses, DOMs, entire strings or something completely different.  <strong>Note</strong>: You can create <code class="docutils literal notranslate"><span class="pre">NodeDefinitions</span></code> that represents  the data as sequences, images or whatever you fancy, making GraphNeT compatible with any deep learning paradigm, such as CNNs, Transformers etc.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EdgeDefinition</span> <span class="pre">&lt;src/graphnet/models/graphs/edges/edges.py&gt;</span></code>__ (Optional):  A module that defines how edges are drawn between your nodes. This could be connecting the <em>N</em> nearest neighbours of each node or connecting all nodes within a radius of <em>R</em> meters of each other. For methods that does not directly use edges in their data representations, this module can be skipped.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">backbone</span> <span class="pre">&lt;src/graphnet/models/gnn/gnn.py&gt;</span></code><strong>: For implementing the actual model architecture. These are the components of GraphNeT that are actually being trained, and the architecture and complexity of these are central to the performance and optimisation on the physics/learning task being performed. For now, we provide a few different example architectures, e.g., <code class="docutils literal notranslate"><span class="pre">DynEdge</span> <span class="pre">&lt;src/graphnet/models/gnn/convnet.py&gt;</span></code></strong> and <code class="docutils literal notranslate"><span class="pre">ConvNet</span> <span class="pre">&lt;src/graphnet/models/gnn/convnet.py&gt;</span></code>__, but in principle any DL architecture could be implemented here — and we encourage you to contribute your favourite!</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Task</span> <span class="pre">&lt;src/graphnet/models/task/task.py&gt;</span></code><strong>: For choosing a certain physics/learning task or tasks with respect to which the model should be trained. We provide a number of common <code class="docutils literal notranslate"><span class="pre">reconstruction</span> <span class="pre">&lt;src/grapnet/models/task/reconstruction.py&gt;</span></code></strong> (<code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa</span></code> and <code class="docutils literal notranslate"><span class="pre">EnergyReconstructionWithUncertainty</span></code>) and <code class="docutils literal notranslate"><span class="pre">classification</span> <span class="pre">&lt;src/grapnet/models/task/classification.py&gt;</span></code>__ (e.g., <code class="docutils literal notranslate"><span class="pre">BinaryClassificationTask</span></code> and <code class="docutils literal notranslate"><span class="pre">MulticlassClassificationTask</span></code>) tasks, but we encourage you to expand on these with new, more specialised tasks appropriate to your physics use case. For now, <code class="docutils literal notranslate"><span class="pre">Task</span></code> instances also require an appropriate <code class="docutils literal notranslate"><span class="pre">LossFunction</span> <span class="pre">&lt;src/graphnet/training/loss_functions.py&gt;</span></code>__ to specify how the models should be trained (see below).</p></li>
+</ul>
+<p>These components are packaged in a particularly simple way in <code class="docutils literal notranslate"><span class="pre">StandardModel</span></code>, but they are not specific to it.
+That is, they can be used in any combination, and alongside more specialised PyTorch/PyG code, as part of a more generic <code class="docutils literal notranslate"><span class="pre">Model</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">graphnet.training</span> <span class="pre">&lt;src/graphnet/training&gt;</span></code><strong>: For training GraphNeT models, including specifying a <code class="docutils literal notranslate"><span class="pre">LossFunction</span> <span class="pre">&lt;src/graphnet/training/loss_functions.py&gt;</span></code></strong>, defining</p></li>
+</ul>
+</section>
+<section id="adding-custom-truth-labels">
+<h2 id="adding-custom-truth-labels">Adding custom truth labels<a class="headerlink" href="#adding-custom-truth-labels" title="Link to this heading">¶</a></h2>
+<p>Some specific applications of <code class="docutils literal notranslate"><span class="pre">Model</span></code>s in GraphNeT might require truth labels that are not included by default in your truth table. In these cases you can define a :doc:<code class="docutils literal notranslate"><span class="pre">Label</span> <span class="pre">&lt;https://graphnet-team.github.io/graphnet/api/graphnet.training.labels.html#graphnet.training.labels.Label&gt;</span></code> that calculates your label on the fly:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import torch
+from torch_geometric.data import Data
+
+from graphnet.training.labels import Label
+
+class MyCustomLabel(Label):
+    """Class for producing my label."""
+    def __init__(self):
+        """Construct `MyCustomLabel`."""
+        # Base class constructor
+        super().__init__(key="my_custom_label")
+
+    def __call__(self, graph: Data) -&gt; torch.tensor:
+        """Compute label for `graph`."""
+        label = ...  # Your computations here.
+        return label
+</pre></div>
+</div>
+<p>You can then pass your <code class="docutils literal notranslate"><span class="pre">Label</span></code> to your <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> as:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dataset.add_label(MyCustomLabel())
+
+graph = dataset[0]
+graph["my_custom_label"]
+&gt;&gt;&gt; ...
+</pre></div>
+</div>
+</section>
+<section id="combining-multiple-datasets">
+<h2 id="combining-multiple-datasets">Combining Multiple Datasets<a class="headerlink" href="#combining-multiple-datasets" title="Link to this heading">¶</a></h2>
+<p>You can combine multiple instances of <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> from GraphNeT into a single <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> by using the :doc:<code class="docutils literal notranslate"><span class="pre">EnsembleDataset</span> <span class="pre">&lt;https://graphnet-team.github.io/graphnet/api/graphnet.data.dataset.html#graphnet.data.dataset.EnsembleDataset&gt;</span></code> class:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from graphnet.data import EnsembleDataset
+from graphnet.data.parquet import ParquetDataset
+from graphnet.data.sqlite import SQLiteDataset
+
+dataset_1 = SQLiteDataset(...)
+dataset_2 = SQLiteDataset(...)
+dataset_3 = ParquetDataset(...)
+
+ensemble_dataset = EnsembleDataset([dataset_1, dataset_2, dataset_3])
+</pre></div>
+</div>
+<p>You can find a detailed example <code class="docutils literal notranslate"><span class="pre">here</span> <span class="pre">&lt;https://github.com/graphnet-team/graphnet/blob/main/examples/02_data/04_ensemble_dataset.py&gt;</span></code>_.</p>
+</section>
+<section id="creating-reproducible-datasets-using-datasetconfig">
+<h2 id="creating-reproducible-datasets-using-datasetconfig">Creating reproducible Datasets using DatasetConfig<a class="headerlink" href="#creating-reproducible-datasets-using-datasetconfig" title="Link to this heading">¶</a></h2>
+<p>You can summarise your <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> and its configuration by exporting it as a :doc:<code class="docutils literal notranslate"><span class="pre">DatasetConfig</span> <span class="pre">&lt;https://graphnet-team.github.io/graphnet/api/graphnet.utilities.config.dataset_config.html#graphnet.utilities.config.dataset_config.DatasetConfig&gt;</span></code> file:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dataset = Dataset(...)
+dataset.config.dump("dataset.yml")
+</pre></div>
+</div>
+<p>This YAML file will contain details about the path to the input data, the tables and columns that should be loaded, any selection that should be applied to data, etc.
+In another session, you can then recreate the same <code class="docutils literal notranslate"><span class="pre">Dataset</span></code>:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from graphnet.data.dataset import Dataset
+
+dataset = Dataset.from_config("dataset.yml")
+</pre></div>
+</div>
+<p>You also have the option to define multiple datasets from the same data file(s) using a single <code class="docutils literal notranslate"><span class="pre">DatasetConfig</span></code> file but with multiple selections:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dataset = Dataset(...)
+dataset.config.selection = {
+    "train": "event_no % 2 == 0",
+    "test": "event_no % 2 == 1",
+}
+dataset.config.dump("dataset.yml")
+</pre></div>
+</div>
+<p>When you then re-create your dataset, it will appear as a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> containing your datasets:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>datasets = Dataset.from_config("dataset.yml")
+&gt;&gt;&gt; datasets
+{"train": Dataset(...),
+"test": Dataset(...),}
+</pre></div>
+</div>
+<p>You can also combine multiple selections into a single, named dataset:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dataset = Dataset(..)
+dataset.config.selection = {
+    "train": [
+        "event_no % 2 == 0 &amp; abs(injection_type) == 12",
+        "event_no % 2 == 0 &amp; abs(injection_type) == 14",
+        "event_no % 2 == 0 &amp; abs(injection_type) == 16",
+    ],
+    (...)
+}
+&gt;&gt;&gt; dataset.config.dump("dataset.yml")
+&gt;&gt;&gt; datasets = Dataset.from_config("dataset.yml")
+&gt;&gt;&gt; datasets
+{"train": EnsembleDataset(...),
+        (...)}
+</pre></div>
+</div>
+<p>You also have the option to select random subsets of your data using <code class="docutils literal notranslate"><span class="pre">DatasetConfig</span></code> using the <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">random</span> <span class="pre">events</span> <span class="pre">~</span> <span class="pre">...</span></code>  syntax, e.g.:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dataset = Dataset(..)
+dataset.config.selection = "1000 random events ~ abs(injection_type) == 14"
+</pre></div>
+</div>
+<p>Finally, you can also reference selections that you have stored as external CSV or JSON files on disk:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dataset.config.selection = {
+    "train": "50000 random events ~ train_selection.csv",
+    "test": "test_selection.csv",
+}
+</pre></div>
+</div>
+</section>
+<section id="example-dataconfig">
+<h2 id="example-dataconfig">Example <code class="docutils literal notranslate"><span class="pre">DataConfig</span></code><a class="headerlink" href="#example-dataconfig" title="Link to this heading">¶</a></h2>
+<p>GraphNeT comes with a pre-defined <code class="docutils literal notranslate"><span class="pre">DatasetConfig</span></code> file for the small open-source dataset which can be found at <code class="docutils literal notranslate"><span class="pre">graphnet/configs/datasets/training_example_data_sqlite.yml</span></code>.
+It looks like so:</p>
+<p>.. code-block:: yaml</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>path: $GRAPHNET/data/examples/sqlite/prometheus/prometheus-events.db
+graph_definition:
+  arguments:
+    columns: [0, 1, 2]
+    detector:
+      arguments: {}
+      class_name: Prometheus
+    dtype: null
+    nb_nearest_neighbours: 8
+    node_definition:
+      arguments: {}
+      class_name: NodesAsPulses
+    node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+  class_name: KNNGraph
+pulsemaps:
+  - total
+features:
+  - sensor_pos_x
+  - sensor_pos_y
+  - sensor_pos_z
+  - t
+truth:
+  - injection_energy
+  - injection_type
+  - injection_interaction_type
+  - injection_zenith
+  - injection_azimuth
+  - injection_bjorkenx
+  - injection_bjorkeny
+  - injection_position_x
+  - injection_position_y
+  - injection_position_z
+  - injection_column_depth
+  - primary_lepton_1_type
+  - primary_hadron_1_type
+  - primary_lepton_1_position_x
+  - primary_lepton_1_position_y
+  - primary_lepton_1_position_z
+  - primary_hadron_1_position_x
+  - primary_hadron_1_position_y
+  - primary_hadron_1_position_z
+  - primary_lepton_1_direction_theta
+  - primary_lepton_1_direction_phi
+  - primary_hadron_1_direction_theta
+  - primary_hadron_1_direction_phi
+  - primary_lepton_1_energy
+  - primary_hadron_1_energy
+  - total_energy
+  - dummy_pid
+index_column: event_no
+truth_table: mc_truth
+seed: 21
+selection:
+  test: event_no % 5 == 0
+  validation: event_no % 5 == 1
+  train: event_no % 5 &gt; 1
+</pre></div>
+</div>
+</section>
+<section id="advanced-functionality-in-sqlitedataset">
+<h2 id="advanced-functionality-in-sqlitedataset">Advanced Functionality in SQLiteDataset<a class="headerlink" href="#advanced-functionality-in-sqlitedataset" title="Link to this heading">¶</a></h2>
+<p><strong>@TODO</strong>: node_truth_table, string selections …</p>
+</section>
+<section id="the-model-class">
+<h2 id="the-model-class">The <code class="docutils literal notranslate"><span class="pre">Model</span></code> class<a class="headerlink" href="#the-model-class" title="Link to this heading">¶</a></h2>
+<p>One important part of the philosophy for :doc:<code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">&lt;https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html&gt;</span></code>s in GraphNeT is that they are self-contained.
+Functionality that a specific model requires (data pre-processing, transformation and other auxiliary calculations) should exist within the <code class="docutils literal notranslate"><span class="pre">Model</span></code> itself such that it is portable and deployable as a single package that only depends on data.
+That is, conceptually,</p>
+<blockquote>
+<div><p>Data → <code class="docutils literal notranslate"><span class="pre">Model</span></code> → Predictions</p>
+</div></blockquote>
+<p>You can subclass the <code class="docutils literal notranslate"><span class="pre">Model</span></code> class to create any model implementation using GraphNeT components (such as instances of, e.g., the  <code class="docutils literal notranslate"><span class="pre">GraphDefinition</span></code>, <code class="docutils literal notranslate"><span class="pre">Backbone</span></code>, and <code class="docutils literal notranslate"><span class="pre">Task</span></code> classes) along with PyTorch and PyG functionality.
+All <code class="docutils literal notranslate"><span class="pre">Model</span></code>s that are applicable to the same detector configuration, regardless of how the <code class="docutils literal notranslate"><span class="pre">Model</span></code>s themselves are implemented, should be able to act on the same graph (<code class="docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code>) objects, thereby making them interchangeable and directly comparable.</p>
+</section>
+<section id="the-standardmodel-class">
+<h2 id="the-standardmodel-class">The <code class="docutils literal notranslate"><span class="pre">StandardModel</span></code> class<a class="headerlink" href="#the-standardmodel-class" title="Link to this heading">¶</a></h2>
+<p>The simplest way to define a <code class="docutils literal notranslate"><span class="pre">Model</span></code> in GraphNeT is through the <code class="docutils literal notranslate"><span class="pre">StandardModel</span></code> subclass.
+This is uniquely defined based on one each of <a class="reference internal" href="#"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">GraphDefinition</span></code> <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.graphs.html#module-graphnet.models.graphs">https://graphnet-team.github.io/graphnet/api/graphnet.models.graphs.html#module-graphnet.models.graphs</a></span></a>,  [<code class="docutils literal notranslate"><span class="pre">Backbone</span></code> <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn">https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn</a>], and one or more [<code class="docutils literal notranslate"><span class="pre">Task</span></code> <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task">https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task</a>]s. Each of these components will be a problem-specific instance of these parent classes. This structure guarantees modularity and reuseability. For example, the only adaptation needed to run a <code class="docutils literal notranslate"><span class="pre">Model</span></code> made for IceCube on a different experiment — say, KM3NeT — would be to switch out the <code class="docutils literal notranslate"><span class="pre">Detector</span></code> component in <code class="docutils literal notranslate"><span class="pre">GraphDefinition</span></code> representing IceCube with one that represents KM3NeT. Similarly, a <code class="docutils literal notranslate"><span class="pre">Model</span></code> developed for [<code class="docutils literal notranslate"><span class="pre">EnergyReconstruction</span></code> <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction">https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction</a>] can be put to work on a different problem, e.g., [<code class="docutils literal notranslate"><span class="pre">DirectionReconstructionWithKappa</span></code> <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa">https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa</a>], by switching out just the [<code class="docutils literal notranslate"><span class="pre">Task</span></code> <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task">https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task</a>] component.</p>
+<p>GraphNeT comes with many pre-defined components that you can simply import and use out-of-the-box.
+So to get started, all you need to do is to import your choices in these components and build the model.
+Below is a snippet that defines a <code class="docutils literal notranslate"><span class="pre">Model</span></code> that reconstructs the zenith angle with uncertainties using the <code class="docutils literal notranslate"><span class="pre">GNN</span> <span class="pre">published</span> <span class="pre">by</span> <span class="pre">IceCube</span> <span class="pre">&lt;https://iopscience.iop.org/article/10.1088/1748-0221/17/11/P11003&gt;</span></code>_ for the IceCube Upgrade detector:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Choice of graph representation, GNN architecture, and physics task
+from graphnet.models.detector.prometheus import Prometheus
+from graphnet.models.graphs import KNNGraph
+from graphnet.models.graphs.nodes import NodesAsPulses
+from graphnet.models.gnn.dynedge import DynEdge
+from graphnet.models.task.reconstruction import ZenithReconstructionWithKappa
+
+# Choice of loss function and Model class
+from graphnet.training.loss_functions import VonMisesFisher2DLoss
+from graphnet.models import StandardModel
+
+# Configuring the components
+
+# Represents the data as a point-cloud graph where each
+# node represents a pulse of Cherenkov radiation
+# edges drawn to the 8 nearest neighbours 
+
+graph_definition = KNNGraph(
+    detector=Prometheus(),
+    node_definition=NodesAsPulses(),
+    nb_nearest_neighbours=8,
+)
+backbone = DynEdge(
+    nb_inputs=detector.nb_outputs,
+    global_pooling_schemes=["min", "max", "mean"],
+)
+task = ZenithReconstructionWithKappa(
+    hidden_size=backbone.nb_outputs,
+    target_labels="injection_zenith",
+    loss_function=VonMisesFisher2DLoss(),
+)
+
+# Construct the Model
+model = StandardModel(
+    graph_definition=graph_definition,
+    backbone=backbone,
+    tasks=[task],
+)
+</pre></div>
+</div>
+<p><strong>Note:</strong> We’re adding the argument <code class="docutils literal notranslate"><span class="pre">global_pooling_schemes=["min",</span> <span class="pre">"max",</span> <span class="pre">"mean"],</span></code> to the <code class="docutils literal notranslate"><span class="pre">Backbone</span></code> component,</p>
+</section>
+<section id="creating-reproducible-models-using-modelconfig">
+<h2 id="creating-reproducible-models-using-modelconfig">Creating reproducible <code class="docutils literal notranslate"><span class="pre">Model</span></code>s using <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code><a class="headerlink" href="#creating-reproducible-models-using-modelconfig" title="Link to this heading">¶</a></h2>
+<p>You can export your choices of <code class="docutils literal notranslate"><span class="pre">Model</span></code> components and their configuration to a <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code> file, and recreate your <code class="docutils literal notranslate"><span class="pre">Model</span></code> in a different session. That is,</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = Model(...)
+model.save_config("model.yml")
+</pre></div>
+</div>
+<p>You can then reconstruct the same model architecture from the <code class="docutils literal notranslate"><span class="pre">.yml</span></code> file:</p>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from graphnet.models import Model
+
+# Indicate that you `trust` the config file after inspecting it, to allow for
+# dynamically loading classes references in the file.
+model = Model.from_config("model.yml", trust=True)
+</pre></div>
+</div>
+<p><strong>Please note</strong>: Models built from a <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code> are initialised with random weights.
+The <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code> class is only meant for defining model <em>definitions</em> in a portable, human-readable format.
+To save also trained model weights, you need to save the entire model, see below.</p>
+</section>
+<section id="example-modelconfig">
+<h2 id="example-modelconfig">Example <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code><a class="headerlink" href="#example-modelconfig" title="Link to this heading">¶</a></h2>
+<p>You can find several pre-defined <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code>’s under <code class="docutils literal notranslate"><span class="pre">graphnet/configs/models</span></code>. Below are the contents of <code class="docutils literal notranslate"><span class="pre">example_energy_reconstruction_model.yml</span></code>:</p>
+<div class="highlight-yml notranslate"><div class="highlight"><pre><span></span>arguments:
+  architecture:
+    ModelConfig:
+      arguments:
+        add_global_variables_after_pooling: false
+        dynedge_layer_sizes: null
+        features_subset: null
+        global_pooling_schemes: [min, max, mean, sum]
+        nb_inputs: 4
+        nb_neighbours: 8
+        post_processing_layer_sizes: null
+        readout_layer_sizes: null
+      class_name: DynEdge
+  graph_definition:
+    ModelConfig:
+      arguments:
+        columns: [0, 1, 2]
+        detector:
+          ModelConfig:
+            arguments: {}
+            class_name: Prometheus
+        dtype: null
+        nb_nearest_neighbours: 8
+        node_definition:
+          ModelConfig:
+            arguments: {}
+            class_name: NodesAsPulses
+        node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
+      class_name: KNNGraph
+  optimizer_class: '!class torch.optim.adam Adam'
+  optimizer_kwargs: {eps: 0.001, lr: 0.001}
+  scheduler_class: '!class graphnet.training.callbacks PiecewiseLinearLR'
+  scheduler_config: {interval: step}
+  scheduler_kwargs:
+    factors: [0.01, 1, 0.01]
+    milestones: [0, 20.0, 80]
+  tasks:
+  - ModelConfig:
+      arguments:
+        hidden_size: 128
+        loss_function:
+          ModelConfig:
+            arguments: {}
+            class_name: LogCoshLoss
+        loss_weight: null
+        prediction_labels: null
+        target_labels: total_energy
+        transform_inference: '!lambda x: torch.pow(10,x)'
+        transform_prediction_and_target: '!lambda x: torch.log10(x)'
+        transform_support: null
+        transform_target: null
+      class_name: EnergyReconstruction
+class_name: StandardModel
+
+Building your own `Model` class
+--------------------------------
+
+**@TODO**
+
+
+Training `Model`s and tracking experiments
+------------------------------------------------
+
+`Model`s in GraphNeT comes with a powerful in-built :py:func:`~graphnet.models.model.Model.fit` method that reduces the training of models on neutrino telescopes to a syntax that is similar to that of `sklearn`:
+
+.. code-block:: python
+
+    model = Model(...)
+    train_dataloader = DataLoader(...)
+    model.fit(train_dataloader=train_dataloader, max_epochs=10)
+
+`Model`s in GraphNeT are PyTorch modules and fully compatible with PyTorch-Lightning.
+You can therefore choose to write your own custom training loops if needed, or use the regular PyTorch-Lightning training functionality.
+The snippet above is equivalent to:
+
+.. code-block:: python
+
+    from  pytorch_lightning import Trainer
+
+    from  graphnet.training.callbacks import ProgressBar
+
+    model = Model(...)
+    train_dataloader = DataLoader(...)
+
+    # Configure Trainer
+    trainer = Trainer(
+        gpus=None,
+        max_epochs=10,
+        callbacks=[ProgressBar()],
+        log_every_n_steps=1,
+        logger=None,
+        strategy="ddp",
+    )
+
+    # Train model
+    trainer.fit(model, train_dataloader)
+
+
+Experiment Tracking
+--------------------
+
+You can track your experiment using `Weights &amp; Biases &lt;https://wandb.ai/&gt;`_ by passing the `WandbLogger` to :py:func:`~graphnet.models.model.Model.fit`:
+
+.. code-block:: python
+
+    import os
+
+    from pytorch_lightning.loggers import WandbLogger
+
+    # Create wandb directory
+    wandb_dir = "./wandb/"
+    os.makedirs(wandb_dir, exist_ok=True)
+
+    # Initialise Weights &amp; Biases (W&amp;B) run
+    wandb_logger = WandbLogger(
+        project="example-script",
+        entity="graphnet-team",
+        save_dir=wandb_dir,
+        log_model=True,
+    )
+
+    # Fit Model
+    model = Model(...)
+    model.fit(
+        ...,
+        logger=wandb_logger,
+    )
+
+By using `WandbLogger`, your training and validation loss is logged and you have the full functionality of Weights &amp; Biases available.
+This means, e.g., that you can log your :py:class:`~graphnet.utilities.config.model_config.ModelConfig`, :py:class:`~graphnet.utilities.config.dataset_config.DatasetConfig`, and :py:class:`~graphnet.utilities.config.training_config.TrainingConfig` as:
+
+.. code-block:: python
+
+    wandb_logger.experiment.config.update(training_config)
+    wandb_logger.experiment.config.update(model_config.as_dict())
+    wandb_logger.experiment.config.update(dataset_config.as_dict())
+
+Using an experiment tracking system like Weights &amp; Biases to track training metrics as well as artifacts like configuration files greatly improves reproducibility, experiment transparency, and collaboration.
+This is because you can easily recreate an previous run from the saved artifacts, you can directly compare runs with diffierent model configurations and hyperparameter choices, and share and compare your results to other people on your team.
+Therefore, we strongly recommend using Weights &amp; Biases or a similar system when training and optimising models meant for actual physics use.
+
+
+Saving, loading, and checkpointing `Model`s
+--------------------------------------------
+
+There are several methods for saving models in GraphNeT and each comes with its own pros and cons.
+
+Using `Model.save`
+~~~~~~~~~~~~~~~~~~
+
+You can pickle your entire model (including the `state_dict`) by calling the :py:meth:`~graphnet.models.model.Model.save` method:
+
+.. code-block:: python
+
+    model.save("model.pth")
+
+You can then load this model by calling :py:meth:`~graphnet.models.model.Model.load` classmethod:
+
+.. code-block:: python
+
+    from graphnet.models import Model
+
+    loaded_model = Model.load("model.pth")
+
+This method is rather convenient as it lets you store everything in a single file but it comes with a big caveat: **it's not version-proof**.
+That is, if you share a pickled model with a user who runs a different version of GraphNeT than what was used to train the model, you might experience compatibility issues.
+This is due to how pickle serialises `Model` objects.
+
+
+Using `ModelConfig` and `state_dict`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can summarise your `Model` components and their configurations by exporting it to a `.yml` file.
+This only captures the _definition_ of the model, not any trained weights, but by saving the `state_dict` too, you have effectively saved the entire model, both definition and weights.
+You can do so by:
+
+.. code-block:: python
+
+    model.save_config('model.yml')
+    model.save_state_dict('state_dict.pth')
+
+You can then reconstruct your model again by building the model from the `ModelConfig` file and loading in the `state_dict`:
+
+.. code-block:: python
+
+    from graphnet.models import Model
+    from graphnet.utilities.config import ModelConfig
+
+    model_config = ModelConfig.load("model.yml")
+    model = Model.from_config(model_config)  # With randomly initialised weights.
+    model.load_state_dict("state_dict.pth")  # Now with trained weight.
+
+This method is less prone to version incompatibility issues, such as those mentioned above, and is therefore our recommended way of storing and porting `Model`s.
+
+
+Using checkpoints
+~~~~~~~~~~~~~~~~~~
+
+Because `Model`s in GraphNeT inherit from are also PyTorch-Lightning's `LightningModule`, you have the option to use the `load_from_checkpoint` method:
+
+.. code-block:: python
+
+    model_config = ModelConfig.load("model.yml")
+    model = Model.from_config(model_config)  # With randomly initialised weights.
+    model.load_from_checkpoint("checkpoint.ckpt")  # Now with trained weight.
+
+You can find more information on checkpointing `here &lt;https://lightning.ai/docs/pytorch/latest/common/checkpointing_basic.html&gt;`_.
+
+Example: Energy Reconstruction using `ModelConfig`
+--------------------------------------------------
+
+Below is a minimal example for training a GNN in GraphNeT for energy reconstruction on the tiny data sample using configuration files:
+
+.. code-block:: python
+
+    # Import(s)
+    import os
+
+    from graphnet.constants import CONFIG_DIR  # Local path to graphnet/configs
+    from graphnet.data.dataloader import DataLoader
+    from graphnet.models import Model
+    from graphnet.utilities.config import DatasetConfig, ModelConfig
+
+    # Configuration
+    dataset_config_path = f"{CONFIG_DIR}/datasets/training_example_data_sqlite.yml"
+    model_config_path = f"{CONFIG_DIR}/models/example_energy_reconstruction_model.yml"
+
+    # Build model
+    model_config = ModelConfig.load(model_config_path)
+    model = Model.from_config(model_config, trust=True)
+
+    # Construct dataloaders
+    dataset_config = DatasetConfig.load(dataset_config_path)
+    dataloaders = DataLoader.from_dataset_config(
+        dataset_config,
+        batch_size=16,
+        num_workers=1,
+    )
+
+    # Train model
+    model.fit(
+        dataloaders["train"],
+        dataloaders["validation"],
+        gpus=[0],
+        max_epochs=5,
+    )
+
+    # Predict on test set and return as pandas.DataFrame
+    results = model.predict_as_dataframe(
+        dataloaders["test"],
+        additional_attributes=model.target_labels + ["event_no"],
+    )
+
+    # Save predictions and model to file
+    outdir = "tutorial_output"
+    os.makedirs(outdir, exist_ok=True)
+    results.to_csv(f"{outdir}/results.csv")
+    model.save_state_dict(f"{outdir}/state_dict.pth")
+    model.save(f"{outdir}/model.pth")
+
+Because `ModelConfig` summarises a `Model` completely, including its `Task`(s), the only modifications required to change the example to reconstruct (or classify) a different attribute than energy, is to pass a `ModelConfig` that defines a model with the corresponding `Task`.
+Similarly, if you wanted to train on a different `Dataset`, you would just have to pass a `DatasetConfig` that defines *that* `Dataset` instead.
+
+
+Deploying `Model`s in physics analyses
+---------------------------------------
+
+**@TODO**
+
+
+Utilities
+---------
+
+The `Logger` class
+~~~~~~~~~~~~~~~~~~
+
+GraphNeT will automatically log prompts to the terminal from your training run (and in other instances) and write it to `logs` in the directory of your script (by default).
+You can add your own custom messages to the :class:`~graphnet.utilities.logging.Logger` by:
+
+.. code-block:: python
+
+    from graphnet.utilities.logging import Logger
+
+    logger = Logger()
+
+    logger.info("My very informative message")
+    logger.warning("My warning shown every time")
+    logger.warning_once("My warning shown once")
+    logger.debug("My debug call")
+    logger.error("My error")
+    logger.critical("My critical call")
+
+Similarly, every class inheriting from `Logger` can use the same methods as, e.g., `self.info("...")`.
+
+Appendix
+--------
+
+A. Interfacing your data with GraphNeT
+---------------------------------------
+
+GraphNeT currently supports two data formats — Parquet and SQLite — and you must therefore provide your data in either of these formats for training a `Model`.
+This is done using the `DataConverter` class.
+Performing this conversion into one of the two supported formats can be a somewhat time-consuming task, but it is only done once, and then you are free to perform all of the training and optimization you want.
+
+In addition, GraphNeT expects your data to contain at least:
+
+- `pulsemap`: A per-hit table, containing a series of sensor measurements that represents the detector response to some interaction in some time window, as described in [Section 4 - The `Dataset` and `DataLoader` classes](#4-the-dataset-and-dataloader-classes).
+- `truth_table`: A per-event table, containing the global truth of each event, as described in [Section 4 - The `Dataset` and `DataLoader` classes](#4-the-dataset-and-dataloader-classes).
+- (Optional) `node_truth_table`: A per-hit truth array, containing truth labels for each node in your graph. This could be labels indicating whether each reconstructed pulse/photon was a result of noise in the event, or a label indicating which particle in the simulation tree caused a specific pulse/photon. These are the node-level quantities that could be classification/reconstructing targets for certain physics/learning tasks.
+- `index_column`: A unique ID that maps each row in `pulsemap` with its corresponding row in `truth_table` and/or `node_truth_table`.
+
+Since `pulsemap`, `truth_table`, and `node_truth_table` are named fields in your Parquet files (or tables in SQLite) you may name these fields however you like.
+You can also freely name your `index_column`. For instance, the `truth_table` could be called `"mc_truth"` and the `index_column` could be called `"event_no"`, see the snippets above.
+However, the following constraints exist:
+
+1. The naming of fields/columns within `pulsemap`,  `truth_table`, and `node_truth_table` must be unique. For instance, the _x_-coordinate of the PMTs and the _x_-coordinate of interaction vertex may not both be called *pos_x*.
+2. No field/column in  `pulsemap`, `truth_table`,  or `node_truth_table` may be called  `x`,  `features`, `edge_attr`, or `edge_index`, as this leads to naming conflicts with attributes of [`torch_geometric.data.Data`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data).
+
+B. Converting your data to a supported format
+----------------------------------------------
+
+**@TODO**
+
+C. Basics for SQLite databases in GraphNeT
+------------------------------------------
+
+In SQLite databases, `pulsemap`, `truth_table`, and optionally `node_truth_table` exist as separate tables.
+Each table has a column `index_column` on which the tables are indexed, in addition to the data that it contains.
+The schemas are:
+
+- `truth_table`: The `index_column` is set to `INTEGER PRIMARY KEY NOT NULL` and other columns are `NOT NULL`.
+- `pulsemap` and `node_truth_table`: All columns are set to `NOT NULL` but a non-unique index is created on the table(s) using `index_column`. This is important for query times.
+
+Below is a snippet that extracts all the contents of `pulsemap` and `truth_table` for the event with `index_column == 120`:
+
+.. code-block:: python
+
+    import pandas as pd
+    import sqlite3
+
+    database = "data/examples/sqlite/prometheus/prometheus-events.db"
+    pulsemap = "total"
+    index_column = "event_no"
+    truth_table = "mc_truth"
+    event_no = 120
+
+    with sqlite3.connect(database) as conn:
+        query = f"SELECT * from {pulsemap} WHERE {index_column} == {event_no}"
+        detector_response = pd.read_sql(query, conn)
+
+        query = f"SELECT * from {truth_table} WHERE {index_column} == {event_no}"
+        truth = pd.read_sql(query, conn)
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="md-footer">
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+          
+          
+        </a>
+        
+      </nav>
+    </div>
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-footer-copyright">
+          <div class="md-footer-copyright__highlight">
+              &#169; Copyright 2021-2024, GraphNeT team.
+              
+          </div>
+            Created using
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+             and
+            <a href="https://github.com/bashtage/sphinx-material/">Material for
+              Sphinx</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../_static/javascripts/application.js"></script>
+  <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+  </body>
+</html>

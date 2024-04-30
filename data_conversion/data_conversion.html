@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="lang:clipboard.copy" content="Copy to clipboard">
+  <meta name="lang:clipboard.copied" content="Copied to clipboard">
+  <meta name="lang:search.language" content="en">
+  <meta name="lang:search.pipeline.stopwords" content="True">
+  <meta name="lang:search.pipeline.trimmer" content="True">
+  <meta name="lang:search.result.none" content="No matching documents">
+  <meta name="lang:search.result.one" content="1 matching document">
+  <meta name="lang:search.result.other" content="# matching documents">
+  <meta name="lang:search.tokenizer" content="[\s\-]+">
+
+  
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel="stylesheet">
+
+    <style>
+      body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+    </style>
+  
+
+  <link rel="stylesheet" href="../_static/stylesheets/application.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-palette.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-fixes.css"/>
+  
+  <link rel="stylesheet" href="../_static/fonts/material-icons.css"/>
+  
+  <meta name="theme-color" content="#3f51b5">
+  <script src="../_static/javascripts/modernizr.js"></script>
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-XXXXX');
+</script>
+  
+  
+    <title>Data Conversion in GraphNeT &#8212; graphnet  documentation</title>
+
+<style>
+  dt:target {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+
+  /*
+    .sig-prename {
+     display: none;
+  }
+  */
+
+  .py.class .sig-name,
+  .py.function .sig-name,
+  .py.method .sig-name,
+  .py.exception .sig-name {
+    color: #37474f;
+    font-feature-settings: "kern";
+    font-family: "Roboto Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.method .sig-object,
+  .py.exception .sig-object {
+    padding: 1ex;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.exception .sig-object {
+    border-top: 1px solid gray;
+  }
+  .py.method .sig-object {
+    border-top: 1px solid lightgray;
+  }
+
+  .py.class .sig-object,
+  .py.exception .sig-object {
+    background: rgba(0,0,0,0.06);
+  }
+  .py.function .sig-object,
+  .py.method .sig-object {
+    background: rgba(0,0,0,0.03);
+  }
+
+  #eu-emblem {
+    margin: 0;
+  }
+
+  #eu-emblem figcaption {
+    display: none;
+  }
+
+</style>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/favicon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Integrating New Experiments into GraphNeT" href="../integration/integration.html" />
+    <link rel="prev" title="Datasets In GraphNeT" href="../datasets/datasets.html" />
+  
+   
+
+  </head>
+  <body dir=ltr
+        data-md-color-primary=indigo data-md-color-accent=blue>
+  
+  <svg class="md-svg">
+    <defs data-children-count="0">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+      
+    </defs>
+  </svg>
+  
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
+  <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+  <a href="#data_conversion/data_conversion" tabindex="1" class="md-skip"> Skip to content </a>
+  <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../index.html" title="graphnet  documentation"
+           class="md-header-nav__button md-logo">
+          
+            &nbsp;
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          <span class="md-header-nav__topic">GraphNeT</span>
+          <span class="md-header-nav__topic"> Data Conversion in GraphNeT </span>
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+        
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" action="../search.html" method="get" name="search">
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
+             autocapitalize="off" autocomplete="off" spellcheck="false"
+             data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+          </div>
+        </div>
+      
+      
+  
+  <script src="../_static/javascripts/version_dropdown.js"></script>
+  <script>
+    var json_loc = "../"versions.json"",
+        target_loc = "../../",
+        text = "Versions";
+    $( document ).ready( add_version_dropdown(json_loc, target_loc, text));
+  </script>
+  
+
+    </div>
+  </nav>
+</header>
+
+  
+  <div class="md-container">
+    
+    
+    
+  <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+            
+            <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
+      </ul>
+    </div>
+  </nav>
+    <main class="md-main">
+      <div class="md-main__inner md-grid" data-md-component="container">
+        
+          <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../index.html" title="graphnet documentation" class="md-nav__button md-logo">
+      
+        <img src="../_static/" alt=" logo" width="48" height="48">
+      
+    </a>
+    <a href="../index.html"
+       title="graphnet documentation">GraphNeT</a>
+  </label>
+    <div class="md-nav__source">
+      <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+    </div>
+  
+  
+
+  
+  <ul class="md-nav__list">
+    <li class="md-nav__item">
+    
+    
+      <a href="../installation/install.html" class="md-nav__link">Installation</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../models/models.html" class="md-nav__link">Models In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../datasets/datasets.html" class="md-nav__link">Datasets In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> Data Conversion in GraphNeT </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">Data Conversion in GraphNeT</a>
+      
+        
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#data-conversion-data-conversion--page-root" class="md-nav__link">Data Conversion in GraphNeT</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#dataconverter" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#readers" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Readers</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#extractors" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Extractors</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#writers" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Writers</span></code></a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#dataconverter" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#readers" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Readers</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#extractors" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Extractors</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#writers" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Writers</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../integration/integration.html" class="md-nav__link">Integrating New Experiments into GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../contribute/contribute.html" class="md-nav__link">Contributing To GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../api/graphnet.html" class="md-nav__link">API</a>
+      
+    
+    </li>
+  </ul>
+  
+
+</nav>
+              </div>
+            </div>
+          </div>
+          <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#data-conversion-data-conversion--page-root" class="md-nav__link">Data Conversion in GraphNeT</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#dataconverter" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#readers" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Readers</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#extractors" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Extractors</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#writers" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Writers</span></code></a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+              </div>
+            </div>
+          </div>
+        
+        <div class="md-content">
+          <article class="md-content__inner md-typeset" role="main">
+            
+  <section id="data-conversion-in-graphnetgraphnet-header">
+<h1 id="data-conversion-data-conversion--page-root">Data Conversion in GraphNeT<a class="reference internal" href="#data-conversion-data-conversion--page-root"><img alt="graphnet" class="align-bottom" height="50px" src="../_images/favicon.svg" width="50px"/></a><a class="headerlink" href="#data-conversion-data-conversion--page-root" title="Link to this heading">¶</a></h1>
+<p>GraphNeT comes with powerful data conversion code that can convert data formats specific to experiments to deep learning friendly data formats.</p>
+<p>Data conversion in GraphNeT follows a reader/writer scheme, where the <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> does most of the heavy lifting.</p>
+<a class="with-shadow reference internal image-reference" href="../_images/dataconverter.svg"><img alt="Illustration of the reader/writer scheme of data conversion in GraphNeT." class="with-shadow align-right" src="../_images/dataconverter.svg" width="500"/></a>
+<p>In the illustration, the “reader” module represents an experiment-specific implementation of <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code>, able to parse your data files. The “Writer” module denotes a <code class="code docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code> module that saves the interim data format from <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> to disk.</p>
+<section id="dataconverter">
+<h2 id="dataconverter"><code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code><a class="headerlink" href="#dataconverter" title="Link to this heading">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> provides parallel processing of file conversion and
+extraction from experiment-specific file formats to graphnet-supported data formats out-of-the-box.
+<code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> can also assigns event ids to your events.</p>
+<p>Specifically, <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> will manage multiprocessing calls to <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code>s and passing their output to
+<code class="code docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code> which will save the extracted data from your files as a specific file format.
+Below is an example of configuring <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> to extract data from <code class="code docutils literal notranslate"><span class="pre">.h5</span></code> files from the LiquidO experiment,
+and to save the data as <code class="code docutils literal notranslate"><span class="pre">.parquet</span></code> files which are compatible with the <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> in GraphNeT.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.extractors.liquido</span> <span class="kn">import</span> <span class="n">H5HitExtractor</span><span class="p">,</span> <span class="n">H5TruthExtractor</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="kn">import</span> <span class="n">DataConverter</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.readers</span> <span class="kn">import</span> <span class="n">LiquidOReader</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.writers</span> <span class="kn">import</span> <span class="n">ParquetWriter</span>
+
+<span class="c1"># Your settings</span>
+<span class="n">dir_with_files</span> <span class="o">=</span> <span class="s1">'/home/my_files'</span>
+<span class="n">outdir</span> <span class="o">=</span> <span class="s1">'/home/my_outdir'</span>
+<span class="n">num_workers</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c1"># Instantiate DataConverter - exports data from LiquidO to Parquet</span>
+<span class="n">converter</span> <span class="o">=</span> <span class="n">DataConverter</span><span class="p">(</span><span class="n">file_reader</span> <span class="o">=</span> <span class="n">LiquidOReader</span><span class="p">(),</span>
+                          <span class="n">save_method</span> <span class="o">=</span> <span class="n">ParquetWriter</span><span class="p">(),</span>
+                          <span class="n">extractors</span><span class="o">=</span><span class="p">[</span><span class="n">H5HitExtractor</span><span class="p">(),</span> <span class="n">H5TruthExtractor</span><span class="p">()],</span>
+                          <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span>
+                          <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+                        <span class="p">)</span>
+<span class="c1"># Run Converter</span>
+<span class="n">converter</span><span class="p">(</span><span class="n">input_dir</span> <span class="o">=</span> <span class="n">dir_with_files</span><span class="p">)</span>
+<span class="c1"># Merge files (Optional)</span>
+<span class="n">converter</span><span class="o">.</span><span class="n">merge_files</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>When <code class="code docutils literal notranslate"><span class="pre">converter(input_dir</span> <span class="pre">=</span> <span class="pre">dir_with_files)</span></code> is called, a <cite>bijective</cite> conversion is run, where every file
+is converted independently and in parallel. I.e. the parallelization is done over files.</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">converter.merge_files()</span></code> call merges these many smaller files into larger chunks of data, and the specific behavior of <code class="code docutils literal notranslate"><span class="pre">GraphNeTWriter.merge_files()</span></code>
+depends fully on the specific implementation of the <code class="code docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code>.</p>
+<p>This modular structure means that extending GraphNeT conversion code to export experiment data to new file formats is as easy as implementing a new <code class="code docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code>.
+Similarly, extending GraphNeT conversion code to work on data from a new experiment only requires implementing a new <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code> and it’s associated <code class="code docutils literal notranslate"><span class="pre">Extractors</span></code> .</p>
+<section id="readers">
+<h3 id="readers"><code class="code docutils literal notranslate"><span class="pre">Readers</span></code><a class="headerlink" href="#readers" title="Link to this heading">¶</a></h3>
+<p>Readers are experiment-specific file readers, written to be able to read and parse data from specific experiments.</p>
+<p>Readers must subclass <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code> and implement a  <code class="code docutils literal notranslate"><span class="pre">__call__</span></code> method that opens a file, applies <code class="code docutils literal notranslate"><span class="pre">Extractor</span></code>s and return either it’s output in one of two forms:</p>
+<ul class="simple">
+<li><p>Serial Output: list of dictionaries, where the number of events in the file <code class="code docutils literal notranslate"><span class="pre">n_events</span></code> satisfies <code class="code docutils literal notranslate"><span class="pre">len(output)</span> <span class="pre">=</span> <span class="pre">n_events</span></code>. I.e each element in the list is a dictionary, and each field in the dictionary is the output of a single extractor. If this is provided, the <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> will automatically assign event ids.</p></li>
+<li><p>Vectorized Output: A single dictionary where each field contains a single dataframe, which holds the data from the <code class="code docutils literal notranslate"><span class="pre">Extractor</span></code> for the entire file. In this case, the <code class="code docutils literal notranslate"><span class="pre">Reader</span></code> must itself assign event ids. This method is faster if your files are not storing events serially.</p></li>
+</ul>
+<p>In addition, classes inheriting from <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code> must set class properties <code class="code docutils literal notranslate"><span class="pre">accepted_file_extensions</span></code> and <code class="code docutils literal notranslate"><span class="pre">accepted_extractors</span></code>.</p>
+<details>
+<summary><b>Example of a Reader</b></summary><p>Implementing a <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code> to read data from your experiment requires writing just a few lines of code.
+Below is an example of a reader meant to parse and extract data from <code class="code docutils literal notranslate"><span class="pre">.h5</span></code> files from LiquidO, which output data in the vectorized format.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.data.extractors.liquido</span> <span class="kn">import</span> <span class="n">H5Extractor</span>
+<span class="kn">from</span> <span class="nn">.graphnet_file_reader</span> <span class="kn">import</span> <span class="n">GraphNeTFileReader</span>
+
+<span class="k">class</span> <span class="nc">LiquidOReader</span><span class="p">(</span><span class="n">GraphNeTFileReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A class for reading h5 files from LiquidO."""</span>
+
+    <span class="n">_accepted_file_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".h5"</span><span class="p">]</span>
+    <span class="n">_accepted_extractors</span> <span class="o">=</span> <span class="p">[</span><span class="n">H5Extractor</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Extract data from single parquet file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Path to h5 file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Extracted data.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Open file</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractors</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">extractor</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">outputs</span><span class="p">[</span><span class="n">extractor</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="k">return</span> <span class="n">outputs</span>
+
+    <span class="k">def</span> <span class="nf">find_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Search folder(s) for h5 files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: directory to search for h5 files.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of h5 files in the folders.</span>
+<span class="sd">        """</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s2">"*.h5"</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">files</span>
+</pre></div>
+</div>
+</details></section>
+<section id="extractors">
+<h3 id="extractors"><code class="code docutils literal notranslate"><span class="pre">Extractors</span></code><a class="headerlink" href="#extractors" title="Link to this heading">¶</a></h3>
+<p>Rarely <cite>all</cite> the data available in files from experiments are needed for training deep learning models, therefore GraphNeT uses <code class="code docutils literal notranslate"><span class="pre">Extractors</span></code> to extract only
+specific parts of the available data.</p>
+<p><code class="code docutils literal notranslate"><span class="pre">Extractors</span></code> are written to work with a specific <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code> and should subclass <code class="code docutils literal notranslate"><span class="pre">Extractor</span></code>.</p>
+<details>
+<summary><b>Example of an Extractor</b></summary><p>Implementing an <code class="code docutils literal notranslate"><span class="pre">Extractor</span></code> to retrieve specific parts of your data files is easy.
+Below is an example of an <code class="code docutils literal notranslate"><span class="pre">Extractor</span></code> that will retrieve tables <code class="code docutils literal notranslate"><span class="pre">.h5</span></code> files from LiquidO.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">H5Extractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Class for extracting information from LiquidO h5 files."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">"""Construct H5Extractor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            extractor_name: Name of the `H5Extractor` instance.</span>
+<span class="sd">            Used to keep track of the provenance of different data,</span>
+<span class="sd">            and to name tables to which this data is saved.</span>
+<span class="sd">            column_names: Name of the columns in `extractor_name`.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Member variable(s)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="n">extractor_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span> <span class="o">=</span> <span class="n">column_names</span>
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor_name</span><span class="o">=</span><span class="n">extractor_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Extract information from h5 file."""</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">available_tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">in</span> <span class="n">available_tables</span><span class="p">:</span>
+                <span class="n">array</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">][:]</span>
+                <span class="c1"># Will throw error if the number of columns don't match</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_verify_columns</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">df</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_verify_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> column names but "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="si">}</span><span class="s2"> has </span><span class="si">{</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">. Please make sure "</span>
+                <span class="sa">f</span><span class="s2">"that the column names match. (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="si">}</span><span class="s2">)"</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+</pre></div>
+</div>
+</details></section>
+<section id="writers">
+<h3 id="writers"><code class="code docutils literal notranslate"><span class="pre">Writers</span></code><a class="headerlink" href="#writers" title="Link to this heading">¶</a></h3>
+<p>Writers are methods used to save the interim data format from <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> to disk. They are subclasses of the <code class="code docutils literal notranslate"><span class="pre">GraphNetWriter</span></code> and should
+implement the <code class="code docutils literal notranslate"><span class="pre">save_file</span> <span class="pre">method</span></code>, which recieves the interim data format from from a single file, and optionally the <code class="code docutils literal notranslate"><span class="pre">merge_files</span></code> method,
+which will be called by <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> through <code class="code docutils literal notranslate"><span class="pre">DataConverter.merge_files()</span></code>.</p>
+<p>Below is a conceptual example of how easy it is to extend the data conversion API to save files in a different format.
+In this example, the writer will save the entire set of extractor outputs - a dictionary with pd.DataFrames - as a single pickle file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.writers</span> <span class="kn">import</span> <span class="n">GraphNeTWriter</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="k">class</span> <span class="nc">MyPickleWriter</span><span class="p">(</span><span class="n">GraphNeTWriter</span><span class="p">):</span>
+
+    <span class="n">_file_extension</span> <span class="o">=</span> <span class="s2">".pickle"</span>
+    <span class="n">_merge_dataframes</span> <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># `data` will be Dict[str, pd.DataFrame]</span>
+
+    <span class="k">def</span> <span class="nf">_save_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]],</span>
+        <span class="n">output_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">n_events</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Save the interim data format from a single input file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: the interim data from a single input file.</span>
+<span class="sd">            output_file_path: output file path.</span>
+<span class="sd">            n_events: Number of events container in `data`.</span>
+<span class="sd">        """</span>
+
+        <span class="c1"># Save file contents as .pickle</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Merge smaller files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            files: Files to be merged.</span>
+<span class="sd">            output_dir: The directory to store the merged files in.</span>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div>
+</div>
+<p>Two writers are implemented in GraphNeT; the <code class="code docutils literal notranslate"><span class="pre">SQLiteWriter</span></code> and <code class="code docutils literal notranslate"><span class="pre">ParquetWriter</span></code>, each of which output files that are directly used for
+training by <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> and <code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="md-footer">
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+          
+            <a href="../datasets/datasets.html" title="Datasets In GraphNeT"
+               class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               rel="prev">
+              <div class="md-flex__cell md-flex__cell--shrink">
+                <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+              </div>
+              <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+                <span class="md-flex__ellipsis">
+                  <span
+                      class="md-footer-nav__direction"> "Previous" </span> Datasets In GraphNeT </span>
+              </div>
+            </a>
+          
+          
+            <a href="../integration/integration.html" title="Integrating New Experiments into GraphNeT"
+               class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
+                class="md-flex__ellipsis"> <span
+                class="md-footer-nav__direction"> "Next" </span> Integrating New Experiments into GraphNeT </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink"><i
+                class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          
+        </a>
+        
+      </nav>
+    </div>
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-footer-copyright">
+          <div class="md-footer-copyright__highlight">
+              &#169; Copyright 2021-2024, GraphNeT team.
+              
+          </div>
+            Created using
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+             and
+            <a href="https://github.com/bashtage/sphinx-material/">Material for
+              Sphinx</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../_static/javascripts/application.js"></script>
+  <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+  </body>
+</html>

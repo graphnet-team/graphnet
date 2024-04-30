@@ -128,7 +128,7 @@
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API" href="../api/graphnet.html" />
+    <link rel="next" title="Models In GraphNeT" href="../models/models.html" />
     <link rel="prev" title="&lt;no title&gt;" href="../index.html" />
   
    
@@ -321,14 +321,28 @@
     <li class="md-nav__item">
     
     
-      <a href="../api/graphnet.html" class="md-nav__link">API</a>
+      <a href="../models/models.html" class="md-nav__link">Models In GraphNeT</a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="../about/about.html" class="md-nav__link">About</a>
+      <a href="../datasets/datasets.html" class="md-nav__link">Datasets In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../data_conversion/data_conversion.html" class="md-nav__link">Data Conversion in GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../integration/integration.html" class="md-nav__link">Integrating New Experiments into GraphNeT</a>
       
     
     </li>
@@ -336,6 +350,13 @@
     
     
       <a href="../contribute/contribute.html" class="md-nav__link">Contributing To GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../api/graphnet.html" class="md-nav__link">API</a>
       
     
     </li>
@@ -486,17 +507,17 @@
     }
 
     if (os == "linux" && cuda != "cpu" && torch != "no_torch"){
-      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_${$("#command").attr("cuda")}.txt -e .[torch, develop]`);
+      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_${$("#command").attr("cuda")}.txt -e .[torch,develop]`);
     }
     else if (os == "linux" && cuda == "cpu" && torch != "no_torch"){
-      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_${$("#command").attr("cuda")}.txt -e .[torch, develop]`);
+      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_${$("#command").attr("cuda")}.txt -e .[torch,develop]`);
     }
     else if (os == "linux" && cuda == "cpu" && torch == "no_torch"){
       $("#command pre").text(`# Installations without PyTorch are intended for file conversion only\ngit clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_${$("#command").attr("cuda")}.txt -e .[develop]`);
     }
 
     if (os == "macos" && cuda == "cpu" && torch != "no_torch"){
-      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_macos.txt -e .[torch, develop]`);
+      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_macos.txt -e .[torch,develop]`);
     }
     if (os == "macos" && cuda == "cpu" && torch == "no_torch"){
       $("#command pre").text(`# Installations without PyTorch are intended for file conversion only\ngit clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_macos.txt -e .[develop]`);
@@ -567,12 +588,12 @@ pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w">
             </a>
           
           
-            <a href="../api/graphnet.html" title="API"
+            <a href="../models/models.html" title="Models In GraphNeT"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> API </span>
+                class="md-footer-nav__direction"> "Next" </span> Models In GraphNeT </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

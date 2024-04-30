@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="lang:clipboard.copy" content="Copy to clipboard">
+  <meta name="lang:clipboard.copied" content="Copied to clipboard">
+  <meta name="lang:search.language" content="en">
+  <meta name="lang:search.pipeline.stopwords" content="True">
+  <meta name="lang:search.pipeline.trimmer" content="True">
+  <meta name="lang:search.result.none" content="No matching documents">
+  <meta name="lang:search.result.one" content="1 matching document">
+  <meta name="lang:search.result.other" content="# matching documents">
+  <meta name="lang:search.tokenizer" content="[\s\-]+">
+
+  
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel="stylesheet">
+
+    <style>
+      body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+    </style>
+  
+
+  <link rel="stylesheet" href="../_static/stylesheets/application.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-palette.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-fixes.css"/>
+  
+  <link rel="stylesheet" href="../_static/fonts/material-icons.css"/>
+  
+  <meta name="theme-color" content="#3f51b5">
+  <script src="../_static/javascripts/modernizr.js"></script>
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-XXXXX');
+</script>
+  
+  
+    <title>Models In GraphNeT &#8212; graphnet  documentation</title>
+
+<style>
+  dt:target {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+
+  /*
+    .sig-prename {
+     display: none;
+  }
+  */
+
+  .py.class .sig-name,
+  .py.function .sig-name,
+  .py.method .sig-name,
+  .py.exception .sig-name {
+    color: #37474f;
+    font-feature-settings: "kern";
+    font-family: "Roboto Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.method .sig-object,
+  .py.exception .sig-object {
+    padding: 1ex;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.exception .sig-object {
+    border-top: 1px solid gray;
+  }
+  .py.method .sig-object {
+    border-top: 1px solid lightgray;
+  }
+
+  .py.class .sig-object,
+  .py.exception .sig-object {
+    background: rgba(0,0,0,0.06);
+  }
+  .py.function .sig-object,
+  .py.method .sig-object {
+    background: rgba(0,0,0,0.03);
+  }
+
+  #eu-emblem {
+    margin: 0;
+  }
+
+  #eu-emblem figcaption {
+    display: none;
+  }
+
+</style>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/favicon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Datasets In GraphNeT" href="../datasets/datasets.html" />
+    <link rel="prev" title="Installation" href="../installation/install.html" />
+  
+   
+
+  </head>
+  <body dir=ltr
+        data-md-color-primary=indigo data-md-color-accent=blue>
+  
+  <svg class="md-svg">
+    <defs data-children-count="0">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+      
+    </defs>
+  </svg>
+  
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
+  <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+  <a href="#models/models" tabindex="1" class="md-skip"> Skip to content </a>
+  <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../index.html" title="graphnet  documentation"
+           class="md-header-nav__button md-logo">
+          
+            &nbsp;
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          <span class="md-header-nav__topic">GraphNeT</span>
+          <span class="md-header-nav__topic"> Models In GraphNeT </span>
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+        
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" action="../search.html" method="get" name="search">
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
+             autocapitalize="off" autocomplete="off" spellcheck="false"
+             data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+          </div>
+        </div>
+      
+      
+  
+  <script src="../_static/javascripts/version_dropdown.js"></script>
+  <script>
+    var json_loc = "../"versions.json"",
+        target_loc = "../../",
+        text = "Versions";
+    $( document ).ready( add_version_dropdown(json_loc, target_loc, text));
+  </script>
+  
+
+    </div>
+  </nav>
+</header>
+
+  
+  <div class="md-container">
+    
+    
+    
+  <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+            
+            <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
+      </ul>
+    </div>
+  </nav>
+    <main class="md-main">
+      <div class="md-main__inner md-grid" data-md-component="container">
+        
+          <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../index.html" title="graphnet documentation" class="md-nav__button md-logo">
+      
+        <img src="../_static/" alt=" logo" width="48" height="48">
+      
+    </a>
+    <a href="../index.html"
+       title="graphnet documentation">GraphNeT</a>
+  </label>
+    <div class="md-nav__source">
+      <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+    </div>
+  
+  
+
+  
+  <ul class="md-nav__list">
+    <li class="md-nav__item">
+    
+    
+      <a href="../installation/install.html" class="md-nav__link">Installation</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> Models In GraphNeT </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">Models In GraphNeT</a>
+      
+        
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#models-models--page-root" class="md-nav__link">Models In GraphNeT</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#the-model-class" class="md-nav__link">The <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#saving-loading-and-checkpointing-models" class="md-nav__link">Saving, loading, and checkpointing <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s</a>
+        </li>
+        <li class="md-nav__item"><a href="#model-save" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Model.save</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#modelconfig-and-state-dict" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code> and <code class="code docutils literal notranslate"><span class="pre">state_dict</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#using-checkpoints" class="md-nav__link">Using checkpoints</a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#the-standardmodel-class" class="md-nav__link">The <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> class</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphdefinition-backbone-task" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>, <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> & <code class="code docutils literal notranslate"><span class="pre">Task</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#instantiating-a-standardmodel" class="md-nav__link">Instantiating a <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#training-syntax-for-standardmodel" class="md-nav__link">Training Syntax for <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#adding-your-own-model" class="md-nav__link">Adding Your Own Model</a>
+        </li>
+        <li class="md-nav__item"><a href="#experiment-tracking" class="md-nav__link">Experiment Tracking</a>
+        </li>
+        <li class="md-nav__item"><a href="#example-energy-reconstruction-using-modelconfig" class="md-nav__link">Example: Energy Reconstruction using <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#the-model-class" class="md-nav__link">The <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#saving-loading-and-checkpointing-models" class="md-nav__link">Saving, loading, and checkpointing <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#model-save" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Model.save</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#modelconfig-and-state-dict" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code> and <code class="code docutils literal notranslate"><span class="pre">state_dict</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#using-checkpoints" class="md-nav__link">Using checkpoints</a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#the-standardmodel-class" class="md-nav__link">The <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> class</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphdefinition-backbone-task" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>, <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> & <code class="code docutils literal notranslate"><span class="pre">Task</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#instantiating-a-standardmodel" class="md-nav__link">Instantiating a <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#training-syntax-for-standardmodel" class="md-nav__link">Training Syntax for <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#adding-your-own-model" class="md-nav__link">Adding Your Own Model</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#experiment-tracking" class="md-nav__link">Experiment Tracking</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#example-energy-reconstruction-using-modelconfig" class="md-nav__link">Example: Energy Reconstruction using <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../datasets/datasets.html" class="md-nav__link">Datasets In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../data_conversion/data_conversion.html" class="md-nav__link">Data Conversion in GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../integration/integration.html" class="md-nav__link">Integrating New Experiments into GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../contribute/contribute.html" class="md-nav__link">Contributing To GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../api/graphnet.html" class="md-nav__link">API</a>
+      
+    
+    </li>
+  </ul>
+  
+
+</nav>
+              </div>
+            </div>
+          </div>
+          <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#models-models--page-root" class="md-nav__link">Models In GraphNeT</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#the-model-class" class="md-nav__link">The <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#saving-loading-and-checkpointing-models" class="md-nav__link">Saving, loading, and checkpointing <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s</a>
+        </li>
+        <li class="md-nav__item"><a href="#model-save" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Model.save</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#modelconfig-and-state-dict" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code> and <code class="code docutils literal notranslate"><span class="pre">state_dict</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#using-checkpoints" class="md-nav__link">Using checkpoints</a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#the-standardmodel-class" class="md-nav__link">The <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> class</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphdefinition-backbone-task" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>, <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> & <code class="code docutils literal notranslate"><span class="pre">Task</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#instantiating-a-standardmodel" class="md-nav__link">Instantiating a <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#training-syntax-for-standardmodel" class="md-nav__link">Training Syntax for <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#adding-your-own-model" class="md-nav__link">Adding Your Own Model</a>
+        </li>
+        <li class="md-nav__item"><a href="#experiment-tracking" class="md-nav__link">Experiment Tracking</a>
+        </li>
+        <li class="md-nav__item"><a href="#example-energy-reconstruction-using-modelconfig" class="md-nav__link">Example: Energy Reconstruction using <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+              </div>
+            </div>
+          </div>
+        
+        <div class="md-content">
+          <article class="md-content__inner md-typeset" role="main">
+            
+  <section id="models-in-graphnetgraphnet-header">
+<h1 id="models-models--page-root">Models In GraphNeT<a class="reference internal" href="#models-models--page-root"><img alt="graphnet" class="align-bottom" height="50px" src="../_images/favicon.svg" width="50px"/></a><a class="headerlink" href="#models-models--page-root" title="Link to this heading">¶</a></h1>
+<p>Three ideals form the philosophy behind <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html">Model</a>s in GraphNeT:</p>
+<dl class="field-list">
+<dt class="field-odd">Self-containment<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Functionality that a specific model requires (data pre-processing, transformation and other auxiliary calculations) should exist within the <code class="code docutils literal notranslate"><span class="pre">Model</span></code> itself such that it is portable and deployable as a single package that only depends on data.
+I.e</p>
+<blockquote>
+<div><p>Data → <code class="code docutils literal notranslate"><span class="pre">Model</span></code> → Predictions</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Summarizeable<span class="colon">:</span></dt>
+<dd class="field-even"><p>Trained <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html">Model</a>s should be fully summarizeable to configuration files, allowing you to easily distribute the results of your experimentation to other <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" height="25px" src="../_images/favicon.svg" width="25px"/></a>GraphNeT users.</p>
+</dd>
+<dt class="field-odd">Reuseable<span class="colon">:</span></dt>
+<dd class="field-odd"><p>It should be easy and intuitive to repurpose existing <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html">Model</a>s to tackle new problems or work on new physics experiments.</p>
+</dd>
+</dl>
+<p>To help developers adhere to these ideals, <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" height="25px" src="../_images/favicon.svg" width="25px"/></a>GraphNeT provides structure and functionality through class inheritance of <code class="code docutils literal notranslate"><span class="pre">Model</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html">Model</a> in <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" height="25px" src="../_images/favicon.svg" width="25px"/></a>GraphNeT is a <code class="code docutils literal notranslate"><span class="pre">LightningModule</span></code> configured to recieve as input <code class="code docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> objects.
+If you’re unfamiliar with these terms, we recommend that you consult the <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/starter/introduction.html">Lightning</a> and <a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/get_started/introduction.html">PyG</a> documentation for details.</p>
+</div>
+<section id="the-model-class">
+<h2 id="the-model-class">The <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class<a class="headerlink" href="#the-model-class" title="Link to this heading">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">Model</span></code> is the generic base class for <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html">Model</a>s in GraphNeT, and forms the basis from which all models are expected to originate.
+It comes with very few restrictions and you can therefore implement nearly any deep learning technique using <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" height="25px" src="../_images/favicon.svg" width="25px"/></a>GraphNeT by subclassing <code class="code docutils literal notranslate"><span class="pre">Model</span></code>.</p>
+<a class="with-shadow reference internal image-reference" href="../_images/model.svg"><img alt="../_images/model.svg" class="with-shadow align-center" src="../_images/model.svg" width="250"/></a>
+<p>Any subclass of <code class="code docutils literal notranslate"><span class="pre">Model</span></code> will inherit the methods <code class="code docutils literal notranslate"><span class="pre">Model.to_config</span></code> and <code class="code docutils literal notranslate"><span class="pre">Model.from_config</span></code>, which allows the model to be exported as <code class="code docutils literal notranslate"><span class="pre">.yml</span></code> files and reloaded in a different session. E.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span><span class="s2">"model.yml"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can then reconstruct the same model architecture from the <code class="code docutils literal notranslate"><span class="pre">.yml</span></code> file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="c1"># Indicate that you `trust` the config file after inspecting it, to allow for</span>
+<span class="c1"># dynamically loading classes references in the file.</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="s2">"model.yml"</span><span class="p">,</span> <span class="n">trust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<details>
+<summary><b>Example of ModelConfig</b></summary><p>You can find several pre-defined <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code>s under <code class="code docutils literal notranslate"><span class="pre">graphnet/configs/models</span></code>. Below are the contents of <code class="code docutils literal notranslate"><span class="pre">example_energy_reconstruction_model.yml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">arguments</span><span class="p">:</span>
+<span class="nt">architecture</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">add_global_variables_after_pooling</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">dynedge_layer_sizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">features_subset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">global_pooling_schemes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">min</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">max</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">mean</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">sum</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">nb_inputs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">        </span><span class="nt">nb_neighbours</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="w">        </span><span class="nt">post_processing_layer_sizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">readout_layer_sizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">    </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DynEdge</span>
+<span class="nt">graph_definition</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">detector</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">            </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">        </span><span class="nt">dtype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">nb_nearest_neighbours</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="w">        </span><span class="nt">node_definition</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">            </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodesAsPulses</span>
+<span class="w">        </span><span class="nt">node_feature_names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sensor_pos_x</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">sensor_pos_y</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">sensor_pos_z</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">t</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KNNGraph</span>
+<span class="nt">optimizer_class</span><span class="p">:</span><span class="w"> </span><span class="s">'!class</span><span class="nv"> </span><span class="s">torch.optim.adam</span><span class="nv"> </span><span class="s">Adam'</span>
+<span class="nt">optimizer_kwargs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">eps</span><span class="p">:</span><span class="w"> </span><span class="nv">0.001</span><span class="p p-Indicator">,</span><span class="nt"> lr</span><span class="p">:</span><span class="w"> </span><span class="nv">0.001</span><span class="p p-Indicator">}</span>
+<span class="nt">scheduler_class</span><span class="p">:</span><span class="w"> </span><span class="s">'!class</span><span class="nv"> </span><span class="s">graphnet.training.callbacks</span><span class="nv"> </span><span class="s">PiecewiseLinearLR'</span>
+<span class="nt">scheduler_config</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="nv">step</span><span class="p p-Indicator">}</span>
+<span class="nt">scheduler_kwargs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">factors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.01</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">milestones</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">80</span><span class="p p-Indicator">]</span>
+<span class="nt">tasks</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">hidden_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128</span>
+<span class="w">        </span><span class="nt">loss_function</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">            </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LogCoshLoss</span>
+<span class="w">        </span><span class="nt">loss_weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">prediction_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">target_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">total_energy</span>
+<span class="w">        </span><span class="nt">transform_inference</span><span class="p">:</span><span class="w"> </span><span class="s">'!lambda</span><span class="nv"> </span><span class="s">x:</span><span class="nv"> </span><span class="s">torch.pow(10,x)'</span>
+<span class="w">        </span><span class="nt">transform_prediction_and_target</span><span class="p">:</span><span class="w"> </span><span class="s">'!lambda</span><span class="nv"> </span><span class="s">x:</span><span class="nv"> </span><span class="s">torch.log10(x)'</span>
+<span class="w">        </span><span class="nt">transform_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">transform_target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">    </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnergyReconstruction</span>
+<span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StandardModel</span>
+</pre></div>
+</div>
+<p>and thus the 2. ideal outlined for models is directly addressed by simply subclassing <code class="code docutils literal notranslate"><span class="pre">Model</span></code>. In addition, <code class="code docutils literal notranslate"><span class="pre">Model</span></code> comes with extra functionality for saving, loading and checkpointing:</p>
+<section id="saving-loading-and-checkpointing-models">
+<h3 id="saving-loading-and-checkpointing-models">Saving, loading, and checkpointing <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s<a class="headerlink" href="#saving-loading-and-checkpointing-models" title="Link to this heading">¶</a></h3>
+<p>There are several methods for saving models in GraphNeT and each comes with its own pros and cons.</p>
+</section>
+<section id="model-save">
+<h3 id="model-save"><code class="code docutils literal notranslate"><span class="pre">Model.save</span></code><a class="headerlink" href="#model-save" title="Link to this heading">¶</a></h3>
+<p>You can pickle your entire model (including the <code class="code docutils literal notranslate"><span class="pre">state_dict</span></code>) by calling the <a class="reference internal" href="../api/graphnet.models.model.html#graphnet.models.model.Model.save" title="graphnet.models.model.Model.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">"model.pth"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can then load this model by calling <a class="reference internal" href="../api/graphnet.models.model.html#graphnet.models.model.Model.load" title="graphnet.models.model.Model.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a> classmethod:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="n">loaded_model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"model.pth"</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method is rather convenient as it lets you store everything in a single file but it comes with a big caveat: <strong>it’s not version-proof</strong>.
+That is, if you share a pickled model with a user who runs a different version of GraphNeT than what was used to train the model, you might experience compatibility issues.
+This is due to how pickle serialises Python objects.</p>
+</div>
+</section>
+<section id="modelconfig-and-state-dict">
+<h3 id="modelconfig-and-state-dict"><code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code> and <code class="code docutils literal notranslate"><span class="pre">state_dict</span></code><a class="headerlink" href="#modelconfig-and-state-dict" title="Link to this heading">¶</a></h3>
+<p>You can summarise your <code class="code docutils literal notranslate"><span class="pre">Model</span></code> components and their configurations by exporting it to a <code class="code docutils literal notranslate"><span class="pre">.yml</span></code> file.
+This only captures the <cite>definition</cite> of the model, not any trained weights, but by saving the <code class="code docutils literal notranslate"><span class="pre">state_dict</span></code> too, you have effectively saved the entire model, both definition and weights.
+You can do so by:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span><span class="s1">'model.yml'</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">save_state_dict</span><span class="p">(</span><span class="s1">'state_dict.pth'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can then reconstruct your model again by building the model from the <cite>ModelConfig</cite> file and loading in the <cite>state_dict</cite>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">ModelConfig</span>
+
+<span class="n">model_config</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"model.yml"</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span>  <span class="c1"># With randomly initialised weights.</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="s2">"state_dict.pth"</span><span class="p">)</span>  <span class="c1"># Now with trained weight.</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is the recommended way of storing and sharing <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s.</p>
+</div>
+</section>
+<section id="using-checkpoints">
+<h3 id="using-checkpoints">Using checkpoints<a class="headerlink" href="#using-checkpoints" title="Link to this heading">¶</a></h3>
+<p>Because <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s in GraphNeT are  PyTorch-Lightning’s <code class="code docutils literal notranslate"><span class="pre">LightningModule</span></code>s, you have the option to use the <code class="code docutils literal notranslate"><span class="pre">load_from_checkpoint</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_config</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"model.yml"</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span>  <span class="c1"># With randomly initialised weights.</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_from_checkpoint</span><span class="p">(</span><span class="s2">"checkpoint.ckpt"</span><span class="p">)</span>  <span class="c1"># Now with trained weight.</span>
+</pre></div>
+</div>
+<p>You can find more information on checkpointing <a class="reference external" href="https://lightning.ai/docs/pytorch/latest/common/checkpointing_basic.html">here</a>.</p>
+</section>
+</details></section>
+<section id="the-standardmodel-class">
+<h2 id="the-standardmodel-class">The <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> class<a class="headerlink" href="#the-standardmodel-class" title="Link to this heading">¶</a></h2>
+<p>The simplest way to define a <code class="code docutils literal notranslate"><span class="pre">Model</span></code> in GraphNeT is through the <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> subclass, which provides additional functionality on top of <code class="code docutils literal notranslate"><span class="pre">Model</span></code>.</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> consists of a series of modules - a <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.graphs.html#module-graphnet.models.graphs">GraphDefinition</a> , which defines the representation of the raw data,  <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn">Backbone</a>, which defines the actual achitecture, and one or more <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task">Task</a>  which defines the problem(s) that the model needs to solve.</p>
+<a class="with-shadow reference internal image-reference" href="../_images/standardmodel.svg"><img alt="../_images/standardmodel.svg" class="with-shadow align-right" src="../_images/standardmodel.svg" width="350"/></a>
+<p>This structure guarantees modularity and reuseability of models in <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" height="25px" src="../_images/favicon.svg" width="25px"/></a>GraphNeT, as these modules are interchangeable. The role of each of these model components is outlined below.</p>
+<p>For example, the only adaptation needed to run a <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> made for IceCube on a different experiment — say, KM3NeT — would be to switch out the <code class="code docutils literal notranslate"><span class="pre">Detector</span></code> component in <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>
+representing IceCube with one that represents KM3NeT. Similarly, a <code class="code docutils literal notranslate"><span class="pre">Model</span></code> developed for <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.EnergyReconstruction">EnergyReconstruction</a>
+can be put to work on a different problem, e.g., <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa">DirectionReconstructionWithKappa</a> ,
+by switching out just the <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task">Task</a> component.</p>
+<p>components (such as instances of, e.g., the  <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>, <code class="code docutils literal notranslate"><span class="pre">Backbone</span></code>, and <code class="code docutils literal notranslate"><span class="pre">Task</span></code> classes) along with PyTorch and PyG functionality.
+All <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s that are applicable to the same detector configuration, regardless of how the <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s themselves are implemented, should be able to act on the same graph (<code class="code docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code>) objects, thereby making them interchangeable and directly comparable.</p>
+<section id="graphdefinition-backbone-task">
+<h3 id="graphdefinition-backbone-task"><code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>, <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> &amp; <code class="code docutils literal notranslate"><span class="pre">Task</span></code><a class="headerlink" href="#graphdefinition-backbone-task" title="Link to this heading">¶</a></h3>
+<p>These components are packaged in a particularly simple way in <cite>StandardModel</cite>, but they are not specific to it.
+That is, they can be used in any combination, and alongside more specialised PyTorch/PyG code.</p>
+<a class="with-shadow reference internal image-reference" href="../_images/datarepresentation.svg"><img alt="../_images/datarepresentation.svg" class="with-shadow align-right" src="../_images/datarepresentation.svg" width="600"/></a>
+<dl class="field-list">
+<dt class="field-odd">GraphDefinition<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code> in GraphNeT is a data representation class, that uniquely defines how the raw data is processed and presented to the model architecture. <cite>graphs</cite> are a flexibile data representation format, which allows raw neutrino telescope data to be presented as point cloud graphs, images, sequences and more, making GraphNeT compatible with nearly all deep learning paradigms.</p>
+<p>A <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code> is itself composed of interchangeable modules, namely <code class="code docutils literal notranslate"><span class="pre">Detector</span></code>, <code class="code docutils literal notranslate"><span class="pre">NodeDefinition</span></code> and <code class="code docutils literal notranslate"><span class="pre">EdgeDefinition</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Detector<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The <code class="code docutils literal notranslate"><span class="pre">Detector</span></code> class holds experiment-specific details such as sensor geometry and index column names and defines standardization functions for each variable in the raw data.</p>
+</dd>
+<dt class="field-even">NodeDefinition<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="code docutils literal notranslate"><span class="pre">NodeDefinition</span></code> defines what a node (i.e. a row and its columns) represents. In charge of transforming the collection of standardized Cherenkov pulses associated with a triggered event into a node/row representation of choice. It is the choice in this module that defines if nodes/rows represents single Cherenkov pulses, DOMs, entire strings or something completely different</p>
+</dd>
+<dt class="field-odd">EdgeDefinition<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The optional <code class="code docutils literal notranslate"><span class="pre">EdgeDefinition</span></code> defines how <cite>edges</cite> are drawn between nodes in a graph, which for graph neural networks can define how information may flow in the network. Methods not requiring edges, such as CNNs or transformers can simply omit this module in their <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The modularity of <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code> ensures that the only adaptation needed to run a <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> made for IceCube on a different experiment — say, KM3NeT — would be to switch out the <code class="code docutils literal notranslate"><span class="pre">Detector</span></code> component in <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>
+representing IceCube with one that represents KM3NeT.</p>
+</div>
+</dd>
+<dt class="field-even">Backbone<span class="colon">:</span></dt>
+<dd class="field-even"><p>The <code class="code docutils literal notranslate"><span class="pre">Backbone</span></code> defines the actual model architecture that will be used to process the data representation, and its output is directly passed to <code class="code docutils literal notranslate"><span class="pre">Task</span></code>.
+The model architecture could be based on CNNs, GNNs, transformers or any of the other established deep learning paradigms. <code class="code docutils literal notranslate"><span class="pre">Backbone</span></code> should be a subclass of <code class="code docutils literal notranslate"><span class="pre">Model</span></code>.</p>
+</dd>
+<dt class="field-odd">Task<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Different applications of deep learning in neutrino telescopes (i.e. the problems we want to solve using DL) are represented as individual detector agnostic <code class="code docutils literal notranslate"><span class="pre">Task</span></code>s.</p>
+<p>A <code class="code docutils literal notranslate"><span class="pre">Task</span></code> fully defines the physics problem that the model is trained to solve, and is in charge of scaling/unscaling truth values and calculation of loss.
+Multiple subclasses of <code class="code docutils literal notranslate"><span class="pre">Task</span></code> exists, most popular of which is <code class="code docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code> that acts as a learnable prediction head that maps
+the latent output of <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> to the target value(s). Many instances of <code class="code docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code> has been implemented in GraphNeT to tackle a wide range of supervised learning tasks, such as binary classification and energy reconstruction.</p>
+<p>Below is an example of a <code class="code docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code> that defines binary classification in general:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.task</span> <span class="kn">import</span> <span class="n">StandardLearnedTask</span>
+
+<span class="k">class</span> <span class="nc">BinaryClassificationTask</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Performs binary classification."""</span>
+
+    <span class="c1"># Requires one feature, logit for being signal class.</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"target"</span><span class="p">]</span>
+    <span class="n">default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"target_pred"</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># transform probability of being muon</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The class variable <strong>nb_inputs</strong> specifies the dimensions that this specific <code class="code docutils literal notranslate"><span class="pre">Task</span></code> expects it’s input <code class="code docutils literal notranslate"><span class="pre">x</span></code> to have. In the case of <code class="code docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code>, a simple MLP is used to adjust the dimensions of the latent prediction from <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> to <strong>nb_inputs</strong>.
+<code class="code docutils literal notranslate"><span class="pre">_forward(self,</span> <span class="pre">x:</span> <span class="pre">Tensor)</span></code> , defines what the <code class="code docutils literal notranslate"><span class="pre">Task</span></code> does to the latent predictions.
+In this task <code class="code docutils literal notranslate"><span class="pre">x</span></code> will be a [batch_size,1]-dimensional latent vector and the <code class="code docutils literal notranslate"><span class="pre">Task</span></code> simply returns the sigmoid of it.</p>
+<p>As such, the code in under <code class="code docutils literal notranslate"><span class="pre">_forward(self,</span> <span class="pre">x:</span> <span class="pre">Tensor)</span></code> defines the last steps of the <code class="code docutils literal notranslate"><span class="pre">Model</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="instantiating-a-standardmodel">
+<h3 id="instantiating-a-standardmodel">Instantiating a <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code><a class="headerlink" href="#instantiating-a-standardmodel" title="Link to this heading">¶</a></h3>
+<p>GraphNeT comes with many pre-defined <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>s, <code class="code docutils literal notranslate"><span class="pre">Backbone</span></code>s, and <code class="code docutils literal notranslate"><span class="pre">Task</span></code>s components that you can simply import and use out-of-the-box.
+So to get started, all you need to do is to import your choices in these components and build the model.
+Below is a snippet that defines a <code class="code docutils literal notranslate"><span class="pre">Model</span></code> that reconstructs the zenith angle with uncertainties using the <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1748-0221/17/11/P11003">GNN published by IceCube</a> for ORCA150:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Choice of graph representation, architecture, and physics task</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.detector.prometheus</span> <span class="kn">import</span> <span class="n">ORCA150</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.graphs</span> <span class="kn">import</span> <span class="n">KNNGraph</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.graphs.nodes</span> <span class="kn">import</span> <span class="n">NodesAsPulses</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.gnn.dynedge</span> <span class="kn">import</span> <span class="n">DynEdge</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.task.reconstruction</span> <span class="kn">import</span> <span class="n">ZenithReconstructionWithKappa</span>
+
+<span class="c1"># Choice of loss function and Model class</span>
+<span class="kn">from</span> <span class="nn">graphnet.training.loss_functions</span> <span class="kn">import</span> <span class="n">VonMisesFisher2DLoss</span>
+<span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">StandardModel</span>
+
+<span class="c1"># Configuring the components</span>
+
+<span class="c1"># Represents the data as a point-cloud graph where each</span>
+<span class="c1"># node represents a pulse of Cherenkov radiation</span>
+<span class="c1"># edges drawn to the 8 nearest neighbours</span>
+
+<span class="n">graph_definition</span> <span class="o">=</span> <span class="n">KNNGraph</span><span class="p">(</span>
+    <span class="n">detector</span><span class="o">=</span><span class="n">ORCA150</span><span class="p">(),</span>
+    <span class="n">node_definition</span><span class="o">=</span><span class="n">NodesAsPulses</span><span class="p">(),</span>
+    <span class="n">nb_nearest_neighbours</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">backbone</span> <span class="o">=</span> <span class="n">DynEdge</span><span class="p">(</span>
+    <span class="n">nb_inputs</span><span class="o">=</span><span class="n">detector</span><span class="o">.</span><span class="n">nb_outputs</span><span class="p">,</span>
+    <span class="n">global_pooling_schemes</span><span class="o">=</span><span class="p">[</span><span class="s2">"min"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">,</span> <span class="s2">"mean"</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">ZenithReconstructionWithKappa</span><span class="p">(</span>
+    <span class="n">hidden_size</span><span class="o">=</span><span class="n">backbone</span><span class="o">.</span><span class="n">nb_outputs</span><span class="p">,</span>
+    <span class="n">target_labels</span><span class="o">=</span><span class="s2">"injection_zenith"</span><span class="p">,</span>
+    <span class="n">loss_function</span><span class="o">=</span><span class="n">VonMisesFisher2DLoss</span><span class="p">(),</span>
+<span class="p">)</span>
+
+<span class="c1"># Construct the Model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">StandardModel</span><span class="p">(</span>
+    <span class="n">graph_definition</span><span class="o">=</span><span class="n">graph_definition</span><span class="p">,</span>
+    <span class="n">backbone</span><span class="o">=</span><span class="n">backbone</span><span class="p">,</span>
+    <span class="n">tasks</span><span class="o">=</span><span class="p">[</span><span class="n">task</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The only change required to get this <code class="code docutils literal notranslate"><span class="pre">Model</span></code> to work on a different integrated experiment in GraphNeT,
+is to switch out the <code class="code docutils literal notranslate"><span class="pre">Detector</span></code>-component. Similarly, the model can be repurposed to solve a completely different problem,
+by switching out the <code class="code docutils literal notranslate"><span class="pre">Task</span></code> component.</p>
+</section>
+<section id="training-syntax-for-standardmodel">
+<h3 id="training-syntax-for-standardmodel">Training Syntax for <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code><a class="headerlink" href="#training-syntax-for-standardmodel" title="Link to this heading">¶</a></h3>
+<p>Models inheriting from <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> in GraphNeT comes with a powerful in-built <code class="code docutils literal notranslate"><span class="pre">model.fit</span></code> method that reduces the training of models on neutrino telescopes to a syntax that is similar to that of <code class="code docutils literal notranslate"><span class="pre">sklearn</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_dataloader</span><span class="o">=</span><span class="n">train_dataloader</span><span class="p">,</span> <span class="n">max_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="code docutils literal notranslate"><span class="pre">model.fit</span></code> is built upon <a class="reference external" href="pytorch_lightningimportTrainer">torch_lightning.Trainer.fit</a> , and therefore accepts the same arguments,
+allowing GraphNeT users to train <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s with the exact same functionality but with less boilerplate code.</p>
+<p>But because <code class="code docutils literal notranslate"><span class="pre">Model</span></code> s in GraphNeT are PyTorch modules and fully compatible with PyTorch-Lightning, you can also choose to write your own custom training loops if needed, or use the regular PyTorch-Lightning training functionality.
+The snippet above is equivalent to:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span>  <span class="nn">torch_lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
+<span class="kn">from</span>  <span class="nn">graphnet.training.callbacks</span> <span class="kn">import</span> <span class="n">ProgressBar</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># Configure Trainer</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">ProgressBar</span><span class="p">()],</span>
+    <span class="n">log_every_n_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">strategy</span><span class="o">=</span><span class="s2">"ddp"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Train model</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="adding-your-own-model">
+<h2 id="adding-your-own-model">Adding Your Own Model<a class="headerlink" href="#adding-your-own-model" title="Link to this heading">¶</a></h2>
+<p>Model architectures in GraphNeT are ordinary pytorch <code class="code docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>‘s that inherits from the generic <code class="code docutils literal notranslate"><span class="pre">graphnet.models.Model</span></code> class,
+and they are configured to receive <code class="code docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> objects as input to their <code class="code docutils literal notranslate"><span class="pre">forward</span></code> pass.
+Therefore, adding your pytorch models to GraphNeT is as easy as changing the inheritance and adjusting the input to expect <code class="code docutils literal notranslate"><span class="pre">Data</span></code> objects.</p>
+<p>Below is an example of a simple pytorch model</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+
+
+<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">input_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+                 <span class="n">output_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Modifying this model to work in GraphNeT requires changing the inheritance to model, and configuring the input to be <code class="code docutils literal notranslate"><span class="pre">Data</span></code> objects:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
+
+
+<span class="k">class</span> <span class="nc">MyGraphNeTModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">input_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+                 <span class="n">output_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The model is then ready to be used as a <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> in <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code>, or to be included in your own implementation.</p>
+</section>
+<section id="experiment-tracking">
+<h2 id="experiment-tracking">Experiment Tracking<a class="headerlink" href="#experiment-tracking" title="Link to this heading">¶</a></h2>
+<p>You can track your experiment using <a class="reference external" href="https://wandb.ai/">Weights &amp; Biases</a> by passing the <code class="code docutils literal notranslate"><span class="pre">WandbLogger</span></code> to <code class="xref py py-func docutils literal notranslate"><span class="pre">fit()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">pytorch_lightning.loggers</span> <span class="kn">import</span> <span class="n">WandbLogger</span>
+
+<span class="c1"># Create wandb directory</span>
+<span class="n">wandb_dir</span> <span class="o">=</span> <span class="s2">"./wandb/"</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">wandb_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Initialise Weights &amp; Biases (W&amp;B) run</span>
+<span class="n">wandb_logger</span> <span class="o">=</span> <span class="n">WandbLogger</span><span class="p">(</span>
+    <span class="n">project</span><span class="o">=</span><span class="s2">"example-script"</span><span class="p">,</span>
+    <span class="n">entity</span><span class="o">=</span><span class="s2">"graphnet-team"</span><span class="p">,</span>
+    <span class="n">save_dir</span><span class="o">=</span><span class="n">wandb_dir</span><span class="p">,</span>
+    <span class="n">log_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Fit Model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">logger</span><span class="o">=</span><span class="n">wandb_logger</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>By using <code class="code docutils literal notranslate"><span class="pre">WandbLogger</span></code>, your training and validation loss is logged and you have the full functionality of Weights &amp; Biases available.
+This means, e.g., that you can log your <a class="reference internal" href="../api/graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfig" title="graphnet.utilities.config.model_config.ModelConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>, <a class="reference internal" href="../api/graphnet.utilities.config.dataset_config.html#graphnet.utilities.config.dataset_config.DatasetConfig" title="graphnet.utilities.config.dataset_config.DatasetConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatasetConfig</span></code></a>, and <a class="reference internal" href="../api/graphnet.utilities.config.training_config.html#graphnet.utilities.config.training_config.TrainingConfig" title="graphnet.utilities.config.training_config.TrainingConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingConfig</span></code></a> as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">wandb_logger</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">training_config</span><span class="p">)</span>
+<span class="n">wandb_logger</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model_config</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
+<span class="n">wandb_logger</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dataset_config</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Using an experiment tracking system like Weights &amp; Biases to track training metrics as well as artifacts like configuration files greatly improves reproducibility, experiment transparency, and collaboration.
+This is because you can easily recreate an previous run from the saved artifacts, you can directly compare runs with diffierent model configurations and hyperparameter choices, and share and compare your results to other people on your team.
+Therefore, we strongly recommend using Weights &amp; Biases or a similar system when training and optimising models meant for actual physics use.</p>
+</section>
+<section id="example-energy-reconstruction-using-modelconfig">
+<h2 id="example-energy-reconstruction-using-modelconfig">Example: Energy Reconstruction using <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code><a class="headerlink" href="#example-energy-reconstruction-using-modelconfig" title="Link to this heading">¶</a></h2>
+<p>Below is a minimal example for training a GNN in GraphNeT for energy reconstruction on a small data sample in GraphNeT, using configuration files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import(s)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">graphnet.constants</span> <span class="kn">import</span> <span class="n">CONFIG_DIR</span>  <span class="c1"># Local path to graphnet/configs</span>
+<span class="kn">from</span> <span class="nn">graphnet.data.dataloader</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">DatasetConfig</span><span class="p">,</span> <span class="n">ModelConfig</span>
+
+<span class="c1"># Configuration</span>
+<span class="n">dataset_config_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">CONFIG_DIR</span><span class="si">}</span><span class="s2">/datasets/training_example_data_sqlite.yml"</span>
+<span class="n">model_config_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">CONFIG_DIR</span><span class="si">}</span><span class="s2">/models/example_energy_reconstruction_model.yml"</span>
+
+<span class="c1"># Build model</span>
+<span class="n">model_config</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_config_path</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">model_config</span><span class="p">,</span> <span class="n">trust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Construct dataloaders</span>
+<span class="n">dataset_config</span> <span class="o">=</span> <span class="n">DatasetConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dataset_config_path</span><span class="p">)</span>
+<span class="n">dataloaders</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="o">.</span><span class="n">from_dataset_config</span><span class="p">(</span>
+    <span class="n">dataset_config</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+    <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Train model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">dataloaders</span><span class="p">[</span><span class="s2">"train"</span><span class="p">],</span>
+    <span class="n">dataloaders</span><span class="p">[</span><span class="s2">"validation"</span><span class="p">],</span>
+    <span class="n">gpus</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Predict on test set and return as pandas.DataFrame</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_as_dataframe</span><span class="p">(</span>
+    <span class="n">dataloaders</span><span class="p">[</span><span class="s2">"test"</span><span class="p">],</span>
+    <span class="n">additional_attributes</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">target_labels</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"event_no"</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Save predictions and model to file</span>
+<span class="n">outdir</span> <span class="o">=</span> <span class="s2">"tutorial_output"</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">outdir</span><span class="si">}</span><span class="s2">/results.csv"</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">save_state_dict</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">outdir</span><span class="si">}</span><span class="s2">/state_dict.pth"</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">outdir</span><span class="si">}</span><span class="s2">/model.pth"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Because <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code> summarises a <code class="code docutils literal notranslate"><span class="pre">Model</span></code> completely, including its <code class="code docutils literal notranslate"><span class="pre">Task</span></code>(s),
+the only modifications required to change the example to reconstruct (or classify) a different attribute than energy, is to pass a <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code> that defines a model with the corresponding <code class="code docutils literal notranslate"><span class="pre">Task</span></code>.
+Similarly, if you wanted to train on a different <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code>, you would just have to pass a <code class="code docutils literal notranslate"><span class="pre">DatasetConfig</span></code> that defines <em>that</em> <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> instead.</p>
+</section>
+</section>
+
+
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="md-footer">
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+          
+            <a href="../installation/install.html" title="Installation"
+               class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               rel="prev">
+              <div class="md-flex__cell md-flex__cell--shrink">
+                <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+              </div>
+              <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+                <span class="md-flex__ellipsis">
+                  <span
+                      class="md-footer-nav__direction"> "Previous" </span> Installation </span>
+              </div>
+            </a>
+          
+          
+            <a href="../datasets/datasets.html" title="Datasets In GraphNeT"
+               class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
+                class="md-flex__ellipsis"> <span
+                class="md-footer-nav__direction"> "Next" </span> Datasets In GraphNeT </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink"><i
+                class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          
+        </a>
+        
+      </nav>
+    </div>
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-footer-copyright">
+          <div class="md-footer-copyright__highlight">
+              &#169; Copyright 2021-2024, GraphNeT team.
+              
+          </div>
+            Created using
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+             and
+            <a href="https://github.com/bashtage/sphinx-material/">Material for
+              Sphinx</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../_static/javascripts/application.js"></script>
+  <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+  </body>
+</html>
