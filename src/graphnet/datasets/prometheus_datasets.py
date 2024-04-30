@@ -76,7 +76,7 @@ class PublicPrometheusDataset(ERDAHostedDataset):
 class TRIDENTSmall(PublicPrometheusDataset):
     """Public Dataset for Prometheus simulation of a TRIDENT geometry.
 
-    Contains ~ 1 million track events.
+    Contains ~ 1 million track events between 10 GeV - 10 TeV.
     """
 
     _experiment = "TRIDENT Prometheus Simulation"
@@ -88,4 +88,22 @@ class TRIDENTSmall(PublicPrometheusDataset):
     )
     _available_backends = ["sqlite"]
     _file_hashes = {"sqlite": "F2R8qb8JW7"}
+    _citation = None
+
+
+class PONESmall(PublicPrometheusDataset):
+    """Public Dataset for Prometheus simulation of a P-ONE geometry.
+
+    Contains ~ 1 million track events between 10 GeV - 10 TeV.
+    """
+
+    _experiment = "P-ONE Prometheus Simulation"
+    _creator = "Rasmus F. Ørsøe"
+    _comments = (
+        "Contains ~1 million track events."
+        " Simulation produced by Stephan Meighen-Berger, "
+        "U. Melbourne."
+    )
+    _available_backends = ["sqlite"]
+    _file_hashes = {"sqlite": "e9ZSVMiykD"}
     _citation = None
