@@ -72,12 +72,12 @@ class TRIDENTSmall(ERDAHostedDataset):
             "graph_definition": self._graph_definition,
             "features": features,
             "truth": truth,
-            "labels": [
-                Direction(
+            "labels": {
+                "direction": Direction(
                     azimuth_key="initial_state_azimuth",
                     zenith_key="initial_state_zenith",
                 )
-            ],
+            },
         }
 
         return dataset_args, train_val, test
