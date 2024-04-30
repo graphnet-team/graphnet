@@ -3,7 +3,7 @@ from typing import Dict, Any, List, Tuple, Union
 import os
 from sklearn.model_selection import train_test_split
 
-from graphnet.training.labels import Direction
+from graphnet.training.labels import Direction, Track
 from graphnet.data import ERDAHostedDataset
 from graphnet.data.constants import FEATURES
 from graphnet.data.utilities import query_database
@@ -76,7 +76,10 @@ class TRIDENTSmall(ERDAHostedDataset):
                 "direction": Direction(
                     azimuth_key="initial_state_azimuth",
                     zenith_key="initial_state_zenith",
-                )
+                ),
+                "track": Track(
+                    pid_key="initial_state_type", interaction_key="interaction"
+                ),
             },
         }
 
