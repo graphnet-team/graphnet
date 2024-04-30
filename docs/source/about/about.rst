@@ -1,7 +1,5 @@
 .. include:: ../substitutions.rst
 
-About
-============
 
 |graphnet|\ GraphNeT is an open-source Python framework aimed at providing high quality, user friendly, end-to-end functionality to perform reconstruction tasks at neutrino telescopes using deep learning. |graphnet|\ GraphNeT makes it fast and easy to train complex models that can provide event reconstruction with state-of-the-art performance, for arbitrary detector configurations, with inference times that are orders of magnitude faster than traditional reconstruction techniques.
 |graphnet|\ GraphNeT provides a common, detector agnostic framework for ML developers and physicists that wish to use the state-of-the-art tools in their research. By uniting both user groups, |graphnet|\ GraphNeT aims to increase the longevity and usability of individual code contributions from ML developers by building a general, reusable software package based on software engineering best practices, and lowers the technical threshold for physicists that wish to use the most performant tools for their scientific problems.
