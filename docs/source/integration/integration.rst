@@ -88,7 +88,7 @@ To convert these pickle files to a supported backend in GraphNeT, we first have 
 When the :code:`DataConverter` is instantiated, it will set the :code:`Extractors` that it was instantiated with as member
 variables of our :code:`GraphNeTFileReader`, making them available to us under :code:`self._extractors`. When the conversion is running, 
 the :code:`DataConverter` will pass a :code:`file_path` to our :code:`__call__` function, and it is the job of our reader to open this
-file and apply extractors to it. These calls will happen in parallel automatically, so we do not have to worry about parallelizing this code ourselves.
+file and apply extractors to it. These calls will happen in parallel automatically.
 
 So - the reader above first opens the `.pickle` file, and then applies the extractors. Job done! Let's now define the extractor:
 
