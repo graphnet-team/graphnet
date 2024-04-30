@@ -29,7 +29,7 @@ Feel free to join the [GraphNeT Slack group](https://join.slack.com/t/graphnet-t
 
 ## :gear:  Install
 
-GraphNeT is compatible with Python 3.8 - 3.11, Linux and macOS, and we recommend installing `graphnet` in a separate environment in a virtual environment. To install GraphNeT, please follow the [installation instructions](https://graphnet-team.github.io/graphnet/installation/install.html#quick-start)
+GraphNeT is compatible with Python 3.8 - 3.11, Linux and macOS, and we recommend installing `graphnet` in a separate virtual environment. To install GraphNeT, please follow the [installation instructions](https://graphnet-team.github.io/graphnet/installation/install.html#quick-start)
 
 
 ## :ringed_planet:  Use cases
