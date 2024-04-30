@@ -6,7 +6,7 @@
 |graphnet|\ GraphNeT provides a common, detector agnostic framework for ML developers and physicists that wish to use the state-of-the-art tools in their research. By uniting both user groups, |graphnet|\ GraphNeT aims to increase the longevity and usability of individual code contributions from ML developers by building a general, reusable software package based on software engineering best practices, and lowers the technical threshold for physicists that wish to use the most performant tools for their scientific problems.
 
 
-|graphnet|\ GraphNeT comprises a number of modules providing the necessary tools to build workflows from ingesting raw training data in domain-specific formats to deploying trained models in domain-specific reconstruction chains, as illustrated in [the Figure](flowchart).
+|graphnet|\ GraphNeT comprises a number of modules providing the necessary tools to build workflows. These workflows range from ingesting raw training data in domain-specific formats to deploying trained models in domain-specific reconstruction chains, as illustrated in [the Figure](flowchart).
 
 .. _flowchart:
 .. figure:: ../../../paper/flowchart.png
