@@ -46,7 +46,6 @@ class PublicPrometheusDataset(ERDAHostedDataset):
             database=dataset_path,
             query="SELECT event_no FROM mc_truth",
         )
-        event_nos = event_nos.loc[event_nos["n_photons"] < 1000]
         train_val, test = train_test_split(
             event_nos["event_no"].tolist(),
             test_size=0.10,
