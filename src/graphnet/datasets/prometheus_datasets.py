@@ -3,6 +3,7 @@ from typing import Dict, Any, List, Tuple, Union
 import os
 from sklearn.model_selection import train_test_split
 from glob import glob
+import numpy as np
 
 from graphnet.training.labels import Direction, Track
 from graphnet.data import ERDAHostedDataset
@@ -39,21 +40,31 @@ class PublicPrometheusDataset(ERDAHostedDataset):
             features: List of features from user to use as input.
             truth: List of event-level truth variables from user.
 
-        Returns: Dataset arguments and selections
+        Returns: Dataset arguments, train/val selection, test selection
         """
-        dataset_paths = glob(os.path.join(self.dataset_dir, "*.db"))
-        assert len(dataset_paths) == 1
-        dataset_path = dataset_paths[0]
-        event_nos = query_database(
-            database=dataset_path, 
-            query=f"SELECT event_no FROM {self._truth_table[0]}"
-        )
-        train_val, test = train_test_split(
-            event_nos["event_no"].tolist(),
-            test_size=0.10,
-            random_state=42,
-            shuffle=True,
-        )
+        if backend == 'sqlite':
+            dataset_paths = glob(os.path.join(self.dataset_dir, "*.db"))
+            assert len(dataset_paths) == 1
+            dataset_path = dataset_paths[0]
+            event_nos = query_database(
+                database=dataset_path, 
+                query=f"SELECT event_no FROM {self._truth_table[0]}"
+            )
+            train_val, test = train_test_split(
+                event_nos["event_no"].tolist(),
+                test_size=0.10,
+                random_state=42,
+                shuffle=True,
+            )
+        elif backend == 'parquet':
+            dataset_path = self.dataset_dir
+            n_batches = len(glob(os.path.join(dataset_path,self._truth_table,'*.parquet')))
+            train_val, test = train_test_split(
+                np.arange(0, n_batches),
+                test_size=0.10,
+                random_state=42,
+                shuffle=True,
+            )
         dataset_args = {
             "truth_table": self._truth_table,
             "pulsemaps": self._pulsemaps,
