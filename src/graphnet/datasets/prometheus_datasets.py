@@ -2,6 +2,7 @@
 from typing import Dict, Any, List, Tuple, Union
 import os
 from sklearn.model_selection import train_test_split
+from glob import glob
 
 from graphnet.training.labels import Direction, Track
 from graphnet.data import ERDAHostedDataset
@@ -40,13 +41,13 @@ class PublicPrometheusDataset(ERDAHostedDataset):
 
         Returns: Dataset arguments and selections
         """
-        dataset_path = os.path.join(self.dataset_dir, "merged.db")
-
+        dataset_paths = glob(os.path.join(self.dataset_dir, "*.db"))
+        assert len(dataset_paths) == 1
+        dataset_path = dataset_paths[0]
         event_nos = query_database(
             database=dataset_path, 
             query=f"SELECT event_no FROM {self._truth_table[0]}"
         )
-
         train_val, test = train_test_split(
             event_nos["event_no"].tolist(),
             test_size=0.10,
@@ -88,7 +89,7 @@ class TRIDENTSmall(PublicPrometheusDataset):
         "U. Melbourne."
     )
     _available_backends = ["sqlite"]
-    _file_hashes = {"sqlite": "F2R8qb8JW7"}
+    _file_hashes = {"sqlite": "aooZEpVsAM"}
     _citation = None
 
 
@@ -106,7 +107,7 @@ class PONESmall(PublicPrometheusDataset):
         "U. Melbourne."
     )
     _available_backends = ["sqlite"]
-    _file_hashes = {"sqlite": "e9ZSVMiykD"}
+    _file_hashes = {"sqlite": "GIt0hlG9qI"}
     _citation = None
 
 
@@ -124,5 +125,5 @@ class BaikalGVDSmall(PublicPrometheusDataset):
         "U. Melbourne."
     )
     _available_backends = ["sqlite"]
-    _file_hashes = {"sqlite": "ebLJHjPDqy"}
+    _file_hashes = {"sqlite": "FtFs5fxXB7"}
     _citation = None
