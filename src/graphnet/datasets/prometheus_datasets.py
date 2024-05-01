@@ -1,4 +1,4 @@
-"""A CuratedDataset for unit tests."""
+"""Public datasets from Prometheus Simulation."""
 from typing import Dict, Any, List, Tuple, Union
 import os
 from sklearn.model_selection import train_test_split
