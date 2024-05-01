@@ -108,6 +108,7 @@ class PONESmall(PublicPrometheusDataset):
     _file_hashes = {"sqlite": "e9ZSVMiykD"}
     _citation = None
 
+
 class BaikailGVDSmall(PublicPrometheusDataset):
     """Public Dataset for Prometheus simulation of a Baikal-GVD geometry.
 
