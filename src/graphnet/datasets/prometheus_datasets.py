@@ -109,7 +109,7 @@ class PONESmall(PublicPrometheusDataset):
     _citation = None
 
 
-class BaikailGVDSmall(PublicPrometheusDataset):
+class BaikalGVDSmall(PublicPrometheusDataset):
     """Public Dataset for Prometheus simulation of a Baikal-GVD geometry.
 
     Contains ~ 1 million track events between 10 GeV - 10 TeV.
