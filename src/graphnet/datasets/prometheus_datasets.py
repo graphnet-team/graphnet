@@ -2,6 +2,7 @@
 from typing import Dict, Any, List, Tuple, Union
 import os
 from sklearn.model_selection import train_test_split
+from glob import glob
 
 from graphnet.training.labels import Direction, Track
 from graphnet.data import ERDAHostedDataset
@@ -40,8 +41,9 @@ class PublicPrometheusDataset(ERDAHostedDataset):
 
         Returns: Dataset arguments and selections
         """
-        dataset_path = os.path.join(self.dataset_dir, "merged.db")
-
+        dataset_paths = glob(os.path.join(self.dataset_dir, "*.db"))
+        assert len(dataset_paths) == 1
+        dataset_path = dataset_paths[0]
         event_nos = query_database(
             database=dataset_path,
             query="SELECT event_no FROM mc_truth",
