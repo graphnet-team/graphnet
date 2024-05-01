@@ -43,9 +43,10 @@ class PublicPrometheusDataset(ERDAHostedDataset):
         dataset_path = os.path.join(self.dataset_dir, "merged.db")
 
         event_nos = query_database(
-            database=dataset_path, query="SELECT event_no FROM mc_truth"
+            database=dataset_path,
+            query="SELECT event_no FROM mc_truth",
         )
-
+        event_nos = event_nos.loc[event_nos["n_photons"] < 1000]
         train_val, test = train_test_split(
             event_nos["event_no"].tolist(),
             test_size=0.10,
@@ -87,7 +88,7 @@ class TRIDENTSmall(PublicPrometheusDataset):
         "U. Melbourne."
     )
     _available_backends = ["sqlite"]
-    _file_hashes = {"sqlite": "F2R8qb8JW7"}
+    _file_hashes = {"sqlite": "aooZEpVsAM"}
     _citation = None
 
 
@@ -105,7 +106,7 @@ class PONESmall(PublicPrometheusDataset):
         "U. Melbourne."
     )
     _available_backends = ["sqlite"]
-    _file_hashes = {"sqlite": "e9ZSVMiykD"}
+    _file_hashes = {"sqlite": "GIt0hlG9qI"}
     _citation = None
 
 
@@ -123,5 +124,5 @@ class BaikalGVDSmall(PublicPrometheusDataset):
         "U. Melbourne."
     )
     _available_backends = ["sqlite"]
-    _file_hashes = {"sqlite": "ebLJHjPDqy"}
+    _file_hashes = {"sqlite": "FtFs5fxXB7"}
     _citation = None
