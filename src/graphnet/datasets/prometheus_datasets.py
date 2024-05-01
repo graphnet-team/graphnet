@@ -43,7 +43,8 @@ class PublicPrometheusDataset(ERDAHostedDataset):
         dataset_path = os.path.join(self.dataset_dir, "merged.db")
 
         event_nos = query_database(
-            database=dataset_path, query="SELECT event_no FROM mc_truth"
+            database=dataset_path, 
+            query=f"SELECT event_no FROM {self._truth_table[0]}"
         )
 
         train_val, test = train_test_split(
