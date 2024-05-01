@@ -50,7 +50,7 @@ class IceCube86(Detector):
 
 class IceCubeKaggle(Detector):
     """`Detector` class for Kaggle Competition."""
-    
+
     geometry_table_path = os.path.join(
         ICECUBE_GEOMETRY_TABLE_DIR, "icecube86.parquet"
     )
