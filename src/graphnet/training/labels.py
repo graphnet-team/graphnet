@@ -90,9 +90,9 @@ class Track(Label):
             pid_key: The name of the pre-existing key in `graph` that will
                 be used to access the pdg encoding, used when calculating
                 the direction.
-            interaction_key: The name of the pre-existing key in `graph` that 
-            will be used to access the interaction type (1 denoting CC),
-            used when calculating the direction.
+            interaction_key: The name of the pre-existing key in `graph` that
+                will be used to access the interaction type (1 denoting CC),
+                used when calculating the direction.
         """
         self._pid_key = pid_key
         self._int_key = interaction_key
@@ -104,4 +104,3 @@ class Track(Label):
         """Compute label for `graph`."""
         label = (graph[self._pid_key] == 14) & (graph[self._int_key] == 1)
         return label.type(torch.int)
-    

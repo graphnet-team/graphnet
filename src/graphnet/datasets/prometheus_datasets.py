@@ -36,7 +36,7 @@ class PublicPrometheusDataset(ERDAHostedDataset):
         Args:
             backend: backend of dataset. Either "parquet" or "sqlite"
             features: List of features from user to use as input.
-            truth: List of event-level truth form user.
+            truth: List of event-level truth variables from user.
 
         Returns: Dataset arguments and selections
         """
