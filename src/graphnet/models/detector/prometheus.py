@@ -333,9 +333,10 @@ class IceCubeGen2(Detector):
 
     def _t(self, x: torch.tensor) -> torch.tensor:
         return x / 1.05e04
-    
+
+
 class PONETriangle(Detector):
-    """`Detector` class for Prometheus PONE Triangle"""
+    """`Detector` class for Prometheus PONE Triangle."""
 
     geometry_table_path = os.path.join(
         PROMETHEUS_GEOMETRY_TABLE_DIR, "pone_triangle.parquet"
@@ -359,7 +360,6 @@ class PONETriangle(Detector):
 
     def _t(self, x: torch.tensor) -> torch.tensor:
         return x / 1.05e04
-
 
 
 class Prometheus(ORCA150SuperDense):
