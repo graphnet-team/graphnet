@@ -1,3 +1,3 @@
 """Contains pre-converted datasets ready for training."""
 from .test_dataset import TestDataset
-from .prometheus_datasets import TRIDENTSmall
+from .prometheus_datasets import TRIDENTSmall, BaikailGVDSmall, PONESmall
