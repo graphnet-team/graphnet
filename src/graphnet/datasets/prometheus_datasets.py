@@ -36,19 +36,19 @@ class PublicPrometheusDataset(ERDAHostedDataset):
         """Prepare arguments for dataset.
 
         Args:
-            backend: backend of dataset. Either "parquet" or "sqlite"
+            backend: backend of dataset. Either "parquet" or "sqlite".
             features: List of features from user to use as input.
             truth: List of event-level truth variables from user.
 
         Returns: Dataset arguments, train/val selection, test selection
         """
-        if backend == 'sqlite':
+        if backend == "sqlite":
             dataset_paths = glob(os.path.join(self.dataset_dir, "*.db"))
             assert len(dataset_paths) == 1
             dataset_path = dataset_paths[0]
             event_nos = query_database(
-                database=dataset_path, 
-                query=f"SELECT event_no FROM {self._truth_table[0]}"
+                database=dataset_path,
+                query=f"SELECT event_no FROM {self._truth_table[0]}",
             )
             train_val, test = train_test_split(
                 event_nos["event_no"].tolist(),
@@ -56,9 +56,13 @@ class PublicPrometheusDataset(ERDAHostedDataset):
                 random_state=42,
                 shuffle=True,
             )
-        elif backend == 'parquet':
+        elif backend == "parquet":
             dataset_path = self.dataset_dir
-            n_batches = len(glob(os.path.join(dataset_path,self._truth_table,'*.parquet')))
+            n_batches = len(
+                glob(
+                    os.path.join(dataset_path, self._truth_table, "*.parquet")
+                )
+            )
             train_val, test = train_test_split(
                 np.arange(0, n_batches),
                 test_size=0.10,
