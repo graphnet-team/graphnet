@@ -107,3 +107,20 @@ class PONESmall(PublicPrometheusDataset):
     _available_backends = ["sqlite"]
     _file_hashes = {"sqlite": "e9ZSVMiykD"}
     _citation = None
+
+class BaikailGVDSmall(PublicPrometheusDataset):
+    """Public Dataset for Prometheus simulation of a Baikal-GVD geometry.
+
+    Contains ~ 1 million track events between 10 GeV - 10 TeV.
+    """
+
+    _experiment = "Baikal-GVD Prometheus Simulation"
+    _creator = "Rasmus F. Ørsøe"
+    _comments = (
+        "Contains ~1 million track events."
+        " Simulation produced by Stephan Meighen-Berger, "
+        "U. Melbourne."
+    )
+    _available_backends = ["sqlite"]
+    _file_hashes = {"sqlite": "ebLJHjPDqy"}
+    _citation = None
