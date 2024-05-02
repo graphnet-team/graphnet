@@ -425,6 +425,45 @@
         <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">graph</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_zenith_key</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="Track">
+<a class="viewcode-back" href="../../../api/graphnet.training.labels.html#graphnet.training.labels.Track">[docs]</a>
+<span class="k">class</span> <span class="nc">Track</span><span class="p">(</span><span class="n">Label</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Class for producing NuMuCC label.</span>
+
+<span class="sd">    Label is set to `1` if the event is a NuMu CC event, else `0`.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"track"</span><span class="p">,</span>
+        <span class="n">pid_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pid"</span><span class="p">,</span>
+        <span class="n">interaction_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"interaction_type"</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `Track` label.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: The name of the field in `Data` where the label will be</span>
+<span class="sd">                stored. That is, `graph[key] = label`.</span>
+<span class="sd">            pid_key: The name of the pre-existing key in `graph` that will</span>
+<span class="sd">                be used to access the pdg encoding, used when calculating</span>
+<span class="sd">                the direction.</span>
+<span class="sd">            interaction_key: The name of the pre-existing key in `graph` that</span>
+<span class="sd">                will be used to access the interaction type (1 denoting CC),</span>
+<span class="sd">                used when calculating the direction.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pid_key</span> <span class="o">=</span> <span class="n">pid_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_key</span> <span class="o">=</span> <span class="n">interaction_key</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute label for `graph`."""</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="p">(</span><span class="n">graph</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pid_key</span><span class="p">]</span> <span class="o">==</span> <span class="mi">14</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">graph</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_int_key</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">label</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int</span><span class="p">)</span></div>
+
 </pre></div>
 
           </article>

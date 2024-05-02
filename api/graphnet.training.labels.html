@@ -396,6 +396,8 @@
             </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.labels.Direction" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.labels.Track" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Track</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -420,6 +422,13 @@
     
     
       <a href="#graphnet.training.labels.Direction" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.labels.Track" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Track</span></code></a>
       
     
     </li></ul>
@@ -487,6 +496,8 @@
             </nav>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.labels.Direction" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Direction</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.labels.Track" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Track</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -537,6 +548,28 @@ the direction.</p></li>
 <li><p><strong>zenith_key</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'zenith'</span></code>) – The name of the pre-existing key in <cite>graph</cite> that will
 be used to access the zenith angle, used when calculating the
 direction.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.labels.Track">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.labels.</span></span><span class="sig-name descname"><span class="pre">Track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interaction_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/labels.html#Track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.labels.Track" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.labels.Label" title="graphnet.training.labels.Label"><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></a></p>
+<p>Class for producing NuMuCC label.</p>
+<p>Label is set to <cite>1</cite> if the event is a NuMu CC event, else <cite>0</cite>.</p>
+<p>Construct <cite>Track</cite> label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'track'</span></code>) – The name of the field in <cite>Data</cite> where the label will be
+stored. That is, <cite>graph[key] = label</cite>.</p></li>
+<li><p><strong>pid_key</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'pid'</span></code>) – The name of the pre-existing key in <cite>graph</cite> that will
+be used to access the pdg encoding, used when calculating
+the direction.</p></li>
+<li><p><strong>interaction_key</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'interaction_type'</span></code>) – The name of the pre-existing key in <cite>graph</cite> that
+will be used to access the interaction type (1 denoting CC),
+used when calculating the direction.</p></li>
 </ul>
 </dd>
 </dl>
