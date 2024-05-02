@@ -48,7 +48,7 @@ class PublicPrometheusDataset(ERDAHostedDataset):
             dataset_path = dataset_paths[0]
             event_nos = query_database(
                 database=dataset_path,
-                query=f"SELECT event_no FROM {self._truth_table[0]}",
+                query=f"SELECT event_no FROM {self._truth_table}",
             )
             train_val, test = train_test_split(
                 event_nos["event_no"].tolist(),
