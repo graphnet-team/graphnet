@@ -21,7 +21,7 @@ from graphnet.models.model import Model
 from graphnet.models.task import StandardLearnedTask
 
 
-class EasyModel(Model):
+class EasySyntax(Model):
     """A suggested Model class that comes with simple user syntax.
 
     This class delivers simple user syntax for training and prediction, while

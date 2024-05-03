@@ -6,11 +6,11 @@ from torch import Tensor
 from torch_geometric.data import Data
 
 from graphnet.models.gnn.gnn import GNN
-from .easy_model import EasyModel
+from .easy_model import EasySyntax
 from graphnet.models.task import StandardLearnedTask
 
 
-class StandardModel(EasyModel):
+class StandardModel(EasySyntax):
     """A Standard way of combining model components in GraphNeT.
 
     This model is compatible with the vast majority of supervised learning
