@@ -647,9 +647,9 @@
 
 
 
-<div class="viewcode-block" id="IceCube86">
-<a class="viewcode-back" href="../../../../api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCube86">[docs]</a>
-<span class="k">class</span> <span class="nc">IceCube86</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
+<div class="viewcode-block" id="IceCube86Prometheus">
+<a class="viewcode-back" href="../../../../api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCube86Prometheus">[docs]</a>
+<span class="k">class</span> <span class="nc">IceCube86Prometheus</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""`Detector` class for Prometheus IceCube86."""</span>
 
     <span class="n">geometry_table_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -659,8 +659,8 @@
     <span class="n">string_id_column</span> <span class="o">=</span> <span class="s2">"sensor_string_id"</span>
     <span class="n">sensor_id_column</span> <span class="o">=</span> <span class="s2">"sensor_id"</span>
 
-<div class="viewcode-block" id="IceCube86.feature_map">
-<a class="viewcode-back" href="../../../../api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCube86.feature_map">[docs]</a>
+<div class="viewcode-block" id="IceCube86Prometheus.feature_map">
+<a class="viewcode-back" href="../../../../api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCube86Prometheus.feature_map">[docs]</a>
     <span class="k">def</span> <span class="nf">feature_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Map standardization functions to each dimension."""</span>
         <span class="n">feature_map</span> <span class="o">=</span> <span class="p">{</span>
