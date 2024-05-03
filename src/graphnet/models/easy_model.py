@@ -46,7 +46,6 @@ class EasySyntax(Model):
         # Check(s)
         if not isinstance(tasks, (list, tuple)):
             tasks = [tasks]
-        self.validate_tasks()
 
         assert isinstance(graph_definition, GraphDefinition)
 
@@ -58,6 +57,8 @@ class EasySyntax(Model):
         self._scheduler_class = scheduler_class
         self._scheduler_kwargs = scheduler_kwargs or dict()
         self._scheduler_config = scheduler_config or dict()
+
+        self.validate_tasks()
 
     def compute_loss(
         self, preds: Tensor, data: List[Data], verbose: bool = False
