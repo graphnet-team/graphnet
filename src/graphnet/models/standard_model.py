@@ -1,13 +1,15 @@
 """Standard model class(es)."""
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Type
 import torch
 from torch import Tensor
 from torch_geometric.data import Data
+from torch.optim import Adam
 
 from graphnet.models.gnn.gnn import GNN
 from .easy_model import EasySyntax
 from graphnet.models.task import StandardLearnedTask
+from graphnet.models.graphs import GraphDefinition
 
 
 class StandardModel(EasySyntax):
@@ -21,13 +23,27 @@ class StandardModel(EasySyntax):
 
     def __init__(
         self,
+        graph_definition: GraphDefinition,
+        tasks: Union[StandardLearnedTask, List[StandardLearnedTask]],
         backbone: GNN = None,
         gnn: Optional[GNN] = None,
-        **easy_model_kwargs: Any,
+        optimizer_class: Type[torch.optim.Optimizer] = Adam,
+        optimizer_kwargs: Optional[Dict] = None,
+        scheduler_class: Optional[type] = None,
+        scheduler_kwargs: Optional[Dict] = None,
+        scheduler_config: Optional[Dict] = None,
     ) -> None:
         """Construct `StandardModel`."""
         # Base class constructor
-        super().__init__(**easy_model_kwargs)
+        super().__init__(
+            graph_definition=graph_definition,
+            tasks=tasks,
+            optimizer_class=optimizer_class,
+            optimizer_kwargs=optimizer_kwargs,
+            scheduler_class=scheduler_class,
+            scheduler_kwargs=scheduler_kwargs,
+            scheduler_config=scheduler_config,
+        )
 
         # deprecation warnings
         if (backbone is None) & (gnn is not None):
