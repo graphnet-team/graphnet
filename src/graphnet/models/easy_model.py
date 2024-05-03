@@ -31,7 +31,6 @@ class EasySyntax(Model):
     def __init__(
         self,
         *,
-        graph_definition: GraphDefinition,
         tasks: Union[StandardLearnedTask, List[StandardLearnedTask]],
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
         optimizer_kwargs: Optional[Dict] = None,
@@ -47,10 +46,7 @@ class EasySyntax(Model):
         if not isinstance(tasks, (list, tuple)):
             tasks = [tasks]
 
-        assert isinstance(graph_definition, GraphDefinition)
-
         # Member variable(s)
-        self._graph_definition = graph_definition
         self._tasks = ModuleList(tasks)
         self._optimizer_class = optimizer_class
         self._optimizer_kwargs = optimizer_kwargs or dict()

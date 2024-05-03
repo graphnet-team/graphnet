@@ -36,7 +36,6 @@ class StandardModel(EasySyntax):
         """Construct `StandardModel`."""
         # Base class constructor
         super().__init__(
-            graph_definition=graph_definition,
             tasks=tasks,
             optimizer_class=optimizer_class,
             optimizer_kwargs=optimizer_kwargs,
@@ -59,9 +58,13 @@ class StandardModel(EasySyntax):
             raise TypeError(
                 "__init__() missing 1 required keyword argument:'backbone'"
             )
+
+        # Checks
         assert isinstance(backbone, GNN)
+        assert isinstance(graph_definition, GraphDefinition)
 
         # Member variable(s)
+        self._graph_definition = graph_definition
         self.backbone = backbone
 
     def compute_loss(
