@@ -410,6 +410,13 @@
 <span class="k">class</span> <span class="nc">IceCubeKaggle</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""`Detector` class for Kaggle Competition."""</span>
 
+    <span class="n">geometry_table_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">ICECUBE_GEOMETRY_TABLE_DIR</span><span class="p">,</span> <span class="s2">"icecube86.parquet"</span>
+    <span class="p">)</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">]</span>
+    <span class="n">string_id_column</span> <span class="o">=</span> <span class="s2">"string"</span>
+    <span class="n">sensor_id_column</span> <span class="o">=</span> <span class="s2">"sensor_id"</span>
+
 <div class="viewcode-block" id="IceCubeKaggle.feature_map">
 <a class="viewcode-back" href="../../../../api/graphnet.models.detector.icecube.html#graphnet.models.detector.icecube.IceCubeKaggle.feature_map">[docs]</a>
     <span class="k">def</span> <span class="nf">feature_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
