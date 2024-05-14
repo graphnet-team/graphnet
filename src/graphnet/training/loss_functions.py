@@ -446,29 +446,6 @@ class VonMisesFisher3DLoss(VonMisesFisherLoss):
         return self._evaluate(p, target)
 
 
-# class LossCombiner(LossFunction):
-#     """Combine multiple loss functions into a single loss function."""
-
-#     def __init__(self, loss_functions: List[str], **kwargs: Any) -> None:
-#         """Construct `LossCombiner`."""
-
-#         super().__init__(**kwargs)
-#         self._loss_functions = []
-#         for loss_function in loss_functions:
-#             loss = importlib.import_module(f"graphnet.training.loss_functions.{loss_function}")
-#             self._loss_functions.append(loss)
-
-
-#     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-#         """Calculate combined loss."""
-#         for count, loss in enumerate(self._loss_functions):
-#             if count == 0:
-#                 elements = loss.forward(prediction, target)
-#             else:
-#                 elements += loss.forward(prediction, target)
-#         return elements
-
-
 class RMSEVonMisesFisher3DLoss(VonMisesFisherLoss):
     """von Mises-Fisher loss function vectors in the 3D plane."""
 
