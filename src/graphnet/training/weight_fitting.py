@@ -76,8 +76,15 @@ class WeightFitter(ABC, Logger):
             transform: A callable method that transform the variable into a
                 desired space. E.g. np.log10 for energy. If given, fitting will
                 happen in this space.
-            db_count_norm: If given, the total sum of the weights for the given db will be this number.
+            db_count_norm: If given, the total sum of the weights for the given
+                db will be this number.
+            automatic_log_bins: If True, the bins are generated as a log10 space
+                between the min and max of the variable.
+            max_weight: If given, the weights are capped such that the sum of a
+                single event's weight cannot exceed this number times the sum of
+                all weights.
             **kwargs: Additional arguments passed to `_fit_weights`.
+
 
         Returns:
             DataFrame that contains weights, event_nos.
@@ -191,6 +198,8 @@ class BjoernLow(WeightFitter):
                 1/(1+a*(x_low -x)) curve.
             alpha: A scalar factor that controls how fast the weights above
                 x_low approaches zero. Larger means faster.
+            percentile: If True, x_low is interpreted as a percentile of the
+                truth variable.
 
         Returns:
             The fitted weights.
