@@ -9,6 +9,7 @@ from .km3netrootextractor import KM3NeTROOTExtractor
 from graphnet.data.extractors.km3net.utilities.km3net_utilities import (
     create_unique_id,
     assert_no_uint_values,
+    creating_time_zero
 )
 
 
@@ -70,5 +71,6 @@ class KM3NeTROOTPulseExtractor(KM3NeTROOTExtractor):
             unique_extended.append(int(unique_id[index]))
         df["event_no"] = unique_extended
         df = df.drop(["entry", "subentry"], axis=1)
+        df = creating_time_zero(df)
 
         return df
