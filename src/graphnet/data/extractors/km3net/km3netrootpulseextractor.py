@@ -9,7 +9,7 @@ from .km3netrootextractor import KM3NeTROOTExtractor
 from graphnet.data.extractors.km3net.utilities.km3net_utilities import (
     create_unique_id,
     assert_no_uint_values,
-    creating_time_zero
+    creating_time_zero,
 )
 
 
