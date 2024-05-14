@@ -21,7 +21,6 @@ from torch.nn.functional import (
 
 from graphnet.models.model import Model
 from graphnet.utilities.decorators import final
-import importlib
 
 
 class LossFunction(Model):
