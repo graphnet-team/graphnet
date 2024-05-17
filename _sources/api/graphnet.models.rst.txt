@@ -29,6 +29,7 @@ models
    :maxdepth: 2
 
    graphnet.models.coarsening
+   graphnet.models.easy_model
    graphnet.models.model
    graphnet.models.standard_averaged_model
    graphnet.models.standard_model

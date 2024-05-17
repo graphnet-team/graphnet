@@ -350,44 +350,36 @@
             
   <h1 id="modules-graphnet-models-standard-model--page-root">Source code for graphnet.models.standard_model</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Standard model class(es)."""</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">Trainer</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="kn">import</span> <span class="n">EarlyStopping</span><span class="p">,</span> <span class="n">ModelCheckpoint</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
-<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">ModuleList</span>
-<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Adam</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">SequentialSampler</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning.loggers</span> <span class="kn">import</span> <span class="n">Logger</span> <span class="k">as</span> <span class="n">LightningLogger</span>
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Adam</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.training.callbacks</span> <span class="kn">import</span> <span class="n">ProgressBar</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.graphs</span> <span class="kn">import</span> <span class="n">GraphDefinition</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="kn">import</span> <span class="n">GNN</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">.easy_model</span> <span class="kn">import</span> <span class="n">EasySyntax</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.task</span> <span class="kn">import</span> <span class="n">StandardLearnedTask</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.graphs</span> <span class="kn">import</span> <span class="n">GraphDefinition</span>
 
 
 <div class="viewcode-block" id="StandardModel">
 <a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel">[docs]</a>
-<span class="k">class</span> <span class="nc">StandardModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Main class for standard models in graphnet.</span>
+<span class="k">class</span> <span class="nc">StandardModel</span><span class="p">(</span><span class="n">EasySyntax</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A Standard way of combining model components in GraphNeT.</span>
 
-<span class="sd">    This class chains together the different elements of a complete GNN- based</span>
-<span class="sd">    model (detector read-in, GNN backbone, and task-specific read-outs).</span>
+<span class="sd">    This model is compatible with the vast majority of supervised learning</span>
+<span class="sd">    tasks such as regression, binary and multi-label classification.</span>
+
+<span class="sd">    Capable of producing both event-level and pulse-level predictions.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
         <span class="n">graph_definition</span><span class="p">:</span> <span class="n">GraphDefinition</span><span class="p">,</span>
+        <span class="n">tasks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">StandardLearnedTask</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StandardLearnedTask</span><span class="p">]],</span>
         <span class="n">backbone</span><span class="p">:</span> <span class="n">GNN</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">gnn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GNN</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">tasks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">StandardLearnedTask</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StandardLearnedTask</span><span class="p">]],</span>
         <span class="n">optimizer_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">]</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">,</span>
         <span class="n">optimizer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scheduler_class</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -396,199 +388,64 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Construct `StandardModel`."""</span>
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-
-        <span class="c1"># Check(s)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">StandardLearnedTask</span><span class="p">):</span>
-            <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">tasks</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">StandardLearnedTask</span><span class="p">)</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph_definition</span><span class="p">,</span> <span class="n">GraphDefinition</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">tasks</span><span class="o">=</span><span class="n">tasks</span><span class="p">,</span>
+            <span class="n">optimizer_class</span><span class="o">=</span><span class="n">optimizer_class</span><span class="p">,</span>
+            <span class="n">optimizer_kwargs</span><span class="o">=</span><span class="n">optimizer_kwargs</span><span class="p">,</span>
+            <span class="n">scheduler_class</span><span class="o">=</span><span class="n">scheduler_class</span><span class="p">,</span>
+            <span class="n">scheduler_kwargs</span><span class="o">=</span><span class="n">scheduler_kwargs</span><span class="p">,</span>
+            <span class="n">scheduler_config</span><span class="o">=</span><span class="n">scheduler_config</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># deprecation warnings</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">backbone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gnn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">backbone</span> <span class="o">=</span> <span class="n">gnn</span>
             <span class="c1"># Code continues after warning</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-<span class="w">                </span><span class="sd">"""DeprecationWarning: Argument `gnn` will be deprecated in GraphNeT 2.0. Please use `backbone` instead."""</span>
+                <span class="s2">"DeprecationWarning: Argument `gnn` will be deprecated in"</span>
+                <span class="s2">" GraphNeT 2.0. Please use `backbone` instead."</span>
+                <span class="s2">""</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span><span class="n">backbone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gnn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="c1"># Code stops</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s2">"__init__() missing 1 required keyword-only argument: 'backbone'"</span>
+                <span class="s2">"__init__() missing 1 required keyword argument:'backbone'"</span>
             <span class="p">)</span>
+
+        <span class="c1"># Checks</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backbone</span><span class="p">,</span> <span class="n">GNN</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph_definition</span><span class="p">,</span> <span class="n">GraphDefinition</span><span class="p">)</span>
 
         <span class="c1"># Member variable(s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="o">=</span> <span class="n">graph_definition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span> <span class="o">=</span> <span class="n">backbone</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="o">=</span> <span class="n">ModuleList</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_class</span> <span class="o">=</span> <span class="n">optimizer_class</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_kwargs</span> <span class="o">=</span> <span class="n">optimizer_kwargs</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_class</span> <span class="o">=</span> <span class="n">scheduler_class</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_kwargs</span> <span class="o">=</span> <span class="n">scheduler_kwargs</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_config</span> <span class="o">=</span> <span class="n">scheduler_config</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
 
-        <span class="c1"># set dtype of GNN from graph_definition</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>
+<div class="viewcode-block" id="StandardModel.compute_loss">
+<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.compute_loss">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute and sum losses across tasks."""</span>
+        <span class="n">data_merged</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">target_labels_merged</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">target_labels_merged</span><span class="p">:</span>
+            <span class="n">data_merged</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">_loss_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">data_merged</span><span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">_loss_weight</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">_loss_weight</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span>
+                <span class="p">)</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_construct_trainer</span><span class="p">(</span>
-        <span class="n">max_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="n">gpus</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">callbacks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Callback</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LightningLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">log_every_n_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">gradient_clip_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">distribution_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"ddp"</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">trainer_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Trainer</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">gpus</span><span class="p">:</span>
-            <span class="n">accelerator</span> <span class="o">=</span> <span class="s2">"gpu"</span>
-            <span class="n">devices</span> <span class="o">=</span> <span class="n">gpus</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">accelerator</span> <span class="o">=</span> <span class="s2">"cpu"</span>
-            <span class="n">devices</span> <span class="o">=</span> <span class="mi">1</span>
-
-        <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
-            <span class="n">accelerator</span><span class="o">=</span><span class="n">accelerator</span><span class="p">,</span>
-            <span class="n">devices</span><span class="o">=</span><span class="n">devices</span><span class="p">,</span>
-            <span class="n">max_epochs</span><span class="o">=</span><span class="n">max_epochs</span><span class="p">,</span>
-            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
-            <span class="n">log_every_n_steps</span><span class="o">=</span><span class="n">log_every_n_steps</span><span class="p">,</span>
-            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
-            <span class="n">gradient_clip_val</span><span class="o">=</span><span class="n">gradient_clip_val</span><span class="p">,</span>
-            <span class="n">strategy</span><span class="o">=</span><span class="n">distribution_strategy</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">trainer_kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">trainer</span>
-
-<div class="viewcode-block" id="StandardModel.fit">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">train_dataloader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
-        <span class="n">val_dataloader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">max_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="n">early_stopping_patience</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
-        <span class="n">gpus</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">callbacks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Callback</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ckpt_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LightningLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">log_every_n_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">gradient_clip_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">distribution_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"ddp"</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">trainer_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Fit `StandardModel` using `pytorch_lightning.Trainer`."""</span>
-        <span class="c1"># Checks</span>
-        <span class="k">if</span> <span class="n">callbacks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># We create the bare-minimum callbacks for you.</span>
-            <span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_default_callbacks</span><span class="p">(</span>
-                <span class="n">val_dataloader</span><span class="o">=</span><span class="n">val_dataloader</span><span class="p">,</span>
-                <span class="n">early_stopping_patience</span><span class="o">=</span><span class="n">early_stopping_patience</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"No Callbacks specified. Default callbacks added."</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># You are on your own!</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Initializing training with user-provided callbacks."</span><span class="p">)</span>
-            <span class="k">pass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_print_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
-        <span class="n">has_early_stopping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_callback</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">EarlyStopping</span><span class="p">)</span>
-        <span class="n">has_model_checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_callback</span><span class="p">(</span>
-            <span class="n">callbacks</span><span class="p">,</span> <span class="n">ModelCheckpoint</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="n">has_early_stopping</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">has_model_checkpoint</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-<span class="w">                </span><span class="sd">"""No ModelCheckpoint found in callbacks. Best-fit model will not automatically be loaded after training!"""</span>
-            <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">trainer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_trainer</span><span class="p">(</span>
-            <span class="n">max_epochs</span><span class="o">=</span><span class="n">max_epochs</span><span class="p">,</span>
-            <span class="n">gpus</span><span class="o">=</span><span class="n">gpus</span><span class="p">,</span>
-            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
-            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
-            <span class="n">log_every_n_steps</span><span class="o">=</span><span class="n">log_every_n_steps</span><span class="p">,</span>
-            <span class="n">gradient_clip_val</span><span class="o">=</span><span class="n">gradient_clip_val</span><span class="p">,</span>
-            <span class="n">distribution_strategy</span><span class="o">=</span><span class="n">distribution_strategy</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">trainer_kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
-                <span class="bp">self</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">val_dataloader</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="o">=</span><span class="n">ckpt_path</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"[ctrl+c] Exiting gracefully."</span><span class="p">)</span>
-            <span class="k">pass</span>
-
-        <span class="c1"># Load weights from best-fit model after training if possible</span>
-        <span class="k">if</span> <span class="n">has_early_stopping</span> <span class="o">&amp;</span> <span class="n">has_model_checkpoint</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">ModelCheckpoint</span><span class="p">):</span>
-                    <span class="n">checkpoint_callback</span> <span class="o">=</span> <span class="n">callback</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
-                <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">checkpoint_callback</span><span class="o">.</span><span class="n">best_model_path</span><span class="p">)[</span><span class="s2">"state_dict"</span><span class="p">]</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Best-fit weights from EarlyStopping loaded."</span><span class="p">)</span></div>
-
-
-    <span class="k">def</span> <span class="nf">_print_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callbacks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callback</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">callback_names</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">cbck</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
-            <span class="n">callback_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cbck</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Training initiated with callbacks: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">callback_names</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_contains_callback</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">callbacks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callback</span><span class="p">],</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callback</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check if `callback` is in `callbacks`."""</span>
-        <span class="k">for</span> <span class="n">cbck</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cbck</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
-                <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">target_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Return target label."""</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">label</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">task</span><span class="o">.</span><span class="n">_target_labels</span><span class="p">]</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">prediction_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Return prediction labels."""</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="n">label</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">task</span><span class="o">.</span><span class="n">_prediction_labels</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">data_merged</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">task</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
         <span class="p">]</span>
-
-<div class="viewcode-block" id="StandardModel.configure_optimizers">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.configure_optimizers">[docs]</a>
-    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Configure the model's optimizer(s)."""</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_class</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_kwargs</span>
-        <span class="p">)</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">"optimizer"</span><span class="p">:</span> <span class="n">optimizer</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_class</span><span class="p">(</span>
-                <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_kwargs</span>
-            <span class="p">)</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">"lr_scheduler"</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">"scheduler"</span><span class="p">:</span> <span class="n">scheduler</span><span class="p">,</span>
-                        <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_config</span><span class="p">,</span>
-                    <span class="p">},</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">config</span></div>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">losses</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span>
+        <span class="p">),</span> <span class="s2">"Please reduce loss for each task separately"</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">losses</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="StandardModel.forward">
@@ -622,304 +479,14 @@
         <span class="k">return</span> <span class="n">loss</span></div>
 
 
-<div class="viewcode-block" id="StandardModel.training_step">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.training_step">[docs]</a>
-    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">train_batch</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Perform training step."""</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">train_batch</span><span class="p">,</span> <span class="n">Data</span><span class="p">):</span>
-            <span class="n">train_batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">train_batch</span><span class="p">]</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_step</span><span class="p">(</span><span class="n">train_batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="s2">"train_loss"</span><span class="p">,</span>
-            <span class="n">loss</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_batch_size</span><span class="p">(</span><span class="n">train_batch</span><span class="p">),</span>
-            <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">sync_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">current_lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">optimizers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"lr"</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">"lr"</span><span class="p">,</span> <span class="n">current_lr</span><span class="p">,</span> <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_step</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">loss</span></div>
-
-
-<div class="viewcode-block" id="StandardModel.validation_step">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.validation_step">[docs]</a>
-    <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">val_batch</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Perform validation step."""</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_batch</span><span class="p">,</span> <span class="n">Data</span><span class="p">):</span>
-            <span class="n">val_batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">val_batch</span><span class="p">]</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_step</span><span class="p">(</span><span class="n">val_batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="s2">"val_loss"</span><span class="p">,</span>
-            <span class="n">loss</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_batch_size</span><span class="p">(</span><span class="n">val_batch</span><span class="p">),</span>
-            <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">sync_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">loss</span></div>
-
-
-<div class="viewcode-block" id="StandardModel.compute_loss">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.compute_loss">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute and sum losses across tasks."""</span>
-        <span class="n">data_merged</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">target_labels_merged</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">target_labels_merged</span><span class="p">:</span>
-            <span class="n">data_merged</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="viewcode-block" id="StandardModel.validate_tasks">
+<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.validate_tasks">[docs]</a>
+    <span class="k">def</span> <span class="nf">validate_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Verify that self._tasks contain compatible elements."""</span>
+        <span class="n">accepted_tasks</span> <span class="o">=</span> <span class="n">StandardLearnedTask</span>
         <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">_loss_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">data_merged</span><span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">_loss_weight</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
-                    <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">_loss_weight</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span>
-                <span class="p">)</span>
-
-        <span class="n">losses</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">task</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">data_merged</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">task</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">losses</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-            <span class="n">loss</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span>
-        <span class="p">),</span> <span class="s2">"Please reduce loss for each task separately"</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">losses</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="StandardModel.inference">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.inference">[docs]</a>
-    <span class="k">def</span> <span class="nf">inference</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Activate inference mode."""</span>
-        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
-            <span class="n">task</span><span class="o">.</span><span class="n">inference</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="StandardModel.train">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.train">[docs]</a>
-    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Model"</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Deactivate inference mode."""</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
-                <span class="n">task</span><span class="o">.</span><span class="n">train_eval</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-
-
-<div class="viewcode-block" id="StandardModel.predict">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.predict">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">dataloader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
-        <span class="n">gpus</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">distribution_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"auto"</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Return predictions for `dataloader`."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inference</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_default_callbacks</span><span class="p">(</span>
-            <span class="n">val_dataloader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">inference_trainer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_trainer</span><span class="p">(</span>
-            <span class="n">gpus</span><span class="o">=</span><span class="n">gpus</span><span class="p">,</span>
-            <span class="n">distribution_strategy</span><span class="o">=</span><span class="n">distribution_strategy</span><span class="p">,</span>
-            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">predictions_list</span> <span class="o">=</span> <span class="n">inference_trainer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions_list</span><span class="p">),</span> <span class="s2">"Got no predictions"</span>
-
-        <span class="n">nb_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">predictions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">preds</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="k">for</span> <span class="n">preds</span> <span class="ow">in</span> <span class="n">predictions_list</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_outputs</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="k">return</span> <span class="n">predictions</span></div>
-
-
-<div class="viewcode-block" id="StandardModel.predict_as_dataframe">
-<a class="viewcode-back" href="../../../api/graphnet.models.standard_model.html#graphnet.models.standard_model.StandardModel.predict_as_dataframe">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict_as_dataframe</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">dataloader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
-        <span class="n">prediction_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">additional_attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">gpus</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">distribution_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"auto"</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return predictions for `dataloader` as a DataFrame.</span>
-
-<span class="sd">        Include `additional_attributes` as additional columns in the output</span>
-<span class="sd">        DataFrame.</span>
-<span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">prediction_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">prediction_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction_labels</span>
-
-        <span class="k">if</span> <span class="n">additional_attributes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">additional_attributes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">additional_attributes</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataloader</span><span class="o">.</span><span class="n">sampler</span><span class="p">,</span> <span class="n">SequentialSampler</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="n">additional_attributes</span>
-        <span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">dataloader</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-                <span class="s2">"DataLoader has a `sampler` that is not `SequentialSampler`, "</span>
-                <span class="s2">"indicating that shuffling is enabled. Using "</span>
-                <span class="s2">"`predict_as_dataframe` with `additional_attributes` assumes "</span>
-                <span class="s2">"that the sequence of batches in `dataloader` are "</span>
-                <span class="s2">"deterministic. Either call this method a `dataloader` which "</span>
-                <span class="s2">"doesn't resample batches; or do not request "</span>
-                <span class="s2">"`additional_attributes`."</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Column names for predictions are: </span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">prediction_columns</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="n">predictions_torch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
-            <span class="n">dataloader</span><span class="o">=</span><span class="n">dataloader</span><span class="p">,</span>
-            <span class="n">gpus</span><span class="o">=</span><span class="n">gpus</span><span class="p">,</span>
-            <span class="n">distribution_strategy</span><span class="o">=</span><span class="n">distribution_strategy</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">predictions</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">predictions_torch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">prediction_columns</span><span class="p">)</span> <span class="o">==</span> <span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Number of provided column names (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">prediction_columns</span><span class="p">)</span><span class="si">}</span><span class="s2">) and "</span>
-            <span class="sa">f</span><span class="s2">"number of output columns (</span><span class="si">{</span><span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">) don't match."</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Check if predictions are on event- or pulse-level</span>
-        <span class="n">pulse_level_predictions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
-
-        <span class="c1"># Get additional attributes</span>
-        <span class="n">attributes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
-            <span class="p">[(</span><span class="n">attr</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">additional_attributes</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
-                <span class="n">attribute</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-                    <span class="n">attribute</span> <span class="o">=</span> <span class="n">attribute</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-
-                <span class="c1"># Check if node level predictions</span>
-                <span class="c1"># If true, additional attributes are repeated</span>
-                <span class="c1"># to make dimensions fit</span>
-                <span class="k">if</span> <span class="n">pulse_level_predictions</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-                        <span class="n">batch</span><span class="o">.</span><span class="n">n_pulses</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="p">):</span>
-                        <span class="n">attribute</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span>
-                            <span class="n">attribute</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">n_pulses</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                        <span class="p">)</span>
-                <span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
-
-        <span class="c1"># Confirm that attributes match length of predictions</span>
-        <span class="n">skip_attributes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
-                    <span class="s2">"Could not automatically adjust length"</span>
-                    <span class="sa">f</span><span class="s2">" of additional attribute '</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">' to match length of"</span>
-                    <span class="sa">f</span><span class="s2">" predictions.This error can be caused by heavy"</span>
-                    <span class="s2">" disagreement between number of examples in the"</span>
-                    <span class="s2">" dataset vs. actual events in the dataloader, e.g. "</span>
-                    <span class="s2">" heavy filtering of events in `collate_fn` passed to"</span>
-                    <span class="s2">" `dataloader`. This can also be caused by requesting"</span>
-                    <span class="s2">" pulse-level attributes for `Task`s that produce"</span>
-                    <span class="s2">" event-level predictions. Attribute skipped."</span>
-                <span class="p">)</span>
-                <span class="n">skip_attributes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-
-        <span class="c1"># Remove bad attributes</span>
-        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">skip_attributes</span><span class="p">:</span>
-            <span class="n">attributes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-            <span class="n">additional_attributes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">predictions</span><span class="p">]</span>
-            <span class="o">+</span> <span class="p">[</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-            <span class="p">],</span>
-            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">prediction_columns</span> <span class="o">+</span> <span class="n">additional_attributes</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">results</span></div>
-
-
-    <span class="k">def</span> <span class="nf">_create_default_callbacks</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">val_dataloader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
-        <span class="n">early_stopping_patience</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Create default callbacks.</span>
-
-<span class="sd">        Used in cases where no callbacks are specified by the user in .fit</span>
-<span class="sd">        """</span>
-        <span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span><span class="n">ProgressBar</span><span class="p">()]</span>
-        <span class="k">if</span> <span class="n">val_dataloader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">early_stopping_patience</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="c1"># Add Early Stopping</span>
-            <span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">EarlyStopping</span><span class="p">(</span>
-                    <span class="n">monitor</span><span class="o">=</span><span class="s2">"val_loss"</span><span class="p">,</span>
-                    <span class="n">patience</span><span class="o">=</span><span class="n">early_stopping_patience</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="c1"># Add Model Check Point</span>
-            <span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">ModelCheckpoint</span><span class="p">(</span>
-                    <span class="n">save_top_k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="n">monitor</span><span class="o">=</span><span class="s2">"val_loss"</span><span class="p">,</span>
-                    <span class="n">mode</span><span class="o">=</span><span class="s2">"min"</span><span class="p">,</span>
-                    <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
-                    <span class="o">+</span> <span class="s2">"-</span><span class="si">{epoch}</span><span class="s2">-</span><span class="si">{val_loss:.2f}</span><span class="s2">-</span><span class="si">{train_loss:.2f}</span><span class="s2">"</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"EarlyStopping has been added with a patience of </span><span class="si">{</span><span class="n">early_stopping_patience</span><span class="si">}</span><span class="s2">."</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">callbacks</span>
-
-    <span class="k">def</span> <span class="nf">_add_early_stopping</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">val_dataloader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">callbacks</span><span class="p">:</span> <span class="n">List</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">val_dataloader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">callbacks</span>
-        <span class="n">has_early_stopping</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">EarlyStopping</span><span class="p">):</span>
-                <span class="n">has_early_stopping</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_early_stopping</span><span class="p">:</span>
-            <span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">EarlyStopping</span><span class="p">(</span>
-                    <span class="n">monitor</span><span class="o">=</span><span class="s2">"val_loss"</span><span class="p">,</span>
-                    <span class="n">patience</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
-                <span class="s2">"Got validation dataloader but no EarlyStopping callback. An "</span>
-                <span class="s2">"EarlyStopping callback has been added automatically with "</span>
-                <span class="s2">"patience=5 and monitor = 'val_loss'."</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">callbacks</span></div>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">accepted_tasks</span><span class="p">)</span></div>
+</div>
 
 </pre></div>
 
