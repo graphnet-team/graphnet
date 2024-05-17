@@ -252,7 +252,9 @@ class LearnedTask(Task):
         raise NotImplementedError
 
     @abstractmethod
-    def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
+    def compute_loss(
+        self, predictions: Union[Tensor, Data], data: Data
+    ) -> Tensor:
         """Compute loss of `pred` wrt.
 
         target labels in `data`.
@@ -310,7 +312,9 @@ class StandardLearnedTask(LearnedTask):
         """Syntax like `.forward`, for implentation in inheriting classes."""
 
     @final
-    def compute_loss(self, pred: Union[Tensor, Data], data: Data) -> Tensor:
+    def compute_loss(
+        self, predictions: Union[Tensor, Data], data: Data
+    ) -> Tensor:
         """Compute supervised learning loss.
 
         Grabs truth labels in `data` and sends both `pred` and `target` to loss
@@ -325,7 +329,9 @@ class StandardLearnedTask(LearnedTask):
         else:
             weights = None
         loss = (
-            self._loss_function(pred, target, weights=weights)
+            self._loss_function(
+                predictions=predictions, target=target, weights=weights
+            )
             + self._regularisation_loss
         )
         return loss
@@ -385,16 +391,28 @@ class StandardFlowTask(Task):
     def __init__(
         self,
         target_labels: List[str],
+        coordinate_columns: List[int],
+        jacobian_columns: List[int],
         **task_kwargs: Any,
     ):
-        """Construct `StandardLearnedTask`.
+        """Construct `StandardFlowTask`.
 
         Args:
             target_labels: A list of names for the targets of this Task.
             hidden_size: The number of columns in the output of
                          the last latent layer of `Model` using this Task.
                          Available through `Model.nb_outputs`
+            coordinate_columns: Indices for columns in input tensor `x` that
+                                represents coordinates in internal, latent
+                                distribution.
+            jacobian_columns: Indices for columns in input tensor `x` that
+                              represents jacobian.
         """
+        self._default_prediction_labels = self._make_prediction_labels(
+            target_labels
+        )
+        self._coordinate_columns = coordinate_columns
+        self._jacobian_columns = jacobian_columns
         # Base class constructor
         super().__init__(target_labels=target_labels, **task_kwargs)
 
@@ -402,28 +420,34 @@ class StandardFlowTask(Task):
         """Return number of inputs assumed by task."""
         return len(self._target_labels)
 
-    def _forward(self, x: Tensor, jacobian: Tensor) -> Tensor:  # type: ignore
-        # Leave it as is.
-        return x
+    def _forward(self, x: Tensor, jacobian: Tensor) -> Tensor:
+        # do nothing
+        return torch.cat([x, jacobian], dim=1)
 
     @final
-    def forward(
-        self, x: Union[Tensor, Data], jacobian: Optional[Tensor]
-    ) -> Union[Tensor, Data]:
+    def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward pass."""
         self._regularisation_loss = 0  # Reset
-        x = self._forward(x, jacobian)
-        return self._transform_prediction(x)
+        y = self._forward(
+            x=x[:, self._coordinate_columns],
+            jacobian=x[:, self._jacobian_columns],
+        )
+        return self._transform_prediction(y)
+
+    def _make_prediction_labels(self, target_labels: List[str]) -> List[str]:
+        jacs = []
+        x_tilde = []
+        for label in target_labels:
+            x_tilde.append(label + "_tilde")
+            jacs.append(label + "_jac")
+        return x_tilde + jacs
 
     @final
-    def compute_loss(
-        self, prediction: Tensor, jacobian: Tensor, data: Data
-    ) -> Tensor:
+    def compute_loss(self, predictions: Tensor, data: Data) -> Tensor:
         """Compute loss for normalizing flow tasks.
 
         Args:
             prediction: transformed sample in latent distribution space.
-            jacobian: the jacobian associated with the transformation.
             data: the graph object.
 
         Returns:
@@ -433,12 +457,14 @@ class StandardFlowTask(Task):
             weights = data[self._loss_weight]
         else:
             weights = None
+
+        pred = predictions[:, self._coordinate_columns]
+        jacobian = predictions[:, self._jacobian_columns]
         loss = (
             self._loss_function(
-                prediction=prediction,
+                predictions=pred,
                 jacobian=jacobian,
                 weights=weights,
-                target=None,
             )
             + self._regularisation_loss
         )
