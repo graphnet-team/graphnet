@@ -24,7 +24,7 @@ class GraphDefinition(Model):
     def __init__(
         self,
         detector: Detector,
-        node_definition: NodeDefinition = NodesAsPulses(),
+        node_definition: NodeDefinition = None,
         edge_definition: Optional[EdgeDefinition] = None,
         input_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
@@ -68,6 +68,9 @@ class GraphDefinition(Model):
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
+
+        if node_definition is None:
+            node_definition = NodesAsPulses()
 
         # Member Variables
         self._detector = detector
