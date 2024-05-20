@@ -1,4 +1,5 @@
 """Contains `DataConverter`."""
+
 from typing import List, Union, OrderedDict, Dict, Tuple, Any, Optional, Type
 from abc import abstractmethod, ABC
 
@@ -102,8 +103,7 @@ class DataConverter(ABC, Logger):
         self._output_files = [
             os.path.join(
                 self._output_dir,
-                self._create_file_name(file)
-                + self._save_method.file_extension,
+                self._create_file_name(file) + self._save_method.file_extension,
             )
             for file in input_files
         ]
@@ -263,9 +263,7 @@ class DataConverter(ABC, Logger):
                 global_index.value += n_ids  # type: ignore[name-defined]
         else:
             starting_index = self._index
-            event_nos = np.arange(
-                starting_index, starting_index + n_ids, 1
-            ).tolist()
+            event_nos = np.arange(starting_index, starting_index + n_ids, 1).tolist()
             self._index += n_ids
 
         return event_nos
@@ -320,9 +318,7 @@ class DataConverter(ABC, Logger):
             self._output_files.extend(list(sorted(output_files[:])))
 
     @final
-    def merge_files(
-        self, files: Optional[List[str]] = None, **kwargs: Any
-    ) -> None:
+    def merge_files(self, files: Optional[List[str]] = None, **kwargs: Any) -> None:
         """Merge converted files.
 
             `DataConverter` will call the `.merge_files` method in the
@@ -338,7 +334,7 @@ class DataConverter(ABC, Logger):
         elif files is not None:
             # Proceed to merge specified by user.
             if isinstance(files, str):
-                files = [files] # Cast to list if user forgot
+                files = [files]  # Cast to list if user forgot
             files_to_merge = files
         else:
             # Raise error
