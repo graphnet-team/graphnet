@@ -258,9 +258,7 @@ class DataConverter(ABC, Logger):
         if self._num_workers > 1:
             with global_index.get_lock():  # type: ignore[name-defined]
                 start_idx = global_index.value  # type: ignore[name-defined]
-                event_nos = np.arange(
-                    start_idx, start_idx + n_ids, 1
-                ).tolist()
+                event_nos = np.arange(start_idx, start_idx + n_ids, 1).tolist()
                 global_index.value += n_ids  # type: ignore[name-defined]
         else:
             start_idx = self._index
