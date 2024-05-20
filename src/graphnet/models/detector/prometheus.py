@@ -248,7 +248,7 @@ class ORCA150(Detector):
         return x / 1.05e04
 
 
-class IceCube86(Detector):
+class IceCube86Prometheus(Detector):
     """`Detector` class for Prometheus IceCube86."""
 
     geometry_table_path = os.path.join(

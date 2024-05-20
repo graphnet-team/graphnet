@@ -1,4 +1,14 @@
-.. include:: ../substitutions.rst
+.. |graphnet| image:: ../../assets/identity/favicon.svg
+   :width: 25px
+   :height: 25px
+   :alt: graphnet
+   :align: bottom
+   
+.. |graphnet-header| image:: ../../assets/identity/favicon.svg
+   :width: 50px
+   :height: 50px
+   :alt: graphnet
+   :align: bottom
 
 GraphNeT\ |graphnet-header|
 ########
@@ -7,10 +17,9 @@ GraphNeT\ |graphnet-header|
 |graphnet|\ GraphNeT provides a common, detector agnostic framework for ML developers and physicists that wish to use the state-of-the-art tools in their research. By uniting both user groups, |graphnet|\ GraphNeT aims to increase the longevity and usability of individual code contributions from ML developers by building a general, reusable software package based on software engineering best practices, and lowers the technical threshold for physicists that wish to use the most performant tools for their scientific problems.
 
 
-|graphnet|\ GraphNeT comprises a number of modules providing the necessary tools to build workflows. These workflows range from ingesting raw training data in domain-specific formats to deploying trained models in domain-specific reconstruction chains, as illustrated in [the Figure](flowchart).
+|graphnet|\ GraphNeT comprises a number of modules providing the necessary tools to build workflows. These workflows range from ingesting raw training data in domain-specific formats to deploying trained models in domain-specific reconstruction chains, as illustrated in the flowchart below.
 
-.. _flowchart:
-.. figure:: ../../../paper/flowchart.png
+.. figure:: ../../paper/flowchart.png
 
     High-level overview of a typical workflow using |graphnet|\ GraphNeT: :code:`graphnet.data` enables converting domain-specific data to industry-standard, intermediate file formats and reading this data; :code:`graphnet.models` allows for configuring and building complex models using simple, physics-oriented components; :code:`graphnet.training` manages model training and experiment logging; and finally, :code:`graphnet.deployment` allows for using trained models for inference in domain-specific reconstruction chains.
 
@@ -20,10 +29,10 @@ These models are trained using :code:`graphnet.training` on data prepared using 
 
 Trained models are deployed to a domain-specific reconstruction chain, yielding predictions, using the components in :code:`graphnet.deployment`. This can either be through model files or container images, making deployment as portable and dependency-free as possible.
 
-By splitting up the model development as in :numref:`flowchart`, |graphnet|\ GraphNeT allows physics users to interface only with high-level building blocks or pre-trained models that can be used directly in their reconstruction chains, while allowing ML developers to continuously improve and expand the framework’s capabilities.
+By splitting up the model development as in the flowchart, |graphnet|\ GraphNeT allows physics users to interface only with high-level building blocks or pre-trained models that can be used directly in their reconstruction chains, while allowing ML developers to continuously improve and expand the framework’s capabilities.
 
 
-.. image:: ../../../assets/images/eu-emblem.jpg
+.. image:: ../../assets/images/eu-emblem.jpg
     :width: 150
 
 This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 890778.
