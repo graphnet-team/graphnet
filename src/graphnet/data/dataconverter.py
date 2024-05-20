@@ -318,7 +318,9 @@ class DataConverter(ABC, Logger):
             self._output_files.extend(list(sorted(output_files[:])))
 
     @final
-    def merge_files(self, files: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def merge_files(self, 
+                    files: Optional[List[str]] = None, 
+                    **kwargs: Any) -> None:
         """Merge converted files.
 
             `DataConverter` will call the `.merge_files` method in the
