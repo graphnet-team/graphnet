@@ -56,8 +56,11 @@ class KNNGraph(GraphDefinition):
         )
 
 
-class IsolatedNodes(GraphDefinition):
-    """A Graph representation where each node is isolated."""
+class EdgelessGraph(GraphDefinition):
+    """A Data representation without edge assignment.
+
+    I.e the resulting representation is created without an EdgeDefinition.
+    """
 
     def __init__(
         self,
