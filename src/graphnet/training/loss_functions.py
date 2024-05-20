@@ -71,6 +71,8 @@ class MSELoss(LossFunction):
         """Implement loss calculation."""
         # Check(s)
         assert prediction.dim() == 2
+        if target.dim() != prediction.dim():
+            target = target.squeeze(1)
         assert prediction.size() == target.size()
 
         elements = torch.mean((prediction - target) ** 2, dim=-1)
@@ -453,6 +455,8 @@ class EnsembleLoss(LossFunction):
         loss_functions: List[LossFunction],
         loss_factors: List[float] = None,
         prediction_keys: Optional[List[List[int]]] = None,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
         """Chain multiple loss functions together.
 
@@ -482,6 +486,7 @@ class EnsembleLoss(LossFunction):
             self._prediction_keys: Optional[List[List[int]]] = prediction_keys
         else:
             self._prediction_keys = None
+        super().__init__(*args, **kwargs)
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculate loss using multiple loss functions.
@@ -504,11 +509,11 @@ class EnsembleLoss(LossFunction):
         ):
             if k == 0:
                 elements = self._factors[k] * loss_function._forward(
-                    prediction=prediction[prediction_key], target=target
+                    prediction=prediction[:, prediction_key], target=target
                 )
             else:
                 elements += self._factors[k] * loss_function._forward(
-                    prediction=prediction[prediction_key], target=target
+                    prediction=prediction[:, prediction_key], target=target
                 )
         return elements
 
