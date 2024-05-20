@@ -79,6 +79,7 @@ class DataConverter(ABC, Logger):
         self._index = 0
         self._output_dir = outdir
         self._output_files: List[str] = []
+        self._extension = self._save_method.file_extension
 
         # Set Extractors. Will throw error if extractors are incompatible
         # with reader.
@@ -103,7 +104,7 @@ class DataConverter(ABC, Logger):
         self._output_files = [
             os.path.join(
                 self._output_dir,
-                self._create_file_name(file) + self._save_method.file_extension,
+                self._create_file_name(file) + self._extension,
             )
             for file in input_files
         ]
@@ -256,14 +257,14 @@ class DataConverter(ABC, Logger):
         # Get new, unique index and increment value
         if self._num_workers > 1:
             with global_index.get_lock():  # type: ignore[name-defined]
-                starting_index = global_index.value  # type: ignore[name-defined]
+                start_idx = global_index.value  # type: ignore[name-defined]
                 event_nos = np.arange(
-                    starting_index, starting_index + n_ids, 1
+                    start_idx, start_idx + n_ids, 1
                 ).tolist()
                 global_index.value += n_ids  # type: ignore[name-defined]
         else:
-            starting_index = self._index
-            event_nos = np.arange(starting_index, starting_index + n_ids, 1).tolist()
+            start_idx = self._index
+            event_nos = np.arange(start_idx, start_idx + n_ids, 1).tolist()
             self._index += n_ids
 
         return event_nos
