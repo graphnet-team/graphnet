@@ -334,7 +334,7 @@ class DataConverter(ABC, Logger):
         elif files is not None:
             # Proceed to merge specified by user.
             if isinstance(files, str):
-                files = [files]  # Cast to list if user forgot
+                files = [files]  # Cast to list if user forgot.
             files_to_merge = files
         else:
             # Raise error
