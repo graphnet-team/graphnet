@@ -104,5 +104,4 @@ class Track(Label):
         """Compute label for `graph`."""
         is_numu = torch.abs(graph[self._pid_key]) == 14
         is_cc = graph[self._int_key] == 1
-        label = is_numu & is_cc
-        return label.type(torch.int)
+        return (is_numu & is_cc).type(torch.int)
