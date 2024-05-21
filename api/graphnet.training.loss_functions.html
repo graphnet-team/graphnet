@@ -435,6 +435,10 @@
         <li class="md-nav__item"><a href="#graphnet.training.loss_functions.EuclideanDistanceLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EuclideanDistanceLoss</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.loss_functions.VonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher3DLoss</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.loss_functions.EnsembleLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EnsembleLoss</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RMSEVonMisesFisher3DLoss</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -559,6 +563,20 @@
       <a href="#graphnet.training.loss_functions.VonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher3DLoss</span></code></a>
       
     
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.loss_functions.EnsembleLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EnsembleLoss</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RMSEVonMisesFisher3DLoss</span></code></a>
+      
+    
     </li></ul>
     
     </li>
@@ -649,6 +667,10 @@
         <li class="md-nav__item"><a href="#graphnet.training.loss_functions.EuclideanDistanceLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EuclideanDistanceLoss</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.loss_functions.VonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">VonMisesFisher3DLoss</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.loss_functions.EnsembleLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EnsembleLoss</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RMSEVonMisesFisher3DLoss</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -983,6 +1005,60 @@ ensuring continuity at this point.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.EnsembleLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">EnsembleLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#EnsembleLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.EnsembleLoss" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>
+<p>Chain multiple loss functions together.</p>
+<p>Chain multiple loss functions together.</p>
+<blockquote>
+<div><p>Optionally apply a weight to each loss function contribution.</p>
+<p>E.g. Loss = RMSE*0.5 + LogCoshLoss*1.5</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loss_functions</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a>]</span>) – A list of loss functions to use.
+Each loss function contributes a term to the overall loss.</p></li>
+<li><p><strong>loss_factors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – An optional list of factors that will be mulitplied</p></li>
+<li><p><strong>according</strong> (<em>to each loss function contribution. Must be ordered</em>)</p></li>
+<li><p><strong>given</strong> (<em>to loss_functions. If not</em>)</p></li>
+<li><p><strong>1.</strong> (<em>the weights default to</em>)</p></li>
+<li><p><strong>prediction_keys</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – An optional list of lists of indices for which
+prediction columns to use for each loss function. If not
+given, all columns are used for all loss functions.</p></li>
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">RMSEVonMisesFisher3DLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#RMSEVonMisesFisher3DLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.EnsembleLoss" title="graphnet.training.loss_functions.EnsembleLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleLoss</span></code></a></p>
+<p>Combine the VonMisesFisher3DLoss with RMSELoss.</p>
+<p>VonMisesFisher3DLoss with a RMSE penality term.</p>
+<blockquote>
+<div><p>The VonMisesFisher3DLoss will be weighted with <cite>vmfs_factor</cite>.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vmfs_factor</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0.05</span></code>) – A factor applied to the VonMisesFisher3DLoss term.</p></li>
+<li><p><strong>0.05.</strong> (<em>Defaults ot</em>)</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>

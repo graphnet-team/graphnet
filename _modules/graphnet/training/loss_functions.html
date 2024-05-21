@@ -430,6 +430,8 @@
 <span class="w">        </span><span class="sd">"""Implement loss calculation."""</span>
         <span class="c1"># Check(s)</span>
         <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">!=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">dim</span><span class="p">():</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
 
         <span class="n">elements</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">prediction</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -844,6 +846,102 @@
         <span class="n">kappa</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">kappa</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">prediction</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="EnsembleLoss">
+<a class="viewcode-back" href="../../../api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.EnsembleLoss">[docs]</a>
+<span class="k">class</span> <span class="nc">EnsembleLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Chain multiple loss functions together."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">loss_functions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LossFunction</span><span class="p">],</span>
+        <span class="n">loss_factors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prediction_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Chain multiple loss functions together.</span>
+
+<span class="sd">            Optionally apply a weight to each loss function contribution.</span>
+
+<span class="sd">            E.g. Loss = RMSE*0.5 + LogCoshLoss*1.5</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loss_functions: A list of loss functions to use.</span>
+<span class="sd">                Each loss function contributes a term to the overall loss.</span>
+<span class="sd">            loss_factors: An optional list of factors that will be mulitplied</span>
+<span class="sd">            to each loss function contribution. Must be ordered according</span>
+<span class="sd">            to `loss_functions`. If not given, the weights default to 1.</span>
+<span class="sd">            prediction_keys: An optional list of lists of indices for which</span>
+<span class="sd">                prediction columns to use for each loss function. If not</span>
+<span class="sd">                given, all columns are used for all loss functions.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">loss_factors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># add weight of 1 - i.e no discrimination</span>
+            <span class="n">loss_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">loss_functions</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">loss_functions</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">loss_factors</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span> <span class="o">=</span> <span class="n">loss_factors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_functions</span> <span class="o">=</span> <span class="n">loss_functions</span>
+
+        <span class="k">if</span> <span class="n">prediction_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prediction_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">prediction_keys</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prediction_keys</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Calculate loss using multiple loss functions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prediction: Output of the model.</span>
+<span class="sd">            target: Target tensor, extracted from graph object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Elementwise loss terms. Shape [N,]</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prediction_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prediction_keys</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">prediction</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)))]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_loss_functions</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prediction_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prediction_keys</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">loss_function</span><span class="p">,</span> <span class="n">prediction_key</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_functions</span><span class="p">,</span> <span class="n">prediction_keys</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">loss_function</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span>
+                    <span class="n">prediction</span><span class="o">=</span><span class="n">prediction</span><span class="p">[:,</span> <span class="n">prediction_key</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">elements</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">loss_function</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span>
+                    <span class="n">prediction</span><span class="o">=</span><span class="n">prediction</span><span class="p">[:,</span> <span class="n">prediction_key</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">elements</span></div>
+
+
+
+<div class="viewcode-block" id="RMSEVonMisesFisher3DLoss">
+<a class="viewcode-back" href="../../../api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss">[docs]</a>
+<span class="k">class</span> <span class="nc">RMSEVonMisesFisher3DLoss</span><span class="p">(</span><span class="n">EnsembleLoss</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Combine the VonMisesFisher3DLoss with RMSELoss."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmfs_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""VonMisesFisher3DLoss with a RMSE penality term.</span>
+
+<span class="sd">            The VonMisesFisher3DLoss will be weighted with `vmfs_factor`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vmfs_factor: A factor applied to the VonMisesFisher3DLoss term.</span>
+<span class="sd">            Defaults ot 0.05.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">loss_functions</span><span class="o">=</span><span class="p">[</span><span class="n">RMSELoss</span><span class="p">(),</span> <span class="n">VonMisesFisher3DLoss</span><span class="p">()],</span>
+            <span class="n">loss_factors</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmfs_factor</span><span class="p">],</span>
+            <span class="n">prediction_keys</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 
