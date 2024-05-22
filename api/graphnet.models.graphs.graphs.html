@@ -424,6 +424,8 @@
         <li class="md-nav__item"><a href="#api-graphnet-models-graphs-graphs--page-root" class="md-nav__link">graphs</a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.graphs.graphs.KNNGraph" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNGraph</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.graphs.EdgelessGraph" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EdgelessGraph</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -434,6 +436,13 @@
     
     
       <a href="#graphnet.models.graphs.graphs.KNNGraph" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNGraph</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.graphs.graphs.EdgelessGraph" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EdgelessGraph</span></code></a>
       
     
     </li></ul>
@@ -553,6 +562,8 @@
         <li class="md-nav__item"><a href="#api-graphnet-models-graphs-graphs--page-root" class="md-nav__link">graphs</a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.graphs.graphs.KNNGraph" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNGraph</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.graphs.EdgelessGraph" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EdgelessGraph</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -592,6 +603,35 @@ Defaults to None.</p></li>
 <li><p><strong>[</strong><strong>0</strong> (<em>. Defaults to</em>)</p></li>
 <li><p><strong>1</strong></p></li>
 <li><p><strong>2</strong><strong>]</strong><strong>.</strong></p></li>
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.graphs.graphs.EdgelessGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.graphs.</span></span><span class="sig-name descname"><span class="pre">EdgelessGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/graphs.html#EdgelessGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.graphs.EdgelessGraph" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a></p>
+<p>A Data representation without edge assignment.</p>
+<p>I.e the resulting representation is created without an EdgeDefinition.</p>
+<p>Construct isolated nodes graph representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>detector</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detector</span></code></a></span>) – Detector that represents your data.</p></li>
+<li><p><strong>node_definition</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.graphs.nodes.nodes.html#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Definition of nodes in the graph.</p></li>
+<li><p><strong>input_feature_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of input feature columns.</p></li>
+<li><p><strong>dtype</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – data type for node features.</p></li>
+<li><p><strong>perturbation_dict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Dictionary mapping a feature name to a standard
+deviation according to which the values for this
+feature should be randomly perturbed. Defaults
+to None.</p></li>
+<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – seed or Generator used to randomly sample perturbations.
+Defaults to None.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>

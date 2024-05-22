@@ -408,6 +408,50 @@
             <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
         <span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="EdgelessGraph">
+<a class="viewcode-back" href="../../../../api/graphnet.models.graphs.graphs.html#graphnet.models.graphs.graphs.EdgelessGraph">[docs]</a>
+<span class="k">class</span> <span class="nc">EdgelessGraph</span><span class="p">(</span><span class="n">GraphDefinition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A Data representation without edge assignment.</span>
+
+<span class="sd">    I.e the resulting representation is created without an EdgeDefinition.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">detector</span><span class="p">:</span> <span class="n">Detector</span><span class="p">,</span>
+        <span class="n">node_definition</span><span class="p">:</span> <span class="n">NodeDefinition</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
+        <span class="n">perturbation_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Generator</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct isolated nodes graph representation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            detector: Detector that represents your data.</span>
+<span class="sd">            node_definition: Definition of nodes in the graph.</span>
+<span class="sd">            input_feature_names: Name of input feature columns.</span>
+<span class="sd">            dtype: data type for node features.</span>
+<span class="sd">            perturbation_dict: Dictionary mapping a feature name to a standard</span>
+<span class="sd">                               deviation according to which the values for this</span>
+<span class="sd">                               feature should be randomly perturbed. Defaults</span>
+<span class="sd">                               to None.</span>
+<span class="sd">            seed: seed or Generator used to randomly sample perturbations.</span>
+<span class="sd">                  Defaults to None.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">detector</span><span class="o">=</span><span class="n">detector</span><span class="p">,</span>
+            <span class="n">node_definition</span><span class="o">=</span><span class="n">node_definition</span> <span class="ow">or</span> <span class="n">NodesAsPulses</span><span class="p">(),</span>
+            <span class="n">edge_definition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="n">input_feature_names</span><span class="o">=</span><span class="n">input_feature_names</span><span class="p">,</span>
+            <span class="n">perturbation_dict</span><span class="o">=</span><span class="n">perturbation_dict</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 </pre></div>
 
           </article>
