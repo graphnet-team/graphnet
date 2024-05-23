@@ -335,7 +335,10 @@ class DataConverter(ABC, Logger):
         elif files is not None:
             # Proceed to merge specified by user.
             if isinstance(files, str):
-                files = [files]  # Cast to list if user forgot.
+                # We shouldn't merge a single file?
+                self.info(f"Got just a single file {files.}"
+                           "Merging skipped.")
+                           return
             files_to_merge = files
         else:
             # Raise error
