@@ -377,7 +377,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">detector</span><span class="p">:</span> <span class="n">Detector</span><span class="p">,</span>
-        <span class="n">node_definition</span><span class="p">:</span> <span class="n">NodeDefinition</span> <span class="o">=</span> <span class="n">NodesAsPulses</span><span class="p">(),</span>
+        <span class="n">node_definition</span><span class="p">:</span> <span class="n">NodeDefinition</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">edge_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
@@ -421,6 +421,9 @@
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node_definition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node_definition</span> <span class="o">=</span> <span class="n">NodesAsPulses</span><span class="p">()</span>
 
         <span class="c1"># Member Variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span> <span class="o">=</span> <span class="n">detector</span>
