@@ -336,7 +336,7 @@ class DataConverter(ABC, Logger):
             # Proceed to merge specified by user.
             if isinstance(files, str):
                 # We shouldn't merge a single file?
-                self.info(f"Got just a single file {files.}"
+                self.info(f"Got just a single file {files}."
                            "Merging skipped.")
                            return
             files_to_merge = files
