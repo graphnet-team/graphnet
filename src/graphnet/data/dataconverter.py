@@ -338,7 +338,7 @@ class DataConverter(ABC, Logger):
                 # We shouldn't merge a single file?
                 self.info(f"Got just a single file {files}."
                            "Merging skipped.")
-                           return
+                return
             files_to_merge = files
         else:
             # Raise error
