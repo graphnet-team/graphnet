@@ -93,6 +93,7 @@ class FourierEncoder(LightningModule):
                 f"{n_features} features."
             )
         elif n_features >= 6:
+
             hidden_dim = 6 * seq_length
         else:
             hidden_dim = int((n_features + 0.5) * seq_length)

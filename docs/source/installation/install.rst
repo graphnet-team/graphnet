@@ -36,7 +36,7 @@ To achieve this, we recommend installing |graphnet|\ GraphNeT into a CVMFS with 
    pip install --upgrade pip>=20
    pip install wheel setuptools==59.5.0
    # Install graphnet into the CVMFS as a user
-   pip install --user -r requirements/torch_cpu.txt -e .[torch, develop]
+   pip install --user -r requirements/torch_cpu.txt -e .[torch,develop]
 
 
 Once installed, |graphnet|\ GraphNeT is available whenever you open the CVMFS locally.
