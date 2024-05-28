@@ -454,7 +454,7 @@ class StandardFlowTask(Task):
         x = self._forward(x, labels)
         return self._transform_prediction(x)
 
-    def sample(self, x, data, n_samples, target_range):
+    def sample(self, x, data: int, n_samples, target_range):
         self.inference()
         with torch.no_grad():
             labels = Uniform(target_range[0], target_range[1]).sample((n_samples, 1)) 
