@@ -240,7 +240,6 @@ class LearnedTask(Task):
                          the last latent layer of `Model` using this Task.
                          Available through `Model.nb_outputs`
             loss_function: Loss function appropriate to the task.
-            
         """
         # Base class constructor
         super().__init__(**task_kwargs)
@@ -400,18 +399,19 @@ class StandardFlowTask(Task):
             flow_layers: A string indicating the flow layer types.
             hidden_size: The number of columns in the output of
                          the last latent layer of `Model` using this Task.
-                         Available through `Model.nb_outputs` 
+                         Available through `Model.nb_outputs`
         """
         # Base class constructor
-        
-        
+
         # Member variables
         self._default_prediction_labels = ["nllh"]
         self._hidden_size = hidden_size
         super().__init__(**task_kwargs)
-        self._flow = jammy_flows.pdf(f"e{len(self._target_labels)}", 
-                                    flow_layers, 
-                                    conditional_input_dim = hidden_size)
+        self._flow = jammy_flows.pdf(
+            f"e{len(self._target_labels)}",
+            flow_layers,
+            conditional_input_dim=hidden_size,
+        )
         self._initialized = False
 
     @property
@@ -419,43 +419,39 @@ class StandardFlowTask(Task):
         """Return default prediction labels."""
         return self._default_prediction_labels
 
-    def nb_inputs(self) -> int:
-        """Return number of inputs assumed by task."""
+    def nb_inputs(self) -> Union[int, None]:  # type: ignore
+        """Return number of conditional inputs assumed by task."""
         return self._hidden_size
 
     def _forward(self, x: Tensor, y: Tensor) -> Tensor:  # type: ignore
         if x is not None:
             if x.shape[0] != y.shape[0]:
-                raise AssertionError(f"Targets {self._target_labels} have "
-                                      f"{y.shape[0]} rows while conditional "
-                                      f"inputs have {x.shape[0]} rows. "
-                                      "The number of rows must match.")
-            log_pdf, _,_ = self._flow(y, conditional_input = x)
+                raise AssertionError(
+                    f"Targets {self._target_labels} have "
+                    f"{y.shape[0]} rows while conditional "
+                    f"inputs have {x.shape[0]} rows. "
+                    "The number of rows must match."
+                )
+            log_pdf, _, _ = self._flow(y, conditional_input=x)
         else:
-            log_pdf, _,_ = self._flow(y)
-        return -log_pdf.reshape(-1,1)
+            log_pdf, _, _ = self._flow(y)
+        return -log_pdf.reshape(-1, 1)
 
     @final
     def forward(
-        self, x: Union[Tensor, Data], data: List[Data]) -> Union[Tensor, Data]:
+        self, x: Union[Tensor, Data], data: List[Data]
+    ) -> Union[Tensor, Data]:
         """Forward pass."""
         # Manually cast pdf to correct dtype - is there a better way?
         self._flow = self._flow.to(x.dtype)
         # Get target values
-        labels = get_fields(data = data, 
-                            fields = self._target_labels).to(x.dtype)
+        labels = get_fields(data=data, fields=self._target_labels).to(x.dtype)
         # Set the initial parameters of flow close to truth
         # This speeds up training and helps with NaN
         if self._initialized is False:
             self._flow.init_params(data=deepcopy(labels).cpu())
             self._flow.to(self.device)
-            self._initialized = True # This is only done once
+            self._initialized = True  # This is only done once
         # Compute nllh
         x = self._forward(x, labels)
         return self._transform_prediction(x)
-
-    def sample(self, x, data: int, n_samples, target_range):
-        self.inference()
-        with torch.no_grad():
-            labels = Uniform(target_range[0], target_range[1]).sample((n_samples, 1)) 
-            return labels, self._forward(y= labels, x = x.repeat(n_samples,1))
