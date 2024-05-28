@@ -4,3 +4,4 @@ from .i3reader import I3Reader
 from .internal_parquet_reader import ParquetReader
 from .liquido_reader import LiquidOReader
 from .prometheus_reader import PrometheusReader
+from .km3netrootreader import KM3NeTROOTReader

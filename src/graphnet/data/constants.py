@@ -31,6 +31,18 @@ class FEATURES:
     ]
     KAGGLE = ["x", "y", "z", "time", "charge", "auxiliary"]
     LIQUIDO = ["sipm_x", "sipm_y", "sipm_z", "t"]
+    ORCA115 = [
+        "t",
+        "pos_x",
+        "pos_y",
+        "pos_z",
+        "dir_x",
+        "dir_y",
+        "dir_z",
+        "tot",
+        "trig",
+    ]
+    ORCA6 = ORCA115
 
 
 class TRUTH:
@@ -93,3 +105,43 @@ class TRUTH:
         "energy",
         "pid",
     ]
+    ORCA115 = [
+        "pdgid",
+        "vrx_x",
+        "vrx_y",
+        "vrx_z",
+        "zenith",
+        "azimuth",
+        "part_dir_x",
+        "part_dir_y",
+        "part_dir_z",
+        "Energy",
+        "Bj_x",
+        "Bj_y",
+        "i_chan",
+        "is_cc_flag",
+        "jshower_E",
+        "jshower_pos_x",
+        "jshower_pos_y",
+        "jshower_pos_z",
+        "jshower_zenith",
+        "jshower_azimuth",
+        "jmuon_E",
+        "jmuon_pos_x",
+        "jmuon_pos_y",
+        "jmuon_pos_z",
+        "jmuon_zenith",
+        "jmuon_azimuth",
+        "n_hits",
+        "w2_gseagen_ps",
+        "livetime",
+        "n_gen",
+        "run_id",
+        "frame_index",
+        "trigger_counter",
+        "event_no",
+        "is_track",
+        "is_muon",
+    ]
+
+    ORCA6 = ORCA115
