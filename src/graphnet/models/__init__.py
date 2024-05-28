@@ -11,3 +11,4 @@ GNN
 from .model import Model
 from .standard_model import StandardModel
 from .standard_averaged_model import StandardAveragedModel
+from .normalizing_flow import NormalizingFlow

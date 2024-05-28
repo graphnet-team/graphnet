@@ -7,6 +7,7 @@ import torch
 from torch import Tensor, LongTensor
 
 from torch_geometric.utils import homophily
+from torch_geometric.data import Data
 
 
 def calculate_xyzt_homophily(
@@ -103,3 +104,11 @@ def array_to_sequence(
     mask = torch.ne(x[:, :, 1], excluding_value)
     x[~mask] = padding_value
     return x, mask, seq_length
+
+def get_fields(data: List[Data], fields: List[str]) -> Tensor:
+        labels = []
+        if not isinstance(data, list):
+            data = [data]
+        for label in list(fields):
+            labels.append(torch.cat([d[label].reshape(-1,1) for d in data], dim=0))
+        return torch.cat(labels, dim = 1)
