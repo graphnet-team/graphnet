@@ -65,7 +65,9 @@ class DataLoader(torch.utils.data.DataLoader):
             )
 
             if isinstance(config.path, list):
-                datasets: Union[Dict[str, Dataset], Dict[str, EnsembleDataset]] = {}  # type: ignore
+                datasets: Union[
+                    Dict[str, Dataset], Dict[str, EnsembleDataset], Dict
+                ] = {}
                 dataset_col: Dict[str, list] = {}
                 for key in config.selection.keys():
                     dataset_col[key] = []
