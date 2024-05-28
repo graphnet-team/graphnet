@@ -28,7 +28,7 @@ class NormalizingFlow(EasySyntax):
         target_labels: str,
         backbone: GNN = None,
         condition_on: Union[str, List[str], None] = None,
-        flow_layers: str = 'gggt',
+        flow_layers: str = "gggt",
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
         optimizer_kwargs: Optional[Dict] = None,
         scheduler_class: Optional[type] = None,
@@ -36,21 +36,23 @@ class NormalizingFlow(EasySyntax):
         scheduler_config: Optional[Dict] = None,
     ) -> None:
         """Construct `NormalizingFlow`."""
-
         # Handle args
         if backbone is not None:
             assert isinstance(backbone, GNN)
             hidden_size = backbone.nb_outputs
-        else:
+        elif condition_on is not None:
             if isinstance(condition_on, str):
                 condition_on = [condition_on]
             hidden_size = len(condition_on)
+        else:
+            hidden_size = None
 
         # Build Flow Task
-        task = StandardFlowTask(hidden_size=hidden_size,
-                                flow_layers=flow_layers,
-                                target_labels = target_labels)
-
+        task = StandardFlowTask(
+            hidden_size=hidden_size,
+            flow_layers=flow_layers,
+            target_labels=target_labels,
+        )
 
         # Base class constructor
         super().__init__(
@@ -74,13 +76,14 @@ class NormalizingFlow(EasySyntax):
         if self.backbone is not None:
             x = self._backbone(data)
         elif self._condition_on is not None:
-            x = get_fields(data = data, 
-                           fields = self._condition_on)
+            assert isinstance(self._condition_on, list)
+            x = get_fields(data=data, fields=self._condition_on)
         return self._tasks[0](x, data)
 
     def _backbone(
         self, data: Union[Data, List[Data]]
     ) -> List[Union[Tensor, Data]]:
+        assert self.backbone is not None
         if isinstance(data, Data):
             data = [data]
         x_list = []
@@ -89,7 +92,6 @@ class NormalizingFlow(EasySyntax):
             x_list.append(x)
         x = torch.cat(x_list, dim=0)
         return x
-        
 
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
@@ -98,18 +100,10 @@ class NormalizingFlow(EasySyntax):
         between the training and validation step.
         """
         loss = self(batch)
-        return torch.mean(loss, dim = 0)
+        return torch.mean(loss, dim=0)
 
     def validate_tasks(self) -> None:
         """Verify that self._tasks contain compatible elements."""
-        accepted_tasks =  (StandardFlowTask)
+        accepted_tasks = StandardFlowTask
         for task in self._tasks:
             assert isinstance(task, accepted_tasks)
-
-    def sample(self, data, n_samples, target_range =  [0,1000]):
-        self._sample = True
-        self._n_samples = n_samples
-        self._target_range = target_range
-        labels, nllh = self(data)
-        self._sample = False
-        return labels, nllh
