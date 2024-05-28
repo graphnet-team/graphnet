@@ -34,7 +34,7 @@ class GraphDefinition(Model):
         sensor_mask: Optional[List[int]] = None,
         string_mask: Optional[List[int]] = None,
         sort_by: str = None,
-        repeat_labels: bool =False,
+        repeat_labels: bool = False,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -63,9 +63,9 @@ class GraphDefinition(Model):
             add_inactive_sensors: If True, inactive sensors will be appended
                 to the graph with padded pulse information. Defaults to False.
             sensor_mask: A list of sensor id's to be masked from the graph. Any
-                sensor listed here will be removed from the graph. 
+                sensor listed here will be removed from the graph.
                     Defaults to None.
-            string_mask: A list of string id's to be masked from the graph. 
+            string_mask: A list of string id's to be masked from the graph.
                 Defaults to None.
             sort_by: Name of node feature to sort by. Defaults to None.
             repeat_labels: If True, labels will be repeated to match the
@@ -415,12 +415,13 @@ class GraphDefinition(Model):
         """
         # Write attributes, either target labels, truth info or original
         # features.
+
         for truth_dict in truth_dicts:
             for key, value in truth_dict.items():
                 try:
                     label = torch.tensor(value)
                     if self._repeat_labels:
-                        label = label.repeat(graph.x.shape[0],1)    
+                        label = label.repeat(graph.x.shape[0], 1)
                     graph[key] = label
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type,
@@ -460,6 +461,6 @@ class GraphDefinition(Model):
         for key, fn in custom_label_functions.items():
             label = fn(graph)
             if self._repeat_labels:
-                label = label.repeat(graph.x.shape[0],1)
+                label = label.repeat(graph.x.shape[0], 1)
             graph[key] = label
         return graph

@@ -1,6 +1,6 @@
 """A module containing different graph representations in GraphNeT."""
 
-from typing import List, Optional, Dict, Union
+from typing import List, Optional, Dict, Union, Any
 import torch
 from numpy.random import Generator
 
@@ -23,7 +23,7 @@ class KNNGraph(GraphDefinition):
         seed: Optional[Union[int, Generator]] = None,
         nb_nearest_neighbours: int = 8,
         columns: List[int] = [0, 1, 2],
-        **kwargs
+        **kwargs: Any,
     ) -> None:
         """Construct k-nn graph representation.
 
@@ -54,7 +54,7 @@ class KNNGraph(GraphDefinition):
             input_feature_names=input_feature_names,
             perturbation_dict=perturbation_dict,
             seed=seed,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -72,7 +72,7 @@ class EdgelessGraph(GraphDefinition):
         dtype: Optional[torch.dtype] = torch.float,
         perturbation_dict: Optional[Dict[str, float]] = None,
         seed: Optional[Union[int, Generator]] = None,
-        **kwargs
+        **kwargs: Any,
     ) -> None:
         """Construct isolated nodes graph representation.
 
@@ -97,5 +97,5 @@ class EdgelessGraph(GraphDefinition):
             input_feature_names=input_feature_names,
             perturbation_dict=perturbation_dict,
             seed=seed,
-            **kwargs
+            **kwargs,
         )
