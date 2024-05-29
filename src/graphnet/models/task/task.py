@@ -10,8 +10,6 @@ import torch
 from torch import Tensor
 from torch.nn import Linear
 from torch_geometric.data import Data
-import jammy_flows
-from torch.distributions.uniform import Uniform
 
 if TYPE_CHECKING:
     # Avoid cyclic dependency
@@ -20,6 +18,10 @@ if TYPE_CHECKING:
 from graphnet.models import Model
 from graphnet.utilities.decorators import final
 from graphnet.models.utils import get_fields
+from graphnet.utilities.imports import has_jammy_flows_package
+
+if has_jammy_flows_package():
+    import jammy_flows
 
 
 class Task(Model):
