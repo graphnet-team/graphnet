@@ -410,6 +410,8 @@
         <span class="n">selection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">db_count_norm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">automatic_log_bins</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">max_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Fit weights.</span>
@@ -429,8 +431,15 @@
 <span class="sd">            transform: A callable method that transform the variable into a</span>
 <span class="sd">                desired space. E.g. np.log10 for energy. If given, fitting will</span>
 <span class="sd">                happen in this space.</span>
-<span class="sd">            db_count_norm: If given, the total sum of the weights for the given db will be this number.</span>
+<span class="sd">            db_count_norm: If given, the total sum of the weights for the given</span>
+<span class="sd">                db will be this number.</span>
+<span class="sd">            automatic_log_bins: If True, the bins are generated as a log10</span>
+<span class="sd">                space between the min and max of the variable.</span>
+<span class="sd">            max_weight: If given, the weights are capped such that a single</span>
+<span class="sd">                event weight cannot exceed this number times the sum of</span>
+<span class="sd">                all weights.</span>
 <span class="sd">            **kwargs: Additional arguments passed to `_fit_weights`.</span>
+
 
 <span class="sd">        Returns:</span>
 <span class="sd">            DataFrame that contains weights, event_nos.</span>
@@ -441,6 +450,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="n">selection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bins</span> <span class="o">=</span> <span class="n">bins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="k">if</span> <span class="n">max_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">max_weight</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">max_weight</span> <span class="o">&lt;</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_weight</span> <span class="o">=</span> <span class="n">max_weight</span>
 
         <span class="k">if</span> <span class="n">weight_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_weight_name</span><span class="p">()</span>
@@ -450,12 +462,29 @@
         <span class="n">truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_truth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">])</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_weights</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">db_count_norm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span> <span class="o">*</span> <span class="n">db_count_norm</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">automatic_log_bins</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">bins</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_weights</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span>
+                <span class="o">&gt;</span> <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_weight</span><span class="p">,</span>
+                <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_weight</span><span class="p">,</span>
+                <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">db_count_norm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span>
+                <span class="o">*</span> <span class="n">db_count_norm</span>
+                <span class="o">/</span> <span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">add_to_database</span><span class="p">:</span>
             <span class="n">create_table_and_save_to_sql</span><span class="p">(</span>
                 <span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span>
@@ -516,7 +545,11 @@
 <span class="sd">    """</span>
 
     <span class="k">def</span> <span class="nf">_fit_weights</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">truth</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">x_low</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">truth</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">x_low</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">percentile</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Fit per-event weights.</span>
 
@@ -527,6 +560,8 @@
 <span class="sd">                1/(1+a*(x_low -x)) curve.</span>
 <span class="sd">            alpha: A scalar factor that controls how fast the weights above</span>
 <span class="sd">                x_low approaches zero. Larger means faster.</span>
+<span class="sd">            percentile: If True, x_low is interpreted as a percentile of the</span>
+<span class="sd">                truth variable.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The fitted weights.</span>
@@ -548,6 +583,11 @@
             <span class="n">weights</span><span class="o">=</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">bin_counts</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">percentile</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">x_low</span> <span class="o">&lt;</span> <span class="mi">1</span>
+            <span class="n">x_low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">],</span> <span class="n">x_low</span><span class="p">)</span>
+
         <span class="nb">slice</span> <span class="o">=</span> <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">][</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x_low</span><span class="p">]</span>
         <span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_weight_name</span><span class="p">][</span><span class="n">truth</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x_low</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span>
             <span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="nb">slice</span> <span class="o">-</span> <span class="n">x_low</span><span class="p">)</span>
