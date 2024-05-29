@@ -35,7 +35,37 @@ class NormalizingFlow(EasySyntax):
         scheduler_kwargs: Optional[Dict] = None,
         scheduler_config: Optional[Dict] = None,
     ) -> None:
-        """Construct `NormalizingFlow`."""
+        """Build NormalizingFlow to learn (conditional) normalizing flows.
+
+        NormalizingFlow is able to build, train and evaluate a wide suite of
+        normalizing flows. Instead of optimizing a loss function, flows
+        minimize a learned pdf of your data, providing you with a posterior
+        distribution for every example instead of point-like predictions.
+
+        `NormalizingFlow` can be conditioned on existing fields in the
+        DataRepresentation or latent representations from `Models`.
+
+        Args:
+            graph_definition: The `GraphDefinition` to train the model on.
+            target_labels: Name of target(s) to learn the pdf of.
+            backbone: Architecture used to produce latent representations of
+            the input data on which the pdf will be conditioned.
+            Defaults to None.
+            condition_on: List of fields in Data objects to condition the
+            pdf on. Defaults to None.
+            flow_layers: A string defining the flow layers.
+            See https://thoglu.github.io/jammy_flows/usage/introduction.html
+            for details. Defaults to "gggt".
+            optimizer_class: Optimizer to use. Defaults to Adam.
+            optimizer_kwargs: Optimzier arguments. Defaults to None.
+            scheduler_class: Learning rate scheduler to use. Defaults to None.
+            scheduler_kwargs: Arguments to learning rate scheduler.
+            Defaults to None.
+            scheduler_config: Defaults to None.
+
+        Raises:
+            ValueError: if both `backbone` and `condition_on` is specified.
+        """
         # Checks
         if (backbone is not None) & (condition_on is not None):
             # If user wants to condition on both
