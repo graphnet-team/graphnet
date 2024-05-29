@@ -13,11 +13,21 @@ from graphnet.models import NormalizingFlow
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graphs import KNNGraph
-from graphnet.models.task.task import StandardFlowTask
 from graphnet.training.callbacks import PiecewiseLinearLR
 from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
+from graphnet.utilities.imports import has_jammy_flows_package
+
+# Make sure the jammy flows is installed
+try:
+    assert has_jammy_flows_package
+except AssertionError:
+    raise AssertionError(
+        "This example requires the package`jammy_flow` "
+        " to be installed. It appears that the package is "
+        " not installed. Please install the package."
+    )
 
 # Constants
 features = FEATURES.PROMETHEUS
