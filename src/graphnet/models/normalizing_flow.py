@@ -36,6 +36,16 @@ class NormalizingFlow(EasySyntax):
         scheduler_config: Optional[Dict] = None,
     ) -> None:
         """Construct `NormalizingFlow`."""
+        # Checks
+        if (backbone is not None) & (condition_on is not None):
+            # If user wants to condition on both
+            raise ValueError(
+                f"{self.__class__.__name__} got values for both "
+                "`backbone` and `condition_on`, but can only"
+                "condition on one of those. Please specify just "
+                "one of these arguments."
+            )
+
         # Handle args
         if backbone is not None:
             assert isinstance(backbone, GNN)
