@@ -21,7 +21,7 @@ from graphnet.utilities.imports import has_jammy_flows_package
 
 # Make sure the jammy flows is installed
 try:
-    assert has_jammy_flows_package
+    assert has_jammy_flows_package()
 except AssertionError:
     raise AssertionError(
         "This example requires the package`jammy_flow` "
