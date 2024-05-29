@@ -45,6 +45,9 @@ class NormalizingFlow(EasySyntax):
         `NormalizingFlow` can be conditioned on existing fields in the
         DataRepresentation or latent representations from `Models`.
 
+        NormalizingFlow is built upon https://github.com/thoglu/jammy_flows,
+        and we refer to their documentation for details on the flows.
+
         Args:
             graph_definition: The `GraphDefinition` to train the model on.
             target_labels: Name of target(s) to learn the pdf of.
