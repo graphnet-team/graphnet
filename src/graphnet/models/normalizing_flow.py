@@ -96,7 +96,7 @@ class NormalizingFlow(EasySyntax):
             x = self._tasks[0](x, d)
             x_list.append(x)
         x = torch.cat(x_list, dim=0)
-        return x
+        return [x]
 
     def _backbone(
         self, data: Union[Data, List[Data]]
@@ -111,6 +111,9 @@ class NormalizingFlow(EasySyntax):
         between the training and validation step.
         """
         loss = self(batch)
+        if isinstance(loss, list):
+            assert len(loss) == 1
+            loss = loss[0]
         return torch.mean(loss, dim=0)
 
     def validate_tasks(self) -> None:
