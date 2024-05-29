@@ -9,7 +9,6 @@ from torch.optim.adam import Adam
 
 from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
-from graphnet.models import NormalizingFlow
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.gnn import DynEdge
 from graphnet.models.graphs import KNNGraph
@@ -22,6 +21,7 @@ from graphnet.utilities.imports import has_jammy_flows_package
 # Make sure the jammy flows is installed
 try:
     assert has_jammy_flows_package()
+    from graphnet.models import NormalizingFlow
 except AssertionError:
     raise AssertionError(
         "This example requires the package`jammy_flow` "
