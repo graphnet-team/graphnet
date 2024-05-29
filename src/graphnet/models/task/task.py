@@ -423,7 +423,7 @@ class StandardFlowTask(Task):
         """Return number of conditional inputs assumed by task."""
         return self._hidden_size
 
-    def _forward(self, x: Tensor, y: Tensor) -> Tensor:  # type: ignore
+    def _forward(self, x: Optional[Tensor], y: Tensor) -> Tensor:  # type: ignore
         if x is not None:
             if x.shape[0] != y.shape[0]:
                 raise AssertionError(
@@ -443,9 +443,10 @@ class StandardFlowTask(Task):
     ) -> Union[Tensor, Data]:
         """Forward pass."""
         # Manually cast pdf to correct dtype - is there a better way?
-        self._flow = self._flow.to(x.dtype)
+        self._flow = self._flow.to(self.dtype)
         # Get target values
-        labels = get_fields(data=data, fields=self._target_labels).to(x.dtype)
+        labels = get_fields(data=data, fields=self._target_labels)
+        labels = labels.to(self.dtype)
         # Set the initial parameters of flow close to truth
         # This speeds up training and helps with NaN
         if self._initialized is False:

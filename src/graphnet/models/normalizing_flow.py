@@ -69,29 +69,30 @@ class NormalizingFlow(EasySyntax):
         self.backbone = backbone
         self._condition_on = condition_on
 
-    def forward(
-        self, data: Union[Data, List[Data]]
-    ) -> List[Union[Tensor, Data]]:
+    def forward(self, data: Union[Data, List[Data]]) -> Tensor:
         """Forward pass, chaining model components."""
-        if self.backbone is not None:
-            x = self._backbone(data)
-        elif self._condition_on is not None:
-            assert isinstance(self._condition_on, list)
-            x = get_fields(data=data, fields=self._condition_on)
-        return self._tasks[0](x, data)
+        if isinstance(data, Data):
+            data = [data]
+        x_list = []
+        for d in data:
+            if self.backbone is not None:
+                x = self._backbone(d)
+            elif self._condition_on is not None:
+                assert isinstance(self._condition_on, list)
+                x = get_fields(data=d, fields=self._condition_on)
+            else:
+                # Unconditional flow
+                x = None
+            x = self._tasks[0](x, d)
+            x_list.append(x)
+        x = torch.cat(x_list, dim=0)
+        return x
 
     def _backbone(
         self, data: Union[Data, List[Data]]
     ) -> List[Union[Tensor, Data]]:
         assert self.backbone is not None
-        if isinstance(data, Data):
-            data = [data]
-        x_list = []
-        for d in data:
-            x = self.backbone(d)
-            x_list.append(x)
-        x = torch.cat(x_list, dim=0)
-        return x
+        return self.backbone(data)
 
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
