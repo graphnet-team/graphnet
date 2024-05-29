@@ -14,12 +14,12 @@ from graphnet.models.utils import get_fields
 
 
 class NormalizingFlow(EasySyntax):
-    """A Standard way of combining model components in GraphNeT.
+    """A model for building (conditional) normalizing flows in GraphNeT.
 
-    This model is compatible with the vast majority of supervised learning
-    tasks such as regression, binary and multi-label classification.
-
-    Capable of producing both event-level and pulse-level predictions.
+    This model relies on `jammy_flows` for building and evaluating
+    normalizing flows.
+    https://thoglu.github.io/jammy_flows/usage/introduction.html
+    for details.
     """
 
     def __init__(

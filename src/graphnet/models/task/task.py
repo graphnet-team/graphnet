@@ -386,7 +386,11 @@ class IdentityTask(StandardLearnedTask):
 
 
 class StandardFlowTask(Task):
-    """A `Task` for `NormalizingFlow`s in GraphNeT."""
+    """A `Task` for `NormalizingFlow`s in GraphNeT.
+
+    This Task requires the support package`jammy_flows` for constructing and
+    evaluating normalizing flows.
+    """
 
     def __init__(
         self,
@@ -394,14 +398,15 @@ class StandardFlowTask(Task):
         flow_layers: str = "gggt",
         **task_kwargs: Any,
     ):
-        """Construct `StandardLearnedTask`.
+        """Construct `StandardFlowTask`.
 
         Args:
             target_labels: A list of names for the targets of this Task.
-            flow_layers: A string indicating the flow layer types.
-            hidden_size: The number of columns in the output of
-                         the last latent layer of `Model` using this Task.
-                         Available through `Model.nb_outputs`
+            flow_layers: A string indicating the flow layer types. See
+             https://thoglu.github.io/jammy_flows/usage/introduction.html
+             for details.
+            hidden_size: The number of columns on which the normalizing flow
+            is conditioned on. May be `None`, indicating non-conditional flow.
         """
         # Base class constructor
 
