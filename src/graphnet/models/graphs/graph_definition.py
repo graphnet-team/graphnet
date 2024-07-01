@@ -34,6 +34,7 @@ class GraphDefinition(Model):
         sensor_mask: Optional[List[int]] = None,
         string_mask: Optional[List[int]] = None,
         sort_by: str = None,
+        repeat_labels: bool = False,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -62,9 +63,14 @@ class GraphDefinition(Model):
             add_inactive_sensors: If True, inactive sensors will be appended
                 to the graph with padded pulse information. Defaults to False.
             sensor_mask: A list of sensor id's to be masked from the graph. Any
-                sensor listed here will be removed from the graph. Defaults to None.
-            string_mask: A list of string id's to be masked from the graph. Defaults to None.
+                sensor listed here will be removed from the graph.
+                    Defaults to None.
+            string_mask: A list of string id's to be masked from the graph.
+                Defaults to None.
             sort_by: Name of node feature to sort by. Defaults to None.
+            repeat_labels: If True, labels will be repeated to match the
+                the number of rows in the output of the GraphDefinition.
+                Defaults to False.
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -80,6 +86,7 @@ class GraphDefinition(Model):
         self._sensor_mask = sensor_mask
         self._string_mask = string_mask
         self._add_inactive_sensors = add_inactive_sensors
+        self._repeat_labels = repeat_labels
 
         self._resolve_masks()
 
@@ -408,10 +415,14 @@ class GraphDefinition(Model):
         """
         # Write attributes, either target labels, truth info or original
         # features.
+
         for truth_dict in truth_dicts:
             for key, value in truth_dict.items():
                 try:
-                    graph[key] = torch.tensor(value)
+                    label = torch.tensor(value)
+                    if self._repeat_labels:
+                        label = label.repeat(graph.x.shape[0], 1)
+                    graph[key] = label
                 except TypeError:
                     # Cannot convert `value` to Tensor due to its data type,
                     # e.g. `str`.
@@ -448,5 +459,8 @@ class GraphDefinition(Model):
     ) -> Data:
         # Add custom labels to the graph
         for key, fn in custom_label_functions.items():
-            graph[key] = fn(graph)
+            label = fn(graph)
+            if self._repeat_labels:
+                label = label.repeat(graph.x.shape[0], 1)
+            graph[key] = label
         return graph
