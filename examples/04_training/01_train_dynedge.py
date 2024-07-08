@@ -16,9 +16,11 @@ from graphnet.models.graphs import KNNGraph
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.callbacks import PiecewiseLinearLR
 from graphnet.training.loss_functions import LogCoshLoss
-from graphnet.training.utils import make_train_validation_dataloader
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
+from graphnet.data import GraphNeTDataModule
+from graphnet.data.dataset import SQLiteDataset
+from graphnet.data.dataset import ParquetDataset
 
 # Constants
 features = FEATURES.PROMETHEUS
@@ -68,6 +70,9 @@ def main(
             "gpus": gpus,
             "max_epochs": max_epochs,
         },
+        "dataset_reference": SQLiteDataset
+        if path.endswith(".db")
+        else ParquetDataset,
     }
 
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model_without_configs")
@@ -79,20 +84,29 @@ def main(
     # Define graph representation
     graph_definition = KNNGraph(detector=Prometheus())
 
-    (
-        training_dataloader,
-        validation_dataloader,
-    ) = make_train_validation_dataloader(
-        db=config["path"],
-        graph_definition=graph_definition,
-        pulsemaps=config["pulsemap"],
-        features=features,
-        truth=truth,
-        batch_size=config["batch_size"],
-        num_workers=config["num_workers"],
-        truth_table=truth_table,
-        selection=None,
+    # Use GraphNetDataModule to load in data
+    dm = GraphNeTDataModule(
+        dataset_reference=config["dataset_reference"],
+        dataset_args={
+            "truth": truth,
+            "truth_table": truth_table,
+            "features": features,
+            "graph_definition": graph_definition,
+            "pulsemaps": [config["pulsemap"]],
+            "path": config["path"],
+        },
+        train_dataloader_kwargs={
+            "batch_size": config["batch_size"],
+            "num_workers": config["num_workers"],
+        },
+        test_dataloader_kwargs={
+            "batch_size": config["batch_size"],
+            "num_workers": config["num_workers"],
+        },
     )
+
+    training_dataloader = dm.train_dataloader
+    validation_dataloader = dm.val_dataloader
 
     # Building model
 
