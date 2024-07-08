@@ -54,6 +54,7 @@ class ParquetDataset(Dataset):
         loss_weight_default_value: Optional[float] = None,
         seed: Optional[int] = None,
         cache_size: int = 1,
+        labels: Optional[Dict[str, Any]] = None,
     ):
         """Construct Dataset.
 
@@ -122,6 +123,7 @@ class ParquetDataset(Dataset):
             loss_weight_default_value=loss_weight_default_value,
             seed=seed,
             graph_definition=graph_definition,
+            labels = labels,
         )
 
         # mypy..
