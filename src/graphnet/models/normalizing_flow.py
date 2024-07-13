@@ -111,6 +111,7 @@ class NormalizingFlow(EasySyntax):
         self._graph_definition = graph_definition
         self.backbone = backbone
         self._condition_on = condition_on
+        self._norm = torch.nn.BatchNorm1d(hidden_size)
 
     def forward(self, data: Union[Data, List[Data]]) -> Tensor:
         """Forward pass, chaining model components."""
@@ -120,6 +121,7 @@ class NormalizingFlow(EasySyntax):
         for d in data:
             if self.backbone is not None:
                 x = self._backbone(d)
+                x = self._norm(x)
             elif self._condition_on is not None:
                 assert isinstance(self._condition_on, list)
                 x = get_fields(data=d, fields=self._condition_on)

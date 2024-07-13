@@ -396,6 +396,7 @@ class StandardFlowTask(Task):
         self,
         hidden_size: Union[int, None],
         flow_layers: str = "gggt",
+        target_norm: float = 1000.0,
         **task_kwargs: Any,
     ):
         """Construct `StandardFlowTask`.
@@ -405,6 +406,8 @@ class StandardFlowTask(Task):
             flow_layers: A string indicating the flow layer types. See
              https://thoglu.github.io/jammy_flows/usage/introduction.html
              for details.
+            target_norm: A normalization constant used to divide the target
+            values. Value is applied to all targets. Defaults to 1000.
             hidden_size: The number of columns on which the normalizing flow
             is conditioned on. May be `None`, indicating non-conditional flow.
         """
@@ -420,6 +423,7 @@ class StandardFlowTask(Task):
             conditional_input_dim=hidden_size,
         )
         self._initialized = False
+        self._norm = target_norm
 
     @property
     def default_prediction_labels(self) -> List[str]:
@@ -431,6 +435,7 @@ class StandardFlowTask(Task):
         return self._hidden_size
 
     def _forward(self, x: Optional[Tensor], y: Tensor) -> Tensor:  # type: ignore
+        y = y / self._norm
         if x is not None:
             if x.shape[0] != y.shape[0]:
                 raise AssertionError(
