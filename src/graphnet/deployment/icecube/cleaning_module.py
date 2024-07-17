@@ -2,7 +2,7 @@
 
 Contains functionality for writing model predictions to i3 files.
 """
-from typing import List, Union, Optional, TYPE_CHECKING, Dict, Any, Tuple
+from typing import List, Union, TYPE_CHECKING, Dict, Any, Tuple
 
 import numpy as np
 

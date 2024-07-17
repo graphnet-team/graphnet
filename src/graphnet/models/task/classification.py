@@ -1,7 +1,5 @@
 """Classification-specific `Model` class(es)."""
 
-from typing import Any
-
 import torch
 from torch import Tensor
 

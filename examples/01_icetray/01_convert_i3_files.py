@@ -1,6 +1,5 @@
 """Example of converting I3-files to SQLite and Parquet."""
 
-import os
 from glob import glob
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR

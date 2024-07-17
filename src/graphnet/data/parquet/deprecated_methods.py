@@ -2,7 +2,7 @@
 
 This code will be removed in GraphNeT 2.0.
 """
-from typing import List, Union, Type
+from typing import List, Union
 
 from graphnet.data.extractors.icecube import I3Extractor
 from graphnet.data.extractors.icecube.utilities.i3_filters import (
