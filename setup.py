@@ -15,7 +15,7 @@ INSTALL_REQUIRES = [
     "configupdater",
     "dill>=0.3",
     "matplotlib>=3.5",
-    "numpy=1.24",
+    "numpy==1.24",
     "pandas>=1.3",
     "pyarrow",
     "pydantic",
