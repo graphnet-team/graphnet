@@ -376,7 +376,14 @@
     <li class="md-nav__item">
     
     
-      <a href="../api/graphnet.html" class="md-nav__link">API</a>
+      <a href="../api/graphnet.html" class="md-nav__link">Subpackages</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../api/graphnet.html#submodules" class="md-nav__link">Submodules</a>
       
     
     </li>
@@ -418,10 +425,11 @@
           <article class="md-content__inner md-typeset" role="main">
             
   <section id="data-conversion-in-graphnetgraphnet-header">
-<h1 id="data-conversion-data-conversion--page-root">Data Conversion in GraphNeT<a class="reference internal" href="#data-conversion-data-conversion--page-root"><img alt="graphnet" class="align-bottom" height="50px" src="../_images/favicon.svg" width="50px"/></a><a class="headerlink" href="#data-conversion-data-conversion--page-root" title="Link to this heading">¶</a></h1>
+<h1 id="data-conversion-data-conversion--page-root">Data Conversion in GraphNeT<a class="reference internal" href="#data-conversion-data-conversion--page-root"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 50px; height: 50px;"/></a><a class="headerlink" href="#data-conversion-data-conversion--page-root" title="Link to this heading">¶</a></h1>
 <p>GraphNeT comes with powerful data conversion code that can convert data formats specific to experiments to deep learning friendly data formats.</p>
 <p>Data conversion in GraphNeT follows a reader/writer scheme, where the <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> does most of the heavy lifting.</p>
-<a class="with-shadow reference internal image-reference" href="../_images/dataconverter.svg"><img alt="Illustration of the reader/writer scheme of data conversion in GraphNeT." class="with-shadow align-right" src="../_images/dataconverter.svg" width="500"/></a>
+<a class="with-shadow reference internal image-reference" href="../_images/dataconverter.svg"><img alt="Illustration of the reader/writer scheme of data conversion in GraphNeT." class="with-shadow align-right" src="../_images/dataconverter.svg" style="width: 500px;"/>
+</a>
 <p>In the illustration, the “reader” module represents an experiment-specific implementation of <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code>, able to parse your data files. The “Writer” module denotes a <code class="code docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code> module that saves the interim data format from <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> to disk.</p>
 <section id="dataconverter">
 <h2 id="dataconverter"><code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code><a class="headerlink" href="#dataconverter" title="Link to this heading">¶</a></h2>
@@ -676,7 +684,7 @@ training by <code class="code docutils literal notranslate"><span class="pre">Pa
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 7.4.6.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

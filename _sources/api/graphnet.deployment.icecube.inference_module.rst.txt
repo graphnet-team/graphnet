@@ -1,6 +1,5 @@
-
-inference\_module
-=================
+graphnet.deployment.icecube.inference\_module module
+====================================================
 
 .. automodule:: graphnet.deployment.icecube.inference_module
    :members:

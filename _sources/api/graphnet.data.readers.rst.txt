@@ -1,16 +1,13 @@
-
-readers
-=======
-
+graphnet.data.readers package
+=============================
 
 .. automodule:: graphnet.data.readers
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -20,21 +17,3 @@ readers
    graphnet.data.readers.internal_parquet_reader
    graphnet.data.readers.liquido_reader
    graphnet.data.readers.prometheus_reader
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

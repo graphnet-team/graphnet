@@ -1,15 +1,13 @@
-
-data
-====
-
+graphnet.data package
+=====================
 
 .. automodule:: graphnet.data
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Subpackages |end-h2|
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 2
@@ -23,8 +21,8 @@ data
    graphnet.data.utilities
    graphnet.data.writers
 
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -35,21 +33,3 @@ data
    graphnet.data.dataconverter
    graphnet.data.dataloader
    graphnet.data.datamodule
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

@@ -1,6 +1,5 @@
-
-deprecated\_methods
-===================
+graphnet.deployment.i3modules.deprecated\_methods module
+========================================================
 
 .. automodule:: graphnet.deployment.i3modules.deprecated_methods
    :members:

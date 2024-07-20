@@ -1,6 +1,5 @@
-
-model
-=====
+graphnet.models.model module
+============================
 
 .. automodule:: graphnet.models.model
    :members:

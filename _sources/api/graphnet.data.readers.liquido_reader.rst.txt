@@ -1,6 +1,5 @@
-
-liquido\_reader
-===============
+graphnet.data.readers.liquido\_reader module
+============================================
 
 .. automodule:: graphnet.data.readers.liquido_reader
    :members:

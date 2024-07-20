@@ -1,6 +1,5 @@
-
-dataclasses
-===========
+graphnet.data.dataclasses module
+================================
 
 .. automodule:: graphnet.data.dataclasses
    :members:

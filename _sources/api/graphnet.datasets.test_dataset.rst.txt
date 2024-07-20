@@ -1,6 +1,5 @@
-
-test\_dataset
-=============
+graphnet.datasets.test\_dataset module
+======================================
 
 .. automodule:: graphnet.datasets.test_dataset
    :members:

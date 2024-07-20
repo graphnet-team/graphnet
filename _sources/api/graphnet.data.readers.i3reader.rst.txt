@@ -1,6 +1,5 @@
-
-i3reader
-========
+graphnet.data.readers.i3reader module
+=====================================
 
 .. automodule:: graphnet.data.readers.i3reader
    :members:

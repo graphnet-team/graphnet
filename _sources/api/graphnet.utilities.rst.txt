@@ -1,23 +1,21 @@
-
-utilities
-=========
-
+graphnet.utilities package
+==========================
 
 .. automodule:: graphnet.utilities
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Subpackages |end-h2|
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 2
 
    graphnet.utilities.config
 
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -29,21 +27,3 @@ utilities
    graphnet.utilities.imports
    graphnet.utilities.logging
    graphnet.utilities.maths
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

@@ -1,16 +1,13 @@
-
-detector
-========
-
+graphnet.models.detector package
+================================
 
 .. automodule:: graphnet.models.detector
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -19,21 +16,3 @@ detector
    graphnet.models.detector.icecube
    graphnet.models.detector.liquido
    graphnet.models.detector.prometheus
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

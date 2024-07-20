@@ -1,6 +1,5 @@
-
-graphnet\_writer
-================
+graphnet.data.writers.graphnet\_writer module
+=============================================
 
 .. automodule:: graphnet.data.writers.graphnet_writer
    :members:

@@ -1,6 +1,5 @@
-
-string\_selection\_resolver
-===========================
+graphnet.data.utilities.string\_selection\_resolver module
+==========================================================
 
 .. automodule:: graphnet.data.utilities.string_selection_resolver
    :members:

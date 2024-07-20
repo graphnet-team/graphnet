@@ -1,6 +1,5 @@
-
-types
-=====
+graphnet.data.extractors.icecube.utilities.types module
+=======================================================
 
 .. automodule:: graphnet.data.extractors.icecube.utilities.types
    :members:

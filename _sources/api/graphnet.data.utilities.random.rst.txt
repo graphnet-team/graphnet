@@ -1,6 +1,5 @@
-
-random
-======
+graphnet.data.utilities.random module
+=====================================
 
 .. automodule:: graphnet.data.utilities.random
    :members:

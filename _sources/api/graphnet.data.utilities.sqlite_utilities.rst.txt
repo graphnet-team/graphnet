@@ -1,6 +1,5 @@
-
-sqlite\_utilities
-=================
+graphnet.data.utilities.sqlite\_utilities module
+================================================
 
 .. automodule:: graphnet.data.utilities.sqlite_utilities
    :members:

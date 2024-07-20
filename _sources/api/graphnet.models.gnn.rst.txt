@@ -1,16 +1,13 @@
-
-gnn
-===
-
+graphnet.models.gnn package
+===========================
 
 .. automodule:: graphnet.models.gnn
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -22,21 +19,3 @@ gnn
    graphnet.models.gnn.dynedge_kaggle_tito
    graphnet.models.gnn.gnn
    graphnet.models.gnn.icemix
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

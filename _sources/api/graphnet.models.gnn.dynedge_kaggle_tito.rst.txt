@@ -1,6 +1,5 @@
-
-dynedge\_kaggle\_tito
-=====================
+graphnet.models.gnn.dynedge\_kaggle\_tito module
+================================================
 
 .. automodule:: graphnet.models.gnn.dynedge_kaggle_tito
    :members:

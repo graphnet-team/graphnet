@@ -1,16 +1,13 @@
-
-icecube
-=======
-
+graphnet.deployment.icecube package
+===================================
 
 .. automodule:: graphnet.deployment.icecube
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -18,21 +15,3 @@ icecube
    graphnet.deployment.icecube.cleaning_module
    graphnet.deployment.icecube.i3deployer
    graphnet.deployment.icecube.inference_module
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

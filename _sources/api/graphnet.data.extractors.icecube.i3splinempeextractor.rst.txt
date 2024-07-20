@@ -1,6 +1,5 @@
-
-i3splinempeextractor
-====================
+graphnet.data.extractors.icecube.i3splinempeextractor module
+============================================================
 
 .. automodule:: graphnet.data.extractors.icecube.i3splinempeextractor
    :members:

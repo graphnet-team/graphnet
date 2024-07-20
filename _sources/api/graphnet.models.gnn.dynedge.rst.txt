@@ -1,6 +1,5 @@
-
-dynedge
-=======
+graphnet.models.gnn.dynedge module
+==================================
 
 .. automodule:: graphnet.models.gnn.dynedge
    :members:

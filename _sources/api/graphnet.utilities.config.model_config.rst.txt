@@ -1,6 +1,5 @@
-
-model\_config
-=============
+graphnet.utilities.config.model\_config module
+==============================================
 
 .. automodule:: graphnet.utilities.config.model_config
    :members:

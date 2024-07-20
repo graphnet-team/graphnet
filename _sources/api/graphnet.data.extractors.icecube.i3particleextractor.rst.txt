@@ -1,6 +1,5 @@
-
-i3particleextractor
-===================
+graphnet.data.extractors.icecube.i3particleextractor module
+===========================================================
 
 .. automodule:: graphnet.data.extractors.icecube.i3particleextractor
    :members:

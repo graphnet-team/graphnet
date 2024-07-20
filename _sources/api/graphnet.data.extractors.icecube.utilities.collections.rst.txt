@@ -1,6 +1,5 @@
-
-collections
-===========
+graphnet.data.extractors.icecube.utilities.collections module
+=============================================================
 
 .. automodule:: graphnet.data.extractors.icecube.utilities.collections
    :members:

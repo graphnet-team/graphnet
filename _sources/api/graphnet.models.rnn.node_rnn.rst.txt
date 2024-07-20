@@ -1,6 +1,5 @@
-
-node\_rnn
-=========
+graphnet.models.rnn.node\_rnn module
+====================================
 
 .. automodule:: graphnet.models.rnn.node_rnn
    :members:

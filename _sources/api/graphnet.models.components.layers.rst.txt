@@ -1,6 +1,5 @@
-
-layers
-======
+graphnet.models.components.layers module
+========================================
 
 .. automodule:: graphnet.models.components.layers
    :members:

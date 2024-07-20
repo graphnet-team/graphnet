@@ -1,6 +1,5 @@
-
-i3genericextractor
-==================
+graphnet.data.extractors.icecube.i3genericextractor module
+==========================================================
 
 .. automodule:: graphnet.data.extractors.icecube.i3genericextractor
    :members:

@@ -1,6 +1,5 @@
-
-prometheus
-==========
+graphnet.models.detector.prometheus module
+==========================================
 
 .. automodule:: graphnet.models.detector.prometheus
    :members:

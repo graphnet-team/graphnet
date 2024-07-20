@@ -1,6 +1,5 @@
-
-i3hybridrecoextractor
-=====================
+graphnet.data.extractors.icecube.i3hybridrecoextractor module
+=============================================================
 
 .. automodule:: graphnet.data.extractors.icecube.i3hybridrecoextractor
    :members:

@@ -1,6 +1,5 @@
-
-weight\_fitting
-===============
+graphnet.training.weight\_fitting module
+========================================
 
 .. automodule:: graphnet.training.weight_fitting
    :members:

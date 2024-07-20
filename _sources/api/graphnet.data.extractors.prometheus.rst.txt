@@ -1,36 +1,15 @@
-
-prometheus
-==========
-
+graphnet.data.extractors.prometheus package
+===========================================
 
 .. automodule:: graphnet.data.extractors.prometheus
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
 
    graphnet.data.extractors.prometheus.prometheus_extractor
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

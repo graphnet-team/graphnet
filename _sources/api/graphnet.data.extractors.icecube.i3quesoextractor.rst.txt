@@ -1,6 +1,5 @@
-
-i3quesoextractor
-================
+graphnet.data.extractors.icecube.i3quesoextractor module
+========================================================
 
 .. automodule:: graphnet.data.extractors.icecube.i3quesoextractor
    :members:

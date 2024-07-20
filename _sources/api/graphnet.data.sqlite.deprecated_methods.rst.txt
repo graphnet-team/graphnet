@@ -1,6 +1,5 @@
-
-deprecated\_methods
-===================
+graphnet.data.sqlite.deprecated\_methods module
+===============================================
 
 .. automodule:: graphnet.data.sqlite.deprecated_methods
    :members:

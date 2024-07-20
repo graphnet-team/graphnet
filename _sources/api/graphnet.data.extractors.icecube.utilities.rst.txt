@@ -1,16 +1,13 @@
-
-utilities
-=========
-
+graphnet.data.extractors.icecube.utilities package
+==================================================
 
 .. automodule:: graphnet.data.extractors.icecube.utilities
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -19,21 +16,3 @@ utilities
    graphnet.data.extractors.icecube.utilities.frames
    graphnet.data.extractors.icecube.utilities.i3_filters
    graphnet.data.extractors.icecube.utilities.types
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

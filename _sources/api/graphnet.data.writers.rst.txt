@@ -1,16 +1,13 @@
-
-writers
-=======
-
+graphnet.data.writers package
+=============================
 
 .. automodule:: graphnet.data.writers
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -18,21 +15,3 @@ writers
    graphnet.data.writers.graphnet_writer
    graphnet.data.writers.parquet_writer
    graphnet.data.writers.sqlite_writer
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

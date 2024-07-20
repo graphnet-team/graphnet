@@ -1,6 +1,5 @@
-
-i3tumextractor
-==============
+graphnet.data.extractors.icecube.i3tumextractor module
+======================================================
 
 .. automodule:: graphnet.data.extractors.icecube.i3tumextractor
    :members:

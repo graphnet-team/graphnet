@@ -1,6 +1,5 @@
-
-icemix
-======
+graphnet.models.gnn.icemix module
+=================================
 
 .. automodule:: graphnet.models.gnn.icemix
    :members:

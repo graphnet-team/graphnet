@@ -1,6 +1,5 @@
-
-reconstruction
-==============
+graphnet.models.task.reconstruction module
+==========================================
 
 .. automodule:: graphnet.models.task.reconstruction
    :members:

@@ -1,6 +1,5 @@
-
-deprecated\_methods
-===================
+graphnet.data.parquet.deprecated\_methods module
+================================================
 
 .. automodule:: graphnet.data.parquet.deprecated_methods
    :members:

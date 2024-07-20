@@ -1,6 +1,5 @@
-
-loss\_functions
-===============
+graphnet.training.loss\_functions module
+========================================
 
 .. automodule:: graphnet.training.loss_functions
    :members:

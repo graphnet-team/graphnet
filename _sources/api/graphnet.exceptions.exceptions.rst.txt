@@ -1,6 +1,5 @@
-
-exceptions
-==========
+graphnet.exceptions.exceptions module
+=====================================
 
 .. automodule:: graphnet.exceptions.exceptions
    :members:

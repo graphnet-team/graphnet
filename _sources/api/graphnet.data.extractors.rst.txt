@@ -1,15 +1,13 @@
-
-extractors
-==========
-
+graphnet.data.extractors package
+================================
 
 .. automodule:: graphnet.data.extractors
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Subpackages |end-h2|
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 2
@@ -19,29 +17,11 @@ extractors
    graphnet.data.extractors.liquido
    graphnet.data.extractors.prometheus
 
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
 
    graphnet.data.extractors.combine_extractors
    graphnet.data.extractors.extractor
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

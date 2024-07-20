@@ -1,6 +1,5 @@
-
-dataconverter
-=============
+graphnet.data.dataconverter module
+==================================
 
 .. automodule:: graphnet.data.dataconverter
    :members:

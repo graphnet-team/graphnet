@@ -1,6 +1,5 @@
-
-argparse
-========
+graphnet.utilities.argparse module
+==================================
 
 .. automodule:: graphnet.utilities.argparse
    :members:

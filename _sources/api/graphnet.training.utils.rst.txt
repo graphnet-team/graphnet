@@ -1,6 +1,5 @@
-
-utils
-=====
+graphnet.training.utils module
+==============================
 
 .. automodule:: graphnet.training.utils
    :members:

@@ -1,6 +1,5 @@
-
-sqlite\_writer
-==============
+graphnet.data.writers.sqlite\_writer module
+===========================================
 
 .. automodule:: graphnet.data.writers.sqlite_writer
    :members:

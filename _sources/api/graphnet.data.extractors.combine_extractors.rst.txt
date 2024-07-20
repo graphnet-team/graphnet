@@ -1,6 +1,5 @@
-
-combine\_extractors
-===================
+graphnet.data.extractors.combine\_extractors module
+===================================================
 
 .. automodule:: graphnet.data.extractors.combine_extractors
    :members:

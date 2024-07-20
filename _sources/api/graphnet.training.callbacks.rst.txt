@@ -1,6 +1,5 @@
-
-callbacks
-=========
+graphnet.training.callbacks module
+==================================
 
 .. automodule:: graphnet.training.callbacks
    :members:

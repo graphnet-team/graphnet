@@ -1,15 +1,13 @@
-
-models
-======
-
+graphnet.models package
+=======================
 
 .. automodule:: graphnet.models
    :members:
    :undoc-members:
    :show-inheritance:
 
-
-|start-h2| Subpackages |end-h2|
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 2
@@ -22,8 +20,8 @@ models
    graphnet.models.task
    graphnet.models.transformer
 
-|start-h2| Submodules |end-h2|
-
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -34,21 +32,3 @@ models
    graphnet.models.standard_averaged_model
    graphnet.models.standard_model
    graphnet.models.utils
-
-
-
-.. |start-h2| raw:: html
-
-     <h2>
-
-.. |end-h2| raw:: html
-
-     </h2>
-
-.. |start-h3| raw:: html
-
-     <h3>
-
-.. |end-h3| raw:: html
-
-     </h3>

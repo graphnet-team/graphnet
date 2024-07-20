@@ -1,6 +1,5 @@
-
-i3ntmuonlabelsextractor
-=======================
+graphnet.data.extractors.icecube.i3ntmuonlabelsextractor module
+===============================================================
 
 .. automodule:: graphnet.data.extractors.icecube.i3ntmuonlabelsextractor
    :members:
