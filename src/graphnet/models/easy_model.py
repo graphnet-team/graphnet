@@ -16,7 +16,6 @@ import pandas as pd
 from pytorch_lightning.loggers import Logger as LightningLogger
 
 from graphnet.training.callbacks import ProgressBar
-from graphnet.models.graphs import GraphDefinition
 from graphnet.models.model import Model
 from graphnet.models.task import StandardLearnedTask
 
@@ -292,6 +291,7 @@ class EasySyntax(Model):
         dataloader: DataLoader,
         gpus: Optional[Union[List[int], int]] = None,
         distribution_strategy: Optional[str] = "auto",
+        **trainer_kwargs: Any,
     ) -> List[Tensor]:
         """Return predictions for `dataloader`."""
         self.inference()
@@ -305,6 +305,7 @@ class EasySyntax(Model):
             gpus=gpus,
             distribution_strategy=distribution_strategy,
             callbacks=callbacks,
+            **trainer_kwargs,
         )
 
         predictions_list = inference_trainer.predict(self, dataloader)
@@ -325,6 +326,7 @@ class EasySyntax(Model):
         additional_attributes: Optional[List[str]] = None,
         gpus: Optional[Union[List[int], int]] = None,
         distribution_strategy: Optional[str] = "auto",
+        **trainer_kwargs: Any,
     ) -> pd.DataFrame:
         """Return predictions for `dataloader` as a DataFrame.
 
@@ -357,6 +359,7 @@ class EasySyntax(Model):
             dataloader=dataloader,
             gpus=gpus,
             distribution_strategy=distribution_strategy,
+            **trainer_kwargs,
         )
         predictions = (
             torch.cat(predictions_torch, dim=1).detach().cpu().numpy()
