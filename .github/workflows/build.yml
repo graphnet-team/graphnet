@@ -117,7 +117,9 @@ jobs:
           pip show torch-cluster
           pip show torch-sparse
           pip show torch-scatter
-          pip show jammy_flows
+          pip show numpy
+
+
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest

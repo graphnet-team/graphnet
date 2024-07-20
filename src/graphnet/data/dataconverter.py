@@ -1,4 +1,5 @@
 """Contains `DataConverter`."""
+
 from typing import List, Union, OrderedDict, Dict, Tuple, Any, Optional, Type
 from abc import abstractmethod, ABC
 
@@ -78,6 +79,7 @@ class DataConverter(ABC, Logger):
         self._index = 0
         self._output_dir = outdir
         self._output_files: List[str] = []
+        self._extension = self._save_method.file_extension
 
         # Set Extractors. Will throw error if extractors are incompatible
         # with reader.
@@ -102,8 +104,7 @@ class DataConverter(ABC, Logger):
         self._output_files = [
             os.path.join(
                 self._output_dir,
-                self._create_file_name(file)
-                + self._save_method.file_extension,
+                self._create_file_name(file) + self._extension,
             )
             for file in input_files
         ]
@@ -256,16 +257,12 @@ class DataConverter(ABC, Logger):
         # Get new, unique index and increment value
         if self._num_workers > 1:
             with global_index.get_lock():  # type: ignore[name-defined]
-                starting_index = global_index.value  # type: ignore[name-defined]
-                event_nos = np.arange(
-                    starting_index, starting_index + n_ids, 1
-                ).tolist()
+                start_idx = global_index.value  # type: ignore[name-defined]
+                event_nos = np.arange(start_idx, start_idx + n_ids, 1).tolist()
                 global_index.value += n_ids  # type: ignore[name-defined]
         else:
-            starting_index = self._index
-            event_nos = np.arange(
-                starting_index, starting_index + n_ids, 1
-            ).tolist()
+            start_idx = self._index
+            event_nos = np.arange(start_idx, start_idx + n_ids, 1).tolist()
             self._index += n_ids
 
         return event_nos
@@ -321,7 +318,7 @@ class DataConverter(ABC, Logger):
 
     @final
     def merge_files(
-        self, files: Optional[List[str]] = None, **kwargs: Any
+        self, files: Optional[Union[List[str], str]] = None, **kwargs: Any
     ) -> None:
         """Merge converted files.
 
@@ -337,6 +334,10 @@ class DataConverter(ABC, Logger):
             files_to_merge = self._output_files
         elif files is not None:
             # Proceed to merge specified by user.
+            if isinstance(files, str):
+                # We shouldn't merge a single file?
+                self.info(f"Got just a single file {files}. Merging skipped.")
+                return
             files_to_merge = files
         else:
             # Raise error
