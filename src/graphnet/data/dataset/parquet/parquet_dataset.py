@@ -103,6 +103,7 @@ class ParquetDataset(Dataset):
             graph_definition: Method that defines the graph representation.
             cache_size: Number of batches to cache in memory.
                         Must be at least 1. Defaults to 1.
+            labels: Dictionary of labels to be added to the dataset.
         """
         self._validate_selection(selection)
         # Base class constructor
