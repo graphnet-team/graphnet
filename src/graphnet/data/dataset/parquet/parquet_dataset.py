@@ -123,7 +123,7 @@ class ParquetDataset(Dataset):
             loss_weight_default_value=loss_weight_default_value,
             seed=seed,
             graph_definition=graph_definition,
-            labels = labels,
+            labels=labels,
         )
 
         # mypy..
