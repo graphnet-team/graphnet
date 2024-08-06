@@ -54,6 +54,7 @@ class ParquetDataset(Dataset):
         loss_weight_default_value: Optional[float] = None,
         seed: Optional[int] = None,
         cache_size: int = 1,
+        labels: Optional[Dict[str, Any]] = None,
     ):
         """Construct Dataset.
 
@@ -102,6 +103,7 @@ class ParquetDataset(Dataset):
             graph_definition: Method that defines the graph representation.
             cache_size: Number of batches to cache in memory.
                         Must be at least 1. Defaults to 1.
+            labels: Dictionary of labels to be added to the dataset.
         """
         self._validate_selection(selection)
         # Base class constructor
@@ -122,6 +124,7 @@ class ParquetDataset(Dataset):
             loss_weight_default_value=loss_weight_default_value,
             seed=seed,
             graph_definition=graph_definition,
+            labels=labels,
         )
 
         # mypy..
