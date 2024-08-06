@@ -209,7 +209,7 @@ Train conditional NormalizingFlow without the use of config files.
         "gpus",
         ("max-epochs", 1),
         "early-stopping-patience",
-        ("batch-size", 50),
+        ("batch-size", 16),
         "num-workers",
     )
 
