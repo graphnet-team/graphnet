@@ -16,7 +16,6 @@ import pandas as pd
 from pytorch_lightning.loggers import Logger as LightningLogger
 
 from graphnet.training.callbacks import ProgressBar
-from graphnet.models.graphs import GraphDefinition
 from graphnet.models.model import Model
 from graphnet.models.task import StandardLearnedTask
 

@@ -6,7 +6,7 @@ from numpy.random import Generator
 
 from .graph_definition import GraphDefinition
 from graphnet.models.detector import Detector
-from graphnet.models.graphs.edges import EdgeDefinition, KNNEdges
+from graphnet.models.graphs.edges import KNNEdges
 from graphnet.models.graphs.nodes import NodeDefinition, NodesAsPulses
 
 

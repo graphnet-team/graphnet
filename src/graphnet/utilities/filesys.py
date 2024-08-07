@@ -2,7 +2,7 @@
 
 from pathlib import Path
 import re
-from typing import List, Optional, Tuple, Union, cast
+from typing import List, Optional, Tuple, Union
 
 
 def is_gcd_file(filename: str) -> bool:

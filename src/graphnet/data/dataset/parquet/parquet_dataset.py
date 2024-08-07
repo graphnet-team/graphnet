@@ -1,18 +1,10 @@
 """Base :py:class:`Dataset` class(es) used in GraphNeT."""
 
-from copy import deepcopy
-from abc import ABC, abstractmethod
 from typing import (
-    cast,
-    Any,
-    Callable,
     Dict,
     List,
     Optional,
-    Tuple,
     Union,
-    Iterable,
-    Type,
 )
 
 import numpy as np
@@ -21,7 +13,6 @@ import os
 from torch_geometric.data import Data
 import polars as pol
 from polars.series.series import Series
-from polars.exceptions import InvalidOperationError
 from glob import glob
 from bisect import bisect_right
 from collections import OrderedDict

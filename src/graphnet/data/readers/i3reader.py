@@ -1,6 +1,6 @@
 """Module containing different I3Reader."""
 
-from typing import List, Union, OrderedDict, Type
+from typing import List, Union, OrderedDict
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors.icecube.utilities.i3_filters import (
