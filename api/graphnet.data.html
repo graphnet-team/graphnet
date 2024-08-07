@@ -546,8 +546,11 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="graphnet-data-package">
-<h1 id="api-graphnet-data--page-root">graphnet.data package<a class="headerlink" href="#api-graphnet-data--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.data">
+<span id="graphnet-data-package"></span><h1 id="api-graphnet-data--page-root">graphnet.data package<a class="headerlink" href="#api-graphnet-data--page-root" title="Link to this heading">¶</a></h1>
+<p>Modules for converting and ingesting data.</p>
+<p><cite>graphnet.data</cite> enables converting domain-specific data to industry-standard,
+intermediate file formats and reading this data.</p>
 <section id="subpackages">
 <h2 id="subpackages">Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -593,8 +596,16 @@
 <h2 id="submodules">Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.data.constants.html">graphnet.data.constants module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.data.curated_datamodule.html">graphnet.data.curated_datamodule module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.constants.html">graphnet.data.constants module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.constants.html#graphnet.data.constants.FEATURES"><code class="docutils literal notranslate"><span class="pre">FEATURES</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.constants.html#graphnet.data.constants.TRUTH"><code class="docutils literal notranslate"><span class="pre">TRUTH</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.curated_datamodule.html">graphnet.data.curated_datamodule module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.CuratedDataset"><code class="docutils literal notranslate"><span class="pre">CuratedDataset</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.ERDAHostedDataset"><code class="docutils literal notranslate"><span class="pre">ERDAHostedDataset</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.data.dataclasses.html">graphnet.data.dataclasses module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataclasses.html#graphnet.data.dataclasses.I3FileSet"><code class="docutils literal notranslate"><span class="pre">I3FileSet</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataclasses.html#graphnet.data.dataclasses.Settings"><code class="docutils literal notranslate"><span class="pre">Settings</span></code></a></li>
@@ -605,8 +616,16 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataconverter.html#graphnet.data.dataconverter.DataConverter"><code class="docutils literal notranslate"><span class="pre">DataConverter</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.data.dataloader.html">graphnet.data.dataloader module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.data.datamodule.html">graphnet.data.datamodule module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.dataloader.html">graphnet.data.dataloader module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataloader.html#graphnet.data.dataloader.collate_fn"><code class="docutils literal notranslate"><span class="pre">collate_fn()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataloader.html#graphnet.data.dataloader.do_shuffle"><code class="docutils literal notranslate"><span class="pre">do_shuffle()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.dataloader.html#graphnet.data.dataloader.DataLoader"><code class="docutils literal notranslate"><span class="pre">DataLoader</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.data.datamodule.html">graphnet.data.datamodule module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.data.datamodule.html#graphnet.data.datamodule.GraphNeTDataModule"><code class="docutils literal notranslate"><span class="pre">GraphNeTDataModule</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
