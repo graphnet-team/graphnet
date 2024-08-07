@@ -63,6 +63,14 @@ jobs:
         uses: ./.github/actions/install
         with:
           editable: true
+      - name: Print packages in pip
+        run: |
+          pip show torch
+          pip show torch-geometric
+          pip show torch-cluster
+          pip show torch-sparse
+          pip show torch-scatter
+          pip show jammy_flows
       - name: Run unit tests and generate coverage report
         run: |
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
@@ -110,6 +118,8 @@ jobs:
           pip show torch-sparse
           pip show torch-scatter
           pip show numpy
+
+
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
