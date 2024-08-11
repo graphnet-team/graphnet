@@ -14,7 +14,6 @@ from torch import Tensor
 from torch import nn
 from torch.nn.functional import (
     one_hot,
-    cross_entropy,
     binary_cross_entropy,
     softplus,
 )

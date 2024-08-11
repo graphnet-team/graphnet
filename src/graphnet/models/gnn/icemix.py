@@ -114,7 +114,7 @@ class DeepIce(GNN):
                 add_norm_layer=True,
                 skip_readout=True,
             )
-        elif include_dynedge and not (dynedge_args is None):
+        elif include_dynedge and dynedge_args is not None:
             self.dyn_edge = DynEdge(**dynedge_args)
 
         self.include_dynedge = include_dynedge
