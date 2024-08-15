@@ -17,8 +17,8 @@ GLOBAL_POOLINGS = {
 }
 
 
-class OrcaNeT(GNN):
-    """OrcaNeT (dynamical edge convolutional) model used in KM3NeT."""
+class ParticleNeT(GNN):
+    """ParticleNeT (dynamical edge convolutional) model. Inspired by: https://arxiv.org/abs/1902.08570"""
 
     def __init__(
         self,
@@ -28,14 +28,14 @@ class OrcaNeT(GNN):
         features_subset: Optional[Union[List[int], slice]] = None,
         dynamic: bool = True,
         dynedge_layer_sizes: Optional[List[Tuple[int, ...]]] = [(64,64,64), (128,128,128), (256,256,256)],
-        readout_layer_sizes: Optional[List[int]] = None,
+        readout_layer_sizes: Optional[List[int]] = [256],
         global_pooling_schemes: Optional[Union[str, List[str]]] = "mean",
         activation_layer: Optional[str] = "relu",
         add_batchnorm_layer: bool = True,
         dropout_readout: float = 0.1,
         skip_readout: bool = False,
     ):
-        """Construct `OrcaNeT`.
+        """Construct `ParticleNeT`.
 
         Args:
             nb_inputs: Number of input features on each node.
@@ -72,7 +72,7 @@ class OrcaNeT(GNN):
             skip_readout: Whether to skip the readout layer(s). If `True`, the
                 output of the last DynEdgeConv block is returned directly.
         """
-        # Latent feature subset for computing nearest neighbours in OrcaNeT.
+        # Latent feature subset for computing nearest neighbours in ParticleNeT.
         if features_subset is None:
             features_subset = slice(0, 3)
 
