@@ -1,6 +1,6 @@
 """Pre-configured combinations of writers and readers."""
 
-from typing import List, Union, Type
+from typing import List, Union
 
 from graphnet.data import DataConverter
 from graphnet.data.readers import I3Reader, ParquetReader

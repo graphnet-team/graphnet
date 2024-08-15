@@ -8,7 +8,7 @@ Kaggle competition.
 Solution by TITO.
 """
 
-from typing import List, Tuple, Optional, Union
+from typing import List, Tuple, Optional
 
 import torch
 from torch import Tensor, LongTensor

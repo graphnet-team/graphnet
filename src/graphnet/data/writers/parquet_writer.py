@@ -1,7 +1,7 @@
 """DataConverter for the Parquet backend."""
 
 import os
-from typing import List, Optional, Dict, Any
+from typing import List, Dict, Any
 
 import pandas as pd
 import polars as pol

@@ -1,9 +1,8 @@
 """RNN_DynEdge model implementation."""
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import torch
 from graphnet.models.gnn.gnn import GNN
-from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.gnn.dynedge_kaggle_tito import DynEdgeTITO
 from graphnet.models.rnn.node_rnn import Node_RNN
 

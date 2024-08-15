@@ -1,7 +1,7 @@
 """Contains `DataConverter`."""
 
 from typing import List, Union, OrderedDict, Dict, Tuple, Any, Optional, Type
-from abc import abstractmethod, ABC
+from abc import ABC
 
 from tqdm import tqdm
 import numpy as np

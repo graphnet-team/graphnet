@@ -1,18 +1,11 @@
 """Base :py:class:`Dataset` class(es) used in GraphNeT."""
 
-from copy import deepcopy
-from abc import ABC, abstractmethod
 from typing import (
-    cast,
-    Any,
-    Callable,
     Dict,
     List,
     Optional,
-    Tuple,
     Union,
-    Iterable,
-    Type,
+    Any,
 )
 
 import numpy as np
@@ -21,7 +14,6 @@ import os
 from torch_geometric.data import Data
 import polars as pol
 from polars.series.series import Series
-from polars.exceptions import InvalidOperationError
 from glob import glob
 from bisect import bisect_right
 from collections import OrderedDict
@@ -54,6 +46,7 @@ class ParquetDataset(Dataset):
         loss_weight_default_value: Optional[float] = None,
         seed: Optional[int] = None,
         cache_size: int = 1,
+        labels: Optional[Dict[str, Any]] = None,
     ):
         """Construct Dataset.
 
@@ -102,6 +95,7 @@ class ParquetDataset(Dataset):
             graph_definition: Method that defines the graph representation.
             cache_size: Number of batches to cache in memory.
                         Must be at least 1. Defaults to 1.
+            labels: Dictionary of labels to be added to the dataset.
         """
         self._validate_selection(selection)
         # Base class constructor
@@ -122,6 +116,7 @@ class ParquetDataset(Dataset):
             loss_weight_default_value=loss_weight_default_value,
             seed=seed,
             graph_definition=graph_definition,
+            labels=labels,
         )
 
         # mypy..

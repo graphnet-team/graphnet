@@ -3,7 +3,6 @@
 import torch
 from torch_geometric.data import Data, Batch
 
-from graphnet.models.components.pool import group_by
 from graphnet.models.coarsening import AttributeCoarsening
 
 

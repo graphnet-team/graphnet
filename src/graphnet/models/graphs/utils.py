@@ -1,6 +1,6 @@
 """Utility functions for construction of graphs."""
 
-from typing import List, Tuple, Optional, Dict, Union
+from typing import List, Tuple
 import os
 import numpy as np
 import pandas as pd
