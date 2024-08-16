@@ -195,13 +195,6 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             if self._val_selection is not None:
                 self._val_dataset = self._create_dataset(self._val_selection)
 
-            # if self._len_match_batch:  # TODO: the same for val -PW
-            #     batch_size =  self._train_batch_sampler_kwargs["batch_size"]
-            #     self._train_random_chunk_sampler = RandomChunkSampler(self._train_dataset,
-            #                                                           chunks=self._train_dataset.chunk_sizes)
-            #     self._train_len_match_batch_sampler = LenMatchBatchSampler(self._train_random_chunk_sampler,
-            #                                                                batch_size=batch_size,
-            #                                                                drop_last=True)
         return
 
     @property
