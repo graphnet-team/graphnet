@@ -188,14 +188,33 @@ class LenMatchBatchSampler(BatchSampler):
         batch_size: int = 1,
         num_workers: int = 1,
         bucket_width: int = 16,
+        multiprocessing_context: str = "spawn",
         drop_last: Optional[bool] = False,
     ) -> None:
-        """Construct `LenMatchBatchSampler`."""
+        """Construct `LenMatchBatchSampler`.
+
+        This `BatchSampler` groups data with similar lengths to be more efficient
+        in operations like masking for MultiHeadAttention. Since batch samplers
+        run on the main process and can result in a CPU bottleneck, `num_workers`
+        can be specified to use multiprocessing for creating the batches. The
+        `bucket_width` argument specifies how wide the bins are for grouping batches.
+        For example, with `bucket_width=16`, data with length [1, 16] and grouped into
+        a bucket and data with length [17, 32] in another.
+
+        Args:
+            sampler: A `Sampler` object that selects/draws data in some way.
+            batch_size: Batch size.
+            num_workers: Number of workers to spawn to create batches.
+            bucket_width: Size of length buckets for grouping data.
+            multiprocessing_context: Start method for multiprocessing.
+            drop_last: (Optional) Drop the last incomplete batch.
+        """
         super().__init__(
             sampler=sampler, batch_size=batch_size, drop_last=drop_last
         )
-        self._bucket_width = bucket_width
         self._num_workers = num_workers
+        self._bucket_width = bucket_width
+        self._multiprocessing_context = multiprocessing_context
 
     def __iter__(self) -> Iterator[List[int]]:
         """Return length-matched batches."""
@@ -213,7 +232,9 @@ class LenMatchBatchSampler(BatchSampler):
             chunks.append(indices[self._num_workers * chunk_size :])
 
         yielded = 0
-        with get_context("spawn").Pool(processes=self._num_workers) as pool:
+        with get_context(self._multiprocessing_context).Pool(
+            processes=self._num_workers
+        ) as pool:
             results = pool.map(
                 gather_buckets,
                 [
