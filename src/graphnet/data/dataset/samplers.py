@@ -14,6 +14,7 @@ from multiprocessing import Pool, cpu_count, get_context
 import numpy as np
 import torch
 from torch.utils.data import Sampler, BatchSampler
+from graphnet.data.dataset import Dataset
 
 
 class RandomChunkSampler(Sampler[int]):
@@ -40,20 +41,21 @@ class RandomChunkSampler(Sampler[int]):
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
+    _____________________
+
+    Original implementation: https://github.com/DrHB/icecube-2nd-place/blob/main/src/dataset.py
     """
 
     def __init__(
         self,
-        data_source: Sequence[Any],
-        chunks: List[int],
+        data_source: Dataset,
         num_samples: Optional[int] = None,
         generator: Optional[torch.Generator] = None,
     ) -> None:
         """Construct `RandomChunkSampler`."""
-        # chunks - a list of chunk sizes
         self._data_source = data_source
         self._num_samples = num_samples
-        self._chunks = chunks
+        self._chunks = data_source.chunk_sizes
 
         # Create a random number generator if one was not provided
         if generator is None:
@@ -94,7 +96,7 @@ class RandomChunkSampler(Sampler[int]):
         """Return a list of indices from a randomly sampled chunk."""
         cumsum = np.cumsum(self.chunks)
         chunk_list = torch.randperm(
-            len(self.chunks), generator=self.generator
+            len(self.chunks), generator=self._generator
         ).tolist()
 
         # sample indexes chunk by chunk
@@ -103,7 +105,7 @@ class RandomChunkSampler(Sampler[int]):
             chunk_len = self.chunks[i]
             offset = cumsum[i - 1] if i > 0 else 0
             samples = (
-                offset + torch.randperm(chunk_len, generator=self.generator)
+                offset + torch.randperm(chunk_len, generator=self._generator)
             ).tolist()
             if len(samples) <= self.num_samples - yield_samples:
                 yield_samples += len(samples)
@@ -114,29 +116,33 @@ class RandomChunkSampler(Sampler[int]):
 
 
 def gather_buckets(
-    params: Tuple[List[int], Sequence[Any], int],
+    params: Tuple[List[int], Sequence[Any], int, int],
 ) -> Tuple[List[List[int]], List[List[int]]]:
     """Gather buckets of events.
 
-    The function that will be used to gather buckets of events by the
+    The function that will be used to gather batches of events for the
     `LenMatchBatchSampler`. When using multiprocessing, each worker will call
-    this function.
+    this function. Given indices, this function will group events based on
+    their length. If the length of event is N, then it will go into the
+    (N // bucket_width) bucket. This returns completed batches and a
+    list of incomplete batches that did not fill to batch_size at the end.
 
     Args:
         params: A tuple containg the list of indices to process,
-        the data_source (typically a `Dataset`), and the batch size.
+        the data_source (typically a `Dataset`), the batch size, and the
+        bucket width.
 
     Returns:
         batches: A list containing batches.
         remaining_batches: Incomplete batches.
     """
-    indices, data_source, batch_size = params
+    indices, data_source, batch_size, bucket_width = params
     buckets = defaultdict(list)
     batches = []
 
     for idx in indices:
         s = data_source[idx]
-        L = max(1, s.num_nodes // 16)
+        L = max(1, s.num_nodes // bucket_width)
         buckets[L].append(idx)
         if len(buckets[L]) == batch_size:
             batches.append(list(buckets[L]))
@@ -171,40 +177,49 @@ class LenMatchBatchSampler(BatchSampler):
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
+    _____________________
+
+    Original implementation: https://github.com/DrHB/icecube-2nd-place/blob/main/src/dataset.py
     """
 
     def __init__(
         self,
         sampler: Sampler,
-        batch_size: int,
+        batch_size: int = 1,
+        num_workers: int = 1,
+        bucket_width: int = 16,
         drop_last: Optional[bool] = False,
     ) -> None:
         """Construct `LenMatchBatchSampler`."""
         super().__init__(
             sampler=sampler, batch_size=batch_size, drop_last=drop_last
         )
+        self._bucket_width = bucket_width
+        self._num_workers = num_workers
 
     def __iter__(self) -> Iterator[List[int]]:
         """Return length-matched batches."""
         indices = list(self.sampler)
         data_source = self.sampler.data_source
 
-        n_workers = min(cpu_count(), 6)
-        chunk_size = len(indices) // n_workers
+        chunk_size = len(indices) // self._num_workers
 
         # Split indices into nearly equal-sized chunks
         chunks = [
             indices[i * chunk_size : (i + 1) * chunk_size]
-            for i in range(n_workers)
+            for i in range(self._num_workers)
         ]
-        if len(indices) % n_workers != 0:
-            chunks.append(indices[n_workers * chunk_size :])
+        if len(indices) % self._num_workers != 0:
+            chunks.append(indices[self._num_workers * chunk_size :])
 
         yielded = 0
-        with get_context("spawn").Pool(processes=n_workers) as pool:
+        with get_context("spawn").Pool(processes=self._num_workers) as pool:
             results = pool.map(
                 gather_buckets,
-                [(chunk, data_source, self.batch_size) for chunk in chunks],
+                [
+                    (chunk, data_source, self.batch_size, self._bucket_width)
+                    for chunk in chunks
+                ],
             )
 
         merged_batches = []
