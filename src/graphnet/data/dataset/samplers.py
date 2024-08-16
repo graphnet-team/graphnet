@@ -198,8 +198,8 @@ class LenMatchBatchSampler(BatchSampler):
         run on the main process and can result in a CPU bottleneck, `num_workers`
         can be specified to use multiprocessing for creating the batches. The
         `bucket_width` argument specifies how wide the bins are for grouping batches.
-        For example, with `bucket_width=16`, data with length [1, 16] and grouped into
-        a bucket and data with length [17, 32] in another.
+        For example, with `bucket_width=16`, data with length [1, 16] are grouped into
+        a bucket, data with length [17, 32] into another, etc.
 
         Args:
             sampler: A `Sampler` object that selects/draws data in some way.
@@ -212,6 +212,10 @@ class LenMatchBatchSampler(BatchSampler):
         super().__init__(
             sampler=sampler, batch_size=batch_size, drop_last=drop_last
         )
+        assert (
+            num_workers >= 1
+        ), "Need at least one worker to use LenMatchBatchSampler!"
+
         self._num_workers = num_workers
         self._bucket_width = bucket_width
         self._multiprocessing_context = multiprocessing_context
@@ -221,43 +225,38 @@ class LenMatchBatchSampler(BatchSampler):
         indices = list(self.sampler)
         data_source = self.sampler.data_source
 
-        chunk_size = len(indices) // self._num_workers
+        segments_size = len(indices) // self._num_workers
 
-        # Split indices into nearly equal-sized chunks
-        chunks = [
-            indices[i * chunk_size : (i + 1) * chunk_size]
+        # Split indices into nearly equal-sized segments amonst the workers
+        segments = [
+            indices[i * segments_size : (i + 1) * segments_size]
             for i in range(self._num_workers)
         ]
+
+        # Collect the leftovers into another segment
         if len(indices) % self._num_workers != 0:
-            chunks.append(indices[self._num_workers * chunk_size :])
+            segments.append(indices[self._num_workers * segments_size :])
 
         yielded = 0
-        with get_context(self._multiprocessing_context).Pool(
-            processes=self._num_workers
-        ) as pool:
-            results = pool.map(
+        remaining_indices = []
+        with get_context("spawn").Pool(processes=self._num_workers) as pool:
+            for result in pool.imap_unordered(
                 gather_buckets,
                 [
-                    (chunk, data_source, self.batch_size, self._bucket_width)
-                    for chunk in chunks
+                    (segment, data_source, self.batch_size, self._bucket_width)
+                    for segment in segments
                 ],
-            )
-
-        merged_batches = []
-        remaining_indices = []
-        for batches, remaining in results:
-            merged_batches.extend(batches)
-            remaining_indices.extend(remaining)
-
-        for batch in merged_batches:
-            yield batch
-            yielded += 1
+            ):
+                batches, leftovers = result
+                for batch in batches:
+                    yield batch
+                    yielded += 1
+                remaining_indices.extend(leftovers)
 
         # Process any remaining indices
-        leftover = [idx for batch in remaining_indices for idx in batch]
         batch = []
-        for idx in leftover:
-            batch.append(idx)
+        for incomplete_batch in remaining_indices:
+            batch.extend(incomplete_batch)
             if len(batch) == self.batch_size:
                 yield batch
                 yielded += 1
