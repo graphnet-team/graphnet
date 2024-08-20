@@ -18,7 +18,10 @@ GLOBAL_POOLINGS = {
 
 
 class ParticleNeT(GNN):
-    """ParticleNeT (dynamical edge convolutional) model. Inspired by: https://arxiv.org/abs/1902.08570"""
+    """ParticleNeT (dynamical edge convolutional) model.
+
+    Inspired by: https://arxiv.org/abs/1902.08570
+    """
 
     def __init__(
         self,
@@ -27,7 +30,11 @@ class ParticleNeT(GNN):
         nb_neighbours: int = 16,
         features_subset: Optional[Union[List[int], slice]] = None,
         dynamic: bool = True,
-        dynedge_layer_sizes: Optional[List[Tuple[int, ...]]] = [(64,64,64), (128,128,128), (256,256,256)],
+        dynedge_layer_sizes: Optional[List[Tuple[int, ...]]] = [
+            (64, 64, 64),
+            (128, 128, 128),
+            (256, 256, 256),
+        ],
         readout_layer_sizes: Optional[List[int]] = [256],
         global_pooling_schemes: Optional[Union[str, List[str]]] = "mean",
         activation_layer: Optional[str] = "relu",
@@ -53,7 +60,7 @@ class ParticleNeT(GNN):
                 layer; the integers in the corresponding tuple corresponds to
                 the layer sizes in the multi-layer perceptron (MLP) that is
                 applied within each `DynEdgeConv` layer. That is, a list of
-                size-three tuples means that all `DynEdgeConv` layers contain 
+                size-three tuples means that all `DynEdgeConv` layers contain
                 a three-layer MLP.
                 Defaults to [(64, 64, 64), (128, 128, 128), (256, 256, 256)].
             readout_layer_sizes: Hidden layer size in the MLP following the
@@ -65,7 +72,7 @@ class ParticleNeT(GNN):
                 Default to "mean".
             activation_layer: The activation function to use in the model.
                 Default to "relu".
-            add_batchnorm_layer: Whether to add a batch normalization layer after 
+            add_batchnorm_layer: Whether to add a batch normalization layer after
                 each linear layer. Default to True.
             dropout_readout: Dropout value to use in the readout layer(s).
                 Default to 0.1.
@@ -79,29 +86,34 @@ class ParticleNeT(GNN):
         # DynEdge layer sizes
         if dynedge_layer_sizes is None:
             dynedge_layer_sizes = [
+                (64, 64, 64),
                 (
-                    64, 64, 64
+                    128,
+                    128,
+                    128,
                 ),
                 (
-                    128, 128, 128,
-                ),
-                (
-                    256, 256, 256,
+                    256,
+                    256,
+                    256,
                 ),
             ]
-            
+
         dynedge_layer_sizes_check = []
         for sizes in dynedge_layer_sizes:
             if isinstance(sizes, list):
-                sizes = tuple(sizes)    
+                sizes = tuple(sizes)
             dynedge_layer_sizes_check.append(sizes)
 
         assert isinstance(dynedge_layer_sizes_check, list)
         assert len(dynedge_layer_sizes_check)
-        assert all(isinstance(sizes, tuple) for sizes in dynedge_layer_sizes_check)
+        assert all(
+            isinstance(sizes, tuple) for sizes in dynedge_layer_sizes_check
+        )
         assert all(len(sizes) > 0 for sizes in dynedge_layer_sizes_check)
         assert all(
-            all(size > 0 for size in sizes) for sizes in dynedge_layer_sizes_check
+            all(size > 0 for size in sizes)
+            for sizes in dynedge_layer_sizes_check
         )
 
         self._dynedge_layer_sizes = dynedge_layer_sizes_check
@@ -140,7 +152,7 @@ class ParticleNeT(GNN):
             raise ValueError(
                 f"Activation layer {activation_layer} not supported."
             )
-        
+
         # Base class constructor
         super().__init__(nb_inputs, self._readout_layer_sizes[-1])
 
@@ -159,10 +171,9 @@ class ParticleNeT(GNN):
     # Builds the network
     def _construct_layers(self) -> None:
         """Construct layers (torch.nn.Modules)."""
-        
         # Convolutional operations
         nb_input_features = self._nb_inputs
-        
+
         self._conv_layers = torch.nn.ModuleList()
         nb_latent_features = nb_input_features
         for sizes in self._dynedge_layer_sizes:
@@ -177,10 +188,10 @@ class ParticleNeT(GNN):
                 if self._add_batchnorm_layer:
                     layers.append(torch.nn.BatchNorm1d(nb_out))
                 layers.append(self._activation)
-            
+
             conv_layer = DynEdgeConv(
                 torch.nn.Sequential(*layers),
-                aggr = "mean",
+                aggr="mean",
                 nb_neighbors=self._nb_neighbours,
                 features_subset=self._features_subset,
             )
@@ -231,7 +242,7 @@ class ParticleNeT(GNN):
                 x, edge_index = conv_layer(x, edge_index, batch)
             else:
                 x, _ = conv_layer(x, edge_index, batch)
-            
+
         # Read-out
         if not self._skip_readout:
             # (Optional) Global pooling
