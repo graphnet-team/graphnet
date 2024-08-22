@@ -15,6 +15,7 @@ import numpy as np
 import torch
 from torch.utils.data import Sampler, BatchSampler
 from graphnet.data.dataset import Dataset
+from graphnet.utilities.logging import Logger
 
 
 class RandomChunkSampler(Sampler[int]):
@@ -115,10 +116,10 @@ class RandomChunkSampler(Sampler[int]):
             yield from samples
 
 
-def gather_buckets(
-    params: Tuple[List[int], Sequence[Any], int, int],
+def gather_len_matched_buckets(
+    params: Tuple[range, Sequence[Any], int, int],
 ) -> Tuple[List[List[int]], List[List[int]]]:
-    """Gather buckets of events.
+    """Gather length-matched buckets of events.
 
     The function that will be used to gather batches of events for the
     `LenMatchBatchSampler`. When using multiprocessing, each worker will call
@@ -153,7 +154,7 @@ def gather_buckets(
     return batches, remaining_batches
 
 
-class LenMatchBatchSampler(BatchSampler):
+class LenMatchBatchSampler(BatchSampler, Logger):
     """A `BatchSampler` that batches similar length events.
 
     MIT License
@@ -188,6 +189,7 @@ class LenMatchBatchSampler(BatchSampler):
         batch_size: int = 1,
         num_workers: int = 1,
         bucket_width: int = 16,
+        chunks_per_segment: int = 4,
         multiprocessing_context: str = "spawn",
         drop_last: Optional[bool] = False,
     ) -> None:
@@ -206,62 +208,103 @@ class LenMatchBatchSampler(BatchSampler):
             batch_size: Batch size.
             num_workers: Number of workers to spawn to create batches.
             bucket_width: Size of length buckets for grouping data.
+            chunks_per_segment: Number of chunks to group together for processing.
             multiprocessing_context: Start method for multiprocessing.
             drop_last: (Optional) Drop the last incomplete batch.
         """
+        Logger.__init__(self)
         super().__init__(
             sampler=sampler, batch_size=batch_size, drop_last=drop_last
         )
-        assert (
-            num_workers >= 1
-        ), "Need at least one worker to use LenMatchBatchSampler!"
+        assert num_workers >= 0, "`num_workers` must be >= 0!"
 
         self._num_workers = num_workers
         self._bucket_width = bucket_width
+        self._chunks_per_segment = chunks_per_segment
         self._multiprocessing_context = multiprocessing_context
+
+        self.info(
+            f"Setting up batch sampler with {self._num_workers} workers."
+        )
 
     def __iter__(self) -> Iterator[List[int]]:
         """Return length-matched batches."""
         indices = list(self.sampler)
         data_source = self.sampler.data_source
 
-        segments_size = len(indices) // self._num_workers
+        if self._num_workers > 0:
 
-        # Split indices into nearly equal-sized segments amonst the workers
-        segments = [
-            indices[i * segments_size : (i + 1) * segments_size]
-            for i in range(self._num_workers)
-        ]
+            n_chunks = len(self.sampler.chunks)
+            n_segments = n_chunks // self._chunks_per_segment
 
-        # Collect the leftovers into another segment
-        if len(indices) % self._num_workers != 0:
-            segments.append(indices[self._num_workers * segments_size :])
+            # Split indices into nearly equal-sized segments amongst the workers
+            segments = [
+                range(
+                    sum(self.sampler.chunks[: i * self._chunks_per_segment]),
+                    sum(
+                        self.sampler.chunks[
+                            : (i + 1) * self._chunks_per_segment
+                        ]
+                    ),
+                )
+                for i in range(n_segments)
+            ]
+            segments.extend(
+                [range(segments[-1][-1], len(indices) - 1)]
+            )  # Make a segment w/ the leftover indices
 
-        yielded = 0
-        remaining_indices = []
-        with get_context("spawn").Pool(processes=self._num_workers) as pool:
-            for result in pool.imap_unordered(
-                gather_buckets,
-                [
-                    (segment, data_source, self.batch_size, self._bucket_width)
-                    for segment in segments
-                ],
-            ):
-                batches, leftovers = result
-                for batch in batches:
-                    yield batch
-                    yielded += 1
-                remaining_indices.extend(leftovers)
+            remaining_indices = []
+            with get_context(self._multiprocessing_context).Pool(
+                processes=self._num_workers
+            ) as pool:
+                results = pool.imap_unordered(
+                    gather_len_matched_buckets,
+                    [
+                        (
+                            segments[i],
+                            data_source,
+                            self.batch_size,
+                            self._bucket_width,
+                        )
+                        for i in range(n_segments)
+                    ],
+                )
+                for result in results:
+                    batches, leftovers = result
+                    for batch in batches:
+                        yield batch
+                    remaining_indices.extend(leftovers)
 
-        # Process any remaining indices
-        batch = []
-        for incomplete_batch in remaining_indices:
-            batch.extend(incomplete_batch)
-            if len(batch) == self.batch_size:
+            # Process any remaining indices
+            batch = []
+            for incomplete_batch in remaining_indices:
+                batch.extend(incomplete_batch)
+                if len(batch) >= self.batch_size:
+                    yield batch[: self.batch_size]
+                    batch = batch[self.batch_size :]
+
+            if len(batch) > 0 and not self.drop_last:
                 yield batch
-                yielded += 1
-                batch = []
+        else:  # n_workers = 0, no multiprocessing
+            buckets = defaultdict(list)
 
-        if len(batch) > 0 and not self.drop_last:
-            yield batch
-            yielded += 1
+            for idx in self.sampler:
+                s = self.sampler.data_source[idx]
+                L = max(1, s.num_nodes // self._bucket_width)
+                buckets[L].append(idx)
+                if len(buckets[L]) == self.batch_size:
+                    batch = list(buckets[L])
+                    yield batch
+                    buckets[L] = []
+
+            batch = []
+            leftover = [idx for bucket in buckets for idx in bucket]
+
+            for idx in leftover:
+                batch.append(idx)
+                if len(batch) == self.batch_size:
+                    yield batch
+                    batch = []
+
+            if len(batch) > 0 and not self.drop_last:
+                yield batch
