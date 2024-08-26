@@ -72,14 +72,14 @@ class ParticleNeT(GNN):
                 Default to "mean".
             activation_layer: The activation function to use in the model.
                 Default to "relu".
-            add_batchnorm_layer: Whether to add a batch normalization layer after
-                each linear layer. Default to True.
+            add_batchnorm_layer: Whether to add a batch normalization layer 
+                after each linear layer. Default to True.
             dropout_readout: Dropout value to use in the readout layer(s).
                 Default to 0.1.
             skip_readout: Whether to skip the readout layer(s). If `True`, the
                 output of the last DynEdgeConv block is returned directly.
         """
-        # Latent feature subset for computing nearest neighbours in ParticleNeT.
+        # Latent feature subset for computing nearest neighbours in model
         if features_subset is None:
             features_subset = slice(0, 3)
 
