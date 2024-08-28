@@ -276,7 +276,12 @@ class ERDAHostedDataset(CuratedDataset):
         else:
             # Download, unzip and delete zipped file
             os.makedirs(self.dataset_dir)
-            file_path = os.path.join(self.dataset_dir, file_hash + ".tar.gz")
+            _, file_name = os.path.split(file_hash)
+            extension = ".tar.gz" if ".tar.gz" not in file_name else ""
+            file_path = os.path.join(
+                self.dataset_dir,
+                file_name + extension,
+            )
             os.system(f"wget -O {file_path} {self._mirror}/{file_hash}")
             os.system(f"tar -xf {file_path} -C {self.dataset_dir}")
             os.system(f"rm {file_path}")
