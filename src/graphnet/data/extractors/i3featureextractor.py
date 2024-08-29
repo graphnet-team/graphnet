@@ -98,6 +98,7 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
         event_time = frame["I3EventHeader"].start_time.mod_julian_day_double
 
         for om_key in om_keys:
+
             # Common values for each OM
             x = self._gcd_dict[om_key].position.x
             y = self._gcd_dict[om_key].position.y
@@ -111,6 +112,12 @@ class I3FeatureExtractorIceCube86(I3FeatureExtractor):
             dom_number = om_key[1]
             pmt_number = om_key[2]
             dom_type = self._gcd_dict[om_key].omtype
+
+            # Definition of DOM positions changed in 2017 data (and onwards) due to rounding in a database
+            # Round all DOM positions to nearest cm so that there are no season-to-season differences for the training to latch on to
+            x = round( x / icetray.I3Units.centimeter ) * icetray.I3Units.centimeter
+            y = round( y / icetray.I3Units.centimeter ) * icetray.I3Units.centimeter
+            z = round( z / icetray.I3Units.centimeter ) * icetray.I3Units.centimeter
 
             # DOM flags
             if bright_doms:
