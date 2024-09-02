@@ -72,7 +72,7 @@ class ParticleNeT(GNN):
                 Default to "mean".
             activation_layer: The activation function to use in the model.
                 Default to "relu".
-            add_batchnorm_layer: Whether to add a batch normalization layer 
+            add_batchnorm_layer: Whether to add a batch normalization layer
                 after each linear layer. Default to True.
             dropout_readout: Dropout value to use in the readout layer(s).
                 Default to 0.1.
