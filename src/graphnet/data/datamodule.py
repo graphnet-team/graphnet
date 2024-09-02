@@ -285,7 +285,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         if "batch_sampler" in dataloader_args.keys():
             if "sampler" not in dataloader_args.keys():
                 raise KeyError(
-                    "When specifying a `batch_sampler`, you must also provide `sampler`."
+                    "When specifying a `batch_sampler`,"
+                    "you must also provide `sampler`."
                 )
             # If there were no kwargs provided, set it to empty dict
             if "batch_sampler_kwargs" not in dataloader_args.keys():
