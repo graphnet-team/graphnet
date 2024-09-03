@@ -102,5 +102,6 @@ class Track(Label):
 
     def __call__(self, graph: Data) -> torch.tensor:
         """Compute label for `graph`."""
-        label = (graph[self._pid_key] == 14) & (graph[self._int_key] == 1)
-        return label.type(torch.int)
+        is_numu = torch.abs(graph[self._pid_key]) == 14
+        is_cc = graph[self._int_key] == 1
+        return (is_numu & is_cc).type(torch.int)
