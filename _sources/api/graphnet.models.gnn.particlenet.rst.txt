@@ -1,0 +1,7 @@
+graphnet.models.gnn.particlenet module
+======================================
+
+.. automodule:: graphnet.models.gnn.particlenet
+   :members:
+   :undoc-members:
+   :show-inheritance:

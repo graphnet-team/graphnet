@@ -19,3 +19,4 @@ Submodules
    graphnet.models.gnn.dynedge_kaggle_tito
    graphnet.models.gnn.gnn
    graphnet.models.gnn.icemix
+   graphnet.models.gnn.particlenet
