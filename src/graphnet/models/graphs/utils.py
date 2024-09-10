@@ -67,7 +67,7 @@ def gather_cluster_sequence(
     )
     # sort DOMs and pulse-counts
     contingency_table = np.concatenate([unique_sensors, counts.reshape(-1, 1)], axis=1)
-    cluster_columns_contingency_table = np.arange(n_clusters = len(cluster_columns))
+    cluster_columns_contingency_table = np.arange(0, unique_sensors.shape[1], 1)
     contingency_table = lex_sort(x = contingency_table, cluster_columns = cluster_columns_contingency_table)
     unique_sensors = contingency_table[:, 0 : unique_sensors.shape[1]]
     counts = contingency_table[:, unique_sensors.shape[1] :].flatten().astype(int)
