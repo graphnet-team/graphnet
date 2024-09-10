@@ -66,10 +66,11 @@ def gather_cluster_sequence(
         x[:, cluster_columns], return_counts=True, axis=0
     )
     # sort DOMs and pulse-counts
-    sort_this = np.concatenate([unique_sensors, counts.reshape(-1, 1)], axis=1)
-    sort_this = lex_sort(x=sort_this, cluster_columns=cluster_columns)
-    unique_sensors = sort_this[:, 0 : unique_sensors.shape[1]]
-    counts = sort_this[:, unique_sensors.shape[1] :].flatten().astype(int)
+    contingency_table = np.concatenate([unique_sensors, counts.reshape(-1, 1)], axis=1)
+    cluster_columns_contingency_table = np.arange(n_clusters = len(cluster_columns))
+    contingency_table = lex_sort(x = contingency_table, cluster_columns = cluster_columns_contingency_table)
+    unique_sensors = contingency_table[:, 0 : unique_sensors.shape[1]]
+    counts = contingency_table[:, unique_sensors.shape[1] :].flatten().astype(int)
 
     # Pad unique sensor columns with NaN's up until the maximum number of
     # Same pmt-pulses. Each of padded columns represents a pulse.
