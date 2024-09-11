@@ -18,6 +18,7 @@ class LiquidO_v1(Detector):
     string_id_column = "fiber_id"
     sensor_id_column = "sipm_id"
     sensor_time_column = "t"
+    charge_column = None
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""

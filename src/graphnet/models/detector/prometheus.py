@@ -18,6 +18,7 @@ class ORCA150SuperDense(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -49,6 +50,7 @@ class TRIDENT1211(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -80,6 +82,7 @@ class IceCubeUpgrade7(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -111,6 +114,7 @@ class WaterDemo81(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -142,6 +146,7 @@ class BaikalGVD8(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -173,6 +178,7 @@ class IceDemo81(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -204,6 +210,7 @@ class ARCA115(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -235,6 +242,7 @@ class ORCA150(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -266,6 +274,7 @@ class IceCube86Prometheus(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -297,6 +306,7 @@ class IceCubeDeepCore8(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -328,6 +338,7 @@ class IceCubeGen2(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
@@ -356,6 +367,7 @@ class PONETriangle(Detector):
     string_id_column = "sensor_string_id"
     sensor_id_column = "sensor_id"
     sensor_time_column = "t"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension."""
