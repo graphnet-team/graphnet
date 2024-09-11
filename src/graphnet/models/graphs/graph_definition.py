@@ -511,7 +511,9 @@ class GraphDefinition(Model):
         # Identify photons that needs to be merged
         assert isinstance(self._merge_window, float)
         idx = self._find_photons_for_merging(
-            t=photons["t"], ids=ids, merge_window=self._merge_window
+            t=photons[self._detector.time_column],
+            ids=ids,
+            merge_window=self._merge_window,
         )
 
         # Merge photon attributes based on temporary ids
