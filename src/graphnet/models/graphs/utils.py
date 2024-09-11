@@ -66,12 +66,13 @@ def gather_cluster_sequence(
         x[:, cluster_columns], return_counts=True, axis=0
     )
     # sort DOMs and pulse-counts
-    contingency_table = np.concatenate([unique_sensors, counts.reshape(-1, 1)], axis=1)
-    cluster_columns_contingency_table = np.arange(0, unique_sensors.shape[1], 1)
-    contingency_table = lex_sort(x=contingency_table, 
-                                 cluster_columns=cluster_columns_contingency_table)
-    unique_sensors = contingency_table[:, 0 : unique_sensors.shape[1]]
-    counts = contingency_table[:, unique_sensors.shape[1] :].flatten().astype(int)
+    sensor_counts = counts.reshape(-1, 1)
+    contingency_table = np.concatenate([unique_sensors, sensor_counts], axis=1)
+    cluster_columns_contingency_table = np.arange(0,unique_sensors.shape[1],1)
+    contingency_table = lex_sort(x=contingency_table,
+                            cluster_columns=cluster_columns_contingency_table)
+    unique_sensors = contingency_table[:, 0:unique_sensors.shape[1]]
+    counts = contingency_table[:, unique_sensors.shape[1]:].flatten().astype(int)
 
     # Pad unique sensor columns with NaN's up until the maximum number of
     # Same pmt-pulses. Each of padded columns represents a pulse.
@@ -88,8 +89,8 @@ def gather_cluster_sequence(
 
     # Insert pulse attribute in place of NaN.
     for k in range(len(counts)):
-        array[k, column_offset : (column_offset + counts[k])] = x[
-            cumsum[k] : cumsum[k + 1], feature_idx
+        array[k, column_offset:(column_offset + counts[k])] = x[
+            cumsum[k]:cumsum[k + 1], feature_idx
         ]
     return array, column_offset, counts
 
@@ -131,7 +132,8 @@ def cluster_summarize_with_percentiles(
     then each row in the returned array will correspond to a DOM,
     and the time and charge for each DOM will be summarized by percentiles.
     Returned output array has dimensions
-    `[n_clusters, len(percentiles)*len(summarization_indices) + len(cluster_indices)]`
+    `[n_clusters,
+    len(percentiles)*len(summarization_indices) + len(cluster_indices)]`
 
     Args:
         x: Array to be clustered
