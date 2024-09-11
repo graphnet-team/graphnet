@@ -501,10 +501,11 @@ class GraphDefinition(Model):
             ].tolist()
 
         # Create temporary module ids based on xyz coordinates
+        xyz = self._detector.xyz
         ids = self._assign_temp_ids(
-            x=photons["sensor_pos_x"],
-            y=photons["sensor_pos_y"],
-            z=photons["sensor_pos_z"],
+            x=xyz[0],
+            y=xyz[1],
+            z=xyz[2],
         )
 
         # Identify photons that needs to be merged
