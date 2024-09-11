@@ -499,7 +499,6 @@ class GraphDefinition(Model):
 
         # Create temporary module ids based on xyz coordinates
         xyz = self._detector.xyz
-        print(xyz)
         ids = self._assign_temp_ids(
             x=photons[xyz[0]],
             y=photons[xyz[1]],
