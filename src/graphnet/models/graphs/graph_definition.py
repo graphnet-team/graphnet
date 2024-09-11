@@ -89,13 +89,9 @@ class GraphDefinition(Model):
         self._sensor_mask = sensor_mask
         self._string_mask = string_mask
         self._add_inactive_sensors = add_inactive_sensors
-
-        self._time_column = "t"
-
         self._n_modules = self._detector.geometry_table.shape[0]
-        self._merge_window = merge_window  # = 4.5
+        self._merge_window = merge_window
         self._merge = merge_coincident
-        self._charge_key = "charge"
 
         self._resolve_masks()
 
@@ -502,16 +498,17 @@ class GraphDefinition(Model):
 
         # Create temporary module ids based on xyz coordinates
         xyz = self._detector.xyz
+        print(xyz)
         ids = self._assign_temp_ids(
-            x=xyz[0],
-            y=xyz[1],
-            z=xyz[2],
+            x=photons[xyz[0]],
+            y=photons[xyz[1]],
+            z=photons[xyz[2]],
         )
 
         # Identify photons that needs to be merged
-        assert isinstance(self._merge_window, float)
+        assert isinstance(self._merge_window, (float, int))
         idx = self._find_photons_for_merging(
-            t=photons[self._detector.time_column],
+            t=photons[self._detector.sensor_time_name],
             ids=ids,
             merge_window=self._merge_window,
         )

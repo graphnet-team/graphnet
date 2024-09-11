@@ -65,6 +65,11 @@ class Detector(Model):
         """Public get method for retrieving the sensor time column name."""
         return self.sensor_time_column
 
+    @property
+    def charge_name(self) -> str:
+        """Public get method for retrieving the charge column name."""
+        return self.charge_column
+
     @final
     def _standardize(
         self, input_features: torch.tensor, input_feature_names: List[str]
