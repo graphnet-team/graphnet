@@ -642,6 +642,39 @@
                 <span class="s2">"Unknown dataset encountered during dataloader creation."</span>
             <span class="p">)</span>
 
+        <span class="k">if</span> <span class="s2">"sampler"</span> <span class="ow">in</span> <span class="n">dataloader_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># If there were no kwargs provided, set it to empty dict</span>
+            <span class="k">if</span> <span class="s2">"sampler_kwargs"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataloader_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"sampler_kwargs"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"sampler"</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"sampler"</span><span class="p">](</span>
+                <span class="n">dataset</span><span class="p">,</span> <span class="o">**</span><span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"sampler_kwargs"</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">del</span> <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"sampler_kwargs"</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s2">"batch_sampler"</span> <span class="ow">in</span> <span class="n">dataloader_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">"sampler"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataloader_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                    <span class="s2">"When specifying a `batch_sampler`,"</span>
+                    <span class="s2">"you must also provide `sampler`."</span>
+                <span class="p">)</span>
+            <span class="c1"># If there were no kwargs provided, set it to empty dict</span>
+            <span class="k">if</span> <span class="s2">"batch_sampler_kwargs"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataloader_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"batch_sampler_kwargs"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="n">batch_sampler</span> <span class="o">=</span> <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"batch_sampler"</span><span class="p">](</span>
+                <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"sampler"</span><span class="p">],</span>
+                <span class="o">**</span><span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"batch_sampler_kwargs"</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"batch_sampler"</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_sampler</span>
+            <span class="c1"># Remove extra keys</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="s2">"batch_sampler_kwargs"</span><span class="p">,</span>
+                <span class="s2">"drop_last"</span><span class="p">,</span>
+                <span class="s2">"sampler"</span><span class="p">,</span>
+                <span class="s2">"shuffle"</span><span class="p">,</span>
+            <span class="p">]:</span>
+                <span class="n">dataloader_args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">dataloader_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"Dataloader arguments not provided."</span><span class="p">)</span>
 
@@ -848,7 +881,6 @@
             <span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="p">)</span>
             <span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="p">)</span>  <span class="c1"># shuffled list</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_selection</span><span class="p">(</span><span class="n">all_events</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_construct_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>

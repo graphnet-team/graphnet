@@ -22,3 +22,4 @@ Submodules
    :maxdepth: 2
 
    graphnet.data.dataset.dataset
+   graphnet.data.dataset.samplers

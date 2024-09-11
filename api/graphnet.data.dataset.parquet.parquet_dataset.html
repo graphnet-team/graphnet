@@ -376,6 +376,8 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.chunk_sizes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">chunk_sizes</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.query_table" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">query_table()</span></code></a>
         </li></ul>
             </nav>
@@ -390,6 +392,13 @@
     
       <a href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a>
       <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.chunk_sizes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">chunk_sizes</span></code></a>
+      
+    
+    </li>
     <li class="md-nav__item">
     
     
@@ -552,6 +561,8 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.chunk_sizes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">chunk_sizes</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.query_table" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">query_table()</span></code></a>
         </li></ul>
             </nav>
@@ -622,7 +633,7 @@ subset of events when resolving a string-based selection (e.g.,
 <cite>“10000 random events ~ event_no % 5 &gt; 0”</cite> or <cite>“20% random
 events ~ event_no % 5 &gt; 0”</cite>).</p></li>
 <li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a></span>) – Method that defines the graph representation.</p></li>
-<li><p><strong>cache_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Number of batches to cache in memory.
+<li><p><strong>cache_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Number of files to cache in memory.
 Must be at least 1. Defaults to 1.</p></li>
 <li><p><strong>labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Dictionary of labels to be added to the dataset.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
@@ -633,6 +644,11 @@ Must be at least 1. Defaults to 1.</p></li>
 <dd class="field-even"><p>object</p>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.chunk_sizes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chunk_sizes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.chunk_sizes" title="Link to this definition">¶</a></dt>
+<dd><p>Return a list of the chunk sizes.</p>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.query_table">
 <span class="sig-name descname"><span class="pre">query_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset/parquet/parquet_dataset.html#ParquetDataset.query_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.parquet.parquet_dataset.ParquetDataset.query_table" title="Link to this definition">¶</a></dt>
