@@ -93,7 +93,7 @@ class ParquetDataset(Dataset):
                 `"10000 random events ~ event_no % 5 > 0"` or `"20% random
                 events ~ event_no % 5 > 0"`).
             graph_definition: Method that defines the graph representation.
-            cache_size: Number of batches to cache in memory.
+            cache_size: Number of files to cache in memory.
                         Must be at least 1. Defaults to 1.
             labels: Dictionary of labels to be added to the dataset.
         """
@@ -124,8 +124,8 @@ class ParquetDataset(Dataset):
         self._path: str = self._path
         # Member Variables
         self._cache_size = cache_size
-        self._batch_sizes = self._calculate_sizes()
-        self._batch_cumsum = np.cumsum(self._batch_sizes)
+        self._chunk_sizes = self._calculate_sizes()
+        self._chunk_cumsum = np.cumsum(self._chunk_sizes)
         self._file_cache = self._initialize_file_cache(
             truth_table=truth_table,
             node_truth_table=node_truth_table,
@@ -180,9 +180,14 @@ class ParquetDataset(Dataset):
         )
         return event_index
 
+    @property
+    def chunk_sizes(self) -> List[int]:
+        """Return a list of the chunk sizes."""
+        return self._chunk_sizes
+
     def __len__(self) -> int:
         """Return length of dataset, i.e. number of training examples."""
-        return sum(self._batch_sizes)
+        return sum(self._chunk_sizes)
 
     def _get_all_indices(self) -> List[int]:
         """Return a list of all unique values in `self._index_column`."""
@@ -190,22 +195,22 @@ class ParquetDataset(Dataset):
         return np.arange(0, len(files), 1)
 
     def _calculate_sizes(self) -> List[int]:
-        """Calculate the number of events in each batch."""
+        """Calculate the number of events in each chunk."""
         sizes = []
-        for batch_id in self._indices:
+        for chunk_id in self._indices:
             path = os.path.join(
                 self._path,
                 self._truth_table,
-                f"{self.truth_table}_{batch_id}.parquet",
+                f"{self.truth_table}_{chunk_id}.parquet",
             )
             sizes.append(len(pol.read_parquet(path)))
         return sizes
 
     def _get_row_idx(self, sequential_index: int) -> int:
         """Return the row index corresponding to a `sequential_index`."""
-        file_idx = bisect_right(self._batch_cumsum, sequential_index)
+        file_idx = bisect_right(self._chunk_cumsum, sequential_index)
         if file_idx > 0:
-            idx = int(sequential_index - self._batch_cumsum[file_idx - 1])
+            idx = int(sequential_index - self._chunk_cumsum[file_idx - 1])
         else:
             idx = sequential_index
         return idx
@@ -242,9 +247,9 @@ class ParquetDataset(Dataset):
             columns = [columns]
 
         if sequential_index is None:
-            file_idx = np.arange(0, len(self._batch_cumsum), 1)
+            file_idx = np.arange(0, len(self._chunk_cumsum), 1)
         else:
-            file_idx = [bisect_right(self._batch_cumsum, sequential_index)]
+            file_idx = [bisect_right(self._chunk_cumsum, sequential_index)]
 
         file_indices = [self._indices[idx] for idx in file_idx]
 
