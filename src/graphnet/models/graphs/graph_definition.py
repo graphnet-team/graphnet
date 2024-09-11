@@ -92,6 +92,7 @@ class GraphDefinition(Model):
         self._n_modules = self._detector.geometry_table.shape[0]
         self._merge_window = merge_window
         self._merge = merge_coincident
+        self._charge_key = self._detector.charge_name
 
         self._resolve_masks()
 
@@ -223,7 +224,7 @@ class GraphDefinition(Model):
         input_features = torch.tensor(input_features, dtype=self.dtype)
 
         # Standardize / Scale  node features
-        input_features = self._detector(input_features, input_feature_names)
+        # input_features = self._detector(input_features, input_feature_names)
 
         # Create graph & get new node feature names
         graph, node_feature_names = self._node_definition(input_features)
@@ -554,10 +555,18 @@ class GraphDefinition(Model):
             for key in data_dict.keys():
                 # Extract the values corresponding to the current group of IDs
                 values_to_merge = np.array([data_dict[key][i] for i in group])
-                charges = np.array(
-                    [data_dict[self._charge_key][i] for i in group]
-                )
-                weights = charges / sum(charges)
+                if self._charge_key in data_dict.keys():
+                    charges = np.array(
+                        [data_dict[self._charge_key][i] for i in group]
+                    )
+                    weights = charges / sum(charges)
+                else:
+                    self.warning_once(
+                        f"`{self._charge_key}` not available in"
+                        f" {self._input_feature_names}."
+                        " Cannot do weighted sum."
+                    )
+                    weights = np.array([1])
                 # Handle numeric and non-numeric fields differently
                 if all(
                     isinstance(value, (int, float))
