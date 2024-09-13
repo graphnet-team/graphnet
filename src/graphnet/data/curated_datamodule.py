@@ -278,15 +278,13 @@ class ERDAHostedDataset(CuratedDataset):
         """Prepare the dataset for training."""
         assert self._file_hashes is not None  # mypy
         file_hash = self._file_hashes[self._backend]
-        file_path = os.path.join(
-            self.dataset_dir, file_hash.split("/")[-1]
-        )  # + ".tar.gz")
+        file_path = os.path.join(self.dataset_dir, file_hash + ".tar.gz")
         if os.path.exists(self.dataset_dir):
             return
         else:
             # Download, unzip and delete zipped file
             os.makedirs(self.dataset_dir, exist_ok=True)
-            print(f"wget -O {file_path} {self._mirror}/{file_hash}")
             os.system(f"wget -O {file_path} {self._mirror}/{file_hash}")
-            os.system(f"tar -xf {file_path} -C {self.dataset_dir}")
+            print("Unzipping file, this might take a while..")
+            os.system(f"tar -xvzf {file_path} -C {self.dataset_dir}")
             os.system(f"rm {file_path}")
