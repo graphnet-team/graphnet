@@ -218,6 +218,7 @@ class ParquetDataset(Dataset):
         ids = []
         for file in files:
             file_name = file.split("/")[-1].replace(self._truth_table, "")
+            file_name = file_name.replace("_", "")
             ids.append(int(file_name.replace(".parquet", "")))
         return np.array(ids)
 
