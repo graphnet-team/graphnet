@@ -8,4 +8,9 @@ from .dataconverter import DataConverter
 from .pre_configured import I3ToParquetConverter
 from .pre_configured import I3ToSQLiteConverter
 from .datamodule import GraphNeTDataModule
-from .curated_datamodule import CuratedDataset, ERDAHostedDataset
+from .curated_datamodule import (
+    CuratedDataset,
+    ERDAHostedDataset,
+    SecretDataset,
+    PublicBenchmarkDataset,
+)
