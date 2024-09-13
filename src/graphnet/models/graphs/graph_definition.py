@@ -224,7 +224,7 @@ class GraphDefinition(Model):
         input_features = torch.tensor(input_features, dtype=self.dtype)
 
         # Standardize / Scale  node features
-        # input_features = self._detector(input_features, input_feature_names)
+        input_features = self._detector(input_features, input_feature_names)
 
         # Create graph & get new node feature names
         graph, node_feature_names = self._node_definition(input_features)
