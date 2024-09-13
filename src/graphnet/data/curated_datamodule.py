@@ -4,7 +4,6 @@ Inheriting subclasses are data-specific implementations that allow the user to
 import and download pre-converteddatasets for training of deep learning based
 methods in GraphNeT.
 """
-
 from typing import Dict, Any, Optional, List, Tuple, Union
 from abc import abstractmethod
 import os
