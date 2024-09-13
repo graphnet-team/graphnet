@@ -309,7 +309,7 @@ class PublicBenchmarkDataset(ERDAHostedDataset):
         validation_dataloader_kwargs: Dict[str, Any] = None,
         test_dataloader_kwargs: Dict[str, Any] = None,
     ) -> None:
-        """Download a public dataset and build DataLoaders get dataloaders.
+        """Download a public dataset and build DataLoaders.
 
         The Dataset can be instatiated in three modes: "train", "test" or
         "test-no-noise". When instantiated in "train" mode, input data is
