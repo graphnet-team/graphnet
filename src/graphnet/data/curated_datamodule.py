@@ -286,5 +286,8 @@ class ERDAHostedDataset(CuratedDataset):
             os.makedirs(self.dataset_dir, exist_ok=True)
             os.system(f"wget -O {file_path} {self._mirror}/{file_hash}")
             print("Unzipping file, this might take a while..")
-            os.system(f"tar -xvzf {file_path} -C {self.dataset_dir}")
+            if self._backend == "parquet":
+                os.system(f"tar -xvf {file_path} -C {self.dataset_dir}")
+            else:
+                os.system(f"tar -xvzf {file_path} -C {self.dataset_dir}")
             os.system(f"rm {file_path}")
