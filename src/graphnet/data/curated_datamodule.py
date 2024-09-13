@@ -243,10 +243,17 @@ class CuratedDataset(GraphNeTDataModule):
     @property
     def dataset_dir(self) -> str:
         """Produce path directory that contains dataset files."""
-        dataset_dir = os.path.join(
-            self._download_dir, self.__class__.__name__, self._backend
-        )
-        return dataset_dir
+        if hasattr(self, "_secret"):
+            dir = os.path.join(
+                self._download_dir,
+                self.__class__.__name__ + "-" + self._secret,
+                self._backend,
+            )
+        else:
+            dir = os.path.join(
+                self._download_dir, self.__class__.__name__, self._backend
+            )
+        return dir
 
 
 class ERDAHostedDataset(CuratedDataset):
